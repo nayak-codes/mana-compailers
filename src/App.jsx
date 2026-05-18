@@ -89,7 +89,7 @@ export default function App() {
 
     try {
       // ✅ Own Render.com backend — Unlimited runs, No API limits!
-      const res = await fetch('https://mana-compailer-backend.onrender.com/api/run', {
+      const res = await fetch('https://mana-compailer-backend-docker.onrender.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
