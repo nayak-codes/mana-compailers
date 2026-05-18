@@ -30,8 +30,7 @@ export default function App() {
       // /api/run → proxied to localhost:3001 in dev
       //          → Vercel serverless function in production
       // Production: Render.com backend (unlimited, no API limits!)
-      const BACKEND = 'https://mana-compailer-backend-docker.onrender.com'
-      const res = await fetch(`${BACKEND}/api/run`, {
+      const res = await fetch('/api/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
