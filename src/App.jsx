@@ -124,7 +124,7 @@ export default function App() {
         </div>
         <div style={s.navAdContainer}>
           <div className="ad-slot" style={{ width:'60%', maxWidth:600, height:48, display:'flex', alignItems:'center', justifyContent:'center' }}>
-            📢 Google Ad will appear here (AdSense)
+            
           </div>
         </div>
         <div style={{ width:120 }} />
@@ -249,7 +249,7 @@ export default function App() {
         {/* RIGHT AD COLUMN */}
         <div style={s.adColumn}>
           <div className="ad-slot" style={{ height:'100%', display:'flex', alignItems:'flex-start', justifyContent:'center', paddingTop:12 }}>
-            📢 Google Ad (AdSense)
+            
           </div>
         </div>
       </div>
