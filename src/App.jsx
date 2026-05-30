@@ -49,7 +49,6 @@ export default function App() {
 
   useEffect(() => {
     if (!isDragging) return
-
     const onPointerMove = (event) => {
       const total = getTotalAvailable()
       const delta = event.clientX - dragStartX
@@ -57,11 +56,7 @@ export default function App() {
       const clamped = Math.min(Math.max(next, MIN_EDITOR_WIDTH), total - MIN_OUTPUT_WIDTH)
       setEditorWidth(clamped)
     }
-
-    const onPointerUp = () => {
-      setIsDragging(false)
-    }
-
+    const onPointerUp = () => setIsDragging(false)
     document.addEventListener('pointermove', onPointerMove)
     document.addEventListener('pointerup', onPointerUp)
     return () => {
@@ -74,17 +69,15 @@ export default function App() {
     const onResize = () => {
       const total = getTotalAvailable()
       const clampMax = Math.max(total - MIN_OUTPUT_WIDTH, MIN_EDITOR_WIDTH)
-      if (editorWidth > clampMax) {
-        setEditorWidth(clampMax)
-      }
+      if (editorWidth > clampMax) setEditorWidth(clampMax)
     }
     window.addEventListener('resize', onResize)
     onResize()
     return () => window.removeEventListener('resize', onResize)
   }, [editorWidth])
 
-  const editorSize = maximizedPanel === 'editor' ? getTotalAvailable() : maximizedPanel === 'output' ? 0 : editorWidth
-  const outputSize = maximizedPanel === 'output' ? getTotalAvailable() : getTotalAvailable() - editorSize
+  const editorSize  = maximizedPanel === 'editor' ? getTotalAvailable() : maximizedPanel === 'output' ? 0 : editorWidth
+  const outputSize  = maximizedPanel === 'output' ? getTotalAvailable() : getTotalAvailable() - editorSize
   const showResizer = maximizedPanel === null
 
   const runCode = useCallback(async () => {
@@ -95,26 +88,23 @@ export default function App() {
     const start = Date.now()
 
     try {
-      // /api/run → proxied to localhost:3001 in dev
-      //          → Vercel serverless function in production
-      const res = await fetch('/api/run', {
+      // ✅ Docker backend — Unlimited, No API limits!
+      const res = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          script:       code,
-          language:     lang.id,
-          versionIndex: lang.jVersion,
-          stdin:        stdin || ''
+          language: lang.id,
+          code:     code,
+          stdin:    stdin || ''
         })
       })
 
-      const data = await res.json()
+      const data    = await res.json()
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
 
       if (data.error) throw new Error(data.error)
 
-      const out = data.output || '(no output)'
-      setOutput({ status: 'ok', text: out, elapsed, label: 'Success' })
+      setOutput({ status: 'ok', text: data.output || '(no output)', elapsed, label: 'Success' })
 
     } catch (err) {
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
@@ -131,15 +121,13 @@ export default function App() {
         <div style={s.brand}>
           <span style={s.brandIcon}>{'</>'}</span>
           <span style={s.brandName}>Mana Compiler</span>
-       
         </div>
-
-        <div style={s.navAdContainer}>
-          <div className="ad-slot" style={{ width: '60%', maxWidth:600, height:48, display:'flex', alignItems:'center', justifyContent:'center' }}>
-            📢 Google Ad will appear here (AdSense)
-          </div>
+        <div style={s.navLinks}>
+          <a href="/" style={s.navLink}>Home</a>
+          <a href="/about.html" style={s.navLink}>About</a>
+          <a href="/contact.html" style={s.navLink}>Contact</a>
+          <a href="/privacy-policy.html" style={s.navLink}>Privacy Policy</a>
         </div>
-
         <div style={{ width:120 }} />
       </nav>
 
@@ -205,20 +193,17 @@ export default function App() {
 
         {/* OUTPUT */}
         <div style={{ ...s.outPanel, ...(maximizedPanel === 'output' ? s.maxPanel : maximizedPanel === 'editor' ? s.minPanel : {}) }}>
-          {/* Tabs */}
           <div style={s.tabs}>
             {['output','stdin'].map(t => (
-              <button key={t} onClick={() => setTab(t)}
-                style={{ ...s.tab, ...(tab===t ? s.tabActive : {}) }}>
+              <button key={t} onClick={() => setTab(t)} style={{ ...s.tab, ...(tab===t ? s.tabActive : {}) }}>
                 {t === 'output' ? '📤 Output' : '📥 Stdin'}
               </button>
             ))}
             {output && output.status !== 'running' && (
               <span style={{
-                marginLeft:'auto', fontSize:11, padding:'2px 10px',
-                borderRadius:999, fontWeight:600,
+                marginLeft:'auto', fontSize:11, padding:'2px 10px', borderRadius:999, fontWeight:600,
                 background: output.status==='ok' ? '#1a3a25' : '#3d1a1a',
-                color: output.status==='ok' ? 'var(--green)' : 'var(--red)'
+                color:      output.status==='ok' ? 'var(--green)' : 'var(--red)'
               }}>
                 {output.label}
               </span>
@@ -228,7 +213,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* Output content */}
           {tab === 'output' && (
             <div style={s.outContent}>
               {!output && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
@@ -261,49 +245,51 @@ export default function App() {
               />
             </div>
           )}
-
         </div>
 
         {/* RIGHT AD COLUMN */}
         <div style={s.adColumn}>
-          <div className="ad-slot" style={{ height: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 12 }}>📢 Google Ad (AdSense)</div>
+          <div className="ad-slot" style={{ height:'100%', display:'flex', alignItems:'flex-start', justifyContent:'center', paddingTop:12 }}>
+            
+          </div>
         </div>
       </div>
-
-      {/* removed bottom ad and footer per user request */}
+      <footer style={s.footer}>
+        <div>Mana Compiler • <a href="/about.html" style={{ color:'var(--text2)' }}>About</a> • <a href="/contact.html" style={{ color:'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color:'var(--text2)' }}>Privacy Policy</a></div>
+        <div>Free online code compiler with fast execution and support for multiple languages.</div>
+      </footer>
     </div>
   )
 }
 
 const s = {
-  root:      { display:'flex', flexDirection:'column', minHeight:'100vh', background:'var(--bg)' },
-  nav:       { display:'flex', alignItems:'center', padding:'0 20px', height:88, background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
-  brand:     { display:'flex', alignItems:'center', gap:10 },
-  brandIcon: { fontFamily:'var(--mono)', fontSize:18, fontWeight:700, color:'var(--accent)' },
-  brandName: { fontSize:17, fontWeight:700 },
-  badge:     { fontSize:11, padding:'2px 8px', background:'var(--bg3)', color:'var(--blue)', borderRadius:999, border:'1px solid var(--border)' },
-  navLink:   { color:'var(--text2)', fontSize:13, textDecoration:'none' },
-  toolbar:   { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 16px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0, flexWrap:'wrap', gap:8 },
-  select:    { background:'var(--bg3)', color:'var(--text)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 10px', fontSize:14, cursor:'pointer' },
-  btnGhost:  { background:'transparent', color:'var(--text2)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 14px', fontSize:13 },
-  btnSwap:   { background:'transparent', color:'var(--text2)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 10px', fontSize:13, marginLeft:4 },
-  panelBtn:  { background:'transparent', color:'var(--text2)', border:'1px solid transparent', borderRadius:6, padding:'4px 8px', fontSize:13, cursor:'pointer' },
-  btnRun:    { background:'#238636', color:'#fff', border:'none', borderRadius:8, padding:'7px 20px', fontSize:14, fontWeight:600 },
-  main:      { display:'flex', flex:1, overflow:'hidden', minHeight:0 },
+  root:        { display:'flex', flexDirection:'column', minHeight:'100vh', background:'var(--bg)' },
+  nav:         { display:'flex', alignItems:'center', padding:'0 20px', height:88, background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
+  brand:       { display:'flex', alignItems:'center', gap:10 },
+  brandIcon:   { fontFamily:'var(--mono)', fontSize:18, fontWeight:700, color:'var(--accent)' },
+  brandName:   { fontSize:17, fontWeight:700 },
+  navLinks:    { display:'flex', alignItems:'center', gap:16 },
+  navLink:     { color:'var(--text2)', fontSize:13, textDecoration:'none' },
+  toolbar:     { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 16px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0, flexWrap:'wrap', gap:8 },
+  select:      { background:'var(--bg3)', color:'var(--text)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 10px', fontSize:14, cursor:'pointer' },
+  btnGhost:    { background:'transparent', color:'var(--text2)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 14px', fontSize:13 },
+  btnSwap:     { background:'transparent', color:'var(--text2)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 10px', fontSize:13, marginLeft:4 },
+  panelBtn:    { background:'transparent', color:'var(--text2)', border:'1px solid transparent', borderRadius:6, padding:'4px 8px', fontSize:13, cursor:'pointer' },
+  btnRun:      { background:'#238636', color:'#fff', border:'none', borderRadius:8, padding:'7px 20px', fontSize:14, fontWeight:600 },
+  main:        { display:'flex', flex:1, overflow:'hidden', minHeight:0 },
   editorPanel: { display:'flex', flexDirection:'column', width:'100%', minWidth:0 },
-  panelHead: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 14px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
-  resizer: { width:10, cursor:'col-resize', background:'transparent', position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'center' },
-  outPanel:  { display:'flex', flexDirection:'column', width:'100%', minWidth:0, borderLeft:'1px solid var(--border)' },
-  adColumn:  { width:140, minWidth:120, background:'var(--bg2)', borderLeft:'1px solid var(--border)', display:'flex', flexDirection:'column', flexShrink:0 },
-  maxPanel:  { flex:'1 1 100%', minWidth:0 },
-  minPanel:  { flex:'0 0 0', minWidth:0, maxWidth:0, overflow:'hidden' },
-  navAdContainer: { flex:1, display:'flex', alignItems:'center', justifyContent:'center' },
-  tabs:      { display:'flex', alignItems:'center', gap:4, padding:'6px 12px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
-  tab:       { background:'transparent', color:'var(--text2)', border:'1px solid transparent', borderRadius:6, padding:'4px 12px', fontSize:13, fontFamily:'var(--ui)' },
-  tabActive: { background:'var(--bg3)', color:'var(--text)', border:'1px solid var(--border)' },
-  outContent:{ flex:1, overflow:'auto', padding:14 },
-  ph:        { color:'var(--text3)', fontSize:13, fontStyle:'italic' },
-  outText:   { fontFamily:'var(--mono)', fontSize:13, lineHeight:1.7, whiteSpace:'pre-wrap', wordBreak:'break-all' },
-  stdinTa:   { flex:1, resize:'none', background:'var(--bg2)', color:'var(--text)', border:'1px solid var(--border)', borderRadius:8, padding:10, fontSize:13, lineHeight:1.6, fontFamily:'var(--mono)', outline:'none', minHeight:120 },
-  footer:    { display:'flex', justifyContent:'space-between', padding:'10px 20px', background:'var(--bg2)', borderTop:'1px solid var(--border)', fontSize:12, color:'var(--text2)', flexShrink:0 },
+  panelHead:   { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 14px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
+  resizer:     { width:10, cursor:'col-resize', background:'transparent', position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'center' },
+  outPanel:    { display:'flex', flexDirection:'column', width:'100%', minWidth:0, borderLeft:'1px solid var(--border)' },
+  adColumn:    { width:140, minWidth:120, background:'var(--bg2)', borderLeft:'1px solid var(--border)', display:'flex', flexDirection:'column', flexShrink:0 },
+  maxPanel:    { flex:'1 1 100%', minWidth:0 },
+  minPanel:    { flex:'0 0 0', minWidth:0, maxWidth:0, overflow:'hidden' },
+  tabs:        { display:'flex', alignItems:'center', gap:4, padding:'6px 12px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
+  tab:         { background:'transparent', color:'var(--text2)', border:'1px solid transparent', borderRadius:6, padding:'4px 12px', fontSize:13, fontFamily:'var(--ui)' },
+  tabActive:   { background:'var(--bg3)', color:'var(--text)', border:'1px solid var(--border)' },
+  outContent:  { flex:1, overflow:'auto', padding:14 },
+  ph:          { color:'var(--text3)', fontSize:13, fontStyle:'italic' },
+  outText:     { fontFamily:'var(--mono)', fontSize:13, lineHeight:1.7, whiteSpace:'pre-wrap', wordBreak:'break-all' },
+  stdinTa:     { flex:1, resize:'none', background:'var(--bg2)', color:'var(--text)', border:'1px solid var(--border)', borderRadius:8, padding:10, fontSize:13, lineHeight:1.6, fontFamily:'var(--mono)', outline:'none', minHeight:120 },
+  footer:      { display:'flex', justifyContent:'space-between', padding:'10px 20px', background:'var(--bg2)', borderTop:'1px solid var(--border)', fontSize:12, color:'var(--text2)', flexShrink:0 },
 }
