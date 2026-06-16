@@ -3,41 +3,43 @@
 
 const express = require('express')
 const cors    = require('cors')
+const https   = require('https')
 
 const app  = express()
 const PORT = 3002  // Changed to 3002 to avoid conflicts
 
+// Reuse HTTPS connections to reduce cold-start latency
+const agent = new https.Agent({ keepAlive: true })
+
 app.use(cors())
 app.use(express.json())
 
-const CLIENT_ID     = 'f0b9d26b55b41b417bc0804b19551187'
-const CLIENT_SECRET = '7db23d86e627704c5eda59237167521c31ce0241ecbf78a6f5f3873a54666a4d'
-
 app.post('/api/run', async (req, res) => {
-  const { script, language, versionIndex, stdin } = req.body
+  const { code, language, stdin } = req.body
 
-  if (!script || !language) {
-    return res.status(400).json({ error: 'script and language required' })
+  if (!code || !language) {
+    return res.status(400).json({ error: 'code and language required' })
   }
 
   try {
     console.log(`[Mana Compiler] Running: ${language}`)
+    const startTime = Date.now()
 
-    const response = await fetch('https://api.jdoodle.com/v1/execute', {
+    // ✅ Use Render Docker backend (faster, no API rate limits!)
+    const response = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        clientId:     CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        script,
-        language,
-        versionIndex: versionIndex || '0',
+        language: language,
+        code: code,
         stdin: stdin || ''
-      })
+      }),
+      agent  // ✅ Keep-alive connections
     })
 
     const data = await response.json()
-    console.log(`[Mana Compiler] Result:`, data.output || data.error)
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(2)
+    console.log(`[Mana Compiler] Result (${elapsed}s):`, data.output || data.error)
     return res.json(data)
 
   } catch (err) {
