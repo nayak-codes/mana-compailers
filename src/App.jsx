@@ -4,27 +4,140 @@ import { LANGUAGES, TEMPLATES } from './languages'
 
 const DEFAULT = LANGUAGES[0]
 
+
+const TerminalInput = ({ onSubmit }) => {
+  const [value, setValue] = useState('')
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [])
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      onSubmit(value)
+      setValue('')
+    }
+  }
+
+  return (
+    <input
+      ref={inputRef}
+      type="text"
+      className="terminal-active-input"
+      value={value}
+      onChange={e => setValue(e.target.value)}
+      onKeyDown={handleKeyDown}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        outline: 'none',
+        color: '#58a6ff',
+        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+        fontSize: 'inherit',
+        padding: 0,
+        margin: 0,
+        width: '120px',
+        caretColor: 'var(--text)',
+      }}
+    />
+  )
+}
+
+const parseTerminalSession = (rawOutput, inputs, code, langId) => {
+  if (!rawOutput) return []
+
+  const promptRegex = /([^]*?[:?❯>$#](?!\/|\d)\s*)/g
+  const matches = []
+  let lastIndex = 0
+  let match
+
+  while ((match = promptRegex.exec(rawOutput)) !== null) {
+    matches.push(match[1])
+    lastIndex = promptRegex.lastIndex
+  }
+
+  const remainder = rawOutput.substring(lastIndex)
+  const segments = []
+  let inputIdx = 0
+
+  for (let i = 0; i < matches.length; i++) {
+    const promptText = matches[i]
+    if (inputIdx < inputs.length) {
+      segments.push({ type: 'output', text: promptText })
+      segments.push({ type: 'input', text: inputs[inputIdx] })
+      segments.push({ type: 'output', text: '\n' })
+      inputIdx++
+    } else {
+      segments.push({ type: 'output', text: promptText })
+      segments.push({ type: 'active-input' })
+      return segments
+    }
+  }
+
+  if (remainder) {
+    segments.push({ type: 'output', text: remainder })
+  }
+
+  if (detectsInput(code, langId) && !segments.some(s => s.type === 'active-input')) {
+    if (inputs.length < 10) {
+      segments.push({ type: 'generic-active-input' })
+    }
+  }
+
+  return segments
+}
+
+const detectsInput = (code, langId) => {
+  const codeLower = code.toLowerCase();
+  switch (langId) {
+    case 'c':
+      return /scanf|gets|fgets|getchar/i.test(code);
+    case 'cpp17':
+      return /cin\s*>>|getline/i.test(code);
+    case 'python3':
+      return /input\s*\(/i.test(code);
+    case 'java':
+      return /scanner|bufferedreader|system\.in/i.test(code);
+    case 'nodejs':
+      return /readline|process\.stdin/i.test(code);
+    case 'go':
+      return /scan|scanln|scanf|readstring|bufio/i.test(codeLower);
+    case 'rust':
+      return /stdin\s*\(\)/i.test(code);
+    case 'php':
+      return /readline|stdin/i.test(codeLower);
+    case 'ruby':
+      return /gets/i.test(code);
+    default:
+      return false;
+  }
+}
+
 export default function App() {
-  const [view, setView]       = useState('home') // 'home' or 'compiler'
-  const [lang, setLang]       = useState(DEFAULT)
-  const [code, setCode]       = useState(TEMPLATES[DEFAULT.id])
-  const [stdin, setStdin]     = useState('')
-  const [output, setOutput]   = useState(null)
+  const [view, setView] = useState('home') // 'home' or 'compiler'
+  const [lang, setLang] = useState(DEFAULT)
+  const [code, setCode] = useState(TEMPLATES[DEFAULT.id])
+  const [inputs, setInputs] = useState([])
+  const [output, setOutput] = useState(null)
   const [running, setRunning] = useState(false)
-  const [tab, setTab]         = useState('output')
-  const [swap, setSwap]       = useState(false)
+  const [tab, setTab] = useState('output')
+  const [swap, setSwap] = useState(false)
   const [maximizedPanel, setMaximizedPanel] = useState(null)
   const [editorWidth, setEditorWidth] = useState(900)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
   const [dragStartWidth, setDragStartWidth] = useState(0)
   const containerRef = useRef(null)
+  const [highlightStdin, setHighlightStdin] = useState(false)
 
   const selectLanguage = (id) => {
     const l = LANGUAGES.find(x => x.id === id)
     setLang(l)
     setCode(TEMPLATES[id] || '')
     setOutput(null)
+    setInputs([])
     setView('compiler')
     // Push history so browser back works correctly
     window.history.pushState({ view: 'compiler', lang: id }, '', window.location.href)
@@ -35,11 +148,13 @@ export default function App() {
     setLang(l)
     setCode(TEMPLATES[id] || '')
     setOutput(null)
+    setInputs([])
   }
 
   const goHome = () => {
     setView('home')
     setOutput(null)
+    setInputs([])
     // Replace history so browser back goes to previous page
     window.history.replaceState({ view: 'home' }, '', window.location.href)
   }
@@ -107,15 +222,15 @@ export default function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [editorWidth])
 
-  const editorSize  = maximizedPanel === 'editor' ? getTotalAvailable() : maximizedPanel === 'output' ? 0 : editorWidth
-  const outputSize  = maximizedPanel === 'output' ? getTotalAvailable() : getTotalAvailable() - editorSize
+  const editorSize = maximizedPanel === 'editor' ? getTotalAvailable() : maximizedPanel === 'output' ? 0 : editorWidth
+  const outputSize = maximizedPanel === 'output' ? getTotalAvailable() : getTotalAvailable() - editorSize
   const showResizer = maximizedPanel === null
 
-  const runCode = useCallback(async () => {
+  const executeCode = useCallback(async (inputVal) => {
+    const inputToSend = inputVal !== undefined ? inputVal : inputs.join('\n')
     if (!code.trim() || running) return
     setRunning(true)
     setOutput({ status: 'running' })
-    setTab('output')
     const start = Date.now()
 
     try {
@@ -125,17 +240,17 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           language: lang.id,
-          code:     code,
-          stdin:    stdin || ''
+          code: code,
+          stdin: inputToSend || ''
         })
       })
 
-      const data    = await res.json()
+      const data = await res.json()
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
 
       if (data.error) throw new Error(data.error)
 
-      setOutput({ status: 'ok', text: data.output || '(no output)', elapsed, label: 'Success' })
+      setOutput({ status: 'ok', text: data.output || '(no output)', elapsed, label: 'Success', usedStdin: inputToSend })
 
     } catch (err) {
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
@@ -143,7 +258,19 @@ export default function App() {
     } finally {
       setRunning(false)
     }
-  }, [code, lang, stdin, running])
+  }, [code, lang, inputs, running])
+
+  const runCode = useCallback(() => {
+    setInputs([])
+    executeCode("")
+  }, [executeCode])
+
+  const handleTerminalClick = () => {
+    const inputEl = document.querySelector('.terminal-active-input')
+    if (inputEl) {
+      inputEl.focus()
+    }
+  }
 
   return (
     <div style={s.root}>
@@ -154,21 +281,21 @@ export default function App() {
           {/* NAV */}
           <nav style={s.nav}>
             <div style={s.brand}>
-              <span onClick={goHome} style={{...s.brandIcon, cursor:'pointer'}}>{'</>'}</span>
+              <span onClick={goHome} style={{ ...s.brandIcon, cursor: 'pointer' }}>{'</>'}</span>
               <span onClick={goHome} style={s.brandName}>our Compiler</span>
             </div>
           </nav>
 
           {/* TOOLBAR */}
           <div style={s.toolbar}>
-            <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
                 {LANGUAGES.map(l => (
                   <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
                 ))}
               </select>
             </div>
-            <div style={{ display:'flex', gap:8 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
               <button onClick={() => { setCode(''); setOutput(null) }} style={s.btnGhost}>Clear</button>
               <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
@@ -190,15 +317,15 @@ export default function App() {
             {/* EDITOR */}
             <div style={{ ...s.editorPanel, ...(maximizedPanel === 'editor' ? s.maxPanel : maximizedPanel === 'output' ? s.minPanel : {}) }}>
               <div style={s.panelHead}>
-                <span style={{ fontSize:13, fontWeight:600 }}>📝 Editor</span>
-                <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                  <span style={{ fontSize:12, color:'var(--text2)' }}>{lang.icon} {lang.label}</span>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>📝 Editor</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 12, color: 'var(--text2)' }}>{lang.icon} {lang.label}</span>
                   <button onClick={() => toggleMaximize('editor')} style={s.panelBtn}>
                     {maximizedPanel === 'editor' ? '🗗' : '⛶'}
                   </button>
                 </div>
               </div>
-              <div style={{ flex:1, overflow:'hidden' }}>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
                 <Editor
                   height="100%"
                   language={lang.monacoLang}
@@ -220,71 +347,112 @@ export default function App() {
 
             <div style={{ ...s.resizer, width: showResizer ? s.resizer.width : 0, pointerEvents: showResizer ? 'auto' : 'none' }} onPointerDown={handlePointerDown} />
 
-            {/* OUTPUT */}
-            <div style={{ ...s.outPanel, ...(maximizedPanel === 'output' ? s.maxPanel : maximizedPanel === 'editor' ? s.minPanel : {}) }}>
+            {/* UNIFIED TERMINAL PANEL */}
+            <div
+              onClick={handleTerminalClick}
+              style={{
+                ...s.outPanel,
+                cursor: 'text',
+                ...(maximizedPanel === 'output' ? s.maxPanel : maximizedPanel === 'editor' ? s.minPanel : {})
+              }}
+            >
+              {/* TERMINAL HEADER */}
               <div style={s.tabs}>
-                {['output','stdin'].map(t => (
-                  <button key={t} onClick={() => setTab(t)} style={{ ...s.tab, ...(tab===t ? s.tabActive : {}) }}>
-                    {t === 'output' ? '📤 Output' : '📥 Stdin'}
-                  </button>
-                ))}
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  🖥️ Terminal
+                </span>
                 {output && output.status !== 'running' && (
                   <span style={{
-                    marginLeft:'auto', fontSize:11, padding:'2px 10px', borderRadius:999, fontWeight:600,
-                    background: output.status==='ok' ? '#1a3a25' : '#3d1a1a',
-                    color:      output.status==='ok' ? 'var(--green)' : 'var(--red)'
+                    marginLeft: 'auto', marginRight: 10, fontSize: 11, padding: '2px 10px', borderRadius: 999, fontWeight: 600,
+                    background: output.status === 'ok' ? '#1a3a25' : '#3d1a1a',
+                    color: output.status === 'ok' ? 'var(--green)' : 'var(--red)'
                   }}>
                     {output.label}
                   </span>
                 )}
-                <button onClick={() => toggleMaximize('output')} style={s.panelBtn}>
+                <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: !output || output.status === 'running' ? 'auto' : 0 }}>
                   {maximizedPanel === 'output' ? '🗗' : '⛶'}
                 </button>
               </div>
 
-              {tab === 'output' && (
+              {/* TERMINAL BODY */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--bg2)' }}>
+                {/* Output content area */}
                 <div style={s.outContent}>
                   {!output && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
                   {output?.status === 'running' && <div style={s.ph}>⏳ Executing...</div>}
                   {output?.text && (
-                    <>
-                      <pre style={{ ...s.outText, color: output.status==='ok' ? 'var(--green)' : 'var(--red)' }}>
-                        {output.text}
-                      </pre>
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      <div style={{
+                        ...s.outText,
+                        color: output.status === 'ok' ? 'var(--green)' : 'var(--red)',
+                        whiteSpace: 'pre-wrap',
+                        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                        fontSize: 14,
+                        lineHeight: 1.6
+                      }}>
+                        {(() => {
+                          if (output.status !== 'ok') {
+                            return <span>{output.text}</span>
+                          }
+                          const tv = parseTerminalSession(output.text, inputs, code, lang.id)
+                          return tv.map((seg, idx) => {
+                            if (seg.type === 'output') {
+                              return <span key={idx}>{seg.text}</span>
+                            }
+                            if (seg.type === 'input') {
+                              return <span key={idx} style={{ color: '#58a6ff', fontWeight: 600 }}>{seg.text}</span>
+                            }
+                            if (seg.type === 'active-input') {
+                              return (
+                                <TerminalInput
+                                  key={idx}
+                                  onSubmit={(val) => {
+                                    const nextInputs = [...inputs, val]
+                                    setInputs(nextInputs)
+                                    executeCode(nextInputs.join('\n'))
+                                  }}
+                                />
+                              )
+                            }
+                            if (seg.type === 'generic-active-input') {
+                              return (
+                                <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                  <span style={{ color: 'var(--green)', fontWeight: 700 }}>❯</span>
+                                  <TerminalInput
+                                    onSubmit={(val) => {
+                                      const nextInputs = [...inputs, val]
+                                      setInputs(nextInputs)
+                                      executeCode(nextInputs.join('\n'))
+                                    }}
+                                  />
+                                </div>
+                              )
+                            }
+                            return null
+                          })
+                        })()}
+                      </div>
                       {output.elapsed && (
-                        <div style={{ marginTop:10, fontSize:11, color:'var(--text3)', fontFamily:'var(--mono)' }}>
+                        <div style={{ marginTop: 16, fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--mono)' }}>
                           ⏱ {output.elapsed}s · {lang.label}
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 </div>
-              )}
-
-              {tab === 'stdin' && (
-                <div style={{ flex:1, padding:14, display:'flex', flexDirection:'column' }}>
-                  <div style={{ fontSize:12, color:'var(--text2)', marginBottom:8 }}>
-                    Program input — one value per line
-                  </div>
-                  <textarea
-                    value={stdin}
-                    onChange={e => setStdin(e.target.value)}
-                    placeholder="Enter input here..."
-                    style={s.stdinTa}
-                  />
-                </div>
-              )}
+              </div>
             </div>
 
             {/* RIGHT AD COLUMN */}
             <div style={s.adColumn}>
-              <div className="ad-slot" style={{ height:'100%', display:'flex', alignItems:'flex-start', justifyContent:'center', paddingTop:12 }}>
-                
+              <div className="ad-slot" style={{ height: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 12 }}>
+
               </div>
             </div>
           </div>
           <footer style={s.footer}>
-            <div>Our Compiler • <a href="/about.html" style={{ color:'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color:'var(--text2)' }}>Features</a> • <a href="/contact.html" style={{ color:'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color:'var(--text2)' }}>Privacy Policy</a></div>
+            <div>Our Compiler • <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
             <div>Free online code compiler with fast execution and support for multiple languages.</div>
           </footer>
         </>
@@ -294,36 +462,36 @@ export default function App() {
 }
 
 const s = {
-  root:        { display:'flex', flexDirection:'column', minHeight:'100vh', background:'var(--bg)' },
-  nav:         { display:'flex', alignItems:'center', padding:'0 20px', height:88, background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
-  brand:       { display:'flex', alignItems:'center', gap:10 },
-  brandIcon:   { fontFamily:'var(--mono)', fontSize:18, fontWeight:700, color:'var(--accent)' },
-  brandName:   { fontSize:17, fontWeight:700, cursor:'pointer' },
-  navLinks:    { display:'flex', alignItems:'center', gap:16 },
-  navLink:     { color:'var(--text2)', fontSize:13, textDecoration:'none' },
-  toolbar:     { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 16px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0, flexWrap:'wrap', gap:8 },
-  select:      { background:'var(--bg3)', color:'var(--text)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 10px', fontSize:14, cursor:'pointer' },
-  btnGhost:    { background:'transparent', color:'var(--text2)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 14px', fontSize:13 },
-  btnHome:     { background:'transparent', color:'var(--text2)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 14px', fontSize:13, cursor:'pointer' },
-  btnSwap:     { background:'transparent', color:'var(--text2)', border:'1px solid var(--border)', borderRadius:8, padding:'6px 10px', fontSize:13, marginLeft:4 },
-  panelBtn:    { background:'transparent', color:'var(--text2)', border:'1px solid transparent', borderRadius:6, padding:'4px 8px', fontSize:13, cursor:'pointer' },
-  btnRun:      { background:'#238636', color:'#fff', border:'none', borderRadius:8, padding:'7px 20px', fontSize:14, fontWeight:600 },
-  main:        { display:'flex', flex:1, overflow:'hidden', minHeight:0 },
-  editorPanel: { display:'flex', flexDirection:'column', width:'100%', minWidth:0 },
-  panelHead:   { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 14px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
-  resizer:     { width:10, cursor:'col-resize', background:'transparent', position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'center' },
-  outPanel:    { display:'flex', flexDirection:'column', width:'100%', minWidth:0, borderLeft:'1px solid var(--border)' },
-  adColumn:    { width:140, minWidth:120, background:'var(--bg2)', borderLeft:'1px solid var(--border)', display:'flex', flexDirection:'column', flexShrink:0 },
-  maxPanel:    { flex:'1 1 100%', minWidth:0 },
-  minPanel:    { flex:'0 0 0', minWidth:0, maxWidth:0, overflow:'hidden' },
-  tabs:        { display:'flex', alignItems:'center', gap:4, padding:'6px 12px', background:'var(--bg2)', borderBottom:'1px solid var(--border)', flexShrink:0 },
-  tab:         { background:'transparent', color:'var(--text2)', border:'1px solid transparent', borderRadius:6, padding:'4px 12px', fontSize:13, fontFamily:'var(--ui)' },
-  tabActive:   { background:'var(--bg3)', color:'var(--text)', border:'1px solid var(--border)' },
-  outContent:  { flex:1, overflow:'auto', padding:14 },
-  ph:          { color:'var(--text3)', fontSize:13, fontStyle:'italic' },
-  outText:     { fontFamily:'var(--mono)', fontSize:13, lineHeight:1.7, whiteSpace:'pre-wrap', wordBreak:'break-all' },
-  stdinTa:     { flex:1, resize:'none', background:'var(--bg2)', color:'var(--text)', border:'1px solid var(--border)', borderRadius:8, padding:10, fontSize:13, lineHeight:1.6, fontFamily:'var(--mono)', outline:'none', minHeight:120 },
-  footer:      { display:'flex', justifyContent:'space-between', padding:'10px 20px', background:'var(--bg2)', borderTop:'1px solid var(--border)', fontSize:12, color:'var(--text2)', flexShrink:0 },
+  root: { display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)' },
+  nav: { display: 'flex', alignItems: 'center', padding: '0 20px', height: 88, background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
+  brand: { display: 'flex', alignItems: 'center', gap: 10 },
+  brandIcon: { fontFamily: 'var(--mono)', fontSize: 18, fontWeight: 700, color: 'var(--accent)' },
+  brandName: { fontSize: 17, fontWeight: 700, cursor: 'pointer' },
+  navLinks: { display: 'flex', alignItems: 'center', gap: 16 },
+  navLink: { color: 'var(--text2)', fontSize: 13, textDecoration: 'none' },
+  toolbar: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 16px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0, flexWrap: 'wrap', gap: 8 },
+  select: { background: 'var(--bg3)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', fontSize: 14, cursor: 'pointer' },
+  btnGhost: { background: 'transparent', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 14px', fontSize: 13 },
+  btnHome: { background: 'transparent', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer' },
+  btnSwap: { background: 'transparent', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', fontSize: 13, marginLeft: 4 },
+  panelBtn: { background: 'transparent', color: 'var(--text2)', border: '1px solid transparent', borderRadius: 6, padding: '4px 8px', fontSize: 13, cursor: 'pointer' },
+  btnRun: { background: '#238636', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 20px', fontSize: 14, fontWeight: 600 },
+  main: { display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 },
+  editorPanel: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 },
+  panelHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
+  resizer: { width: 10, cursor: 'col-resize', background: 'transparent', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  outPanel: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0, borderLeft: '1px solid var(--border)' },
+  adColumn: { width: 140, minWidth: 120, background: 'var(--bg2)', borderLeft: '1px solid var(--border)', display: 'flex', flexDirection: 'column', flexShrink: 0 },
+  maxPanel: { flex: '1 1 100%', minWidth: 0 },
+  minPanel: { flex: '0 0 0', minWidth: 0, maxWidth: 0, overflow: 'hidden' },
+  tabs: { display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
+  tab: { background: 'transparent', color: 'var(--text2)', border: '1px solid transparent', borderRadius: 6, padding: '4px 12px', fontSize: 13, fontFamily: 'var(--ui)' },
+  tabActive: { background: 'var(--bg3)', color: 'var(--text)', border: '1px solid var(--border)' },
+  outContent: { flex: 1, overflow: 'auto', padding: 14 },
+  ph: { color: 'var(--text3)', fontSize: 13, fontStyle: 'italic' },
+  outText: { fontFamily: 'var(--mono)', fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', wordBreak: 'break-all' },
+  stdinTa: { flex: 1, resize: 'none', background: 'var(--bg2)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 8, padding: 10, fontSize: 13, lineHeight: 1.6, fontFamily: 'var(--mono)', outline: 'none', minHeight: 120 },
+  footer: { display: 'flex', justifyContent: 'space-between', padding: '10px 20px', background: 'var(--bg2)', borderTop: '1px solid var(--border)', fontSize: 12, color: 'var(--text2)', flexShrink: 0 },
 }
 
 function HomePage({ selectLanguage }) {
@@ -480,16 +648,16 @@ function HomePage({ selectLanguage }) {
                 position: 'relative',
                 overflow: 'hidden'
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--accent)'
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow = '0 12px 24px rgba(88, 166, 255, 0.1)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border)'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}>
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)'
+                  e.currentTarget.style.transform = 'translateY(-4px)'
+                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(88, 166, 255, 0.1)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}>
                 <div style={{ fontSize: 40, marginBottom: 16 }}>{feature.icon}</div>
                 <h3 style={{
                   marginTop: 0,
