@@ -248,9 +248,23 @@ export default function App() {
       const data = await res.json()
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
 
-      if (data.error) throw new Error(data.error)
+      let isEofError = false
+      if (data.error && detectsInput(code, lang.id)) {
+        const eofPatterns = /(EOFError|NoSuchElementException|No line found|readline|stdin|EOF)/i
+        if (eofPatterns.test(data.error)) {
+          isEofError = true
+        }
+      }
 
-      setOutput({ status: 'ok', text: data.output || '(no output)', elapsed, label: 'Success', usedStdin: inputToSend })
+      if (data.error && !isEofError) throw new Error(data.error)
+
+      setOutput({
+        status: 'ok',
+        text: isEofError ? (data.output || '') : (data.output || '(no output)'),
+        elapsed,
+        label: 'Success',
+        usedStdin: inputToSend
+      })
 
     } catch (err) {
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
