@@ -295,9 +295,9 @@ export default function App() {
         <>
           {/* NAV */}
           <nav style={s.nav}>
-            <div style={s.brand}>
-              <span onClick={goHome} style={{ ...s.brandIcon, cursor: 'pointer' }}>{'</>'}</span>
-              <span onClick={goHome} style={s.brandName}>our Compiler</span>
+            <div style={s.brand} onClick={goHome} role="button" tabIndex={0} aria-label="Go to homepage">
+              <img src="/logo.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8 }} />
+              <span onClick={goHome} style={{ ...s.brandName, cursor: 'pointer' }}>Our Compiler</span>
             </div>
           </nav>
 
@@ -515,19 +515,32 @@ function HomePage({ selectLanguage }) {
         position: 'relative'
       }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          {/* Title with icon */}
+          {/* Logo + Title */}
           <div style={{
-            fontSize: 48,
-            fontWeight: 700,
-            marginBottom: 12,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 12,
-            color: 'var(--text)'
+            gap: 20,
+            marginBottom: 12
           }}>
-            <span style={{ color: 'var(--accent)', fontSize: 48 }}>{'</>'}</span>
-            Our Compiler
+            <img
+              src="/logo.png"
+              alt="Our Compiler Logo"
+              style={{
+                height: 80,
+                width: 80,
+                objectFit: 'contain',
+                borderRadius: 16,
+                filter: 'drop-shadow(0 4px 16px rgba(88,166,255,0.3))'
+              }}
+            />
+            <div style={{
+              fontSize: 48,
+              fontWeight: 700,
+              color: 'var(--text)'
+            }}>
+              Our Compiler
+            </div>
           </div>
 
           {/* Tagline */}
