@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rust Memory Safety & Ownership Guide | Our Compiler</title>
+  <meta name="description" content="A comprehensive tutorial explaining Rust syntax, ownership, borrowing, lifetimes, variables, and loops." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; font-family:'Sora',sans-serif; background:#0d1117; color:#e6edf3; line-height:1.6; }
+    .page { max-width:900px; margin:0 auto; padding:32px 20px; }
+    a { color:#58a6ff; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    h1, h2, h3 { margin:28px 0 12px; color:#ffffff; }
+    p { margin:14px 0; color:#c9d1d9; }
+    .meta { color:#8b949e; font-size:14px; margin-bottom:24px; }
+    pre { background:#161b22; border:1px solid #30363d; border-radius:8px; padding:16px; overflow-x:auto; }
+    code { font-family:'JetBrains Mono', monospace; font-size:14px; color:#ff7b72; }
+    pre code { color:#e6edf3; }
+    .keyword { color:#ff7b72; }
+    .string { color:#a5d6ff; }
+    .comment { color:#8b949e; }
+    .number { color:#79c0ff; }
+    .function { color:#d2a8ff; }
+    .footer { margin-top:48px; border-top:1px solid #30363d; padding-top:16px; color:#8b949e; font-size:13px; text-align:center; }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a href="/blog.html" style="font-size:14px; color:#58a6ff;">← Back to Blog</a>
+    <h1>Rust Memory Safety & Ownership</h1>
+    <div class="meta">Published: June 2026 • Reading Time: 9 mins</div>
+
+    <p>Rust is a modern systems programming language that focuses heavily on safety, speed, and concurrency. Developed by Graydon Hoare at Mozilla Research, Rust compiles directly to native machine code, achieving comparable speed to C and C++. Crucially, Rust guarantees memory safety without using a garbage collector. It enforces strict ownership, borrowing, and lifetime checks during compilation, preventing common memory leaks, buffer overflows, and null-pointer exceptions.</p>
+
+    <h2>1. The Basic Hello World in Rust</h2>
+    <p>Every executable Rust program contains a <code>main</code> function. Printing to console uses the <code>println!</code> macro, denoted by an exclamation mark.</p>
+    <pre><code><span class="keyword">fn</span> <span class="function">main</span>() {
+    println!(<span class="string">"Hello, World from Rust!"</span>);
+}</code></pre>
+
+    <h2>2. Variables and Mutability</h2>
+    <p>By default, all variables in Rust are immutable. To declare variables that can change value, you must use the <code>mut</code> keyword.</p>
+    <pre><code><span class="keyword">fn</span> <span class="function">main</span>() {
+    <span class="keyword">let</span> x = <span class="number">5</span>; <span class="comment">// Immutable</span>
+    <span class="comment">// x = 6;  // This would fail to compile!</span>
+    
+    <span class="keyword">let</span> <span class="keyword">mut</span> y = <span class="number">10</span>; <span class="comment">// Mutable</span>
+    y = <span class="number">15</span>;
+    println!(<span class="string">"y is: {}"</span>, y);
+}</code></pre>
+
+    <h2>3. Conditionals (if-else)</h2>
+    <p>Rust conditionals do not enclose the expression in parenthesis, and the conditional block must evaluate to a boolean type.</p>
+    <pre><code><span class="keyword">let</span> number = <span class="number">7</span>;
+
+<span class="keyword">if</span> number &lt; <span class="number">5</span> {
+    println!(<span class="string">"Condition met."</span>);
+} <span class="keyword">else</span> {
+    println!(<span class="string">"Condition not met."</span>);
+}</code></pre>
+
+    <h2>4. Loops (loop, while, for)</h2>
+    <p>Rust offers three loop constructs: <code>loop</code> (infinite loop until explicit break), <code>while</code>, and <code>for</code> (to loop through ranges and iterators).</p>
+    <pre><code><span class="comment">// For loop through a range</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">1</span>..=<span class="number">5</span> {
+    println!(<span class="string">"Value: {}"</span>, i);
+}
+
+<span class="comment">// Conditional while loop</span>
+<span class="keyword">let</span> <span class="keyword">mut</span> count = <span class="number">3</span>;
+<span class="keyword">while</span> count &gt; <span class="number">0</span> {
+    println!(<span class="string">"Count: {}"</span>, count);
+    count -= <span class="number">1</span>;
+}</code></pre>
+
+    <h2>5. The Concept of Ownership</h2>
+    <p>Ownership is Rust's most unique feature. It ensures memory is managed safely. The compiler checks these rules at compile time:</p>
+    <ul>
+      <li>Each value in Rust has a variable called its <strong>owner</strong>.</li>
+      <li>There can only be <strong>one owner</strong> at a time.</li>
+      <li>When the owner goes <strong>out of scope</strong>, the value is dropped (freed from memory).</li>
+    </ul>
+    <pre><code><span class="keyword">fn</span> <span class="function">main</span>() {
+    <span class="keyword">let</span> s1 = String::from(<span class="string">"hello"</span>);
+    <span class="keyword">let</span> s2 = s1; <span class="comment">// Ownership is MOVED to s2. s1 is no longer valid!</span>
+    
+    <span class="comment">// println!("{}", s1); // This would fail to compile!</span>
+    println!(<span class="string">"{}"</span>, s2);   <span class="comment">// This works fine.</span>
+}</code></pre>
+
+    <h2>6. Borrowing and References</h2>
+    <p>If you don't want to transfer ownership, you can **borrow** values by passing references (denoted by an ampersand <code>&amp;</code>).</p>
+    <pre><code><span class="keyword">fn</span> <span class="function">calculate_length</span>(s: &amp;String) -&gt; usize {
+    s.len()
+}
+
+<span class="keyword">fn</span> <span class="function">main</span>() {
+    <span class="keyword">let</span> s1 = String::from(<span class="string">"hello"</span>);
+    <span class="keyword">let</span> len = calculate_length(&amp;s1); <span class="comment">// Borrowing s1</span>
+    println!(<span class="string">"Length of '{}' is {}."</span>, s1, len); <span class="comment">// s1 remains valid!</span>
+}</code></pre>
+
+    <div class="footer">
+      <p>Test out memory-safe scripts online! Open the <a href="/">Rust Compiler</a> now.</p>
+    </div>
+  </main>
+</body>
+</html>

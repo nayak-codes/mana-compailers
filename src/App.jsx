@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
 import { LANGUAGES, TEMPLATES } from './languages'
 
+
 const DEFAULT = LANGUAGES[0]
 
 
@@ -324,8 +325,8 @@ export default function App() {
             ...s.main,
             display: 'grid',
             gridTemplateColumns: swap
-              ? `${outputSize}px ${showResizer ? RESIZER_WIDTH : 0}px ${editorSize}px ${AD_WIDTH}px`
-              : `${editorSize}px ${showResizer ? RESIZER_WIDTH : 0}px ${outputSize}px ${AD_WIDTH}px`,
+              ? `${outputSize}px ${showResizer ? RESIZER_WIDTH : 0}px ${editorSize}px`
+              : `${editorSize}px ${showResizer ? RESIZER_WIDTH : 0}px ${outputSize}px`,
             overflowX: 'auto'
           }}>
             {/* EDITOR */}
@@ -458,12 +459,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* RIGHT AD COLUMN */}
-            <div style={s.adColumn}>
-              <div className="ad-slot" style={{ height: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 12 }}>
-
-              </div>
-            </div>
           </div>
           <footer style={s.footer}>
             <div>Our Compiler • <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
@@ -490,7 +485,7 @@ const s = {
   btnSwap: { background: 'transparent', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', fontSize: 13, marginLeft: 4 },
   panelBtn: { background: 'transparent', color: 'var(--text2)', border: '1px solid transparent', borderRadius: 6, padding: '4px 8px', fontSize: 13, cursor: 'pointer' },
   btnRun: { background: '#238636', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 20px', fontSize: 14, fontWeight: 600 },
-  main: { display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 },
+  main: { display: 'flex', height: 'calc(100vh - 190px)', minHeight: '520px', flexShrink: 0 },
   editorPanel: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 },
   panelHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
   resizer: { width: 10, cursor: 'col-resize', background: 'transparent', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' },
@@ -779,3 +774,4 @@ function HomePage({ selectLanguage }) {
     </div>
   )
 }
+
