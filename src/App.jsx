@@ -125,7 +125,7 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
   const lines = cleanedText.split('\n');
 
   return lines.map((line, idx) => {
-    let style = { color: isErrorStatus ? '#ff6b6b' : 'var(--text)' };
+    let style = { color: isErrorStatus ? '#ff6b6b' : 'var(--green)' };
     let lineElements = [];
 
     const isError = /error:/i.test(line) || /exception/i.test(line) || /failed/i.test(line);
@@ -157,7 +157,7 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
         const codePart = line.substring(pipeIdx + 1);
         lineElements = [
           <span key="num" style={{ color: 'var(--text3)', marginRight: '8px' }}>{numPart}</span>,
-          <span key="code" style={{ color: isErrorStatus ? '#ff6b6b' : 'var(--text)' }}>{codePart}</span>
+          <span key="code" style={{ color: isErrorStatus ? '#ff6b6b' : 'var(--green)' }}>{codePart}</span>
         ];
       } else {
         lineElements = [<span>{line}</span>];
@@ -427,6 +427,11 @@ export default function App() {
                   value={code}
                   onChange={v => setCode(v || '')}
                   theme="vs-dark"
+                  onMount={(editor, monaco) => {
+                    document.fonts.ready.then(() => {
+                      monaco.editor.remeasureFonts();
+                    });
+                  }}
                   options={{
                     fontSize: 14,
                     fontFamily: "'JetBrains Mono', monospace",
@@ -489,7 +494,7 @@ export default function App() {
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                       <div style={{
                         ...s.outText,
-                        color: 'var(--text)',
+                        color: 'var(--green)',
                         whiteSpace: 'pre-wrap',
                         fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
                         fontSize: 14,
