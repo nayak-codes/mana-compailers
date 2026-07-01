@@ -116,6 +116,76 @@ const detectsInput = (code, langId) => {
   }
 }
 
+const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
+  if (!text) return null;
+
+  // Clean up docker container internal paths (e.g. /tmp/mana-compiler/xxxxxx/)
+  const cleanedText = text.replace(/\/tmp\/mana-compiler\/[^/]+\//g, '');
+
+  const lines = cleanedText.split('\n');
+
+  return lines.map((line, idx) => {
+    let style = { color: isErrorStatus ? '#ff6b6b' : 'var(--text)' };
+    let lineElements = [];
+
+    const isError = /error:/i.test(line) || /exception/i.test(line) || /failed/i.test(line);
+    const isWarning = /warning:/i.test(line);
+    const isLineNumber = /^\s*\d+\s*\|/g.test(line); // e.g. "  20 |"
+
+    if (isError) {
+      style.color = '#ff6b6b';
+      const parts = line.split(/(error:)/i);
+      lineElements = parts.map((part, pIdx) => {
+        if (part.toLowerCase() === 'error:') {
+          return <strong key={pIdx} style={{ backgroundColor: 'rgba(255, 107, 107, 0.15)', padding: '1px 6px', borderRadius: '4px', marginRight: '6px', color: '#ff6b6b' }}>{part}</strong>;
+        }
+        return <span key={pIdx}>{part}</span>;
+      });
+    } else if (isWarning) {
+      style.color = '#f1c40f';
+      const parts = line.split(/(warning:)/i);
+      lineElements = parts.map((part, pIdx) => {
+        if (part.toLowerCase() === 'warning:') {
+          return <strong key={pIdx} style={{ backgroundColor: 'rgba(241, 196, 15, 0.15)', padding: '1px 6px', borderRadius: '4px', marginRight: '6px', color: '#f1c40f' }}>{part}</strong>;
+        }
+        return <span key={pIdx}>{part}</span>;
+      });
+    } else if (isLineNumber) {
+      const pipeIdx = line.indexOf('|');
+      if (pipeIdx !== -1) {
+        const numPart = line.substring(0, pipeIdx + 1);
+        const codePart = line.substring(pipeIdx + 1);
+        lineElements = [
+          <span key="num" style={{ color: 'var(--text3)', marginRight: '8px' }}>{numPart}</span>,
+          <span key="code" style={{ color: isErrorStatus ? '#ff6b6b' : 'var(--text)' }}>{codePart}</span>
+        ];
+      } else {
+        lineElements = [<span>{line}</span>];
+      }
+    } else if (line.trim().startsWith('|') || /^\s*\|\s*[\^~]+/.test(line)) {
+      style.color = '#58a6ff';
+      lineElements = [<span>{line}</span>];
+    } else {
+      lineElements = [<span>{line}</span>];
+    }
+
+    return (
+      <span key={idx} style={{ display: 'block', ...style, minHeight: '1.2em' }}>
+        {lineElements}
+      </span>
+    );
+  });
+}
+
+const BACKEND_URL = 'https://mana-compailer-backend-docker.onrender.com'
+
+
+// Silent warmup — wakes Render backend before user clicks Run
+function warmupBackend() {
+  fetch(`${BACKEND_URL}/api/health`, { method: 'GET', signal: AbortSignal.timeout(30000) })
+    .catch(() => {}) // Ignore errors silently
+}
+
 export default function App() {
   const [view, setView] = useState('home') // 'home' or 'compiler'
   const [lang, setLang] = useState(DEFAULT)
@@ -126,12 +196,14 @@ export default function App() {
   const [tab, setTab] = useState('output')
   const [swap, setSwap] = useState(false)
   const [maximizedPanel, setMaximizedPanel] = useState(null)
-  const [editorWidth, setEditorWidth] = useState(900)
+  const [editorWidth, setEditorWidth] = useState(55) // percentage
   const [isDragging, setIsDragging] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
   const [dragStartWidth, setDragStartWidth] = useState(0)
   const containerRef = useRef(null)
   const [highlightStdin, setHighlightStdin] = useState(false)
+  const [backendReady, setBackendReady] = useState(false)
+  const warmupDoneRef = useRef(false)
 
   const selectLanguage = (id) => {
     const l = LANGUAGES.find(x => x.id === id)
@@ -160,6 +232,21 @@ export default function App() {
     window.history.replaceState({ view: 'home' }, '', window.location.href)
   }
 
+  // 🔥 Warmup backend on first load — eliminates cold start delay
+  useEffect(() => {
+    if (warmupDoneRef.current) return
+    warmupDoneRef.current = true
+    setBackendReady(false)
+    // Ping Render backend root to wake it from sleep (no-cors: any response = awake)
+    fetch(BACKEND_URL, {
+      method: 'GET',
+      signal: AbortSignal.timeout(60000),
+      mode: 'no-cors' // Use no-cors so CORS errors don't block us
+    })
+      .then(() => setBackendReady(true))
+      .catch(() => setBackendReady(true)) // Even on error, unblock the Run button
+  }, [])
+
   // Handle browser back button
   useEffect(() => {
     const handlePopState = (e) => {
@@ -173,14 +260,13 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
-  const AD_WIDTH = 140
-  const RESIZER_WIDTH = 10
-  const MIN_EDITOR_WIDTH = 420
-  const MIN_OUTPUT_WIDTH = 260
+  const RESIZER_WIDTH = 6
+  const MIN_EDITOR_PCT = 25   // minimum 25% for editor
+  const MIN_OUTPUT_PCT = 20   // minimum 20% for terminal
 
   const getTotalAvailable = () => {
     const rect = containerRef.current?.getBoundingClientRect()
-    return rect ? Math.max(rect.width - AD_WIDTH - RESIZER_WIDTH, 0) : editorWidth + MIN_OUTPUT_WIDTH
+    return rect ? rect.width : window.innerWidth
   }
 
   const toggleMaximize = (panel) => {
@@ -198,9 +284,11 @@ export default function App() {
     if (!isDragging) return
     const onPointerMove = (event) => {
       const total = getTotalAvailable()
+      if (total === 0) return
       const delta = event.clientX - dragStartX
-      const next = dragStartWidth + delta
-      const clamped = Math.min(Math.max(next, MIN_EDITOR_WIDTH), total - MIN_OUTPUT_WIDTH)
+      const deltaPct = (delta / total) * 100
+      const next = dragStartWidth + deltaPct
+      const clamped = Math.min(Math.max(next, MIN_EDITOR_PCT), 100 - MIN_OUTPUT_PCT)
       setEditorWidth(clamped)
     }
     const onPointerUp = () => setIsDragging(false)
@@ -210,21 +298,14 @@ export default function App() {
       document.removeEventListener('pointermove', onPointerMove)
       document.removeEventListener('pointerup', onPointerUp)
     }
-  }, [isDragging, dragStartX, dragStartWidth, editorWidth])
+  }, [isDragging, dragStartX, dragStartWidth])
 
   useEffect(() => {
-    const onResize = () => {
-      const total = getTotalAvailable()
-      const clampMax = Math.max(total - MIN_OUTPUT_WIDTH, MIN_EDITOR_WIDTH)
-      if (editorWidth > clampMax) setEditorWidth(clampMax)
-    }
-    window.addEventListener('resize', onResize)
-    onResize()
-    return () => window.removeEventListener('resize', onResize)
-  }, [editorWidth])
+    // No-op: percentage-based layout auto-adjusts on resize
+  }, [])
 
-  const editorSize = maximizedPanel === 'editor' ? getTotalAvailable() : maximizedPanel === 'output' ? 0 : editorWidth
-  const outputSize = maximizedPanel === 'output' ? getTotalAvailable() : getTotalAvailable() - editorSize
+  const editorPct = maximizedPanel === 'editor' ? 100 : maximizedPanel === 'output' ? 0 : editorWidth
+  const outputPct = maximizedPanel === 'output' ? 100 : maximizedPanel === 'editor' ? 0 : (100 - editorWidth)
   const showResizer = maximizedPanel === null
 
   const executeCode = useCallback(async (inputVal) => {
@@ -236,7 +317,7 @@ export default function App() {
 
     try {
       // ✅ Docker backend — Unlimited, No API limits!
-      const res = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
+      const res = await fetch(`${BACKEND_URL}/api/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -310,12 +391,17 @@ export default function App() {
                 ))}
               </select>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
               <button onClick={() => { setCode(''); setOutput(null) }} style={s.btnGhost}>Clear</button>
               <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
-              <button onClick={runCode} disabled={running} style={{ ...s.btnRun, opacity: running ? 0.6 : 1 }}>
-                {running ? '⏳ Running...' : '▶ Run Code'}
+              {!backendReady && (
+                <span style={{ fontSize: 11, color: '#f0a500', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</span> Warming up server...
+                </span>
+              )}
+              <button onClick={runCode} disabled={running || !backendReady} style={{ ...s.btnRun, opacity: (running || !backendReady) ? 0.6 : 1, cursor: !backendReady ? 'not-allowed' : 'pointer' }}>
+                {running ? '⏳ Running...' : !backendReady ? '⏳ Loading...' : '▶ Run Code'}
               </button>
             </div>
           </div>
@@ -323,14 +409,17 @@ export default function App() {
           {/* MAIN */}
           <div ref={containerRef} style={{
             ...s.main,
-            display: 'grid',
-            gridTemplateColumns: swap
-              ? `${outputSize}px ${showResizer ? RESIZER_WIDTH : 0}px ${editorSize}px`
-              : `${editorSize}px ${showResizer ? RESIZER_WIDTH : 0}px ${outputSize}px`,
-            overflowX: 'auto'
+            display: 'flex',
+            flexDirection: swap ? 'row-reverse' : 'row',
+            overflow: 'hidden'
           }}>
             {/* EDITOR */}
-            <div style={{ ...s.editorPanel, ...(maximizedPanel === 'editor' ? s.maxPanel : maximizedPanel === 'output' ? s.minPanel : {}) }}>
+            <div style={{
+              ...s.editorPanel,
+              flex: maximizedPanel === 'editor' ? '1 1 100%' : maximizedPanel === 'output' ? '0 0 0' : `0 0 ${editorPct}%`,
+              maxWidth: maximizedPanel === 'editor' ? '100%' : maximizedPanel === 'output' ? '0' : `${editorPct}%`,
+              overflow: maximizedPanel === 'output' ? 'hidden' : 'hidden'
+            }}>
               <div style={s.panelHead}>
                 <span style={{ fontSize: 13, fontWeight: 600 }}>📝 Editor</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -352,23 +441,32 @@ export default function App() {
                     fontFamily: "'JetBrains Mono', monospace",
                     minimap: { enabled: false },
                     scrollBeyondLastLine: false,
-                    wordWrap: 'on',
+                    wordWrap: 'off',
                     automaticLayout: true,
-                    padding: { top: 12 }
+                    padding: { top: 12 },
+                    scrollbar: { horizontalScrollbarSize: 6 }
                   }}
                 />
               </div>
             </div>
 
-            <div style={{ ...s.resizer, width: showResizer ? s.resizer.width : 0, pointerEvents: showResizer ? 'auto' : 'none' }} onPointerDown={handlePointerDown} />
+            {/* RESIZER */}
+            {showResizer && (
+              <div
+                style={{ ...s.resizer, width: RESIZER_WIDTH, cursor: 'col-resize', flexShrink: 0 }}
+                onPointerDown={handlePointerDown}
+              />
+            )}
 
             {/* UNIFIED TERMINAL PANEL */}
             <div
               onClick={handleTerminalClick}
               style={{
                 ...s.outPanel,
+                flex: maximizedPanel === 'output' ? '1 1 100%' : maximizedPanel === 'editor' ? '0 0 0' : `0 0 ${outputPct}%`,
+                maxWidth: maximizedPanel === 'output' ? '100%' : maximizedPanel === 'editor' ? '0' : `${outputPct}%`,
+                overflow: maximizedPanel === 'editor' ? 'hidden' : undefined,
                 cursor: 'text',
-                ...(maximizedPanel === 'output' ? s.maxPanel : maximizedPanel === 'editor' ? s.minPanel : {})
               }}
             >
               {/* TERMINAL HEADER */}
@@ -400,7 +498,7 @@ export default function App() {
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                       <div style={{
                         ...s.outText,
-                        color: output.status === 'ok' ? 'var(--green)' : 'var(--red)',
+                        color: 'var(--text)',
                         whiteSpace: 'pre-wrap',
                         fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
                         fontSize: 14,
@@ -408,12 +506,12 @@ export default function App() {
                       }}>
                         {(() => {
                           if (output.status !== 'ok') {
-                            return <span>{output.text}</span>
+                            return <div>{formatTerminalOutput(output.text, lang.id, true)}</div>
                           }
                           const tv = parseTerminalSession(output.text, inputs, code, lang.id)
                           return tv.map((seg, idx) => {
                             if (seg.type === 'output') {
-                              return <span key={idx}>{seg.text}</span>
+                              return <div key={idx} style={{ display: 'inline' }}>{formatTerminalOutput(seg.text, lang.id)}</div>
                             }
                             if (seg.type === 'input') {
                               return <span key={idx} style={{ color: '#58a6ff', fontWeight: 600 }}>{seg.text}</span>

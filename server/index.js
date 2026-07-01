@@ -14,6 +14,11 @@ const agent = new https.Agent({ keepAlive: true })
 app.use(cors())
 app.use(express.json())
 
+// 🔥 Health check endpoint for warmup pings
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Mana Compiler backend is awake!' })
+})
+
 app.post('/api/run', async (req, res) => {
   const { code, language, stdin } = req.body
 
