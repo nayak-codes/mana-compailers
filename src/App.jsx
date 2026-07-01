@@ -202,7 +202,6 @@ export default function App() {
   const [dragStartWidth, setDragStartWidth] = useState(0)
   const containerRef = useRef(null)
   const [highlightStdin, setHighlightStdin] = useState(false)
-  const [backendReady, setBackendReady] = useState(false)
   const warmupDoneRef = useRef(false)
 
   const selectLanguage = (id) => {
@@ -236,15 +235,12 @@ export default function App() {
   useEffect(() => {
     if (warmupDoneRef.current) return
     warmupDoneRef.current = true
-    setBackendReady(false)
     // Ping Render backend root to wake it from sleep (no-cors: any response = awake)
     fetch(BACKEND_URL, {
       method: 'GET',
       signal: AbortSignal.timeout(60000),
       mode: 'no-cors' // Use no-cors so CORS errors don't block us
-    })
-      .then(() => setBackendReady(true))
-      .catch(() => setBackendReady(true)) // Even on error, unblock the Run button
+    }).catch(() => {}) // Ignore errors silently
   }, [])
 
   // Handle browser back button
@@ -395,13 +391,8 @@ export default function App() {
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
               <button onClick={() => { setCode(''); setOutput(null) }} style={s.btnGhost}>Clear</button>
               <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
-              {!backendReady && (
-                <span style={{ fontSize: 11, color: '#f0a500', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</span> Warming up server...
-                </span>
-              )}
-              <button onClick={runCode} disabled={running || !backendReady} style={{ ...s.btnRun, opacity: (running || !backendReady) ? 0.6 : 1, cursor: !backendReady ? 'not-allowed' : 'pointer' }}>
-                {running ? '⏳ Running...' : !backendReady ? '⏳ Loading...' : '▶ Run Code'}
+              <button onClick={runCode} disabled={running} style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}>
+                {running ? '⏳ Running...' : '▶ Run Code'}
               </button>
             </div>
           </div>
