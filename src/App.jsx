@@ -187,9 +187,17 @@ function warmupBackend() {
 }
 
 export default function App() {
-  const [view, setView] = useState('home') // 'home' or 'compiler'
-  const [lang, setLang] = useState(DEFAULT)
-  const [code, setCode] = useState(TEMPLATES[DEFAULT.id])
+  const queryParams = new URLSearchParams(window.location.search)
+  const urlLangId = queryParams.get('lang')
+  const initialLang = urlLangId ? (LANGUAGES.find(x => x.id === urlLangId) || DEFAULT) : DEFAULT
+  const initialView = urlLangId && LANGUAGES.some(x => x.id === urlLangId) ? 'compiler' : 'home'
+  const initialCode = localStorage.getItem(`code_${initialLang.id}`) !== null 
+    ? localStorage.getItem(`code_${initialLang.id}`) 
+    : (TEMPLATES[initialLang.id] || '')
+
+  const [view, setView] = useState(initialView)
+  const [lang, setLang] = useState(initialLang)
+  const [code, setCode] = useState(initialCode)
   const [inputs, setInputs] = useState([])
   const [output, setOutput] = useState(null)
   const [running, setRunning] = useState(false)
@@ -207,28 +215,34 @@ export default function App() {
   const selectLanguage = (id) => {
     const l = LANGUAGES.find(x => x.id === id)
     setLang(l)
-    setCode(TEMPLATES[id] || '')
+    const savedCode = localStorage.getItem(`code_${id}`)
+    setCode(savedCode !== null ? savedCode : (TEMPLATES[id] || ''))
     setOutput(null)
     setInputs([])
     setView('compiler')
     // Push history so browser back works correctly
-    window.history.pushState({ view: 'compiler', lang: id }, '', window.location.href)
+    const newUrl = `${window.location.pathname}?lang=${id}`
+    window.history.pushState({ view: 'compiler', lang: id }, '', newUrl)
   }
 
   const changeLang = (id) => {
     const l = LANGUAGES.find(x => x.id === id)
     setLang(l)
-    setCode(TEMPLATES[id] || '')
+    const savedCode = localStorage.getItem(`code_${id}`)
+    setCode(savedCode !== null ? savedCode : (TEMPLATES[id] || ''))
     setOutput(null)
     setInputs([])
+    // Update URL query parameter
+    const newUrl = `${window.location.pathname}?lang=${id}`
+    window.history.pushState({ view: 'compiler', lang: id }, '', newUrl)
   }
 
   const goHome = () => {
     setView('home')
     setOutput(null)
     setInputs([])
-    // Replace history so browser back goes to previous page
-    window.history.replaceState({ view: 'home' }, '', window.location.href)
+    // Clear URL query parameter
+    window.history.replaceState({ view: 'home' }, '', window.location.pathname)
   }
 
   // 🔥 Warmup backend on first load — eliminates cold start delay
@@ -246,10 +260,23 @@ export default function App() {
   // Handle browser back button
   useEffect(() => {
     const handlePopState = (e) => {
-      if (e.state?.view === 'home' || !e.state) {
+      const queryParams = new URLSearchParams(window.location.search)
+      const urlLangId = queryParams.get('lang')
+      if (e.state?.view === 'home' || (!e.state && !urlLangId)) {
         setView('home')
-      } else if (e.state?.view === 'compiler') {
-        setView('compiler')
+      } else {
+        const langId = e.state?.lang || urlLangId
+        if (langId) {
+          const l = LANGUAGES.find(x => x.id === langId)
+          if (l) {
+            setLang(l)
+            const savedCode = localStorage.getItem(`code_${l.id}`)
+            setCode(savedCode !== null ? savedCode : (TEMPLATES[l.id] || ''))
+          }
+          setView('compiler')
+        } else {
+          setView('home')
+        }
       }
     }
     window.addEventListener('popstate', handlePopState)
@@ -425,7 +452,11 @@ export default function App() {
                   height="100%"
                   language={lang.monacoLang}
                   value={code}
-                  onChange={v => setCode(v || '')}
+                  onChange={v => {
+                    const newCode = v || ''
+                    setCode(newCode)
+                    localStorage.setItem(`code_${lang.id}`, newCode)
+                  }}
                   theme="vs-dark"
                   onMount={(editor, monaco) => {
                     document.fonts.ready.then(() => {
