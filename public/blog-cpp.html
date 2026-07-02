@@ -3,128 +3,244 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modern C++ Features and Syntax Guide | Our Compiler</title>
-  <meta name="description" content="A comprehensive tutorial explaining modern C++ (C++17) features, STL libraries, OOPs, loops, and stream inputs." />
+  <title>C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn C++ — c++ tutorial with clear explanations, examples, and execution." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { color-scheme: dark; }
-    body { margin:0; font-family:'Sora',sans-serif; background:#0d1117; color:#e6edf3; line-height:1.6; }
-    .page { max-width:900px; margin:0 auto; padding:32px 20px; }
-    a { color:#58a6ff; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    h1, h2, h3 { margin:28px 0 12px; color:#ffffff; }
-    p { margin:14px 0; color:#c9d1d9; }
-    .meta { color:#8b949e; font-size:14px; margin-bottom:24px; }
-    pre { background:#161b22; border:1px solid #30363d; border-radius:8px; padding:16px; overflow-x:auto; }
-    code { font-family:'JetBrains Mono', monospace; font-size:14px; color:#ff7b72; }
-    pre code { color:#e6edf3; }
-    .keyword { color:#ff7b72; }
-    .string { color:#a5d6ff; }
-    .comment { color:#8b949e; }
-    .number { color:#79c0ff; }
-    .function { color:#d2a8ff; }
-    .footer { margin-top:48px; border-top:1px solid #30363d; padding-top:16px; color:#8b949e; font-size:13px; text-align:center; }
-    .back-link { font-size: 14px; color: #58a6ff; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+      --border: #30363d; --accent: #e3b341; --blue: #58a6ff;
+      --text: #e6edf3; --text2: #8b949e; --text3: #484f58;
+      --sidebar-w: 260px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+
+    /* TOP NAV */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0; height: 48px;
+      overflow-x: auto; padding: 0 12px;
+    }
+    .topnav a {
+      color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500;
+      padding: 0 14px; height: 48px; display: flex; align-items: center;
+      border-bottom: 3px solid transparent; white-space: nowrap; transition: color .2s;
+    }
+    .topnav a:hover { color: var(--text); }
+    .topnav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .topnav .brand { font-weight: 700; color: var(--text); font-size: 14px; margin-right: 8px; padding-right: 12px; border-right: 1px solid var(--border); }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: calc(100vh - 48px); }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--bg2); border-right: 1px solid var(--border);
+      position: sticky; top: 48px; height: calc(100vh - 48px);
+      overflow-y: auto; padding: 20px 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+    .sidebar-heading {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text3);
+      padding: 8px 20px 4px; margin-top: 12px;
+    }
+    .sidebar-heading:first-child { margin-top: 0; }
+    .sidebar a {
+      display: block; padding: 7px 20px; font-size: 13.5px; color: var(--text2);
+      text-decoration: none; border-left: 3px solid transparent; transition: all .15s;
+    }
+    .sidebar a:hover { color: var(--text); background: var(--bg3); }
+    .sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,.06); font-weight: 600; }
+
+    /* CONTENT */
+    .content { flex: 1; min-width: 0; padding: 40px 48px 80px; max-width: 860px; }
+
+    /* BREADCRUMB */
+    .breadcrumb { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--blue); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: var(--text3); }
+
+    /* TITLE BLOCK */
+    .page-title { font-size: 36px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .page-meta { font-size: 13px; color: var(--text2); margin-bottom: 28px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; gap: 5px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 12px; }
+
+    /* INTRO BOX */
+    .intro-box { background: linear-gradient(135deg, rgba(88,166,255,.1), rgba(88,166,255,.04)); border: 1px solid rgba(88,166,255,.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 36px; }
+    .intro-box p { margin: 0; color: #c9d1d9; font-size: 15px; line-height: 1.75; }
+
+    /* SECTIONS */
+    .section { margin-bottom: 48px; scroll-margin-top: 64px; }
+    .section-title { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .section-title .num { background: var(--accent); color: #000; font-size: 13px; font-weight: 700; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .section p { color: #c9d1d9; font-size: 15px; margin-bottom: 16px; }
+
+    /* CODE BLOCK */
+    .code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin: 20px 0; overflow: hidden; }
+    .code-block-header { background: var(--bg3); padding: 8px 16px; font-size: 12px; color: var(--text2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .code-block-header .lang-tag { font-weight: 600; color: var(--accent); }
+    .try-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #000; border: none; border-radius: 6px;
+      padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .try-btn:hover { opacity: 0.85; }
+    .code-block pre { margin: 0; padding: 18px; overflow-x: auto; }
+    .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--text); line-height: 1.6; }
+    .kw { color: #ff7b72; } .st { color: #a5d6ff; } .cm { color: #8b949e; font-style: italic; } .nu { color: #79c0ff; } .fn { color: #d2a8ff; }
+
+    /* INLINE CODE */
+    .content code { background: rgba(110,118,129,.15); color: #ff7b72; padding: 2px 6px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    .code-block code { background: none; color: var(--text); padding: 0; }
+
+    /* INFO BOX */
+    .info-box { background: rgba(88,166,255,.07); border: 1px solid rgba(88,166,255,.25); border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: #c9d1d9; }
+    .info-box strong { color: var(--blue); }
+
+    /* TABLE */
+    .tbl { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    .tbl th { background: var(--bg3); padding: 10px 14px; text-align: left; color: var(--text); font-weight: 600; border-bottom: 2px solid var(--border); }
+    .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c9d1d9; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:hover td { background: var(--bg3); }
+
+    /* NEXT / PREV */
+    .nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
+    .nav-btn { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 20px; border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all .2s; max-width: 220px; }
+    .nav-btn:hover { border-color: var(--accent); background: var(--bg2); }
+    .nav-btn .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; }
+    .nav-btn .title { font-size: 14px; font-weight: 600; color: var(--text); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .content { padding: 24px 20px 60px; }
+      .page-title { font-size: 26px; }
+    }
   </style>
 </head>
 <body>
-  <main class="page">
-    <a href="/blog.html" class="back-link">← Back to Blog</a>
-    <h1>C++ Modern Features & Syntax Guide</h1>
-    <div class="meta">Published: June 2026 • Reading Time: 8 mins</div>
 
-    <p>C++ is a high-performance, compiled, general-purpose programming language. Developed by Bjarne Stroustrup in 1979 as an extension of the C language, C++ added object-oriented traits and rich abstractions. In modern contexts (like C++17), C++ includes standard template libraries (STL), memory optimizations, and fast compiling structures. It is widely used in systems software, game engines, algorithmic trading systems, and high-performance utilities.</p>
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python 3</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a>
+</nav>
 
-    <h2>1. A Basic C++ Program</h2>
-    <p>C++ introduces streams for standard input and output (<code>std::cout</code> and <code>std::cin</code>) via the <code>iostream</code> header library.</p>
-    <pre><code>#include &lt;iostream&gt;
-
-<span class="keyword">int</span> main() {
-    std::cout &lt;&lt; <span class="string">"Hello, World from C++!"</span> &lt;&lt; std::endl;
-    <span class="keyword">return</span> <span class="number">0</span>;
-}</code></pre>
-
-    <h2>2. Variables & Namespaces</h2>
-    <p>Namespaces prevent code name collisions. The <code>std</code> namespace holds standard features of C++.</p>
-    <pre><code>#include &lt;iostream&gt;
-<span class="keyword">using namespace</span> std;
-
-<span class="keyword">int</span> main() {
-    <span class="keyword">int</span> value = <span class="number">100</span>;
-    <span class="keyword">double</span> factor = <span class="number">1.5</span>;
-    string phrase = <span class="string">"C++ guides"</span>;
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
     
-    cout &lt;&lt; phrase &lt;&lt; <span class="string">" result: "</span> &lt;&lt; (value * factor) &lt;&lt; endl;
-    <span class="keyword">return</span> <span class="number">0</span>;
-}</code></pre>
+    <div class="sidebar-heading">C++ Tutorial</div>
+    <a href="/blog-cpp.html" class="active">C++ HOME</a>
+    <a href="/blog-cpp-syntax.html">A Basic C++ Program</a>
+    <a href="/blog-cpp-variables.html">Variables & Namespaces</a>
+    <a href="/blog-cpp-conditionals.html">Conditionals & Control Flow</a>
+    <a href="/blog-cpp-loops.html">Range-Based Loops (C++11/C++17)</a>
+    <a href="/blog-cpp-functions.html">Stream Input (cin)</a>
+    <a href="/blog-cpp-collections.html">Object-Oriented Principles (Classes)</a>
 
-    <h2>3. Conditionals & Control Flow</h2>
-    <p>C++ supports standard logical conditionals similar to C and Java.</p>
-    <pre><code><span class="keyword">int</span> health = <span class="number">80</span>;
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=cpp17">▶ Try C++ Online</a>
 
-<span class="keyword">if</span> (health &gt; <span class="number">50</span>) {
-    cout &lt;&lt; <span class="string">"Condition: Good"</span> &lt;&lt; endl;
-} <span class="keyword">else</span> {
-    cout &lt;&lt; <span class="string">"Condition: Warning"</span> &lt;&lt; endl;
-}</code></pre>
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-python.html">Python 3</a>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
 
-    <h2>4. Range-Based Loops (C++11/C++17)</h2>
-    <p>Modern C++ includes simple syntax to loop through lists and vectors without writing standard index increments.</p>
-    <pre><code>#include &lt;vector&gt;
-#include &lt;iostream&gt;
+  </aside>
 
-<span class="keyword">int</span> main() {
-    std::vector&lt;<span class="keyword">int</span>&gt; numbers = {<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>};
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <span>C++</span>
+    </div>
+    <h1 class="page-title">C++ Tutorial</h1>
+    <div class="page-meta">
+      <span class="badge">⚡ C++</span>
+      <span class="badge">🟢 Beginner Friendly</span>
+      <span class="badge">📅 July 2026</span>
+    </div>
     
-    <span class="comment">// Range-based loop</span>
-    <span class="keyword">for</span> (<span class="keyword">int</span> n : numbers) {
-        std::cout &lt;&lt; n &lt;&lt; <span class="string">" "</span>;
-    }
-    std::cout &lt;&lt; std::endl;
-    <span class="keyword">return</span> <span class="number">0</span>;
-}</code></pre>
+    <div class="intro-box">
+      <p>C++ is a high-performance, compiled, general-purpose programming language. Developed by Bjarne Stroustrup in 1979 as an extension of the C language, C++ added object-oriented traits and rich abstractions. In modern contexts (like C++17), C++ includes standard template libraries (STL), memory optimizations, and fast compiling structures. It is widely used in systems software, game engines, algorithmic trading systems, and high-performance utilities.</p>
+    </div>
 
-    <h2>5. Stream Input (cin)</h2>
-    <p>Reading standard inputs in C++ uses the extraction operator <code>&gt;&gt;</code> with `cin`.</p>
-    <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
-<span class="keyword">using namespace</span> std;
-
-<span class="keyword">int</span> main() {
-    string name;
-    cout &lt;&lt; <span class="string">"Enter your username: "</span>;
-    cin &gt;&gt; name;
-    cout &lt;&lt; <span class="string">"Authenticated user: "</span> &lt;&lt; name &lt;&lt; endl;
-    <span class="keyword">return</span> <span class="number">0</span>;
-}</code></pre>
-    <p>Make sure you provide the inputs in the terminal inputs tab in Our Compiler before running C++ programs.</p>
-
-    <h2>6. Object-Oriented Principles (Classes)</h2>
-    <p>C++ classes group properties and member functions. The <code>public</code> access specifier makes members accessible outside the class.</p>
-    <pre><code><span class="keyword">class</span> Vehicle {
-<span class="keyword">public</span>:
-    std::string brand;
-    <span class="keyword">int</span> speed;
-
-    <span class="keyword">void</span> accelerate() {
-        speed += <span class="number">10</span>;
-        std::cout &lt;&lt; brand &lt;&lt; <span class="string">" accelerated. Speed: "</span> &lt;&lt; speed &lt;&lt; <span class="string">" km/h\n"</span>;
-    }
-};
-
-<span class="keyword">int</span> main() {
-    Vehicle car;
-    car.brand = <span class="string">"Tesla"</span>;
-    car.speed = <span class="number">80</span>;
-    car.accelerate();
-    <span class="keyword">return</span> <span class="number">0</span>;
-}</code></pre>
-
-    <div class="footer">
-      <p>Need to run modern C++ code? Check out the <a href="/">C++ Online Compiler</a>.</p>
+    <div class="section">
+      <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
+      <p>Choose a topic from the left sidebar or click a lesson below to start learning C++:</p>
+      <table class="tbl" style="margin-top: 15px;">
+        <tr><th>Lesson</th><th>Topic</th></tr>
+        
+          <tr>
+            <td><strong>Lesson 1</strong></td>
+            <td><strong><a href="/blog-cpp-syntax.html">A Basic C++ Program</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 2</strong></td>
+            <td><strong><a href="/blog-cpp-variables.html">Variables & Namespaces</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 3</strong></td>
+            <td><strong><a href="/blog-cpp-conditionals.html">Conditionals & Control Flow</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 4</strong></td>
+            <td><strong><a href="/blog-cpp-loops.html">Range-Based Loops (C++11/C++17)</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 5</strong></td>
+            <td><strong><a href="/blog-cpp-functions.html">Stream Input (cin)</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 6</strong></td>
+            <td><strong><a href="/blog-cpp-collections.html">Object-Oriented Principles (Classes)</a></strong></td>
+          </tr>
+        
+      </table>
+    </div>
+    <div class="nav-footer">
+      <a href="/blog.html" class="nav-btn">
+        <span class="label">← All Tutorials</span>
+        <span class="title">Learning Hub</span>
+      </a>
+      <a href="/blog-cpp-syntax.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next →</span>
+        <span class="title">A Basic C++ Program</span>
+      </a>
     </div>
   </main>
+</div>
 </body>
 </html>

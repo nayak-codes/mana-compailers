@@ -3,115 +3,244 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JavaScript and Node.js Essentials Guide | Our Compiler</title>
-  <meta name="description" content="A comprehensive tutorial covering JavaScript syntax, modern ES6+ features, Node.js console outputs, async programming, and arrays." />
+  <title>JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn JavaScript — javascript tutorial with clear explanations, examples, and execution." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { color-scheme: dark; }
-    body { margin:0; font-family:'Sora',sans-serif; background:#0d1117; color:#e6edf3; line-height:1.6; }
-    .page { max-width:900px; margin:0 auto; padding:32px 20px; }
-    a { color:#58a6ff; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    h1, h2, h3 { margin:28px 0 12px; color:#ffffff; }
-    p { margin:14px 0; color:#c9d1d9; }
-    .meta { color:#8b949e; font-size:14px; margin-bottom:24px; }
-    pre { background:#161b22; border:1px solid #30363d; border-radius:8px; padding:16px; overflow-x:auto; }
-    code { font-family:'JetBrains Mono', monospace; font-size:14px; color:#ff7b72; }
-    pre code { color:#e6edf3; }
-    .keyword { color:#ff7b72; }
-    .string { color:#a5d6ff; }
-    .comment { color:#8b949e; }
-    .number { color:#79c0ff; }
-    .function { color:#d2a8ff; }
-    .footer { margin-top:48px; border-top:1px solid #30363d; padding-top:16px; color:#8b949e; font-size:13px; text-align:center; }
-    .back-link { font-size: 14px; color: #58a6ff; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+      --border: #30363d; --accent: #f1e05a; --blue: #58a6ff;
+      --text: #e6edf3; --text2: #8b949e; --text3: #484f58;
+      --sidebar-w: 260px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+
+    /* TOP NAV */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0; height: 48px;
+      overflow-x: auto; padding: 0 12px;
+    }
+    .topnav a {
+      color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500;
+      padding: 0 14px; height: 48px; display: flex; align-items: center;
+      border-bottom: 3px solid transparent; white-space: nowrap; transition: color .2s;
+    }
+    .topnav a:hover { color: var(--text); }
+    .topnav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .topnav .brand { font-weight: 700; color: var(--text); font-size: 14px; margin-right: 8px; padding-right: 12px; border-right: 1px solid var(--border); }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: calc(100vh - 48px); }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--bg2); border-right: 1px solid var(--border);
+      position: sticky; top: 48px; height: calc(100vh - 48px);
+      overflow-y: auto; padding: 20px 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+    .sidebar-heading {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text3);
+      padding: 8px 20px 4px; margin-top: 12px;
+    }
+    .sidebar-heading:first-child { margin-top: 0; }
+    .sidebar a {
+      display: block; padding: 7px 20px; font-size: 13.5px; color: var(--text2);
+      text-decoration: none; border-left: 3px solid transparent; transition: all .15s;
+    }
+    .sidebar a:hover { color: var(--text); background: var(--bg3); }
+    .sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,.06); font-weight: 600; }
+
+    /* CONTENT */
+    .content { flex: 1; min-width: 0; padding: 40px 48px 80px; max-width: 860px; }
+
+    /* BREADCRUMB */
+    .breadcrumb { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--blue); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: var(--text3); }
+
+    /* TITLE BLOCK */
+    .page-title { font-size: 36px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .page-meta { font-size: 13px; color: var(--text2); margin-bottom: 28px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; gap: 5px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 12px; }
+
+    /* INTRO BOX */
+    .intro-box { background: linear-gradient(135deg, rgba(88,166,255,.1), rgba(88,166,255,.04)); border: 1px solid rgba(88,166,255,.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 36px; }
+    .intro-box p { margin: 0; color: #c9d1d9; font-size: 15px; line-height: 1.75; }
+
+    /* SECTIONS */
+    .section { margin-bottom: 48px; scroll-margin-top: 64px; }
+    .section-title { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .section-title .num { background: var(--accent); color: #000; font-size: 13px; font-weight: 700; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .section p { color: #c9d1d9; font-size: 15px; margin-bottom: 16px; }
+
+    /* CODE BLOCK */
+    .code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin: 20px 0; overflow: hidden; }
+    .code-block-header { background: var(--bg3); padding: 8px 16px; font-size: 12px; color: var(--text2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .code-block-header .lang-tag { font-weight: 600; color: var(--accent); }
+    .try-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #000; border: none; border-radius: 6px;
+      padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .try-btn:hover { opacity: 0.85; }
+    .code-block pre { margin: 0; padding: 18px; overflow-x: auto; }
+    .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--text); line-height: 1.6; }
+    .kw { color: #ff7b72; } .st { color: #a5d6ff; } .cm { color: #8b949e; font-style: italic; } .nu { color: #79c0ff; } .fn { color: #d2a8ff; }
+
+    /* INLINE CODE */
+    .content code { background: rgba(110,118,129,.15); color: #ff7b72; padding: 2px 6px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    .code-block code { background: none; color: var(--text); padding: 0; }
+
+    /* INFO BOX */
+    .info-box { background: rgba(88,166,255,.07); border: 1px solid rgba(88,166,255,.25); border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: #c9d1d9; }
+    .info-box strong { color: var(--blue); }
+
+    /* TABLE */
+    .tbl { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    .tbl th { background: var(--bg3); padding: 10px 14px; text-align: left; color: var(--text); font-weight: 600; border-bottom: 2px solid var(--border); }
+    .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c9d1d9; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:hover td { background: var(--bg3); }
+
+    /* NEXT / PREV */
+    .nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
+    .nav-btn { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 20px; border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all .2s; max-width: 220px; }
+    .nav-btn:hover { border-color: var(--accent); background: var(--bg2); }
+    .nav-btn .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; }
+    .nav-btn .title { font-size: 14px; font-weight: 600; color: var(--text); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .content { padding: 24px 20px 60px; }
+      .page-title { font-size: 26px; }
+    }
   </style>
 </head>
 <body>
-  <main class="page">
-    <a href="/blog.html" class="back-link">← Back to Blog</a>
-    <h1>JavaScript & Node.js Guide</h1>
-    <div class="meta">Published: June 2026 • Reading Time: 7 mins</div>
 
-    <p>JavaScript is a versatile, high-level, dynamic, and interpreted programming language that serves as the core of modern web browsers. Originally created to add interactivity to web pages, JavaScript has expanded to the server-side via Node.js—a high-performance runtime environment powered by Google Chrome's V8 engine. In this guide, we cover fundamental JavaScript constructs, arrays, ES6+ features, and running JS scripts outside the browser.</p>
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python 3</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-javascript.html" class="active">JavaScript</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a>
+</nav>
 
-    <h2>1. Variables (let, const, var)</h2>
-    <p>Modern JavaScript uses block-scoped declarations: <code>let</code> for variables that change values and <code>const</code> for immutable values (constants).</p>
-    <pre><code><span class="keyword">const</span> name = <span class="string">"Our Compiler"</span>;
-<span class="keyword">let</span> runCount = <span class="number">105</span>;
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">JavaScript Tutorial</div>
+    <a href="/blog-javascript.html" class="active">JavaScript HOME</a>
+    <a href="/blog-javascript-syntax.html">Variables (let, const, var)</a>
+    <a href="/blog-javascript-variables.html">Basic Conditionals</a>
+    <a href="/blog-javascript-conditionals.html">Loops (for, while, for...of)</a>
+    <a href="/blog-javascript-loops.html">Arrow Functions</a>
+    <a href="/blog-javascript-functions.html">Working with Arrays & Objects</a>
+    <a href="/blog-javascript-collections.html">Async/Await & Promises</a>
 
-<span class="comment">// Modifying variable value</span>
-runCount += <span class="number">1</span>;
-console.log(<span class="string">`Project: ${name}, Executions: ${runCount}`</span>);</code></pre>
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=nodejs">▶ Try JavaScript Online</a>
 
-    <h2>2. Basic Conditionals</h2>
-    <p>Conditional branches control code path decisions based on logical equations.</p>
-    <pre><code><span class="keyword">let</span> status = <span class="number">200</span>;
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-python.html">Python 3</a>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
 
-<span class="keyword">if</span> (status === <span class="number">200</span>) {
-    console.log(<span class="string">"Request succeeded."</span>);
-} <span class="keyword">else</span> {
-    console.log(<span class="string">"Request failed."</span>);
-}</code></pre>
+  </aside>
 
-    <h2>3. Loops (for, while, for...of)</h2>
-    <p>JavaScript supports several loop types to iterate over indices, arrays, and object properties.</p>
-    <pre><code><span class="comment">// Standard index iteration</span>
-<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) {
-    console.log(<span class="string">`Step: ${i}`</span>);
-}
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <span>JavaScript</span>
+    </div>
+    <h1 class="page-title">JavaScript Tutorial</h1>
+    <div class="page-meta">
+      <span class="badge">🟡 JavaScript</span>
+      <span class="badge">🟢 Beginner Friendly</span>
+      <span class="badge">📅 July 2026</span>
+    </div>
+    
+    <div class="intro-box">
+      <p>JavaScript is a versatile, high-level, dynamic, and interpreted programming language that serves as the core of modern web browsers. Originally created to add interactivity to web pages, JavaScript has expanded to the server-side via Node.js—a high-performance runtime environment powered by Google Chrome's V8 engine. In this guide, we cover fundamental JavaScript constructs, arrays, ES6+ features, and running JS scripts outside the browser.</p>
+    </div>
 
-<span class="comment">// Iterating over arrays</span>
-<span class="keyword">const</span> tags = [<span class="string">"node"</span>, <span class="string">"react"</span>, <span class="string">"vite"</span>];
-<span class="keyword">for</span> (<span class="keyword">const</span> tag <span class="keyword">of</span> tags) {
-    console.log(<span class="string">`Tag: ${tag}`</span>);
-}</code></pre>
-
-    <h2>4. Arrow Functions</h2>
-    <p>ES6 introduced arrow functions, providing a shorter syntax for writing functional expressions.</p>
-    <pre><code><span class="comment">// Traditional Function</span>
-<span class="keyword">function</span> <span class="function">doubleVal</span>(x) {
-    <span class="keyword">return</span> x * <span class="number">2</span>;
-}
-
-<span class="comment">// Arrow Function</span>
-<span class="keyword">const</span> <span class="function">doubleArrow</span> = (x) =&gt; x * <span class="number">2</span>;
-
-console.log(doubleArrow(<span class="number">25</span>)); <span class="comment">// Output: 50</span></code></pre>
-
-    <h2>5. Working with Arrays & Objects</h2>
-    <p>Arrays and objects are fundamental components of data handling in JavaScript applications.</p>
-    <pre><code><span class="keyword">const</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
-<span class="keyword">const</span> squared = list.map(n =&gt; n * n); <span class="comment">// [1, 4, 9]</span>
-
-<span class="keyword">const</span> employee = {
-    name: <span class="string">"Rahul"</span>,
-    role: <span class="string">"Developer"</span>,
-    logRole() {
-        console.log(this.name + <span class="string">" is a "</span> + this.role);
-    }
-};
-employee.logRole();</code></pre>
-
-    <h2>6. Async/Await & Promises</h2>
-    <p>Asynchronous operations are crucial in JavaScript (e.g. database requests, file I/O). Promises and <code>async/await</code> syntax allow you to write asynchronous code that reads like synchronous code.</p>
-    <pre><code><span class="keyword">const</span> <span class="function">simulateFetch</span> = () =&gt; <span class="keyword">new</span> Promise(resolve =&gt; {
-    setTimeout(() =&gt; resolve(<span class="string">"Data loaded successfully."</span>), <span class="number">1000</span>);
-});
-
-<span class="keyword">async</span> <span class="keyword">function</span> <span class="function">runTask</span>() {
-    console.log(<span class="string">"Fetching..."</span>);
-    <span class="keyword">const</span> result = <span class="keyword">await</span> simulateFetch();
-    console.log(result);
-}
-
-runTask();</code></pre>
-
-    <div class="footer">
-      <p>Want to write and execute Node.js scripts online? Open the <a href="/">JavaScript Compiler</a>.</p>
+    <div class="section">
+      <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
+      <p>Choose a topic from the left sidebar or click a lesson below to start learning JavaScript:</p>
+      <table class="tbl" style="margin-top: 15px;">
+        <tr><th>Lesson</th><th>Topic</th></tr>
+        
+          <tr>
+            <td><strong>Lesson 1</strong></td>
+            <td><strong><a href="/blog-javascript-syntax.html">Variables (let, const, var)</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 2</strong></td>
+            <td><strong><a href="/blog-javascript-variables.html">Basic Conditionals</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 3</strong></td>
+            <td><strong><a href="/blog-javascript-conditionals.html">Loops (for, while, for...of)</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 4</strong></td>
+            <td><strong><a href="/blog-javascript-loops.html">Arrow Functions</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 5</strong></td>
+            <td><strong><a href="/blog-javascript-functions.html">Working with Arrays & Objects</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 6</strong></td>
+            <td><strong><a href="/blog-javascript-collections.html">Async/Await & Promises</a></strong></td>
+          </tr>
+        
+      </table>
+    </div>
+    <div class="nav-footer">
+      <a href="/blog.html" class="nav-btn">
+        <span class="label">← All Tutorials</span>
+        <span class="title">Learning Hub</span>
+      </a>
+      <a href="/blog-javascript-syntax.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next →</span>
+        <span class="title">Variables (let, const, var)</span>
+      </a>
     </div>
   </main>
+</div>
 </body>
 </html>

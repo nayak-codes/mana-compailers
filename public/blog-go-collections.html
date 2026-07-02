@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Go Tutorial | Our Compiler</title>
-  <meta name="description" content="Learn Go — go tutorial with clear explanations, examples, and execution." />
+  <title>Go Channels: Communication between Threads | Our Compiler</title>
+  <meta name="description" content="Learn Go — go channels: communication between threads with clear explanations, examples, and execution." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -150,13 +150,13 @@
   <aside class="sidebar">
     
     <div class="sidebar-heading">Go Tutorial</div>
-    <a href="/blog-go.html" class="active">Go HOME</a>
+    <a href="/blog-go.html">Go HOME</a>
     <a href="/blog-go-syntax.html">The Hello World Program</a>
     <a href="/blog-go-variables.html">Variables & Type Inference</a>
     <a href="/blog-go-conditionals.html">Conditions (if-else)</a>
     <a href="/blog-go-loops.html">Loops (Go only has For)</a>
     <a href="/blog-go-functions.html">Goroutines: Lightweight Concurrency</a>
-    <a href="/blog-go-collections.html">Channels: Communication between Threads</a>
+    <a href="/blog-go-collections.html" class="active">Channels: Communication between Threads</a>
 
     <div class="sidebar-heading">Reference</div>
     <a href="/blog.html">All Tutorials</a>
@@ -179,65 +179,53 @@
     <div class="breadcrumb">
       <a href="/">Home</a><span>›</span>
       <a href="/blog.html">Tutorials</a><span>›</span>
-      <span>Go</span>
+      <a href="/blog-go.html">Go</a><span>›</span>
+      <span>Channels: Communication between Threads</span>
     </div>
-    <h1 class="page-title">Go Tutorial</h1>
-    <div class="page-meta">
-      <span class="badge">🐹 Go</span>
-      <span class="badge">🟢 Beginner Friendly</span>
+<h1 class="page-title">Go — Channels: Communication between Threads</h1>
+<div class="page-meta">
+      <span class="badge">🕐 8 min read</span>
+      <span class="badge">🟢 Lesson 6</span>
       <span class="badge">📅 July 2026</span>
     </div>
-    
-    <div class="intro-box">
-      <p>Go (often referred to as Golang) is an open-source programming language created by Google developers in 2007. It is statically typed, compiled, and known for its extreme structural simplicity, efficiency, and native support for concurrent processes. Go compiles directly to machine code, achieving fast execution speeds. It is an industry standard for writing microservices, API servers, cloud applications, and networking utilities.</p>
-    </div>
 
-    <div class="section">
-      <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-      <p>Choose a topic from the left sidebar or click a lesson below to start learning Go:</p>
-      <table class="tbl" style="margin-top: 15px;">
-        <tr><th>Lesson</th><th>Topic</th></tr>
-        
-          <tr>
-            <td><strong>Lesson 1</strong></td>
-            <td><strong><a href="/blog-go-syntax.html">The Hello World Program</a></strong></td>
-          </tr>
-        
-          <tr>
-            <td><strong>Lesson 2</strong></td>
-            <td><strong><a href="/blog-go-variables.html">Variables & Type Inference</a></strong></td>
-          </tr>
-        
-          <tr>
-            <td><strong>Lesson 3</strong></td>
-            <td><strong><a href="/blog-go-conditionals.html">Conditions (if-else)</a></strong></td>
-          </tr>
-        
-          <tr>
-            <td><strong>Lesson 4</strong></td>
-            <td><strong><a href="/blog-go-loops.html">Loops (Go only has For)</a></strong></td>
-          </tr>
-        
-          <tr>
-            <td><strong>Lesson 5</strong></td>
-            <td><strong><a href="/blog-go-functions.html">Goroutines: Lightweight Concurrency</a></strong></td>
-          </tr>
-        
-          <tr>
-            <td><strong>Lesson 6</strong></td>
-            <td><strong><a href="/blog-go-collections.html">Channels: Communication between Threads</a></strong></td>
-          </tr>
-        
-      </table>
-    </div>
+<div class="section" id="s6">
+<p>Channels are conduits through which concurrent goroutines send and receive messages safely, preventing race conditions.</p>
+    <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Go Code Example</span>
+          <a class="try-btn" href="/?lang=go">▶ Run Code</a>
+        </div>
+        <pre><code><span class="keyword">package</span> main
+<span class="keyword">import</span> <span class="string">"fmt"</span>
+
+<span class="keyword">func</span> computeSquare(val int, c <span class="keyword">chan</span> int) {
+    c &lt;- val * val <span class="comment">// Send result to channel</span>
+}
+
+<span class="keyword">func</span> main() {
+    c := make(<span class="keyword">chan</span> int)
+    <span class="keyword">go</span> computeSquare(<span class="number">8</span>, c)
+    
+    result := &lt;-c <span class="comment">// Receive result from channel</span>
+    fmt.Println(<span class="string">"Channel Result:"</span>, result) <span class="comment">// Output: 64</span>
+}</code></pre></div>
+
+<div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 30px;">
+  <h2 style="font-size: 22px; color: var(--text); margin-bottom: 16px;">💡 Detailed Explanation & Deep Dive</h2>
+<h3>Slices vs Arrays</h3>
+      <p>Go arrays have a fixed size. Slices are dynamic, resizable wrappers around arrays that are much more common in Go programming.</p>
+</div>
+
+</div>
     <div class="nav-footer">
-      <a href="/blog.html" class="nav-btn">
-        <span class="label">← All Tutorials</span>
-        <span class="title">Learning Hub</span>
+      <a href="/blog-go-functions.html" class="nav-btn">
+        <span class="label">← Previous</span>
+        <span class="title">Goroutines: Lightweight Concurrency</span>
       </a>
-      <a href="/blog-go-syntax.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next →</span>
-        <span class="title">The Hello World Program</span>
+      <a href="/blog.html" class="nav-btn" style="text-align:right;">
+        <span class="label">All Tutorials →</span>
+        <span class="title">Learning Hub</span>
       </a>
     </div>
   </main>
