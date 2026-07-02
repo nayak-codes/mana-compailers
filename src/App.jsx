@@ -198,6 +198,36 @@ export default function App() {
   const [view, setView] = useState(initialView)
   const [lang, setLang] = useState(initialLang)
   const [code, setCode] = useState(initialCode)
+  const [tutorialHtml, setTutorialHtml] = useState('')
+
+  useEffect(() => {
+    let langFile = lang.id
+    if (lang.id === 'python3') langFile = 'python'
+    if (lang.id === 'nodejs') langFile = 'javascript'
+    if (lang.id === 'cpp17') langFile = 'cpp'
+    
+    setTutorialHtml('')
+    fetch(`/blog-${langFile}.html`)
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(html, 'text/html')
+        const main = doc.querySelector('main')
+        if (main) {
+          const backLink = main.querySelector('.back-link') || main.querySelector('a[href="/blog.html"]')
+          if (backLink) backLink.remove()
+          const footer = main.querySelector('.footer')
+          if (footer) footer.remove()
+          setTutorialHtml(main.innerHTML)
+        } else {
+          setTutorialHtml(doc.body.innerHTML)
+        }
+      })
+      .catch(() => {
+        setTutorialHtml('<p>Tutorial guide currently unavailable for this language. You can still compile and run your code above.</p>')
+      })
+  }, [lang])
+
   const [inputs, setInputs] = useState([])
   const [output, setOutput] = useState(null)
   const [running, setRunning] = useState(false)
@@ -585,6 +615,23 @@ export default function App() {
             </div>
 
           </div>
+
+          {/* TUTORIAL CONTENT PANEL */}
+          <div className="tutorial-section">
+            <div className="tutorial-header">
+              <h2>📚 {lang.label} Tutorial & Reference Guide</h2>
+              <p>Read the guide below to learn the syntax and features of {lang.label}, and practice by running code in the editor above.</p>
+            </div>
+            {tutorialHtml ? (
+              <div 
+                className="tutorial-body"
+                dangerouslySetInnerHTML={{ __html: tutorialHtml }} 
+              />
+            ) : (
+              <div className="tutorial-loading">Loading tutorial...</div>
+            )}
+          </div>
+
           <footer style={s.footer}>
             <div>Our Compiler • <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
             <div>Free online code compiler with fast execution and support for multiple languages.</div>
@@ -748,6 +795,79 @@ function HomePage({ selectLanguage }) {
                 <span style={{ fontSize: 40, lineHeight: 1 }}>{lang.icon}</span>
                 <span style={{ fontWeight: 600, letterSpacing: '0.2px' }}>{lang.label}</span>
               </button>
+            ))}
+          </div>
+        </section>
+
+        {/* LEARN PROGRAMMING SECTION */}
+        <section style={{ marginBottom: 80 }}>
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{
+              fontSize: 32,
+              fontWeight: 700,
+              marginBottom: 12,
+              color: 'var(--text)'
+            }}>
+              Free Programming Tutorials
+            </h2>
+            <p style={{
+              color: 'var(--text2)',
+              fontSize: 15,
+              margin: 0,
+              maxWidth: '600px'
+            }}>
+              Boost your knowledge with our step-by-step programming guides. Learn syntax, concepts, and run examples instantly.
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 24
+          }}>
+            {[
+              { id: 'python3', path: '/blog-python.html', icon: '🐍', title: 'Python 3 Tutorial', desc: 'Master Python syntax, data types, loops, lists, and OOP fundamentals.' },
+              { id: 'java', path: '/blog-java.html', icon: '☕', title: 'Java Tutorial', desc: 'Learn object-oriented programming, classes, structures, and exceptions in Java.' },
+              { id: 'c', path: '/blog-c.html', icon: '🔵', title: 'C Programming Guide', desc: 'Understand pointers, memory allocation, structure, and low-level programming.' },
+              { id: 'cpp17', path: '/blog-cpp.html', icon: '⚡', title: 'C++ Tutorial', desc: 'Master standard template library (STL), templates, and advanced C++ features.' },
+              { id: 'nodejs', path: '/blog-javascript.html', icon: '🟡', title: 'JavaScript Guide', desc: 'Understand modern ES6+ JavaScript, promises, and backend development on Node.js.' },
+              { id: 'rust', path: '/blog-rust.html', icon: '🦀', title: 'Rust Tutorial', desc: 'Learn memory safety, lifetimes, references, and systems programming in Rust.' },
+              { id: 'go', path: '/blog-go.html', icon: '🐹', title: 'Go Tutorial', desc: 'Explore concurrency patterns, channels, interfaces, and clean design in Go.' },
+              { id: 'ruby', path: '/blog-ruby.html', icon: '💎', title: 'Ruby Tutorial', desc: 'Learn blocks, modules, syntax, and object-oriented programming in Ruby.' },
+              { id: 'php', path: '/blog-php.html', icon: '🐘', title: 'PHP Tutorial', desc: 'Understand dynamic web scripting. Learn variables, associative arrays, and objects in PHP.' }
+            ].map(guide => (
+              <a
+                key={guide.id}
+                href={guide.path}
+                style={{
+                  display: 'block',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  background: 'var(--bg2)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 16,
+                  padding: '28px',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)'
+                  e.currentTarget.style.transform = 'translateY(-4px)'
+                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(88, 166, 255, 0.1)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                  <span style={{ fontSize: 28 }}>{guide.icon}</span>
+                  <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{guide.title}</h3>
+                </div>
+                <p style={{ margin: 0, fontSize: 14, color: 'var(--text2)', lineHeight: 1.6 }}>{guide.desc}</p>
+              </a>
             ))}
           </div>
         </section>

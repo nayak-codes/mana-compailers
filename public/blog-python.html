@@ -3,123 +3,250 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python 3 Programming Guide | Our Compiler</title>
-  <meta name="description" content="A comprehensive guide to learning Python 3 basics, loops, conditionals, functions, and standard input/output with code examples." />
+  <title>Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 — python 3 tutorial with clear explanations, examples, and execution." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { color-scheme: dark; }
-    body { margin:0; font-family:'Sora',sans-serif; background:#0d1117; color:#e6edf3; line-height:1.6; }
-    .page { max-width:900px; margin:0 auto; padding:32px 20px; }
-    a { color:#58a6ff; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    h1, h2, h3 { margin:28px 0 12px; color:#ffffff; }
-    p { margin:14px 0; color:#c9d1d9; }
-    .meta { color:#8b949e; font-size:14px; margin-bottom:24px; }
-    pre { background:#161b22; border:1px solid #30363d; border-radius:8px; padding:16px; overflow-x:auto; }
-    code { font-family:'JetBrains Mono', monospace; font-size:14px; color:#ff7b72; }
-    pre code { color:#e6edf3; }
-    .keyword { color:#ff7b72; }
-    .string { color:#a5d6ff; }
-    .comment { color:#8b949e; }
-    .number { color:#79c0ff; }
-    .function { color:#d2a8ff; }
-    .footer { margin-top:48px; border-top:1px solid #30363d; padding-top:16px; color:#8b949e; font-size:13px; text-align:center; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+      --border: #30363d; --accent: #3fb950; --blue: #58a6ff;
+      --text: #e6edf3; --text2: #8b949e; --text3: #484f58;
+      --sidebar-w: 260px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+
+    /* TOP NAV */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0; height: 48px;
+      overflow-x: auto; padding: 0 12px;
+    }
+    .topnav a {
+      color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500;
+      padding: 0 14px; height: 48px; display: flex; align-items: center;
+      border-bottom: 3px solid transparent; white-space: nowrap; transition: color .2s;
+    }
+    .topnav a:hover { color: var(--text); }
+    .topnav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .topnav .brand { font-weight: 700; color: var(--text); font-size: 14px; margin-right: 8px; padding-right: 12px; border-right: 1px solid var(--border); }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: calc(100vh - 48px); }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--bg2); border-right: 1px solid var(--border);
+      position: sticky; top: 48px; height: calc(100vh - 48px);
+      overflow-y: auto; padding: 20px 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+    .sidebar-heading {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text3);
+      padding: 8px 20px 4px; margin-top: 12px;
+    }
+    .sidebar-heading:first-child { margin-top: 0; }
+    .sidebar a {
+      display: block; padding: 7px 20px; font-size: 13.5px; color: var(--text2);
+      text-decoration: none; border-left: 3px solid transparent; transition: all .15s;
+    }
+    .sidebar a:hover { color: var(--text); background: var(--bg3); }
+    .sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,.06); font-weight: 600; }
+
+    /* CONTENT */
+    .content { flex: 1; min-width: 0; padding: 40px 48px 80px; max-width: 860px; }
+
+    /* BREADCRUMB */
+    .breadcrumb { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--blue); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: var(--text3); }
+
+    /* TITLE BLOCK */
+    .page-title { font-size: 36px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .page-meta { font-size: 13px; color: var(--text2); margin-bottom: 28px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; gap: 5px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 12px; }
+
+    /* INTRO BOX */
+    .intro-box { background: linear-gradient(135deg, rgba(88,166,255,.1), rgba(88,166,255,.04)); border: 1px solid rgba(88,166,255,.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 36px; }
+    .intro-box p { margin: 0; color: #c9d1d9; font-size: 15px; line-height: 1.75; }
+
+    /* SECTIONS */
+    .section { margin-bottom: 48px; scroll-margin-top: 64px; }
+    .section-title { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .section-title .num { background: var(--accent); color: #000; font-size: 13px; font-weight: 700; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .section p { color: #c9d1d9; font-size: 15px; margin-bottom: 16px; }
+
+    /* CODE BLOCK */
+    .code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin: 20px 0; overflow: hidden; }
+    .code-block-header { background: var(--bg3); padding: 8px 16px; font-size: 12px; color: var(--text2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .code-block-header .lang-tag { font-weight: 600; color: var(--accent); }
+    .try-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #000; border: none; border-radius: 6px;
+      padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .try-btn:hover { opacity: 0.85; }
+    .code-block pre { margin: 0; padding: 18px; overflow-x: auto; }
+    .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--text); line-height: 1.6; }
+    .kw { color: #ff7b72; } .st { color: #a5d6ff; } .cm { color: #8b949e; font-style: italic; } .nu { color: #79c0ff; } .fn { color: #d2a8ff; }
+
+    /* INLINE CODE */
+    .content code { background: rgba(110,118,129,.15); color: #ff7b72; padding: 2px 6px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    .code-block code { background: none; color: var(--text); padding: 0; }
+
+    /* INFO BOX */
+    .info-box { background: rgba(88,166,255,.07); border: 1px solid rgba(88,166,255,.25); border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: #c9d1d9; }
+    .info-box strong { color: var(--blue); }
+
+    /* TABLE */
+    .tbl { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    .tbl th { background: var(--bg3); padding: 10px 14px; text-align: left; color: var(--text); font-weight: 600; border-bottom: 2px solid var(--border); }
+    .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c9d1d9; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:hover td { background: var(--bg3); }
+
+    /* NEXT / PREV */
+    .nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
+    .nav-btn { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 20px; border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all .2s; max-width: 220px; }
+    .nav-btn:hover { border-color: var(--accent); background: var(--bg2); }
+    .nav-btn .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; }
+    .nav-btn .title { font-size: 14px; font-weight: 600; color: var(--text); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .content { padding: 24px 20px 60px; }
+      .page-title { font-size: 26px; }
+    }
   </style>
 </head>
 <body>
-  <main class="page">
-    <a href="/blog.html" style="font-size:14px; color:#58a6ff;">← Back to Blog</a>
-    <h1>Python 3 Programming Guide</h1>
-    <div class="meta">Published: June 2026 • Reading Time: 8 mins</div>
 
-    <p>Python is one of the most popular, high-level, interpreted programming languages in the world. It is known for its clear, clean readability, simplicity, and flexibility, making it an excellent language for beginners and professional developers alike. In this guide, we will explore the essential elements of Python 3, from variables to classes, with practical examples you can execute directly on Our Compiler.</p>
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python 3</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a>
+</nav>
 
-    <h2>1. Variables and Basic Data Types</h2>
-    <p>In Python, you do not need to explicitly declare variable types. Python dynamically infers the type of a variable based on the value assigned to it.</p>
-    <pre><code><span class="comment"># Variable declarations</span>
-name = <span class="string">"Our Compiler"</span>  <span class="comment"># String</span>
-version = <span class="number">3.0</span>           <span class="comment"># Float</span>
-is_active = <span class="keyword">True</span>        <span class="comment"># Boolean</span>
-languages_count = <span class="number">9</span>     <span class="comment"># Integer</span>
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Python 3 Tutorial</div>
+    <a href="/blog-python.html" class="active">Python 3 HOME</a>
+    <a href="/blog-python-syntax.html">Variables and Basic Data Types</a>
+    <a href="/blog-python-variables.html">Control Flow: Conditionals</a>
+    <a href="/blog-python-conditionals.html">Loops and Iterations</a>
+    <a href="/blog-python-loops.html">Defining Functions</a>
+    <a href="/blog-python-functions.html">Reading Standard Input (stdin)</a>
+    <a href="/blog-python-collections.html">Lists and Dictionaries</a>
+    <a href="/blog-python-oop.html">Object-Oriented Programming (OOP)</a>
 
-<span class="comment"># Printing values</span>
-print(f<span class="string">"Name: {name}, Version: {version}"</span>)</code></pre>
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=python3">▶ Try Python 3 Online</a>
 
-    <h2>2. Control Flow: Conditionals</h2>
-    <p>Python uses indentation to define code blocks. There are no curly braces <code>{}</code> or semicolons <code>;</code> required. You should use 4 spaces per indentation level.</p>
-    <pre><code>score = <span class="number">85</span>
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
 
-<span class="keyword">if</span> score &gt;= <span class="number">90</span>:
-    print(<span class="string">"Grade: A"</span>)
-<span class="keyword">elif</span> score &gt;= <span class="number">80</span>:
-    print(<span class="string">"Grade: B"</span>)
-<span class="keyword">else</span>:
-    print(<span class="string">"Grade: C"</span>)</code></pre>
+  </aside>
 
-    <h2>3. Loops and Iterations</h2>
-    <p>Python supports <code>for</code> loops and <code>while</code> loops. The <code>range()</code> function is commonly used with loops to run a block of code a set number of times.</p>
-    <pre><code><span class="comment"># Using a for loop with range</span>
-<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">6</span>):
-    print(f<span class="string">"Square of {i} is {i*i}"</span>)
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <span>Python 3</span>
+    </div>
+    <h1 class="page-title">Python 3 Tutorial</h1>
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Beginner Friendly</span>
+      <span class="badge">📅 July 2026</span>
+    </div>
+    
+    <div class="intro-box">
+      <p>Python is one of the most popular, high-level, interpreted programming languages in the world. It is known for its clear, clean readability, simplicity, and flexibility, making it an excellent language for beginners and professional developers alike. In this guide, we will explore the essential elements of Python 3, from variables to classes, with practical examples you can execute directly on Our Compiler.</p>
+    </div>
 
-<span class="comment"># Using a while loop</span>
-count = <span class="number">5</span>
-<span class="keyword">while</span> count &gt; <span class="number">0</span>:
-    print(f<span class="string">"Count: {count}"</span>)
-    count -= <span class="number">1</span></code></pre>
-
-    <h2>4. Defining Functions</h2>
-    <p>Functions are defined using the <code>def</code> keyword. They allow you to write reusable blocks of code that can be called whenever needed.</p>
-    <pre><code><span class="keyword">def</span> <span class="function">greet_user</span>(user_name):
-    <span class="keyword">return</span> f<span class="string">"Hello, {user_name}! Welcome to Our Compiler."</span>
-
-message = greet_user(<span class="string">"Balaji"</span>)
-print(message)</code></pre>
-
-    <h2>5. Reading Standard Input (stdin)</h2>
-    <p>To read input from the user in Python, use the <code>input()</code> function. Since <code>input()</code> returns a string, you must convert it to another data type (like an integer) if you need to perform calculations.</p>
-    <pre><code><span class="comment"># Reading string input</span>
-user_name = input(<span class="string">"Enter your name: "</span>)
-print(f<span class="string">"Hello, {user_name}!"</span>)
-
-<span class="comment"># Reading numerical input</span>
-age = int(input(<span class="string">"Enter your age: "</span>))
-print(f<span class="string">"Next year you will be {age + 1} years old."</span>)</code></pre>
-    <p>When running this example on Our Compiler, make sure to enter the inputs in the <strong>Terminal Input</strong> or <strong>stdin</strong> box before executing.</p>
-
-    <h2>6. Lists and Dictionaries</h2>
-    <p>Lists are ordered collections of items, while dictionaries are collections of key-value pairs. Both are highly useful in Python.</p>
-    <pre><code><span class="comment"># Lists</span>
-fruits = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>]
-fruits.append(<span class="string">"orange"</span>)
-print(fruits[<span class="number">0</span>]) <span class="comment"># Output: apple</span>
-
-<span class="comment"># Dictionaries</span>
-student = {
-    <span class="string">"name"</span>: <span class="string">"Sai"</span>,
-    <span class="string">"id"</span>: <span class="number">101</span>,
-    <span class="string">"courses"</span>: [<span class="string">"Math"</span>, <span class="string">"CS"</span>]
-}
-print(student[<span class="string">"name"</span>]) <span class="comment"># Output: Sai</span></code></pre>
-
-    <h2>7. Object-Oriented Programming (OOP)</h2>
-    <p>Python supports classes and object-oriented paradigms. Here is how you can define a simple class with an initiator (constructor):</p>
-    <pre><code><span class="keyword">class</span> <span class="function">Rectangle</span>:
-    <span class="keyword">def</span> <span class="function">__init__</span>(self, width, height):
-        self.width = width
-        self.height = height
+    <div class="section">
+      <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
+      <p>Choose a topic from the left sidebar or click a lesson below to start learning Python 3:</p>
+      <table class="tbl" style="margin-top: 15px;">
+        <tr><th>Lesson</th><th>Topic</th></tr>
         
-    <span class="keyword">def</span> <span class="function">get_area</span>(self):
-        <span class="keyword">return</span> self.width * self.height
-
-rect = Rectangle(<span class="number">10</span>, <span class="number">5</span>)
-print(f<span class="string">"Rectangle Area: {rect.get_area()}"</span>)</code></pre>
-
-    <div class="footer">
-      <p>Want to write and test Python code? Launch the <a href="/">Python 3 Compiler</a> now.</p>
+          <tr>
+            <td><strong>Lesson 1</strong></td>
+            <td><strong><a href="/blog-python-syntax.html">Variables and Basic Data Types</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 2</strong></td>
+            <td><strong><a href="/blog-python-variables.html">Control Flow: Conditionals</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 3</strong></td>
+            <td><strong><a href="/blog-python-conditionals.html">Loops and Iterations</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 4</strong></td>
+            <td><strong><a href="/blog-python-loops.html">Defining Functions</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 5</strong></td>
+            <td><strong><a href="/blog-python-functions.html">Reading Standard Input (stdin)</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 6</strong></td>
+            <td><strong><a href="/blog-python-collections.html">Lists and Dictionaries</a></strong></td>
+          </tr>
+        
+          <tr>
+            <td><strong>Lesson 7</strong></td>
+            <td><strong><a href="/blog-python-oop.html">Object-Oriented Programming (OOP)</a></strong></td>
+          </tr>
+        
+      </table>
+    </div>
+    <div class="nav-footer">
+      <a href="/blog.html" class="nav-btn">
+        <span class="label">← All Tutorials</span>
+        <span class="title">Learning Hub</span>
+      </a>
+      <a href="/blog-python-syntax.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next →</span>
+        <span class="title">Variables and Basic Data Types</span>
+      </a>
     </div>
   </main>
+</div>
 </body>
 </html>
