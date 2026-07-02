@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+﻿import { useState, useCallback, useRef, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
 import { LANGUAGES, TEMPLATES } from './languages'
 
@@ -49,7 +49,7 @@ const TerminalInput = ({ onSubmit }) => {
 const parseTerminalSession = (rawOutput, inputs, code, langId) => {
   if (!rawOutput) return []
 
-  const promptRegex = /([^]*?[:?❯>$#](?!\/|\d)\s*)/g
+  const promptRegex = /([^]*?[:?â¯>$#](?!\/|\d)\s*)/g
   const matches = []
   let lastIndex = 0
   let match
@@ -180,7 +180,7 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
 const BACKEND_URL = 'https://mana-compailer-backend-docker.onrender.com'
 
 
-// Silent warmup — wakes Render backend before user clicks Run
+// Silent warmup â€” wakes Render backend before user clicks Run
 function warmupBackend() {
   fetch(`${BACKEND_URL}/api/health`, { method: 'GET', signal: AbortSignal.timeout(30000) })
     .catch(() => {}) // Ignore errors silently
@@ -275,7 +275,7 @@ export default function App() {
     window.history.replaceState({ view: 'home' }, '', window.location.pathname)
   }
 
-  // 🔥 Warmup backend on first load — eliminates cold start delay
+  // ðŸ”¥ Warmup backend on first load â€” eliminates cold start delay
   useEffect(() => {
     if (warmupDoneRef.current) return
     warmupDoneRef.current = true
@@ -369,7 +369,7 @@ export default function App() {
     const start = Date.now()
 
     try {
-      // ✅ Docker backend — Unlimited, No API limits!
+      // âœ… Docker backend â€” Unlimited, No API limits!
       const res = await fetch(`${BACKEND_URL}/api/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -445,11 +445,11 @@ export default function App() {
               </select>
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
+              <button onClick={goHome} style={s.btnHome}>ðŸ  Home</button>
               <button onClick={() => { setCode(''); setOutput(null) }} style={s.btnGhost}>Clear</button>
-              <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
+              <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? 'â‡¤ Editor Right' : 'Editor Left â‡¥'}</button>
               <button onClick={runCode} disabled={running} style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}>
-                {running ? '⏳ Running...' : '▶ Run Code'}
+                {running ? 'â³ Running...' : 'â–¶ Run Code'}
               </button>
             </div>
           </div>
@@ -469,11 +469,11 @@ export default function App() {
               overflow: maximizedPanel === 'output' ? 'hidden' : 'hidden'
             }}>
               <div style={s.panelHead}>
-                <span style={{ fontSize: 13, fontWeight: 600 }}>📝 Editor</span>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>ðŸ“ Editor</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 12, color: 'var(--text2)' }}>{lang.icon} {lang.label}</span>
                   <button onClick={() => toggleMaximize('editor')} style={s.panelBtn}>
-                    {maximizedPanel === 'editor' ? '🗗' : '⛶'}
+                    {maximizedPanel === 'editor' ? 'ðŸ——' : 'â›¶'}
                   </button>
                 </div>
               </div>
@@ -529,7 +529,7 @@ export default function App() {
               {/* TERMINAL HEADER */}
               <div style={s.tabs}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  🖥️ Terminal
+                  ðŸ–¥ï¸ Terminal
                 </span>
                 {output && output.status !== 'running' && (
                   <span style={{
@@ -541,7 +541,7 @@ export default function App() {
                   </span>
                 )}
                 <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: !output || output.status === 'running' ? 'auto' : 0 }}>
-                  {maximizedPanel === 'output' ? '🗗' : '⛶'}
+                  {maximizedPanel === 'output' ? 'ðŸ——' : 'â›¶'}
                 </button>
               </div>
 
@@ -549,8 +549,8 @@ export default function App() {
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--bg2)' }}>
                 {/* Output content area */}
                 <div style={s.outContent}>
-                  {!output && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
-                  {output?.status === 'running' && <div style={s.ph}>⏳ Executing...</div>}
+                  {!output && <div style={s.ph}>Click â–¶ Run Code to see output...</div>}
+                  {output?.status === 'running' && <div style={s.ph}>â³ Executing...</div>}
                   {output?.text && (
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                       <div style={{
@@ -588,7 +588,7 @@ export default function App() {
                             if (seg.type === 'generic-active-input') {
                               return (
                                 <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                                  <span style={{ color: 'var(--green)', fontWeight: 700 }}>❯</span>
+                                  <span style={{ color: 'var(--green)', fontWeight: 700 }}>â¯</span>
                                   <TerminalInput
                                     onSubmit={(val) => {
                                       const nextInputs = [...inputs, val]
@@ -605,7 +605,7 @@ export default function App() {
                       </div>
                       {output.elapsed && (
                         <div style={{ marginTop: 16, fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--mono)' }}>
-                          ⏱ {output.elapsed}s · {lang.label}
+                          â± {output.elapsed}s Â· {lang.label}
                         </div>
                       )}
                     </div>
@@ -619,7 +619,7 @@ export default function App() {
           {/* TUTORIAL CONTENT PANEL */}
           <div className="tutorial-section">
             <div className="tutorial-header">
-              <h2>📚 {lang.label} Tutorial & Reference Guide</h2>
+              <h2>ðŸ“š {lang.label} Tutorial & Reference Guide</h2>
               <p>Read the guide below to learn the syntax and features of {lang.label}, and practice by running code in the editor above.</p>
             </div>
             {tutorialHtml ? (
@@ -633,7 +633,7 @@ export default function App() {
           </div>
 
           <footer style={s.footer}>
-            <div>Our Compiler • <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
+            <div>Our Compiler â€¢ <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> â€¢ <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> â€¢ <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> â€¢ <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
             <div>Free online code compiler with fast execution and support for multiple languages.</div>
           </footer>
         </>
@@ -662,7 +662,6 @@ const s = {
   panelHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
   resizer: { width: 10, cursor: 'col-resize', background: 'transparent', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' },
   outPanel: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0, borderLeft: '1px solid var(--border)' },
-  adColumn: { width: 140, minWidth: 120, background: 'var(--bg2)', borderLeft: '1px solid var(--border)', display: 'flex', flexDirection: 'column', flexShrink: 0 },
   maxPanel: { flex: '1 1 100%', minWidth: 0 },
   minPanel: { flex: '0 0 0', minWidth: 0, maxWidth: 0, overflow: 'hidden' },
   tabs: { display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
@@ -675,224 +674,221 @@ const s = {
   footer: { display: 'flex', justifyContent: 'space-between', padding: '10px 20px', background: 'var(--bg2)', borderTop: '1px solid var(--border)', fontSize: 12, color: 'var(--text2)', flexShrink: 0 },
 }
 
+// â”€â”€â”€ Per-language brand colors for the home page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const LANG_META = {
+  python3: { color: '#3fb950', bg: 'rgba(63,185,80,0.08)',   desc: 'Beginner-friendly Â· great for AI, data & scripting' },
+  java:    { color: '#f0a500', bg: 'rgba(240,165,0,0.08)',   desc: 'Industry-standard OOP for enterprise applications' },
+  c:       { color: '#58a6ff', bg: 'rgba(88,166,255,0.08)',  desc: 'Low-level power â€” pointers, memory & systems' },
+  cpp17:   { color: '#e3b341', bg: 'rgba(227,179,65,0.08)',  desc: 'C with superpowers â€” STL, templates & C++17' },
+  nodejs:  { color: '#f1e05a', bg: 'rgba(241,224,90,0.08)',  desc: 'Modern ES6+ JavaScript & Node.js runtime' },
+  go:      { color: '#00add8', bg: 'rgba(0,173,216,0.08)',   desc: 'Fast, compiled & built for concurrency & cloud' },
+  rust:    { color: '#f74c00', bg: 'rgba(247,76,0,0.08)',    desc: 'Memory-safe systems with zero-cost abstractions' },
+  php:     { color: '#8892bf', bg: 'rgba(136,146,191,0.08)', desc: 'The backbone of the web â€” server-side scripting' },
+  ruby:    { color: '#cc342d', bg: 'rgba(204,52,45,0.08)',   desc: 'Elegant OOP â€” the language Rails developers love' },
+}
+
+// â”€â”€â”€ HomePage Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function HomePage({ selectLanguage }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* HERO HEADER */}
-      <header style={{
-        background: 'var(--bg2)',
-        borderBottom: '1px solid var(--border)',
-        textAlign: 'center',
-        padding: '40px 20px',
-        position: 'relative'
-      }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          {/* Logo + Title */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 20,
-            marginBottom: 12
-          }}>
-            <img
-              src="/logo.png"
-              alt="Our Compiler Logo"
-              style={{
-                height: 80,
-                width: 80,
-                objectFit: 'contain',
-                borderRadius: 16,
-                filter: 'drop-shadow(0 4px 16px rgba(88,166,255,0.3))'
-              }}
-            />
-            <div style={{
-              fontSize: 48,
-              fontWeight: 700,
-              color: 'var(--text)'
-            }}>
-              Our Compiler
-            </div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)', overflowX: 'hidden' }}>
+
+      {/* â•â• HERO â•â• */}
+      <header style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg2)', borderBottom: '1px solid var(--border)' }}>
+        {/* glow blobs */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+          <div style={{ position: 'absolute', top: -140, left: '-10%', width: 700, height: 700, borderRadius: '50%', background: 'radial-gradient(circle,rgba(88,166,255,0.10) 0%,transparent 70%)', filter: 'blur(80px)' }} />
+          <div style={{ position: 'absolute', top: 0, right: '-8%',   width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle,rgba(63,185,80,0.09) 0%,transparent 70%)',  filter: 'blur(80px)' }} />
+          <div style={{ position: 'absolute', bottom: -80, left: '40%',width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle,rgba(247,76,0,0.06) 0%,transparent 70%)',   filter: 'blur(80px)' }} />
+        </div>
+
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: 1000, margin: '0 auto', padding: '80px 28px 72px', textAlign: 'center' }}>
+
+          {/* badge */}
+          <div style={{ marginBottom: 28 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(88,166,255,0.09)', border: '1px solid rgba(88,166,255,0.25)', borderRadius: 999, padding: '7px 22px', fontSize: 11.5, fontWeight: 700, color: '#58a6ff', letterSpacing: 1, textTransform: 'uppercase' }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#3fb950', boxShadow: '0 0 8px #3fb950', display: 'inline-block', flexShrink: 0 }} />
+              Free Â· No Login Â· No Setup Required
+            </span>
           </div>
 
-          {/* Tagline */}
-          <p style={{
-            fontSize: 16,
-            color: 'var(--text2)',
-            margin: '8px 0 0 0',
-            fontWeight: 400
-          }}>
-            Write • Compile • Execute — Instantly
+          {/* logo */}
+          <div style={{ marginBottom: 22 }}>
+            <img src="/logo.png" alt="Our Compiler" style={{ height: 100, width: 100, objectFit: 'contain', borderRadius: 24, filter: 'drop-shadow(0 10px 30px rgba(88,166,255,0.40))' }} />
+          </div>
+
+          {/* headline */}
+          <h1 style={{ margin: '0 0 10px', fontSize: 'clamp(40px,7vw,74px)', fontWeight: 900, lineHeight: 1.06, letterSpacing: '-2.5px', color: 'var(--text)' }}>
+            Our Compiler
+          </h1>
+          <div style={{ fontSize: 'clamp(18px,3.2vw,30px)', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 22, background: 'linear-gradient(90deg,#58a6ff 0%,#3fb950 48%,#f0a500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            Write Â· Compile Â· Execute â€” Instantly
+          </div>
+          <p style={{ margin: '0 auto 44px', fontSize: 17, color: 'var(--text2)', maxWidth: 520, lineHeight: 1.8 }}>
+            Code in <strong style={{ color: 'var(--text)' }}>9+ programming languages</strong> right in your browser.
+            Zero downloads Â· Zero accounts Â· Just code.
           </p>
+
+          {/* CTAs */}
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 60 }}>
+            <button
+              onClick={() => selectLanguage('python3')}
+              style={{ background: 'linear-gradient(135deg,#58a6ff,#1f6feb)', color: '#fff', border: 'none', borderRadius: 12, padding: '15px 40px', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 24px rgba(88,166,255,0.40)', transition: 'all .22s', letterSpacing: 0.2 }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(88,166,255,0.55)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(88,166,255,0.40)' }}
+            >â–¶ Start Coding Now</button>
+            <a
+              href="/blog.html"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 12, padding: '15px 30px', fontSize: 16, fontWeight: 600, textDecoration: 'none', transition: 'all .22s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#58a6ff'; e.currentTarget.style.background = 'rgba(88,166,255,0.06)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'transparent' }}
+            >ðŸ“š View Tutorials</a>
+          </div>
+
+          {/* stats */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 48, flexWrap: 'wrap' }}>
+            {[
+              { num: '9+',   lbl: 'Languages' },
+              { num: '100%', lbl: 'Free Forever' },
+              { num: '<2s',  lbl: 'Avg. Runtime' },
+              { num: '0',    lbl: 'Setup Needed' },
+            ].map(stat => (
+              <div key={stat.lbl} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--text)', lineHeight: 1, letterSpacing: '-0.5px' }}>{stat.num}</div>
+                <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.4, fontWeight: 600 }}>{stat.lbl}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </header>
 
-      {/* MAIN CONTENT */}
-      <main style={{ flex: 1, padding: '60px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-        {/* CHOOSE LANGUAGE SECTION */}
-        <section style={{ marginBottom: 80 }}>
-          <div style={{ marginBottom: 32 }}>
-            <h2 style={{
-              fontSize: 32,
-              fontWeight: 700,
-              marginBottom: 12,
-              color: 'var(--text)'
-            }}>
-              Choose Your Language
+      {/* â•â• MAIN â•â• */}
+      <main style={{ flex: 1, maxWidth: 1200, margin: '0 auto', width: '100%', padding: '72px 24px 80px' }}>
+
+        {/* â”€â”€ LANGUAGE PICKER â”€â”€ */}
+        <section style={{ marginBottom: 96 }}>
+          <div style={{ marginBottom: 40 }}>
+            <p style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: 2.5, color: '#58a6ff', textTransform: 'uppercase', margin: '0 0 10px' }}>â€” Choose Your Language</p>
+            <h2 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 900, color: 'var(--text)', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
+              Select a Language &amp; Start Coding
             </h2>
-            <p style={{
-              color: 'var(--text2)',
-              fontSize: 15,
-              margin: 0,
-              maxWidth: '600px'
-            }}>
-              Select any language below to start coding instantly. No setup required — just click and start.
+            <p style={{ color: 'var(--text2)', fontSize: 15, margin: 0, maxWidth: 480, lineHeight: 1.75 }}>
+              Click any card to instantly open the editor. Ready-to-run examples included.
             </p>
           </div>
 
-          {/* LANGUAGE GRID */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-            gap: 20,
-            marginBottom: 20
-          }}>
-            {LANGUAGES.map(lang => (
-              <button
-                key={lang.id}
-                onClick={() => selectLanguage(lang.id)}
-                style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14,
-                  padding: '28px 16px',
-                  background: 'var(--bg2)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 16,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
-                  fontSize: 14, color: 'var(--text)', fontWeight: 700,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                  position: 'relative', overflow: 'hidden'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'var(--bg3)'
-                  e.currentTarget.style.borderColor = 'var(--accent)'
-                  e.currentTarget.style.transform = 'translateY(-8px)'
-                  e.currentTarget.style.boxShadow = '0 16px 32px rgba(88,166,255,0.18)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'var(--bg2)'
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)'
-                }}
-              >
-                <span style={{ fontSize: 38, lineHeight: 1, display: 'block' }}>{lang.icon}</span>
-                <span style={{ letterSpacing: 0.2 }}>{lang.label}</span>
-              </button>
-            ))}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: 12 }}>
+            {LANGUAGES.map(lang => {
+              const meta = LANG_META[lang.id] || { color: '#58a6ff', bg: 'rgba(88,166,255,0.08)', desc: '' }
+              return (
+                <button
+                  key={lang.id}
+                  onClick={() => selectLanguage(lang.id)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 16,
+                    padding: '16px 20px',
+                    background: 'var(--bg2)',
+                    border: '1px solid var(--border)',
+                    borderLeft: `4px solid ${meta.color}`,
+                    borderRadius: 14,
+                    cursor: 'pointer', textAlign: 'left',
+                    transition: 'all 0.22s cubic-bezier(0.4,0,0.2,1)',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+                    width: '100%', fontFamily: 'inherit',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = meta.bg
+                    e.currentTarget.style.borderColor = meta.color
+                    e.currentTarget.style.borderLeftColor = meta.color
+                    e.currentTarget.style.transform = 'translateX(5px)'
+                    e.currentTarget.style.boxShadow = `0 6px 22px ${meta.color}28`
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'var(--bg2)'
+                    e.currentTarget.style.borderColor = 'var(--border)'
+                    e.currentTarget.style.borderLeftColor = meta.color
+                    e.currentTarget.style.transform = 'translateX(0)'
+                    e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.15)'
+                  }}
+                >
+                  <div style={{ width: 52, height: 52, borderRadius: 12, flexShrink: 0, background: meta.bg, border: `1px solid ${meta.color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>
+                    {lang.icon}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 3, letterSpacing: '-0.2px' }}>{lang.label}</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meta.desc}</div>
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: meta.color, flexShrink: 0, opacity: 0.9 }}>Open â†’</span>
+                </button>
+              )
+            })}
           </div>
         </section>
 
-        {/* ── TUTORIALS GRID ── */}
+        {/* â”€â”€ TUTORIALS GRID â”€â”€ */}
         <section style={{ marginBottom: 96 }}>
           <div style={{ marginBottom: 40 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: 2, color: '#3fb950', textTransform: 'uppercase', marginBottom: 10 }}>— Learn Programming</p>
-            <h2 style={{ fontSize: 'clamp(24px,4vw,38px)', fontWeight: 800, color: 'var(--text)', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
+            <p style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: 2.5, color: '#3fb950', textTransform: 'uppercase', margin: '0 0 10px' }}>â€” Learn Programming</p>
+            <h2 style={{ fontSize: 'clamp(24px,4vw,38px)', fontWeight: 900, color: 'var(--text)', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
               Free Step-by-Step Tutorials
             </h2>
-            <p style={{ color: 'var(--text2)', fontSize: 15, margin: 0, maxWidth: 540 }}>
-              Each guide is structured like W3Schools — with a sidebar, deep-dive explanations, and live runnable examples.
+            <p style={{ color: 'var(--text2)', fontSize: 15, margin: 0, maxWidth: 540, lineHeight: 1.75 }}>
+              Each guide follows a W3Schools-style layout â€” sidebar navigation, deep explanations, and runnable code examples.
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
             {[
-              { path: '/blog-python.html', icon: '🐍', title: 'Python 3', color: '#3fb950', desc: 'From variables to OOP — the most beginner-friendly guide to Python.' },
-              { path: '/blog-java.html', icon: '☕', title: 'Java', color: '#f0a500', desc: 'Classes, inheritance, exceptions — everything you need for Java mastery.' },
-              { path: '/blog-c.html', icon: '🔵', title: 'C Programming', color: '#58a6ff', desc: 'Pointers, memory, structs — the foundation of systems programming.' },
-              { path: '/blog-cpp.html', icon: '⚡', title: 'C++', color: '#e3b341', desc: 'STL, templates, and modern C++17 features explained clearly.' },
-              { path: '/blog-javascript.html', icon: '🟡', title: 'JavaScript', color: '#f1e05a', desc: 'Promises, async/await, and ES6+ for Node.js backend development.' },
-              { path: '/blog-go.html', icon: '🐹', title: 'Go', color: '#00add8', desc: 'Goroutines, channels, and idiomatic Go patterns for concurrency.' },
-              { path: '/blog-rust.html', icon: '🦀', title: 'Rust', color: '#f74c00', desc: 'Ownership, borrowing, and memory safety without a garbage collector.' },
-              { path: '/blog-php.html', icon: '🐘', title: 'PHP', color: '#8892bf', desc: 'Server-side scripting, arrays, OOP, and web development in PHP.' },
-              { path: '/blog-ruby.html', icon: '💎', title: 'Ruby', color: '#cc342d', desc: 'Elegant blocks, iterators, and object-oriented design the Ruby way.' },
+              { path: '/blog-python.html',     icon: 'ðŸ', title: 'Python 3',      color: '#3fb950', desc: 'Variables to OOP â€” the most beginner-friendly Python guide.' },
+              { path: '/blog-java.html',       icon: 'â˜•', title: 'Java',          color: '#f0a500', desc: 'Classes, inheritance, exceptions â€” master Java step by step.' },
+              { path: '/blog-c.html',          icon: 'ðŸ”µ', title: 'C Programming', color: '#58a6ff', desc: 'Pointers, memory & structs â€” the foundation of systems programming.' },
+              { path: '/blog-cpp.html',        icon: 'âš¡', title: 'C++',           color: '#e3b341', desc: 'STL, templates and modern C++17 features explained clearly.' },
+              { path: '/blog-javascript.html', icon: 'ðŸŸ¡', title: 'JavaScript',    color: '#f1e05a', desc: 'Promises, async/await and ES6+ for Node.js backend dev.' },
+              { path: '/blog-go.html',         icon: 'ðŸ¹', title: 'Go',            color: '#00add8', desc: 'Goroutines, channels & idiomatic Go for concurrency.' },
+              { path: '/blog-rust.html',       icon: 'ðŸ¦€', title: 'Rust',          color: '#f74c00', desc: 'Ownership, borrowing & memory safety without a GC.' },
+              { path: '/blog-php.html',        icon: 'ðŸ˜', title: 'PHP',           color: '#8892bf', desc: 'Server-side scripting, arrays, OOP & web dev in PHP.' },
+              { path: '/blog-ruby.html',       icon: 'ðŸ’Ž', title: 'Ruby',          color: '#cc342d', desc: 'Elegant blocks, iterators & OOP the Ruby way.' },
             ].map(guide => (
               <a
                 key={guide.path}
                 href={guide.path}
-                style={{
-                  display: 'block', textDecoration: 'none', color: 'inherit',
-                  background: 'var(--bg2)', border: '1px solid var(--border)',
-                  borderRadius: 16, padding: '28px 24px',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                  position: 'relative', overflow: 'hidden'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = guide.color
-                  e.currentTarget.style.transform = 'translateY(-5px)'
-                  e.currentTarget.style.boxShadow = `0 16px 32px ${guide.color}22`
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)'
-                }}
+                style={{ display: 'block', textDecoration: 'none', color: 'inherit', background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 16, padding: '26px 22px', transition: 'all 0.25s ease', boxShadow: '0 2px 8px rgba(0,0,0,0.18)', position: 'relative', overflow: 'hidden' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = guide.color; e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = `0 16px 32px ${guide.color}22` }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.18)' }}
               >
-                {/* color bar */}
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${guide.color}, transparent)`, borderRadius: '16px 16px 0 0' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg,${guide.color},transparent)`, borderRadius: '16px 16px 0 0' }} />
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                  <span style={{ fontSize: 30 }}>{guide.icon}</span>
+                  <span style={{ fontSize: 28 }}>{guide.icon}</span>
                   <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>{guide.title}</h3>
                 </div>
                 <p style={{ margin: 0, fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.65 }}>{guide.desc}</p>
-                <div style={{ marginTop: 16, fontSize: 12, color: guide.color, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
-                  View Tutorial →
-                </div>
+                <div style={{ marginTop: 16, fontSize: 12, color: guide.color, fontWeight: 700 }}>View Tutorial â†’</div>
               </a>
             ))}
           </div>
         </section>
 
-        {/* ── FEATURES GRID ── */}
+        {/* â”€â”€ FEATURES â”€â”€ */}
         <section style={{ marginBottom: 96 }}>
           <div style={{ marginBottom: 40, textAlign: 'center' }}>
-            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: 2, color: '#f0a500', textTransform: 'uppercase', marginBottom: 10 }}>— Why Us</p>
-            <h2 style={{ fontSize: 'clamp(24px,4vw,38px)', fontWeight: 800, color: 'var(--text)', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
-              Why Choose Our Compiler?
-            </h2>
-            <p style={{ color: 'var(--text2)', fontSize: 15, margin: '0 auto', maxWidth: 480 }}>
-              Built for developers who want speed, simplicity, and professionalism in a browser-based tool.
-            </p>
+            <p style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: 2.5, color: '#f0a500', textTransform: 'uppercase', margin: '0 0 10px' }}>â€” Why Us</p>
+            <h2 style={{ fontSize: 'clamp(24px,4vw,38px)', fontWeight: 900, color: 'var(--text)', margin: '0 0 12px', letterSpacing: '-0.5px' }}>Why Choose Our Compiler?</h2>
+            <p style={{ color: 'var(--text2)', fontSize: 15, margin: '0 auto', maxWidth: 480, lineHeight: 1.75 }}>Built for developers who want speed, simplicity, and professionalism in a browser-based tool.</p>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 22 }}>
             {[
-              { icon: '⚡', title: 'Lightning Fast Execution', desc: 'Docker-isolated containers execute your code in under 2 seconds on average — no cold starts, no waiting.', color: '#f1e05a' },
-              { icon: '📝', title: 'Monaco Code Editor', desc: 'The same engine powering VS Code — full syntax highlighting, auto-complete, and smart indentation.', color: '#58a6ff' },
-              { icon: '🔒', title: 'Privacy First', desc: 'Your code is never stored. Complete sandbox isolation and zero tracking — guaranteed.', color: '#3fb950' },
-              { icon: '🌍', title: '9 Languages Supported', desc: 'Python, Java, C, C++, JavaScript, Go, Rust, PHP, Ruby — one platform for every stack.', color: '#f74c00' },
-              { icon: '📱', title: 'Works on Any Device', desc: 'Fully responsive design — works flawlessly on desktop, tablet, and mobile with an adaptive layout.', color: '#d2a8ff' },
-              { icon: '✨', title: 'Zero Setup Required', desc: 'Open your browser, choose a language, and start. No terminal, no installation, no frustration.', color: '#f0a500' },
+              { icon: 'âš¡', title: 'Lightning Fast Execution', desc: 'Docker-isolated containers execute your code in under 2 seconds â€” no cold starts.',           color: '#f1e05a' },
+              { icon: 'ðŸ“', title: 'Monaco Code Editor',       desc: 'The same engine powering VS Code â€” syntax highlighting, auto-complete & smart indentation.', color: '#58a6ff' },
+              { icon: 'ðŸ”’', title: 'Privacy First',            desc: 'Your code is never stored. Complete sandbox isolation and zero tracking â€” guaranteed.',       color: '#3fb950' },
+              { icon: 'ðŸŒ', title: '9 Languages Supported',    desc: 'Python, Java, C, C++, JavaScript, Go, Rust, PHP, Ruby â€” one platform for every stack.',      color: '#f74c00' },
+              { icon: 'ðŸ“±', title: 'Works on Any Device',      desc: 'Fully responsive â€” works on desktop, tablet, and mobile with an adaptive layout.',           color: '#d2a8ff' },
+              { icon: 'âœ¨', title: 'Zero Setup Required',       desc: 'Open your browser, choose a language, and start. No install, no frustration.',               color: '#f0a500' },
             ].map((f, i) => (
-              <div key={i} style={{
-                padding: '28px 28px', background: 'var(--bg2)', border: '1px solid var(--border)',
-                borderRadius: 16, transition: 'all 0.3s ease', cursor: 'default', position: 'relative', overflow: 'hidden'
-              }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = f.color
-                  e.currentTarget.style.transform = 'translateY(-4px)'
-                  e.currentTarget.style.boxShadow = `0 12px 28px ${f.color}20`
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}
+              <div key={i}
+                style={{ padding: '26px', background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 16, transition: 'all 0.25s ease', cursor: 'default' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = f.color; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 12px 28px ${f.color}20` }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
               >
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${f.color}18`, border: `1px solid ${f.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 18 }}>
-                  {f.icon}
-                </div>
+                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${f.color}18`, border: `1px solid ${f.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 18 }}>{f.icon}</div>
                 <h3 style={{ margin: '0 0 10px', fontSize: 17, fontWeight: 700, color: 'var(--text)' }}>{f.title}</h3>
                 <p style={{ margin: 0, fontSize: 14, color: 'var(--text2)', lineHeight: 1.65 }}>{f.desc}</p>
               </div>
@@ -900,37 +896,29 @@ function HomePage({ selectLanguage }) {
           </div>
         </section>
 
-        {/* ── CTA BANNER ── */}
-        <section style={{
-          background: 'linear-gradient(135deg, rgba(88,166,255,0.08) 0%, rgba(63,185,80,0.06) 50%, rgba(248,129,80,0.06) 100%)',
-          border: '1px solid rgba(88,166,255,0.25)',
-          borderRadius: 24, padding: '64px 40px', textAlign: 'center'
-        }}>
-          <h3 style={{ fontSize: 'clamp(22px,4vw,36px)', fontWeight: 800, margin: '0 0 14px', color: 'var(--text)', letterSpacing: '-0.5px' }}>
-            Ready to Write Your First Program?
-          </h3>
-          <p style={{ fontSize: 16, color: 'var(--text2)', margin: '0 auto 32px', maxWidth: 460 }}>
-            Join thousands of developers and students who code faster with Our Compiler every day.
-          </p>
+        {/* â”€â”€ CTA BANNER â”€â”€ */}
+        <section style={{ background: 'linear-gradient(135deg,rgba(88,166,255,0.08) 0%,rgba(63,185,80,0.06) 50%,rgba(248,129,80,0.06) 100%)', border: '1px solid rgba(88,166,255,0.22)', borderRadius: 24, padding: '64px 40px', textAlign: 'center' }}>
+          <h3 style={{ fontSize: 'clamp(22px,4vw,36px)', fontWeight: 900, margin: '0 0 14px', color: 'var(--text)', letterSpacing: '-0.5px' }}>Ready to Write Your First Program?</h3>
+          <p style={{ fontSize: 16, color: 'var(--text2)', margin: '0 auto 32px', maxWidth: 460, lineHeight: 1.75 }}>Join thousands of developers and students who code faster with Our Compiler every day.</p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
               onClick={() => selectLanguage('python3')}
-              style={{ background: 'linear-gradient(135deg, #58a6ff 0%, #1f6feb 100%)', color: '#fff', border: 'none', borderRadius: 12, padding: '14px 36px', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 20px rgba(88,166,255,0.35)', transition: 'all 0.25s' }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(88,166,255,0.5)' }}
+              style={{ background: 'linear-gradient(135deg,#58a6ff,#1f6feb)', color: '#fff', border: 'none', borderRadius: 12, padding: '14px 36px', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 20px rgba(88,166,255,0.35)', transition: 'all .22s' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(88,166,255,0.5)' }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(88,166,255,0.35)' }}
-            >🐍 Try Python Now</button>
+            >ðŸ Try Python Now</button>
             <button
               onClick={() => selectLanguage('java')}
-              style={{ background: 'linear-gradient(135deg, #f0a500 0%, #e8890c 100%)', color: '#fff', border: 'none', borderRadius: 12, padding: '14px 36px', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 20px rgba(240,165,0,0.3)', transition: 'all 0.25s' }}
+              style={{ background: 'linear-gradient(135deg,#f0a500,#e8890c)', color: '#fff', border: 'none', borderRadius: 12, padding: '14px 36px', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 20px rgba(240,165,0,0.30)', transition: 'all .22s' }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)' }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)' }}
-            >☕ Try Java Now</button>
+            >â˜• Try Java Now</button>
           </div>
         </section>
 
       </main>
 
-      {/* ── FOOTER ── */}
+      {/* â•â• FOOTER â•â• */}
       <footer style={{ padding: '36px 24px 28px', background: 'var(--bg2)', borderTop: '1px solid var(--border)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24 }}>
@@ -940,13 +928,14 @@ function HomePage({ selectLanguage }) {
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
               {[
-                { href: '/about.html', label: 'About' },
-                { href: '/features.html', label: 'Features' },
-                { href: '/blog.html', label: 'Tutorials' },
-                { href: '/contact.html', label: 'Contact' },
-                { href: '/privacy-policy.html', label: 'Privacy' },
+                { href: '/about.html',         label: 'About' },
+                { href: '/features.html',       label: 'Features' },
+                { href: '/blog.html',           label: 'Tutorials' },
+                { href: '/contact.html',         label: 'Contact' },
+                { href: '/privacy-policy.html',  label: 'Privacy' },
               ].map(l => (
-                <a key={l.href} href={l.href} style={{ color: 'var(--text2)', textDecoration: 'none', fontSize: 14, transition: 'color 0.2s' }}
+                <a key={l.href} href={l.href}
+                  style={{ color: 'var(--text2)', textDecoration: 'none', fontSize: 14, transition: 'color 0.2s' }}
                   onMouseEnter={e => e.target.style.color = 'var(--accent)'}
                   onMouseLeave={e => e.target.style.color = 'var(--text2)'}
                 >{l.label}</a>
@@ -954,11 +943,13 @@ function HomePage({ selectLanguage }) {
             </div>
           </div>
           <div style={{ borderTop: '1px solid var(--border)', paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-            <span style={{ fontSize: 12, color: 'var(--text3)' }}>Our Compiler — Free Online Code Compiler • © 2026</span>
-            <span style={{ fontSize: 12, color: 'var(--text3)' }}>Built with ❤️ for developers</span>
+            <span style={{ fontSize: 12, color: 'var(--text3)' }}>Our Compiler â€” Free Online Code Compiler Â· Â© 2026</span>
+            <span style={{ fontSize: 12, color: 'var(--text3)' }}>Built with â¤ï¸ for developers</span>
           </div>
         </div>
       </footer>
+
     </div>
   )
 }
+
