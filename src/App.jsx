@@ -430,7 +430,7 @@ export default function App() {
           {/* NAV */}
           <nav style={s.nav}>
             <div style={s.brand} onClick={goHome} role="button" tabIndex={0} aria-label="Go to homepage">
-              <img src="/logo.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8 }} />
+              <img src="/logo-nav.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8, mixBlendMode: 'multiply' }} />
               <span onClick={goHome} style={{ ...s.brandName, cursor: 'pointer' }}>Our Compiler</span>
             </div>
           </nav>
@@ -696,14 +696,15 @@ function HomePage({ selectLanguage }) {
             marginBottom: 12
           }}>
             <img
-              src="/logo.png"
+              src="/logo-nav.png"
               alt="Our Compiler Logo"
               style={{
-                height: 80,
-                width: 80,
+                height: 90,
+                width: 90,
                 objectFit: 'contain',
                 borderRadius: 16,
-                filter: 'drop-shadow(0 4px 16px rgba(88,166,255,0.3))'
+                mixBlendMode: 'multiply',
+                filter: 'drop-shadow(0 4px 20px rgba(88,166,255,0.35))'
               }}
             />
             <div style={{
@@ -935,7 +936,7 @@ function HomePage({ selectLanguage }) {
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <img src="/logo.png" alt="logo" style={{ height: 32, width: 32, objectFit: 'contain', borderRadius: 8 }} />
+              <img src="/logo-nav.png" alt="logo" style={{ height: 32, width: 32, objectFit: 'contain', borderRadius: 8, mixBlendMode: 'multiply' }} />
               <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>Our Compiler</span>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
