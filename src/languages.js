@@ -11,21 +11,21 @@ export const LANGUAGES = [
 ]
 
 export const TEMPLATES = {
-  python3: '# Python 3\nprint("Hello from Mana Compiler!")\nfor i in range(1, 6):\n    print(str(i) + " x " + str(i) + " = " + str(i*i))',
+  python3: '# Welcome to Our Compiler! 🚀\n\nprint("=" * 40)\nprint("      Welcome to Our Compiler! 🚀      ")\nprint("=" * 40)\n\nprint("Hello, World!")',
 
-  java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello from Mana Compiler!");\n        for (int i = 1; i <= 5; i++) {\n            System.out.println(i + " x " + i + " = " + (i*i));\n        }\n    }\n}',
+  java: '// Welcome to Our Compiler! 🚀\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("========================================");\n        System.out.println("      Welcome to Our Compiler! 🚀      ");\n        System.out.println("========================================");\n        \n        System.out.println("Hello, World!");\n    }\n}',
 
-  c: '#include <stdio.h>\nint main() {\n    printf("Hello from Mana Compiler!\\n");\n    for (int i = 1; i <= 5; i++)\n        printf("%d x %d = %d\\n", i, i, i*i);\n    return 0;\n}',
+  c: '#include <stdio.h>\n\nint main() {\n    printf("========================================\\n");\n    printf("      Welcome to Our Compiler! 🚀      \\n");\n    printf("========================================\\n");\n    \n    printf("Hello, World!\\n");\n    return 0;\n}',
 
-  cpp17: '#include <iostream>\nusing namespace std;\nint main() {\n    cout << "Hello from Mana Compiler!" << endl;\n    for (int i = 1; i <= 5; i++)\n        cout << i << " x " << i << " = " << i*i << endl;\n    return 0;\n}',
+  cpp17: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "========================================" << endl;\n    cout << "      Welcome to Our Compiler! 🚀      " << endl;\n    cout << "========================================" << endl;\n    \n    cout << "Hello, World!" << endl;\n    return 0;\n}',
 
-  nodejs: 'console.log("Hello from Mana Compiler!");\nfor (let i = 1; i <= 5; i++)\n    console.log(i + " x " + i + " = " + (i*i));',
+  nodejs: 'console.log("========================================");\nconsole.log("      Welcome to Our Compiler! 🚀      ");\nconsole.log("========================================");\n\nconsole.log("Hello, World!");',
 
-  go: 'package main\nimport "fmt"\nfunc main() {\n    fmt.Println("Hello from Mana Compiler!")\n    for i := 1; i <= 5; i++ {\n        fmt.Printf("%d x %d = %d\\n", i, i, i*i)\n    }\n}',
+  go: 'package main\nimport "fmt"\n\nfunc main() {\n    fmt.Println("========================================")\n    fmt.Println("      Welcome to Our Compiler! 🚀      ")\n    fmt.Println("========================================")\n    \n    fmt.Println("Hello, World!")\n}',
 
-  rust: 'fn main() {\n    println!("Hello from Mana Compiler!");\n    for i in 1..=5 {\n        println!("{} x {} = {}", i, i, i*i);\n    }\n}',
+  rust: 'fn main() {\n    println!("========================================");\n    println!("      Welcome to Our Compiler! 🚀      ");\n    println!("========================================");\n    \n    println!("Hello, World!");\n}',
 
-  php: '<?php\necho "Hello from Mana Compiler!\\n";\nfor ($i = 1; $i <= 5; $i++)\n    echo "$i x $i = " . ($i*$i) . "\\n";',
+  php: '<?php\necho "========================================\\n";\necho "      Welcome to Our Compiler! 🚀      \\n";\necho "========================================\\n";\n\necho "Hello, World!\\n";',
 
-  ruby: 'puts "Hello from Mana Compiler!"\n(1..5).each { |i| puts "#{i} x #{i} = #{i*i}" }',
+  ruby: 'puts "========================================"\nputs "      Welcome to Our Compiler! 🚀      "\nputs "========================================"\n\nputs "Hello, World!"',
 }

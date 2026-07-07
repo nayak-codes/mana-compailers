@@ -191,8 +191,9 @@ export default function App() {
   const urlLangId = queryParams.get('lang')
   const initialLang = urlLangId ? (LANGUAGES.find(x => x.id === urlLangId) || DEFAULT) : DEFAULT
   const initialView = urlLangId && LANGUAGES.some(x => x.id === urlLangId) ? 'compiler' : 'home'
-  const initialCode = localStorage.getItem(`code_${initialLang.id}`) !== null 
-    ? localStorage.getItem(`code_${initialLang.id}`) 
+  const savedInitial = localStorage.getItem(`code_${initialLang.id}`)
+  const initialCode = (savedInitial !== null && savedInitial.trim() !== '')
+    ? savedInitial 
     : (TEMPLATES[initialLang.id] || '')
 
   const [view, setView] = useState(initialView)
@@ -246,7 +247,7 @@ export default function App() {
     const l = LANGUAGES.find(x => x.id === id)
     setLang(l)
     const savedCode = localStorage.getItem(`code_${id}`)
-    setCode(savedCode !== null ? savedCode : (TEMPLATES[id] || ''))
+    setCode(savedCode !== null && savedCode.trim() !== '' ? savedCode : (TEMPLATES[id] || ''))
     setOutput(null)
     setInputs([])
     setView('compiler')
@@ -259,7 +260,7 @@ export default function App() {
     const l = LANGUAGES.find(x => x.id === id)
     setLang(l)
     const savedCode = localStorage.getItem(`code_${id}`)
-    setCode(savedCode !== null ? savedCode : (TEMPLATES[id] || ''))
+    setCode(savedCode !== null && savedCode.trim() !== '' ? savedCode : (TEMPLATES[id] || ''))
     setOutput(null)
     setInputs([])
     // Update URL query parameter
@@ -430,7 +431,7 @@ export default function App() {
           {/* NAV */}
           <nav style={s.nav}>
             <div style={s.brand} onClick={goHome} role="button" tabIndex={0} aria-label="Go to homepage">
-              <img src="/logo-nav.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8, mixBlendMode: 'multiply' }} />
+              <img src="/logo-nav.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8 }} />
               <span onClick={goHome} style={{ ...s.brandName, cursor: 'pointer' }}>Our Compiler</span>
             </div>
           </nav>
@@ -703,7 +704,6 @@ function HomePage({ selectLanguage }) {
                 width: 90,
                 objectFit: 'contain',
                 borderRadius: 16,
-                mixBlendMode: 'multiply',
                 filter: 'drop-shadow(0 4px 20px rgba(88,166,255,0.35))'
               }}
             />
@@ -936,7 +936,7 @@ function HomePage({ selectLanguage }) {
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <img src="/logo-nav.png" alt="logo" style={{ height: 32, width: 32, objectFit: 'contain', borderRadius: 8, mixBlendMode: 'multiply' }} />
+              <img src="/logo-nav.png" alt="logo" style={{ height: 32, width: 32, objectFit: 'contain', borderRadius: 8 }} />
               <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>Our Compiler</span>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
