@@ -177,6 +177,43 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
   });
 }
 
+function preprocessJavaCode(code) {
+  // 1. Escape non-ASCII characters to \uXXXX unicode escapes
+  let escapedCode = '';
+  for (let i = 0; i < code.length; i++) {
+    const char = code[i];
+    const codePoint = code.charCodeAt(i);
+    if (codePoint > 127) {
+      const hex = codePoint.toString(16).padStart(4, '0');
+      escapedCode += '\\u' + hex;
+    } else {
+      escapedCode += char;
+    }
+  }
+  code = escapedCode;
+
+  // 2. Rename class to Main if necessary
+  if (/\bclass\s+Main\b/.test(code)) {
+    return code;
+  }
+  const publicClassMatch = code.match(/\bpublic\s+class\s+([A-Za-z0-9_]+)\b/);
+  let targetClassName = null;
+  if (publicClassMatch) {
+    targetClassName = publicClassMatch[1];
+  } else {
+    const classMatch = code.match(/\bclass\s+([A-Za-z0-9_]+)\b/);
+    if (classMatch) {
+      targetClassName = classMatch[1];
+    }
+  }
+  if (targetClassName && targetClassName !== 'Main') {
+    const escapedName = targetClassName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const replacementRegex = new RegExp('\\b' + escapedName + '\\b', 'g');
+    return code.replace(replacementRegex, 'Main');
+  }
+  return code;
+}
+
 const BACKEND_URL = 'https://mana-compailer-backend-docker.onrender.com'
 
 
@@ -191,9 +228,17 @@ export default function App() {
   const urlLangId = queryParams.get('lang')
   const initialLang = urlLangId ? (LANGUAGES.find(x => x.id === urlLangId) || DEFAULT) : DEFAULT
   const initialView = urlLangId && LANGUAGES.some(x => x.id === urlLangId) ? 'compiler' : 'home'
+
+  // 🔄 Cache busting — if template version changed, clear old saved code
+  const TEMPLATE_VERSION = 'v2'
+  if (localStorage.getItem('template_version') !== TEMPLATE_VERSION) {
+    LANGUAGES.forEach(l => localStorage.removeItem(`code_${l.id}`))
+    localStorage.setItem('template_version', TEMPLATE_VERSION)
+  }
+
   const savedInitial = localStorage.getItem(`code_${initialLang.id}`)
   const initialCode = (savedInitial !== null && savedInitial.trim() !== '')
-    ? savedInitial 
+    ? savedInitial
     : (TEMPLATES[initialLang.id] || '')
 
   const [view, setView] = useState(initialView)
@@ -376,7 +421,7 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           language: lang.id,
-          code: code,
+          code: lang.id === 'java' ? preprocessJavaCode(code) : code,
           stdin: inputToSend || ''
         })
       })
@@ -430,9 +475,29 @@ export default function App() {
         <>
           {/* NAV */}
           <nav style={s.nav}>
-            <div style={s.brand} onClick={goHome} role="button" tabIndex={0} aria-label="Go to homepage">
-              <img src="/logo-nav.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8 }} />
-              <span onClick={goHome} style={{ ...s.brandName, cursor: 'pointer' }}>Our Compiler</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={s.brand} onClick={goHome} role="button" tabIndex={0} aria-label="Go to homepage">
+                <img src="/logo-nav.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8 }} />
+                <span onClick={goHome} style={{ ...s.brandName, cursor: 'pointer' }}>Our Compiler</span>
+              </div>
+              <a
+                href="https://balanju-sol-8h4m.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  fontSize: 11, fontWeight: 700, letterSpacing: 0.8,
+                  color: '#a78bfa', textDecoration: 'none',
+                  padding: '3px 8px', borderRadius: '12px',
+                  background: 'rgba(108,61,232,0.15)',
+                  border: '1px solid rgba(108,61,232,0.3)',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.3)'; e.currentTarget.style.color = '#c4b5fd' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.15)'; e.currentTarget.style.color = '#a78bfa' }}
+              >
+                🔷 A Balanju Product
+              </a>
             </div>
           </nav>
 
@@ -635,7 +700,17 @@ export default function App() {
 
           <footer style={s.footer}>
             <div>Our Compiler • <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
-            <div>Free online code compiler with fast execution and support for multiple languages.</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span>Free online code compiler for developers worldwide.</span>
+              <a
+                href="https://balanju-sol-8h4m.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#a78bfa', fontWeight: 800, textDecoration: 'none', fontSize: 11, letterSpacing: 0.5, transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#c4b5fd'}
+                onMouseLeave={e => e.currentTarget.style.color = '#a78bfa'}
+              >🔷 A Balanju Solutions Product</a>
+            </div>
           </footer>
         </>
       )}
@@ -931,32 +1006,197 @@ function HomePage({ selectLanguage }) {
 
       </main>
 
-      {/* ── FOOTER ── */}
-      <footer style={{ padding: '36px 24px 28px', background: 'var(--bg2)', borderTop: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <img src="/logo-nav.png" alt="logo" style={{ height: 32, width: 32, objectFit: 'contain', borderRadius: 8 }} />
-              <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>Our Compiler</span>
+      {/* ── PREMIUM FOOTER ── */}
+      <footer style={{
+        position: 'relative',
+        background: 'linear-gradient(180deg, #0d121c 0%, #07090e 100%)',
+        fontFamily: "'Inter', 'Segoe UI', sans-serif"
+      }}>
+
+        {/* Glowing top accent */}
+        <div style={{
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(108,61,232,0.8) 30%, rgba(88,166,255,1.0) 50%, rgba(63,185,80,0.8) 70%, transparent 100%)',
+        }} />
+
+        {/* Balanju banner */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(108,61,232,0.2) 0%, rgba(88,166,255,0.12) 100%)',
+          borderBottom: '1px solid rgba(108,61,232,0.25)',
+          padding: '14px 40px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px'
+        }}>
+          <span style={{ fontSize: '12px', color: '#cbd5e1', fontWeight: '600', letterSpacing: '1.5px', textTransform: 'uppercase' }}>Proudly built by</span>
+          <a href="https://balanju-sol-8h4m.vercel.app/" target="_blank" rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              textDecoration: 'none',
+              background: 'rgba(108,61,232,0.25)',
+              border: '1px solid rgba(108,61,232,0.5)',
+              borderRadius: '999px', padding: '6px 18px',
+              transition: 'all 0.25s'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.4)'; e.currentTarget.style.borderColor = '#9f75ff'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(108,61,232,0.4)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.25)'; e.currentTarget.style.borderColor = 'rgba(108,61,232,0.5)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+          >
+            <span style={{ fontSize: '15px' }}>🔷</span>
+            <span style={{ fontSize: '13px', fontWeight: '800', color: '#c4b5fd', letterSpacing: '0.2px' }}>Balanju Solutions</span>
+            <span style={{ fontSize: '11px', color: 'rgba(196,181,253,0.9)', fontWeight: '700' }}>↗</span>
+          </a>
+        </div>
+
+        {/* Main grid */}
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '64px 40px 40px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '40px',
+            marginBottom: '56px'
+          }}>
+
+            {/* Col 1 — Brand */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                <img src="/logo-nav.png" alt="Our Compiler" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '9px', boxShadow: '0 0 16px rgba(88,166,255,0.4)' }} />
+                <span style={{ fontSize: '19px', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.3px' }}>Our Compiler</span>
+              </div>
+              <p style={{ fontSize: '13.5px', color: '#e2e8f0', lineHeight: '1.85', margin: '0 0 22px', maxWidth: '240px' }}>
+                Write, compile &amp; run code in 10+ languages — instantly in your browser. No setup. No login. Always free.
+              </p>
+              {/* Social icons */}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {[
+                  { icon: '𝕏', label: 'Twitter' },
+                  { icon: '⌨', label: 'GitHub' },
+                  { icon: 'in', label: 'LinkedIn' },
+                ].map(s => (
+                  <a key={s.label} href="#" aria-label={s.label}
+                    style={{
+                      width: '34px', height: '34px', borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(255,255,255,0.18)',
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#e2e8f0', fontSize: '13px', fontWeight: '700',
+                      textDecoration: 'none', transition: 'all 0.2s', cursor: 'pointer'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(88,166,255,0.2)'; e.currentTarget.style.borderColor = 'rgba(88,166,255,0.5)'; e.currentTarget.style.color = '#58a6ff' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)'; e.currentTarget.style.color = '#e2e8f0' }}
+                  >{s.icon}</a>
+                ))}
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-              {[
-                { href: '/about.html', label: 'About' },
-                { href: '/features.html', label: 'Features' },
-                { href: '/blog.html', label: 'Tutorials' },
-                { href: '/contact.html', label: 'Contact' },
-                { href: '/privacy-policy.html', label: 'Privacy' },
-              ].map(l => (
-                <a key={l.href} href={l.href} style={{ color: 'var(--text2)', textDecoration: 'none', fontSize: 14, transition: 'color 0.2s' }}
-                  onMouseEnter={e => e.target.style.color = 'var(--accent)'}
-                  onMouseLeave={e => e.target.style.color = 'var(--text2)'}
-                >{l.label}</a>
-              ))}
+
+            {/* Col 2 — Languages */}
+            <div>
+              <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#58a6ff', margin: '0 0 18px', borderBottom: '1px solid rgba(88,166,255,0.35)', paddingBottom: '10px' }}>Languages</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {[
+                  { icon: '🐍', label: 'Python', lang: 'python3' },
+                  { icon: '☕', label: 'Java', lang: 'java' },
+                  { icon: '⚙️', label: 'C / C++', lang: 'cpp17' },
+                  { icon: '🟨', label: 'JavaScript', lang: 'nodejs' },
+                  { icon: '🦀', label: 'Rust', lang: 'rust' },
+                  { icon: '🐹', label: 'Go', lang: 'go' },
+                ].map(l => (
+                  <li key={l.lang}>
+                    <a href={`/?lang=${l.lang}`}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.18s' }}
+                      onMouseEnter={e => e.currentTarget.style.color = '#58a6ff'}
+                      onMouseLeave={e => e.currentTarget.style.color = '#cbd5e1'}
+                    ><span>{l.icon}</span>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 3 — Product */}
+            <div>
+              <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: '#3fb950', margin: '0 0 18px', borderBottom: '1px solid rgba(63,185,80,0.35)', paddingBottom: '10px' }}>Product</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {[
+                  { href: '/features.html', label: '⚡ Features' },
+                  { href: '/blog.html', label: '📚 Tutorials' },
+                  { href: '/about.html', label: 'ℹ️ About' },
+                  { href: '/contact.html', label: '📬 Contact' },
+                  { href: '/privacy-policy.html', label: '🔒 Privacy' },
+                ].map(l => (
+                  <li key={l.href}>
+                    <a href={l.href}
+                      style={{ fontSize: '13.5px', color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.18s' }}
+                      onMouseEnter={e => e.currentTarget.style.color = '#3fb950'}
+                      onMouseLeave={e => e.currentTarget.style.color = '#cbd5e1'}
+                    >{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 4 — Balanju Solutions (highlighted) */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(108,61,232,0.18) 0%, rgba(108,61,232,0.06) 100%)',
+              border: '1px solid rgba(108,61,232,0.35)',
+              borderRadius: '16px',
+              padding: '24px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ fontSize: '18px' }}>🔷</span>
+                <span style={{ fontSize: '14px', fontWeight: '800', color: '#c4b5fd', letterSpacing: '-0.2px' }}>Balanju Solutions</span>
+              </div>
+              <p style={{ fontSize: '12.5px', color: '#e9d5ff', lineHeight: '1.75', margin: '0 0 18px' }}>
+                Our Compiler is a flagship product of Balanju Solutions — a tech startup building innovative software for developers &amp; businesses.
+              </p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                {[
+                  { href: 'https://balanju-sol-8h4m.vercel.app/', label: '🌐 Company Website' },
+                  { href: 'https://balanju-sol-8h4m.vercel.app/products.html', label: '🚀 All Products' },
+                  { href: 'https://balanju-sol-8h4m.vercel.app/services.html', label: '🛠️ Our Services' },
+                  { href: 'https://balanju-sol-8h4m.vercel.app/contact.html', label: '🤝 Hire Us' },
+                ].map(l => (
+                  <li key={l.href}>
+                    <a href={l.href} target="_blank" rel="noopener noreferrer"
+                      style={{ fontSize: '13px', color: '#d8b4fe', textDecoration: 'none', transition: 'color 0.18s', fontWeight: '500' }}
+                      onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+                      onMouseLeave={e => e.currentTarget.style.color = '#d8b4fe'}
+                    >{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+              <a href="https://balanju-sol-8h4m.vercel.app/" target="_blank" rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '5px',
+                  fontSize: '12px', fontWeight: '800', color: '#ffffff',
+                  textDecoration: 'none',
+                  background: 'rgba(108,61,232,0.35)',
+                  border: '1px solid rgba(108,61,232,0.6)',
+                  borderRadius: '999px', padding: '7px 18px',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.5)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(108,61,232,0.45)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.35)'; e.currentTarget.style.boxShadow = 'none' }}
+              >Visit Balanju →</a>
             </div>
           </div>
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-            <span style={{ fontSize: 12, color: 'var(--text3)' }}>Our Compiler — Free Online Code Compiler • © 2026</span>
-            <span style={{ fontSize: 12, color: 'var(--text3)' }}>Built with ❤️ for developers</span>
+
+          {/* Bottom bar */}
+          <div style={{
+            borderTop: '1px solid rgba(255,255,255,0.15)',
+            paddingTop: '24px', paddingBottom: '32px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            flexWrap: 'wrap', gap: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '12.5px', color: '#cbd5e1' }}>© 2026 Our Compiler. All rights reserved.</span>
+              <span style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.3)' }}>|</span>
+              <span style={{ fontSize: '12.5px', color: '#cbd5e1' }}>Free · No ads · No sign-up</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '12px', color: '#cbd5e1' }}>Made with ❤️ in India by</span>
+              <a href="https://balanju-sol-8h4m.vercel.app/" target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: '12.5px', fontWeight: '800', color: '#c4b5fd', textDecoration: 'none', letterSpacing: '0.2px', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={e => e.currentTarget.style.color = '#c4b5fd'}
+              >🔷 Balanju Solutions</a>
+            </div>
           </div>
         </div>
       </footer>

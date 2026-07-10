@@ -11,6 +11,43 @@ const PORT = 3002  // Changed to 3002 to avoid conflicts
 // Reuse HTTPS connections to reduce cold-start latency
 const agent = new https.Agent({ keepAlive: true })
 
+function preprocessJavaCode(code) {
+  // 1. Escape non-ASCII characters to \uXXXX unicode escapes
+  let escapedCode = '';
+  for (let i = 0; i < code.length; i++) {
+    const char = code[i];
+    const codePoint = code.charCodeAt(i);
+    if (codePoint > 127) {
+      const hex = codePoint.toString(16).padStart(4, '0');
+      escapedCode += '\\u' + hex;
+    } else {
+      escapedCode += char;
+    }
+  }
+  code = escapedCode;
+
+  // 2. Rename class to Main if necessary
+  if (/\bclass\s+Main\b/.test(code)) {
+    return code;
+  }
+  const publicClassMatch = code.match(/\bpublic\s+class\s+([A-Za-z0-9_]+)\b/);
+  let targetClassName = null;
+  if (publicClassMatch) {
+    targetClassName = publicClassMatch[1];
+  } else {
+    const classMatch = code.match(/\bclass\s+([A-Za-z0-9_]+)\b/);
+    if (classMatch) {
+      targetClassName = classMatch[1];
+    }
+  }
+  if (targetClassName && targetClassName !== 'Main') {
+    const escapedName = targetClassName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const replacementRegex = new RegExp('\\b' + escapedName + '\\b', 'g');
+    return code.replace(replacementRegex, 'Main');
+  }
+  return code;
+}
+
 app.use(cors())
 app.use(express.json())
 
@@ -36,7 +73,7 @@ app.post('/api/run', async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         language: language,
-        code: code,
+        code: language === 'java' ? preprocessJavaCode(code) : code,
         stdin: stdin || ''
       }),
       agent  // ✅ Keep-alive connections
