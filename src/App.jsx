@@ -480,24 +480,6 @@ export default function App() {
                 <img src="/logo-nav.png" alt="Our Compiler Logo" style={{ height: 44, width: 44, objectFit: 'contain', cursor: 'pointer', borderRadius: 8 }} />
                 <span onClick={goHome} style={{ ...s.brandName, cursor: 'pointer' }}>Our Compiler</span>
               </div>
-              <a
-                href="https://balanju-sol-8h4m.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 5,
-                  fontSize: 11, fontWeight: 700, letterSpacing: 0.8,
-                  color: '#a78bfa', textDecoration: 'none',
-                  padding: '3px 8px', borderRadius: '12px',
-                  background: 'rgba(108,61,232,0.15)',
-                  border: '1px solid rgba(108,61,232,0.3)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.3)'; e.currentTarget.style.color = '#c4b5fd' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.15)'; e.currentTarget.style.color = '#a78bfa' }}
-              >
-                🔷 A Balanju Product
-              </a>
             </div>
           </nav>
 
@@ -699,11 +681,11 @@ export default function App() {
           </div>
 
           <footer style={s.footer}>
-            <div>Our Compiler • <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
+            <div>Our Compiler • <a href="/about.html" style={{ color: 'var(--text2)' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/blog.html" style={{ color: 'var(--text2)' }}>Tutorials</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <span>Free online code compiler for developers worldwide.</span>
               <a
-                href="https://balanju-sol-8h4m.vercel.app/"
+                href="https://balanju-solutions.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: '#a78bfa', fontWeight: 800, textDecoration: 'none', fontSize: 11, letterSpacing: 0.5, transition: 'color 0.2s' }}
@@ -1027,7 +1009,7 @@ function HomePage({ selectLanguage }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px'
         }}>
           <span style={{ fontSize: '12px', color: '#cbd5e1', fontWeight: '600', letterSpacing: '1.5px', textTransform: 'uppercase' }}>Proudly built by</span>
-          <a href="https://balanju-sol-8h4m.vercel.app/" target="_blank" rel="noopener noreferrer"
+          <a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               textDecoration: 'none',
@@ -1147,10 +1129,10 @@ function HomePage({ selectLanguage }) {
               </p>
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 {[
-                  { href: 'https://balanju-sol-8h4m.vercel.app/', label: '🌐 Company Website' },
-                  { href: 'https://balanju-sol-8h4m.vercel.app/products.html', label: '🚀 All Products' },
-                  { href: 'https://balanju-sol-8h4m.vercel.app/services.html', label: '🛠️ Our Services' },
-                  { href: 'https://balanju-sol-8h4m.vercel.app/contact.html', label: '🤝 Hire Us' },
+                  { href: 'https://balanju-solutions.vercel.app/', label: '🌐 Company Website' },
+                  { href: 'https://balanju-solutions.vercel.app/products.html', label: '🚀 All Products' },
+                  { href: 'https://balanju-solutions.vercel.app/services.html', label: '🛠️ Our Services' },
+                  { href: 'https://balanju-solutions.vercel.app/contact.html', label: '🤝 Hire Us' },
                 ].map(l => (
                   <li key={l.href}>
                     <a href={l.href} target="_blank" rel="noopener noreferrer"
@@ -1161,7 +1143,7 @@ function HomePage({ selectLanguage }) {
                   </li>
                 ))}
               </ul>
-              <a href="https://balanju-sol-8h4m.vercel.app/" target="_blank" rel="noopener noreferrer"
+              <a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '5px',
                   fontSize: '12px', fontWeight: '800', color: '#ffffff',
@@ -1191,7 +1173,7 @@ function HomePage({ selectLanguage }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontSize: '12px', color: '#cbd5e1' }}>Made with ❤️ in India by</span>
-              <a href="https://balanju-sol-8h4m.vercel.app/" target="_blank" rel="noopener noreferrer"
+              <a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: '12.5px', fontWeight: '800', color: '#c4b5fd', textDecoration: 'none', letterSpacing: '0.2px', transition: 'color 0.2s' }}
                 onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
                 onMouseLeave={e => e.currentTarget.style.color = '#c4b5fd'}
