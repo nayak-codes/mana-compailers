@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 3 Basic Operators & Math | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 â€” Python 3 Basic Operators & Math with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? 'ðŸŒ™ Dark' : 'â˜€ï¸ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = 'ðŸ“‹ Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = 'âœ… Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = 'ðŸ“‹ Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-nav.js" defer></script>
+
+    
+  <!-- Scroll Position Restoration Script -->
+  <script>
+    (function() {
+      // Restore scroll position on page load - wait for all images and content
+      var restoreScrollTimeout;
+      
+      function restoreScroll() {
+        var scrollPos = sessionStorage.getItem('scrollPos');
+        if (scrollPos) {
+          var pos = parseInt(scrollPos, 10);
+          window.scrollTo(0, pos);
+          sessionStorage.removeItem('scrollPos');
+        }
+      }
+      
+      // Try multiple times to restore - waits for layout to settle
+      window.addEventListener('load', function() {
+        restoreScroll();
+        // Also try after a small delay to account for lazy-loaded content
+        setTimeout(restoreScroll, 100);
+        setTimeout(restoreScroll, 500);
+      });
+
+      // Also restore when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(restoreScroll, 50);
+      });
+
+      // Save scroll position before navigating away
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
+          // Only save for same-domain links (internal navigation)
+          sessionStorage.setItem('scrollPos', window.scrollY);
+        }
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a><a href="/blog-git.html">Git & GitHub</a></nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Python 3 Tutorial</div>
+    <a href="/blog-python.html">Python 3 HOME</a>
+    <a href="/blog-python-intro.html">1. Welcome & Hello World</a>
+    <a href="/blog-python-variables.html">2. Variables & Core Types</a>
+    <a href="/blog-python-operators.html" class="active">3. Basic Operators & Math</a>
+    <a href="/blog-python-strings.html">4. String Slicing & Methods</a>
+    <a href="/blog-python-conditionals.html">5. Conditionals (if-else)</a>
+    <a href="/blog-python-loops.html">6. Loops & Ranges</a>
+    <a href="/blog-python-input.html">7. Reading User Inputs</a>
+    <a href="/blog-python-lists.html">8. Lists & Tuples</a>
+    <a href="/blog-python-dicts.html">9. Dictionaries & Sets</a>
+    <a href="/blog-python-functions.html">10. Functions & Reusable Code</a>
+    <a href="/blog-python-modules.html">11. Modules & Standard Lib</a>
+    <a href="/blog-python-files.html">12. File I/O Operations</a>
+    <a href="/blog-python-errors.html">13. Exception Handling</a>
+    <a href="/blog-python-oop-basics.html">14. OOP: Classes & Objects</a>
+    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance & Dunder</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=python3">â–¶ Try Python 3 Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    
+<div class="breadcrumb">
+  <a href="/">Home</a><span>â€º</span>
+  <a href="/blog.html">Tutorials</a><span>â€º</span>
+  <a href="/blog-python.html">Python 3</a><span>â€º</span>
+  <span>Basic Operators & Math</span>
+</div>
+<h1 class="page-title">Python 3 â€” Basic Operators & Math</h1>
+<div class="page-meta">
+  <span class="badge">ðŸ Python 3</span>
+  <span class="badge">ðŸŸ¢ Lesson 3</span>
+  <span class="badge">ðŸ“… July 2026</span>
+</div>
+
+<div class="intro-box">
+  <p>Computers excel at calculations. In this lesson, we will see how Python executes basic arithmetic, how operators interact with string text, and how to convert data from one type to another (called type casting) to avoid standard type bugs.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Arithmetic Operators</div>
+  <p>Python provides simple operators for math operations. Most are standard symbols, with a few useful additions:</p>
+  <table class="tbl">
+    <tr><th>Operator</th><th>Operation</th><th>Example</th><th>Result</th></tr>
+    <tr><td><code>+</code></td><td>Addition</td><td><code>10 + 5</code></td><td><code>15</code></td></tr>
+    <tr><td><code>-</code></td><td>Subtraction</td><td><code>10 - 5</code></td><td><code>5</code></td></tr>
+    <tr><td><code>*</code></td><td>Multiplication</td><td><code>10 * 5</code></td><td><code>50</code></td></tr>
+    <tr><td><code>/</code></td><td>Division (always returns float)</td><td><code>10 / 4</code></td><td><code>2.5</code></td></tr>
+    <tr><td><code>//</code></td><td>Floor Division (rounds down)</td><td><code>10 // 4</code></td><td><code>2</code></td></tr>
+    <tr><td><code>%</code></td><td>Modulo (remainder of division)</td><td><code>10 % 3</code></td><td><code>1</code></td></tr>
+    <tr><td><code>**</code></td><td>Exponentiation (power)</td><td><code>2 ** 3</code></td><td><code>8</code> (2 to power 3)</td></tr>
+  </table>
+
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 â€” Math Operations</span>
+      <a class="try-btn" href="/?lang=python3">â–¶ Run Code</a>
+    </div>
+    <pre><code># Basic calculations
+total = 15 + 4
+remainder = 17 % 5
+power = 3 ** 4
+
+print(f"Total: {total}")
+print(f"Remainder: {remainder}")
+print(f"Power: {power}")</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">2</span> String Operations</div>
+  <p>In Python, operators aren't just for numbers! You can use the addition operator (<code>+</code>) to merge (concatenate) strings, and the multiplication operator (<code>*</code>) to repeat text:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 â€” String Math</span>
+      <a class="try-btn" href="/?lang=python3">â–¶ Run Code</a>
+    </div>
+    <pre><code>first_name = "Balaji"
+last_name = "Nayak"
+
+# String concatenation
+full_name = first_name + " " + last_name
+print(full_name) # Balaji Nayak
+
+# String repetition
+divider = "-" * 30
+print(divider) # Prints 30 dashes</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Type Casting (Conversions)</div>
+  <p>Sometimes you have text that contains numbers (like <code>"25"</code>), but you cannot perform mathematical operations on it directly. You must explicitly convert the type using Python's casting functions:</p>
+  <ul>
+    <li><code>int(x)</code>: Converts <code>x</code> to a whole number.</li>
+    <li><code>float(x)</code>: Converts <code>x</code> to a decimal number.</li>
+    <li><code>str(x)</code>: Converts <code>x</code> to text format.</li>
+  </ul>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 â€” Type Conversions</span>
+      <a class="try-btn" href="/?lang=python3">â–¶ Run Code</a>
+    </div>
+    <pre><code>str_num = "100"
+# This would error: result = str_num + 50
+
+# Converting to integer first
+actual_num = int(str_num)
+result = actual_num + 50
+print(result) # Prints 150</code></pre>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>âš ï¸ The String & Int Trap:</strong>
+  <p>If you try to run <code>print("Age: " + 25)</code>, Python will throw a <code>TypeError: can only concatenate str (not "int") to str</code>. You must wrap the integer in <code>str(25)</code> or use formatted string interpolation: <code>print(f"Age: {25}")</code>.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
+  <p>Create a program that has a variable representing hours worked and another representing hourly wage in string format (e.g., hourly_wage = "15.50"). Calculate the gross pay, convert it to float, and display the result nicely.</p>
+</div>
+
+    <div class="nav-footer">
+      <a href="/blog-python-variables.html" class="nav-btn">
+        <span class="label">â† Previous Lesson</span>
+        <span class="title">Variables & Core Types</span>
+      </a>
+      <a href="/blog-python-strings.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson â†’</span>
+        <span class="title">String Slicing & Methods</span>
+      </a>
+    </div>
+  </main>
+</div>
+</body>
+</html>
+
+
+
+
+
+

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forms & Validation with Flask-WTF | Our Compiler</title>
+  <meta name="description" content="Learn Flask — Forms & Validation with Flask-WTF with clear Python examples, code challenges, and step-by-step setup guides." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <script>
+    (function(){
+      var t=localStorage.getItem("theme")||"dark";
+      if(t==="light"){document.documentElement.classList.add("light-theme");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("light-theme");});}
+      window.addEventListener("DOMContentLoaded",function(){
+        var nav=document.querySelector(".topnav");
+        if(nav){var btn=document.createElement("button");btn.style.cssText="margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;";var upd=function(){btn.innerHTML=document.body.classList.contains("light-theme")?"&#127769; Dark":"&#9728;&#65039; Light";};upd();btn.onclick=function(){document.body.classList.toggle("light-theme");document.documentElement.classList.toggle("light-theme");localStorage.setItem("theme",document.body.classList.contains("light-theme")?"light":"dark");upd();};nav.appendChild(btn);}
+        document.querySelectorAll(".code-block").forEach(function(block){var header=block.querySelector(".code-block-header");var codeEl=block.querySelector("pre code");if(!header||!codeEl)return;var ac=header.querySelector(".code-actions");if(!ac){ac=document.createElement("div");ac.className="code-actions";ac.style.cssText="display:flex;gap:8px;align-items:center;margin-left:auto;";header.appendChild(ac);}var cb=document.createElement("button");cb.innerHTML="&#128203; Copy";cb.style.cssText="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:Inter,sans-serif;white-space:nowrap;";cb.onclick=function(){navigator.clipboard.writeText(codeEl.textContent).then(function(){cb.innerHTML="&#9989; Copied!";setTimeout(function(){cb.innerHTML="&#128203; Copy";},2000);});};ac.appendChild(cb);});
+      });
+    })();
+  </script>
+
+
+
+<!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-nav.js" defer></script>
+</head>
+<body class="lang-flask">
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html" class="active">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-sqlite.html">SQLite</a>
+  <a href="/blog-redis.html">Redis</a>
+  <a href="/blog-cassandra.html">Cassandra</a>
+  <a href="/blog-aws.html">AWS</a>
+  <a href="/blog-azure.html">Azure</a>
+  <a href="/blog-gcloud.html">Google Cloud</a>
+  <a href="/blog-docker.html">Docker</a>
+  <a href="/blog-kubernetes.html">Kubernetes</a>
+  <a href="/blog-cicd.html">CI/CD</a>
+  <a href="/blog-data-science.html">Data Science</a>
+  <a href="/blog-ml.html">Machine Learning</a>
+  <a href="/blog-deep-learning.html">Deep Learning</a>
+  <a href="/blog-tensorflow.html">TensorFlow</a>
+  <a href="/blog-pytorch.html">PyTorch</a>
+  <a href="/blog-big-data.html">Big Data</a>
+  <a href="/blog-git.html">Git & GitHub</a>
+  <a href="/blog-linux.html">Linux</a>
+  <a href="/blog-shell.html">Shell Scripting</a>
+  <a href="/blog-testing.html">Testing</a>
+  <a href="/blog-agile.html">Agile & Scrum</a>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Flask Tutorial</div>
+    <a href="/blog-flask.html">Flask HOME</a>
+    <a href="/blog-flask/intro.html">1. Introduction to Flask</a>
+    <a href="/blog-flask/hello-world.html">2. First Flask App & Debug Mode</a>
+    <a href="/blog-flask/routing-dynamic-urls.html">3. Routing & Dynamic URL Parameters</a>
+    <a href="/blog-flask/templates-jinja.html">4. Templates with Jinja2 & Static Files</a>
+    <a href="/blog-flask/request-response.html">5. Request Handling & Custom Responses</a>
+    <a href="/blog-flask/sessions-cookies.html">6. Cookies, Sessions & Flash Messages</a>
+    <a href="/blog-flask/sqlalchemy-models.html">7. Flask-SQLAlchemy: Setup & Models</a>
+    <a href="/blog-flask/database-crud.html">8. Database CRUD & Flask-Migrate</a>
+    <a href="/blog-flask/user-authentication.html">9. User Authentication with Flask-Login</a>
+    <a href="/blog-flask/blueprints.html">10. Structuring Large Apps with Blueprints</a>
+    <a href="/blog-flask/rest-apis.html">11. Building REST APIs with Flask-RESTful</a>
+    <a href="/blog-flask/forms-validation.html" class="active">12. Forms & Validation with Flask-WTF</a>
+    <a href="/blog-flask/error-handling-logging.html">13. Error Handlers & Application Logging</a>
+    <a href="/blog-flask/testing.html">14. Unit Testing with Pytest & Flask Client</a>
+    <a href="/blog-flask/production-deployment.html">15. Production Servers (Gunicorn & Nginx)</a>
+
+    <div class="sidebar-heading">Related Topics</div>
+    <a href="/blog-python.html">Python</a>
+    <a href="/blog-django.html">Django</a>
+    <a href="/blog-rest-api.html">REST API</a>
+    <a href="/blog-postgresql.html">PostgreSQL</a>
+    <a href="/blog-docker.html">Docker</a>
+    <a href="/blog.html">All Tutorials</a>
+  </aside>
+  <main class="content">
+    <div class="breadcrumb"><a href="/">Home</a><span>&#8250;</span><a href="/blog.html">Tutorials</a><span>&#8250;</span><a href="/blog-flask.html">Flask</a><span>&#8250;</span><span>Lesson 12</span></div>
+    <h1 class="page-title">Forms &amp; Validation with Flask-WTF</h1>
+<div class="page-meta"><span class="badge">&#128013; Flask</span><span class="badge">Lesson 12</span><span class="badge">Intermediate</span></div>
+<div class="intro-box"><p>Flask-WTF integrates Flask with WTForms, providing secure form rendering, validation logic, and built-in CSRF protection mechanisms.</p></div>
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Secure WTForms Class</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python &#8212; forms.py</span></div>
+    <pre><code>from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email, Length
+
+class RegistrationForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=4, max=25)])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired(), Length(min=8)])
+    submit = SubmitField("Register")</code></pre>
+  </div>
+</div>
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Code Challenge</div>
+  <div class="info-box"><strong>Challenge:</strong> Write a template showing registration fields. Ensure the template renders error messages dynamically next to input fields when form validation fails.</div>
+</div>
+
+    <div class="nav-footer">
+      <a href="/blog-flask/rest-apis.html" class="nav-btn"><span class="label">&#8592; Previous Lesson</span><span class="title">Building REST APIs with Flask-RESTful</span></a>
+      <a href="/blog-flask/error-handling-logging.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson &#8594;</span><span class="title">Error Handlers & Application Logging</span></a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

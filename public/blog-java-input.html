@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading User Input (Scanner) | Our Compiler</title>
+  <meta name="description" content="Learn Java â€” Reading User Input (Scanner) with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? 'ðŸŒ™ Dark' : 'â˜€ï¸ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = 'ðŸ“‹ Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = 'âœ… Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = 'ðŸ“‹ Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-nav.js" defer></script>
+
+    
+  <!-- Scroll Position Restoration Script -->
+  <script>
+    (function() {
+      // Restore scroll position on page load - wait for all images and content
+      var restoreScrollTimeout;
+      
+      function restoreScroll() {
+        var scrollPos = sessionStorage.getItem('scrollPos');
+        if (scrollPos) {
+          var pos = parseInt(scrollPos, 10);
+          window.scrollTo(0, pos);
+          sessionStorage.removeItem('scrollPos');
+        }
+      }
+      
+      // Try multiple times to restore - waits for layout to settle
+      window.addEventListener('load', function() {
+        restoreScroll();
+        // Also try after a small delay to account for lazy-loaded content
+        setTimeout(restoreScroll, 100);
+        setTimeout(restoreScroll, 500);
+      });
+
+      // Also restore when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(restoreScroll, 50);
+      });
+
+      // Save scroll position before navigating away
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
+          // Only save for same-domain links (internal navigation)
+          sessionStorage.setItem('scrollPos', window.scrollY);
+        }
+      });
+    })();
+  </script>
+</head>
+<body class="lang-java">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html" class="active">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a><a href="/blog-git.html">Git & GitHub</a></nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Java Tutorial</div>
+    <a href="/blog-java.html">Java HOME</a>
+    <a href="/blog-java-intro.html">1. Welcome & Hello World</a>
+    <a href="/blog-java-variables.html">2. Variables & Primitive Types</a>
+    <a href="/blog-java-operators.html">3. Operators & Expressions</a>
+    <a href="/blog-java-strings.html">4. Strings & Manipulation</a>
+    <a href="/blog-java-conditionals.html">5. Conditionals (if-else & switch)</a>
+    <a href="/blog-java-loops.html">6. Loops & Control Flow</a>
+    <a href="/blog-java-arrays.html">7. Arrays (Single & Multi)</a>
+    <a href="/blog-java-input.html" class="active">8. Reading User Input (Scanner)</a>
+    <a href="/blog-java-methods.html">9. Methods & Parameters</a>
+    <a href="/blog-java-oop-basics.html">10. OOP: Classes & Objects</a>
+    <a href="/blog-java-oop-encapsulation.html">11. OOP: Encapsulation & Access</a>
+    <a href="/blog-java-oop-inheritance.html">12. OOP: Inheritance & Overriding</a>
+    <a href="/blog-java-oop-polymorphism.html">13. OOP: Polymorphism & Interfaces</a>
+    <a href="/blog-java-collections.html">14. Collections Framework</a>
+    <a href="/blog-java-exceptions.html">15. Exception Handling</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=java">â–¶ Try Java Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-python.html">Python 3</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>â€º</span>
+      <a href="/blog.html">Tutorials</a><span>â€º</span>
+      <a href="/blog-java.html">Java</a><span>â€º</span>
+      <span>Lesson 8</span>
+    </div>
+    
+    
+<h1 class="page-title">Reading User Input (Scanner)</h1>
+<div class="page-meta">
+  <span class="badge">â˜• Java</span>
+  <span class="badge">Lesson 8</span>
+  <span class="badge">Beginner</span>
+</div>
+
+<div class="intro-box">
+  <p>To build interactive programs, we need to read values from the console. Java provides the <code>Scanner</code> class inside the <code>java.util</code> package to capture standard input streams.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Scanner Methods & Buffer Flushing issues</div>
+  <p>The `Scanner` class provides different methods for reading data types:</p>
+  <ul>
+    <li>`nextInt()`: Reads the next integer tokens.</li>
+    <li>`nextDouble()`: Reads decimal tokens.</li>
+    <li>`next()`: Reads a single word token (stops at spaces).</li>
+    <li>`nextLine()`: Reads an entire line of text including spaces.</li>
+  </ul>
+  
+  <blockquote>
+    <strong>âš ï¸ Critical Gotcha: The Newline Buffer Issue</strong><br>
+    When you input a number and press Enter (e.g. `nextInt()`), Java reads the number token but leaves the trailing newline character (`\n`) sitting in the buffer. If you subsequently call `nextLine()`, it instantly consumes that leftover newline and returns empty text without waiting for user input. To fix this, always call a dummy `scanner.nextLine()` to "flush" the buffer after reading numbers before reading strings.
+  </blockquote>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Interactive Scanner Code</div>
+  <p>Let's run a program that reads name, age, and details safely with proper buffer flushes:</p>
+
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Java â€” Scanner Input</span>
+      <a class="try-btn" href="/?lang=java">â–¶ Run Code</a>
+    </div>
+    <pre><code>import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        // Setup scanner reading standard input stream
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter your Age: ");
+        int age = scanner.nextInt();
+        
+        // ðŸš¨ CRITICAL: Flush the newline character from the buffer!
+        scanner.nextLine(); 
+        
+        System.out.print("Enter your Full Name: ");
+        String name = scanner.nextLine();
+        
+        System.out.println("Hello, " + name + "! You are " + age + " years old.");
+        
+        // Good practice: Close the resource streams
+        scanner.close();
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Code Challenge</div>
+  <div class="info-box">
+    <strong>Challenge:</strong> Write an interactive calculator program. Use Scanner to ask the user to input two numbers, and then input their choice of operator (`+`, `-`, `*`). Compute and print the result. Use a buffer flush appropriately if you read numbers before strings/chars.
+  </div>
+</div>
+
+    
+    <div class="nav-footer">
+      <a href="/blog-java-arrays.html" class="nav-btn">
+        <span class="label">â† Previous Lesson</span>
+        <span class="title">Arrays (Single & Multi)</span>
+      </a>
+      <a href="/blog-java-methods.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson â†’</span>
+        <span class="title">Methods & Parameters</span>
+      </a>
+    </div>
+  </main>
+</div>
+</body>
+</html>
+
+
+
+
+
+

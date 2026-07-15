@@ -1,0 +1,398 @@
+/* Shared professional site navigation — React app + static HTML pages */
+
+.app-topnav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: linear-gradient(180deg, #0c1929 0%, #0f2340 100%);
+  border-bottom: 1px solid rgba(88, 166, 255, 0.18);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  font-family: 'Sora', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.app-topnav::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.7) 30%, rgba(63, 185, 80, 0.7) 70%, transparent);
+}
+
+.app-topnav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 24px;
+  gap: 8px;
+}
+
+.app-topnav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 8px;
+  text-decoration: none;
+}
+
+.app-topnav-brand img {
+  height: 36px;
+  width: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.25);
+}
+
+.app-topnav-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.app-topnav-brand-name {
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+  color: #ffffff;
+}
+
+.app-topnav-brand-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: rgba(88, 166, 255, 0.9);
+}
+
+.app-topnav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  margin-left: 12px;
+}
+
+.app-topnav-link {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: color 0.18s, background 0.18s;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.app-topnav-link:hover,
+.app-topnav-dropdown:hover .app-topnav-trigger {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.app-topnav-link.active,
+.app-topnav-trigger.active {
+  color: #ffffff;
+  background: rgba(88, 166, 255, 0.15);
+}
+
+.app-topnav-dropdown {
+  position: relative;
+}
+
+.app-topnav-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.app-topnav-chevron {
+  opacity: 0.7;
+  transition: transform 0.2s;
+}
+
+.app-topnav-dropdown.open .app-topnav-chevron,
+.app-topnav-dropdown:hover .app-topnav-chevron {
+  transform: rotate(180deg);
+}
+
+.app-topnav-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 280px;
+  background: #111a2e;
+  border: 1px solid rgba(88, 166, 255, 0.22);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  pointer-events: none;
+}
+
+/* Create invisible hover bridge between trigger and panel */
+.app-topnav-dropdown::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 8px;
+  pointer-events: auto;
+}
+
+.app-topnav-dropdown.open .app-topnav-panel,
+.app-topnav-dropdown:hover .app-topnav-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.app-topnav-panel--mega {
+  min-width: 680px;
+  left: -80px;
+  padding: 20px 20px 12px;
+}
+
+.app-topnav-panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(88, 166, 255, 0.85);
+  margin: 0 0 12px;
+}
+
+.app-topnav-compiler-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+
+.app-topnav-compiler-item {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.app-topnav-compiler-item:hover {
+  background: rgba(88, 166, 255, 0.12);
+  color: #ffffff;
+}
+
+.app-topnav-compiler-item.active {
+  background: rgba(88, 166, 255, 0.2);
+  color: #58a6ff;
+}
+
+.app-topnav-mega-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 24px;
+}
+
+.app-topnav-mega-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #58a6ff;
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(88, 166, 255, 0.2);
+}
+
+.app-topnav-mega-link {
+  display: block;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 5px 0;
+  transition: color 0.15s;
+}
+
+.app-topnav-mega-link:hover,
+.app-topnav-mega-link.active {
+  color: #ffffff;
+}
+
+.app-topnav-mega-footer {
+  display: block;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #58a6ff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-topnav-mega-footer:hover {
+  color: #79b8ff;
+}
+
+.app-topnav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.app-topnav-cta {
+  background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 12px rgba(35, 134, 54, 0.35);
+}
+
+.app-topnav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(35, 134, 54, 0.45);
+}
+
+.app-topnav-toggle {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+  font-family: inherit;
+}
+
+.app-topnav-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.app-topnav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.app-topnav-hamburger span {
+  display: block;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+.app-topnav-mobile {
+  display: none;
+  background: #0c1929;
+  border-top: 1px solid rgba(88, 166, 255, 0.15);
+  padding: 16px 24px 24px;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.app-topnav.app-topnav--mobile-open .app-topnav-mobile {
+  display: block;
+}
+
+.app-topnav-mobile-link {
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-topnav-mobile-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #58a6ff;
+  margin: 16px 0 10px;
+}
+
+.app-topnav-mobile-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.app-topnav-mobile-chip {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(88, 166, 255, 0.12);
+  border: 1px solid rgba(88, 166, 255, 0.25);
+}
+
+.app-topnav-mobile-cta {
+  display: block;
+  margin-top: 16px;
+  text-align: center;
+  background: linear-gradient(135deg, #238636, #2ea043);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+/* Hide legacy cramped nav when site-nav is active */
+nav.topnav.site-nav-replaced,
+header.header.site-nav-replaced {
+  display: none !important;
+}
+
+@media (max-width: 1100px) {
+  .app-topnav-desktop { display: none; }
+  .app-topnav-cta { display: none; }
+  .app-topnav-hamburger { display: flex; }
+  .app-topnav-brand-tag { display: none; }
+  .app-topnav-panel--mega {
+    min-width: min(92vw, 680px);
+    left: -20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-topnav-inner { padding: 0 16px; }
+  .app-topnav-brand-name { font-size: 14px; }
+  .app-topnav-brand img { height: 32px; width: 32px; }
+}

@@ -8,6 +8,7 @@ export const LANGUAGES = [
   { id: 'rust',     label: 'Rust',       monacoLang: 'rust',       icon: '🦀', ext: 'rs',   jVersion: '4' },
   { id: 'php',      label: 'PHP',        monacoLang: 'php',        icon: '🐘', ext: 'php',  jVersion: '4' },
   { id: 'ruby',     label: 'Ruby',       monacoLang: 'ruby',       icon: '💎', ext: 'rb',   jVersion: '4' },
+  { id: 'csharp',   label: 'C#',         monacoLang: 'csharp',     icon: '🔷', ext: 'cs',   jVersion: '4' },
 ]
 
 export const TEMPLATES = {
@@ -28,4 +29,6 @@ export const TEMPLATES = {
   php: '<?php\necho "Hello, World!\\n";',
 
   ruby: 'puts "Hello, World!"',
+
+  csharp: 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, World!");\n    }\n}',
 }

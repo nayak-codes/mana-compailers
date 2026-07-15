@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OOP: Classes & Objects | Our Compiler</title>
+  <meta name="description" content="Learn C# — OOP: Classes & Objects with clear explanations, unique examples, common mistakes, and interactive compiler runs." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-nav.js" defer></script>
+</head>
+<body class="lang-csharp">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html" class="active">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-sqlite.html">SQLite</a>
+  <a href="/blog-redis.html">Redis</a>
+  <a href="/blog-cassandra.html">Cassandra</a>
+  <a href="/blog-aws.html">AWS</a>
+  <a href="/blog-azure.html">Azure</a>
+  <a href="/blog-gcloud.html">Google Cloud</a>
+  <a href="/blog-docker.html">Docker</a>
+  <a href="/blog-kubernetes.html">Kubernetes</a>
+  <a href="/blog-cicd.html">CI/CD</a>
+  <a href="/blog-data-science.html">Data Science</a>
+  <a href="/blog-ml.html">Machine Learning</a>
+  <a href="/blog-deep-learning.html">Deep Learning</a>
+  <a href="/blog-tensorflow.html">TensorFlow</a>
+  <a href="/blog-pytorch.html">PyTorch</a>
+  <a href="/blog-big-data.html">Big Data</a>
+  <a href="/blog-git.html">Git & GitHub</a>
+  <a href="/blog-linux.html">Linux</a>
+  <a href="/blog-shell.html">Shell Scripting</a>
+  <a href="/blog-testing.html">Testing</a>
+  <a href="/blog-agile.html">Agile & Scrum</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">C# Tutorial</div>
+    <a href="/blog-csharp.html">C# HOME</a>
+    <a href="/blog-csharp/intro.html">1. Welcome & Hello World</a>
+    <a href="/blog-csharp/variables.html">2. Variables & Constants</a>
+    <a href="/blog-csharp/operators.html">3. Operators & Expressions</a>
+    <a href="/blog-csharp/conditionals.html">4. Conditionals (if-else & switch)</a>
+    <a href="/blog-csharp/loops.html">5. Loops & Control Flow</a>
+    <a href="/blog-csharp/arrays.html">6. Arrays (Single & Multi)</a>
+    <a href="/blog-csharp/methods.html">7. Methods & Parameters</a>
+    <a href="/blog-csharp/oop-basics.html" class="active">8. OOP: Classes & Objects</a>
+    <a href="/blog-csharp/oop-encapsulation.html">9. OOP: Encapsulation & Access</a>
+    <a href="/blog-csharp/oop-inheritance.html">10. OOP: Inheritance & Overriding</a>
+    <a href="/blog-csharp/oop-polymorphism.html">11. OOP: Polymorphism & Interfaces</a>
+    <a href="/blog-csharp/collections.html">12. Collections & Generics</a>
+    <a href="/blog-csharp/linq.html">13. LINQ (Language Integrated Query)</a>
+    <a href="/blog-csharp/exceptions.html">14. Exception Handling</a>
+    <a href="/blog-csharp/files.html">15. File I/O & disposable streams</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=csharp">▶ Try C# Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-python.html">Python 3</a>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <a href="/blog-csharp.html">C#</a><span>›</span>
+      <span>Lesson 8</span>
+    </div>
+    
+    
+<h1 class="page-title">OOP: Classes & Objects</h1>
+<div class="page-meta">
+  <span class="badge">🔷 C# Programming</span>
+  <span class="badge">Lesson 8</span>
+  <span class="badge">Intermediate</span>
+</div>
+
+<div class="intro-box">
+  <p>C# is a strictly object-oriented language. In this lesson, we will look at classes, instances, constructors, and modern C# Properties.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Auto-Implemented Properties ({ get; set; })</div>
+  <p>In C#, rather than writing verbose getter and setter methods, you can use **Auto-Implemented Properties**. The compiler automatically generates the private backing fields, getters, and setters for you behind the scenes, making your code significantly cleaner:</p>
+  <pre><code>public string Name { get; set; } // Shorthand property</code></pre>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Classes Code</div>
+  <p>Let's run a program declaring classes, constructor chaining, and shorthand properties:</p>
+
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">C# — Classes and Objects</span>
+      <a class="try-btn" href="/?lang=csharp">▶ Run Code</a>
+    </div>
+    <pre><code>using System;
+
+class Car {
+    // Auto-implemented properties
+    public string Model { get; set; }
+    public int Year { get; set; }
+
+    // Constructor
+    public Car(string model, int year) {
+        Model = model;
+        Year = year;
+    }
+
+    // Chained constructor using 'this'
+    public Car(string model) : this(model, 2026) {}
+
+    public void ShowInfo() {
+        Console.WriteLine($"Model: {Model}, Year: {Year}");
+    }
+}
+
+class Program {
+    static void Main() {
+        Car car1 = new Car("Ford Mustang", 2022);
+        Car car2 = new Car("Tesla Model Y");
+
+        car1.ShowInfo();
+        car2.ShowInfo();
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Code Challenge</div>
+  <div class="info-box">
+    <strong>Challenge:</strong> Create a class called `Student` with properties `Name` (string) and `Gpa` (double). Implement a constructor. Instantiate a student, assign values, and print their details.
+  </div>
+</div>
+
+    
+    <div class="nav-footer">
+      <a href="/blog-csharp/methods.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">Methods & Parameters</span>
+      </a>
+      <a href="/blog-csharp/oop-encapsulation.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">OOP: Encapsulation & Access</span>
+      </a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

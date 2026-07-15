@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Programming Tutorial & Reference Guide | Our Compiler</title>
+  <meta name="description" content="Learn HTML â€” HTML Programming Tutorial & Reference Guide with clear explanations, structured elements, accessibility options, and interactive copy code snippets." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? 'ðŸŒ™ Dark' : 'â˜€ï¸ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = 'ðŸ“‹ Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = 'âœ… Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = 'ðŸ“‹ Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-nav.js" defer></script>
+
+    
+  <!-- Scroll Position Restoration Script -->
+  <script>
+    (function() {
+      // Restore scroll position on page load - wait for all images and content
+      var restoreScrollTimeout;
+      
+      function restoreScroll() {
+        var scrollPos = sessionStorage.getItem('scrollPos');
+        if (scrollPos) {
+          var pos = parseInt(scrollPos, 10);
+          window.scrollTo(0, pos);
+          sessionStorage.removeItem('scrollPos');
+        }
+      }
+      
+      // Try multiple times to restore - waits for layout to settle
+      window.addEventListener('load', function() {
+        restoreScroll();
+        // Also try after a small delay to account for lazy-loaded content
+        setTimeout(restoreScroll, 100);
+        setTimeout(restoreScroll, 500);
+      });
+
+      // Also restore when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(restoreScroll, 50);
+      });
+
+      // Save scroll position before navigating away
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
+          // Only save for same-domain links (internal navigation)
+          sessionStorage.setItem('scrollPos', window.scrollY);
+        }
+      });
+    })();
+  </script>
+</head>
+<body class="lang-html">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-html.html" class="active">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a><a href="/blog-git.html">Git & GitHub</a></nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">HTML Tutorial</div>
+    <a href="/blog-html.html" class="active">HTML HOME</a>
+    <a href="/blog-html/intro.html">1. Welcome & Basic Syntax</a>
+    <a href="/blog-html/structure.html">2. Document Structure & Head Elements</a>
+    <a href="/blog-html/text-formatting.html">3. Headings, Paragraphs & Formatting</a>
+    <a href="/blog-html/links.html">4. Hyperlinks & Navigation</a>
+    <a href="/blog-html/media.html">5. Images & Embedded Media</a>
+    <a href="/blog-html/lists.html">6. Unordered, Ordered & Description Lists</a>
+    <a href="/blog-html/tables.html">7. Tables & Structured Data</a>
+    <a href="/blog-html/forms-basics.html">8. Forms & Basic Inputs</a>
+    <a href="/blog-html/forms-advanced.html">9. Advanced Form Controls & Validations</a>
+    <a href="/blog-html/semantic-html.html">10. Semantic HTML5 Elements</a>
+    <a href="/blog-html/block-inline.html">11. Block vs. Inline Elements</a>
+    <a href="/blog-html/iframes-security.html">12. IFrames & Sandboxed Security</a>
+    <a href="/blog-html/accessibility-seo.html">13. HTML Accessibility (a11y) & SEO</a>
+    <a href="/blog-html/canvas-svg.html">14. HTML5 Canvas & SVG Basics</a>
+    <a href="/blog-html/best-practices.html">15. HTML Best Practices & Validation</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-python.html">Python 3</a>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-csharp.html">C#</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-ruby.html">Ruby</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>â€º</span>
+      <a href="/blog.html">Tutorials</a><span>â€º</span>
+      <a href="/blog-html.html">HTML</a><span>â€º</span>
+      <span>Lesson Index</span>
+    </div>
+    
+    
+<h1 class="page-title">HTML Programming Tutorial</h1>
+<div class="page-meta">
+  <span class="badge">ðŸŒ HTML Basics</span>
+  <span class="badge">ðŸŸ¢ Beginner Friendly</span>
+  <span class="badge">ðŸ“… July 2026</span>
+</div>
+
+<div class="intro-box">
+  <p>HTML (HyperText Markup Language) forms the core foundation of every webpage. By structuring content semantic frameworks, HTML enables search engines and web browsers to index layouts correctly. In this comprehensive guide, you will master HTML tags syntax, head metadata elements, text inline formatting, relative/absolute hyperlink navigations, alt-tag media embeddings, lists formats, structured tables data, form POST actions validation, semantic HTML5, block vs inline display bounds, iframe sandboxed security, ARIA accessibility (a11y), SVG graphic paths, and standards validation rules.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">â–¶</span> Course Curriculum</div>
+  <p>Choose a topic from the left sidebar or click a lesson below to start learning HTML:</p>
+  <table class="tbl" style="margin-top: 15px;">
+    <tr><th>Lesson</th><th>Topic</th></tr>
+    
+      <tr>
+        <td><strong>Lesson 1</strong></td>
+        <td><strong><a href="/blog-html/intro.html">Welcome & Basic Syntax</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 2</strong></td>
+        <td><strong><a href="/blog-html/structure.html">Document Structure & Head Elements</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 3</strong></td>
+        <td><strong><a href="/blog-html/text-formatting.html">Headings, Paragraphs & Formatting</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 4</strong></td>
+        <td><strong><a href="/blog-html/links.html">Hyperlinks & Navigation</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 5</strong></td>
+        <td><strong><a href="/blog-html/media.html">Images & Embedded Media</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 6</strong></td>
+        <td><strong><a href="/blog-html/lists.html">Unordered, Ordered & Description Lists</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 7</strong></td>
+        <td><strong><a href="/blog-html/tables.html">Tables & Structured Data</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 8</strong></td>
+        <td><strong><a href="/blog-html/forms-basics.html">Forms & Basic Inputs</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 9</strong></td>
+        <td><strong><a href="/blog-html/forms-advanced.html">Advanced Form Controls & Validations</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 10</strong></td>
+        <td><strong><a href="/blog-html/semantic-html.html">Semantic HTML5 Elements</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 11</strong></td>
+        <td><strong><a href="/blog-html/block-inline.html">Block vs. Inline Elements</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 12</strong></td>
+        <td><strong><a href="/blog-html/iframes-security.html">IFrames & Sandboxed Security</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 13</strong></td>
+        <td><strong><a href="/blog-html/accessibility-seo.html">HTML Accessibility (a11y) & SEO</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 14</strong></td>
+        <td><strong><a href="/blog-html/canvas-svg.html">HTML5 Canvas & SVG Basics</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 15</strong></td>
+        <td><strong><a href="/blog-html/best-practices.html">HTML Best Practices & Validation</a></strong></td>
+      </tr>
+    
+  </table>
+</div>
+
+    
+    <div class="nav-footer">
+      <a href="/blog-html.html" class="nav-btn">
+        <span class="label">â† HTML Overview</span>
+        <span class="title">Course Index</span>
+      </a>
+      <a href="/blog-html/intro.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson â†’</span>
+        <span class="title">Welcome & Basic Syntax</span>
+      </a>
+    </div>
+  </main>
+</div>
+</body>
+</html>
+
+
+
+
+
+

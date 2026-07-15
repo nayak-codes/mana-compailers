@@ -4,66 +4,79 @@ const path = require('path');
 const publicDir = path.join(__dirname, '../public');
 const sitemapPath = path.join(publicDir, 'sitemap.xml');
 
-// Read all files in public
-const files = fs.readdirSync(publicDir);
-const blogFiles = files.filter(f => f.startsWith('blog') && f.endsWith('.html'));
+// Helper to get files recursively
+function getFilesRecursively(dir, fileList = []) {
+  const files = fs.readdirSync(dir);
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    if (fs.statSync(filePath).isDirectory()) {
+      getFilesRecursively(filePath, fileList);
+    } else {
+      fileList.push(filePath);
+    }
+  });
+  return fileList;
+}
 
-// Sort them so the index files come first, then subpages alphabetically
-blogFiles.sort((a, b) => {
-  const aSub = a.split('-').length > 2;
-  const bSub = b.split('-').length > 2;
-  if (aSub && !bSub) return 1;
-  if (!aSub && bSub) return -1;
-  return a.localeCompare(b);
-});
+function updateSitemap() {
+  const allFiles = getFilesRecursively(publicDir);
+  const htmlFiles = allFiles
+    .filter(f => f.endsWith('.html') && !f.endsWith('index.html'))
+    .map(f => path.relative(publicDir, f).replace(/\\/g, '/')); // Normalize paths for URL formatting
 
-// Construct URL XML nodes
-let urlNodes = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://ourcompiler.vercel.app/</loc>
-    <lastmod>2026-07-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://ourcompiler.vercel.app/about.html</loc>
-    <lastmod>2026-07-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ourcompiler.vercel.app/features.html</loc>
-    <lastmod>2026-07-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ourcompiler.vercel.app/contact.html</loc>
-    <lastmod>2026-07-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ourcompiler.vercel.app/privacy-policy.html</loc>
-    <lastmod>2026-07-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-`;
+  const dateStr = new Date().toISOString().split('T')[0];
 
-blogFiles.forEach(file => {
-  const isSub = file.split('-').length > 2;
-  const priority = isSub ? '0.6' : '0.8';
-  urlNodes += `  <url>
-    <loc>https://ourcompiler.vercel.app/${file}</loc>
-    <lastmod>2026-07-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>${priority}</priority>
-  </url>\n`;
-});
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-urlNodes += `</urlset>\n`;
+  // Root URL
+  xml += `  <url>\n`;
+  xml += `    <loc>https://ourcompiler.vercel.app/</loc>\n`;
+  xml += `    <lastmod>${dateStr}</lastmod>\n`;
+  xml += `    <changefreq>daily</changefreq>\n`;
+  xml += `    <priority>1.0</priority>\n`;
+  xml += `  </url>\n`;
 
-fs.writeFileSync(sitemapPath, urlNodes, 'utf8');
-console.log(`Successfully generated sitemap.xml with ${blogFiles.length} tutorial pages!`);
+  // Add all HTML files
+  htmlFiles.forEach(f => {
+    let priority = '0.6';
+    let freq = 'weekly';
+
+    // Highlight main hub pages with higher priority
+    const hubPages = [
+      'blog.html', 
+      'blog-python.html', 
+      'blog-java.html', 
+      'blog-javascript.html', 
+      'blog-c.html', 
+      'blog-cpp.html', 
+      'blog-go.html', 
+      'blog-rust.html', 
+      'blog-php.html', 
+      'blog-ruby.html', 
+      'about.html', 
+      'features.html', 
+      'contact.html', 
+      'privacy-policy.html'
+    ];
+    
+    if (hubPages.includes(f)) {
+      priority = '0.8';
+      freq = 'monthly';
+    }
+
+    xml += `  <url>\n`;
+    xml += `    <loc>https://ourcompiler.vercel.app/${f}</loc>\n`;
+    xml += `    <lastmod>${dateStr}</lastmod>\n`;
+    xml += `    <changefreq>${freq}</changefreq>\n`;
+    xml += `    <priority>${priority}</priority>\n`;
+    xml += `  </url>\n`;
+  });
+
+  xml += `</urlset>\n`;
+
+  fs.writeFileSync(sitemapPath, xml, 'utf8');
+  console.log(`🎉 Sitemap updated successfully at public/sitemap.xml with ${htmlFiles.length + 1} links!`);
+}
+
+updateSitemap();

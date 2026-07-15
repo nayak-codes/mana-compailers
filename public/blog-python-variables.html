@@ -1,149 +1,220 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python 3 Control Flow: Conditionals | Our Compiler</title>
-  <meta name="description" content="Learn Python 3 — python 3 control flow: conditionals with clear explanations, examples, and execution." />
+  <title>Python 3 Variables & Core Types | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 â€” Python 3 Variables & Core Types with clear explanations, unique examples, common mistakes, and interactive execution." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
-      --border: #30363d; --accent: #3fb950; --blue: #58a6ff;
-      --text: #e6edf3; --text2: #8b949e; --text3: #484f58;
-      --sidebar-w: 260px;
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  
 
-    /* TOP NAV */
-    .topnav {
-      position: sticky; top: 0; z-index: 100;
-      background: var(--bg2); border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 0; height: 48px;
-      overflow-x: auto; padding: 0 12px;
-    }
-    .topnav a {
-      color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500;
-      padding: 0 14px; height: 48px; display: flex; align-items: center;
-      border-bottom: 3px solid transparent; white-space: nowrap; transition: color .2s;
-    }
-    .topnav a:hover { color: var(--text); }
-    .topnav a.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .topnav .brand { font-weight: 700; color: var(--text); font-size: 14px; margin-right: 8px; padding-right: 12px; border-right: 1px solid var(--border); }
 
-    /* LAYOUT */
-    .layout { display: flex; min-height: calc(100vh - 48px); }
 
-    /* SIDEBAR */
-    .sidebar {
-      width: var(--sidebar-w); flex-shrink: 0;
-      background: var(--bg2); border-right: 1px solid var(--border);
-      position: sticky; top: 48px; height: calc(100vh - 48px);
-      overflow-y: auto; padding: 20px 0;
-    }
-    .sidebar::-webkit-scrollbar { width: 4px; }
-    .sidebar::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
-    .sidebar-heading {
-      font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--text3);
-      padding: 8px 20px 4px; margin-top: 12px;
-    }
-    .sidebar-heading:first-child { margin-top: 0; }
-    .sidebar a {
-      display: block; padding: 7px 20px; font-size: 13.5px; color: var(--text2);
-      text-decoration: none; border-left: 3px solid transparent; transition: all .15s;
-    }
-    .sidebar a:hover { color: var(--text); background: var(--bg3); }
-    .sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,.06); font-weight: 600; }
 
-    /* CONTENT */
-    .content { flex: 1; min-width: 0; padding: 40px 48px 80px; max-width: 860px; }
 
-    /* BREADCRUMB */
-    .breadcrumb { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .breadcrumb a { color: var(--blue); text-decoration: none; }
-    .breadcrumb a:hover { text-decoration: underline; }
-    .breadcrumb span { color: var(--text3); }
 
-    /* TITLE BLOCK */
-    .page-title { font-size: 36px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
-    .page-meta { font-size: 13px; color: var(--text2); margin-bottom: 28px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .badge { display: inline-flex; align-items: center; gap: 5px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 12px; }
 
-    /* INTRO BOX */
-    .intro-box { background: linear-gradient(135deg, rgba(88,166,255,.1), rgba(88,166,255,.04)); border: 1px solid rgba(88,166,255,.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 36px; }
-    .intro-box p { margin: 0; color: #c9d1d9; font-size: 15px; line-height: 1.75; }
 
-    /* SECTIONS */
-    .section { margin-bottom: 48px; scroll-margin-top: 64px; }
-    .section-title { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
-    .section-title .num { background: var(--accent); color: #000; font-size: 13px; font-weight: 700; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .section p { color: #c9d1d9; font-size: 15px; margin-bottom: 16px; }
 
-    /* CODE BLOCK */
-    .code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin: 20px 0; overflow: hidden; }
-    .code-block-header { background: var(--bg3); padding: 8px 16px; font-size: 12px; color: var(--text2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-    .code-block-header .lang-tag { font-weight: 600; color: var(--accent); }
-    .try-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--accent); color: #000; border: none; border-radius: 6px;
-      padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
-      text-decoration: none; transition: opacity .2s;
-    }
-    .try-btn:hover { opacity: 0.85; }
-    .code-block pre { margin: 0; padding: 18px; overflow-x: auto; }
-    .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--text); line-height: 1.6; }
-    .kw { color: #ff7b72; } .st { color: #a5d6ff; } .cm { color: #8b949e; font-style: italic; } .nu { color: #79c0ff; } .fn { color: #d2a8ff; }
 
-    /* INLINE CODE */
-    .content code { background: rgba(110,118,129,.15); color: #ff7b72; padding: 2px 6px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-    .code-block code { background: none; color: var(--text); padding: 0; }
 
-    /* INFO BOX */
-    .info-box { background: rgba(88,166,255,.07); border: 1px solid rgba(88,166,255,.25); border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: #c9d1d9; }
-    .info-box strong { color: var(--blue); }
 
-    /* TABLE */
-    .tbl { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-    .tbl th { background: var(--bg3); padding: 10px 14px; text-align: left; color: var(--text); font-weight: 600; border-bottom: 2px solid var(--border); }
-    .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c9d1d9; }
-    .tbl tr:last-child td { border-bottom: none; }
-    .tbl tr:hover td { background: var(--bg3); }
 
-    /* NEXT / PREV */
-    .nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
-    .nav-btn { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 20px; border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all .2s; max-width: 220px; }
-    .nav-btn:hover { border-color: var(--accent); background: var(--bg2); }
-    .nav-btn .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; }
-    .nav-btn .title { font-size: 14px; font-weight: 600; color: var(--text); }
 
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .content { padding: 24px 20px 60px; }
-      .page-title { font-size: 26px; }
-    }
-  </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? 'ðŸŒ™ Dark' : 'â˜€ï¸ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = 'ðŸ“‹ Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = 'âœ… Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = 'ðŸ“‹ Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-nav.js" defer></script>
+
+    
+  <!-- Scroll Position Restoration Script -->
+  <script>
+    (function() {
+      // Restore scroll position on page load - wait for all images and content
+      var restoreScrollTimeout;
+      
+      function restoreScroll() {
+        var scrollPos = sessionStorage.getItem('scrollPos');
+        if (scrollPos) {
+          var pos = parseInt(scrollPos, 10);
+          window.scrollTo(0, pos);
+          sessionStorage.removeItem('scrollPos');
+        }
+      }
+      
+      // Try multiple times to restore - waits for layout to settle
+      window.addEventListener('load', function() {
+        restoreScroll();
+        // Also try after a small delay to account for lazy-loaded content
+        setTimeout(restoreScroll, 100);
+        setTimeout(restoreScroll, 500);
+      });
+
+      // Also restore when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(restoreScroll, 50);
+      });
+
+      // Save scroll position before navigating away
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
+          // Only save for same-domain links (internal navigation)
+          sessionStorage.setItem('scrollPos', window.scrollY);
+        }
+      });
+    })();
+  </script>
 </head>
-<body>
+<body class="lang-python">
 
 <!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html" class="active">Python 3</a>
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
   <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
   <a href="/blog-c.html">C</a>
   <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-csharp.html">C#</a>
   <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="/blog-ruby.html">Ruby</a>
-</nav>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a><a href="/blog-git.html">Git & GitHub</a></nav>
 
 <div class="layout">
   <!-- LEFT SIDEBAR -->
@@ -151,23 +222,31 @@
     
     <div class="sidebar-heading">Python 3 Tutorial</div>
     <a href="/blog-python.html">Python 3 HOME</a>
-    <a href="/blog-python-syntax.html">Variables and Basic Data Types</a>
-    <a href="/blog-python-variables.html" class="active">Control Flow: Conditionals</a>
-    <a href="/blog-python-conditionals.html">Loops and Iterations</a>
-    <a href="/blog-python-loops.html">Defining Functions</a>
-    <a href="/blog-python-functions.html">Reading Standard Input (stdin)</a>
-    <a href="/blog-python-collections.html">Lists and Dictionaries</a>
-    <a href="/blog-python-oop.html">Object-Oriented Programming (OOP)</a>
+    <a href="/blog-python-intro.html">1. Welcome & Hello World</a>
+    <a href="/blog-python-variables.html" class="active">2. Variables & Core Types</a>
+    <a href="/blog-python-operators.html">3. Basic Operators & Math</a>
+    <a href="/blog-python-strings.html">4. String Slicing & Methods</a>
+    <a href="/blog-python-conditionals.html">5. Conditionals (if-else)</a>
+    <a href="/blog-python-loops.html">6. Loops & Ranges</a>
+    <a href="/blog-python-input.html">7. Reading User Inputs</a>
+    <a href="/blog-python-lists.html">8. Lists & Tuples</a>
+    <a href="/blog-python-dicts.html">9. Dictionaries & Sets</a>
+    <a href="/blog-python-functions.html">10. Functions & Reusable Code</a>
+    <a href="/blog-python-modules.html">11. Modules & Standard Lib</a>
+    <a href="/blog-python-files.html">12. File I/O Operations</a>
+    <a href="/blog-python-errors.html">13. Exception Handling</a>
+    <a href="/blog-python-oop-basics.html">14. OOP: Classes & Objects</a>
+    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance & Dunder</a>
 
     <div class="sidebar-heading">Reference</div>
     <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=python3">▶ Try Python 3 Online</a>
+    <a href="/?lang=python3">â–¶ Try Python 3 Online</a>
 
     <div class="sidebar-heading">Other Languages</div>
     <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
     <a href="/blog-c.html">C</a>
     <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-javascript.html">JavaScript</a>
     <a href="/blog-go.html">Go</a>
     <a href="/blog-rust.html">Rust</a>
     <a href="/blog-php.html">PHP</a>
@@ -177,61 +256,119 @@
 
   <!-- MAIN CONTENT -->
   <main class="content">
-    <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-python.html">Python 3</a><span>›</span>
-      <span>Control Flow: Conditionals</span>
-    </div>
-<h1 class="page-title">Python 3 — Control Flow: Conditionals</h1>
+    
+<div class="breadcrumb">
+  <a href="/">Home</a><span>â€º</span>
+  <a href="/blog.html">Tutorials</a><span>â€º</span>
+  <a href="/blog-python.html">Python 3</a><span>â€º</span>
+  <span>Variables & Core Types</span>
+</div>
+<h1 class="page-title">Python 3 â€” Variables & Core Data Types</h1>
 <div class="page-meta">
-      <span class="badge">🕐 8 min read</span>
-      <span class="badge">🟢 Lesson 2</span>
-      <span class="badge">📅 July 2026</span>
+  <span class="badge">ðŸ Python 3</span>
+  <span class="badge">ðŸŸ¢ Lesson 2</span>
+  <span class="badge">ðŸ“… July 2026</span>
+</div>
+
+<div class="intro-box">
+  <p>Think of a variable as a storage box with a label stuck to it. You write a label on the box (the variable name), put something inside it (the value), and then look it up whenever you need it. Python handles variables dynamically, meaning you don't have to state what type of data goes in the box beforehand.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Creating Variables</div>
+  <p>To store a value in a variable, we use the assignment operator (<code>=</code>). The variable name goes on the left, and the value goes on the right:</p>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 â€” Variable Assignment</span>
+      <a class="try-btn" href="/?lang=python3">â–¶ Run Code</a>
     </div>
+    <pre><code># Storing data in variables
+username = "Balaji"
+age = 25
+height = 5.9
+is_developer = True
 
-<div class="section" id="s2">
-<p>Python uses indentation to define code blocks. There are no curly braces <code>{}</code> or semicolons <code>;</code> required. You should use 4 spaces per indentation level.</p>
-    <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">Python 3 Code Example</span>
-          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
-        </div>
-        <pre><code>score = <span class="number">85</span>
-
-<span class="keyword">if</span> score &gt;= <span class="number">90</span>:
-    print(<span class="string">"Grade: A"</span>)
-<span class="keyword">elif</span> score &gt;= <span class="number">80</span>:
-    print(<span class="string">"Grade: B"</span>)
-<span class="keyword">else</span>:
-    print(<span class="string">"Grade: C"</span>)</code></pre></div>
-
-<div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 30px;">
-  <h2 style="font-size: 22px; color: var(--text); margin-bottom: 16px;">💡 Detailed Explanation & Deep Dive</h2>
-<h3>Dynamic Typing in Python</h3>
-      <p>Python is a dynamically-typed language. This means you do not need to state the variable type during declaration. The interpreter determines the type at runtime based on the value assigned to it.</p>
-      <h3>Variable Naming Conventions</h3>
-      <p>According to PEP 8 (Python's style guide), variable names should be lowercase, with words separated by underscores as necessary to improve readability (known as <code>snake_case</code>).</p>
-      <table class="tbl">
-        <tr><th>Rule</th><th>Correct Example</th><th>Incorrect Example</th></tr>
-        <tr><td>Must start with letter or _</td><td><code>user_age = 25</code></td><td><code>2age = 25</code></td></tr>
-        <tr><td>Case-sensitive</td><td><code>val = 1</code> and <code>Val = 2</code></td><td>(Different variables)</td></tr>
-        <tr><td>No reserved keywords</td><td><code>my_pass = True</code></td><td><code>pass = True</code></td></tr>
-      </table>
+# Printing the variables
+print(username)
+print(age)
+print(height)
+print(is_developer)</code></pre>
+  </div>
 </div>
 
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Core Data Types</div>
+  <p>Every piece of data stored in Python belongs to a specific category. Here are the 4 fundamental types you must know:</p>
+  <table class="tbl">
+    <tr><th>Type</th><th>Class Name</th><th>Description</th><th>Example</th></tr>
+    <tr><td>Text</td><td><code>str</code> (String)</td><td>Unicode characters wrapped in quotes</td><td><code>"Python 3"</code></td></tr>
+    <tr><td>Whole Number</td><td><code>int</code> (Integer)</td><td>Positive or negative whole values</td><td><code>-42</code></td></tr>
+    <tr><td>Decimal</td><td><code>float</code> (Float)</td><td>Numbers with decimal points</td><td><code>3.1415</code></td></tr>
+    <tr><td>Boolean</td><td><code>bool</code> (Boolean)</td><td>Logical state representing true/false</td><td><code>True</code> or <code>False</code></td></tr>
+  </table>
+  <p>You can check the type of any variable using the built-in <code>type()</code> function:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 â€” Checking Types</span>
+      <a class="try-btn" href="/?lang=python3">â–¶ Run Code</a>
+    </div>
+    <pre><code>score = 99
+print(type(score))  # Outputs: &lt;class 'int'&gt;
+
+is_online = False
+print(type(is_online))  # Outputs: &lt;class 'bool'&gt;</code></pre>
+  </div>
 </div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Dynamic Typing in Python</div>
+  <p>In languages like Java or C++, once you declare a variable as an integer, you can never store a string inside it. Python is **dynamically typed**, meaning variables can change their type easily as you assign new values:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 â€” Dynamic Types</span>
+      <a class="try-btn" href="/?lang=python3">â–¶ Run Code</a>
+    </div>
+    <pre><code>data = 100
+print(type(data))  # &lt;class 'int'&gt;
+
+data = "Now I am text!"
+print(type(data))  # &lt;class 'str'&gt;</code></pre>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>âš ï¸ Variable Naming Rules:</strong>
+  <ul>
+    <li>Variable names can only contain letters, numbers, and underscores (e.g., <code>user_1</code>).</li>
+    <li>They must **never** start with a number (e.g., <code>1user</code> is invalid).</li>
+    <li>Use standard **snake_case** (all lowercase words connected by underscores) to follow clean Python guidelines (PEP 8).</li>
+    <li>Do not use reserved keywords like <code>if</code>, <code>else</code>, <code>class</code>, or <code>print</code> as variable names.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
+  <p>Write a program that declares a variable representing a product price, discount rate, product name, and whether it is in stock. Output their values and their types to the terminal.</p>
+</div>
+
     <div class="nav-footer">
-      <a href="/blog-python-syntax.html" class="nav-btn">
-        <span class="label">← Previous</span>
-        <span class="title">Variables and Basic Data Types</span>
+      <a href="/blog-python-intro.html" class="nav-btn">
+        <span class="label">â† Previous Lesson</span>
+        <span class="title">Welcome & Hello World</span>
       </a>
-      <a href="/blog-python-conditionals.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next →</span>
-        <span class="title">Loops and Iterations</span>
+      <a href="/blog-python-operators.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson â†’</span>
+        <span class="title">Basic Operators & Math</span>
       </a>
     </div>
   </main>
 </div>
 </body>
 </html>
+
+
+
+
+
+

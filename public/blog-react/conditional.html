@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conditional Rendering | React Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn React — Conditional Rendering. Practical examples, hooks, component patterns, and hands-on challenges." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <script>
+    (function(){
+      const t=localStorage.getItem('theme')||'dark';
+      if(t==='light'){document.documentElement.classList.add('light-theme');document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('light-theme'));}
+      window.addEventListener('DOMContentLoaded',()=>{
+        const nav=document.querySelector('.topnav');
+        if(nav){const b=document.createElement('button');b.style.cssText='margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all .2s;white-space:nowrap;margin-right:12px;';const u=()=>{b.innerHTML=document.body.classList.contains('light-theme')?'🌙 Dark':'☀️ Light';};u();b.addEventListener('click',()=>{document.body.classList.toggle('light-theme');document.documentElement.classList.toggle('light-theme');localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');u();});nav.appendChild(b);}
+        document.querySelectorAll('.code-block').forEach(block=>{
+          const hdr=block.querySelector('.code-block-header'),ce=block.querySelector('pre code');
+          if(!hdr||!ce)return;
+          let ac=hdr.querySelector('.code-actions');
+          if(!ac){ac=document.createElement('div');ac.className='code-actions';ac.style.cssText='display:flex;gap:8px;align-items:center;margin-left:auto;';hdr.appendChild(ac);}
+          const cp=document.createElement('button');cp.innerHTML='📋 Copy';
+          cp.style.cssText='background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:"Inter",sans-serif;white-space:nowrap;';
+          cp.addEventListener('click',()=>{navigator.clipboard.writeText(ce.textContent).then(()=>{cp.innerHTML='✅ Copied!';setTimeout(()=>cp.innerHTML='📋 Copy',2000);});});
+          ac.appendChild(cp);
+        });
+      });
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-nav.js" defer></script>
+</head>
+<body class="lang-react">
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html" class="active">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-sqlite.html">SQLite</a>
+  <a href="/blog-redis.html">Redis</a>
+  <a href="/blog-cassandra.html">Cassandra</a>
+  <a href="/blog-aws.html">AWS</a>
+  <a href="/blog-azure.html">Azure</a>
+  <a href="/blog-gcloud.html">Google Cloud</a>
+  <a href="/blog-docker.html">Docker</a>
+  <a href="/blog-kubernetes.html">Kubernetes</a>
+  <a href="/blog-cicd.html">CI/CD</a>
+  <a href="/blog-data-science.html">Data Science</a>
+  <a href="/blog-ml.html">Machine Learning</a>
+  <a href="/blog-deep-learning.html">Deep Learning</a>
+  <a href="/blog-tensorflow.html">TensorFlow</a>
+  <a href="/blog-pytorch.html">PyTorch</a>
+  <a href="/blog-big-data.html">Big Data</a>
+  <a href="/blog-git.html">Git & GitHub</a>
+  <a href="/blog-linux.html">Linux</a>
+  <a href="/blog-shell.html">Shell Scripting</a>
+  <a href="/blog-testing.html">Testing</a>
+  <a href="/blog-agile.html">Agile & Scrum</a>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">React Tutorial</div>
+    <a href="/blog-react.html">React HOME</a>
+    <a href="/blog-react/intro.html">1. Introduction to React & JSX</a>
+    <a href="/blog-react/components-props.html">2. Components & Props</a>
+    <a href="/blog-react/state.html">3. State & useState Hook</a>
+    <a href="/blog-react/events.html">4. Event Handling</a>
+    <a href="/blog-react/conditional.html" class="active">5. Conditional Rendering</a>
+    <a href="/blog-react/lists-keys.html">6. Lists & Keys</a>
+    <a href="/blog-react/forms.html">7. Forms & Controlled Components</a>
+    <a href="/blog-react/useeffect.html">8. useEffect Hook & Side Effects</a>
+    <a href="/blog-react/useref-usememo.html">9. useRef, useMemo & useCallback</a>
+    <a href="/blog-react/context.html">10. Context API & Global State</a>
+    <a href="/blog-react/usereducer.html">11. useReducer & Complex State</a>
+    <a href="/blog-react/custom-hooks.html">12. Custom Hooks</a>
+    <a href="/blog-react/react-router.html">13. React Router v6</a>
+    <a href="/blog-react/fetching-data.html">14. Fetching Data & APIs</a>
+    <a href="/blog-react/performance.html">15. Performance & Best Practices</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+
+    <div class="sidebar-heading">Related</div>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-html.html">HTML</a>
+    <a href="/blog-css.html">CSS</a>
+    <a href="/blog-nextjs.html">Next.js</a>
+    <a href="/blog-nodejs.html">Node.js</a>
+</aside>
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <a href="/blog-react.html">React</a><span>›</span>
+      <span>Lesson 5</span>
+    </div>
+    
+<h1 class="page-title">Conditional Rendering</h1>
+<div class="page-meta"><span class="badge">⚛️ React</span><span class="badge">Lesson 5</span><span class="badge">Beginner</span></div>
+<div class="intro-box">
+  <p>React components can render different UI based on conditions — like showing a login form vs. a dashboard. Since JSX is JavaScript, you can use all standard JS conditional patterns.</p>
+</div>
+<div class="section">
+  <div class="section-title"><span class="num">1</span> All Conditional Patterns</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">React — Conditional Rendering</span></div>
+    <pre><code>function Dashboard({ user, isLoading, error }) {
+  // 1. Early return
+  if (isLoading) return &lt;Spinner /&gt;;
+  if (error)     return &lt;ErrorMessage message={error} /&gt;;
+
+  return (
+    &lt;div&gt;
+      {/* 2. Ternary */}
+      {user ? &lt;h1&gt;Welcome, {user.name}!&lt;/h1&gt; : &lt;h1&gt;Welcome, Guest!&lt;/h1&gt;}
+
+      {/* 3. Short-circuit (render only if true) */}
+      {user?.isAdmin &amp;&amp; &lt;AdminPanel /&gt;}
+
+      {/* 4. Nullish coalescing for fallback text */}
+      &lt;p&gt;{user?.bio ?? "No bio provided."}&lt;/p&gt;
+
+      {/* 5. if/else via IIFE */}
+      {(() =&gt; {
+        if (user?.role === "admin")  return &lt;span className="badge-red"&gt;Admin&lt;/span&gt;;
+        if (user?.role === "editor") return &lt;span className="badge-blue"&gt;Editor&lt;/span&gt;;
+        return &lt;span className="badge-gray"&gt;Viewer&lt;/span&gt;;
+      })()}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+</div>
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Loading & Empty States</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">React — Loading / Empty Patterns</span></div>
+    <pre><code>function UserList({ users, isLoading }) {
+  if (isLoading) {
+    return (
+      &lt;div className="skeleton-list"&gt;
+        {Array.from({ length: 3 }).map((_, i) =&gt; (
+          &lt;div key={i} className="skeleton-card" /&gt;
+        ))}
+      &lt;/div&gt;
+    );
+  }
+
+  if (users.length === 0) {
+    return (
+      &lt;div className="empty-state"&gt;
+        &lt;span&gt;👥&lt;/span&gt;
+        &lt;p&gt;No users found.&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  return &lt;ul&gt;{users.map(u =&gt; &lt;li key={u.id}&gt;{u.name}&lt;/li&gt;)}&lt;/ul&gt;;
+}</code></pre>
+  </div>
+</div>
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Code Challenge</div>
+  <div class="info-box"><strong>Challenge:</strong> Build a <code>Notification</code> component that renders differently based on a <code>type</code> prop: "success" (green ✅), "warning" (yellow ⚠️), "error" (red ❌), and "info" (blue ℹ️).</div>
+</div>
+    <div class="nav-footer"><a href="/blog-react/events.html" class="nav-btn"><span class="label">← Previous</span><span class="title">Event Handling</span></a><a href="/blog-react/lists-keys.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">Lists & Keys</span></a></div>
+  </main>
+</div>
+</body>
+</html>
