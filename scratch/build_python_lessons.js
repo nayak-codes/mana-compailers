@@ -1610,7 +1610,7 @@ function getHomeContent() {
 // Write all pages to public/
 function buildAll() {
   // Write Home Page
-  const homeHtml = wrapPage('home', 'Python 3 Tutorial', getHomeContent(), null, '', lessons[0].filename, lessons[0].title);
+  const homeHtml = wrapPage('home', 'Free Online Python 3 Compiler & Tutorial', getHomeContent(), null, '', lessons[0].filename, lessons[0].title);
   fs.writeFileSync(path.join(publicDir, 'blog-python.html'), homeHtml, 'utf8');
   console.log('Generated: blog-python.html');
 

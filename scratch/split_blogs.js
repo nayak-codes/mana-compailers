@@ -382,7 +382,7 @@ languages.forEach(lang => {
 
   const homeFullHtml = makeFullPage(
     'home',
-    `${lang.name} Tutorial`,
+    `Free Online ${lang.name} Compiler & Tutorial`,
     homeMainBody,
     homePrevLink,
     homePrevTitle,

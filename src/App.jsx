@@ -227,9 +227,25 @@ function warmupBackend() {
 
 export default function App() {
   const queryParams = new URLSearchParams(window.location.search)
-  const urlLangId = queryParams.get('lang')
+  let urlLangId = queryParams.get('lang')
+
+  // Pre-select language based on pathname (e.g., online-python-compiler.html)
+  const pathname = window.location.pathname
+  if (!urlLangId) {
+    if (pathname.includes('online-python-compiler')) urlLangId = 'python3'
+    else if (pathname.includes('online-java-compiler')) urlLangId = 'java'
+    else if (pathname.includes('online-c-compiler')) urlLangId = 'c'
+    else if (pathname.includes('online-cpp-compiler')) urlLangId = 'cpp17'
+    else if (pathname.includes('online-javascript-compiler')) urlLangId = 'nodejs'
+    else if (pathname.includes('online-csharp-compiler')) urlLangId = 'csharp'
+    else if (pathname.includes('online-go-compiler')) urlLangId = 'go'
+    else if (pathname.includes('online-rust-compiler')) urlLangId = 'rust'
+    else if (pathname.includes('online-php-compiler')) urlLangId = 'php'
+    else if (pathname.includes('online-ruby-compiler')) urlLangId = 'ruby'
+  }
+
   const initialLang = urlLangId ? (LANGUAGES.find(x => x.id === urlLangId) || DEFAULT) : DEFAULT
-  const initialView = urlLangId && LANGUAGES.some(x => x.id === urlLangId) ? 'compiler' : 'home'
+  const initialView = (urlLangId || pathname.includes('online-')) ? 'compiler' : 'home'
 
   // 🔄 Cache busting — if template version changed, clear old saved code
   const TEMPLATE_VERSION = 'v2'
@@ -300,6 +316,14 @@ export default function App() {
   const [highlightStdin, setHighlightStdin] = useState(false)
   const warmupDoneRef = useRef(false)
 
+  const getCompilerUrl = (id) => {
+    let slug = id
+    if (id === 'python3') slug = 'python'
+    else if (id === 'nodejs') slug = 'javascript'
+    else if (id === 'cpp17') slug = 'cpp'
+    return `/online-${slug}-compiler.html`
+  }
+
   const selectLanguage = (id) => {
     const l = LANGUAGES.find(x => x.id === id)
     setLang(l)
@@ -308,8 +332,8 @@ export default function App() {
     setOutput(null)
     setInputs([])
     setView('compiler')
-    // Push history so browser back works correctly
-    const newUrl = `${window.location.pathname}?lang=${id}`
+    // Push history with clean SEO path so browser back works correctly
+    const newUrl = getCompilerUrl(id)
     window.history.pushState({ view: 'compiler', lang: id }, '', newUrl)
   }
 
@@ -320,8 +344,8 @@ export default function App() {
     setCode(savedCode !== null && savedCode.trim() !== '' ? savedCode : (TEMPLATES[id] || ''))
     setOutput(null)
     setInputs([])
-    // Update URL query parameter
-    const newUrl = `${window.location.pathname}?lang=${id}`
+    // Update URL to clean SEO path
+    const newUrl = getCompilerUrl(id)
     window.history.pushState({ view: 'compiler', lang: id }, '', newUrl)
   }
 
@@ -329,8 +353,12 @@ export default function App() {
     setView('home')
     setOutput(null)
     setInputs([])
-    // Clear URL query parameter
-    window.history.replaceState({ view: 'home' }, '', window.location.pathname)
+    // Redirect to homepage path (/) if on a static compiler page
+    if (window.location.pathname.includes('online-')) {
+      window.history.pushState({ view: 'home' }, '', '/')
+    } else {
+      window.history.replaceState({ view: 'home' }, '', window.location.pathname)
+    }
   }
 
   // 🔥 Warmup backend on first load — eliminates cold start delay

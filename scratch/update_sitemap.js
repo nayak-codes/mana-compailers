@@ -24,6 +24,21 @@ function updateSitemap() {
     .filter(f => f.endsWith('.html') && !f.endsWith('index.html'))
     .map(f => path.relative(publicDir, f).replace(/\\/g, '/')); // Normalize paths for URL formatting
 
+  // Add the newly created compiler pages to sitemap
+  const compilerPages = [
+    'online-python-compiler.html',
+    'online-java-compiler.html',
+    'online-c-compiler.html',
+    'online-cpp-compiler.html',
+    'online-javascript-compiler.html',
+    'online-csharp-compiler.html',
+    'online-go-compiler.html',
+    'online-rust-compiler.html',
+    'online-php-compiler.html',
+    'online-ruby-compiler.html'
+  ];
+  htmlFiles.push(...compilerPages);
+
   const dateStr = new Date().toISOString().split('T')[0];
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
@@ -60,7 +75,10 @@ function updateSitemap() {
       'privacy-policy.html'
     ];
     
-    if (hubPages.includes(f)) {
+    if (compilerPages.includes(f)) {
+      priority = '0.9';
+      freq = 'daily';
+    } else if (hubPages.includes(f)) {
       priority = '0.8';
       freq = 'monthly';
     }

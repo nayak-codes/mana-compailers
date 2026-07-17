@@ -1397,7 +1397,7 @@ const indexContent = `
 
 const outputIndexHtml = wrapPage(
   'home',
-  'Java Tutorial & Reference Guide',
+  'Free Online Java Compiler & Tutorial',
   indexContent,
   null,
   null,

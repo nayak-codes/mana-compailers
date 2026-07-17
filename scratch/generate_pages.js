@@ -710,7 +710,7 @@ languages.forEach(lang => {
   writeFullPage(
     'home',
     `blog-${lang.id}.html`,
-    `${lang.name} Tutorial`,
+    `Free Online ${lang.name} Compiler & Tutorial`,
     homeMainBody,
     null,
     '',
