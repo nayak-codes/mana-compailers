@@ -167,6 +167,48 @@
     })();
   </script>
 
+
+  <script src="/site-nav.js" defer></script>
+  
+  <!-- Scroll Position Restoration Script -->
+  <script>
+    (function() {
+      // Restore scroll position on page load - wait for all images and content
+      var restoreScrollTimeout;
+      
+      function restoreScroll() {
+        var scrollPos = sessionStorage.getItem('scrollPos');
+        if (scrollPos) {
+          var pos = parseInt(scrollPos, 10);
+          window.scrollTo(0, pos);
+          sessionStorage.removeItem('scrollPos');
+        }
+      }
+      
+      // Try multiple times to restore - waits for layout to settle
+      window.addEventListener('load', function() {
+        restoreScroll();
+        // Also try after a small delay to account for lazy-loaded content
+        setTimeout(restoreScroll, 100);
+        setTimeout(restoreScroll, 500);
+      });
+
+      // Also restore when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(restoreScroll, 50);
+      });
+
+      // Save scroll position before navigating away
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
+          // Only save for same-domain links (internal navigation)
+          sessionStorage.setItem('scrollPos', window.scrollY);
+        }
+      });
+    })();
+  </script>
+
 <!-- Blog Theme Switcher -->
   <script>
     (function() {
@@ -267,46 +309,6 @@
       });
     })();
   </script>
-  <script src="/site-nav.js" defer></script>
-  
-  <!-- Scroll Position Restoration Script -->
-  <script>
-    (function() {
-      // Restore scroll position on page load - wait for all images and content
-      var restoreScrollTimeout;
-      
-      function restoreScroll() {
-        var scrollPos = sessionStorage.getItem('scrollPos');
-        if (scrollPos) {
-          var pos = parseInt(scrollPos, 10);
-          window.scrollTo(0, pos);
-          sessionStorage.removeItem('scrollPos');
-        }
-      }
-      
-      // Try multiple times to restore - waits for layout to settle
-      window.addEventListener('load', function() {
-        restoreScroll();
-        // Also try after a small delay to account for lazy-loaded content
-        setTimeout(restoreScroll, 100);
-        setTimeout(restoreScroll, 500);
-      });
-
-      // Also restore when DOM is ready
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(restoreScroll, 50);
-      });
-
-      // Save scroll position before navigating away
-      document.addEventListener('click', function(e) {
-        var link = e.target.closest('a');
-        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
-          // Only save for same-domain links (internal navigation)
-          sessionStorage.setItem('scrollPos', window.scrollY);
-        }
-      });
-    })();
-  </script>
 </head>
 <body>
 <nav class="topnav">
@@ -318,9 +320,9 @@
   <a href="/blog-cpp.html">C++</a>
   <a href="/blog-csharp.html">C#</a>
   <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-html.html">HTML</a>
   <a href="/blog-css.html">CSS</a>
   <a href="/blog-react.html">React</a>
@@ -328,15 +330,14 @@
   <a href="/blog-vue.html">Vue.js</a>
   <a href="/blog-nextjs.html">Next.js</a>
   <a href="/blog-nodejs.html">Node.js</a>
-  <a href="/blog-rest-api.html">REST API</a>
-  <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-express.html">Express.js</a>
   <a href="/blog-django.html">Django</a>
   <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-postgresql.html" class="active">PostgreSQL</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
   <a href="/blog-mysql.html">MySQL</a>
   <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
   <a href="/blog-git.html">Git & GitHub</a>
 </nav>
 
@@ -375,3 +376,4 @@
 </div>
 </body>
 </html>
+

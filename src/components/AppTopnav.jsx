@@ -49,10 +49,7 @@ const TUTORIAL_GROUPS = [
     title: 'Databases & APIs',
     items: [
       { name: 'MySQL', url: '/blog-mysql.html' },
-      { name: 'PostgreSQL', url: '/blog-postgresql.html' },
       { name: 'MongoDB', url: '/blog-mongodb.html' },
-      { name: 'SQLite', url: '/blog-sqlite.html' },
-      { name: 'Redis', url: '/blog-redis.html' },
       { name: 'REST API', url: '/blog-rest-api.html' },
       { name: 'GraphQL', url: '/blog-graphql.html' },
     ],
