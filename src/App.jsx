@@ -481,7 +481,7 @@ export default function App() {
     const inputToSend = inputVal !== undefined ? inputVal : inputs.join('\n')
     if (!code.trim() || running) return
     setRunning(true)
-    setOutput({ status: 'running' })
+    setOutput(prev => (prev && prev.text ? { ...prev, status: 'running' } : { status: 'running' }))
     const start = Date.now()
 
     try {
@@ -674,7 +674,7 @@ export default function App() {
                 {/* Output content area */}
                 <div style={s.outContent}>
                   {!output && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
-                  {output?.status === 'running' && <div style={s.ph}>⏳ Executing...</div>}
+                  {output?.status === 'running' && !output?.text && <div style={s.ph}>⏳ Executing...</div>}
                   {output?.text && (
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                       <div style={{
@@ -683,10 +683,12 @@ export default function App() {
                         whiteSpace: 'pre-wrap',
                         fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
                         fontSize: 14,
-                        lineHeight: 1.6
+                        lineHeight: 1.6,
+                        opacity: running ? 0.7 : 1,
+                        transition: 'opacity 0.15s ease'
                       }}>
                         {(() => {
-                          if (output.status !== 'ok') {
+                          if (output.status === 'error') {
                             return <div>{formatTerminalOutput(output.text, lang.id, true)}</div>
                           }
                           const tv = parseTerminalSession(output.text, inputs, code, lang.id)
