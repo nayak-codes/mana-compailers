@@ -31,7 +31,7 @@ function updateSitemap() {
 
   // Root URL
   xml += `  <url>\n`;
-  xml += `    <loc>https://ourcompiler.vercel.app/</loc>\n`;
+  xml += `    <loc>https://www.ourcompiler.com/</loc>\n`;
   xml += `    <lastmod>${dateStr}</lastmod>\n`;
   xml += `    <changefreq>daily</changefreq>\n`;
   xml += `    <priority>1.0</priority>\n`;
@@ -66,7 +66,7 @@ function updateSitemap() {
     }
 
     xml += `  <url>\n`;
-    xml += `    <loc>https://ourcompiler.vercel.app/${f}</loc>\n`;
+    xml += `    <loc>https://www.ourcompiler.com/${f}</loc>\n`;
     xml += `    <lastmod>${dateStr}</lastmod>\n`;
     xml += `    <changefreq>${freq}</changefreq>\n`;
     xml += `    <priority>${priority}</priority>\n`;

@@ -204,6 +204,7 @@ languages.forEach(lang => {
   <title>${pageTitle} | Our Compiler</title>
   <meta name="description" content="Learn ${lang.name} — ${pageTitle.toLowerCase()} with clear explanations and interactive execution." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="canonical" href="https://www.ourcompiler.com/${activeKey === 'home' ? `blog-${lang.id}.html` : `blog-${lang.id}-${activeKey}.html`}" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
