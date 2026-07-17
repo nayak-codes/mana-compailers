@@ -560,7 +560,7 @@ export default function App() {
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
-              <button onClick={() => { setCode(''); setOutput(null) }} style={s.btnGhost}>Clear</button>
+              <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
               <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
               <button onClick={runCode} disabled={running} style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}>
                 {running ? '⏳ Running...' : '▶ Run Code'}
@@ -586,6 +586,16 @@ export default function App() {
                 <span style={{ fontSize: 13, fontWeight: 600 }}>📝 Editor</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 12, color: 'var(--text2)' }}>{lang.icon} {lang.label}</span>
+                  <button 
+                    onClick={() => { 
+                      setCode(''); 
+                      localStorage.setItem(`code_${lang.id}`, '');
+                    }} 
+                    style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
+                    title="Clear editor code"
+                  >
+                    🧹 Clear Code
+                  </button>
                   <button onClick={() => toggleMaximize('editor')} style={s.panelBtn}>
                     {maximizedPanel === 'editor' ? '🗗' : '⛶'}
                   </button>
@@ -682,9 +692,20 @@ export default function App() {
                           const tv = parseTerminalSession(output.text, inputs, code, lang.id)
                           return tv.map((seg, idx) => {
                             if (seg.type === 'output') {
+                              const nextSeg = tv[idx + 1]
+                              // Render inline if followed by an input box or echoed input value
+                              // so they appear on the same line: "Enter number of terms: 2"
+                              if (nextSeg && (nextSeg.type === 'active-input' || nextSeg.type === 'input')) {
+                                return <span key={idx} style={{ color: 'var(--green)', whiteSpace: 'pre-wrap' }}>{seg.text}</span>
+                              }
+                              // The '\n' pushed after each echoed input — render as a simple line break
+                              if (seg.text === '\n') {
+                                return <br key={idx} />
+                              }
                               return <div key={idx} style={{ display: 'inline' }}>{formatTerminalOutput(seg.text, lang.id)}</div>
                             }
                             if (seg.type === 'input') {
+                              // Render echoed input inline (same line as the prompt)
                               return <span key={idx} style={{ color: '#58a6ff', fontWeight: 600 }}>{seg.text}</span>
                             }
                             if (seg.type === 'active-input') {
