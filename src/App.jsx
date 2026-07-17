@@ -51,6 +51,9 @@ const TerminalInput = ({ onSubmit }) => {
 const parseTerminalSession = (rawOutput, inputs, code, langId) => {
   if (!rawOutput) return []
 
+  // Count how many input() calls exist in the code to know when to stop matching prompts
+  const maxInputs = countInputCalls(code, langId)
+
   const promptRegex = /([^]*?[:?❯>$#](?!\/|\d)\s*)/g
   const matches = []
   let lastIndex = 0
@@ -59,6 +62,12 @@ const parseTerminalSession = (rawOutput, inputs, code, langId) => {
   while ((match = promptRegex.exec(rawOutput)) !== null) {
     matches.push(match[1])
     lastIndex = promptRegex.lastIndex
+    // Stop matching after we've found all known input prompts.
+    // This prevents lines like "the sum of number is :" from being
+    // incorrectly treated as an input prompt after all inputs are consumed.
+    if (maxInputs > 0 && matches.length >= maxInputs) {
+      break
+    }
   }
 
   const remainder = rawOutput.substring(lastIndex)
@@ -84,7 +93,9 @@ const parseTerminalSession = (rawOutput, inputs, code, langId) => {
   }
 
   if (detectsInput(code, langId) && !segments.some(s => s.type === 'active-input')) {
-    if (inputs.length < 10) {
+    // Only show generic input box if we don't know the input count (maxInputs=0)
+    // OR if we still need more inputs than we have
+    if (maxInputs === 0 && inputs.length < 10) {
       segments.push({ type: 'generic-active-input' })
     }
   }
@@ -115,6 +126,25 @@ const detectsInput = (code, langId) => {
       return /gets/i.test(code);
     default:
       return false;
+  }
+}
+
+// Count the number of input-reading calls in the code for a given language.
+// Returns 0 if unknown (e.g. loops/dynamic input), which triggers fallback behavior.
+const countInputCalls = (code, langId) => {
+  switch (langId) {
+    case 'python3':
+      return (code.match(/\binput\s*\(/gi) || []).length
+    case 'c':
+      return (code.match(/\bscanf\s*\(|\bgets\s*\(|\bfgets\s*\(|\bgetchar\s*\(/gi) || []).length
+    case 'cpp17':
+      return (code.match(/\bcin\s*>>/gi) || []).length
+    case 'java':
+      return (code.match(/\.nextLine\s*\(|\.nextInt\s*\(|\.nextDouble\s*\(|\.nextLong\s*\(|\.next\s*\(/gi) || []).length
+    case 'ruby':
+      return (code.match(/\bgets\s*\b/gi) || []).length
+    default:
+      return 0 // Unknown — fallback to old behavior
   }
 }
 
