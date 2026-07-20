@@ -56,6 +56,70 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Mana Compiler backend is awake!' })
 })
 
+// 📋 Code Clipboard — Share code with a 4-digit PIN (expires in 24 hours)
+const clipboardStore = new Map()
+
+function generatePin() {
+  return String(Math.floor(1000 + Math.random() * 9000))
+}
+
+function cleanupClipboard() {
+  const now = Date.now()
+  for (const [key, val] of clipboardStore.entries()) {
+    if (now > val.expiresAt) clipboardStore.delete(key)
+  }
+}
+
+// Save code → returns 4-digit PIN
+app.post('/api/clipboard', (req, res) => {
+  cleanupClipboard()
+  const { code, language, languageLabel } = req.body
+  if (!code || !language) {
+    return res.status(400).json({ error: 'code and language are required' })
+  }
+  if (code.length > 50000) {
+    return res.status(400).json({ error: 'Code too large (max 50KB)' })
+  }
+  let pin
+  let attempts = 0
+  do {
+    pin = generatePin()
+    attempts++
+  } while (clipboardStore.has(pin) && attempts < 100)
+
+  clipboardStore.set(pin, {
+    code,
+    language,
+    languageLabel: languageLabel || language,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+  })
+
+  console.log(`[Clipboard] Saved PIN ${pin} (${language})`)
+  return res.json({ pin, expiresIn: '24 hours' })
+})
+
+// Retrieve code by 4-digit PIN
+app.get('/api/clipboard', (req, res) => {
+  cleanupClipboard()
+  const { pin } = req.query
+  if (!pin || !/^\d{4}$/.test(pin)) {
+    return res.status(400).json({ error: 'Invalid PIN format. Must be 4 digits.' })
+  }
+  const entry = clipboardStore.get(pin)
+  if (!entry || Date.now() > entry.expiresAt) {
+    if (entry) clipboardStore.delete(pin)
+    return res.status(404).json({ error: 'Code not found. PIN may have expired or is incorrect.' })
+  }
+  console.log(`[Clipboard] Retrieved PIN ${pin} (${entry.language})`)
+  return res.json({
+    code: entry.code,
+    language: entry.language,
+    languageLabel: entry.languageLabel,
+    createdAt: entry.createdAt,
+  })
+})
+
 app.post('/api/run', async (req, res) => {
   const { code, language, stdin } = req.body
 

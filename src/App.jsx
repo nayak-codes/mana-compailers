@@ -4,6 +4,194 @@ import { LANGUAGES, TEMPLATES } from './languages'
 import AppTopnav from './components/AppTopnav'
 import CompilerHeader from './components/CompilerHeader'
 
+// ── Code Clipboard Modal ─────────────────────────────────────────────────
+const CLIP_API = '/api/clipboard'
+
+function ClipboardModal({ code, lang, onClose, onReceive }) {
+  const [tab, setTab] = useState('send')
+  const [pin, setPin] = useState('')
+  const [receivePin, setReceivePin] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  const sendCode = async () => {
+    if (!code.trim()) { setError('Editor is empty! Write some code first.'); return }
+    setLoading(true); setError(''); setSuccess('')
+    try {
+      const res = await fetch(CLIP_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, language: lang.id, languageLabel: lang.label })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to share')
+      setPin(data.pin)
+      setSuccess(`Code shared! PIN expires in ${data.expiresIn}.`)
+    } catch (e) { setError(e.message) }
+    finally { setLoading(false) }
+  }
+
+  const receiveCode = async () => {
+    if (!/^\d{4}$/.test(receivePin)) { setError('Enter a valid 4-digit PIN.'); return }
+    setLoading(true); setError(''); setSuccess('')
+    try {
+      const res = await fetch(`${CLIP_API}?pin=${receivePin}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'PIN not found')
+      onReceive(data)
+      onClose()
+    } catch (e) { setError(e.message) }
+    finally { setLoading(false) }
+  }
+
+  const copyPin = () => {
+    navigator.clipboard.writeText(pin).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
+  }
+
+  return (
+    <div style={ms.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={ms.modal}>
+        {/* Header */}
+        <div style={ms.header}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 22 }}>📋</span>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>Code Clipboard</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>Share code instantly with a 4-digit PIN</div>
+            </div>
+          </div>
+          <button onClick={onClose} style={ms.closeBtn}>✕</button>
+        </div>
+
+        {/* Tabs */}
+        <div style={ms.tabs}>
+          <button onClick={() => { setTab('send'); setError(''); setSuccess(''); }}
+            style={{ ...ms.tabBtn, ...(tab === 'send' ? ms.tabActive : {}) }}>
+            📤 Send Code
+          </button>
+          <button onClick={() => { setTab('receive'); setError(''); setSuccess(''); }}
+            style={{ ...ms.tabBtn, ...(tab === 'receive' ? ms.tabActive : {}) }}>
+            📥 Receive Code
+          </button>
+        </div>
+
+        <div style={ms.body}>
+          {tab === 'send' ? (
+            <div>
+              {!pin ? (
+                <>
+                  <div style={ms.infoBox}>
+                    <span style={{ fontSize: 18 }}>💡</span>
+                    <div>
+                      <div style={{ fontWeight: 600, color: '#e6edf3', marginBottom: 4 }}>How it works</div>
+                      <div style={{ color: '#8b949e', fontSize: 13, lineHeight: 1.6 }}>
+                        Click <strong style={{ color: '#3fb950' }}>Generate PIN</strong> to share your current <strong style={{ color: '#58a6ff' }}>{lang.label}</strong> code.
+                        A 4-digit PIN will be generated — send it to your friend via WhatsApp, chat, or anywhere!
+                        PIN is valid for <strong style={{ color: '#f0a500' }}>24 hours</strong>.
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 8, fontSize: 12, color: '#484f58', padding: '0 4px' }}>
+                    Code preview: {code.trim().substring(0, 60)}{code.trim().length > 60 ? '...' : ''}
+                  </div>
+                  {error && <div style={ms.errorBox}>⚠️ {error}</div>}
+                  <button onClick={sendCode} disabled={loading} style={ms.sendBtn}>
+                    {loading ? '⏳ Generating...' : '🚀 Generate PIN'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div style={ms.successBox}>
+                    <div style={{ fontSize: 13, color: '#3fb950', marginBottom: 12, fontWeight: 600 }}>✅ {success}</div>
+                    <div style={{ fontSize: 13, color: '#8b949e', marginBottom: 16 }}>Share this PIN with your friend:</div>
+                    <div style={ms.pinDisplay}>
+                      {pin.split('').map((d, i) => (
+                        <div key={i} style={ms.pinDigit}>{d}</div>
+                      ))}
+                    </div>
+                    <button onClick={copyPin} style={ms.copyBtn}>
+                      {copied ? '✅ Copied!' : '📋 Copy PIN'}
+                    </button>
+                    <div style={{ marginTop: 16, fontSize: 12, color: '#484f58', textAlign: 'center' }}>
+                      Friend types this PIN in the "Receive Code" tab
+                    </div>
+                  </div>
+                  <button onClick={() => { setPin(''); setSuccess(''); }} style={ms.resetBtn}>↩ Share Again</button>
+                </>
+              )}
+            </div>
+          ) : (
+            <div>
+              <div style={ms.infoBox}>
+                <span style={{ fontSize: 18 }}>🔑</span>
+                <div>
+                  <div style={{ fontWeight: 600, color: '#e6edf3', marginBottom: 4 }}>Enter PIN</div>
+                  <div style={{ color: '#8b949e', fontSize: 13, lineHeight: 1.6 }}>
+                    Got a 4-digit PIN from a friend? Enter it below to instantly load their code into the editor.
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 20, justifyContent: 'center' }}>
+                {[0,1,2,3].map(i => (
+                  <input
+                    key={i}
+                    id={`pin-digit-${i}`}
+                    type="text"
+                    maxLength={1}
+                    value={receivePin[i] || ''}
+                    onChange={e => {
+                      const val = e.target.value.replace(/\D/g, '')
+                      const arr = receivePin.split('')
+                      arr[i] = val
+                      const newPin = arr.join('').substring(0, 4)
+                      setReceivePin(newPin)
+                      if (val && i < 3) document.getElementById(`pin-digit-${i+1}`)?.focus()
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Backspace' && !receivePin[i] && i > 0) {
+                        document.getElementById(`pin-digit-${i-1}`)?.focus()
+                      }
+                      if (e.key === 'Enter' && receivePin.length === 4) receiveCode()
+                    }}
+                    style={ms.pinInput}
+                    autoFocus={i === 0}
+                  />
+                ))}
+              </div>
+              {error && <div style={ms.errorBox}>⚠️ {error}</div>}
+              <button onClick={receiveCode} disabled={loading || receivePin.length !== 4} style={{ ...ms.sendBtn, background: receivePin.length === 4 ? '#1f6feb' : '#21262d', cursor: receivePin.length === 4 ? 'pointer' : 'not-allowed' }}>
+                {loading ? '⏳ Loading...' : '📥 Load Code'}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ms = {
+  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  modal: { background: '#161b22', border: '1px solid #30363d', borderRadius: 16, width: '100%', maxWidth: 480, boxShadow: '0 24px 64px rgba(0,0,0,0.6)', overflow: 'hidden', animation: 'fadeInUp 0.2s ease' },
+  header: { background: 'linear-gradient(135deg, #1a2a3a, #0d1117)', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #30363d' },
+  closeBtn: { background: 'rgba(255,255,255,0.1)', color: '#8b949e', border: '1px solid #30363d', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  tabs: { display: 'flex', borderBottom: '1px solid #30363d' },
+  tabBtn: { flex: 1, padding: '12px 16px', background: 'transparent', color: '#8b949e', border: 'none', borderBottom: '3px solid transparent', cursor: 'pointer', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' },
+  tabActive: { color: '#58a6ff', borderBottomColor: '#58a6ff', background: 'rgba(88,166,255,0.06)' },
+  body: { padding: 24 },
+  infoBox: { background: 'rgba(88,166,255,0.06)', border: '1px solid rgba(88,166,255,0.2)', borderRadius: 10, padding: 16, display: 'flex', gap: 12, alignItems: 'flex-start' },
+  sendBtn: { width: '100%', marginTop: 20, padding: '12px 20px', background: '#238636', color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'opacity 0.2s' },
+  errorBox: { marginTop: 12, padding: '10px 14px', background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.3)', borderRadius: 8, color: '#ff6b6b', fontSize: 13 },
+  successBox: { background: 'rgba(63,185,80,0.06)', border: '1px solid rgba(63,185,80,0.2)', borderRadius: 12, padding: 20, textAlign: 'center' },
+  pinDisplay: { display: 'flex', gap: 12, justifyContent: 'center', margin: '16px 0' },
+  pinDigit: { width: 56, height: 72, background: '#0d1117', border: '2px solid #3fb950', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, fontWeight: 800, color: '#3fb950', fontFamily: 'JetBrains Mono, monospace', boxShadow: '0 0 16px rgba(63,185,80,0.2)' },
+  copyBtn: { background: 'rgba(63,185,80,0.15)', color: '#3fb950', border: '1px solid rgba(63,185,80,0.4)', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
+  resetBtn: { width: '100%', marginTop: 12, padding: '8px', background: 'transparent', color: '#8b949e', border: '1px solid #30363d', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: 'Inter, sans-serif' },
+  pinInput: { width: 60, height: 72, textAlign: 'center', fontSize: 28, fontWeight: 800, background: '#0d1117', color: '#58a6ff', border: '2px solid #30363d', borderRadius: 12, outline: 'none', fontFamily: 'JetBrains Mono, monospace', transition: 'border-color 0.2s' },
+}
+
 
 const DEFAULT = LANGUAGES[0]
 
@@ -345,6 +533,7 @@ export default function App() {
   const containerRef = useRef(null)
   const [highlightStdin, setHighlightStdin] = useState(false)
   const warmupDoneRef = useRef(false)
+  const [showClipboard, setShowClipboard] = useState(false)
 
   const getCompilerUrl = (id) => {
     let slug = id
@@ -562,6 +751,9 @@ export default function App() {
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
               <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
               <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
+              <button onClick={() => setShowClipboard(true)} style={s.btnShare} title="Share code with a 4-digit PIN">
+                📤 Share Code
+              </button>
               <button onClick={runCode} disabled={running} style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}>
                 {running ? '⏳ Running...' : '▶ Run Code'}
               </button>
@@ -769,6 +961,27 @@ export default function App() {
             )}
           </div>
 
+          {/* CODE CLIPBOARD MODAL */}
+          {showClipboard && (
+            <ClipboardModal
+              code={code}
+              lang={lang}
+              onClose={() => setShowClipboard(false)}
+              onReceive={(data) => {
+                const targetLang = LANGUAGES.find(l => l.id === data.language)
+                if (targetLang) {
+                  setLang(targetLang)
+                  const newUrl = getCompilerUrl(targetLang.id)
+                  window.history.pushState({ view: 'compiler', lang: targetLang.id }, '', newUrl)
+                }
+                setCode(data.code)
+                localStorage.setItem(`code_${data.language}`, data.code)
+                setOutput(null)
+                setInputs([])
+              }}
+            />
+          )}
+
           <footer style={s.footer}>
             <div><a href="/about.html" style={{ color: 'var(--text2)', textDecoration: 'none' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/blog.html" style={{ color: 'var(--text2)' }}>Tutorials</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -803,6 +1016,7 @@ const s = {
   btnHome: { background: 'transparent', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer' },
   btnSwap: { background: 'transparent', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', fontSize: 13, marginLeft: 4 },
   panelBtn: { background: 'transparent', color: 'var(--text2)', border: '1px solid transparent', borderRadius: 6, padding: '4px 8px', fontSize: 13, cursor: 'pointer' },
+  btnShare: { background: 'linear-gradient(135deg, #1a3a5c, #1f6feb)', color: '#58a6ff', border: '1px solid rgba(88,166,255,0.4)', borderRadius: 8, padding: '6px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' },
   btnRun: { background: '#238636', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 20px', fontSize: 14, fontWeight: 600 },
   main: { display: 'flex', height: 'calc(100vh - 140px)', minHeight: '520px', flexShrink: 0 },
   editorPanel: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 },
