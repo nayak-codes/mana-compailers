@@ -15,6 +15,12 @@ function ClipboardModal({ code, lang, onClose, onReceive }) {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [copied, setCopied] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
+
+  const getShareLink = (p) => {
+    const base = window.location.origin
+    return `${base}/?pin=${p}`
+  }
 
   const sendCode = async () => {
     if (!code.trim()) { setError('Editor is empty! Write some code first.'); return }
@@ -48,6 +54,10 @@ function ClipboardModal({ code, lang, onClose, onReceive }) {
 
   const copyPin = () => {
     navigator.clipboard.writeText(pin).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
+  }
+
+  const copyLink = (p) => {
+    navigator.clipboard.writeText(getShareLink(p)).then(() => { setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000) })
   }
 
   return (
@@ -105,20 +115,48 @@ function ClipboardModal({ code, lang, onClose, onReceive }) {
                 <>
                   <div style={ms.successBox}>
                     <div style={{ fontSize: 13, color: '#3fb950', marginBottom: 12, fontWeight: 600 }}>✅ {success}</div>
-                    <div style={{ fontSize: 13, color: '#8b949e', marginBottom: 16 }}>Share this PIN with your friend:</div>
+                    <div style={{ fontSize: 13, color: '#8b949e', marginBottom: 8 }}>Share this PIN with your friend:</div>
                     <div style={ms.pinDisplay}>
                       {pin.split('').map((d, i) => (
                         <div key={i} style={ms.pinDigit}>{d}</div>
                       ))}
                     </div>
                     <button onClick={copyPin} style={ms.copyBtn}>
-                      {copied ? '✅ Copied!' : '📋 Copy PIN'}
+                      {copied ? '✅ PIN Copied!' : '📋 Copy PIN'}
                     </button>
-                    <div style={{ marginTop: 16, fontSize: 12, color: '#484f58', textAlign: 'center' }}>
-                      Friend types this PIN in the "Receive Code" tab
+
+                    {/* Shareable Link */}
+                    <div style={{ marginTop: 20, padding: '14px 16px', background: 'rgba(88,166,255,0.06)', border: '1px solid rgba(88,166,255,0.2)', borderRadius: 10 }}>
+                      <div style={{ fontSize: 12, color: '#8b949e', marginBottom: 8, fontWeight: 600, textAlign: 'left' }}>🔗 Or share this direct link:</div>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <div style={{
+                          flex: 1, fontSize: 12, color: '#58a6ff', background: '#0d1117',
+                          border: '1px solid #30363d', borderRadius: 6, padding: '6px 10px',
+                          fontFamily: 'JetBrains Mono, monospace', overflow: 'hidden',
+                          textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left'
+                        }}>
+                          {getShareLink(pin)}
+                        </div>
+                        <button onClick={() => copyLink(pin)} style={{
+                          flexShrink: 0, background: copiedLink ? 'rgba(63,185,80,0.15)' : 'rgba(88,166,255,0.15)',
+                          color: copiedLink ? '#3fb950' : '#58a6ff',
+                          border: `1px solid ${copiedLink ? 'rgba(63,185,80,0.4)' : 'rgba(88,166,255,0.4)'}`,
+                          borderRadius: 6, padding: '6px 12px', cursor: 'pointer',
+                          fontSize: 12, fontWeight: 600, fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap'
+                        }}>
+                          {copiedLink ? '✅ Copied!' : '🔗 Copy Link'}
+                        </button>
+                      </div>
+                      <div style={{ marginTop: 8, fontSize: 11, color: '#484f58', textAlign: 'left' }}>
+                        Anyone who opens this link will auto-load your code instantly!
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: 12, fontSize: 12, color: '#484f58', textAlign: 'center' }}>
+                      Friend can also type PIN <strong style={{ color: '#e6edf3' }}>{pin}</strong> in the "Receive Code" tab
                     </div>
                   </div>
-                  <button onClick={() => { setPin(''); setSuccess(''); }} style={ms.resetBtn}>↩ Share Again</button>
+                  <button onClick={() => { setPin(''); setSuccess(''); setCopied(false); setCopiedLink(false); }} style={ms.resetBtn}>↩ Share Again</button>
                 </>
               )}
             </div>
@@ -534,6 +572,32 @@ export default function App() {
   const [highlightStdin, setHighlightStdin] = useState(false)
   const warmupDoneRef = useRef(false)
   const [showClipboard, setShowClipboard] = useState(false)
+
+  // 🔗 Auto-load code from ?pin= URL param (shareable link)
+  useEffect(() => {
+    const urlPin = new URLSearchParams(window.location.search).get('pin')
+    if (!urlPin || !/^\d{4}$/.test(urlPin)) return
+    // Remove pin from URL immediately so it doesn't re-trigger on refresh
+    const cleanUrl = window.location.pathname
+    window.history.replaceState({}, '', cleanUrl)
+    fetch(`/api/clipboard?pin=${urlPin}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) return
+        const targetLang = LANGUAGES.find(l => l.id === data.language)
+        if (targetLang) {
+          setLang(targetLang)
+          const newUrl = getCompilerUrl(targetLang.id)
+          window.history.replaceState({ view: 'compiler', lang: targetLang.id }, '', newUrl)
+        }
+        setCode(data.code)
+        localStorage.setItem(`code_${data.language}`, data.code)
+        setView('compiler')
+        setOutput(null)
+        setInputs([])
+      })
+      .catch(() => {})
+  }, [])
 
   const getCompilerUrl = (id) => {
     let slug = id
