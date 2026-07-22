@@ -571,6 +571,7 @@ export default function App() {
   const containerRef = useRef(null)
   const [highlightStdin, setHighlightStdin] = useState(false)
   const warmupDoneRef = useRef(false)
+  const [serverReady, setServerReady] = useState('warming') // 'warming' | 'ready' | 'failed'
   const [showClipboard, setShowClipboard] = useState(false)
 
   // 🔗 Auto-load code from ?pin= URL param (shareable link)
@@ -648,12 +649,31 @@ export default function App() {
   useEffect(() => {
     if (warmupDoneRef.current) return
     warmupDoneRef.current = true
-    // Ping Render backend root to wake it from sleep (no-cors: any response = awake)
-    fetch(BACKEND_URL, {
-      method: 'GET',
-      signal: AbortSignal.timeout(60000),
-      mode: 'no-cors' // Use no-cors so CORS errors don't block us
-    }).catch(() => {}) // Ignore errors silently
+
+    // Ping Render backend root — any HTTP response means it's awake
+    // Network timeout/error means cold start is still in progress
+    // Retry up to 3 times with increasing delays (3s, 6s)
+    const tryWarmup = async (attempt = 1) => {
+      try {
+        // We use no-cors so CORS issues don't matter — any response = server awake
+        await fetch(`${BACKEND_URL}/api/health`, {
+          method: 'GET',
+          mode: 'no-cors',
+          signal: AbortSignal.timeout(35000)
+        })
+        // no-cors fetch always resolves (status=0, type='opaque') if server responded
+        setServerReady('ready')
+      } catch (err) {
+        // AbortError = timeout = server still cold starting
+        if (attempt < 3) {
+          setTimeout(() => tryWarmup(attempt + 1), attempt * 3000)
+        } else {
+          // Give up — let user try anyway
+          setServerReady('failed')
+        }
+      }
+    }
+    tryWarmup()
   }, [])
 
   // Handle browser back button
@@ -818,6 +838,29 @@ export default function App() {
               <button onClick={() => setShowClipboard(true)} style={s.btnShare} title="Share code with a 4-digit PIN">
                 📤 Share Code
               </button>
+              {/* Server status dot */}
+              {serverReady === 'warming' && (
+                <span title="Server is warming up, first run may be slower" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  fontSize: 11, color: '#f0a500', fontWeight: 600,
+                  background: 'rgba(240,165,0,0.1)', border: '1px solid rgba(240,165,0,0.3)',
+                  borderRadius: 999, padding: '3px 10px', whiteSpace: 'nowrap'
+                }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#f0a500', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
+                  Server warming up...
+                </span>
+              )}
+              {serverReady === 'ready' && (
+                <span title="Server is ready!" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  fontSize: 11, color: '#3fb950', fontWeight: 600,
+                  background: 'rgba(63,185,80,0.1)', border: '1px solid rgba(63,185,80,0.3)',
+                  borderRadius: 999, padding: '3px 10px'
+                }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#3fb950', display: 'inline-block' }} />
+                  Server Ready
+                </span>
+              )}
               <button onClick={runCode} disabled={running} style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}>
                 {running ? '⏳ Running...' : '▶ Run Code'}
               </button>
@@ -929,7 +972,13 @@ export default function App() {
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--bg2)' }}>
                 {/* Output content area */}
                 <div style={s.outContent}>
-                  {!output && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
+                  {!output && serverReady === 'warming' && (
+                    <div style={{ ...s.ph, color: '#f0a500' }}>
+                      <span style={{ display: 'block', marginBottom: 6 }}>⏳ Server is warming up...</span>
+                      <span style={{ fontSize: 11, color: 'var(--text3)' }}>Render free tier server takes ~20-30s to wake up. Please wait a moment before running code.</span>
+                    </div>
+                  )}
+                  {!output && serverReady !== 'warming' && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
                   {output?.status === 'running' && !output?.text && <div style={s.ph}>⏳ Executing...</div>}
                   {output?.text && (
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
