@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 3 List Comprehensions & Generators | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 List Comprehensions & Generators — write powerful one-liners, filter data efficiently, and use lazy generators for memory-efficient programming." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <script src="/site-nav.js" defer></script>
+  <!-- Scroll Position Restoration Script -->
+  <script>
+    (function() {
+      function restoreScroll() {
+        var scrollPos = sessionStorage.getItem('scrollPos');
+        if (scrollPos) { window.scrollTo(0, parseInt(scrollPos, 10)); sessionStorage.removeItem('scrollPos'); }
+      }
+      window.addEventListener('load', function() { restoreScroll(); setTimeout(restoreScroll, 100); setTimeout(restoreScroll, 500); });
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(restoreScroll, 50); });
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) { sessionStorage.setItem('scrollPos', window.scrollY); }
+      });
+    })();
+  </script>
+  <!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') { document.documentElement.classList.add('light-theme'); document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('light-theme'); }); }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => { toggleBtn.style.background = 'rgba(255,255,255,0.25)'; toggleBtn.style.borderColor = '#fff'; });
+          toggleBtn.addEventListener('mouseleave', () => { toggleBtn.style.background = 'rgba(255,255,255,0.15)'; toggleBtn.style.borderColor = 'rgba(255,255,255,0.25)'; });
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
+          updateText();
+          toggleBtn.addEventListener('click', () => { document.body.classList.toggle('light-theme'); document.documentElement.classList.toggle('light-theme'); localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark'); updateText(); });
+          topnav.appendChild(toggleBtn);
+        }
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) { actionsContainer = document.createElement('div'); actionsContainer.className = 'code-actions'; actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;'; const tryBtn = header.querySelector('.try-btn'); if (tryBtn) actionsContainer.appendChild(tryBtn); header.appendChild(actionsContainer); }
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn'; copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => { copyBtn.style.background = 'rgba(255,255,255,0.25)'; copyBtn.style.borderColor = '#fff'; });
+          copyBtn.addEventListener('mouseleave', () => { copyBtn.style.background = 'rgba(255,255,255,0.15)'; copyBtn.style.borderColor = 'rgba(255,255,255,0.25)'; });
+          copyBtn.addEventListener('click', () => { navigator.clipboard.writeText(codeEl.textContent).then(() => { copyBtn.innerHTML = '✅ Copied!'; setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000); }); });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) { tryBtn.addEventListener('click', (e) => { e.preventDefault(); const url = tryBtn.getAttribute('href'); const langId = new URLSearchParams(url.split('?')[1]).get('lang') || 'python3'; localStorage.setItem('code_' + langId, codeEl.textContent); window.location.href = url; }); }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-git.html">Git &amp; GitHub</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Tutorial</div>
+    <a href="/blog-python.html">Python 3 HOME</a>
+    <a href="/blog-python-intro.html">1. Welcome &amp; Hello World</a>
+    <a href="/blog-python-variables.html">2. Variables &amp; Core Types</a>
+    <a href="/blog-python-operators.html">3. Basic Operators &amp; Math</a>
+    <a href="/blog-python-strings.html">4. String Slicing &amp; Methods</a>
+    <a href="/blog-python-conditionals.html">5. Conditionals (if-else)</a>
+    <a href="/blog-python-loops.html">6. Loops &amp; Ranges</a>
+    <a href="/blog-python-input.html">7. Reading User Inputs</a>
+    <a href="/blog-python-lists.html">8. Lists &amp; Tuples</a>
+    <a href="/blog-python-dicts.html">9. Dictionaries &amp; Sets</a>
+    <a href="/blog-python-functions.html">10. Functions &amp; Reusable Code</a>
+    <a href="/blog-python-modules.html">11. Modules &amp; Standard Lib</a>
+    <a href="/blog-python-files.html">12. File I/O Operations</a>
+    <a href="/blog-python-errors.html">13. Exception Handling</a>
+    <a href="/blog-python-oop-basics.html">14. OOP: Classes &amp; Objects</a>
+    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance &amp; Dunder</a>
+    <a href="/blog-python-comprehensions.html" class="active">16. List Comprehensions</a>
+    <a href="/blog-python-lambda.html">17. Lambda &amp; Decorators</a>
+    <a href="/blog-python-regex.html">18. Regular Expressions</a>
+    <a href="/blog-python-json.html">19. JSON &amp; APIs</a>
+    <a href="/blog-python-venv.html">20. Virtual Environments</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=python3">▶ Try Python 3 Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <a href="/blog-python.html">Python 3</a><span>›</span>
+      <span>List Comprehensions &amp; Generators</span>
+    </div>
+    <h1 class="page-title">Python 3 — List Comprehensions &amp; Generators</h1>
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Lesson 16</span>
+      <span class="badge">📅 July 2026</span>
+    </div>
+
+    <div class="intro-box">
+      <p>List comprehensions are one of Python's most powerful and Pythonic features. They let you build new lists from existing data in a single, readable line — replacing what would otherwise require a multi-line <code>for</code> loop. Generators extend this idea with lazy evaluation, computing values only when needed to save memory.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">1</span> The Problem: Verbose Loops</div>
+      <p>Suppose you want to create a list of squares from 1 to 10. Without comprehensions, you'd write:</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 — Traditional Loop</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code># Traditional approach — 4 lines
+squares = []
+for n in range(1, 11):
+    squares.append(n ** 2)
+print(squares)  # [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]</code></pre>
+      </div>
+      <p>This works, but it's verbose. List comprehensions collapse this into one elegant line.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">2</span> Basic List Comprehension Syntax</div>
+      <p>The syntax is: <code>[expression for item in iterable]</code></p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 — List Comprehension</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code># Same result in ONE line!
+squares = [n ** 2 for n in range(1, 11)]
+print(squares)  # [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+# Another example: convert Celsius to Fahrenheit
+celsius = [0, 20, 37, 100]
+fahrenheit = [(c * 9/5) + 32 for c in celsius]
+print(fahrenheit)  # [32.0, 68.0, 98.6, 212.0]</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">3</span> Filtering with if Conditions</div>
+      <p>Add an <code>if</code> clause to filter which items get included: <code>[expr for item in iterable if condition]</code></p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 — Filtering with Comprehension</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code># Get only even numbers from 1 to 20
+evens = [n for n in range(1, 21) if n % 2 == 0]
+print(evens)  # [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+
+# Filter words longer than 4 characters
+words = ["Python", "is", "fast", "and", "powerful"]
+long_words = [w for w in words if len(w) > 4]
+print(long_words)  # ['Python', 'powerful']
+
+# Get only vowels from a string
+text = "Hello World"
+vowels = [ch for ch in text if ch.lower() in "aeiou"]
+print(vowels)  # ['e', 'o', 'o']</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">4</span> Dictionary &amp; Set Comprehensions</div>
+      <p>Comprehensions work for dictionaries and sets too — just change the brackets:</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 — Dict &amp; Set Comprehensions</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code># Dict comprehension: word → its length
+words = ["Python", "Java", "Go", "Rust"]
+word_lengths = {word: len(word) for word in words}
+print(word_lengths)  # {'Python': 6, 'Java': 4, 'Go': 2, 'Rust': 4}
+
+# Set comprehension: unique first letters
+fruits = ["apple", "avocado", "banana", "blueberry", "cherry"]
+first_letters = {f[0] for f in fruits}
+print(first_letters)  # {'a', 'b', 'c'} (order may vary)</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">5</span> Generator Expressions</div>
+      <p>A generator is like a list comprehension but uses parentheses <code>()</code> instead of brackets <code>[]</code>. Unlike lists, generators don't store all values in memory — they produce each value on-demand (lazy evaluation):</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 — Generator Expression</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code># List — all values stored in memory at once
+squares_list = [n ** 2 for n in range(1, 6)]
+print(squares_list)  # [1, 4, 9, 16, 25]
+
+# Generator — values computed one at a time
+squares_gen = (n ** 2 for n in range(1, 6))
+print(squares_gen)   # <generator object ...>
+
+# Use next() to pull values one by one
+print(next(squares_gen))  # 1
+print(next(squares_gen))  # 4
+
+# Or convert to a list when needed
+print(list(squares_gen))  # [9, 16, 25] (remaining values)</code></pre>
+      </div>
+      <p>Use generators when processing large datasets (like reading millions of rows from a file) because they use far less memory than building a list.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">6</span> Generator Functions with yield</div>
+      <p>You can create a reusable generator using a regular function with the <code>yield</code> keyword instead of <code>return</code>:</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 — Generator Function</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>def count_up(limit):
+    """Yields numbers from 1 up to limit, one at a time."""
+    n = 1
+    while n <= limit:
+        yield n   # Pauses here, sends n to caller
+        n += 1    # Resumes from here next time
+
+# Using the generator
+counter = count_up(5)
+for num in counter:
+    print(num, end=" ")  # 1 2 3 4 5
+
+# Fibonacci sequence generator
+def fibonacci():
+    a, b = 0, 1
+    while True:        # Infinite sequence!
+        yield a
+        a, b = b, a + b
+
+fib = fibonacci()
+first_10 = [next(fib) for _ in range(10)]
+print(first_10)  # [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</code></pre>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>⚡ List vs Generator — When to Use Which?</strong>
+      <table class="tbl" style="margin-top: 10px;">
+        <tr><th>Feature</th><th>List Comprehension []</th><th>Generator Expression ()</th></tr>
+        <tr><td>Memory</td><td>Stores all values at once</td><td>Computes one value at a time</td></tr>
+        <tr><td>Speed</td><td>Faster for small data</td><td>Better for large/infinite data</td></tr>
+        <tr><td>Reusable</td><td>Yes — iterate many times</td><td>No — exhausted after one pass</td></tr>
+        <tr><td>Use case</td><td>Small lists, need random access</td><td>Large files, streams, pipelines</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">7</span> Coding Challenge</div>
+      <p>Write a list comprehension that generates all <strong>prime numbers</strong> between 2 and 50. A prime number is only divisible by 1 and itself. Hint: Use a nested comprehension to check if any number from 2 to <code>n-1</code> divides evenly.</p>
+    </div>
+
+    <div class="nav-footer">
+      <a href="/blog-python-oop-advanced.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">OOP: Inheritance &amp; Dunder</span>
+      </a>
+      <a href="/blog-python-lambda.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Lambda &amp; Decorators</span>
+      </a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

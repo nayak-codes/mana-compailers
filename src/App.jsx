@@ -3,6 +3,11 @@ import Editor from '@monaco-editor/react'
 import { LANGUAGES, TEMPLATES } from './languages'
 import AppTopnav from './components/AppTopnav'
 import CompilerHeader from './components/CompilerHeader'
+import NativeBanner from './components/ads/NativeBanner'
+import Banner728 from './components/ads/Banner728'
+import MobileBanner320 from './components/ads/MobileBanner320'
+import Banner300 from './components/ads/Banner300'
+import Banner160 from './components/ads/Banner160'
 
 // ── Code Clipboard Modal ─────────────────────────────────────────────────
 const CLIP_API = '/api/clipboard'
@@ -822,6 +827,10 @@ export default function App() {
 
           <CompilerHeader theme={theme} setTheme={setTheme} goHome={goHome} />
 
+          {/* ── ADSTERRA RESPONSIVE TOP BANNER ADS ── */}
+          <Banner728 className="desktop-ad" />
+          <MobileBanner320 className="mobile-ad" />
+
           {/* TOOLBAR */}
           <div style={s.toolbar}>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -1064,6 +1073,9 @@ export default function App() {
               <h2>📚 {lang.label} Tutorial & Reference Guide</h2>
               <p>Read the guide below to learn the syntax and features of {lang.label}, and practice by running code in the editor above.</p>
             </div>
+            
+            {/* ── ADSTERRA 300x250 BANNER AD ── */}
+            <Banner300 />
             {tutorialHtml ? (
               <div 
                 className="tutorial-body"
@@ -1507,6 +1519,11 @@ function HomePage({ selectLanguage, theme, setTheme }) {
             >☕ Try Java Now</button>
           </div>
         </section>
+
+        {/* ── ADSTERRA NATIVE BANNER AD ── */}
+        <div style={{ maxWidth: '1200px', margin: '20px auto', padding: '0 20px' }}>
+          <NativeBanner />
+        </div>
 
       </main>
 
