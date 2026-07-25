@@ -3,6 +3,7 @@ import Editor from '@monaco-editor/react'
 import { LANGUAGES, TEMPLATES } from './languages'
 import AppTopnav from './components/AppTopnav'
 import CompilerHeader from './components/CompilerHeader'
+import Banner728 from './components/ads/Banner728'
 
 // ── Code Clipboard Modal ─────────────────────────────────────────────────
 const CLIP_API = '/api/clipboard'
@@ -996,6 +997,9 @@ export default function App() {
 
           </div>
 
+          {/* 728x90 Adsterra Banner Ad */}
+          <Banner728 />
+
           {/* TUTORIAL CONTENT PANEL */}
           <div className="tutorial-section">
             <div className="tutorial-header">
@@ -1301,6 +1305,9 @@ function HomePage({ selectLanguage, theme, setTheme }) {
             ))}
           </div>
         </section>
+
+        {/* 728x90 Adsterra Banner Ad */}
+        <Banner728 />
 
         {/* ── TUTORIALS GRID ── */}
         <section style={{ marginBottom: 96 }}>

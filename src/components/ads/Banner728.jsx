@@ -39,7 +39,7 @@ export default function Banner728({ adKey = 'dee3a7589e2999900cad19c8f354a5a8', 
             'params' : {}
           };
         </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/${adKey}/invoke.js"></script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script>
       </body>
       </html>
     `);
