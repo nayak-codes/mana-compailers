@@ -641,7 +641,10 @@ export default function App() {
     }
   }
 
-
+  // ⚡ Silent backend warmup — wakes Render server in background on page load
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})
+  }, [])
 
   // Handle browser back button
   useEffect(() => {
@@ -806,7 +809,12 @@ export default function App() {
                 📤 Share Code
               </button>
 
-              <button onClick={runCode} disabled={running} style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}>
+              <button 
+                onClick={runCode} 
+                onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+                disabled={running} 
+                style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}
+              >
                 {running ? '⏳ Running...' : '▶ Run Code'}
               </button>
             </div>

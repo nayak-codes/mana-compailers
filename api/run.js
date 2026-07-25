@@ -49,7 +49,7 @@ export default async function handler(req, res) {
   // 🔥 Health check — used for warmup pings to wake Render backend
   if (req.method === 'GET') {
     try {
-      await fetch(`${BACKEND_URL}/api/health`, { signal: AbortSignal.timeout(5000) })
+      await fetch(`${BACKEND_URL}/`, { signal: AbortSignal.timeout(5000) })
     } catch (_) {}
     return res.status(200).json({ status: 'ok' })
   }
