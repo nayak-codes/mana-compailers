@@ -275,11 +275,21 @@ const TerminalInput = ({ onSubmit }) => {
   )
 }
 
-const parseTerminalSession = (rawOutput, inputs, code, langId) => {
+const parseTerminalSession = (rawOutput, inputs, code, langId, isEofError = false) => {
   if (!rawOutput) return []
+
+  // If code does NOT call any input functions, return the output directly as pure output
+  if (!detectsInput(code, langId)) {
+    return [{ type: 'output', text: rawOutput }]
+  }
 
   // Count how many input() calls exist in the code to know when to stop matching prompts
   const maxInputs = countInputCalls(code, langId)
+
+  // Determine prompt limit:
+  // If maxInputs > 0, match up to maxInputs prompts.
+  // If maxInputs === 0 (unknown/dynamic loop), match up to (inputs.length + 1) prompts.
+  const promptLimit = maxInputs > 0 ? maxInputs : (inputs.length + 1)
 
   const promptRegex = /([^]*?[:?❯>$#](?!\/|\d)\s*)/g
   const matches = []
@@ -289,10 +299,8 @@ const parseTerminalSession = (rawOutput, inputs, code, langId) => {
   while ((match = promptRegex.exec(rawOutput)) !== null) {
     matches.push(match[1])
     lastIndex = promptRegex.lastIndex
-    // Stop matching after we've found all known input prompts.
-    // This prevents lines like "the sum of number is :" from being
-    // incorrectly treated as an input prompt after all inputs are consumed.
-    if (maxInputs > 0 && matches.length >= maxInputs) {
+    // Stop matching after we've found all allowed input prompts
+    if (matches.length >= promptLimit) {
       break
     }
   }
@@ -320,9 +328,9 @@ const parseTerminalSession = (rawOutput, inputs, code, langId) => {
   }
 
   if (detectsInput(code, langId) && !segments.some(s => s.type === 'active-input')) {
-    // Only show generic input box if we don't know the input count (maxInputs=0)
-    // OR if we still need more inputs than we have
-    if (maxInputs === 0 && inputs.length < 10) {
+    // Only show generic active input if the execution actually hit an EOF error (was interrupted waiting for input)
+    // AND maxInputs === 0 AND we have provided fewer inputs than 10
+    if (isEofError && maxInputs === 0 && inputs.length < 10) {
       segments.push({ type: 'generic-active-input' })
     }
   }
@@ -342,7 +350,7 @@ const detectsInput = (code, langId) => {
     case 'java':
       return /scanner|bufferedreader|system\.in/i.test(code);
     case 'nodejs':
-      return /readline|process\.stdin/i.test(code);
+      return /readline|process\.stdin|prompt\s*\(/i.test(code);
     case 'go':
       return /scan|scanln|scanf|readstring|bufio/i.test(codeLower);
     case 'rust':
@@ -351,6 +359,8 @@ const detectsInput = (code, langId) => {
       return /readline|stdin/i.test(codeLower);
     case 'ruby':
       return /gets/i.test(code);
+    case 'csharp':
+      return /Console\.Read/i.test(code);
     default:
       return false;
   }
@@ -365,11 +375,13 @@ const countInputCalls = (code, langId) => {
     case 'c':
       return (code.match(/\bscanf\s*\(|\bgets\s*\(|\bfgets\s*\(|\bgetchar\s*\(/gi) || []).length
     case 'cpp17':
-      return (code.match(/\bcin\s*>>/gi) || []).length
+      return (code.match(/\bcin\s*>>|\bgetline\s*\(/gi) || []).length
     case 'java':
-      return (code.match(/\.nextLine\s*\(|\.nextInt\s*\(|\.nextDouble\s*\(|\.nextLong\s*\(|\.next\s*\(/gi) || []).length
+      return (code.match(/\.next(Line|Int|Double|Long|Float|Byte|Short|Boolean)?\s*\(|\.readLine\s*\(|\.read\s*\(/gi) || []).length
     case 'ruby':
       return (code.match(/\bgets\s*\b/gi) || []).length
+    case 'csharp':
+      return (code.match(/Console\.Read(Line)?\s*\(/gi) || []).length
     default:
       return 0 // Unknown — fallback to old behavior
   }
@@ -570,6 +582,15 @@ export default function App() {
 
   const [showClipboard, setShowClipboard] = useState(false)
 
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
+  const [mobileTab, setMobileTab] = useState('editor')
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // 🔗 Auto-load code from ?pin= URL param (shareable link)
   useEffect(() => {
     const urlPin = new URLSearchParams(window.location.search).get('pin')
@@ -757,7 +778,8 @@ export default function App() {
         text: isEofError ? (data.output || '') : (data.output || '(no output)'),
         elapsed,
         label: 'Success',
-        usedStdin: inputToSend
+        usedStdin: inputToSend,
+        isEofError
       })
 
     } catch (err) {
@@ -770,8 +792,11 @@ export default function App() {
 
   const runCode = useCallback(() => {
     setInputs([])
+    if (isMobile) {
+      setMobileTab('terminal')
+    }
     executeCode("")
-  }, [executeCode])
+  }, [executeCode, isMobile])
 
   const handleTerminalClick = () => {
     const inputEl = document.querySelector('.terminal-active-input')
@@ -793,7 +818,7 @@ export default function App() {
           <CompilerHeader theme={theme} setTheme={setTheme} goHome={goHome} />
 
           {/* TOOLBAR */}
-          <div style={s.toolbar}>
+          <div style={s.toolbar} className="compiler-toolbar">
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
                 {LANGUAGES.map(l => (
@@ -801,10 +826,12 @@ export default function App() {
                 ))}
               </select>
             </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
               <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
-              <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
+              {!isMobile && (
+                <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
+              )}
               <button onClick={() => setShowClipboard(true)} style={s.btnShare} title="Share code with a 4-digit PIN">
                 📤 Share Code
               </button>
@@ -820,8 +847,36 @@ export default function App() {
             </div>
           </div>
 
+          {/* MOBILE SEGMENTED TABS */}
+          {isMobile && (
+            <div className="compiler-mobile-tabs">
+              <button
+                onClick={() => setMobileTab('editor')}
+                className={`compiler-mobile-tab-btn ${mobileTab === 'editor' ? 'active' : ''}`}
+              >
+                📝 Code Editor
+              </button>
+              <button
+                onClick={() => setMobileTab('terminal')}
+                className={`compiler-mobile-tab-btn ${mobileTab === 'terminal' ? 'active' : ''}`}
+              >
+                🖥️ Terminal Output
+                {output && output.status !== 'running' && (
+                  <span style={{
+                    width: 8, height: 8, borderRadius: '50%',
+                    background: output.status === 'ok' ? '#3fb950' : '#ff6b6b',
+                    display: 'inline-block', marginLeft: 4
+                  }} />
+                )}
+                {running && (
+                  <span style={{ fontSize: 12 }}>⏳</span>
+                )}
+              </button>
+            </div>
+          )}
+
           {/* MAIN */}
-          <div ref={containerRef} style={{
+          <div ref={containerRef} className="compiler-main-container" style={{
             ...s.main,
             display: 'flex',
             flexDirection: swap ? 'row-reverse' : 'row',
@@ -830,11 +885,12 @@ export default function App() {
             {/* EDITOR */}
             <div style={{
               ...s.editorPanel,
-              flex: maximizedPanel === 'editor' ? '1 1 100%' : maximizedPanel === 'output' ? '0 0 0' : `0 0 ${editorPct}%`,
-              maxWidth: maximizedPanel === 'editor' ? '100%' : maximizedPanel === 'output' ? '0' : `${editorPct}%`,
-              overflow: maximizedPanel === 'output' ? 'hidden' : 'hidden'
+              flex: isMobile ? (mobileTab === 'editor' ? '1 1 100%' : '0 0 0') : (maximizedPanel === 'editor' ? '1 1 100%' : maximizedPanel === 'output' ? '0 0 0' : `0 0 ${editorPct}%`),
+              maxWidth: isMobile ? (mobileTab === 'editor' ? '100%' : '0') : (maximizedPanel === 'editor' ? '100%' : maximizedPanel === 'output' ? '0' : `${editorPct}%`),
+              display: isMobile && mobileTab !== 'editor' ? 'none' : 'flex',
+              overflow: 'hidden'
             }}>
-              <div style={s.panelHead}>
+              <div style={s.panelHead} className="compiler-panel-head">
                 <span style={{ fontSize: 13, fontWeight: 600 }}>📝 Editor</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 12, color: 'var(--text2)' }}>{lang.icon} {lang.label}</span>
@@ -848,9 +904,11 @@ export default function App() {
                   >
                     🧹 Clear Code
                   </button>
-                  <button onClick={() => toggleMaximize('editor')} style={s.panelBtn}>
-                    {maximizedPanel === 'editor' ? '🗗' : '⛶'}
-                  </button>
+                  {!isMobile && (
+                    <button onClick={() => toggleMaximize('editor')} style={s.panelBtn}>
+                      {maximizedPanel === 'editor' ? '🗗' : '⛶'}
+                    </button>
+                  )}
                 </div>
               </div>
               <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -870,13 +928,14 @@ export default function App() {
                     });
                   }}
                   options={{
-                    fontSize: 14,
+                    fontSize: isMobile ? 13 : 14,
                     fontFamily: "'JetBrains Mono', monospace",
                     minimap: { enabled: false },
                     scrollBeyondLastLine: false,
-                    wordWrap: 'off',
+                    wordWrap: isMobile ? 'on' : 'off',
                     automaticLayout: true,
                     padding: { top: 12 },
+                    lineNumbersMinChars: isMobile ? 3 : 5,
                     scrollbar: { horizontalScrollbarSize: 6 }
                   }}
                 />
@@ -884,7 +943,7 @@ export default function App() {
             </div>
 
             {/* RESIZER */}
-            {showResizer && (
+            {!isMobile && showResizer && (
               <div
                 style={{ ...s.resizer, width: RESIZER_WIDTH, cursor: 'col-resize', flexShrink: 0 }}
                 onPointerDown={handlePointerDown}
@@ -896,14 +955,15 @@ export default function App() {
               onClick={handleTerminalClick}
               style={{
                 ...s.outPanel,
-                flex: maximizedPanel === 'output' ? '1 1 100%' : maximizedPanel === 'editor' ? '0 0 0' : `0 0 ${outputPct}%`,
-                maxWidth: maximizedPanel === 'output' ? '100%' : maximizedPanel === 'editor' ? '0' : `${outputPct}%`,
-                overflow: maximizedPanel === 'editor' ? 'hidden' : undefined,
+                flex: isMobile ? (mobileTab === 'terminal' ? '1 1 100%' : '0 0 0') : (maximizedPanel === 'output' ? '1 1 100%' : maximizedPanel === 'editor' ? '0 0 0' : `0 0 ${outputPct}%`),
+                maxWidth: isMobile ? (mobileTab === 'terminal' ? '100%' : '0') : (maximizedPanel === 'output' ? '100%' : maximizedPanel === 'editor' ? '0' : `${outputPct}%`),
+                display: isMobile && mobileTab !== 'terminal' ? 'none' : 'flex',
+                borderLeft: isMobile ? 'none' : '1px solid var(--border)',
                 cursor: 'text',
               }}
             >
               {/* TERMINAL HEADER */}
-              <div style={s.tabs}>
+              <div style={s.tabs} className="compiler-panel-head">
                 <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   🖥️ Terminal
                 </span>
@@ -916,9 +976,11 @@ export default function App() {
                     {output.label}
                   </span>
                 )}
-                <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: !output || output.status === 'running' ? 'auto' : 0 }}>
-                  {maximizedPanel === 'output' ? '🗗' : '⛶'}
-                </button>
+                {!isMobile && (
+                  <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: !output || output.status === 'running' ? 'auto' : 0 }}>
+                    {maximizedPanel === 'output' ? '🗗' : '⛶'}
+                  </button>
+                )}
               </div>
 
               {/* TERMINAL BODY */}
@@ -934,7 +996,7 @@ export default function App() {
                         color: 'var(--green)',
                         whiteSpace: 'pre-wrap',
                         fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                        fontSize: 14,
+                        fontSize: isMobile ? 13 : 14,
                         lineHeight: 1.6,
                         opacity: running ? 0.7 : 1,
                         transition: 'opacity 0.15s ease'
@@ -943,7 +1005,7 @@ export default function App() {
                           if (output.status === 'error') {
                             return <div>{formatTerminalOutput(output.text, lang.id, true)}</div>
                           }
-                          const tv = parseTerminalSession(output.text, inputs, code, lang.id)
+                          const tv = parseTerminalSession(output.text, inputs, code, lang.id, output.isEofError)
                           return tv.map((seg, idx) => {
                             if (seg.type === 'output') {
                               const nextSeg = tv[idx + 1]
@@ -1004,6 +1066,19 @@ export default function App() {
             </div>
 
           </div>
+
+          {/* FLOATING RUN BUTTON ON MOBILE */}
+          {isMobile && (
+            <button
+              onClick={runCode}
+              onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+              disabled={running}
+              className="compiler-floating-run"
+              title="Run Code"
+            >
+              {running ? '⏳ Executing...' : '▶ Run Code'}
+            </button>
+          )}
 
 
 
