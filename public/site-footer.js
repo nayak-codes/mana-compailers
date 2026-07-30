@@ -54,6 +54,7 @@
             '<li><a href="/features.html">⚡ Features</a></li>' +
             '<li><a href="/contact.html">📬 Contact</a></li>' +
             '<li><a href="/privacy-policy.html">🔒 Privacy Policy</a></li>' +
+            '<li><a href="/terms-of-service.html">📜 Terms of Service</a></li>' +
             '<li><a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer">🏢 Balanju Solutions</a></li>' +
           '</ul>' +
         '</div>' +
@@ -73,6 +74,8 @@
         '</div>' +
         '<div class="bottom-right">' +
           '<a href="/privacy-policy.html">Privacy</a>' +
+          '<span class="divider">·</span>' +
+          '<a href="/terms-of-service.html">Terms</a>' +
           '<span class="divider">·</span>' +
           '<a href="/contact.html">Contact</a>' +
           '<span class="divider">·</span>' +

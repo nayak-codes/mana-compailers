@@ -1,336 +1,325 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Python 3 Exception Handling | Our Compiler</title>
-  <meta name="description" content="Learn Python 3 — Python 3 Exception Handling with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <meta name="description" content="Learn Python 3 exception handling — try, except, else, finally, raise, custom exceptions, and common error types with practical examples." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <script src="/site-nav.js" defer></script>
-
-    
-  <!-- Scroll Position Restoration Script -->
   <script>
     (function() {
-      // Restore scroll position on page load - wait for all images and content
-      var restoreScrollTimeout;
-      
-      function restoreScroll() {
-        var scrollPos = sessionStorage.getItem('scrollPos');
-        if (scrollPos) {
-          var pos = parseInt(scrollPos, 10);
-          window.scrollTo(0, pos);
-          sessionStorage.removeItem('scrollPos');
-        }
-      }
-      
-      // Try multiple times to restore - waits for layout to settle
-      window.addEventListener('load', function() {
-        restoreScroll();
-        // Also try after a small delay to account for lazy-loaded content
-        setTimeout(restoreScroll, 100);
-        setTimeout(restoreScroll, 500);
-      });
-
-      // Also restore when DOM is ready
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(restoreScroll, 50);
-      });
-
-      // Save scroll position before navigating away
-      document.addEventListener('click', function(e) {
-        var link = e.target.closest('a');
-        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
-          // Only save for same-domain links (internal navigation)
-          sessionStorage.setItem('scrollPos', window.scrollY);
-        }
-      });
+      function restoreScroll() { var s=sessionStorage.getItem('scrollPos'); if(s){window.scrollTo(0,parseInt(s,10));sessionStorage.removeItem('scrollPos');} }
+      window.addEventListener('load',function(){restoreScroll();setTimeout(restoreScroll,100);setTimeout(restoreScroll,500);});
+      document.addEventListener('DOMContentLoaded',function(){setTimeout(restoreScroll,50);});
+      document.addEventListener('click',function(e){var l=e.target.closest('a');if(l&&l.hostname===window.location.hostname&&!l.hasAttribute('download')){sessionStorage.setItem('scrollPos',window.scrollY);}});
     })();
   </script>
-
-<!-- Blog Theme Switcher -->
   <script>
-    (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
-      if (currentTheme === 'light') {
-        document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('light-theme');
-        });
-      }
-      window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
-        const topnav = document.querySelector('.topnav');
-        if (topnav) {
-          const toggleBtn = document.createElement('button');
-          toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          const updateText = () => {
-            const isLight = document.body.classList.contains('light-theme');
-            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-          };
-          updateText();
-          toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateText();
-          });
-          topnav.appendChild(toggleBtn);
-        }
-
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'python3';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
-            });
-          }
+    (function(){
+      const t=localStorage.getItem('theme')||'dark';
+      if(t==='light'){document.documentElement.classList.add('light-theme');document.addEventListener('DOMContentLoaded',()=>{document.body.classList.add('light-theme');});}
+      window.addEventListener('DOMContentLoaded',()=>{
+        const nav=document.querySelector('.topnav');
+        if(nav){const b=document.createElement('button');b.className='blog-theme-toggle';b.style.cssText='margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';const u=()=>{b.innerHTML=document.body.classList.contains('light-theme')?'🌙 Dark':'☀️ Light';};u();b.addEventListener('click',()=>{document.body.classList.toggle('light-theme');document.documentElement.classList.toggle('light-theme');localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');u();});nav.appendChild(b);}
+        document.querySelectorAll('.code-block').forEach(block=>{
+          const h=block.querySelector('.code-block-header'),c=block.querySelector('pre code');if(!h||!c)return;
+          let ac=h.querySelector('.code-actions');if(!ac){ac=document.createElement('div');ac.className='code-actions';ac.style.cssText='display:flex;gap:8px;align-items:center;margin-left:auto;';const tb=h.querySelector('.try-btn');if(tb)ac.appendChild(tb);h.appendChild(ac);}
+          const cb=document.createElement('button');cb.innerHTML='📋 Copy';cb.style.cssText='background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:"Inter",sans-serif;white-space:nowrap;';
+          cb.addEventListener('click',()=>{navigator.clipboard.writeText(c.textContent).then(()=>{cb.innerHTML='✅ Copied!';setTimeout(()=>{cb.innerHTML='📋 Copy';},2000);});});
+          ac.insertBefore(cb,ac.firstChild);
+          const tb=ac.querySelector('.try-btn');if(tb){tb.addEventListener('click',(e)=>{e.preventDefault();const url=tb.getAttribute('href');const lang=new URLSearchParams(url.split('?')[1]).get('lang')||'python3';localStorage.setItem('code_'+lang,c.textContent);window.location.href=url;});}
         });
       });
     })();
   </script>
 </head>
 <body class="lang-python">
-
-<!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html" class="active">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
-  <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html">Angular</a>
-  <a href="/blog-vue.html">Vue.js</a>
-  <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-django.html">Django</a>
-  <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
-  <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
-  <a href="/blog-rest-api.html">REST API</a>
-  <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-git.html">Git & GitHub</a>
+  <a href="/blog-java.html">Java</a><a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a><a href="/blog-cpp.html">C++</a><a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a><a href="/blog-rust.html">Rust</a><a href="/blog-php.html">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a><a href="/blog-html.html">HTML</a><a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a><a href="/blog-angular.html">Angular</a><a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a><a href="/blog-nodejs.html">Node.js</a><a href="/blog-express.html">Express.js</a>
+  <a href="/blog-django.html">Django</a><a href="/blog-flask.html">Flask</a><a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-mysql.html">MySQL</a><a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-rest-api.html">REST API</a><a href="/blog-graphql.html">GraphQL</a><a href="/blog-git.html">Git &amp; GitHub</a>
 </nav>
-
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    
     <div class="sidebar-heading">Python 3 Tutorial</div>
     <a href="/blog-python.html">Python 3 HOME</a>
-    <a href="/blog-python-intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-python-variables.html">2. Variables & Core Types</a>
-    <a href="/blog-python-operators.html">3. Basic Operators & Math</a>
-    <a href="/blog-python-strings.html">4. String Slicing & Methods</a>
+    <a href="/blog-python-intro.html">1. Welcome &amp; Hello World</a>
+    <a href="/blog-python-variables.html">2. Variables &amp; Core Types</a>
+    <a href="/blog-python-operators.html">3. Basic Operators &amp; Math</a>
+    <a href="/blog-python-strings.html">4. String Slicing &amp; Methods</a>
     <a href="/blog-python-conditionals.html">5. Conditionals (if-else)</a>
-    <a href="/blog-python-loops.html">6. Loops & Ranges</a>
+    <a href="/blog-python-loops.html">6. Loops &amp; Ranges</a>
     <a href="/blog-python-input.html">7. Reading User Inputs</a>
-    <a href="/blog-python-lists.html">8. Lists & Tuples</a>
-    <a href="/blog-python-dicts.html">9. Dictionaries & Sets</a>
-    <a href="/blog-python-functions.html">10. Functions & Reusable Code</a>
-    <a href="/blog-python-modules.html">11. Modules & Standard Lib</a>
+    <a href="/blog-python-lists.html">8. Lists &amp; Tuples</a>
+    <a href="/blog-python-dicts.html">9. Dictionaries &amp; Sets</a>
+    <a href="/blog-python-functions.html">10. Functions &amp; Reusable Code</a>
+    <a href="/blog-python-modules.html">11. Modules &amp; Standard Lib</a>
     <a href="/blog-python-files.html">12. File I/O Operations</a>
     <a href="/blog-python-errors.html" class="active">13. Exception Handling</a>
-    <a href="/blog-python-oop-basics.html">14. OOP: Classes & Objects</a>
-    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance & Dunder</a>
-
+    <a href="/blog-python-oop-basics.html">14. OOP: Classes &amp; Objects</a>
+    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance &amp; Dunder</a>
     <div class="sidebar-heading">Reference</div>
     <a href="/blog.html">All Tutorials</a>
     <a href="/?lang=python3">▶ Try Python 3 Online</a>
-
     <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
-
+    <a href="/blog-java.html">Java</a><a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a><a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a><a href="/blog-rust.html">Rust</a>
   </aside>
-
-  <!-- MAIN CONTENT -->
   <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <a href="/blog-python.html">Python 3</a><span>›</span>
+      <span>Exception Handling</span>
+    </div>
+    <h1 class="page-title">Python 3 — Exception Handling</h1>
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Lesson 13</span>
+      <span class="badge">📅 July 2026</span>
+    </div>
+    <div class="intro-box"><p>Errors in Python are called <strong>exceptions</strong>. Instead of crashing your program when something goes wrong, Python lets you catch exceptions and handle them gracefully. This makes your programs robust, user-friendly, and production-ready.</p></div>
     
-<div class="breadcrumb">
-  <a href="/">Home</a><span>›</span>
-  <a href="/blog.html">Tutorials</a><span>›</span>
-  <a href="/blog-python.html">Python 3</a><span>›</span>
-  <span>Exception Handling</span>
-</div>
-<h1 class="page-title">Python 3 — Exception Handling with try-except</h1>
-<div class="page-meta">
-  <span class="badge">🐍 Python 3</span>
-  <span class="badge">🟢 Lesson 13</span>
-  <span class="badge">📅 July 2026</span>
-</div>
-
-<div class="intro-box">
-  <p>Errors happen. A user might type invalid values, or your program might try to open a missing file. In professional software, a crash is unacceptable. Python provides exception handling structures to intercept errors and handle them gracefully.</p>
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Common Built-in Exceptions</div>
+  <table class="tbl"><tr><th>Exception</th><th>Cause</th><th>Example</th></tr>
+    <tr><td><code>ValueError</code></td><td>Wrong value type/format</td><td><code>int("hello")</code></td></tr>
+    <tr><td><code>TypeError</code></td><td>Wrong data type</td><td><code>"a" + 5</code></td></tr>
+    <tr><td><code>ZeroDivisionError</code></td><td>Division by zero</td><td><code>10 / 0</code></td></tr>
+    <tr><td><code>IndexError</code></td><td>List index out of range</td><td><code>[1,2][5]</code></td></tr>
+    <tr><td><code>KeyError</code></td><td>Dictionary key missing</td><td><code>d["x"]</code></td></tr>
+    <tr><td><code>FileNotFoundError</code></td><td>File doesn't exist</td><td><code>open("x.txt")</code></td></tr>
+    <tr><td><code>AttributeError</code></td><td>Object has no attribute</td><td><code>"hi".upper2()</code></td></tr>
+    <tr><td><code>NameError</code></td><td>Variable not defined</td><td><code>print(x)</code></td></tr>
+    <tr><td><code>ImportError</code></td><td>Module not found</td><td><code>import xyz</code></td></tr>
+  </table>
 </div>
 
 <div class="section">
-  <div class="section-title"><span class="num">1</span> What is an Exception?</div>
-  <p>An exception is a signal that an error has occurred during execution. Instead of continuing, Python halts program flow and raises a traceback detailing what went wrong. Standard exceptions include <code>ZeroDivisionError</code>, <code>ValueError</code>, and <code>FileNotFoundError</code>.</p>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">2</span> The try-except Block</div>
-  <p>To prevent errors from crashing your script, isolate risky instructions in a <code>try</code> block. If an error is raised, Python skips the remaining try code and jumps to the matching <code>except</code> block:</p>
-  
+  <div class="section-title"><span class="num">2</span> Basic try-except</div>
   <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">Python 3 — Exception Catching</span>
-      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
-    </div>
-    <pre><code>try:
-    number = int(input("Enter a whole number: "))
-    result = 10 / number
-    print(f"Result: {result}")
+    <div class="code-block-header"><span class="lang-tag">Python 3 — try-except</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code># Without error handling — program crashes!
+# num = int("hello")  # ValueError: invalid literal
+
+# With error handling — program continues
+try:
+    num = int("hello")
+    print(f"Number: {num}")
+except ValueError as e:
+    print(f"❌ ValueError: {e}")
+    print("Please enter a valid number.")
+
+print("Program continues running...")
+
+# ZeroDivisionError
+try:
+    result = 100 / 0
+    print(result)
 except ZeroDivisionError:
-    print("Error: You cannot divide a number by zero!")
+    print("❌ Cannot divide by zero!")
+
+# Multiple except blocks
+try:
+    data = [1, 2, 3]
+    value = int("abc")
+    item = data[10]
 except ValueError:
-    print("Error: That wasn't a valid whole number!")</code></pre>
+    print("❌ Invalid number format")
+except IndexError:
+    print("❌ Index out of range")
+except Exception as e:
+    print(f"❌ Unexpected error: {e}")</code></pre>
   </div>
 </div>
 
 <div class="section">
-  <div class="section-title"><span class="num">3</span> The finally Clause</div>
-  <p>You can append an optional <code>finally</code> block at the bottom. Code inside the <code>finally</code> block is guaranteed to run **no matter what**, whether an error occurred or not. This is commonly used for resource cleanup:</p>
+  <div class="section-title"><span class="num">3</span> try-except-else-finally</div>
   <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">Python 3 — finally Block</span>
-      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
-    </div>
-    <pre><code>try:
-    print("Opening database...")
-    # Simulate an error
-    error_val = 10 / 0
-except ZeroDivisionError:
-    print("Caught division by zero!")
-finally:
-    print("Closing database connections safely!")</code></pre>
+    <div class="code-block-header"><span class="lang-tag">Python 3 — Full try Block</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code>def divide(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        print("❌ Division by zero!")
+        return None
+    except TypeError:
+        print("❌ Both values must be numbers!")
+        return None
+    else:
+        # Runs ONLY when no exception occurred
+        print(f"✅ Success! {a} / {b} = {result}")
+        return result
+    finally:
+        # ALWAYS runs, even if there's an exception
+        print("--- Division attempt complete ---")
+
+divide(10, 2)    # Succeeds
+print()
+divide(10, 0)    # ZeroDivisionError
+print()
+divide("a", 2)   # TypeError</code></pre>
   </div>
 </div>
 
-<div class="info-box">
-  <strong>âš ï¸ Avoid Blank Excepts:</strong>
-  <p>Writing <code>except:</code> without specifying the exception type (like <code>except ValueError:</code>) catches *every* error, including syntax slips or exit requests. This hides bugs and makes debugging extremely difficult. Always specify the specific exception you want to handle.</p>
+<div class="section">
+  <div class="section-title"><span class="num">4</span> Raising Exceptions</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — raise</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code>def set_age(age):
+    if not isinstance(age, int):
+        raise TypeError("Age must be an integer!")
+    if age < 0 or age > 150:
+        raise ValueError(f"Invalid age: {age}. Must be 0-150.")
+    print(f"Age set to: {age}")
+
+# Test valid age
+set_age(25)
+
+# Test invalid types
+try:
+    set_age("twenty")
+except TypeError as e:
+    print(f"TypeError: {e}")
+
+# Test invalid range
+try:
+    set_age(-5)
+except ValueError as e:
+    print(f"ValueError: {e}")
+
+# Re-raise an exception after logging
+def process_file(filename):
+    try:
+        with open(filename) as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"Log: File '{filename}' not found")
+        raise  # Re-raise same exception</code></pre>
+  </div>
 </div>
 
 <div class="section">
-  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
-  <p>Write a calculator program that divides two numbers. Wrap the inputs and division calculations inside a 'try-except' block to cleanly handle inputs that aren't numeric, and division by zero.</p>
+  <div class="section-title"><span class="num">5</span> Custom Exception Classes</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — Custom Exceptions</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code># Create custom exceptions by inheriting from Exception
+class InsufficientFundsError(Exception):
+    """Raised when a bank account has insufficient balance."""
+    def __init__(self, balance, amount):
+        self.balance = balance
+        self.amount = amount
+        self.message = f"Insufficient funds! Balance: ₹{balance}, Requested: ₹{amount}"
+        super().__init__(self.message)
+
+class InvalidAccountError(Exception):
+    """Raised for invalid account numbers."""
+    pass
+
+# Bank account class using custom exceptions
+class BankAccount:
+    def __init__(self, account_id, balance):
+        self.account_id = account_id
+        self.balance = balance
+
+    def withdraw(self, amount):
+        if amount <= 0:
+            raise ValueError("Withdrawal amount must be positive!")
+        if amount > self.balance:
+            raise InsufficientFundsError(self.balance, amount)
+        self.balance -= amount
+        print(f"✅ Withdrew ₹{amount}. New balance: ₹{self.balance}")
+
+account = BankAccount("ACC001", 5000)
+try:
+    account.withdraw(3000)
+    account.withdraw(3000)   # Will fail
+except InsufficientFundsError as e:
+    print(f"❌ {e}")
+except ValueError as e:
+    print(f"❌ {e}")</code></pre>
+  </div>
 </div>
 
+<div class="section">
+  <div class="section-title"><span class="num">6</span> Exception Chaining</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — Exception Chaining</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code># raise ... from ... — attach context to exceptions
+def load_config(filename):
+    try:
+        with open(filename) as f:
+            import json
+            return json.load(f)
+    except FileNotFoundError as e:
+        raise RuntimeError(f"Config file missing: {filename}") from e
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Config file is invalid JSON") from e
+
+try:
+    config = load_config("missing_config.json")
+except RuntimeError as e:
+    print(f"RuntimeError: {e}")
+    print(f"Caused by: {e.__cause__}")</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">7</span> Context Managers &amp; with Statement</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — with Statement</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code># 'with' ensures resources are always cleaned up
+# Even if an exception occurs inside the block!
+
+# File handling with 'with'
+with open("safe.txt", "w") as f:
+    f.write("Safe file handling!")
+# File is automatically closed here, even if exception occurs
+
+# Create a custom context manager using contextlib
+from contextlib import contextmanager
+
+@contextmanager
+def timer():
+    import time
+    start = time.time()
+    try:
+        yield  # Control passes to the 'with' block
+    finally:
+        end = time.time()
+        print(f"⏱️ Execution time: {end - start:.4f}s")
+
+with timer():
+    result = sum(range(1_000_000))
+    print(f"Sum: {result}")</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">8</span> Coding Challenge</div>
+  <p>Build a <strong>robust user registration system</strong>:</p>
+  <ul>
+    <li>Create custom exceptions: <code>UsernameTakenError</code>, <code>WeakPasswordError</code>, <code>InvalidEmailError</code></li>
+    <li>Write a <code>register_user(username, email, password)</code> function that raises these exceptions for: taken usernames, passwords shorter than 8 chars, emails without "@", duplicate registrations</li>
+    <li>Use a dictionary to store registered users</li>
+    <li>Test with: a valid registration, duplicate username, weak password, and invalid email</li>
+    <li>Use try-except-else to print success or appropriate error messages</li>
+  </ul>
+</div>
     <div class="nav-footer">
       <a href="/blog-python-files.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
@@ -338,17 +327,10 @@ finally:
       </a>
       <a href="/blog-python-oop-basics.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">OOP: Classes & Objects</span>
+        <span class="title">OOP: Classes &amp; Objects</span>
       </a>
     </div>
   </main>
 </div>
 </body>
 </html>
-
-
-
-
-
-
-

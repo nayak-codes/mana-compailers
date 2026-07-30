@@ -365,7 +365,7 @@ msg = "Hello %s, you are %d years old." % ("Bob", 30)
 print(msg)
 
 # .format() method
-msg2 = "Product: {}, Price: \\${:.2f}".format("Laptop", 999.99)
+msg2 = 'Product: {}, Price: $' + '{:.2f}'.format("Laptop", 999.99)
 print(msg2)</code></pre>
   </div>
 </div>

@@ -819,12 +819,22 @@ export default function App() {
 
           {/* TOOLBAR */}
           <div style={s.toolbar} className="compiler-toolbar">
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', width: isMobile ? '100%' : 'auto' }}>
               <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
                 {LANGUAGES.map(l => (
                   <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
                 ))}
               </select>
+              {isMobile && (
+                <button 
+                  onClick={runCode} 
+                  onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+                  disabled={running} 
+                  style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}
+                >
+                  {running ? '⏳ Running...' : '▶ Run Code'}
+                </button>
+              )}
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
@@ -836,14 +846,16 @@ export default function App() {
                 📤 Share Code
               </button>
 
-              <button 
-                onClick={runCode} 
-                onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
-                disabled={running} 
-                style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}
-              >
-                {running ? '⏳ Running...' : '▶ Run Code'}
-              </button>
+              {!isMobile && (
+                <button 
+                  onClick={runCode} 
+                  onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+                  disabled={running} 
+                  style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}
+                >
+                  {running ? '⏳ Running...' : '▶ Run Code'}
+                </button>
+              )}
             </div>
           </div>
 

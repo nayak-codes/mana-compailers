@@ -1,339 +1,367 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python 3 OOP: Classes & Objects | Our Compiler</title>
-  <meta name="description" content="Learn Python 3 — Python 3 OOP: Classes & Objects with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <title>Python 3 OOP: Classes &amp; Objects | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 OOP — define classes, create objects, __init__ constructor, instance methods, class variables, properties, and encapsulation." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <script src="/site-nav.js" defer></script>
-
-    
-  <!-- Scroll Position Restoration Script -->
   <script>
     (function() {
-      // Restore scroll position on page load - wait for all images and content
-      var restoreScrollTimeout;
-      
-      function restoreScroll() {
-        var scrollPos = sessionStorage.getItem('scrollPos');
-        if (scrollPos) {
-          var pos = parseInt(scrollPos, 10);
-          window.scrollTo(0, pos);
-          sessionStorage.removeItem('scrollPos');
-        }
-      }
-      
-      // Try multiple times to restore - waits for layout to settle
-      window.addEventListener('load', function() {
-        restoreScroll();
-        // Also try after a small delay to account for lazy-loaded content
-        setTimeout(restoreScroll, 100);
-        setTimeout(restoreScroll, 500);
-      });
-
-      // Also restore when DOM is ready
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(restoreScroll, 50);
-      });
-
-      // Save scroll position before navigating away
-      document.addEventListener('click', function(e) {
-        var link = e.target.closest('a');
-        if (link && link.hostname === window.location.hostname && !link.hasAttribute('download')) {
-          // Only save for same-domain links (internal navigation)
-          sessionStorage.setItem('scrollPos', window.scrollY);
-        }
-      });
+      function restoreScroll() { var s=sessionStorage.getItem('scrollPos'); if(s){window.scrollTo(0,parseInt(s,10));sessionStorage.removeItem('scrollPos');} }
+      window.addEventListener('load',function(){restoreScroll();setTimeout(restoreScroll,100);setTimeout(restoreScroll,500);});
+      document.addEventListener('DOMContentLoaded',function(){setTimeout(restoreScroll,50);});
+      document.addEventListener('click',function(e){var l=e.target.closest('a');if(l&&l.hostname===window.location.hostname&&!l.hasAttribute('download')){sessionStorage.setItem('scrollPos',window.scrollY);}});
     })();
   </script>
-
-<!-- Blog Theme Switcher -->
   <script>
-    (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
-      if (currentTheme === 'light') {
-        document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('light-theme');
-        });
-      }
-      window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
-        const topnav = document.querySelector('.topnav');
-        if (topnav) {
-          const toggleBtn = document.createElement('button');
-          toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          const updateText = () => {
-            const isLight = document.body.classList.contains('light-theme');
-            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-          };
-          updateText();
-          toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateText();
-          });
-          topnav.appendChild(toggleBtn);
-        }
-
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'python3';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
-            });
-          }
+    (function(){
+      const t=localStorage.getItem('theme')||'dark';
+      if(t==='light'){document.documentElement.classList.add('light-theme');document.addEventListener('DOMContentLoaded',()=>{document.body.classList.add('light-theme');});}
+      window.addEventListener('DOMContentLoaded',()=>{
+        const nav=document.querySelector('.topnav');
+        if(nav){const b=document.createElement('button');b.className='blog-theme-toggle';b.style.cssText='margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';const u=()=>{b.innerHTML=document.body.classList.contains('light-theme')?'🌙 Dark':'☀️ Light';};u();b.addEventListener('click',()=>{document.body.classList.toggle('light-theme');document.documentElement.classList.toggle('light-theme');localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');u();});nav.appendChild(b);}
+        document.querySelectorAll('.code-block').forEach(block=>{
+          const h=block.querySelector('.code-block-header'),c=block.querySelector('pre code');if(!h||!c)return;
+          let ac=h.querySelector('.code-actions');if(!ac){ac=document.createElement('div');ac.className='code-actions';ac.style.cssText='display:flex;gap:8px;align-items:center;margin-left:auto;';const tb=h.querySelector('.try-btn');if(tb)ac.appendChild(tb);h.appendChild(ac);}
+          const cb=document.createElement('button');cb.innerHTML='📋 Copy';cb.style.cssText='background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:"Inter",sans-serif;white-space:nowrap;';
+          cb.addEventListener('click',()=>{navigator.clipboard.writeText(c.textContent).then(()=>{cb.innerHTML='✅ Copied!';setTimeout(()=>{cb.innerHTML='📋 Copy';},2000);});});
+          ac.insertBefore(cb,ac.firstChild);
+          const tb=ac.querySelector('.try-btn');if(tb){tb.addEventListener('click',(e)=>{e.preventDefault();const url=tb.getAttribute('href');const lang=new URLSearchParams(url.split('?')[1]).get('lang')||'python3';localStorage.setItem('code_'+lang,c.textContent);window.location.href=url;});}
         });
       });
     })();
   </script>
 </head>
 <body class="lang-python">
-
-<!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html" class="active">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
-  <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html">Angular</a>
-  <a href="/blog-vue.html">Vue.js</a>
-  <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-django.html">Django</a>
-  <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
-  <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
-  <a href="/blog-rest-api.html">REST API</a>
-  <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-git.html">Git & GitHub</a>
+  <a href="/blog-java.html">Java</a><a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a><a href="/blog-cpp.html">C++</a><a href="/blog-csharp.html">C#</a>
+  <a href="/blog-go.html">Go</a><a href="/blog-rust.html">Rust</a><a href="/blog-php.html">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a><a href="/blog-html.html">HTML</a><a href="/blog-css.html">CSS</a>
+  <a href="/blog-react.html">React</a><a href="/blog-angular.html">Angular</a><a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a><a href="/blog-nodejs.html">Node.js</a><a href="/blog-express.html">Express.js</a>
+  <a href="/blog-django.html">Django</a><a href="/blog-flask.html">Flask</a><a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-mysql.html">MySQL</a><a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-rest-api.html">REST API</a><a href="/blog-graphql.html">GraphQL</a><a href="/blog-git.html">Git &amp; GitHub</a>
 </nav>
-
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    
     <div class="sidebar-heading">Python 3 Tutorial</div>
     <a href="/blog-python.html">Python 3 HOME</a>
-    <a href="/blog-python-intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-python-variables.html">2. Variables & Core Types</a>
-    <a href="/blog-python-operators.html">3. Basic Operators & Math</a>
-    <a href="/blog-python-strings.html">4. String Slicing & Methods</a>
+    <a href="/blog-python-intro.html">1. Welcome &amp; Hello World</a>
+    <a href="/blog-python-variables.html">2. Variables &amp; Core Types</a>
+    <a href="/blog-python-operators.html">3. Basic Operators &amp; Math</a>
+    <a href="/blog-python-strings.html">4. String Slicing &amp; Methods</a>
     <a href="/blog-python-conditionals.html">5. Conditionals (if-else)</a>
-    <a href="/blog-python-loops.html">6. Loops & Ranges</a>
+    <a href="/blog-python-loops.html">6. Loops &amp; Ranges</a>
     <a href="/blog-python-input.html">7. Reading User Inputs</a>
-    <a href="/blog-python-lists.html">8. Lists & Tuples</a>
-    <a href="/blog-python-dicts.html">9. Dictionaries & Sets</a>
-    <a href="/blog-python-functions.html">10. Functions & Reusable Code</a>
-    <a href="/blog-python-modules.html">11. Modules & Standard Lib</a>
+    <a href="/blog-python-lists.html">8. Lists &amp; Tuples</a>
+    <a href="/blog-python-dicts.html">9. Dictionaries &amp; Sets</a>
+    <a href="/blog-python-functions.html">10. Functions &amp; Reusable Code</a>
+    <a href="/blog-python-modules.html">11. Modules &amp; Standard Lib</a>
     <a href="/blog-python-files.html">12. File I/O Operations</a>
     <a href="/blog-python-errors.html">13. Exception Handling</a>
-    <a href="/blog-python-oop-basics.html" class="active">14. OOP: Classes & Objects</a>
-    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance & Dunder</a>
-
+    <a href="/blog-python-oop-basics.html" class="active">14. OOP: Classes &amp; Objects</a>
+    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance &amp; Dunder</a>
     <div class="sidebar-heading">Reference</div>
     <a href="/blog.html">All Tutorials</a>
     <a href="/?lang=python3">▶ Try Python 3 Online</a>
-
     <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
-
+    <a href="/blog-java.html">Java</a><a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a><a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a><a href="/blog-rust.html">Rust</a>
   </aside>
-
-  <!-- MAIN CONTENT -->
   <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <a href="/blog-python.html">Python 3</a><span>›</span>
+      <span>OOP: Classes &amp; Objects</span>
+    </div>
+    <h1 class="page-title">Python 3 — OOP: Classes &amp; Objects</h1>
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Lesson 14</span>
+      <span class="badge">📅 July 2026</span>
+    </div>
+    <div class="intro-box"><p>Object-Oriented Programming (OOP) is a programming paradigm that organizes code around <strong>objects</strong> — data structures that bundle related data and behavior together. Python is a fully object-oriented language. Classes are the blueprints; objects are the real things built from those blueprints.</p></div>
     
-<div class="breadcrumb">
-  <a href="/">Home</a><span>›</span>
-  <a href="/blog.html">Tutorials</a><span>›</span>
-  <a href="/blog-python.html">Python 3</a><span>›</span>
-  <span>OOP: Classes & Objects</span>
-</div>
-<h1 class="page-title">Python 3 — OOP: Classes & Objects</h1>
-<div class="page-meta">
-  <span class="badge">🐍 Python 3</span>
-  <span class="badge">🟢 Lesson 14</span>
-  <span class="badge">📅 July 2026</span>
-</div>
-
-<div class="intro-box">
-  <p>Object-Oriented Programming (OOP) is a design pattern that models software after real-world objects. Instead of writing disconnected variables and functions, OOP binds them together inside a single, unified capsule called a Class.</p>
-</div>
-
 <div class="section">
-  <div class="section-title"><span class="num">1</span> Class Blueprints vs Object Instances</div>
-  <p>Think of a **Class** as a blueprint (like the architectural blueprint for a house). You can't live inside a blueprint. An **Object** is the actual house constructed from that blueprint. You can build as many houses as you want from a single blueprint!</p>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">2</span> Defining a Class & Constructor</div>
-  <p>We define classes using the <code>class</code> keyword. The <code>__init__</code> function is the constructor method that initializes an object when it's created. The <code>self</code> parameter represents the current object instance:</p>
-  
+  <div class="section-title"><span class="num">1</span> What is a Class?</div>
+  <p>A class is a blueprint for creating objects. Think of it like a cookie cutter — the cutter is the class, and the cookies are the objects (instances):</p>
   <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">Python 3 — Class Definition</span>
-      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
-    </div>
-    <pre><code>class Student:
-    # Constructor (Blueprint Setup)
-    def __init__(self, name, score):
-        self.name = name   # Attribute
-        self.score = score # Attribute
-        
-    # Class Method (Action)
-    def display_info(self):
-        print(f"Student: {self.name}, Score: {self.score}/100")
+    <div class="code-block-header"><span class="lang-tag">Python 3 — First Class</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code># Define a class
+class Dog:
+    # Class variable — shared by ALL instances
+    species = "Canis familiaris"
 
-# Constructing object instances
-student1 = Student("Alice", 92)
-student2 = Student("Balaji", 98)
+    # Constructor — called when creating an object
+    def __init__(self, name, breed, age):
+        # Instance variables — unique to each object
+        self.name = name
+        self.breed = breed
+        self.age = age
 
-# Running methods on instances
-student1.display_info()
-student2.display_info()</code></pre>
+    # Instance method
+    def bark(self):
+        return f"{self.name} says: Woof! Woof!"
+
+    def describe(self):
+        return f"{self.name} is a {self.age}-year-old {self.breed}."
+
+# Create objects (instances)
+dog1 = Dog("Buddy", "Golden Retriever", 3)
+dog2 = Dog("Max", "German Shepherd", 5)
+
+print(dog1.name)          # Buddy
+print(dog2.breed)         # German Shepherd
+print(dog1.bark())        # Buddy says: Woof! Woof!
+print(dog2.describe())    # Max is a 5-year-old German Shepherd.
+print(Dog.species)        # Canis familiaris (class variable)</code></pre>
   </div>
 </div>
 
 <div class="section">
-  <div class="section-title"><span class="num">3</span> Modifying Object Attributes</div>
-  <p>You can access and modify attributes directly on object instances using the dot (<code>.</code>) syntax:</p>
+  <div class="section-title"><span class="num">2</span> The __init__ Constructor</div>
   <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">Python 3 — Modifying Objects</span>
-      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
-    </div>
-    <pre><code>student1.score = 95 # Modify Alice's score
-student1.display_info() # Student: Alice, Score: 95/100</code></pre>
+    <div class="code-block-header"><span class="lang-tag">Python 3 — __init__</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code>class BankAccount:
+    def __init__(self, owner, initial_balance=0):
+        self.owner = owner
+        self.balance = initial_balance
+        self.transactions = []   # Mutable default must be in __init__!
+
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError("Deposit must be positive!")
+        self.balance += amount
+        self.transactions.append(f"Deposit: +₹{amount}")
+        print(f"✅ Deposited ₹{amount}. Balance: ₹{self.balance}")
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            raise ValueError("Insufficient funds!")
+        self.balance -= amount
+        self.transactions.append(f"Withdrawal: -₹{amount}")
+        print(f"✅ Withdrew ₹{amount}. Balance: ₹{self.balance}")
+
+    def statement(self):
+        print(f"\n=== Statement for {self.owner} ===")
+        for t in self.transactions:
+            print(f"  {t}")
+        print(f"  Current Balance: ₹{self.balance}")
+
+acc = BankAccount("Balaji", 10000)
+acc.deposit(5000)
+acc.withdraw(3000)
+acc.statement()</code></pre>
   </div>
 </div>
 
-<div class="info-box">
-  <strong>🐘’¡ Understanding 'self':</strong>
-  <p>The <code>self</code> parameter is mandatory inside class methods. When you call <code>student1.display_info()</code>, Python passes the <code>student1</code> object as the first parameter (<code>self</code>) under the hood. This is how the method knows which object's attributes to display.</p>
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Instance vs Class Variables</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — Variable Types</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code>class Employee:
+    # Class variable — shared by ALL employees
+    company = "TechCorp"
+    employee_count = 0
+
+    def __init__(self, name, role, salary):
+        # Instance variables — unique to each employee
+        self.name = name
+        self.role = role
+        self.salary = salary
+        Employee.employee_count += 1  # Update class variable
+
+    def get_info(self):
+        return f"{self.name} ({self.role}) at {Employee.company}"
+
+emp1 = Employee("Alice", "Developer", 80000)
+emp2 = Employee("Bob", "Designer", 70000)
+
+print(emp1.get_info())         # Alice (Developer) at TechCorp
+print(emp2.get_info())         # Bob (Designer) at TechCorp
+print(f"Total employees: {Employee.employee_count}")  # 2
+
+# Class variable affects ALL instances
+Employee.company = "MegaCorp"
+print(emp1.get_info())   # Alice (Developer) at MegaCorp
+print(emp2.get_info())   # Bob (Designer) at MegaCorp</code></pre>
+  </div>
 </div>
 
 <div class="section">
-  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
-  <p>Create a class called 'Car' with constructor attributes for 'brand', 'model', and 'year'. Add a method called 'drive()' that prints: "[brand] [model] is driving away!". Instantiate a car object and call the method.</p>
+  <div class="section-title"><span class="num">4</span> Properties &amp; Encapsulation</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — Properties</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code>class Circle:
+    def __init__(self, radius):
+        self._radius = radius   # _ prefix = "private by convention"
+
+    @property
+    def radius(self):
+        """Getter — access like an attribute"""
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        """Setter — validates before setting"""
+        if value < 0:
+            raise ValueError("Radius cannot be negative!")
+        self._radius = value
+
+    @property
+    def diameter(self):
+        return self._radius * 2
+
+    @property
+    def area(self):
+        import math
+        return math.pi * self._radius ** 2
+
+    @property
+    def circumference(self):
+        import math
+        return 2 * math.pi * self._radius
+
+c = Circle(5)
+print(f"Radius: {c.radius}")         # 5
+print(f"Diameter: {c.diameter}")     # 10
+print(f"Area: {c.area:.2f}")         # 78.54
+c.radius = 10                         # Uses setter
+print(f"New radius: {c.radius}")</code></pre>
+  </div>
 </div>
 
+<div class="section">
+  <div class="section-title"><span class="num">5</span> Static &amp; Class Methods</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — Static &amp; Class Methods</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code>class Temperature:
+    def __init__(self, celsius):
+        self.celsius = celsius
+
+    @property
+    def fahrenheit(self):
+        return (self.celsius * 9/5) + 32
+
+    @classmethod
+    def from_fahrenheit(cls, f):
+        """Alternative constructor from Fahrenheit."""
+        return cls((f - 32) * 5/9)
+
+    @staticmethod
+    def is_freezing(celsius):
+        """Utility — doesn't need class or instance."""
+        return celsius <= 0
+
+    def __str__(self):
+        return f"{self.celsius}°C / {self.fahrenheit}°F"
+
+# Instance method
+t1 = Temperature(100)
+print(t1)                          # 100°C / 212.0°F
+
+# Class method — alternative constructor
+t2 = Temperature.from_fahrenheit(98.6)
+print(t2)                          # 37.0°C / 98.6°F
+
+# Static method — no instance needed
+print(Temperature.is_freezing(0))   # True
+print(Temperature.is_freezing(25))  # False</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">6</span> __str__ and __repr__</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3 — String Representation</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code>class Product:
+    def __init__(self, name, price, quantity):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+
+    def __str__(self):
+        """Human-readable string — used by print()"""
+        return f"{self.name}: ₹{self.price} (Stock: {self.quantity})"
+
+    def __repr__(self):
+        """Developer-friendly — used in REPL, lists"""
+        return f"Product(name={self.name!r}, price={self.price}, qty={self.quantity})"
+
+    def total_value(self):
+        return self.price * self.quantity
+
+p = Product("Laptop", 59999, 10)
+print(p)           # Product.__str__: Laptop: ₹59999 (Stock: 10)
+print(repr(p))     # Product.__repr__: Product(name='Laptop', ...)
+
+products = [p, Product("Mouse", 999, 50)]
+print(products)    # Uses __repr__ for list display</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">7</span> Dataclasses (Python 3.7+)</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">Python 3.7+ — dataclass</span><a class="try-btn" href="/?lang=python3">▶ Run Code</a></div>
+    <pre><code">from dataclasses import dataclass, field
+
+@dataclass
+class Student:
+    name: str
+    age: int
+    score: float = 0.0
+    subjects: list = field(default_factory=list)
+
+    def grade(self):
+        if self.score >= 90: return "A"
+        if self.score >= 80: return "B"
+        if self.score >= 70: return "C"
+        return "F"
+
+    def __post_init__(self):
+        """Runs after __init__ — for validation"""
+        if self.age < 5 or self.age > 100:
+            raise ValueError(f"Invalid age: {self.age}")
+
+s1 = Student("Alice", 20, 92.5, ["Math", "Python"])
+s2 = Student("Bob", 22, 78.0)
+
+print(s1)           # Student(name='Alice', age=20, ...)
+print(s1.grade())   # A
+print(s2.grade())   # B</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">8</span> Coding Challenge</div>
+  <p>Build a <strong>Library Management System</strong> using classes:</p>
+  <ul>
+    <li><code>Book</code> class: title, author, isbn, available (default True)</li>
+    <li><code>Library</code> class with a list of books and these methods:
+      <ul>
+        <li><code>add_book(book)</code> — add a Book</li>
+        <li><code>borrow_book(isbn)</code> — sets available=False (raises ValueError if not available)</li>
+        <li><code>return_book(isbn)</code> — sets available=True</li>
+        <li><code>search(query)</code> — finds books by title or author</li>
+        <li><code>available_books()</code> — lists only available books</li>
+      </ul>
+    </li>
+    <li>Add <code>__str__</code> to both classes for nice display</li>
+  </ul>
+</div>
     <div class="nav-footer">
       <a href="/blog-python-errors.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
@@ -341,17 +369,10 @@ student1.display_info() # Student: Alice, Score: 95/100</code></pre>
       </a>
       <a href="/blog-python-oop-advanced.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">OOP: Inheritance & Dunder</span>
+        <span class="title">OOP: Inheritance &amp; Dunder</span>
       </a>
     </div>
   </main>
 </div>
 </body>
 </html>
-
-
-
-
-
-
-

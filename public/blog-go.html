@@ -3,147 +3,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Go Tutorial | Our Compiler</title>
-  <meta name="description" content="Learn Go — go tutorial with clear explanations and interactive execution." />
+  <title>Go Programming Tutorial & Reference Guide | Our Compiler</title>
+  <meta name="description" content="Learn Go — Go Programming Tutorial & Reference Guide with clear explanations, concurrency tutorials, goroutine channels, and interactive compiler executions." />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
-  <link rel="canonical" href="https://www.ourcompiler.com/blog-go.html" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
-      --border: #30363d; --accent: #00add8; --blue: #58a6ff;
-      --text: #e6edf3; --text2: #8b949e; --text3: #484f58;
-      --sidebar-w: 260px;
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  <!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
 
-    /* TOP NAV */
-    .topnav {
-      position: sticky; top: 0; z-index: 100;
-      background: var(--bg2); border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 0; height: 48px;
-      overflow-x: auto; padding: 0 12px;
-    }
-    .topnav a {
-      color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500;
-      padding: 0 14px; height: 48px; display: flex; align-items: center;
-      border-bottom: 3px solid transparent; white-space: nowrap; transition: color .2s;
-    }
-    .topnav a:hover { color: var(--text); }
-    .topnav a.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .topnav .brand { font-weight: 700; color: var(--text); font-size: 14px; margin-right: 8px; padding-right: 12px; border-right: 1px solid var(--border); }
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
 
-    /* LAYOUT */
-    .layout { display: flex; min-height: calc(100vh - 48px); }
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
 
-    /* SIDEBAR */
-    .sidebar {
-      width: var(--sidebar-w); flex-shrink: 0;
-      background: var(--bg2); border-right: 1px solid var(--border);
-      position: sticky; top: 48px; height: calc(100vh - 48px);
-      overflow-y: auto; padding: 20px 0;
-    }
-    .sidebar::-webkit-scrollbar { width: 4px; }
-    .sidebar::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
-    .sidebar-heading {
-      font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--text3);
-      padding: 8px 20px 4px; margin-top: 12px;
-    }
-    .sidebar-heading:first-child { margin-top: 0; }
-    .sidebar a {
-      display: block; padding: 7px 20px; font-size: 13.5px; color: var(--text2);
-      text-decoration: none; border-left: 3px solid transparent; transition: all .15s;
-    }
-    .sidebar a:hover { color: var(--text); background: var(--bg3); }
-    .sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,.06); font-weight: 600; }
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
 
-    /* CONTENT */
-    .content { flex: 1; min-width: 0; padding: 40px 48px 80px; max-width: 860px; }
-
-    /* BREADCRUMB */
-    .breadcrumb { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .breadcrumb a { color: var(--blue); text-decoration: none; }
-    .breadcrumb a:hover { text-decoration: underline; }
-    .breadcrumb span { color: var(--text3); }
-
-    /* TITLE BLOCK */
-    .page-title { font-size: 36px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
-    .page-meta { font-size: 13px; color: var(--text2); margin-bottom: 28px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .badge { display: inline-flex; align-items: center; gap: 5px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 12px; }
-
-    /* INTRO BOX */
-    .intro-box { background: linear-gradient(135deg, rgba(88,166,255,.1), rgba(88,166,255,.04)); border: 1px solid rgba(88,166,255,.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 36px; }
-    .intro-box p { margin: 0; color: #c9d1d9; font-size: 15px; line-height: 1.75; }
-
-    /* SECTIONS */
-    .section { margin-bottom: 48px; scroll-margin-top: 64px; }
-    .section-title { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
-    .section-title .num { background: var(--accent); color: #000; font-size: 13px; font-weight: 700; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .section p { color: #c9d1d9; font-size: 15px; margin-bottom: 16px; }
-
-    /* CODE BLOCK */
-    .code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin: 20px 0; overflow: hidden; }
-    .code-block-header { background: var(--bg3); padding: 8px 16px; font-size: 12px; color: var(--text2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-    .code-block-header .lang-tag { font-weight: 600; color: var(--accent); }
-    .try-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--accent); color: #000; border: none; border-radius: 6px;
-      padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
-      text-decoration: none; transition: opacity .2s;
-    }
-    .try-btn:hover { opacity: 0.85; }
-    .code-block pre { margin: 0; padding: 18px; overflow-x: auto; }
-    .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--text); line-height: 1.6; }
-    .kw { color: #ff7b72; } .st { color: #a5d6ff; } .cm { color: #8b949e; font-style: italic; } .nu { color: #79c0ff; } .fn { color: #d2a8ff; }
-
-    /* INLINE CODE */
-    .content code { background: rgba(110,118,129,.15); color: #ff7b72; padding: 2px 6px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-    .code-block code { background: none; color: var(--text); padding: 0; }
-
-    /* INFO BOX */
-    .info-box { background: rgba(88,166,255,.07); border: 1px solid rgba(88,166,255,.25); border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: #c9d1d9; }
-    .info-box strong { color: var(--blue); }
-
-    /* TABLE */
-    .tbl { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-    .tbl th { background: var(--bg3); padding: 10px 14px; text-align: left; color: var(--text); font-weight: 600; border-bottom: 2px solid var(--border); }
-    .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c9d1d9; }
-    .tbl tr:last-child td { border-bottom: none; }
-    .tbl tr:hover td { background: var(--bg3); }
-
-    /* NEXT / PREV */
-    .nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
-    .nav-btn { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 20px; border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all .2s; max-width: 220px; }
-    .nav-btn:hover { border-color: var(--accent); background: var(--bg2); }
-    .nav-btn .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; }
-    .nav-btn .title { font-size: 14px; font-weight: 600; color: var(--text); }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .content { padding: 24px 20px 60px; }
-      .page-title { font-size: 26px; }
-    }
-  </style>
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'go';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
 </head>
-<body>
+<body class="lang-go">
 
 <!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
   <a href="/blog-c.html">C</a>
   <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-csharp.html">C#</a>
   <a href="/blog-go.html" class="active">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="/blog-ruby.html">Ruby</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
+  <a href="/?lang=nodejs">Node.js</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
+  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
 </nav>
 
 <div class="layout">
@@ -152,24 +171,33 @@
     
     <div class="sidebar-heading">Go Tutorial</div>
     <a href="/blog-go.html" class="active">Go HOME</a>
-    <a href="/blog-go-syntax.html">Syntax & Output</a>
-    <a href="/blog-go-variables.html">Variables & Types</a>
-    <a href="/blog-go-conditionals.html">Conditionals</a>
-    <a href="/blog-go-loops.html">Loops & Iterators</a>
-    <a href="/blog-go-functions.html">Functions & Methods</a>
-    <a href="/blog-go-collections.html">Arrays & Collections</a>
-    <a href="/blog-go-oop.html">OOP & Advanced</a>
+    <a href="/blog-go/intro.html">1. Welcome & Hello World</a>
+    <a href="/blog-go/variables.html">2. Variables & Constants</a>
+    <a href="/blog-go/types-casting.html">3. Data Types & Strict Casting</a>
+    <a href="/blog-go/conditionals.html">4. Conditionals (if-else & switch)</a>
+    <a href="/blog-go/loops.html">5. Loops & Control Flow</a>
+    <a href="/blog-go/arrays-slices.html">6. Arrays & Dynamic Slices</a>
+    <a href="/blog-go/maps.html">7. Maps (Key-Value Pairs)</a>
+    <a href="/blog-go/pointers.html">8. Pointers & Memory Addresses</a>
+    <a href="/blog-go/functions-defer.html">9. Functions, Returns & Defer</a>
+    <a href="/blog-go/structs-methods.html">10. Structs & Custom Methods</a>
+    <a href="/blog-go/encapsulation.html">11. Encapsulation & Package Exports</a>
+    <a href="/blog-go/interfaces.html">12. Interfaces & Implicit Duck Typing</a>
+    <a href="/blog-go/goroutines.html">13. Goroutines & Concurrency Basics</a>
+    <a href="/blog-go/channels.html">14. Channels & Select Operations</a>
+    <a href="/blog-go/error-handling.html">15. Error Handling (Explicit Check)</a>
 
     <div class="sidebar-heading">Reference</div>
     <a href="/blog.html">All Tutorials</a>
     <a href="/?lang=go">▶ Try Go Online</a>
 
     <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python</a>
+    <a href="/blog-python.html">Python 3</a>
     <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
     <a href="/blog-c.html">C</a>
     <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-csharp.html">C#</a>
     <a href="/blog-rust.html">Rust</a>
     <a href="/blog-php.html">PHP</a>
     <a href="/blog-ruby.html">Ruby</a>
@@ -179,11 +207,6 @@
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <span>Go</span>
-    </div>
-<div class="breadcrumb">
       <a href="/">Home</a><span>›</span>
       <a href="/blog.html">Tutorials</a><span>›</span>
       <a href="/blog-go.html">Go</a><span>›</span>
@@ -203,56 +226,98 @@
 </div>
 
 <div class="section">
-    <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-    <p>Select a lesson from the left sidebar or the curriculum below to start learning Go:</p>
-    <table class="tbl" style="margin-top: 15px;">
-      <tr><th>Topic</th><th>Description</th></tr>
-      
-        <tr>
-          <td><strong><a href="/blog-go-syntax.html">1. Syntax & Output</a></strong></td>
-          <td>Learn fundamental and practical concepts on syntax & output in Go.</td>
-        </tr>
-      
-        <tr>
-          <td><strong><a href="/blog-go-variables.html">2. Variables & Types</a></strong></td>
-          <td>Learn fundamental and practical concepts on variables & types in Go.</td>
-        </tr>
-      
-        <tr>
-          <td><strong><a href="/blog-go-conditionals.html">3. Conditionals</a></strong></td>
-          <td>Learn fundamental and practical concepts on conditionals in Go.</td>
-        </tr>
-      
-        <tr>
-          <td><strong><a href="/blog-go-loops.html">4. Loops & Iterators</a></strong></td>
-          <td>Learn fundamental and practical concepts on loops & iterators in Go.</td>
-        </tr>
-      
-        <tr>
-          <td><strong><a href="/blog-go-functions.html">5. Functions & Methods</a></strong></td>
-          <td>Learn fundamental and practical concepts on functions & methods in Go.</td>
-        </tr>
-      
-        <tr>
-          <td><strong><a href="/blog-go-collections.html">6. Arrays & Collections</a></strong></td>
-          <td>Learn fundamental and practical concepts on arrays & collections in Go.</td>
-        </tr>
-      
-        <tr>
-          <td><strong><a href="/blog-go-oop.html">7. OOP & Advanced</a></strong></td>
-          <td>Learn fundamental and practical concepts on oop & advanced in Go.</td>
-        </tr>
-      
-    </table>
-  </div>
+  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
+  <p>Choose a topic from the left sidebar or click a lesson below to start learning Go:</p>
+  <table class="tbl" style="margin-top: 15px;">
+    <tr><th>Lesson</th><th>Topic</th></tr>
+    
+      <tr>
+        <td><strong>Lesson 1</strong></td>
+        <td><strong><a href="/blog-go/intro.html">Welcome & Hello World</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 2</strong></td>
+        <td><strong><a href="/blog-go/variables.html">Variables & Constants</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 3</strong></td>
+        <td><strong><a href="/blog-go/types-casting.html">Data Types & Strict Casting</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 4</strong></td>
+        <td><strong><a href="/blog-go/conditionals.html">Conditionals (if-else & switch)</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 5</strong></td>
+        <td><strong><a href="/blog-go/loops.html">Loops & Control Flow</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 6</strong></td>
+        <td><strong><a href="/blog-go/arrays-slices.html">Arrays & Dynamic Slices</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 7</strong></td>
+        <td><strong><a href="/blog-go/maps.html">Maps (Key-Value Pairs)</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 8</strong></td>
+        <td><strong><a href="/blog-go/pointers.html">Pointers & Memory Addresses</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 9</strong></td>
+        <td><strong><a href="/blog-go/functions-defer.html">Functions, Returns & Defer</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 10</strong></td>
+        <td><strong><a href="/blog-go/structs-methods.html">Structs & Custom Methods</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 11</strong></td>
+        <td><strong><a href="/blog-go/encapsulation.html">Encapsulation & Package Exports</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 12</strong></td>
+        <td><strong><a href="/blog-go/interfaces.html">Interfaces & Implicit Duck Typing</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 13</strong></td>
+        <td><strong><a href="/blog-go/goroutines.html">Goroutines & Concurrency Basics</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 14</strong></td>
+        <td><strong><a href="/blog-go/channels.html">Channels & Select Operations</a></strong></td>
+      </tr>
+    
+      <tr>
+        <td><strong>Lesson 15</strong></td>
+        <td><strong><a href="/blog-go/error-handling.html">Error Handling (Explicit Check)</a></strong></td>
+      </tr>
+    
+  </table>
+</div>
+
+    
     <div class="nav-footer">
-      <a href="/blog.html" class="nav-btn">
-        <span class="label">← All Tutorials</span>
-        <span class="title">Learning Hub</span>
+      <a href="/blog-go.html" class="nav-btn">
+        <span class="label">← Go Overview</span>
+        <span class="title">Course Index</span>
       </a>
-      <a href="/blog-go-syntax.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next →</span>
-        <span class="title">Syntax & Output</span>
+      <a href="/blog-go/intro.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Welcome & Hello World</span>
       </a>
     </div>
   </main>

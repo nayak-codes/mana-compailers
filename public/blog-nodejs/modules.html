@@ -39,124 +39,10 @@
       });
     })();
   </script>
-
-
-
-
-
-
-
-
-
-
-
-
-  <script src="/site-nav.js" defer></script>
-
-<!-- Blog Theme Switcher -->
-  <script>
-    (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
-      if (currentTheme === 'light') {
-        document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('light-theme');
-        });
-      }
-      window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
-        const topnav = document.querySelector('.topnav');
-        if (topnav) {
-          const toggleBtn = document.createElement('button');
-          toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          const updateText = () => {
-            const isLight = document.body.classList.contains('light-theme');
-            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-          };
-          updateText();
-          toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateText();
-          });
-          topnav.appendChild(toggleBtn);
-        }
-
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'python3';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
-            });
-          }
-        });
-      });
-    })();
-  </script>
 </head>
 <body class="lang-nodejs">
 <nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/" class="brand">&#128187; Our Compiler</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
   <a href="/blog-javascript.html">JavaScript</a>
@@ -164,9 +50,9 @@
   <a href="/blog-cpp.html">C++</a>
   <a href="/blog-csharp.html">C#</a>
   <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-html.html">HTML</a>
   <a href="/blog-css.html">CSS</a>
   <a href="/blog-react.html">React</a>
@@ -174,15 +60,35 @@
   <a href="/blog-vue.html">Vue.js</a>
   <a href="/blog-nextjs.html">Next.js</a>
   <a href="/blog-nodejs.html" class="active">Node.js</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-django.html">Django</a>
-  <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
-  <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
   <a href="/blog-rest-api.html">REST API</a>
   <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-git.html">Git & GitHub</a>
+  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-sqlite.html">SQLite</a>
+  <a href="/blog-redis.html">Redis</a>
+  <a href="/blog-cassandra.html">Cassandra</a>
+  <a href="/blog-aws.html">AWS</a>
+  <a href="/blog-azure.html">Azure</a>
+  <a href="/blog-gcloud.html">Google Cloud</a>
+  <a href="/blog-docker.html">Docker</a>
+  <a href="/blog-kubernetes.html">Kubernetes</a>
+  <a href="/blog-cicd.html">CI/CD</a>
+  <a href="/blog-data-science.html">Data Science</a>
+  <a href="/blog-ml.html">Machine Learning</a>
+  <a href="/blog-deep-learning.html">Deep Learning</a>
+  <a href="/blog-tensorflow.html">TensorFlow</a>
+  <a href="/blog-pytorch.html">PyTorch</a>
+  <a href="/blog-big-data.html">Big Data</a>
+  <a href="/blog-git.html">Git &amp; GitHub</a>
+  <a href="/blog-linux.html">Linux</a>
+  <a href="/blog-shell.html">Shell Scripting</a>
+  <a href="/blog-testing.html">Testing</a>
+  <a href="/blog-agile.html">Agile &amp; Scrum</a>
 </nav>
 <div class="layout">
   <aside class="sidebar">
