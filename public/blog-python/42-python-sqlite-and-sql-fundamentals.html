@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python SQLite & SQL Fundamentals — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Master relational databases and SQL in Python with deep conceptual foundations: understanding RDBMS architecture, tables, primary keys, relational data integrity, SQLite embedded engine internals, the sqlite3 standard library, CRUD operations, batch processing with executemany(), and dictionary row mapping with sqlite3.Row." />
+  <meta name="keywords" content="python tutorial, learn python, python sqlite & sql fundamentals, python online compiler, python automation, web scraping, python testing" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/42-python-sqlite-and-sql-fundamentals.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Python SQLite & SQL Fundamentals — Python 3 Master Tutorial",
+  "description": "Master relational databases and SQL in Python with deep conceptual foundations: understanding RDBMS architecture, tables, primary keys, relational data integrity, SQLite embedded engine internals, the sqlite3 standard library, CRUD operations, batch processing with executemany(), and dictionary row mapping with sqlite3.Row.",
+  "articleSection": "Phase 9: Databases and APIs",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why should I use SQLite instead of JSON or CSV files for desktop apps?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SQLite provides instant O(log N) indexing, zero-risk atomic transactions (preventing file corruption on power cut), concurrency management, and relational foreign keys, all inside a single self-contained file with zero installation overhead."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How large can an SQLite database grow on disk?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SQLite supports databases up to 281 Terabytes in size and tables with up to 1 billion rows, making it capable of handling large datasets."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Write-Ahead Logging (WAL) in SQLite?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "WAL mode (PRAGMA journal_mode=WAL;) writes modifications to a separate .wal log file before committing to the main database file. This allows simultaneous readers to read uninterrupted while a writer writes, increasing read/write throughput."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Accordion Toggle, Syntax Highlighter & Code Preload Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___PYTHON_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings: f"...", "...", '...', """...""", '''...'''
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      // 3. Keywords & Decorators
+      const kwList = ['import','from','as','def','return','class','if','elif','else','while','for','in','break','continue','pass','try','except','finally','with','lambda','global','nonlocal','and','or','not','is','yield','async','await','raise','assert','True','False','None','self','super','property','abstractmethod','dataclass','field','Enum','auto','Mapped','mapped_column','models','views','serializers','viewsets','routers','admin','fixture','mark','parametrize'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Functions & Standard Exceptions & Dunders
+      const fnList = ['print','len','range','type','isinstance','issubclass','id','input','int','float','str','list','dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted','reversed','abs','pow','open','help','dir','filter','next','iter','reduce','connect','cursor','execute','executemany','fetchone','fetchall','fetchmany','commit','rollback','create_engine','select','Session','relationship','get','post','put','patch','delete','raise_for_status','json','jsonify','render_template','redirect','url_for','generate_password_hash','check_password_hash','get_object_or_404','login','logout','authenticate','fit','predict','transform','fit_transform','read_csv','read_excel','to_csv','to_excel','groupby','merge','concat','dropna','fillna','describe','info','head','tail','corr','plot','show','savefig','subplots','tight_layout','dump','load','raises','patch','breakpoint','ABC','Exception','StopIteration','ValueError','TypeError','ZeroDivisionError','KeyError','IndexError','FileNotFoundError','PermissionError','OSError','FileExistsError','AttributeError','__init__','__str__','__repr__','__len__','__eq__','__add__','__enter__','__exit__','__iter__','__next__'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:e[+-]?\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___PYTHON_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Apply syntax highlighting & Copy/Run actions to all code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightPythonCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', rawCode);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightPythonCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_python3', rawCode);
+                window.location.href = '/online-python-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Python Basics -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Python Basics</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. Introduction & Setup</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. Syntax & Indentation</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. Variables & Types</a>
+        <a href="/blog-python/04-python-numbers-strings-and-type-conversion.html">4. Numbers, Strings & Casting</a>
+        <a href="/blog-python/05-python-booleans-none-and-input-output.html">5. Booleans, None & I/O</a>
+      </div>
+
+      <!-- Phase 02: Operators & Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Operators & Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/06-python-operators-complete-guide.html">6. Operators Guide</a>
+        <a href="/blog-python/07-python-conditional-statements-and-branching.html">7. Conditional Statements</a>
+        <a href="/blog-python/08-python-loops-while-and-for.html">8. while & for Loops</a>
+        <a href="/blog-python/09-python-loop-control-statements-and-else.html">9. Loop Controls & else</a>
+      </div>
+
+      <!-- Phase 03: Strings & Collections -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Strings & Collections</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/10-python-strings-mastery.html">10. Strings Mastery</a>
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. Lists & Comprehensions</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. Tuples & Unpacking</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. Dictionaries Deep Dive</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. Sets & Operations</a>
+      </div>
+
+      <!-- Phase 04: Functions & Scope -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Functions & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/15-python-functions-fundamentals.html">15. Functions Fundamentals</a>
+        <a href="/blog-python/16-python-args-kwargs-variable-arguments.html">16. *args & **kwargs</a>
+        <a href="/blog-python/17-python-variable-scope-and-legb-rule.html">17. Variable Scope (LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-and-type-hints.html">18. Lambda, Recursion & Hints</a>
+        <a href="/blog-python/19-python-menu-driven-applications.html">19. Menu-Driven Apps</a>
+      </div>
+
+      <!-- Phase 05: Modules & Packages -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Modules & Packages</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/20-python-modules-and-import-system.html">20. Modules & Imports</a>
+        <a href="/blog-python/21-python-core-standard-library-modules.html">21. Standard Library Core</a>
+        <a href="/blog-python/22-python-os-sys-and-pathlib.html">22. OS, Sys & Pathlib</a>
+        <a href="/blog-python/23-python-json-serialization-and-data.html">23. JSON Data Interchange</a>
+        <a href="/blog-python/24-python-packages-virtual-environments-and-pip.html">24. Packages, venv & Pip</a>
+      </div>
+
+      <!-- Phase 06: Exceptions & Files -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Exceptions & Files</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/25-python-exceptions-and-error-handling.html">25. Exception Handling</a>
+        <a href="/blog-python/26-python-file-handling-and-context-managers.html">26. File I/O & Context Managers</a>
+        <a href="/blog-python/27-python-csv-and-json-file-processing.html">27. CSV & JSON Processing</a>
+        <a href="/blog-python/28-python-filesystem-operations-pathlib.html">28. Filesystem & Pathlib</a>
+        <a href="/blog-python/29-python-file-handling-capstone-projects.html">29. File Capstone Projects</a>
+      </div>
+
+      <!-- Phase 07: Object-Oriented OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Object-Oriented OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/30-python-oop-classes-objects-and-init.html">30. Classes & Objects</a>
+        <a href="/blog-python/31-python-oop-encapsulation-and-properties.html">31. Encapsulation & Properties</a>
+        <a href="/blog-python/32-python-oop-inheritance-mro-and-polymorphism.html">32. Inheritance & Polymorphism</a>
+        <a href="/blog-python/33-python-oop-abstract-classes-and-magic-methods.html">33. ABCs & Dunder Methods</a>
+        <a href="/blog-python/34-python-oop-composition-and-dataclasses.html">34. Composition & Dataclasses</a>
+        <a href="/blog-python/35-python-oop-capstone-projects.html">35. OOP Capstone Projects</a>
+      </div>
+
+      <!-- Phase 08: Advanced Python -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Advanced Python</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/36-python-iterators-generators-and-expressions.html">36. Iterators & Generators</a>
+        <a href="/blog-python/37-python-closures-decorators-and-wrappers.html">37. Closures & Decorators</a>
+        <a href="/blog-python/38-python-custom-context-managers-and-contextlib.html">38. Context Managers</a>
+        <a href="/blog-python/39-python-functional-programming-map-filter-reduce.html">39. Functional Programming</a>
+        <a href="/blog-python/40-python-regular-expressions-and-pattern-matching.html">40. Regular Expressions & Enums</a>
+        <a href="/blog-python/41-python-memory-management-gc-and-profiling.html">41. Memory, GC & Profiling</a>
+      </div>
+
+      <!-- Phase 09: Databases & APIs -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Databases & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/42-python-sqlite-and-sql-fundamentals.html" class="active">42. SQLite & SQL Basics</a>
+        <a href="/blog-python/43-python-parameterized-queries-and-transactions.html">43. Safe Queries & Transactions</a>
+        <a href="/blog-python/44-python-postgresql-mysql-and-sqlalchemy-orm.html">44. Enterprise DBs & SQLAlchemy</a>
+        <a href="/blog-python/45-python-http-requests-and-rest-apis.html">45. REST APIs & HTTP</a>
+        <a href="/blog-python/46-python-api-headers-authentication-and-errors.html">46. API Auth & Headers</a>
+        <a href="/blog-python/47-python-databases-and-apis-capstone-projects.html">47. DB & API Capstone</a>
+      </div>
+
+      <!-- Phase 10: Web Development -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Web Development</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/48-python-flask-fundamentals-and-routing.html">48. Flask Basics & Routing</a>
+        <a href="/blog-python/49-python-flask-templates-forms-and-auth.html">49. Flask Templates & Auth</a>
+        <a href="/blog-python/50-python-django-architecture-models-and-admin.html">50. Django Architecture & ORM</a>
+        <a href="/blog-python/51-python-django-views-templates-and-auth.html">51. Django Views & Auth</a>
+        <a href="/blog-python/52-python-django-rest-framework-and-deployment.html">52. DRF & Deployment</a>
+        <a href="/blog-python/53-python-web-development-capstone-projects.html">53. Web Capstone Projects</a>
+      </div>
+
+      <!-- Phase 11: Data Science & AI -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🤖</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Data Science & AI</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/54-python-numpy-arrays-and-vectorization.html">54. NumPy Arrays & Vectorization</a>
+        <a href="/blog-python/55-python-pandas-dataframes-and-csv.html">55. Pandas Series & DataFrames</a>
+        <a href="/blog-python/56-python-pandas-data-cleaning-grouping-and-merging.html">56. Data Cleaning & GroupBy</a>
+        <a href="/blog-python/57-python-data-visualization-matplotlib-seaborn.html">57. Visualization & Plots</a>
+        <a href="/blog-python/58-python-machine-learning-foundations-scikit-learn.html">58. Machine Learning Basics</a>
+        <a href="/blog-python/59-python-data-science-and-ai-capstone-projects.html">59. Data Science & AI Projects</a>
+      </div>
+
+      <!-- Phase 12: Automation & DevOps -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Automation & DevOps</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/60-python-web-scraping-and-browser-automation.html">60. Web Scraping & Automation</a>
+        <a href="/blog-python/61-python-automation-excel-pdf-email-images.html">61. File, PDF & Email Automation</a>
+        <a href="/blog-python/62-python-os-automation-logging-and-config.html">62. OS Automation & Logging</a>
+        <a href="/blog-python/63-python-unit-testing-pytest-and-debugging.html">63. Pytest & Debugging</a>
+        <a href="/blog-python/64-python-git-clean-code-and-documentation.html">64. Git & Clean Code</a>
+        <a href="/blog-python/65-python-automation-and-devops-capstone-projects.html">65. Automation Capstone</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Chapter 42: 42. SQLite & SQL Basics</span>
+    </div>
+
+    <h1 class="page-title">Python SQLite & SQL Fundamentals</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3.12+</span>
+      <span class="badge">🟢 Chapter 42 of 65</span>
+      <span class="badge">📂 Phase 9: Databases and APIs</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Relational DB Theory · SQLite Embedded Architecture · SQLite vs Client-Server · sqlite3 Module · CREATE TABLE DDL · INSERT & SELECT · executemany() · sqlite3.Row Mapping</span>
+    </div>
+
+    <div class="intro-box">
+      Master relational databases and SQL in Python with deep conceptual foundations: understanding RDBMS architecture, tables, primary keys, relational data integrity, SQLite embedded engine internals, the sqlite3 standard library, CRUD operations, batch processing with executemany(), and dictionary row mapping with sqlite3.Row.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Relational Database Concepts: What is an RDBMS & Why Do We Need It?</div>
+    <div class="section-body">
+      <p>Before writing a single line of SQL, it is critical to understand <strong>why databases exist</strong> and why plain text files (like <code>.txt</code> or <code>.csv</code>) are inadequate for serious applications.</p>
+        
+        <h4 style="color:#10b981; margin:16px 0 8px;">The Critical Flaws of File-Based Storage:</h4>
+        <p>When you store application data in JSON or CSV files, every update requires reading the <strong>entire file into RAM</strong>, modifying the data structure, and writing the entire file back to disk. This causes four fatal problems:</p>
+        <ol style="line-height:1.8; margin-left:20px;">
+          <li><strong>No Concurrency (Race Conditions):</strong> If two users attempt to purchase the last item in a store simultaneously, two Python threads will read the file at the same time, see 1 item in stock, and both write back 0, selling 2 items when only 1 existed!</li>
+          <li><strong>No Indexing ($O(N)$ Search Penalty):</strong> To find a user with ID <code>98421</code> in a 1,000,000-line CSV, Python must scan every single line from top to bottom ($O(N)$ time). Databases use <strong>B-Trees</strong> to find records in $O(log N)$ microsecond time.</li>
+          <li><strong>No Data Integrity Constraints:</strong> Plain files cannot stop someone from writing a string into an "age" column or creating an order for a user ID that doesn't exist.</li>
+          <li><strong>Lack of Crash Recovery (Atomicity):</strong> If power cuts out while rewriting a 50 MB CSV file, the file becomes corrupted and all data is permanently lost.</li>
+        </ol>
+
+        <h4 style="color:#10b981; margin:16px 0 8px;">The Relational Model (Tables, Rows, Columns & Keys):</h4>
+        <p>A <strong>Relational Database Management System (RDBMS)</strong> organizes information into two-dimensional <strong>Tables</strong> (also called <em>Relations</em>):</p>
+        <ul>
+          <li><strong>Columns (Attributes/Fields):</strong> Define the schema and data type of each property (e.g. <code>id: INTEGER</code>, <code>name: TEXT</code>, <code>price: REAL</code>).</li>
+          <li><strong>Rows (Records/Tuples):</strong> Individual data entries representing a single real-world entity.</li>
+          <li><strong>Primary Key (PK):</strong> A unique column (usually an auto-incrementing integer or UUID) that guarantees every row in the table can be uniquely identified. No two rows can have the same Primary Key.</li>
+          <li><strong>Foreign Key (FK):</strong> A column in one table that points directly to the Primary Key of another table, establishing a verifiable relationship (e.g. <code>orders.customer_id</code> references <code>customers.id</code>).</li>
+        </ul>
+
+        <div class="diagram-box">┌────────────────────────────────────────────────────────────────────────┐
+│                        RELATIONAL DATABASE MODEL                       │
+├────────────────────────────────────────────────────────────────────────┤
+│  TABLE: customers                                                      │
+│  ┌────────────┬──────────────────┬─────────────────────────────────┐   │
+│  │ id (PK)    │ name             │ email                           │   │
+│  ├────────────┼──────────────────┼─────────────────────────────────┤   │
+│  │ 1          │ Balaji Dev       │ balaji@example.com              │   │
+│  │ 2          │ Alex Smith       │ alex@example.com                │   │
+│  └─────┬──────┴──────────────────┴─────────────────────────────────┘   │
+│        │                                                               │
+│        │ 1-to-Many Relationship (One customer has many orders)         │
+│        ▼                                                               │
+│  TABLE: orders                                                         │
+│  ┌────────────┬──────────────────┬──────────────┬──────────────────┐   │
+│  │ order_id   │ customer_id (FK) │ total_amount │ order_date       │   │
+│  ├────────────┼──────────────────┼──────────────┼──────────────────┤   │
+│  │ 101        │ 1 ───────────────┼─> ₹4,500.00  │ 2026-08-14       │   │
+│  │ 102        │ 1 ───────────────┼─> ₹1,200.00  │ 2026-08-14       │   │
+│  │ 103        │ 2 ───────────────┼─> ₹8,900.00  │ 2026-08-14       │   │
+│  └────────────┴──────────────────┴──────────────┴──────────────────┘   │
+└────────────────────────────────────────────────────────────────────────┘</div>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Concept Blueprint: Relational Database Architecture Overview</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># Conceptual demonstration: The building blocks of relational data
+schema_explanation = {
+    "Table": "A structured spreadsheet-like grid representing an entity (e.g. Products, Users)",
+    "Column": "A typed field (e.g. price: REAL, email: TEXT UNIQUE)",
+    "Row": "A single concrete instance/record stored in the table",
+    "Primary Key": "Uniquely identifies each row (e.g. user_id = 101)",
+    "Foreign Key": "Enforces relationship between tables (e.g. order.user_id -> user.id)"
+}
+
+for concept, definition in schema_explanation.items():
+    print(f"📌 {concept:15}: {definition}")</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">💡 Real-World Analogy:</strong>
+          <p style="margin-top:6px;">Think of a Primary Key like an Aadhaar Number or Social Security Number: even if two people have the exact same name and birthday, their Primary Key uniquely distinguishes them. A Foreign Key is like writing that Aadhaar Number on a passport application to link your passport directly to your identity record.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">2</span>The SQLite Architecture: Why is SQLite Embedded & Serverless?</div>
+    <div class="section-body">
+      <p>Most relational databases (such as PostgreSQL, MySQL, Oracle, and Microsoft SQL Server) operate as <strong>Client-Server systems</strong>:</p>
+        <ul>
+          <li>They run as continuous background daemon processes on dedicated ports (e.g. port <code>5432</code> for Postgres, <code>3306</code> for MySQL).</li>
+          <li>Your Python program must establish a network TCP/IP socket connection, transmit credentials, and send queries across the network wire.</li>
+        </ul>
+        <p><strong>SQLite is fundamentally different:</strong> It is <strong>Serverless and Embedded</strong>.</p>
+        <p>The entire SQLite database engine is written in ANSI C and compiled directly into the Python interpreter itself. When your Python code queries SQLite, there are <strong>zero network calls, zero socket overhead, and zero port configurations</strong>. The entire database is stored in a single standalone binary file on your hard disk (or in RAM with <code>":memory:"</code>).</p>
+
+        <div class="diagram-box">┌──────────────────────────────────────────────┐  ┌──────────────────────────────────────────────┐
+│       TRADITIONAL CLIENT-SERVER DATABASE     │  │          SQLITE EMBEDDED ARCHITECTURE        │
+│                                              │  │                                              │
+│  Python App  ───(Network TCP Socket)───>     │  │  ┌────────────────────────────────────────┐  │
+│                                              │  │  │ Python Script (sqlite3 standard lib)   │  │
+│  Remote Database Server (Postgres Daemon)    │  │  │       │ (Direct In-Memory C-Call)      │  │
+│  ├── User Auth & Network Port 5432           │  │  │ SQLite Engine (Compiled into Python)   │  │
+│  ├── Dedicated RAM & Multi-Process Storage   │  │  └───────────────────┬────────────────────┘  │
+│  └── Complex Server Management               │  │                      ▼                       │
+│                                              │  │   Single Database File on Disk (app.db)      │
+└──────────────────────────────────────────────┘  └──────────────────────────────────────────────┘</div>
+
+        <h4 style="color:#10b981; margin:16px 0 8px;">When should you use SQLite?</h4>
+        <ul>
+          <li><strong>Desktop and Mobile Applications:</strong> SQLite is the internal database engine used inside Android, iOS, Windows 11, macOS, Google Chrome, and Firefox.</li>
+          <li><strong>Local Testing & Prototyping:</strong> Develop and run automated unit tests at lightning speed using in-memory databases (<code>":memory:"</code>).</li>
+          <li><strong>Low-to-Medium Traffic Web Apps:</strong> Websites handling up to ~100,000 requests/day with mostly read operations perform exceptionally well on SQLite (using Write-Ahead Logging / WAL mode).</li>
+        </ul>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Establishing SQLite Connection and Creating Relational Tables</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>import sqlite3
+
+# 1. Establish connection to local SQLite database file:
+# If 'company.db' does not exist, SQLite automatically creates it on disk!
+conn = sqlite3.connect("company.db")
+
+# 2. Create a Cursor:
+# The cursor acts as our execution pointer to send SQL commands to the engine:
+cursor = conn.cursor()
+
+# 3. Create 'departments' table using DDL (Data Definition Language):
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS departments (
+    dept_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dept_name TEXT NOT NULL UNIQUE,
+    budget REAL NOT NULL
+)
+""")
+
+# 4. Create 'employees' table with Foreign Key linking to departments:
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS employees (
+    emp_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    salary REAL NOT NULL,
+    dept_id INTEGER,
+    joined_date DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (dept_id) REFERENCES departments(dept_id)
+)
+""")
+
+conn.commit() # Flush and save schema changes permanently to disk
+print("✅ Database 'company.db' initialized with relational departments and employees tables!")
+conn.close()</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Step-by-Step Code Walkthrough:</strong>
+          <ol style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>sqlite3.connect("company.db")</code> opens a file handle to <code>company.db</code> in the current folder. If you pass <code>":memory:"</code>, SQLite creates a temporary RAM database that vanishes when Python closes.</li>
+            <li><code>cursor = conn.cursor()</code> creates an execution context that tracks query state and fetches result sets.</li>
+            <li><code>TEXT NOT NULL UNIQUE</code> enforces data integrity: every employee must have an email, and no two employees can share the same email address.</li>
+            <li><code>conn.commit()</code> commits the transaction to non-volatile disk storage.</li>
+          </ol>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">3</span>Data Manipulation: Inserting, Querying, Updating & Deleting (CRUD)</div>
+    <div class="section-body">
+      <p><strong>CRUD</strong> stands for the four essential data operations in software engineering: <strong>Create</strong> (<code>INSERT</code>), <strong>Read</strong> (<code>SELECT</code>), <strong>Update</strong> (<code>UPDATE</code>), and <strong>Delete</strong> (<code>DELETE</code>).</p>
+        
+        <h4 style="color:#10b981; margin:16px 0 8px;">1. Inserting Records (Single vs Batch <code>executemany</code>):</h4>
+        <p>Every time you execute an individual <code>INSERT</code> with a commit, SQLite must sync bytes to the physical storage disk (fsync). If you insert 1,000 records one by one in a loop, it will take several seconds.</p>
+        <p>By using <strong><code>cursor.executemany()</code></strong>, all 1,000 records are prepared and inserted in a single disk I/O operation in under <strong>5 milliseconds</strong>!</p>
+
+        <h4 style="color:#10b981; margin:16px 0 8px;">2. Querying Data & Row Factories (<code>sqlite3.Row</code>):</h4>
+        <p>By default, SQLite returns query results as plain tuples: <code>(1, 'Balaji', 95000.0)</code>. Accessing fields by numerical indices like <code>row[1]</code> or <code>row[2]</code> makes code brittle and unreadable.</p>
+        <p>By configuring <strong><code>conn.row_factory = sqlite3.Row</code></strong>, SQLite returns rich mapping objects that allow accessing columns <strong>both by case-insensitive column name</strong> (<code>row['full_name']</code>) and by index!</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Complete Relational CRUD & JOIN Queries with sqlite3.Row</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>import sqlite3
+
+# Connect to database and configure row_factory:
+conn = sqlite3.connect("company.db")
+conn.row_factory = sqlite3.Row  # Enables column-name dictionary access!
+cursor = conn.cursor()
+
+# Enable SQLite foreign key enforcement:
+cursor.execute("PRAGMA foreign_keys = ON")
+
+# 1. CREATE: Batch Insert Departments:
+departments_data = [
+    ("Engineering", 5000000.0),
+    ("Product Design", 2000000.0),
+    ("Human Resources", 1200000.0)
+]
+cursor.executemany("INSERT OR IGNORE INTO departments (dept_name, budget) VALUES (?, ?)", departments_data)
+
+# Batch Insert Employees:
+employees_data = [
+    ("Balaji Dev", "balaji.dev@company.com", 95000.0, 1),
+    ("Alex Smith", "alex.smith@company.com", 82000.0, 1),
+    ("Chloe Davis", "chloe.d@company.com", 78000.0, 2),
+    ("David Miller", "david.m@company.com", 65000.0, 3)
+]
+cursor.executemany("INSERT OR IGNORE INTO employees (full_name, email, salary, dept_id) VALUES (?, ?, ?, ?)", employees_data)
+conn.commit()
+
+# 2. READ: Query Employees joined with their Department names:
+print("--- 📋 Active Employees Report (SQL JOIN Query) ---")
+cursor.execute("""
+SELECT e.emp_id, e.full_name, e.salary, d.dept_name
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id
+WHERE e.salary >= ?
+ORDER BY e.salary DESC
+""", (70000.0,))
+
+high_earners = cursor.fetchall()
+for emp in high_earners:
+    # Notice clean dictionary-like column access:
+    print(f"• ID #{emp['emp_id']}: {emp['full_name']:18} | Dept: {emp['dept_name']:15} | Salary: ₹{emp['salary']:,.2f}")
+
+# 3. UPDATE: Give 10% raise to all Engineering employees:
+cursor.execute("""
+UPDATE employees
+SET salary = salary * 1.10
+WHERE dept_id = (SELECT dept_id FROM departments WHERE dept_name = 'Engineering')
+""")
+print(f"\n📈 Promoted {cursor.rowcount} engineering employees with a 10% salary raise!")
+
+# 4. DELETE: Remove an employee record safely:
+cursor.execute("DELETE FROM employees WHERE email = ?", ("david.m@company.com",))
+print(f"🗑️ Deleted {cursor.rowcount} employee record.")
+
+conn.commit()
+conn.close()</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Deep Dive into CRUD Mechanics:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>JOIN departments d ON e.dept_id = d.dept_id</code> combines data from two tables in memory using the foreign key relationship.</li>
+            <li><code>cursor.rowcount</code> returns the exact number of rows modified by the last UPDATE or DELETE statement.</li>
+            <li><code>PRAGMA foreign_keys = ON</code> is required in SQLite because backward compatibility disables foreign key enforcement by default.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfall: Assuming SQLite Enforces Foreign Keys by Default Without PRAGMA</div>
+      <p>In SQLite, foreign key enforcement is DISABLED by default for backward compatibility with SQLite 2.0. You must explicitly execute "PRAGMA foreign_keys = ON" on every newly opened connection, otherwise invalid foreign keys will be silently accepted into your database!</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Create an in-memory SQLite table inventory (item_id, name, quantity). Insert 3 items, update the quantity of one item, and select all items with quantity > 10 using sqlite3.Row.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 Practice Challenge</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>import sqlite3
+
+conn = sqlite3.connect(":memory:")
+conn.row_factory = sqlite3.Row
+cur = conn.cursor()
+
+cur.execute("CREATE TABLE inventory (item_id INTEGER PRIMARY KEY, name TEXT, quantity INTEGER)")
+cur.executemany("INSERT INTO inventory VALUES (?, ?, ?)", [
+    (1, "SSD 1TB", 25),
+    (2, "RAM 16GB DDR5", 8),
+    (3, "Power Supply 750W", 14)
+])
+cur.execute("UPDATE inventory SET quantity = 30 WHERE item_id = 1")
+conn.commit()
+
+cur.execute("SELECT * FROM inventory WHERE quantity > 10")
+for row in cur.fetchall():
+    print(f"Item #{row['item_id']}: {row['name']} (In Stock: {row['quantity']})")
+conn.close()</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Challenge in Online Python IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Why should I use SQLite instead of JSON or CSV files for desktop apps?</h4>
+      <p>SQLite provides instant O(log N) indexing, zero-risk atomic transactions (preventing file corruption on power cut), concurrency management, and relational foreign keys, all inside a single self-contained file with zero installation overhead.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How large can an SQLite database grow on disk?</h4>
+      <p>SQLite supports databases up to 281 Terabytes in size and tables with up to 1 billion rows, making it capable of handling large datasets.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is Write-Ahead Logging (WAL) in SQLite?</h4>
+      <p>WAL mode (PRAGMA journal_mode=WAL;) writes modifications to a separate .wal log file before committing to the main database file. This allows simultaneous readers to read uninterrupted while a writer writes, increasing read/write throughput.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="41-python-memory-management-gc-and-profiling.html" class="nav-btn">
+        <span class="label">← Previous Chapter</span>
+        <span class="title">41. Memory, GC & Profiling</span>
+      </a>
+
+      
+      <a href="43-python-parameterized-queries-and-transactions.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">43. Safe Queries & Transactions</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Class & Object Fundamentals: Blueprint vs Instance — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="Comprehensive masterclass on Java Object-Oriented Programming foundations: understanding the critical distinction between a class (blueprint/template) and an object (living instance in memory), defining fields and methods inside classes, allocating objects on the Heap with the new keyword, and navigating members using the dot operator." />
+  <meta name="keywords" content="java class & object fundamentals: blueprint vs instance, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/38-java-class-and-object-fundamentals.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .code-action-btn {
+      background: #21262d;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .code-action-btn:hover {
+      background: #30363d;
+      color: #ffffff;
+      border-color: #8b949e;
+    }
+    .code-output-card {
+      background: #141414;
+      border: 1px solid #282828;
+      border-left: 3.5px solid #10b981;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: -10px 0 24px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    .output-header {
+      color: #10b981;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .output-content {
+      color: #a6accd;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    .explain-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 20px 0 28px 0;
+    }
+    .explain-card h3 {
+      color: #10b981;
+      font-size: 15px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .explain-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .explain-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .code-token {
+      background: rgba(16, 185, 129, 0.15) !important;
+      color: #10b981 !important;
+      padding: 2px 8px !important;
+      border-radius: 4px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      width: fit-content;
+      border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    }
+    .explain-item p {
+      color: #c9d1d9;
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* Light Theme Overrides */
+    body.light-theme .explain-card {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    body.light-theme .explain-card h3 {
+      color: #059669;
+    }
+    body.light-theme .code-token {
+      background: #fef3c7 !important;
+      color: #047857 !important;
+      border-color: #fde68a !important;
+    }
+    body.light-theme .explain-item p {
+      color: #334155;
+    }
+    body.light-theme .code-output-card {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+      border-left-color: #059669;
+    }
+    body.light-theme .output-header {
+      color: #047857;
+    }
+    body.light-theme .output-content {
+      color: #1e293b;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+  </script>
+  
+  <script>
+    function highlightJavaCode(code) {
+      const tokens = [];
+      let tokenIdx = 0;
+      const pushToken = (cls, text) => {
+        const key = '___JAVA_TOK_' + (tokenIdx++) + '___';
+        tokens[key] = '<span class="' + cls + '">' + text + '</span>';
+        return key;
+      };
+
+      // 1. Comments
+      code = code.replace(/\/\/.*$/gm, m => pushToken('cm', m));
+      code = code.replace(/\/\*[\s\S]*?\*\//g, m => pushToken('cm', m));
+
+      // 2. Strings & Chars
+      code = code.replace(/"(?:\\.|[^"\\\r\n])*"/g, m => pushToken('st', m));
+      code = code.replace(/'(?:\\.|[^'\\\r\n])*'/g, m => pushToken('st', m));
+
+      // 3. Annotations
+      code = code.replace(/@[A-Za-z0-9_]+/g, m => pushToken('ann', m));
+
+      // 4. Java Reserved Keywords & Modifiers
+      const keywords = ['public','private','protected','static','final','abstract','class','interface','enum','extends','implements','void','new','return','this','super','package','import','try','catch','finally','throw','throws','if','else','switch','case','default','break','continue','for','while','do','instanceof','var','synchronized','volatile','transient','native','strictfp','assert','true','false','null'];
+      const kwRegex = new RegExp('\\b(' + keywords.join('|') + ')\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 5. Primitive & Common Reference Types
+      const types = ['byte','short','int','long','float','double','char','boolean','String','Integer','Double','Long','Float','Short','Byte','Character','Boolean','Object','System','Scanner','Math','Arrays','Collections','List','ArrayList','LinkedList','Set','HashSet','TreeSet','Map','HashMap','TreeMap','Queue','Deque','ArrayDeque','Thread','Runnable','Exception','RuntimeException','Throwable','Error','Override','Deprecated','SuppressWarnings'];
+      const typeRegex = new RegExp('\\b(' + types.join('|') + ')\\b', 'g');
+      code = code.replace(typeRegex, m => pushToken('tp', m));
+
+      // 6. Built-in Methods
+      const methods = ['println','print','printf','format','length','charAt','substring','indexOf','lastIndexOf','toUpperCase','toLowerCase','trim','replace','split','contains','startsWith','endsWith','equals','equalsIgnoreCase','toString','hashCode','compareTo','add','get','set','remove','size','clear','isEmpty','contains','put','keySet','values','entrySet','sort','binarySearch','min','max','sqrt','pow','abs','round','random','floor','ceil','hasNextInt','hasNextDouble','hasNextLine','nextInt','nextDouble','nextLong','nextFloat','next','nextLine','nextBoolean','close','out','in','err','getRuntime','maxMemory','totalMemory','freeMemory','availableProcessors','getProperty','now','getYear'];
+      const fnRegex = new RegExp('\\b(' + methods.join('|') + ')\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 7. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?[fFdDlL]?|0[xX][0-9a-fA-F_]+|0[bB][01_]+)\b/g, m => pushToken('nu', m));
+
+      // 8. Restore Tokens
+      for (const [key, val] of Object.entries(tokens)) {
+        code = code.replace(new RegExp(key, 'g'), val);
+      }
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+      });
+    })();
+  </script>
+
+</head>
+<body class="lang-java">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html" class="active">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Java Master Course</div>
+    <a href="/blog-java.html" class="sidebar-home-link">☕ Java Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Java Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Java Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-compilation-execution-and-source-structure.html">3. Compilation & File Structure</a>
+        <a href="/blog-java/04-java-comments-and-naming-conventions.html">4. Comments & Naming Rules</a>
+        <a href="/blog-java/05-java-errors-debugging-and-troubleshooting.html">5. Errors & Debugging</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-variables-declaration-and-memory-model.html">6. Variables & Memory</a>
+        <a href="/blog-java/07-java-primitive-data-types-and-literals.html">7. Primitive Data Types</a>
+        <a href="/blog-java/08-java-reference-types-strings-and-scopes.html">8. Reference Types & Scopes</a>
+        <a href="/blog-java/09-java-type-casting-and-var-inference.html">9. Type Casting & var</a>
+      </div>
+
+      <!-- Phase 03: Operators & User Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & User Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/10-java-operators-arithmetic-assignment-relational.html">10. Basic Operators</a>
+        <a href="/blog-java/11-java-logical-bitwise-and-ternary-operators.html">11. Logical & Bitwise</a>
+        <a href="/blog-java/12-java-user-input-scanner-complete-guide.html">12. Scanner & User Input</a>
+        <a href="/blog-java/13-java-formatted-output-printf-and-math.html">13. printf() & Math Library</a>
+        <a href="/blog-java/14-java-basics-and-input-capstone-projects.html">14. Capstone Projects (5)</a>
+      </div>
+
+      <!-- Phase 04: Conditions & Branching -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditions & Branching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/15-java-if-else-and-nested-conditions.html">15. if-else & Nested Branching</a>
+        <a href="/blog-java/16-java-ternary-operator-and-string-comparison.html">16. Ternary & String Equality</a>
+        <a href="/blog-java/17-java-switch-statement-and-string-switching.html">17. switch, case, break & default</a>
+        <a href="/blog-java/18-java-modern-switch-expressions-and-pitfalls.html">18. Modern Switch & Pitfalls</a>
+      </div>
+
+      <!-- Phase 05: Loops & Control Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/19-java-for-loop-and-loop-mechanics.html">19. for Loop & Mechanics</a>
+        <a href="/blog-java/20-java-while-and-do-while-loops.html">20. while & do-while</a>
+        <a href="/blog-java/21-java-jump-statements-break-continue-and-enhanced-for.html">21. Jump & Enhanced for</a>
+        <a href="/blog-java/22-java-nested-loops-and-pattern-programming.html">22. Patterns & Nested Loops</a>
+      </div>
+
+      <!-- Phase 06: Strings & StringBuilder -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings & StringBuilder</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/23-java-string-fundamentals-and-memory-architecture.html">23. String Fundamentals & SCP</a>
+        <a href="/blog-java/24-java-string-methods-search-extraction-and-manipulation.html">24. String Methods Masterclass</a>
+        <a href="/blog-java/25-java-string-comparison-and-equality.html">25. String Equality & Comparison</a>
+        <a href="/blog-java/26-java-stringbuilder-stringbuffer-and-formatting.html">26. StringBuilder & Formatting</a>
+        <a href="/blog-java/27-java-strings-capstone-projects.html">27. Capstone Projects (5)</a>
+      </div>
+
+      <!-- Phase 07: Arrays & Matrices -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays & Matrices</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/28-java-array-fundamentals-and-memory-model.html">28. Array Fundamentals & Memory</a>
+        <a href="/blog-java/29-java-array-algorithms-sum-min-max-and-searching.html">29. Array Math & Search Algorithms</a>
+        <a href="/blog-java/30-java-array-sorting-copying-and-arrays-utility-class.html">30. Sorting, Copying & Utilities</a>
+        <a href="/blog-java/31-java-multidimensional-and-jagged-arrays.html">31. 2D & Jagged Arrays</a>
+        <a href="/blog-java/32-java-arrays-capstone-projects-and-limitations.html">32. Capstone Projects (7) & Limitations</a>
+      </div>
+
+      <!-- Phase 08: Methods & Recursion -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Methods & Recursion</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/33-java-method-fundamentals-and-call-stack.html">33. Method Fundamentals & Call Stack</a>
+        <a href="/blog-java/34-java-pass-by-value-and-variable-scope.html">34. Pass-by-Value & Scope</a>
+        <a href="/blog-java/35-java-method-overloading-and-static-vs-instance.html">35. Overloading & Static Methods</a>
+        <a href="/blog-java/36-java-recursion-and-stack-overflow.html">36. Recursion & StackOverflow</a>
+        <a href="/blog-java/37-java-methods-capstone-projects-and-best-practices.html">37. Capstone Projects (4) & Best Practices</a>
+      </div>
+
+      <!-- Phase 09: Classes & Objects (OOP) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Classes & Objects (OOP)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/38-java-class-and-object-fundamentals.html" class="active">38. Class & Object Fundamentals</a>
+        <a href="/blog-java/39-java-constructors-this-keyword-and-overloading.html">39. Constructors & this Keyword</a>
+        <a href="/blog-java/40-java-static-members-nested-classes-and-enums.html">40. Static, Nested Classes & Enums</a>
+        <a href="/blog-java/41-java-tostring-encapsulation-and-object-best-practices.html">41. toString() & Encapsulation</a>
+        <a href="/blog-java/42-java-oop-classes-capstone-projects.html">42. Capstone Projects (4 OOP Systems)</a>
+      </div>
+
+      <!-- Phase 10: Encapsulation & Access -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Encapsulation & Access</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/43-java-access-modifiers-public-private-protected-default.html">43. Access Modifiers: 4 Levels</a>
+        <a href="/blog-java/44-java-getters-setters-and-data-validation.html">44. Getters, Setters & Validation</a>
+        <a href="/blog-java/45-java-immutable-objects-and-read-only-properties.html">45. Immutable Objects & final</a>
+        <a href="/blog-java/46-java-good-class-design-and-package-access.html">46. Package Access & Class Design</a>
+        <a href="/blog-java/47-java-encapsulation-capstone-projects.html">47. Capstone Projects (4 Secure Systems)</a>
+      </div>
+
+      <!-- Phase 11: Inheritance & Polymorphism -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 12: Abstraction & Interfaces -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Abstraction & Interfaces</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 13: Packages & Enums -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Packages & Enums</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 14: Exception Handling -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 15: Collections Framework -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📚</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Collections Framework</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 16: Generics & Type Safety -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏷️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Generics & Type Safety</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 17: Wrapper Classes & Enums -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Wrapper Classes & Enums</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 18: Lambda Expressions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 19: Stream API & Pipelines -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Stream API & Pipelines</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 20: Date & Time (java.time) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏱️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Date & Time (java.time)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 21: File Handling & NIO -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">File Handling & NIO</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 22: Regular Expressions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 22</span>
+            <span class="phase-title">Regular Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 23: Multithreading & Concurrency -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 23</span>
+            <span class="phase-title">Multithreading & Concurrency</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 24: Networking & HTTP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 24</span>
+            <span class="phase-title">Networking & HTTP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 25: JDBC & Databases -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 25</span>
+            <span class="phase-title">JDBC & Databases</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 26: Build Tools (Maven & Gradle) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 26</span>
+            <span class="phase-title">Build Tools (Maven & Gradle)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 27: Testing (JUnit & Mockito) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 27</span>
+            <span class="phase-title">Testing (JUnit & Mockito)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 28: Clean Code & Patterns -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💎</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 28</span>
+            <span class="phase-title">Clean Code & Patterns</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 29: Spring & Spring Boot -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🍃</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 29</span>
+            <span class="phase-title">Spring & Spring Boot</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 30: Advanced Backend & Projects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 30</span>
+            <span class="phase-title">Advanced Backend & Projects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Chapter 38: 38. Class & Object Fundamentals</span>
+    </div>
+
+    <h1 class="page-title">Java Class & Object Fundamentals: Blueprint vs Instance</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java 21+ LTS</span>
+      <span class="badge">🟢 Chapter 38 of 47</span>
+      <span class="badge">📂 Phase 9: Classes & Objects</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="intro-box">
+      <div style="font-size:13px; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">📌 Covered in this chapter:</div>
+      <p style="margin:0; font-size:13.5px; color:var(--text2);">Class ante enti? · Object ante enti? · Blueprint vs Instance Analogy · Fields (Instance Variables) · Methods Inside Classes · Creating Objects with new · Dot Operator · Memory Model: Stack Reference + Heap Object · Multiple Objects from One Class</p>
+    </div>
+
+    <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
+      <p>Comprehensive masterclass on Java Object-Oriented Programming foundations: understanding the critical distinction between a class (blueprint/template) and an object (living instance in memory), defining fields and methods inside classes, allocating objects on the Heap with the new keyword, and navigating members using the dot operator.</p>
+    </div>
+
+    <!-- Deep Conceptual Theory Sections -->
+    
+    <section class="lesson-section">
+      <h2>1. Class Ante Enti? (What is a Class in Java?)</h2>
+      <div class="theory-text">
+        <p>A <strong>Class</strong> is a <strong>blueprint, template, or architectural plan</strong> that describes two things:<br>1. <strong>Fields (State):</strong> What data/attributes an object should hold.<br>2. <strong>Methods (Behavior):</strong> What actions/operations the object can perform.</p>
+<p><strong>Real-World Analogy — Car Blueprint:</strong><br>- The architectural blueprint of a car says: "Every car has a color, engine size, and fuel type. Every car can startEngine(), accelerate(), and brake()."<br>- But the blueprint itself is NOT a physical car—you cannot sit in or drive a blueprint!<br>- It is only when a manufacturer <strong>builds (instantiates) a car from that blueprint</strong> that a real, usable car (object) comes into existence.</p>
+<div class="code-block"><pre><code>// 1. CLASS = Blueprint (Defines structure and behavior)
+class Car {
+    String color;    // Field (State)
+    int speed;       // Field (State)
+<p>void accelerate() { // Method (Behavior)<br>        speed += 10;<br>    }<br>}</p>
+<p>// 2. OBJECT = A real car built from the blueprint (Instantiation)<br>Car myCar = new Car(); // myCar is now a usable instance</code></pre></div></p>
+      </div>
+    </section>
+  
+
+    <section class="lesson-section">
+      <h2>2. Object Ante Enti? (What is an Object in Java?)</h2>
+      <div class="theory-text">
+        <p>An <strong>Object</strong> is a <strong>concrete, usable instance</strong> of a class that exists in the <strong>JVM Heap memory</strong> at runtime.</p>
+<p>Each object has:<br>1. <strong>Its own identity:</strong> A unique 64-bit memory address in the Heap.<br>2. <strong>Its own state:</strong> Independent values for every field defined in the class.<br>3. <strong>Shared behavior:</strong> Methods defined in the class are shared (not duplicated) via the JVM Method Area.</p>
+<div class="code-block"><pre><code>CLASS (Method Area - Template)     HEAP MEMORY (Runtime Objects)
+  +----------------------------+    +----------------+  +----------------+
+  | class Student {            |    | Object #1      |  | Object #2      |
+  |   String name;             |    | name = "Ravi"  |  | name = "Priya" |
+  |   int age;                 |    | age  = 20      |  | age  = 22      |
+  |   void display() { ... }  |    | Addr: 0x5A00   |  | Addr: 0x6B00   |
+  | }                          |    +----------------+  +----------------+
+  +----------------------------+</code></pre></div>
+      </div>
+    </section>
+  
+
+    <section class="lesson-section">
+      <h2>3. Fields (Instance Variables) Explained</h2>
+      <div class="theory-text">
+        <p>Fields (also called <strong>Instance Variables</strong>) are variables declared directly inside a class body but OUTSIDE any method:</p>
+<div class="code-block"><pre><code>class Student {
+    String name;    // Instance field: EACH object gets its own copy
+    int age;        // Instance field
+    double gpa;     // Instance field
+}</code></pre></div>
+<p><strong>Key Rules:</strong><br>- Fields are allocated on the <strong>Heap</strong> as part of the object (not the Stack).<br>- Every object created from the class gets its <strong>own independent copy</strong> of each field.<br>- Fields are auto-initialized to default values (<code>0</code>, <code>false</code>, <code>null</code>) if not explicitly initialized in a constructor.</p>
+      </div>
+    </section>
+  
+
+    <section class="lesson-section">
+      <h2>4. Creating Objects with new & The Dot Operator</h2>
+      <div class="theory-text">
+        <p>The <code>new</code> keyword triggers 3 JVM operations:<br>1. <strong>Allocates</strong> memory in the Heap for the new object.<br>2. <strong>Initializes</strong> all fields to their default values (0 / false / null).<br>3. <strong>Invokes</strong> the constructor to set up the object's initial state.</p>
+<p>The <strong>dot operator (<code>.</code>)</strong> navigates from a reference variable to an object's fields or methods:<br><div class="code-block"><pre><code>Student s = new Student(); // s is a Stack reference pointing to a Heap object<br>s.name = "Ravi";           // Sets name field on the Heap object<br>s.age = 20;                // Sets age field on the Heap object<br>s.displayDetails();        // Invokes displayDetails() method</code></pre></div></p>
+      </div>
+    </section>
+  
+
+    <section class="lesson-section">
+      <h2>5. JVM Memory Model: Stack Reference + Heap Object</h2>
+      <div class="theory-text">
+        <div class="code-block"><pre><code>STACK MEMORY                    HEAP MEMORY
+  +-------------------+          +----------------------------+
+  | s1 = 0x4A00       | ------&gt;  | name: "Ravi"               |
+  +-------------------+          | age : 20                   |
+  | s2 = 0x7C00       | ------&gt;  +----------------------------+
+  +-------------------+          | name: "Priya"              |
+                                  | age : 22                   |
+                                  +----------------------------+</code></pre></div>
+<p><strong>The Null Pointer Hazard:</strong><br>If you declare a reference but don't create an object, the reference variable contains <code>null</code>. Attempting to use the dot operator on a null reference throws <code>NullPointerException</code>:<br><div class="code-block"><pre><code>Student ghost = null;<br>ghost.displayDetails(); // throws java.lang.NullPointerException!</code></pre></div></p>
+      </div>
+    </section>
+  
+
+    <!-- Primary Code Example -->
+    <section class="lesson-section">
+      <h2>Beginner Example & Code Anatomy</h2>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">☕ Main.java — Chapter 38 Core Example</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
+          </div>
+        </div>
+        <pre><code>class Student {
+    // Fields (Instance Variables)
+    String name;
+    int age;
+
+    // Method inside class (User requested core snippet)
+    void displayDetails() {
+        System.out.println(name + " - " + age);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("=== 1. User Requested Primary Snippet ===");
+        Student student = new Student("Ravi", 20);  // Note: This requires constructor
+        student.displayDetails(); // Will be extended in next chapter
+
+        System.out.println("
+=== 2. Dot Operator: Setting Fields Directly ===");
+        Student s1 = new Student();
+        s1.name = "Priya Sharma";
+        s1.age  = 22;
+        s1.displayDetails();
+
+        System.out.println("
+=== 3. Multiple Independent Objects from One Class ===");
+        Student s2 = new Student();
+        s2.name = "Kiran Kumar";
+        s2.age  = 21;
+
+        Student s3 = new Student();
+        s3.name = "Ananya Reddy";
+        s3.age  = 23;
+
+        // Each object has its own state!
+        System.out.println("Object s1: "); s1.displayDetails();
+        System.out.println("Object s2: "); s2.displayDetails();
+        System.out.println("Object s3: "); s3.displayDetails();
+
+        System.out.println("
+=== 4. Checking Object Identity ===");
+        System.out.println("s1 == s2 (same object?) : " + (s1 == s2));
+
+        Student s4 = s1; // s4 and s1 point to the SAME heap object!
+        System.out.println("s4 == s1 (same object?) : " + (s4 == s1));
+        s4.name = "MODIFIED via s4";
+        System.out.println("s1.name after s4 change : " + s1.name);
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">💻 Program Console Output</div>
+        <div class="output-content">=== 1. User Requested Primary Snippet ===
+Ravi - 20
+
+=== 2. Dot Operator: Setting Fields Directly ===
+Priya Sharma - 22
+
+=== 3. Multiple Independent Objects from One Class ===
+Object s1: 
+Priya Sharma - 22
+Object s2: 
+Kiran Kumar - 21
+Object s3: 
+Ananya Reddy - 23
+
+=== 4. Checking Object Identity ===
+s1 == s2 (same object?) : false
+s4 == s1 (same object?) : true
+s1.name after s4 change : MODIFIED via s4</div>
+      </div>
+
+      <div class="explain-card">
+        <h3>🔍 Line-by-Line Code Explanation</h3>
+        
+    <div class="explain-item">
+      <code class="code-token">class Student { String name; int age; }</code>
+      <p>Declares a class blueprint defining two instance fields: name (String) and age (int).</p>
+    </div>
+  
+
+    <div class="explain-item">
+      <code class="code-token">Student s1 = new Student();</code>
+      <p>Allocates a new Student object on the Heap; s1 on the Stack holds the memory address (reference).</p>
+    </div>
+  
+
+    <div class="explain-item">
+      <code class="code-token">s1.name = "Priya Sharma";</code>
+      <p>Follows the s1 reference to the Heap object and writes "Priya Sharma" into the name field.</p>
+    </div>
+  
+
+    <div class="explain-item">
+      <code class="code-token">Student s4 = s1;</code>
+      <p>Copies the memory address from s1 into s4. Both variables now point to the same Heap object.</p>
+    </div>
+  
+      </div>
+    </section>
+
+    <!-- Practical Industry Example -->
+    <section class="lesson-section">
+      <h2>Practical Real-World Example</h2>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">☕ PracticalApplication.java — Industry Implementation</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
+          </div>
+        </div>
+        <pre><code>class BankAccount {
+    String accountNumber;
+    String holderName;
+    double balance;
+
+    void showBalance() {
+        System.out.printf("  Account: %s | Holder: %-12s | Balance: $%,.2f%n",
+                accountNumber, holderName, balance);
+    }
+}
+
+public class PracticalApplication {
+    public static void main(String[] args) {
+        BankAccount acc1 = new BankAccount();
+        acc1.accountNumber = "SB-001-2026";
+        acc1.holderName = "Ravi Kumar";
+        acc1.balance = 15000.00;
+
+        BankAccount acc2 = new BankAccount();
+        acc2.accountNumber = "SB-002-2026";
+        acc2.holderName = "Priya Devi";
+        acc2.balance = 32500.75;
+
+        System.out.println("=== Active Bank Accounts ===");
+        acc1.showBalance();
+        acc2.showBalance();
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">💻 Practical Console Output</div>
+        <div class="output-content">=== Active Bank Accounts ===
+  Account: SB-001-2026 | Holder: Ravi Kumar    | Balance: $15,000.00
+  Account: SB-002-2026 | Holder: Priya Devi    | Balance: $32,500.75</div>
+      </div>
+    </section>
+
+    <!-- Common Mistakes Callout -->
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
+      <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
+        
+    <li style="margin-bottom:8px; line-height:1.6;">Accessing an object's field without first creating the object (NullPointerException).</li>
+  
+
+    <li style="margin-bottom:8px; line-height:1.6;">Writing <code>Student s1 = Student();</code> without the <code>new</code> keyword, which is a compile error.</li>
+  
+
+    <li style="margin-bottom:8px; line-height:1.6;">Believing that <code>s4 = s1</code> creates a copy of the object. It only copies the reference address!</li>
+  
+
+    <li style="margin-bottom:8px; line-height:1.6;">Declaring fields inside a method (those are local variables, NOT instance fields).</li>
+  
+      </ul>
+    </div>
+
+    <!-- Coding Challenge -->
+    <div class="try-box">
+      <div class="try-title">🎯 Hands-on Coding Challenge</div>
+      <p style="color: var(--text2); font-size: 14.5px; margin-bottom: 12px;">Test your understanding by writing the code directly in your editor or running in our online Java compiler:</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">☕ Challenge.java</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Solve in Compiler</button>
+          </div>
+        </div>
+        <pre><code>// Coding Challenge:
+// 1. Create a class Rectangle with fields: double length and double width.
+// 2. Add a method calculateArea() returning length * width.
+// 3. Add a method calculatePerimeter() returning 2 * (length + width).
+// 4. Create 3 different Rectangle objects and display their area and perimeter.
+
+class Rectangle {
+    double length;
+    double width;
+
+    double calculateArea() {
+        return length * width;
+    }
+
+    double calculatePerimeter() {
+        return 2 * (length + width);
+    }
+}
+
+public class Challenge {
+    public static void main(String[] args) {
+        Rectangle r1 = new Rectangle();
+        r1.length = 10.0; r1.width = 5.0;
+
+        Rectangle r2 = new Rectangle();
+        r2.length = 8.5; r2.width = 3.0;
+
+        System.out.printf("R1: Area=%.2f, Perimeter=%.2f%n", r1.calculateArea(), r1.calculatePerimeter());
+        System.out.printf("R2: Area=%.2f, Perimeter=%.2f%n", r2.calculateArea(), r2.calculatePerimeter());
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Mini Quiz / FAQ Section -->
+    <section class="faq-section" style="margin-top: 36px;">
+      <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
+      
+    <div class="faq-card">
+      <h4>❓ Can we have a class without fields or methods?</h4>
+      <p>Yes, Java allows an empty class (`class Empty {}`). However, it is rarely useful. Marker interfaces and some annotation types are used this way in enterprise code.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4>❓ How many objects can be created from a single class?</h4>
+      <p>Theoretically unlimited, bounded only by available JVM Heap memory. A highly loaded web server might instantiate thousands of `HttpRequest` objects per second from a single class definition.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4>❓ What is the difference between a class and an object?</h4>
+      <p>A class is a compile-time concept (code written in a .java file), while an object is a runtime concept (memory allocated in the JVM Heap). One class definition can produce millions of objects.</p>
+    </div>
+  
+    </section>
+
+    <!-- Quick Recap Box -->
+    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 20px 22px; margin: 36px 0;">
+      <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
+      <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
+        
+    <li style="margin-bottom:6px; line-height:1.5;">A class is a blueprint defining fields (state) and methods (behavior).</li>
+  
+
+    <li style="margin-bottom:6px; line-height:1.5;">An object is a live instance of a class, allocated in JVM Heap memory.</li>
+  
+
+    <li style="margin-bottom:6px; line-height:1.5;"><code>new</code> allocates the object, initializes fields to defaults, and invokes the constructor.</li>
+  
+
+    <li style="margin-bottom:6px; line-height:1.5;">The dot operator (<code>.</code>) navigates from a Stack reference to a Heap object's members.</li>
+  
+
+    <li style="margin-bottom:6px; line-height:1.5;">Multiple objects are independent; each has its own copy of instance fields.</li>
+  
+      </ul>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:40px; padding-top:24px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <a href="/blog-java/37-java-methods-capstone-projects-and-best-practices.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); padding:10px 18px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13.5px;">← Prev: 37. Capstone Projects (4) & Best Practices</a>
+      <a href="/blog-java/39-java-constructors-this-keyword-and-overloading.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#121212; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13.5px;">Next: 39. Constructors & this Keyword →</a>
+    </div>
+
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Curated by Our Compiler Java Technical Editorial Team</strong><br>
+        <span>Published for 2026 Academic & Enterprise Reference · 100% Free & Open Access</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+<script>
+  // Highlight all code blocks on load
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.code-block pre code').forEach(el => {
+      el.innerHTML = highlightJavaCode(el.innerText);
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,25 +1,30 @@
 const fs = require('fs');
 const path = require('path');
 
-const publicDir = path.join(__dirname, '../public');
+const publicDir = path.join(__dirname, '../public/python');
+
+// Ensure the directory exists
+if (!fs.existsSync(publicDir)) {
+  fs.mkdirSync(publicDir, { recursive: true });
+}
 
 // Curriculum array with active markers
 const lessons = [
-  { slug: 'intro', num: 1, title: 'Welcome & Hello World', filename: 'blog-python-intro.html' },
-  { slug: 'variables', num: 2, title: 'Variables & Core Types', filename: 'blog-python-variables.html' },
-  { slug: 'operators', num: 3, title: 'Basic Operators & Math', filename: 'blog-python-operators.html' },
-  { slug: 'strings', num: 4, title: 'String Slicing & Methods', filename: 'blog-python-strings.html' },
-  { slug: 'conditionals', num: 5, title: 'Conditionals (if-else)', filename: 'blog-python-conditionals.html' },
-  { slug: 'loops', num: 6, title: 'Loops & Ranges', filename: 'blog-python-loops.html' },
-  { slug: 'input', num: 7, title: 'Reading User Inputs', filename: 'blog-python-input.html' },
-  { slug: 'lists', num: 8, title: 'Lists & Tuples', filename: 'blog-python-lists.html' },
-  { slug: 'dicts', num: 9, title: 'Dictionaries & Sets', filename: 'blog-python-dicts.html' },
-  { slug: 'functions', num: 10, title: 'Functions & Reusable Code', filename: 'blog-python-functions.html' },
-  { slug: 'modules', num: 11, title: 'Modules & Standard Lib', filename: 'blog-python-modules.html' },
-  { slug: 'files', num: 12, title: 'File I/O Operations', filename: 'blog-python-files.html' },
-  { slug: 'errors', num: 13, title: 'Exception Handling', filename: 'blog-python-errors.html' },
-  { slug: 'oop-basics', num: 14, title: 'OOP: Classes & Objects', filename: 'blog-python-oop-basics.html' },
-  { slug: 'oop-advanced', num: 15, title: 'OOP: Inheritance & Dunder', filename: 'blog-python-oop-advanced.html' }
+  { slug: 'intro', num: 1, title: 'Welcome & Hello World', filename: 'intro.html' },
+  { slug: 'variables', num: 2, title: 'Variables & Core Types', filename: 'variables.html' },
+  { slug: 'operators', num: 3, title: 'Basic Operators & Math', filename: 'operators.html' },
+  { slug: 'strings', num: 4, title: 'String Slicing & Methods', filename: 'strings.html' },
+  { slug: 'conditionals', num: 5, title: 'Conditionals (if-else)', filename: 'conditionals.html' },
+  { slug: 'loops', num: 6, title: 'Loops & Ranges', filename: 'loops.html' },
+  { slug: 'input', num: 7, title: 'Reading User Inputs', filename: 'input.html' },
+  { slug: 'lists', num: 8, title: 'Lists & Tuples', filename: 'lists.html' },
+  { slug: 'dicts', num: 9, title: 'Dictionaries & Sets', filename: 'dicts.html' },
+  { slug: 'functions', num: 10, title: 'Functions & Reusable Code', filename: 'functions.html' },
+  { slug: 'modules', num: 11, title: 'Modules & Standard Lib', filename: 'modules.html' },
+  { slug: 'files', num: 12, title: 'File I/O Operations', filename: 'files.html' },
+  { slug: 'errors', num: 13, title: 'Exception Handling', filename: 'errors.html' },
+  { slug: 'oop-basics', num: 14, title: 'OOP: Classes & Objects', filename: 'oop-basics.html' },
+  { slug: 'oop-advanced', num: 15, title: 'OOP: Inheritance & Dunder', filename: 'oop-advanced.html' }
 ];
 
 // Helper to generate the sidebar HTML dynamically
@@ -28,11 +33,12 @@ function getSidebar(activeSlug) {
   html += `    <a href="/blog-python.html"${activeSlug === 'home' ? ' class="active"' : ''}>Python 3 HOME</a>\n`;
   
   lessons.forEach(l => {
-    html += `    <a href="/${l.filename}"${activeSlug === l.slug ? ' class="active"' : ''}>${l.num}. ${l.title}</a>\n`;
+    html += `    <a href="/python/${l.filename}"${activeSlug === l.slug ? ' class="active"' : ''}>${l.num}. ${l.title}</a>\n`;
   });
 
   html += `\n    <div class="sidebar-heading">Reference</div>\n`;
   html += `    <a href="/blog.html">All Tutorials</a>\n`;
+  html += `    <a href="/python/quiz.html" style="color:#a8a3ff;font-weight:700;">🧠 Python Quiz</a>\n`;
   html += `    <a href="/?lang=python3">▶ Try Python 3 Online</a>\n\n`;
 
   html += `    <div class="sidebar-heading">Other Languages</div>\n`;
@@ -47,6 +53,7 @@ function getSidebar(activeSlug) {
   
   return html;
 }
+
 
 // Wrapper template for consistency
 function wrapPage(slug, title, mainContent, prevFile, prevTitle, nextFile, nextTitle) {
@@ -189,59 +196,9 @@ function wrapPage(slug, title, mainContent, prevFile, prevTitle, nextFile, nextT
       });
     })();
   </script>
+  <link rel="stylesheet" href="/site-nav.css" />
 </head>
 <body class="lang-python">
-
-<!-- TOP LANGUAGE BAR -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html" class="active">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
-</nav>
 
 <div class="layout">
   <!-- LEFT SIDEBAR -->
@@ -255,6 +212,7 @@ function wrapPage(slug, title, mainContent, prevFile, prevTitle, nextFile, nextT
     ${navFooter}
   </main>
 </div>
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>`;
 }
@@ -1635,9 +1593,10 @@ function buildAll() {
 
   lessons.forEach((l, idx) => {
     const mainContent = contentMap[l.slug];
-    const prevFile = idx === 0 ? 'blog-python.html' : lessons[idx - 1].filename;
+    // Use /python/ prefix for navigation — files now live in public/python/
+    const prevFile = idx === 0 ? 'blog-python.html' : `python/${lessons[idx - 1].filename}`;
     const prevTitle = idx === 0 ? 'Python 3 Overview' : lessons[idx - 1].title;
-    const nextFile = idx === lessons.length - 1 ? null : lessons[idx + 1].filename;
+    const nextFile = idx === lessons.length - 1 ? null : `python/${lessons[idx + 1].filename}`;
     const nextTitle = idx === lessons.length - 1 ? '' : lessons[idx + 1].title;
 
     const fullHtml = wrapPage(
@@ -1651,15 +1610,10 @@ function buildAll() {
     );
 
     fs.writeFileSync(path.join(publicDir, l.filename), fullHtml, 'utf8');
-    console.log(`Generated: ${l.filename}`);
+    console.log(`Generated: public/python/${l.filename}`);
   });
 
-  // Delete the old deprecated blog-python-syntax.html file if it exists
-  const oldSyntaxFile = path.join(publicDir, 'blog-python-syntax.html');
-  if (fs.existsSync(oldSyntaxFile)) {
-    fs.unlinkSync(oldSyntaxFile);
-    console.log('Deleted old deprecated file: blog-python-syntax.html');
-  }
+  // All lesson files are now inside public/python/ — clean folder structure ✅
 
   console.log('🎉 Successfully generated all 15 Python tutorial files!');
 }

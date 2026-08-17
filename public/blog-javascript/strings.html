@@ -3,16 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Strings & Template Literals | Our Compiler</title>
-  <meta name="description" content="Learn JavaScript — Strings & Template Literals with clear explanations, unique examples, common mistakes, and interactive code execution." />
+  <title>Strings & Text Processing (Methods, Escaping & 5 Projects) — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Comprehensive guide to JavaScript Strings: quotes, template literals, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, palindromes, and 5 mini projects." />
+  <meta name="keywords" content="javascript tutorial, strings & text processing (methods, escaping & 5 projects), learn javascript, javascript online compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/strings.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
   
-  <!-- Blog Theme Switcher -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +75,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -51,61 +95,61 @@
           topnav.appendChild(toggleBtn);
         }
 
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
         document.querySelectorAll('.code-block').forEach(block => {
           const header = block.querySelector('.code-block-header');
           const codeEl = block.querySelector('pre code');
           if (!header || !codeEl) return;
 
-          // Find or create actions container inside header
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
           let actionsContainer = header.querySelector('.code-actions');
           if (!actionsContainer) {
             actionsContainer = document.createElement('div');
             actionsContainer.className = 'code-actions';
             actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
             const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
             header.appendChild(actionsContainer);
           }
 
-          // Inject Copy Button
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
           copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            navigator.clipboard.writeText(rawCode).then(() => {
               copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
             });
           });
           actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
 
-          // Preload Code into Editor on Run Click
           const tryBtn = actionsContainer.querySelector('.try-btn');
           if (tryBtn) {
             tryBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'nodejs';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
             });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
           }
         });
       });
@@ -127,158 +171,607 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">JavaScript Tutorial</div>
-    <a href="/blog-javascript.html">JavaScript HOME</a>
-    <a href="/blog-javascript/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-javascript/variables.html">2. Variables (var, let & const)</a>
-    <a href="/blog-javascript/operators.html">3. Data Types & Operators</a>
-    <a href="/blog-javascript/strings.html" class="active">4. Strings & Template Literals</a>
-    <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
-    <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
-    <a href="/blog-javascript/functions.html">7. Functions & Arrow Syntax</a>
-    <a href="/blog-javascript/arrays.html">8. Arrays & Iteration Methods</a>
-    <a href="/blog-javascript/objects.html">9. Objects & JSON</a>
-    <a href="/blog-javascript/es6-features.html">10. ES6+ Destructuring & Spread</a>
-    <a href="/blog-javascript/oop.html">11. OOP: Classes & Prototypes</a>
-    <a href="/blog-javascript/closures.html">12. Closures & Callback Functions</a>
-    <a href="/blog-javascript/promises.html">13. Promises & Async/Await</a>
-    <a href="/blog-javascript/exceptions.html">14. Error Handling (try-catch)</a>
-    <a href="/blog-javascript/dom.html">15. DOM Basics & Event Listeners</a>
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=nodejs">▶ Try JavaScript Online</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
 
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
 
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditional Statements (if & switch)</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow (Masterclass)</a>
+      </div>
+
+      <!-- Phase 06: Strings Mastery -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/strings.html" class="active">9. Strings & Text Processing (Masterclass)</a>
+      </div>
+
+      <!-- Phase 07: Functions & Arrow Syntax -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Functions & Arrow Syntax</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/functions.html">10. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 08: Arrays & Objects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Arrays & Objects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">11. Arrays & Iteration Methods</a>
+        <a href="/blog-javascript/objects.html">12. Objects & JSON</a>
+        <a href="/blog-javascript/es6-features.html">13. ES6+ Destructuring & Spread</a>
+      </div>
+
+      <!-- Phase 09: Advanced Functions & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Advanced Functions & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/closures.html">14. Closures & Higher-Order Functions</a>
+        <a href="/blog-javascript/oop.html">15. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 10: Asynchronous JavaScript & DOM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Asynchronous JavaScript & DOM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">16. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">17. Error Handling & Debugging</a>
+        <a href="/blog-javascript/dom.html">18. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-javascript.html">JavaScript</a><span>›</span>
-      <span>Lesson 4</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 9: Strings & Text Processing (Methods, Escaping & 5 Projects)</span>
     </div>
-    
-    
-<h1 class="page-title">Strings & Template Literals</h1>
-<div class="page-meta">
-  <span class="badge">🟨 JavaScript</span>
-  <span class="badge">Lesson 4</span>
-  <span class="badge">Beginner</span>
-</div>
 
-<div class="intro-box">
-  <p>Strings store text sequences. JavaScript provides single quotes, double quotes, and backtick string representations for formatting interpolation.</p>
-</div>
+    <h1 class="page-title">Strings & Text Processing (Methods, Escaping & 5 Projects)</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">1</span> String Pool & Template Strings</div>
-  <p>Template string literals use **backticks (``)** instead of standard quotes. They offer two major advantages:</p>
-  <ul>
-    <li><strong>Multi-line Support</strong>: You can write strings spanning multiple lines directly without using escape sequences like `\n`.</li>
-    <li><strong>String Interpolation (`${expression}`)</strong>: You can embed variables and mathematical calculations directly inside the string without clumsy concatenation using `+` signs.</li>
-  </ul>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">2</span> Core String Methods</div>
-  <p>Let's run a program demonstrating slice, index searching, case transformations, and template literal substitution formatting:</p>
-
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">JavaScript — String Manipulation</span>
-      <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 9</span>
+      <span class="badge">📂 Phase 06: Strings Mastery</span>
+      <span class="badge">📅 2026 Edition</span>
     </div>
-    <pre><code>let text = "JavaScript Programming";
 
-// Length and slices
-console.log("Length: " + text.length);
-console.log("Slice (0, 10): " + text.slice(0, 10));
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Creating Strings · Quotes & Template Literals · length & charAt() · toUpperCase/toLowerCase · trim · includes/startsWith/endsWith · slice vs substring · replace/replaceAll · split · repeat · Escape Characters · 5 Projects</span>
+    </div>
 
-// Replacements & case shifts
-console.log("Upper Case: " + text.toUpperCase());
-console.log("Replace Java: " + text.replace("Java", "Type"));
 
-// Template Literal formatting
-let course = "JavaScript";
-let rating = 5;
-let summary = `The ${course} course has a rating of ${rating}/5 stars.`;
-console.log("Summary: " + summary);</code></pre>
-  </div>
-</div>
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 6: Strings Mastery</strong>! In JavaScript, text is handled through <strong>Strings</strong>. Strings in JavaScript are immutable sequences of UTF-16 character code units. In this masterclass guide, you will learn how to create strings using single quotes, double quotes, and modern ES6 <strong>Template Literals</strong>, master over 15 built-in string manipulation methods, understand character indexing, escaping, slicing, string replacement, palindrome verification, and build 5 interactive text-processing mini-projects.</p>
+    </div>
 
-<div class="section">
-  <div class="section-title"><span class="num">3</span> Code Challenge</div>
-  <div class="info-box">
-    <strong>Challenge:</strong> Create variables storing a product name, price, and purchase quantity. Use template literals to compute the total cost and output a dynamic statement (e.g. `Purchased 3 Shirts for a total of $75`).
-  </div>
-</div>
+    <!-- 1. Creating Strings, Quotes & Template Literals -->
+    <div class="section-title"><span class="num">1</span>Creating Strings (Single, Double Quotes & Template Literals)</div>
+    <div class="section-body">
+      <p>JavaScript lo strings create cheyyadaniki 3 approaches unnaayi:</p>
 
+      <table class="tbl">
+        <tr><th>String Delimiter</th><th>Syntax</th><th>Key Features</th></tr>
+        <tr>
+          <td><strong>1. Single Quotes</strong></td>
+          <td><code>'Hello World'</code></td>
+          <td>Classic literal. Useful when string contains double quotes.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Double Quotes</strong></td>
+          <td><code>"Hello World"</code></td>
+          <td>Classic literal. Useful when string contains apostrophes.</td>
+        </tr>
+        <tr>
+          <td><strong>3. Template Literals</strong> (ES6 ⭐)</td>
+          <td><code>`Hello ${name}`</code></td>
+          <td>Supports <strong>String Interpolation (`${expression}`)</strong>, multi-line strings, and embedded JavaScript code without concatenation.</td>
+        </tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Quotes & Template Literals</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const language = "JavaScript";
+
+console.log(language.length);
+console.log(language.toUpperCase());
+console.log(language.includes("Script"));
+console.log(`I am learning ${language}`);</code></pre>
+      </div>
+    </div>
+
+    <!-- 2. String Length & Character Indexing -->
+    <div class="section-title"><span class="num">2</span>String Length, Indexing & charAt()</div>
+    <div class="section-body">
+      <p>Strings are zero-indexed (first character index is <code>0</code>):</p>
+      
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><code>str.length</code> — Total number of characters (property, not a method).</li>
+        <li><code>str[0]</code> — Bracket notation to read character at index 0.</li>
+        <li><code>str.charAt(0)</code> — Method to read character at index 0 (returns empty string <code>""</code> if out of bounds, unlike <code>undefined</code>).</li>
+        <li><code>str.at(-1)</code> — Modern ES2022 method supporting negative indices (last character).</li>
+      </ul>
+    </div>
+
+    <!-- 3. Essential String Methods -->
+    <div class="section-title"><span class="num">3</span>Essential String Methods Master Table</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Method</th><th>Description</th><th>Example</th><th>Result</th></tr>
+        <tr><td><code>toUpperCase()</code></td><td>Converts string to uppercase.</td><td><code>"js".toUpperCase()</code></td><td><code>"JS"</code></td></tr>
+        <tr><td><code>toLowerCase()</code></td><td>Converts string to lowercase.</td><td><code>"JS".toLowerCase()</code></td><td><code>"js"</code></td></tr>
+        <tr><td><code>trim()</code></td><td>Removes whitespace from both ends.</td><td><code>"  hi  ".trim()</code></td><td><code>"hi"</code></td></tr>
+        <tr><td><code>includes(sub)</code></td><td>Checks if substring exists (boolean).</td><td><code>"JavaScript".includes("Script")</code></td><td><code>true</code></td></tr>
+        <tr><td><code>startsWith(sub)</code></td><td>Checks if string starts with substring.</td><td><code>"Hello".startsWith("He")</code></td><td><code>true</code></td></tr>
+        <tr><td><code>endsWith(sub)</code></td><td>Checks if string ends with substring.</td><td><code>"image.png".endsWith(".png")</code></td><td><code>true</code></td></tr>
+        <tr><td><code>indexOf(sub)</code></td><td>Returns first index of match (or -1).</td><td><code>"developer".indexOf("el")</code></td><td><code>3</code></td></tr>
+        <tr><td><code>split(delim)</code></td><td>Splits string into array of strings.</td><td><code>"a,b,c".split(",")</code></td><td><code>["a", "b", "c"]</code></td></tr>
+        <tr><td><code>repeat(count)</code></td><td>Repeats string N times.</td><td><code>"⭐".repeat(3)</code></td><td><code>"⭐⭐⭐"</code></td></tr>
+      </table>
+    </div>
+
+    <!-- 4. Slicing: slice() vs substring() -->
+    <div class="section-title"><span class="num">4</span>Extracting Text: slice() vs substring()</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Feature</th><th><code>slice(start, end)</code> ⭐ Recommended</th><th><code>substring(start, end)</code></th></tr>
+        <tr><td><strong>Negative Indices</strong></td><td>✅ Counts backward from end: <code>"Hello".slice(-2) // "lo"</code></td><td>❌ Treats negative index as <code>0</code></td></tr>
+        <tr><td><strong>start > end</strong></td><td>Returns empty string <code>""</code></td><td>Swaps indices automatically</td></tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — slice vs substring</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const message = "JavaScript Masterclass 2026";
+
+console.log("slice(0, 10):", message.slice(0, 10));     // "JavaScript"
+console.log("slice(-4):", message.slice(-4));           // "2026"
+console.log("substring(0, 10):", message.substring(0, 10)); // "JavaScript"</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Replacing Text: replace() vs replaceAll() -->
+    <div class="section-title"><span class="num">5</span>Replacing Text: replace() vs replaceAll()</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><code>str.replace("old", "new")</code> — Replaces ONLY the first match.</li>
+        <li><code>str.replaceAll("old", "new")</code> — Replaces ALL occurrences in the entire string (ES2021).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — replace vs replaceAll</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const sentence = "Java is great, Java is fast, Java is everywhere!";
+
+console.log("replace():", sentence.replace("Java", "JavaScript"));
+// Only first "Java" changed!
+
+console.log("replaceAll():", sentence.replaceAll("Java", "JavaScript"));
+// All 3 "Java" occurrences replaced with "JavaScript"!</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. Escape Characters & Palindromes -->
+    <div class="section-title"><span class="num">6</span>Escape Characters & Palindrome Checking</div>
+    <div class="section-body">
+      <p>Special characters ni strings lo embed cheyyadaniki backslash <code>\</code> escape character vadathamu:</p>
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><code>\n</code> — New Line</li>
+        <li><code>\t</code> — Tab Indent</li>
+        <li><code>\'</code> or <code>\"</code> — Quotation marks inside literal</li>
+        <li><code>\\</code> — Literal backslash character</li>
+      </ul>
+
+      <h4 style="color:#10b981; margin-top:16px;">Palindrome Algorithm</h4>
+      <p>Oka word/sentence mundhu nunchi or venuka nunchi chadivina okela unte dheenini <strong>Palindrome</strong> antaru (e.g. <em>"madam"</em>, <em>"racecar"</em>):</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Palindrome Checker</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+function isPalindrome(str) {
+    // 1. Sanitize: lowercase and remove non-alphanumeric chars
+    const cleaned = str.toLowerCase().replaceAll(" ", "");
     
+    // 2. Reverse string using split-reverse-join
+    const reversed = cleaned.split("").reverse().join("");
+    
+    // 3. Compare
+    return cleaned === reversed;
+}
+
+console.log("is 'racecar' Palindrome?", isPalindrome("racecar")); // true
+console.log("is 'madam' Palindrome?", isPalindrome("madam"));     // true
+console.log("is 'javascript' Palindrome?", isPalindrome("javascript")); // false</code></pre>
+      </div>
+    </div>
+
+    <!-- 5 MINI PROJECTS -->
+    <div class="section-title"><span class="num">7</span>5 Text-Processing Mini Projects</div>
+    <div class="section-body">
+      <p>Mastering string processing through 5 real-world applications:</p>
+
+      <!-- Project 1: Word Counter -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 1: Word Counter</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Word Counter</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+function countWords(text) {
+    if (!text.trim()) return 0;
+    // Split by one or more whitespace characters
+    const words = text.trim().split(/\s+/);
+    return words.length;
+}
+
+const article = "JavaScript is a versatile language powering the modern web and cloud APIs.";
+console.log("Total Words:", countWords(article)); // 12</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 2: Character Counter -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 2: Character Counter & Analytics</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Character Counter</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+function analyzeText(text) {
+    const totalChars = text.length;
+    const withoutSpaces = text.replaceAll(" ", "").length;
+    const spacesCount = totalChars - withoutSpaces;
+    
+    return {
+        totalCharacters: totalChars,
+        charactersWithoutSpaces: withoutSpaces,
+        spaces: spacesCount
+    };
+}
+
+console.log(analyzeText("Our Compiler 2026 Platform"));</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 3: Palindrome Checker -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 3: Advanced Palindrome Checker (Phrases)</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Palindrome Project</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+function checkPhrasePalindrome(phrase) {
+    const clean = phrase.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const rev = clean.split("").reverse().join("");
+    return clean === rev;
+}
+
+console.log("A man, a plan, a canal: Panama ->", checkPhrasePalindrome("A man, a plan, a canal: Panama")); // true
+console.log("Hello World ->", checkPhrasePalindrome("Hello World")); // false</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 4: Username Validator -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 4: Username Validator</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Username Validator</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+function validateUsername(username) {
+    // Rule 1: Length between 4 and 15
+    if (username.length < 4 || username.length > 15) {
+        return "❌ Username must be between 4 and 15 characters.";
+    }
+    
+    // Rule 2: Cannot contain spaces
+    if (username.includes(" ")) {
+        return "❌ Username cannot contain spaces.";
+    }
+    
+    // Rule 3: Must start with a letter
+    const firstChar = username[0].toLowerCase();
+    if (firstChar < 'a' || firstChar > 'z') {
+        return "❌ Username must start with a letter.";
+    }
+    
+    return "✅ Valid Username: @" + username;
+}
+
+console.log(validateUsername("ravi_dev"));     // Valid
+console.log(validateUsername("123ravi"));      // Invalid start
+console.log(validateUsername("ravi nayak"));   // Contains spaces</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 5: Password Strength Checker -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 5: Password Strength Checker</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Password Strength</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+function checkPasswordStrength(password) {
+    let score = 0;
+    
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++; // Has Uppercase
+    if (/[a-z]/.test(password)) score++; // Has Lowercase
+    if (/[0-9]/.test(password)) score++; // Has Number
+    if (/[^A-Za-z0-9]/.test(password)) score++; // Has Special Char
+    
+    if (score <= 2) return "🔴 WEAK Password (Add numbers & symbols)";
+    if (score <= 4) return "🟡 MEDIUM Password (Good, but can be stronger)";
+    return "🟢 STRONG Password (Excellent security!)";
+}
+
+console.log("pass123:", checkPasswordStrength("pass123"));
+console.log("Ravi@2026#Secure:", checkPasswordStrength("Ravi@2026#Secure"));</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Try It Yourself Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this string processing snippet in our live compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript Strings</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const language = "JavaScript";
+
+console.log("Length:", language.length);
+console.log("Uppercase:", language.toUpperCase());
+console.log("Includes 'Script':", language.includes("Script"));
+console.log(`I am learning ${language}`);</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
     <div class="nav-footer">
-      <a href="/blog-javascript/operators.html" class="nav-btn">
+      
+      <a href="loops.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">Data Types & Operators</span>
+        <span class="title">8. Loops & Control Flow</span>
       </a>
-      <a href="/blog-javascript/conditionals.html" class="nav-btn" style="text-align:right;">
+
+      
+      <a href="functions.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">Conditionals (if-else & switch)</span>
+        <span class="title">Phase 7: Functions</span>
       </a>
     </div>
   </main>
 </div>
+
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>

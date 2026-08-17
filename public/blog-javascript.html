@@ -3,16 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JavaScript Tutorial & Reference Guide | Our Compiler</title>
-  <meta name="description" content="Learn JavaScript — JavaScript Tutorial & Reference Guide with clear explanations, unique examples, common mistakes, and interactive code execution." />
+  <title>JavaScript Programming Master Tutorial & Complete Roadmap (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master JavaScript from complete beginner to advanced full-stack level with our in-depth combined curriculum, collapsible roadmap across 16 phases, live code execution, Node.js, and interview prep." />
+  <meta name="keywords" content="javascript tutorial, js course, learn javascript online, js basics, OOP in javascript, prototypes, ES6 classes, inheritance extends super, private fields, async await, nodejs, dom, javascript interview questions" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-javascript/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Course Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "JavaScript Complete Programming Masterclass (2026 Edition)",
+    "description": "Comprehensive JavaScript course covering syntax, V8 engine, ES6+, DOM manipulation, Events, Forms, Browser APIs, JSON, Fetch API, Promises, async/await, Event Loop, Object-Oriented JS, Classes, Prototypes, Node.js, and technical interview preparation with live runnable code examples.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "educationalLevel": "Beginner to Advanced",
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <!-- Accordion Toggle & Theme Script -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +55,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -50,71 +74,13 @@
           });
           topnav.appendChild(toggleBtn);
         }
-
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'nodejs';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
-            });
-          }
-        });
       });
     })();
   </script>
 </head>
 <body class="lang-javascript">
 
-<!-- TOP LANGUAGE BAR -->
+<!-- TOP NAVIGATION -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
@@ -127,199 +93,897 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">JavaScript Tutorial</div>
-    <a href="/blog-javascript.html" class="active">JavaScript HOME</a>
-    <a href="/blog-javascript/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-javascript/variables.html">2. Variables (var, let & const)</a>
-    <a href="/blog-javascript/operators.html">3. Data Types & Operators</a>
-    <a href="/blog-javascript/strings.html">4. Strings & Template Literals</a>
-    <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
-    <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
-    <a href="/blog-javascript/functions.html">7. Functions & Arrow Syntax</a>
-    <a href="/blog-javascript/arrays.html">8. Arrays & Iteration Methods</a>
-    <a href="/blog-javascript/objects.html">9. Objects & JSON</a>
-    <a href="/blog-javascript/es6-features.html">10. ES6+ Destructuring & Spread</a>
-    <a href="/blog-javascript/oop.html">11. OOP: Classes & Prototypes</a>
-    <a href="/blog-javascript/closures.html">12. Closures & Callback Functions</a>
-    <a href="/blog-javascript/promises.html">13. Promises & Async/Await</a>
-    <a href="/blog-javascript/exceptions.html">14. Error Handling (try-catch)</a>
-    <a href="/blog-javascript/dom.html">15. DOM Basics & Event Listeners</a>
+    <div class="sidebar-heading">JavaScript Master Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link active">🟨 JavaScript HOME</a>
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=nodejs">▶ Try JavaScript Online</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
 
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
 
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditional Statements (if & switch)</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow (Masterclass)</a>
+      </div>
+
+      <!-- Phase 06: Strings Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Text Processing (Masterclass)</a>
+      </div>
+
+      <!-- Phase 07: Arrays Masterclass -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays Masterclass</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">10. Arrays Deep Dive & Core Operations</a>
+      </div>
+
+      <!-- Phase 08: Higher-Order Array Methods -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Higher-Order Array Methods</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/array-methods.html">11. Array Methods (map, filter, reduce & ES2024)</a>
+      </div>
+
+      <!-- Phase 09: Objects Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Objects Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/objects.html">12. Objects & Key-Value Mastery</a>
+      </div>
+
+      <!-- Phase 10: Functions Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Functions Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/functions.html">13. Functions, Closures & this (Masterclass)</a>
+      </div>
+
+      <!-- Phase 11: DOM Manipulation -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">DOM Manipulation</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/dom.html">14. DOM Manipulation & Web Interactivity</a>
+      </div>
+
+      <!-- Phase 12: Events & Forms -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Events & Forms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/events-and-forms.html">15. Browser Events, Forms & Event Delegation</a>
+      </div>
+
+      <!-- Phase 13: Browser APIs & Storage -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Browser APIs & Storage</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/browser-apis-and-storage.html">16. Browser APIs, Storage & Timers</a>
+      </div>
+
+      <!-- Phase 14: JSON & Fetch API -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">JSON & Fetch API</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/json-and-fetch-api.html">17. JSON, Fetch API & REST Integration</a>
+      </div>
+
+      <!-- Phase 15: Asynchronous JavaScript & Promises -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Asynchronous JavaScript & Promises</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">18. Asynchronous JavaScript, Promises & async/await</a>
+      </div>
+
+      <!-- Phase 16: Object-Oriented JavaScript (OOP) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Object-Oriented JavaScript (OOP)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/oop.html">19. Object-Oriented JavaScript (Classes & Prototypes)</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-javascript.html">JavaScript</a><span>›</span>
-      <span>Lesson Index</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">JavaScript Masterclass</span>
     </div>
-    
-    
-<h1 class="page-title">JavaScript Tutorial</h1>
-<div class="page-meta">
-  <span class="badge">🟨 JavaScript</span>
-  <span class="badge">🟢 Beginner Friendly</span>
-  <span class="badge">📅 July 2026</span>
-</div>
 
-<div class="intro-box">
-  <p>JavaScript is a versatile, lightweight, JIT-compiled programming language that powers the web. It handles everything from responsive front-end pages to scalable backend architectures using Node.js. In this comprehensive guide, you will master variable scoping rules, operator operations, functional iteration helper methods, asynchronous promises, error checks, prototypical structures, and DOM interfaces.</p>
-</div>
+    <h1 class="page-title">JavaScript Programming Master Tutorial</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-  <p>Choose a topic from the left sidebar or click a lesson below to start learning JavaScript:</p>
-  <table class="tbl" style="margin-top: 15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    
-      <tr>
-        <td><strong>Lesson 1</strong></td>
-        <td><strong><a href="/blog-javascript/intro.html">Welcome & Hello World</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 2</strong></td>
-        <td><strong><a href="/blog-javascript/variables.html">Variables (var, let & const)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 3</strong></td>
-        <td><strong><a href="/blog-javascript/operators.html">Data Types & Operators</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 4</strong></td>
-        <td><strong><a href="/blog-javascript/strings.html">Strings & Template Literals</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 5</strong></td>
-        <td><strong><a href="/blog-javascript/conditionals.html">Conditionals (if-else & switch)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 6</strong></td>
-        <td><strong><a href="/blog-javascript/loops.html">Loops & Control Flow</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 7</strong></td>
-        <td><strong><a href="/blog-javascript/functions.html">Functions & Arrow Syntax</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 8</strong></td>
-        <td><strong><a href="/blog-javascript/arrays.html">Arrays & Iteration Methods</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 9</strong></td>
-        <td><strong><a href="/blog-javascript/objects.html">Objects & JSON</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 10</strong></td>
-        <td><strong><a href="/blog-javascript/es6-features.html">ES6+ Destructuring & Spread</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 11</strong></td>
-        <td><strong><a href="/blog-javascript/oop.html">OOP: Classes & Prototypes</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 12</strong></td>
-        <td><strong><a href="/blog-javascript/closures.html">Closures & Callback Functions</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 13</strong></td>
-        <td><strong><a href="/blog-javascript/promises.html">Promises & Async/Await</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 14</strong></td>
-        <td><strong><a href="/blog-javascript/exceptions.html">Error Handling (try-catch)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 15</strong></td>
-        <td><strong><a href="/blog-javascript/dom.html">DOM Basics & Event Listeners</a></strong></td>
-      </tr>
-    
-  </table>
-</div>
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 19 In-Depth Combined Chapters</span>
+      <span class="badge">📂 Collapsible Interactive Roadmap (16 Phases)</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
 
-    
-    <div class="nav-footer">
-      <a href="/blog-javascript.html" class="nav-btn">
-        <span class="label">← JS Overview</span>
-        <span class="title">Course Index</span>
-      </a>
-      <a href="/blog-javascript/intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">Welcome & Hello World</span>
-      </a>
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's JavaScript Master Course</strong>. JavaScript is the programming language of the Web powering front-end client applications, full-stack backends with Node.js, mobile apps, and desktop platforms. Each phase in this masterclass combines interconnected topics into a thorough, hands-on learning experience with live runnable code examples.</p>
+    </div>
+
+    <!-- Quick Start Card -->
+    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(20, 24, 32, 0.6)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 24px; margin: 28px 0;">
+      <h3 style="color:#10b981; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning JavaScript?</h3>
+      <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Choose where to start: explore fundamentals, variables & types, operators & input, conditions, loops, strings, arrays, array methods, objects, functions, DOM manipulation, events & forms, browser storage, JSON & Fetch API, Promises & async/await, or Object-Oriented JS:</p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/blog-javascript/01-javascript-fundamentals.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: Basics →</a>
+        <a href="/blog-javascript/variables.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 2: Variables →</a>
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 3: Operators & Input →</a>
+        <a href="/blog-javascript/conditionals.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 4: Conditions →</a>
+        <a href="/blog-javascript/loops.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 5: Loops →</a>
+        <a href="/blog-javascript/strings.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 6: Strings →</a>
+        <a href="/blog-javascript/arrays.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 7: Arrays →</a>
+        <a href="/blog-javascript/array-methods.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 8: Array Methods →</a>
+        <a href="/blog-javascript/objects.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 9: Objects →</a>
+        <a href="/blog-javascript/functions.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 10: Functions →</a>
+        <a href="/blog-javascript/dom.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 11: DOM Manipulation →</a>
+        <a href="/blog-javascript/events-and-forms.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 12: Events & Forms →</a>
+        <a href="/blog-javascript/browser-apis-and-storage.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 13: Storage & APIs →</a>
+        <a href="/blog-javascript/json-and-fetch-api.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 14: JSON & Fetch API →</a>
+        <a href="/blog-javascript/promises.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 15: Promises & Async →</a>
+        <a href="/blog-javascript/oop.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 16: OOP & Classes →</a>
+      </div>
+    </div>
+
+    <!-- Full Curriculum Roadmap Cards -->
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum Roadmap</div>
+    <div class="curriculum-roadmap-container">
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🟨</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 01</div>
+            <h3 class="phase-roadmap-title">JavaScript Fundamentals</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/01-javascript-fundamentals.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">01</span>
+            <div class="lesson-info">
+              <span class="lesson-title">1. Welcome & JS Fundamentals</span>
+              <span class="lesson-subtopics">JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">02</span>
+            <div class="lesson-info">
+              <span class="lesson-title">2. Syntax, Statements & Errors</span>
+              <span class="lesson-subtopics">Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📦</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 02</div>
+            <h3 class="phase-roadmap-title">Variables & Data Types</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/variables.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">03</span>
+            <div class="lesson-info">
+              <span class="lesson-title">3. Variables (let, const & var)</span>
+              <span class="lesson-subtopics">Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-javascript/operators.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">04</span>
+            <div class="lesson-info">
+              <span class="lesson-title">4. Data Types, typeof & Coercion</span>
+              <span class="lesson-subtopics">7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⚡</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 03</div>
+            <h3 class="phase-roadmap-title">Operators & Input</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">05</span>
+            <div class="lesson-info">
+              <span class="lesson-title">5. Operators, Expressions & Precedence</span>
+              <span class="lesson-subtopics">Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">06</span>
+            <div class="lesson-info">
+              <span class="lesson-title">6. Input & Output (alert, prompt...)</span>
+              <span class="lesson-subtopics">alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔀</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 04</div>
+            <h3 class="phase-roadmap-title">Conditional Statements</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/conditionals.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">07</span>
+            <div class="lesson-info">
+              <span class="lesson-title">7. Conditional Statements (if & switch)</span>
+              <span class="lesson-subtopics">if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔁</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 05</div>
+            <h3 class="phase-roadmap-title">Loops & Iterations</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/loops.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">08</span>
+            <div class="lesson-info">
+              <span class="lesson-title">8. Loops & Control Flow (Masterclass)</span>
+              <span class="lesson-subtopics">Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🧵</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 06</div>
+            <h3 class="phase-roadmap-title">Strings Mastery</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/strings.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">09</span>
+            <div class="lesson-info">
+              <span class="lesson-title">9. Strings & Text Processing (Masterclass)</span>
+              <span class="lesson-subtopics">String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📊</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 07</div>
+            <h3 class="phase-roadmap-title">Arrays Masterclass</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/arrays.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">10</span>
+            <div class="lesson-info">
+              <span class="lesson-title">10. Arrays Deep Dive & Core Operations</span>
+              <span class="lesson-subtopics">Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⚡</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 08</div>
+            <h3 class="phase-roadmap-title">Higher-Order Array Methods</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/array-methods.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">11</span>
+            <div class="lesson-info">
+              <span class="lesson-title">11. Array Methods (map, filter, reduce & ES2024)</span>
+              <span class="lesson-subtopics">forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📦</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 09</div>
+            <h3 class="phase-roadmap-title">Objects Mastery</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/objects.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">12</span>
+            <div class="lesson-info">
+              <span class="lesson-title">12. Objects & Key-Value Mastery</span>
+              <span class="lesson-subtopics">Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🧩</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 10</div>
+            <h3 class="phase-roadmap-title">Functions Mastery</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/functions.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">13</span>
+            <div class="lesson-info">
+              <span class="lesson-title">13. Functions, Closures & this (Masterclass)</span>
+              <span class="lesson-subtopics">Declaration vs Expression · Arrow Syntax · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🌐</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 11</div>
+            <h3 class="phase-roadmap-title">DOM Manipulation</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">DOM ante enti?, Selecting elements (getElementById, querySelector, querySelectorAll), textContent vs innerHTML, changing styles, classList (add, remove, toggle), reading input values, creating & appending elements, removing elements, data attributes, DOM traversal (parent, children, closest), dynamic lists, and 4 interactive projects.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/dom.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">14</span>
+            <div class="lesson-info">
+              <span class="lesson-title">14. DOM Manipulation & Web Interactivity</span>
+              <span class="lesson-subtopics">DOM ante enti? · Selecting Elements · textContent vs innerHTML · Styles & classList · createElement & append · Data Attributes · DOM Traversal & closest · 4 Interactive Projects</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🎯</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 12</div>
+            <h3 class="phase-roadmap-title">Events & Forms</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">Browser events, addEventListener, click, dblclick, mouse events, keyboard events, input & change, submit event, focus & blur, event object, event bubbling vs capturing, event delegation, preventDefault, form validation, error messages, and 6 full projects.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/events-and-forms.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">15</span>
+            <div class="lesson-info">
+              <span class="lesson-title">15. Browser Events, Forms & Event Delegation</span>
+              <span class="lesson-subtopics">addEventListener · Click, Mouse & Keyboard · Input vs Change · Submit & preventDefault() · Bubbling & Delegation · Form Validation · 6 Complete Projects</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">💾</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 13</div>
+            <h3 class="phase-roadmap-title">Browser APIs & Storage</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">window, document, console utilities, setTimeout, setInterval, clearTimeout, clearInterval, localStorage, sessionStorage, Cookies, URL & URLSearchParams, History API, Clipboard API, Geolocation API, Notifications, and Permissions.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/browser-apis-and-storage.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">16</span>
+            <div class="lesson-info">
+              <span class="lesson-title">16. Browser APIs, Storage & Timers</span>
+              <span class="lesson-subtopics">window & document · Timers (setTimeout/setInterval) · localStorage vs sessionStorage vs Cookies · URL API · History · Clipboard · Geolocation · Notifications</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🌐</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 14</div>
+            <h3 class="phase-roadmap-title">JSON & Fetch API</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">What is JSON?, Objects & Arrays, JSON.stringify & parse, HTTP basics (GET, POST, PUT, DELETE), Headers, Body, response.ok, Status codes, Error handling, Loading states, Query params, Authentication, and 5 full projects.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/json-and-fetch-api.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">17</span>
+            <div class="lesson-info">
+              <span class="lesson-title">17. JSON, Fetch API & REST Integration</span>
+              <span class="lesson-subtopics">JSON.stringify & parse · HTTP GET/POST/PUT/DELETE · Headers & Body · response.ok & Status · Loading States · Auth & Tokens · 5 Projects</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⏳</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 15</div>
+            <h3 class="phase-roadmap-title">Asynchronous JavaScript & Promises</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">Sync vs Async, Call Stack, Web APIs, Event Loop & Microtasks priority, Callbacks & Callback Hell, Promises & 3 states, .then/.catch/.finally, Promise Chaining, Promise combinators (all, allSettled, race, any), async/await, and Sequential vs Parallel execution.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/promises.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">18</span>
+            <div class="lesson-info">
+              <span class="lesson-title">18. Asynchronous JavaScript, Promises & async/await</span>
+              <span class="lesson-subtopics">Sync vs Async · Event Loop & Microtasks · Callbacks & Hell · Promise States · all/allSettled/race/any · async/await · Sequential vs Parallel</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🏗️</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 16</div>
+            <h3 class="phase-roadmap-title">Object-Oriented JavaScript (OOP)</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">OOP in JavaScript, Constructor functions, Prototypes & Prototype Chain, ES6 Classes, constructor(), instance vs static methods, getters & setters, Inheritance (extends, super), Polymorphism, #private fields, Composition vs Inheritance, Factory functions, and this binding.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-javascript/oop.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">19</span>
+            <div class="lesson-info">
+              <span class="lesson-title">19. Object-Oriented JavaScript (Classes & Prototypes)</span>
+              <span class="lesson-subtopics">Prototypes & Chain · ES6 Classes · constructor & Methods · static & Getters/Setters · extends & super · Polymorphism · #private Fields · 4 Projects</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on V8 / Node.js runtime · Last updated August 2026</span>
+      </div>
     </div>
   </main>
 </div>
+
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>

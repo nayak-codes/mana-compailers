@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 3 OOP: Classes & Objects | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 — Python 3 OOP: Classes & Objects with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  <!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="/site-nav.css" />
+</head>
+<body class="lang-python">
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Python 3 Tutorial</div>
+    <a href="/blog-python.html">Python 3 HOME</a>
+    <a href="/python/intro.html">1. Welcome & Hello World</a>
+    <a href="/python/variables.html">2. Variables & Core Types</a>
+    <a href="/python/operators.html">3. Basic Operators & Math</a>
+    <a href="/python/strings.html">4. String Slicing & Methods</a>
+    <a href="/python/conditionals.html">5. Conditionals (if-else)</a>
+    <a href="/python/loops.html">6. Loops & Ranges</a>
+    <a href="/python/input.html">7. Reading User Inputs</a>
+    <a href="/python/lists.html">8. Lists & Tuples</a>
+    <a href="/python/dicts.html">9. Dictionaries & Sets</a>
+    <a href="/python/functions.html">10. Functions & Reusable Code</a>
+    <a href="/python/modules.html">11. Modules & Standard Lib</a>
+    <a href="/python/files.html">12. File I/O Operations</a>
+    <a href="/python/errors.html">13. Exception Handling</a>
+    <a href="/python/oop-basics.html" class="active">14. OOP: Classes & Objects</a>
+    <a href="/python/oop-advanced.html">15. OOP: Inheritance & Dunder</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/python/quiz.html" style="color:#a8a3ff;font-weight:700;">🧠 Python Quiz</a>
+    <a href="/?lang=python3">▶ Try Python 3 Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/blog.html">Tutorials</a><span>›</span>
+  <a href="/blog-python.html">Python 3</a><span>›</span>
+  <span>OOP: Classes & Objects</span>
+</div>
+<h1 class="page-title">Python 3 — OOP: Classes & Objects</h1>
+<div class="page-meta">
+  <span class="badge">🐍 Python 3</span>
+  <span class="badge">🟢 Lesson 14</span>
+  <span class="badge">📅 July 2026</span>
+</div>
+
+<div class="intro-box">
+  <p>Object-Oriented Programming (OOP) is a design pattern that models software after real-world objects. Instead of writing disconnected variables and functions, OOP binds them together inside a single, unified capsule called a Class.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Class Blueprints vs Object Instances</div>
+  <p>Think of a **Class** as a blueprint (like the architectural blueprint for a house). You can't live inside a blueprint. An **Object** is the actual house constructed from that blueprint. You can build as many houses as you want from a single blueprint!</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Defining a Class & Constructor</div>
+  <p>We define classes using the <code>class</code> keyword. The <code>__init__</code> function is the constructor method that initializes an object when it's created. The <code>self</code> parameter represents the current object instance:</p>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — Class Definition</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code>class Student:
+    # Constructor (Blueprint Setup)
+    def __init__(self, name, score):
+        self.name = name   # Attribute
+        self.score = score # Attribute
+        
+    # Class Method (Action)
+    def display_info(self):
+        print(f"Student: {self.name}, Score: {self.score}/100")
+
+# Constructing object instances
+student1 = Student("Alice", 92)
+student2 = Student("Balaji", 98)
+
+# Running methods on instances
+student1.display_info()
+student2.display_info()</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Modifying Object Attributes</div>
+  <p>You can access and modify attributes directly on object instances using the dot (<code>.</code>) syntax:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — Modifying Objects</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code>student1.score = 95 # Modify Alice's score
+student1.display_info() # Student: Alice, Score: 95/100</code></pre>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>💡 Understanding 'self':</strong>
+  <p>The <code>self</code> parameter is mandatory inside class methods. When you call <code>student1.display_info()</code>, Python passes the <code>student1</code> object as the first parameter (<code>self</code>) under the hood. This is how the method knows which object's attributes to display.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
+  <p>Create a class called 'Car' with constructor attributes for 'brand', 'model', and 'year'. Add a method called 'drive()' that prints: "[brand] [model] is driving away!". Instantiate a car object and call the method.</p>
+</div>
+
+    <div class="nav-footer">
+      <a href="/python/errors.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">Exception Handling</span>
+      </a>
+      <a href="/python/oop-advanced.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">OOP: Inheritance & Dunder</span>
+      </a>
+    </div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

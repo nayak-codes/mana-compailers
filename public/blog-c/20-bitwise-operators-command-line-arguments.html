@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitwise Operators & Command-Line Arguments — C Language Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn Bitwise Operators & Command-Line Arguments in C with beginner-friendly explanations, code examples, memory concepts, common pitfalls, and hands-on exercises in our online compiler." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Blog Theme Switcher & Code Helpers -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/online-c-compiler.html';
+            });
+          }
+        });
+
+        // Also wire up Try-It-Yourself run buttons to preload code
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/online-c-compiler.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="/site-nav.css" />
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/?lang=nodejs">Node.js</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-heading">C Tutorial</div>
+    <a href="/blog-c.html">C HOME</a>
+    <a href="01-introduction-to-c-how-compilation-works.html">1. Introduction to C & How Compilation Works</a>
+    <a href="02-variables-data-types.html">2. Variables & Data Types</a>
+    <a href="03-operators-expressions.html">3. Operators & Expressions</a>
+    <a href="04-input-output-printf-and-scanf.html">4. Input & Output (printf & scanf)</a>
+    <a href="05-conditional-statements-if-else-switch.html">5. Conditional Statements (if-else & switch)</a>
+    <a href="06-loops-for-while-do-while.html">6. Loops (for, while, do-while)</a>
+    <a href="07-functions-recursion.html">7. Functions & Recursion</a>
+    <a href="08-arrays.html">8. Arrays (1D & Contiguous Memory)</a>
+    <a href="09-multi-dimensional-arrays.html">9. Multi-Dimensional Arrays (2D Matrices)</a>
+    <a href="10-strings-string-h.html">10. Strings & string.h Library</a>
+    <a href="11-pointers-basics.html">11. Pointers Basics & Memory Addresses</a>
+    <a href="12-pointers-arrays.html">12. Pointers & Arrays</a>
+    <a href="13-pointers-functions.html">13. Pointers & Functions (Pass by Reference)</a>
+    <a href="14-structures.html">14. Structures (struct)</a>
+    <a href="15-unions-enums.html">15. Unions & Enumerations (enum)</a>
+    <a href="16-dynamic-memory-allocation.html">16. Dynamic Memory Allocation (malloc & free)</a>
+    <a href="17-file-handling-in-c.html">17. File Handling in C (fopen, fscanf, fprintf)</a>
+    <a href="18-preprocessor-directives-macros.html">18. Preprocessor Directives & Macros</a>
+    <a href="19-storage-classes.html">19. Storage Classes (auto, static, extern, register)</a>
+    <a href="20-bitwise-operators-command-line-arguments.html" class="active">20. Bitwise Operators & Command-Line Arguments</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/online-c-compiler.html">▶ Try C Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-python.html">Python 3</a>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Language</a><span class="sep">›</span>
+      <span class="current">Lesson 20: Bitwise Operators & Command-Line Arguments</span>
+    </div>
+
+    <h1 class="page-title">Bitwise Operators & Command-Line Arguments</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚙️ C Language</span>
+      <span class="badge">🟢 Lesson 20 of 20</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+<div class="intro-box">This final lesson covers two more specialized but genuinely useful C features: bitwise operators, which manipulate data at the level of individual binary bits, and command-line arguments, which let a compiled program accept input directly when it's launched.</div>
+
+    <div class="section-title"><span class="num">1</span>Bitwise Operators</div>
+<div class="code-block">
+  <div class="code-block-header">
+    <span class="lang-tag">C Language</span>
+    <a class="try-btn" href="/online-c-compiler.html">▶ Run Code</a>
+  </div>
+  <pre><code>int a = 12;   // binary: 1100
+int b = 10;   // binary: 1010
+
+printf("%d\n", a & b);   // 8  (1000)  - AND: 1 only where BOTH bits are 1
+printf("%d\n", a | b);   // 14 (1110)  - OR:  1 where EITHER bit is 1
+printf("%d\n", a ^ b);   // 6  (0110)  - XOR: 1 where the bits DIFFER
+printf("%d\n", ~a);      // -13        - NOT: flips every bit
+printf("%d\n", a << 1);  // 24 (11000) - shifts bits left, doubles the value
+printf("%d\n", a >> 1);  // 6  (0110)  - shifts bits right, halves the value</code></pre>
+</div>
+<div class="section-title"><span class="num">2</span>Practical Uses for Bitwise Operators</div>
+<p>Bitwise operators are heavily used in embedded systems and low-level programming for tasks like reading and setting individual hardware flags, compact permission systems (where each bit represents one on/off setting), and fast arithmetic tricks — for example, <code>x &lt;&lt; 1</code> is a very fast way to multiply an integer by 2.</p><div class="code-block">
+  <div class="code-block-header">
+    <span class="lang-tag">C Language</span>
+    <a class="try-btn" href="/online-c-compiler.html">▶ Run Code</a>
+  </div>
+  <pre><code>#define READ_PERMISSION  1  // 001
+#define WRITE_PERMISSION 2  // 010
+#define EXEC_PERMISSION  4  // 100
+
+int permissions = READ_PERMISSION | WRITE_PERMISSION;   // combine flags: 011
+
+if (permissions & WRITE_PERMISSION) {
+    printf("Write access granted\n");
+}</code></pre>
+</div>
+<div class="section-title"><span class="num">3</span>Command-Line Arguments</div>
+<div class="code-block">
+  <div class="code-block-header">
+    <span class="lang-tag">C Language</span>
+    <a class="try-btn" href="/online-c-compiler.html">▶ Run Code</a>
+  </div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(int argc, char *argv[]) {
+    printf("Number of arguments: %d\n", argc);
+
+    for (int i = 0; i < argc; i++) {
+        printf("Argument %d: %s\n", i, argv[i]);
+    }
+    return 0;
+}</code></pre>
+</div><p><code>argc</code> (argument count) tells you how many values were passed when the program was launched from the terminal, and <code>argv</code> (argument vector) is an array of those values as strings. <code>argv[0]</code> is always the program's own name; real arguments start at <code>argv[1]</code>.</p>
+<div class="section-title"><span class="num">4</span>Using Command-Line Arguments</div>
+<p>If compiled to a program called <code>calc</code>, running <code>./calc 5 10</code> from a terminal sets <code>argc</code> to <code>3</code> and <code>argv</code> to <code>{"./calc", "5", "10"}</code>. You'd then convert <code>argv[1]</code> and <code>argv[2]</code> from strings to numbers using <code>atoi()</code> before doing any arithmetic with them.</p>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Mistake: Using Bitwise & and Logical && Interchangeably</div>
+      <p><code>&amp;</code> (bitwise AND) and <code>&amp;&amp;</code> (logical AND) look similar but do completely different things — the single-ampersand version compares individual bits and can produce surprising numeric results, while the double-ampersand version evaluates two boolean conditions and always produces <code>0</code> or <code>1</code>. Mixing them up in a condition is a subtle, hard-to-spot bug.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself</div>
+      <p>Write a program that uses bitwise AND to check whether a number is even or odd, and separately demonstrates left-shifting a number to double it.</p>
+      <div class="code-block">
+  <div class="code-block-header">
+    <span class="lang-tag">C Language</span>
+    <a class="try-btn" href="/online-c-compiler.html">▶ Run Code</a>
+  </div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int num = 7;
+
+    if (num & 1) {
+        printf("%d is odd\n", num);
+    } else {
+        printf("%d is even\n", num);
+    }
+
+    printf("Doubled using shift: %d\n", num &lt;&lt; 1);
+    return 0;
+}</code></pre>
+</div>
+      <a class="run-btn" href="/online-c-compiler.html">Run This in Our Compiler →</a>
+    </div>
+
+    
+
+<div class="nav-footer">
+      <a href="19-storage-classes.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">19. Storage Classes (auto, static, extern, register)</span>
+      </a>
+      <a href="/blog-c.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Course Completed 🎉</span>
+        <span class="title">Return to Course Index</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

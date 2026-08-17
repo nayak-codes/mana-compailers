@@ -3,16 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free Online Java Compiler & Tutorial | Our Compiler</title>
-  <meta name="description" content="Learn Java — Free Online Java Compiler & Tutorial with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <title>Java Programming Master Tutorial & Complete Roadmap (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master Java 21 LTS from complete beginner to advanced enterprise backend developer with our 30-phase curriculum, JVM deep dives, live code execution, and interview prep." />
+  <meta name="keywords" content="java tutorial, java course, learn java online, java basics, java oop, java collections, java streams, multithreading, spring boot, jdbc, maven, java interview questions" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Course Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "Java Complete Programming Masterclass (2026 Edition)",
+    "description": "Comprehensive 30-Phase Java course covering JVM architecture, variables, data types, OOP, Collections, Generics, Lambdas, Stream API, Multithreading, Networking, JDBC, Spring Boot, and technical interview preparation with live runnable code examples.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "educationalLevel": "Beginner to Advanced",
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <!-- Accordion Toggle & Theme Script -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +55,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -50,71 +74,13 @@
           });
           topnav.appendChild(toggleBtn);
         }
-
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'java';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
-            });
-          }
-        });
       });
     })();
   </script>
 </head>
 <body class="lang-java">
 
-<!-- TOP LANGUAGE BAR -->
+<!-- TOP NAVIGATION -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
@@ -127,199 +93,1887 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
   <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">Java Tutorial</div>
-    <a href="/blog-java.html" class="active">Java HOME</a>
-    <a href="/blog-java-intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-java-variables.html">2. Variables & Primitive Types</a>
-    <a href="/blog-java-operators.html">3. Operators & Expressions</a>
-    <a href="/blog-java-strings.html">4. Strings & Manipulation</a>
-    <a href="/blog-java-conditionals.html">5. Conditionals (if-else & switch)</a>
-    <a href="/blog-java-loops.html">6. Loops & Control Flow</a>
-    <a href="/blog-java-arrays.html">7. Arrays (Single & Multi)</a>
-    <a href="/blog-java-input.html">8. Reading User Input (Scanner)</a>
-    <a href="/blog-java-methods.html">9. Methods & Parameters</a>
-    <a href="/blog-java-oop-basics.html">10. OOP: Classes & Objects</a>
-    <a href="/blog-java-oop-encapsulation.html">11. OOP: Encapsulation & Access</a>
-    <a href="/blog-java-oop-inheritance.html">12. OOP: Inheritance & Overriding</a>
-    <a href="/blog-java-oop-polymorphism.html">13. OOP: Polymorphism & Interfaces</a>
-    <a href="/blog-java-collections.html">14. Collections Framework</a>
-    <a href="/blog-java-exceptions.html">15. Exception Handling</a>
+    <div class="sidebar-heading">Java Master Course</div>
+    <a href="/blog-java.html" class="sidebar-home-link active">☕ Java Course HOME</a>
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=java">▶ Try Java Online</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Java Basics & JVM -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Java Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-compilation-execution-and-source-structure.html">3. Compilation & File Structure</a>
+        <a href="/blog-java/04-java-comments-and-naming-conventions.html">4. Comments & Naming Rules</a>
+        <a href="/blog-java/05-java-errors-debugging-and-troubleshooting.html">5. Errors & Debugging</a>
+      </div>
 
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-variables-declaration-and-memory-model.html">6. Variables & Memory</a>
+        <a href="/blog-java/07-java-primitive-data-types-and-literals.html">7. Primitive Data Types</a>
+        <a href="/blog-java/08-java-reference-types-strings-and-scopes.html">8. Reference Types & Scopes</a>
+        <a href="/blog-java/09-java-type-casting-and-var-inference.html">9. Type Casting & var</a>
+      </div>
 
+      <!-- Phase 03: Operators & User Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & User Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/10-java-operators-arithmetic-assignment-relational.html">10. Basic Operators</a>
+        <a href="/blog-java/11-java-logical-bitwise-and-ternary-operators.html">11. Logical & Bitwise</a>
+        <a href="/blog-java/12-java-user-input-scanner-complete-guide.html">12. Scanner & User Input</a>
+        <a href="/blog-java/13-java-formatted-output-printf-and-math.html">13. printf() & Math Library</a>
+        <a href="/blog-java/14-java-basics-and-input-capstone-projects.html">14. Capstone Projects (5)</a>
+      </div>
+
+      <!-- Phase 04: Conditions & Branching -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditions & Branching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/15-java-if-else-and-nested-conditions.html">15. if-else & Nested Branching</a>
+        <a href="/blog-java/16-java-ternary-operator-and-string-comparison.html">16. Ternary & String Equality</a>
+        <a href="/blog-java/17-java-switch-statement-and-string-switching.html">17. switch, case, break & default</a>
+        <a href="/blog-java/18-java-modern-switch-expressions-and-pitfalls.html">18. Modern Switch & Pitfalls</a>
+      </div>
+
+      <!-- Phase 05: Loops & Control Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/19-java-for-loop-and-loop-mechanics.html">19. for Loop & Mechanics</a>
+        <a href="/blog-java/20-java-while-and-do-while-loops.html">20. while & do-while</a>
+        <a href="/blog-java/21-java-jump-statements-break-continue-and-enhanced-for.html">21. Jump & Enhanced for</a>
+        <a href="/blog-java/22-java-nested-loops-and-pattern-programming.html">22. Patterns & Nested Loops</a>
+      </div>
+
+      <!-- Phase 06: Strings & StringBuilder -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings & StringBuilder</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/23-java-string-fundamentals-and-memory-architecture.html">23. String Fundamentals & SCP</a>
+        <a href="/blog-java/24-java-string-methods-search-extraction-and-manipulation.html">24. String Methods Masterclass</a>
+        <a href="/blog-java/25-java-string-comparison-and-equality.html">25. String Equality & Comparison</a>
+        <a href="/blog-java/26-java-stringbuilder-stringbuffer-and-formatting.html">26. StringBuilder & Formatting</a>
+        <a href="/blog-java/27-java-strings-capstone-projects.html">27. Capstone Projects (5)</a>
+      </div>
+
+      <!-- Phase 07: Arrays & Matrices -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays & Matrices</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/28-java-array-fundamentals-and-memory-model.html">28. Array Fundamentals & Memory</a>
+        <a href="/blog-java/29-java-array-algorithms-sum-min-max-and-searching.html">29. Array Math & Search Algorithms</a>
+        <a href="/blog-java/30-java-array-sorting-copying-and-arrays-utility-class.html">30. Sorting, Copying & Utilities</a>
+        <a href="/blog-java/31-java-multidimensional-and-jagged-arrays.html">31. 2D & Jagged Arrays</a>
+        <a href="/blog-java/32-java-arrays-capstone-projects-and-limitations.html">32. Capstone Projects (7) & Limitations</a>
+      </div>
+
+      <!-- Phase 08: Methods & Recursion -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Methods & Recursion</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/33-java-method-fundamentals-and-call-stack.html">33. Method Fundamentals & Call Stack</a>
+        <a href="/blog-java/34-java-pass-by-value-and-variable-scope.html">34. Pass-by-Value & Scope</a>
+        <a href="/blog-java/35-java-method-overloading-and-static-vs-instance.html">35. Overloading & Static Methods</a>
+        <a href="/blog-java/36-java-recursion-and-stack-overflow.html">36. Recursion & StackOverflow</a>
+        <a href="/blog-java/37-java-methods-capstone-projects-and-best-practices.html">37. Capstone Projects (4) & Best Practices</a>
+      </div>
+
+      <!-- Phase 09: Classes & Objects (OOP) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Classes & Objects (OOP)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/38-java-class-and-object-fundamentals.html">38. Class & Object Fundamentals</a>
+        <a href="/blog-java/39-java-constructors-this-keyword-and-overloading.html">39. Constructors & this Keyword</a>
+        <a href="/blog-java/40-java-static-members-nested-classes-and-enums.html">40. Static, Nested Classes & Enums</a>
+        <a href="/blog-java/41-java-tostring-encapsulation-and-object-best-practices.html">41. toString() & Encapsulation</a>
+        <a href="/blog-java/42-java-oop-classes-capstone-projects.html">42. Capstone Projects (4 OOP Systems)</a>
+      </div>
+
+      <!-- Phase 10: Encapsulation & Access -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Encapsulation & Access</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/43-java-access-modifiers-public-private-protected-default.html">43. Access Modifiers: 4 Levels</a>
+        <a href="/blog-java/44-java-getters-setters-and-data-validation.html">44. Getters, Setters & Validation</a>
+        <a href="/blog-java/45-java-immutable-objects-and-read-only-properties.html">45. Immutable Objects & final</a>
+        <a href="/blog-java/46-java-good-class-design-and-package-access.html">46. Package Access & Class Design</a>
+        <a href="/blog-java/47-java-encapsulation-capstone-projects.html">47. Capstone Projects (4 Secure Systems)</a>
+      </div>
+
+      <!-- Phase 11: Inheritance & Polymorphism -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 12: Abstraction & Interfaces -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Abstraction & Interfaces</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 13: Packages & Enums -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Packages & Enums</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 14: Exception Handling -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 15: Collections Framework -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📚</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Collections Framework</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 16: Generics & Type Safety -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏷️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Generics & Type Safety</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 17: Wrapper Classes & Enums -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Wrapper Classes & Enums</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/48-java-wrapper-classes-autoboxing-and-enums.html">48. Wrapper Classes, Autoboxing & Enums</a>
+      </div>
+
+      <!-- Phase 18: Lambda Expressions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/49-java-lambda-expressions-and-functional-interfaces.html">49. Lambdas & Functional Interfaces</a>
+      </div>
+
+      <!-- Phase 19: Stream API & Pipelines -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Stream API & Pipelines</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/50-java-stream-api-and-pipelines.html">50. Stream API & Pipelines</a>
+      </div>
+
+      <!-- Phase 20: Date & Time (java.time) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏱️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Date & Time (java.time)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/51-java-date-and-time-api.html">51. Date & Time (java.time)</a>
+      </div>
+
+      <!-- Phase 21: File Handling & NIO -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">File Handling & NIO</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 22: Regular Expressions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 22</span>
+            <span class="phase-title">Regular Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 23: Multithreading & Concurrency -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 23</span>
+            <span class="phase-title">Multithreading & Concurrency</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 24: Networking & HTTP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 24</span>
+            <span class="phase-title">Networking & HTTP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 25: JDBC & Databases -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 25</span>
+            <span class="phase-title">JDBC & Databases</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 26: Build Tools (Maven & Gradle) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 26</span>
+            <span class="phase-title">Build Tools (Maven & Gradle)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 27: Testing (JUnit & Mockito) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 27</span>
+            <span class="phase-title">Testing (JUnit & Mockito)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 28: Clean Code & Patterns -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💎</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 28</span>
+            <span class="phase-title">Clean Code & Patterns</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 29: Spring & Spring Boot -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🍃</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 29</span>
+            <span class="phase-title">Spring & Spring Boot</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+      <!-- Phase 30: Advanced Backend & Projects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 30</span>
+            <span class="phase-title">Advanced Backend & Projects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">Upcoming</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-java.html">Java</a><span>›</span>
-      <span>Lesson Index</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">Java Masterclass</span>
     </div>
-    
-    
-<h1 class="page-title">Java Tutorial</h1>
-<div class="page-meta">
-  <span class="badge">☕ Java</span>
-  <span class="badge">🟢 Beginner Friendly</span>
-  <span class="badge">📅 July 2026</span>
-</div>
 
-<div class="intro-box">
-  <p>Java is an exceptionally powerful, class-based, object-oriented programming language designed to have as few implementation dependencies as possible. Java follows the "Write Once, Run Anywhere" (WORA) philosophy, which means compiled Java code can run on all platforms that support Java without the need for recompilation. In this guide, we will cover the core syntax of Java, its object-oriented nature, and how to write and run Java programs online.</p>
-</div>
+    <h1 class="page-title">Java Programming Master Tutorial</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-  <p>Choose a topic from the left sidebar or click a lesson below to start learning Java:</p>
-  <table class="tbl" style="margin-top: 15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    
-      <tr>
-        <td><strong>Lesson 1</strong></td>
-        <td><strong><a href="/blog-java-intro.html">Welcome & Hello World</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 2</strong></td>
-        <td><strong><a href="/blog-java-variables.html">Variables & Primitive Types</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 3</strong></td>
-        <td><strong><a href="/blog-java-operators.html">Operators & Expressions</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 4</strong></td>
-        <td><strong><a href="/blog-java-strings.html">Strings & Manipulation</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 5</strong></td>
-        <td><strong><a href="/blog-java-conditionals.html">Conditionals (if-else & switch)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 6</strong></td>
-        <td><strong><a href="/blog-java-loops.html">Loops & Control Flow</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 7</strong></td>
-        <td><strong><a href="/blog-java-arrays.html">Arrays (Single & Multi)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 8</strong></td>
-        <td><strong><a href="/blog-java-input.html">Reading User Input (Scanner)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 9</strong></td>
-        <td><strong><a href="/blog-java-methods.html">Methods & Parameters</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 10</strong></td>
-        <td><strong><a href="/blog-java-oop-basics.html">OOP: Classes & Objects</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 11</strong></td>
-        <td><strong><a href="/blog-java-oop-encapsulation.html">OOP: Encapsulation & Access</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 12</strong></td>
-        <td><strong><a href="/blog-java-oop-inheritance.html">OOP: Inheritance & Overriding</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 13</strong></td>
-        <td><strong><a href="/blog-java-oop-polymorphism.html">OOP: Polymorphism & Interfaces</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 14</strong></td>
-        <td><strong><a href="/blog-java-collections.html">Collections Framework</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 15</strong></td>
-        <td><strong><a href="/blog-java-exceptions.html">Exception Handling</a></strong></td>
-      </tr>
-    
-  </table>
-</div>
+    <div class="page-meta">
+      <span class="badge">☕ Java 21+ LTS</span>
+      <span class="badge">🟢 47 In-Depth Combined Chapters</span>
+      <span class="badge">📂 Collapsible Interactive Roadmap (30 Phases)</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
 
-    
-    <div class="nav-footer">
-      <a href="/blog-java.html" class="nav-btn">
-        <span class="label">← Java Overview</span>
-        <span class="title">Course Index</span>
-      </a>
-      <a href="/blog-java-intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">Welcome & Hello World</span>
-      </a>
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's Java Master Course</strong>. Java is an exceptionally robust, class-based, object-oriented programming language designed around the philosophy of <em>"Write Once, Run Anywhere" (WORA)</em>. Built by Sun Microsystems in 1995 and maintained by Oracle, Java powers millions of enterprise backends, cloud microservices, Android mobile applications, and big data systems. Each chapter in this masterclass combines multiple interconnected topics into a thorough, hands-on learning experience with live runnable code examples.</p>
+    </div>
+
+    <!-- Quick Start Card -->
+    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(20, 24, 32, 0.6)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 24px; margin: 28px 0;">
+      <h3 style="color:#10b981; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning Java?</h3>
+      <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Choose where to start: explore foundations, variables & types, control flow, object-oriented programming (OOP), collections, streams, concurrency, or enterprise Spring Boot & interview skills:</p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: Basics →</a>
+        <a href="/blog-java/06-java-variables-declaration-and-memory-model.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 2: Variables & Types →</a>
+        <a href="/blog-java/10-java-operators-arithmetic-assignment-relational.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 3: Operators & Input →</a>
+        <a href="/blog-java/14-java-basics-and-input-capstone-projects.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 3: Capstone Projects →</a>
+      </div>
+    </div>
+
+    <!-- Full Curriculum Roadmap Cards -->
+    <div class="section-title"><span class="num">📚</span> 30-Phase Complete Java Curriculum Roadmap</div>
+    <div class="curriculum-roadmap-container">
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">☕</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 01</div>
+            <h3 class="phase-roadmap-title">Java Basics & JVM</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">Origins, WORA, features, JDK vs JRE vs JVM, JVM internal memory, setup, Hello World breakdown, comments, and debugging.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">01</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Introduction, Features & JVM Architecture</span>
+                <span class="lesson-subtopics">What is Java? · WORA Philosophy · Core Features · Industry Use Cases · JDK vs JRE vs JVM · JVM Internal Architecture</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/02-java-installation-ide-and-first-program.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">02</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Installation, IDEs & First Hello World Program</span>
+                <span class="lesson-subtopics">JDK 21 LTS Installation · Setting JAVA_HOME & PATH · IDEs vs Online Compiler · First Program Breakdown · main() Signature Anatomy · System.out.println</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/03-java-compilation-execution-and-source-structure.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">03</span>
+              <div class="lesson-info">
+                <span class="lesson-title">How Java Compiles & Runs & Source File Structure</span>
+                <span class="lesson-subtopics">Compilation Pipeline (javac to Bytecode to JVM) · Why Java is Compiled & Interpreted · Source File Structure Rules · Packages & Imports</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/04-java-comments-and-naming-conventions.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">04</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Comments & Industry Naming Conventions</span>
+                <span class="lesson-subtopics">Single-line // · Multi-line /* */ · Javadoc /** */ with Tags · Naming Conventions (PascalCase, camelCase, UPPER_SNAKE_CASE) · Self-Documenting Code</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/05-java-errors-debugging-and-troubleshooting.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">05</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Error Types, Stack Traces & Debugging</span>
+                <span class="lesson-subtopics">Compile-Time / Syntax Errors · Runtime Errors & Exceptions · Logical Errors · Stack Trace Anatomy · Defensive Debugging</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📦</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 02</div>
+            <h3 class="phase-roadmap-title">Variables & Data Types</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">Stack vs Heap memory, 8 primitives, Unicode char, Strings, final constants, variable scopes, type casting, and var keyword.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/06-java-variables-declaration-and-memory-model.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">06</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Variables, Declaration & Memory Allocation</span>
+                <span class="lesson-subtopics">What is a Variable? · Declaration vs Initialization vs Assignment · Strong Static Typing · JVM Stack vs Heap Memory Model</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/07-java-primitive-data-types-and-literals.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">07</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java 8 Primitive Data Types & Literals</span>
+                <span class="lesson-subtopics">byte, short, int, long · float, double · char (Unicode UTF-16) · boolean · Memory Sizes & Bit Ranges · Numeric Underscores & Literals</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/08-java-reference-types-strings-and-scopes.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">08</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Reference Types, Strings, Constants & Variable Scopes</span>
+                <span class="lesson-subtopics">Primitive vs Reference Types · String Immutability & Pool · final Constants · Variable Scopes: Local, Instance & Static</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/09-java-type-casting-and-var-inference.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">09</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Type Casting (Widening/Narrowing) & var Keyword</span>
+                <span class="lesson-subtopics">Widening Casting (Implicit) · Narrowing Casting (Explicit) · Data Loss & Overflow · ASCII char/int Conversions · var Keyword (Local Variable Type Inference)</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⚡</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 03</div>
+            <h3 class="phase-roadmap-title">Operators & User Input</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">Arithmetic, logical, bitwise, ternary, operator precedence, Scanner input, newline trap, printf, Math, and 5 capstones.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/10-java-operators-arithmetic-assignment-relational.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">10</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Arithmetic, Assignment & Relational Operators</span>
+                <span class="lesson-subtopics">Arithmetic Operators (+, -, *, /, %) · Integer Division vs Floating-Point · String Concatenation Nuances · Compound Assignment · Relational Operators</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/11-java-logical-bitwise-and-ternary-operators.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">11</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Logical, Bitwise, Unary & Ternary Operators</span>
+                <span class="lesson-subtopics">Logical Operators (&&, ||, !) · Short-Circuit Evaluation · Prefix vs Postfix (++x / x++) · Ternary Operator (? :) · Bitwise Operators · Operator Precedence Table</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/12-java-user-input-scanner-complete-guide.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">12</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java User Input with Scanner & Newline Trap</span>
+                <span class="lesson-subtopics">java.util.Scanner · Reading Data (nextInt, nextDouble, nextLine) · The Infamous Newline Buffer Trap · InputMismatchException · Resource Management & closing Scanner</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/13-java-formatted-output-printf-and-math.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">13</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Formatted Output with printf() & Math Utilities</span>
+                <span class="lesson-subtopics">System.out.printf() · String.format() · Format Specifiers (%d, %f, %.2f, %s, %-15s) · java.lang.Math Library (sqrt, pow, abs, max, min, round, random)</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/14-java-basics-and-input-capstone-projects.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">14</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Basics & User Input Capstone Projects</span>
+                <span class="lesson-subtopics">5 Comprehensive Projects: 1. Arithmetic Calculator · 2. Simple & Compound Interest · 3. Geometry Engine · 4. Unit Converter · 5. Supermarket POS Billing</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔀</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 04</div>
+            <h3 class="phase-roadmap-title">Conditions & Branching</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">if, if-else, nested if, switch cases, modern switch expressions, and string comparisons with .equals().</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/15-java-if-else-and-nested-conditions.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">15</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Conditional Statements: if, if-else, else-if & Nested if</span>
+                <span class="lesson-subtopics">Why Conditions are Needed · if Statement · if-else · else-if Ladder · Nested if · Combining Logical Conditions (&&, ||, !)</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/16-java-ternary-operator-and-string-comparison.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">16</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Ternary Expressions & String Comparisons (.equals vs ==)</span>
+                <span class="lesson-subtopics">Ternary Operator (? :) · Nested Ternary Expressions · String Equality (.equals vs ==) · equalsIgnoreCase() · String Constant Pool Mechanics · Null-Safe Comparisons</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/17-java-switch-statement-and-string-switching.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">17</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Traditional switch Statement & String Switching</span>
+                <span class="lesson-subtopics">switch Syntax · case Labels · The break Keyword · Fall-Through Mechanism · default Fallback · Switching on byte, short, char, int, enum, and String</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/18-java-modern-switch-expressions-and-pitfalls.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">18</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Modern Java Switch Expressions (Java 14+) & Condition Pitfalls</span>
+                <span class="lesson-subtopics">Traditional vs Modern Switch · Arrow Syntax (->) · yield Keyword · Returning Values from Switch · Exhaustive Pattern Matching · Common Condition Anti-Patterns</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔁</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 05</div>
+            <h3 class="phase-roadmap-title">Loops & Control Flow</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">for, while, do-while, nested loops, break, continue, enhanced for-each, patterns, and Fibonacci/Prime algorithms.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/19-java-for-loop-and-loop-mechanics.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">19</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java for Loop & Core Loop Mechanics</span>
+                <span class="lesson-subtopics">Why Loops are Used (DRY Principle) · 3 Pillars (Initialization, Condition, Update) · for Loop Lifecycle · Infinite Loops · Sum of Numbers · Multiplication Table</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/20-java-while-and-do-while-loops.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">20</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java while & do-while Loops: Number & Digit Algorithms</span>
+                <span class="lesson-subtopics">while Loop (Entry-Controlled) · do-while Loop (Exit-Controlled) · When to use for vs while vs do-while · Digit Reversal · Palindrome · Armstrong Numbers</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/21-java-jump-statements-break-continue-and-enhanced-for.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">21</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Jump Statements (break & continue) & Enhanced for Loop</span>
+                <span class="lesson-subtopics">break Statement · continue Statement · Labeled break/continue · Enhanced for-each Loop · Looping Strings · Prime Numbers · Fibonacci Series</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/22-java-nested-loops-and-pattern-programming.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">22</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Nested Loops & Star/Number Pattern Masterclass</span>
+                <span class="lesson-subtopics">Nested Loop Mechanics · Rows vs Columns Coordinate Logic · Right Triangle · Inverted Triangle · Pyramid · Diamond · Floyd's Triangle · Number Pyramids</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🧵</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 06</div>
+            <h3 class="phase-roadmap-title">Strings & StringBuilder</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">String pool, immutability, methods (substring, split, replace), StringBuilder, StringBuffer, and text validators.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/23-java-string-fundamentals-and-memory-architecture.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">23</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java String Fundamentals & String Constant Pool (SCP)</span>
+                <span class="lesson-subtopics">What is a String? · java.lang.String · String Literals vs new String() · String Constant Pool (SCP) · String Interning (intern()) · String Immutability Deep Dive · Compact Strings (byte[] in Java 9+) · Indexing & charAt()</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/24-java-string-methods-search-extraction-and-manipulation.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">24</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java String Methods: Search, Extraction & Transformation</span>
+                <span class="lesson-subtopics">length() · toUpperCase() · toLowerCase() · trim() & strip() · contains() · startsWith() & endsWith() · indexOf() & lastIndexOf() · substring() · replace() & replaceAll() · split() & join() · repeat()</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/25-java-string-comparison-and-equality.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">25</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java String Comparison: == vs equals(), compareTo() & Hashing</span>
+                <span class="lesson-subtopics">== vs equals() · Reference Equality vs Content Equality · equalsIgnoreCase() · compareTo() & Lexicographical Ordering · Null-Safe Comparison Patterns · String HashCode Caching</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/26-java-stringbuilder-stringbuffer-and-formatting.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">26</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java StringBuilder, StringBuffer & String Formatting Masterclass</span>
+                <span class="lesson-subtopics">The Concatenation Problem (O(N^2)) · StringBuilder Architecture & Capacity Growth · append() · insert() · delete() · reverse() · StringBuffer vs StringBuilder · String.format() & printf() · Text Blocks (""")</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/27-java-strings-capstone-projects.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">27</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Strings Capstone Projects: 5 Production-Grade Systems</span>
+                <span class="lesson-subtopics">Project 1: Palindrome Checker · Project 2: Word Counter & Text Stats · Project 3: Character & Frequency Analyzer · Project 4: Enterprise Username Validator · Project 5: Password Security & Entropy Evaluator</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📊</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 07</div>
+            <h3 class="phase-roadmap-title">Arrays & Matrices</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">1D arrays, 2D matrices, jagged arrays, memory layout, sorting, binary search, and Arrays utility class.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/28-java-array-fundamentals-and-memory-model.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">28</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Array Fundamentals, Memory Architecture & Traversal</span>
+                <span class="lesson-subtopics">Array ante enti? · Why Arrays are Needed · Stack vs Heap Memory Layout · Declaration & 3 Initialization Styles · Default JVM Values · 0-Based Indexing · .length Property · for vs Enhanced for-each Loop · ArrayIndexOutOfBoundsException</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/29-java-array-algorithms-sum-min-max-and-searching.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">29</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Array Algorithms: Sum, Average, Min/Max & Searching</span>
+                <span class="lesson-subtopics">Sum & Average Calculations · Finding Maximum and Minimum · Second Largest Element ($O(N)$) · Linear Search Algorithm · Binary Search Algorithm ($O(\log N)$) · Arrays.binarySearch() Mechanics</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/30-java-array-sorting-copying-and-arrays-utility-class.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">30</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Array Sorting, Copying & java.util.Arrays Masterclass</span>
+                <span class="lesson-subtopics">In-Place Array Reversal · Bubble Sort Algorithm · Arrays.sort() Internals (Dual-Pivot Quicksort) · 4 Array Copying Techniques · System.arraycopy() vs Arrays.copyOf() · Shallow vs Deep Copy · Arrays.fill(), Arrays.equals(), Arrays.mismatch()</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/31-java-multidimensional-and-jagged-arrays.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">31</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Multidimensional & Jagged Arrays Masterclass</span>
+                <span class="lesson-subtopics">2D Arrays (Matrices) · "Array of Arrays" Memory Model · Matrix Declaration & Nested Loops · Matrix Addition & Transpose · Jagged (Ragged) Arrays Architecture · Dynamic Row Allocation · Arrays.deepToString() & Arrays.deepEquals()</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/32-java-arrays-capstone-projects-and-limitations.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">32</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Arrays Capstone Projects: 7 Production-Grade Systems & Limitations</span>
+                <span class="lesson-subtopics">Array Limitations Analysis · Fixed Size Bottleneck · Homogeneity & Memory Fragmentation · Project 1: Largest & Smallest Element · Project 2: In-Place Reverse · Project 3: Duplicate Remover · Project 4: Sorted Array Merger · Project 5: Matrix Addition · Project 6: Search Engine · Project 7: Frequency Counter</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🧩</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 08</div>
+            <h3 class="phase-roadmap-title">Methods & Recursion</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">Method parameters, return types, pass-by-value mechanics, method overloading, recursion, and reusable libraries.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/33-java-method-fundamentals-and-call-stack.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">33</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Method Fundamentals, Anatomy & Call Stack Execution</span>
+                <span class="lesson-subtopics">Method ante enti? · DRY Principle · 6 Components of Method Anatomy · Calling Methods · JVM Call Stack Frames · Parameters vs Arguments · Varargs (int... args) · Return Statement & Unreachable Code</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/34-java-pass-by-value-and-variable-scope.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">34</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Pass-by-Value Mechanics & Variable Scope Deep Dive</span>
+                <span class="lesson-subtopics">The Ultimate Truth: Java is Strictly Pass-by-Value · Primitive Pass-by-Value · Object Reference Pass-by-Value · Mutating vs Reassigning Objects · Block vs Method Scope · Variable Shadowing · Memory Stack & Heap Diagrams</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/35-java-method-overloading-and-static-vs-instance.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">35</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Method Overloading, Type Promotion & Static vs Instance Methods</span>
+                <span class="lesson-subtopics">Method Overloading (Compile-Time Polymorphism) · 3 Valid Overloading Rules · Why Return Type Alone Cannot Overload · Automatic Type Promotion in Overloading · static Methods vs Instance Methods · Memory Allocation of static</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/36-java-recursion-and-stack-overflow.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">36</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Recursion & Call Stack Lifecycle Masterclass</span>
+                <span class="lesson-subtopics">What is Recursion? · 2 Pillars: Base Case & Recursive Step · Call Stack Winding & Unwinding · StackOverflowError Prevention · Factorial (N!) · Fibonacci Series · Sum of Digits · Recursion vs Iteration Trade-offs</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/37-java-methods-capstone-projects-and-best-practices.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">37</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Methods Capstone Projects: 4 Production-Grade Modular Systems</span>
+                <span class="lesson-subtopics">Javadoc Documentation (@param, @return, @throws) · Clean Code & Single Responsibility · Project 1: Scientific Calculator · Project 2: Student Academic & GPA Suite · Project 3: Core Banking Operations · Project 4: Enterprise CommonUtils Library</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🏗️</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 09</div>
+            <h3 class="phase-roadmap-title">Classes & Objects (OOP)</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">OOP fundamentals, fields, methods, constructors, constructor overloading, this keyword, static members, and enums.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/38-java-class-and-object-fundamentals.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">38</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Class & Object Fundamentals: Blueprint vs Instance</span>
+                <span class="lesson-subtopics">Class ante enti? · Object ante enti? · Blueprint vs Instance Analogy · Fields (Instance Variables) · Methods Inside Classes · Creating Objects with new · Dot Operator · Memory Model: Stack Reference + Heap Object · Multiple Objects from One Class</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/39-java-constructors-this-keyword-and-overloading.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">39</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Constructors, this Keyword & Constructor Overloading</span>
+                <span class="lesson-subtopics">What is a Constructor? · Default Constructor · Parameterized Constructor · Constructor vs Method Differences · this Keyword: 3 Roles · this() Constructor Chaining · Constructor Overloading · Copy Constructor Pattern</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/40-java-static-members-nested-classes-and-enums.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">40</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Static Members, Nested Classes & Enums Masterclass</span>
+                <span class="lesson-subtopics">Static Fields (Class Variables) · Static Methods · Static Initializer Blocks · Static vs Instance Memory Layout · Inner Classes (Non-static) · Static Nested Classes · Anonymous Inner Classes · Enums: Type-Safe Constants · Enum Methods & Constructors</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/41-java-tostring-encapsulation-and-object-best-practices.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">41</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java toString(), Encapsulation, Getters/Setters & Object Best Practices</span>
+                <span class="lesson-subtopics">toString() Override · Why Default toString() is Useless · Object.equals() vs == · Encapsulation Principle · private Fields + public Getters & Setters · Data Validation in Setters · Fluent Builder Pattern · Immutable Classes</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/42-java-oop-classes-capstone-projects.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">42</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java OOP Capstone Projects: 4 Production-Grade Class Systems</span>
+                <span class="lesson-subtopics">Project 1: Student Management System · Project 2: Book Library System · Project 3: Product Inventory Manager · Project 4: Bank Account Application · OOP Design Principles Review</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔒</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 10</div>
+            <h3 class="phase-roadmap-title">Encapsulation & Access</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+      </div>
+      <p class="phase-roadmap-desc">private, public, protected, package-private default, getters/setters, data validation, and immutability design.</p>
+      <div class="phase-lessons-list">
+        
+          <a href="/blog-java/43-java-access-modifiers-public-private-protected-default.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">43</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Access Modifiers: public, private, protected & Default Explained</span>
+                <span class="lesson-subtopics">Encapsulation ante enti? · Why Access Control Matters · 4 Access Levels · private: Strictest · default (package-private) · protected: Inheritance + Package · public: Widest · Access Modifier Comparison Table · Applying to Fields, Methods & Classes</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/44-java-getters-setters-and-data-validation.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">44</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Getters, Setters, Data Validation & Controlled Access</span>
+                <span class="lesson-subtopics">Getter Methods (Accessors) · Setter Methods (Mutators) · boolean Getter Naming (isActive) · Data Validation in Setters · Defensive Copying · Chained Setters (Fluent API) · Computed Properties · When NOT to Use Setters</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/45-java-immutable-objects-and-read-only-properties.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">45</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Immutable Objects, final Keyword & Thread Safety</span>
+                <span class="lesson-subtopics">Immutable Classes: Definition & Benefits · 5 Rules for Creating Immutable Classes · final Fields · final Methods · final Classes · Java String Immutability Recap · Immutable Collections · Thread Safety via Immutability · Java 16+ record Keyword</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/46-java-good-class-design-and-package-access.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">46</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Good Class Design: Packages, Access Control & SOLID Principles</span>
+                <span class="lesson-subtopics">Java Package System · Package Declaration & import · Package-Private vs Public API Design · Naming Conventions · Single Responsibility Principle · Cohesion vs Coupling · Encapsulation Violation Patterns (Anti-Patterns) · Access Modifier Decision Flowchart</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+          <a href="/blog-java/47-java-encapsulation-capstone-projects.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">47</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Java Encapsulation Capstone: 4 Production-Grade Secure Systems</span>
+                <span class="lesson-subtopics">Project 1: Secure Bank Account (Core Snippet) · Project 2: Student Grade Book · Project 3: Product Inventory with Access Control · Project 4: Configuration Manager</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🧬</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 11</div>
+            <h3 class="phase-roadmap-title">Inheritance & Polymorphism</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">extends, super keyword, method overriding, @Override, IS-A vs HAS-A, upcasting, downcasting, and instanceof.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔌</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 12</div>
+            <h3 class="phase-roadmap-title">Abstraction & Interfaces</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">abstract classes, interfaces, default/static interface methods, multiple interfaces, and loose coupling.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📦</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 13</div>
+            <h3 class="phase-roadmap-title">Packages & Enums</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Package declarations, imports, static imports, access control, enum fields, constructors, and switch with enum.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🛡️</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 14</div>
+            <h3 class="phase-roadmap-title">Exception Handling</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">try-catch-finally, multiple catch, throw, throws, custom exceptions, try-with-resources, and assertions.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📚</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 15</div>
+            <h3 class="phase-roadmap-title">Collections Framework</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">List (ArrayList, LinkedList), Set (HashSet, TreeSet), Map (HashMap, TreeMap), Queue, Deque, and Iterators.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🏷️</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 16</div>
+            <h3 class="phase-roadmap-title">Generics & Type Safety</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Generic classes, methods, interfaces, type parameters (T, E, K, V), bounded types, wildcards, and type erasure.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🎁</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 17</div>
+            <h3 class="phase-roadmap-title">Wrapper Classes & Enums</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Integer, Double, Character, Boolean, Autoboxing, Unboxing, parseInt, and enum-based menus.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⚡</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 18</div>
+            <h3 class="phase-roadmap-title">Lambda Expressions</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Functional programming, lambda syntax, Predicate, Consumer, Function, Supplier, and Method References (::).</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🌊</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 19</div>
+            <h3 class="phase-roadmap-title">Stream API & Pipelines</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Chapter</span>
+      </div>
+      <p class="phase-roadmap-desc">Stream fundamentals, Collections vs Streams, intermediate operations (filter, map, sorted, distinct, limit, skip), terminal operations (reduce, count, collect), groupingBy, partitioningBy, and Parallel Streams.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-java/50-java-stream-api-and-pipelines.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">50</span>
+            <div class="lesson-info">
+              <span class="lesson-title">50. Stream API & Pipelines</span>
+              <span class="lesson-subtopics">Streams vs Collections · filter & map · sorted & distinct · limit & skip · reduce & collect · groupingBy & partitioningBy · Parallel Streams</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⏱️</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 20</div>
+            <h3 class="phase-roadmap-title">Date & Time (java.time)</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">1 In-Depth Chapter</span>
+      </div>
+      <p class="phase-roadmap-desc">Legacy Date limitations, LocalDate, LocalTime, LocalDateTime, ZonedDateTime, DateTimeFormatter (parsing & formatting), date arithmetic, Period vs Duration, and ZoneId.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-java/51-java-date-and-time-api.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">51</span>
+            <div class="lesson-info">
+              <span class="lesson-title">51. Date & Time (java.time)</span>
+              <span class="lesson-subtopics">Legacy Date Flaws · LocalDate & LocalTime · LocalDateTime & ZonedDateTime · DateTimeFormatter · Date Arithmetic · Period vs Duration · Time Zones</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📁</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 21</div>
+            <h3 class="phase-roadmap-title">File Handling & NIO</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">File, Path, Files, BufferedReader/Writer, Byte streams, serialization, directory ops, and NIO.2.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔍</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 22</div>
+            <h3 class="phase-roadmap-title">Regular Expressions</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Regex patterns, Matcher, Pattern, character classes, quantifiers, groups, email/phone validation.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🧵</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 23</div>
+            <h3 class="phase-roadmap-title">Multithreading & Concurrency</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Thread, Runnable, synchronization, locks, volatile, AtomicInteger, ExecutorService, and CompletableFuture.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🌐</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 24</div>
+            <h3 class="phase-roadmap-title">Networking & HTTP</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Client/Server sockets, URL/URI, Java 11+ HttpClient, GET/POST requests, JSON parsing, and REST client.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">💾</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 25</div>
+            <h3 class="phase-roadmap-title">JDBC & Databases</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">JDBC drivers, Connection, PreparedStatement, ResultSet, CRUD operations, transactions, and connection pools.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⚙️</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 26</div>
+            <h3 class="phase-roadmap-title">Build Tools (Maven & Gradle)</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">pom.xml, build lifecycle, dependency management, plugins, Gradle build.gradle, and logging.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🧪</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 27</div>
+            <h3 class="phase-roadmap-title">Testing (JUnit & Mockito)</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Unit testing, JUnit 5 assertions, @Test, @ParameterizedTest, Mockito mocking, debugging, and TDD.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">💎</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 28</div>
+            <h3 class="phase-roadmap-title">Clean Code & Patterns</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">SOLID principles, DRY, KISS, Factory, Singleton, Builder, Strategy, Observer, Repository patterns.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🍃</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 29</div>
+            <h3 class="phase-roadmap-title">Spring & Spring Boot</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">IoC, Dependency Injection, Spring Boot starters, REST Controllers, Services, Spring Data JPA, and Security.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🚀</span>
+          <div>
+            <div class="phase-roadmap-tag">PHASE 30</div>
+            <h3 class="phase-roadmap-title">Advanced Backend & Projects</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">Upcoming Phase</span>
+      </div>
+      <p class="phase-roadmap-desc">Microservices, JWT auth, Docker, CI/CD, and full-stack enterprise capstone projects.</p>
+      <div class="phase-lessons-list">
+        <div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>
+      </div>
+    </div>
+  
+    </div>
+
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Curated by Our Compiler Technical Editorial Team</strong><br>
+        <span>Published for 2026 Academic & Industry Reference · 100% Free & Open Access</span>
+      </div>
     </div>
   </main>
 </div>
+
+<script src="/site-nav.js" defer></script>
 </body>
 </html>

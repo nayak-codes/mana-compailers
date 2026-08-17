@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>First Python Program — Hello World & Execution Mechanics — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Write and break down your very first Python program, understanding print(), string arguments, file extensions, and how CPython interprets your script." />
+  <meta name="keywords" content="python tutorial, python 3 tutorial, learn python, first python program — hello world & execution mechanics, python online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/03-first-program-hello-world.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "First Python Program — Hello World & Execution Mechanics — Python 3 Tutorial",
+  "description": "Write and break down your very first Python program, understanding print(), string arguments, file extensions, and how CPython interprets your script.",
+  "articleSection": "Phase 1: Python Basics",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is no main() function required in Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In Python, code is executed from top to bottom as soon as the file is loaded. While you can define a def main(): function, simple scripts do not require any boilerplate class or main function structure."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Code Preload & Theme Script -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        // Wire Try-Box run buttons
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Course</div>
+    <a href="/blog-python.html">🐍 Python HOME</a>
+    <a href="01-what-is-python-features-and-uses.html">1. Python ante enti</a>
+    <a href="02-python-installation-and-setup.html">2. Python Installation, VS Code & Environment Setup</a>
+    <a href="03-first-program-hello-world.html" class="active">3. First Python Program</a>
+    <a href="04-python-syntax-and-indentation.html">4. Python Syntax & Indentation Rules (PEP 8)</a>
+    <a href="05-python-comments.html">5. Python Comments</a>
+    <a href="06-variables-and-naming-rules.html">6. Python Variables, Dynamic Typing & Naming Rules</a>
+    <a href="07-numbers-and-math-operations.html">7. Python Numbers</a>
+    <a href="08-strings-slicing-and-methods.html">8. Python Strings</a>
+    <a href="09-booleans-and-truthiness.html">9. Python Booleans & Truthy vs Falsy Evaluation</a>
+    <a href="10-none-type.html">10. Python NoneType</a>
+    <a href="11-type-checking-and-conversion.html">11. Python Type Checking with type(), isinstance() & Type Casting</a>
+    <a href="12-basic-input-and-output.html">12. Python Input & Output</a>
+
+    <div class="sidebar-heading">Interactive Playground</div>
+    <a href="/online-python-compiler.html" style="color:#58a6ff; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Lesson 3: First Python Program </span>
+    </div>
+
+    <h1 class="page-title">First Python Program — Hello World & Execution Mechanics</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Lesson 3 of 12</span>
+      <span class="badge">📂 Phase 1: Python Basics</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="intro-box">
+      Write and break down your very first Python program, understanding print(), string arguments, file extensions, and how CPython interprets your script.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Writing Hello World in Python</div>
+    <div class="section-content"><p>In Python, creating a Hello World program is literally a single line of code:</p></div>
+  
+
+    <div class="section-title"><span class="num">2</span>Line-by-Line Anatomy of the Program</div>
+    <div class="section-content"><ul>
+          <li><code>print</code> is a built-in Python function that outputs data to standard output (your console/terminal screen).</li>
+          <li><code>()</code> parentheses are used to call the function and pass arguments inside.</li>
+          <li><code>"Hello, World!"</code> is a <strong>string literal</strong> enclosed in quotation marks. You can use either single quotes <code>'Hello'</code> or double quotes <code>"Hello"</code>.</li>
+        </ul></div>
+  
+
+    <div class="section-title"><span class="num">3</span>How Python Executes Your Code Under the Hood</div>
+    <div class="section-content"><div class="diagram-box">
+┌──────────────┐     Lexing / Parsing     ┌──────────────────┐
+│  main.py     │ ───────────────────────> │  Bytecode (.pyc) │
+│ (Source Code)│                          │ (Compiled VM)    │
+└──────────────┘                          └─────────┬────────┘
+                                                    │
+                                     Executed by PVM│ (Python Virtual Machine)
+                                                    v
+                                          ┌──────────────────┐
+                                          │ Terminal Output  │
+                                          │ "Hello, World!"  │
+                                          └──────────────────┘</div></div>
+  
+
+    <div class="section-title"><span class="num">💻</span> Complete Executable Code Example</div>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang-tag">Python 3</span>
+        <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+      </div>
+      <pre><code># First Program: Hello World with multiple outputs
+print("Hello, World! 🚀")
+print("Welcome to Our Compiler's Interactive Python Course.")
+print("Python was created by Guido van Rossum in 1991.")</code></pre>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Pitfall: Case Sensitivity in Python Functions</div>
+      <p>Python is strictly case-sensitive. Writing Print() or PRINT() instead of print() will result in a NameError.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Hands-on Practice Challenge</div>
+      <p>Change the message to introduce yourself and calculate an inline expression.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>name = "Developer"
+year = 2026
+
+print(f"Hello {name}, you are learning Python in {year}!")
+print("Calculation inside print:", 10 * 5 + 25)</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Code in Our Online Compiler →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4>Q: Why is no main() function required in Python?</h4>
+      <p>In Python, code is executed from top to bottom as soon as the file is loaded. While you can define a def main(): function, simple scripts do not require any boilerplate class or main function structure.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="02-python-installation-and-setup.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">2. Python Installation, VS Code & Environment Setup</span>
+      </a>
+
+      
+      <a href="04-python-syntax-and-indentation.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">4. Python Syntax & Indentation Rules (PEP 8)</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

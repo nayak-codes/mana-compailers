@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Handling Capstone Projects — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Build four complete, production-grade, file-persisted applications in Python: a timestamped text notes app, an interactive contact book, a CSV-based expense tracker with budget analytics, and a JSON-backed student records CRUD management system." />
+  <meta name="keywords" content="python tutorial, learn python, file handling capstone projects, python online compiler, python automation, web scraping, python testing" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/29-python-file-handling-capstone-projects.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "File Handling Capstone Projects — Python 3 Master Tutorial",
+  "description": "Build four complete, production-grade, file-persisted applications in Python: a timestamped text notes app, an interactive contact book, a CSV-based expense tracker with budget analytics, and a JSON-backed student records CRUD management system.",
+  "articleSection": "Phase 6: Exception and File Handling",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I choose between saving data in Text, CSV, or JSON?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use Text (.txt) for unformatted logs and timestamped notes. Use CSV (.csv) for flat tabular rows and spreadsheets. Use JSON (.json) for nested objects, configuration files, and REST API data interchange."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I ensure atomic writes to prevent data corruption during crashes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Write data to a temporary file (e.g. \"data.json.tmp\") first, and then atomically rename it to \"data.json\" using Path.rename(). Renames are atomic on modern operating systems."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When should I migrate from JSON files to a database like SQLite or PostgreSQL?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Migrate to a database when: (1) multiple concurrent threads/users write simultaneously, (2) dataset exceeds tens of megabytes, or (3) you need complex relational SQL joins and indexing."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Accordion Toggle, Syntax Highlighter & Code Preload Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___PYTHON_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings: f"...", "...", '...', """...""", '''...'''
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      // 3. Keywords & Decorators
+      const kwList = ['import','from','as','def','return','class','if','elif','else','while','for','in','break','continue','pass','try','except','finally','with','lambda','global','nonlocal','and','or','not','is','yield','async','await','raise','assert','True','False','None','self','super','property','abstractmethod','dataclass','field','Enum','auto','Mapped','mapped_column','models','views','serializers','viewsets','routers','admin','fixture','mark','parametrize'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Functions & Standard Exceptions & Dunders
+      const fnList = ['print','len','range','type','isinstance','issubclass','id','input','int','float','str','list','dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted','reversed','abs','pow','open','help','dir','filter','next','iter','reduce','connect','cursor','execute','executemany','fetchone','fetchall','fetchmany','commit','rollback','create_engine','select','Session','relationship','get','post','put','patch','delete','raise_for_status','json','jsonify','render_template','redirect','url_for','generate_password_hash','check_password_hash','get_object_or_404','login','logout','authenticate','fit','predict','transform','fit_transform','read_csv','read_excel','to_csv','to_excel','groupby','merge','concat','dropna','fillna','describe','info','head','tail','corr','plot','show','savefig','subplots','tight_layout','dump','load','raises','patch','breakpoint','ABC','Exception','StopIteration','ValueError','TypeError','ZeroDivisionError','KeyError','IndexError','FileNotFoundError','PermissionError','OSError','FileExistsError','AttributeError','__init__','__str__','__repr__','__len__','__eq__','__add__','__enter__','__exit__','__iter__','__next__'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:e[+-]?\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___PYTHON_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Apply syntax highlighting & Copy/Run actions to all code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightPythonCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', rawCode);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightPythonCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_python3', rawCode);
+                window.location.href = '/online-python-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Python Basics -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Python Basics</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. Introduction & Setup</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. Syntax & Indentation</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. Variables & Types</a>
+        <a href="/blog-python/04-python-numbers-strings-and-type-conversion.html">4. Numbers, Strings & Casting</a>
+        <a href="/blog-python/05-python-booleans-none-and-input-output.html">5. Booleans, None & I/O</a>
+      </div>
+
+      <!-- Phase 02: Operators & Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Operators & Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/06-python-operators-complete-guide.html">6. Operators Guide</a>
+        <a href="/blog-python/07-python-conditional-statements-and-branching.html">7. Conditional Statements</a>
+        <a href="/blog-python/08-python-loops-while-and-for.html">8. while & for Loops</a>
+        <a href="/blog-python/09-python-loop-control-statements-and-else.html">9. Loop Controls & else</a>
+      </div>
+
+      <!-- Phase 03: Strings & Collections -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Strings & Collections</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/10-python-strings-mastery.html">10. Strings Mastery</a>
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. Lists & Comprehensions</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. Tuples & Unpacking</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. Dictionaries Deep Dive</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. Sets & Operations</a>
+      </div>
+
+      <!-- Phase 04: Functions & Scope -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Functions & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/15-python-functions-fundamentals.html">15. Functions Fundamentals</a>
+        <a href="/blog-python/16-python-args-kwargs-variable-arguments.html">16. *args & **kwargs</a>
+        <a href="/blog-python/17-python-variable-scope-and-legb-rule.html">17. Variable Scope (LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-and-type-hints.html">18. Lambda, Recursion & Hints</a>
+        <a href="/blog-python/19-python-menu-driven-applications.html">19. Menu-Driven Apps</a>
+      </div>
+
+      <!-- Phase 05: Modules & Packages -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Modules & Packages</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/20-python-modules-and-import-system.html">20. Modules & Imports</a>
+        <a href="/blog-python/21-python-core-standard-library-modules.html">21. Standard Library Core</a>
+        <a href="/blog-python/22-python-os-sys-and-pathlib.html">22. OS, Sys & Pathlib</a>
+        <a href="/blog-python/23-python-json-serialization-and-data.html">23. JSON Data Interchange</a>
+        <a href="/blog-python/24-python-packages-virtual-environments-and-pip.html">24. Packages, venv & Pip</a>
+      </div>
+
+      <!-- Phase 06: Exceptions & Files -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Exceptions & Files</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/25-python-exceptions-and-error-handling.html">25. Exception Handling</a>
+        <a href="/blog-python/26-python-file-handling-and-context-managers.html">26. File I/O & Context Managers</a>
+        <a href="/blog-python/27-python-csv-and-json-file-processing.html">27. CSV & JSON Processing</a>
+        <a href="/blog-python/28-python-filesystem-operations-pathlib.html">28. Filesystem & Pathlib</a>
+        <a href="/blog-python/29-python-file-handling-capstone-projects.html" class="active">29. File Capstone Projects</a>
+      </div>
+
+      <!-- Phase 07: Object-Oriented OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Object-Oriented OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/30-python-oop-classes-objects-and-init.html">30. Classes & Objects</a>
+        <a href="/blog-python/31-python-oop-encapsulation-and-properties.html">31. Encapsulation & Properties</a>
+        <a href="/blog-python/32-python-oop-inheritance-mro-and-polymorphism.html">32. Inheritance & Polymorphism</a>
+        <a href="/blog-python/33-python-oop-abstract-classes-and-magic-methods.html">33. ABCs & Dunder Methods</a>
+        <a href="/blog-python/34-python-oop-composition-and-dataclasses.html">34. Composition & Dataclasses</a>
+        <a href="/blog-python/35-python-oop-capstone-projects.html">35. OOP Capstone Projects</a>
+      </div>
+
+      <!-- Phase 08: Advanced Python -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Advanced Python</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/36-python-iterators-generators-and-expressions.html">36. Iterators & Generators</a>
+        <a href="/blog-python/37-python-closures-decorators-and-wrappers.html">37. Closures & Decorators</a>
+        <a href="/blog-python/38-python-custom-context-managers-and-contextlib.html">38. Context Managers</a>
+        <a href="/blog-python/39-python-functional-programming-map-filter-reduce.html">39. Functional Programming</a>
+        <a href="/blog-python/40-python-regular-expressions-and-pattern-matching.html">40. Regular Expressions & Enums</a>
+        <a href="/blog-python/41-python-memory-management-gc-and-profiling.html">41. Memory, GC & Profiling</a>
+      </div>
+
+      <!-- Phase 09: Databases & APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Databases & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/42-python-sqlite-and-sql-fundamentals.html">42. SQLite & SQL Basics</a>
+        <a href="/blog-python/43-python-parameterized-queries-and-transactions.html">43. Safe Queries & Transactions</a>
+        <a href="/blog-python/44-python-postgresql-mysql-and-sqlalchemy-orm.html">44. Enterprise DBs & SQLAlchemy</a>
+        <a href="/blog-python/45-python-http-requests-and-rest-apis.html">45. REST APIs & HTTP</a>
+        <a href="/blog-python/46-python-api-headers-authentication-and-errors.html">46. API Auth & Headers</a>
+        <a href="/blog-python/47-python-databases-and-apis-capstone-projects.html">47. DB & API Capstone</a>
+      </div>
+
+      <!-- Phase 10: Web Development -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Web Development</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/48-python-flask-fundamentals-and-routing.html">48. Flask Basics & Routing</a>
+        <a href="/blog-python/49-python-flask-templates-forms-and-auth.html">49. Flask Templates & Auth</a>
+        <a href="/blog-python/50-python-django-architecture-models-and-admin.html">50. Django Architecture & ORM</a>
+        <a href="/blog-python/51-python-django-views-templates-and-auth.html">51. Django Views & Auth</a>
+        <a href="/blog-python/52-python-django-rest-framework-and-deployment.html">52. DRF & Deployment</a>
+        <a href="/blog-python/53-python-web-development-capstone-projects.html">53. Web Capstone Projects</a>
+      </div>
+
+      <!-- Phase 11: Data Science & AI -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🤖</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Data Science & AI</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/54-python-numpy-arrays-and-vectorization.html">54. NumPy Arrays & Vectorization</a>
+        <a href="/blog-python/55-python-pandas-dataframes-and-csv.html">55. Pandas Series & DataFrames</a>
+        <a href="/blog-python/56-python-pandas-data-cleaning-grouping-and-merging.html">56. Data Cleaning & GroupBy</a>
+        <a href="/blog-python/57-python-data-visualization-matplotlib-seaborn.html">57. Visualization & Plots</a>
+        <a href="/blog-python/58-python-machine-learning-foundations-scikit-learn.html">58. Machine Learning Basics</a>
+        <a href="/blog-python/59-python-data-science-and-ai-capstone-projects.html">59. Data Science & AI Projects</a>
+      </div>
+
+      <!-- Phase 12: Automation & DevOps -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Automation & DevOps</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/60-python-web-scraping-and-browser-automation.html">60. Web Scraping & Automation</a>
+        <a href="/blog-python/61-python-automation-excel-pdf-email-images.html">61. File, PDF & Email Automation</a>
+        <a href="/blog-python/62-python-os-automation-logging-and-config.html">62. OS Automation & Logging</a>
+        <a href="/blog-python/63-python-unit-testing-pytest-and-debugging.html">63. Pytest & Debugging</a>
+        <a href="/blog-python/64-python-git-clean-code-and-documentation.html">64. Git & Clean Code</a>
+        <a href="/blog-python/65-python-automation-and-devops-capstone-projects.html">65. Automation Capstone</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Chapter 29: 29. File Capstone Projects</span>
+    </div>
+
+    <h1 class="page-title">File Handling Capstone Projects</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3.12+</span>
+      <span class="badge">🟢 Chapter 29 of 65</span>
+      <span class="badge">📂 Phase 6: Exception and File Handling</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>4 Projects · 1. File Notes App · 2. Contact Book · 3. CSV Expense Tracker · 4. JSON Student Records</span>
+    </div>
+
+    <div class="intro-box">
+      Build four complete, production-grade, file-persisted applications in Python: a timestamped text notes app, an interactive contact book, a CSV-based expense tracker with budget analytics, and a JSON-backed student records CRUD management system.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Project 1: File-Based Timestamped Notes Application</div>
+    <div class="section-body">
+      <p>A persistent, timestamped command-line note-taking application that logs notes to a text file with automated datetime headers and keyword searching:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 1: Persistent Timestamped Notes Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 1: FILE-BASED TIMESTAMPED NOTES APPLICATION
+# =========================================================================
+import datetime as dt
+from pathlib import Path
+
+NOTES_FILE = Path("daily_notes.txt")
+
+def add_note(note_text):
+    """Append a new note with timestamp."""
+    timestamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(NOTES_FILE, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] {note_text.strip()}\n")
+    return "✅ Note saved successfully!"
+
+def view_all_notes():
+    """Read and display all notes from file."""
+    if not NOTES_FILE.exists():
+        return "ℹ️ No notes recorded yet."
+    with open(NOTES_FILE, "r", encoding="utf-8") as f:
+        return f.read().strip()
+
+def search_notes(keyword):
+    """Search for notes containing a specific keyword."""
+    if not NOTES_FILE.exists():
+        return []
+    matches = []
+    with open(NOTES_FILE, "r", encoding="utf-8") as f:
+        for line in f:
+            if keyword.lower() in line.lower():
+                matches.append(line.strip())
+    return matches
+
+# Run Notes App Demonstration:
+print("--- 📝 Notes Application Demo ---")
+add_note("Studied Python Exception Handling (try-except-else-finally)")
+add_note("Built CSV Expense Tracker with DictReader")
+add_note("Reviewing FastAPI background tasks for production")
+
+print("\n--- All Saved Notes ---")
+print(view_all_notes())
+
+print("\n--- Search Results for 'Python' ---")
+for note in search_notes("Python"):
+    print("•", note)</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Architectural Features:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li>Uses append mode (<code>"a"</code>) to safely preserve all historical entries.</li>
+            <li>Case-insensitive streaming search using <code>keyword.lower() in line.lower()</code> without loading unnecessary memory.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">2</span>Project 2: Interactive Contact Book Manager</div>
+    <div class="section-body">
+      <p>A file-backed Contact Book manager supporting contact addition, search by name or phone, and listing contacts alphabetically:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 2: JSON Contact Book Manager Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 2: FILE-BACKED CONTACT BOOK APPLICATION
+# =========================================================================
+import json
+from pathlib import Path
+
+CONTACTS_FILE = Path("contacts_db.json")
+
+def load_contacts():
+    """Load contacts from JSON file safely."""
+    if not CONTACTS_FILE.exists():
+        return {}
+    try:
+        with open(CONTACTS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+def save_contacts(contacts_dict):
+    """Save contacts dictionary to JSON file."""
+    with open(CONTACTS_FILE, "w", encoding="utf-8") as f:
+        json.dump(contacts_dict, f, indent=4)
+
+def add_contact(name, phone, email, category="Personal"):
+    """Add or update a contact record."""
+    contacts = load_contacts()
+    contacts[name.strip().title()] = {
+        "phone": phone.strip(),
+        "email": email.strip().lower(),
+        "category": category
+    }
+    save_contacts(contacts)
+    return f"✅ Contact '{name}' saved successfully!"
+
+def search_contact(search_term):
+    """Find contact by name substring or phone."""
+    contacts = load_contacts()
+    results = {}
+    for name, details in contacts.items():
+        if search_term.lower() in name.lower() or search_term in details["phone"]:
+            results[name] = details
+    return results
+
+# Run Contact Book Demonstration:
+print("--- 📱 Contact Book Manager Demo ---")
+add_contact("Balaji Dev", "+91 98765 43210", "balaji@example.com", "Work")
+add_contact("Alex Smith", "+1 555 123 4567", "alex@example.com", "Friends")
+add_contact("Chloe Davis", "+44 20 7946 0991", "chloe@techcorp.com", "Work")
+
+print("\n--- Search Results for 'balaji' ---")
+print(json.dumps(search_contact("balaji"), indent=2))</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Resilience Features:</strong>
+          <p style="margin-top:6px;">Handles missing database files gracefully by returning an empty dictionary (<code>{}</code>) and catching corrupted JSON with <code>json.JSONDecodeError</code>.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">3</span>Project 3: Production Expense Tracker Using CSV</div>
+    <div class="section-body">
+      <p>A complete financial expense tracking system that logs transactions to CSV, calculates total expenditures, and aggregates category summaries:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 3: CSV Expense Tracker and Analytics Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 3: FINANCIAL EXPENSE TRACKER USING CSV
+# =========================================================================
+import csv
+import datetime as dt
+from pathlib import Path
+
+EXPENSES_FILE = Path("monthly_expenses.csv")
+FIELDNAMES = ["date", "category", "description", "amount"]
+
+def initialize_expense_file():
+    """Ensure CSV file exists with proper headers."""
+    if not EXPENSES_FILE.exists():
+        with open(EXPENSES_FILE, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+            writer.writeheader()
+
+def log_expense(category, description, amount):
+    """Log an expense entry to CSV."""
+    initialize_expense_file()
+    entry = {
+        "date": dt.date.today().isoformat(),
+        "category": category.title(),
+        "description": description.strip(),
+        "amount": f"{float(amount):.2f}"
+    }
+    with open(EXPENSES_FILE, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+        writer.writerow(entry)
+    return f"✅ Logged Rs.{float(amount):.2f} for '{description}'"
+
+def generate_expense_analytics():
+    """Calculate total spending and category breakdown."""
+    if not EXPENSES_FILE.exists():
+        return 0.0, {}
+        
+    total_spent = 0.0
+    category_totals = {}
+    
+    with open(EXPENSES_FILE, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            amt = float(row["amount"])
+            cat = row["category"]
+            total_spent += amt
+            category_totals[cat] = category_totals.get(cat, 0.0) + amt
+            
+    return round(total_spent, 2), category_totals
+
+# Run Expense Tracker Demonstration:
+print("--- 💰 Financial Expense Tracker Demo ---")
+log_expense("Food", "Grocery Supermart Shopping", 1250.00)
+log_expense("Utilities", "High-Speed Internet Bill", 999.00)
+log_expense("Food", "Team Coffee & Snacks", 350.00)
+log_expense("Education", "Python Masterclass Subscription", 1499.00)
+
+total, breakdown = generate_expense_analytics()
+print(f"\n📊 Total Monthly Expenditure: Rs.{total:,.2f}")
+print("--- Category Breakdown ---")
+for cat, amt in breakdown.items():
+    pct = (amt / total) * 100 if total > 0 else 0
+    print(f"• {cat:12}: Rs.{amt:,.2f} ({pct:.1f}%)")</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Analytics Breakdown:</strong>
+          <p style="margin-top:6px;">Uses <code>csv.DictReader</code> to stream expense rows and computes aggregate percentage breakdowns per category dynamically.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">4</span>Project 4: JSON Student Academic Records Management System</div>
+    <div class="section-body">
+      <p>A comprehensive academic records CRUD engine managing student enrollments, subject mark sheets, GPA calculations, and student record exports:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 4: JSON Student Records CRUD System</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 4: JSON STUDENT ACADEMIC RECORDS SYSTEM
+# =========================================================================
+import json
+from pathlib import Path
+
+STUDENT_DB = Path("students_database.json")
+
+def load_db():
+    if not STUDENT_DB.exists(): return {"students": {}}
+    with open(STUDENT_DB, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_db(data):
+    with open(STUDENT_DB, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+
+def register_student(student_id, name, branch):
+    """Create a new student profile."""
+    db = load_db()
+    if student_id in db["students"]:
+        return f"❌ Student ID {student_id} already exists!"
+        
+    db["students"][student_id] = {
+        "name": name,
+        "branch": branch,
+        "marks": {},
+        "gpa": 0.0
+    }
+    save_db(db)
+    return f"🎓 Student '{name}' registered successfully under ID: {student_id}"
+
+def record_marks(student_id, subject, score):
+    """Add subject score and recalculate GPA."""
+    db = load_db()
+    student = db["students"].get(student_id)
+    if not student:
+        return f"❌ Student {student_id} not found!"
+        
+    student["marks"][subject] = score
+    all_scores = list(student["marks"].values())
+    student["gpa"] = round(sum(all_scores) / len(all_scores), 2)
+    save_db(db)
+    return f"✅ Recorded {subject}: {score}/100 | New GPA: {student['gpa']}"
+
+def get_student_report_card(student_id):
+    """Generate a clean formatted report card."""
+    db = load_db()
+    student = db["students"].get(student_id)
+    if not student: return "Student not found!"
+    
+    lines = [
+        "=" * 45,
+        f"📋 REPORT CARD: {student['name']} (ID: {student_id})",
+        f"Branch: {student['branch']} | Overall GPA: {student['gpa']}%",
+        "-" * 45,
+        "Subject Scores:"
+    ]
+    for sub, mark in student["marks"].items():
+        lines.append(f"  • {sub:20}: {mark}/100")
+    lines.append("=" * 45)
+    return "\n".join(lines)
+
+# Run Student Records Demonstration:
+print("--- 🎓 Student Records Management System ---")
+register_student("STU101", "Balaji", "Computer Science")
+record_marks("STU101", "Python Programming", 98)
+record_marks("STU101", "Data Structures", 92)
+record_marks("STU101", "Database Systems", 95)
+
+print(get_student_report_card("STU101"))</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Production Quality Features:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li>Full CRUD persistence in structured JSON.</li>
+            <li>Automatic re-calculation of dynamic metrics (GPA).</li>
+            <li>Modular functions with input validation and clean error returns.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfall: Failing to Handle Missing or Corrupted JSON Database Files</div>
+      <p>If your JSON file is empty or contains invalid syntax, json.load() raises json.JSONDecodeError: Expecting value. Always wrap file loading in a try-except block and provide an empty dictionary fallback.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Create a mini bookmark manager that stores website URLs with categories in a JSON file "bookmarks.json" and prints all bookmarked sites.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 Practice Challenge</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>import json
+from pathlib import Path
+
+bookmarks_file = Path("bookmarks.json")
+
+bookmarks = {
+    "Python": ["https://python.org", "https://docs.python.org"],
+    "Compilers": ["https://www.ourcompiler.com"],
+    "Tools": ["https://github.com", "https://stackoverflow.com"]
+}
+
+with open(bookmarks_file, "w", encoding="utf-8") as f:
+    json.dump(bookmarks, f, indent=2)
+
+print("Saved Bookmarks:")
+with open(bookmarks_file, "r", encoding="utf-8") as f:
+    data = json.load(f)
+    for cat, urls in data.items():
+        print(f"📁 {cat}:")
+        for u in urls:
+            print(f"   🔗 {u}")</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Challenge in Online Python IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How do I choose between saving data in Text, CSV, or JSON?</h4>
+      <p>Use Text (.txt) for unformatted logs and timestamped notes. Use CSV (.csv) for flat tabular rows and spreadsheets. Use JSON (.json) for nested objects, configuration files, and REST API data interchange.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How can I ensure atomic writes to prevent data corruption during crashes?</h4>
+      <p>Write data to a temporary file (e.g. "data.json.tmp") first, and then atomically rename it to "data.json" using Path.rename(). Renames are atomic on modern operating systems.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> When should I migrate from JSON files to a database like SQLite or PostgreSQL?</h4>
+      <p>Migrate to a database when: (1) multiple concurrent threads/users write simultaneously, (2) dataset exceeds tens of megabytes, or (3) you need complex relational SQL joins and indexing.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="28-python-filesystem-operations-pathlib.html" class="nav-btn">
+        <span class="label">← Previous Chapter</span>
+        <span class="title">28. Filesystem & Pathlib</span>
+      </a>
+
+      
+      <a href="30-python-oop-classes-objects-and-init.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">30. Classes & Objects</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

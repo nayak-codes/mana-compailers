@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome & JavaScript Fundamentals — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Complete guide to JavaScript Basics: JavaScript ante enti?, history by Brendan Eich, web uses, JS vs Java, browser role & V8 engine, first program, adding JS to HTML (Inline, Internal, External), console.log(), and strict mode ('use strict')." />
+  <meta name="keywords" content="javascript tutorial, welcome & javascript fundamentals, learn javascript, javascript online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/01-javascript-fundamentals.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-javascript">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html" class="active">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/01-javascript-fundamentals.html" class="active">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (var, let & const)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types & Type Conversion</a>
+      </div>
+
+      <!-- Phase 03: Operators & Control Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
+        <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
+      </div>
+
+      <!-- Phase 04: Strings & Functions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Strings & Functions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">7. Strings & Template Literals</a>
+        <a href="/blog-javascript/functions.html">8. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 05: Arrays & Objects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Arrays & Objects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">9. Arrays & Iteration Methods</a>
+        <a href="/blog-javascript/objects.html">10. Objects & JSON</a>
+        <a href="/blog-javascript/es6-features.html">11. ES6+ Destructuring & Spread</a>
+      </div>
+
+      <!-- Phase 06: Advanced Functions & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Advanced Functions & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/closures.html">12. Closures & Higher-Order Functions</a>
+        <a href="/blog-javascript/oop.html">13. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 07: Asynchronous JavaScript -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Asynchronous JavaScript</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">14. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">15. Error Handling & Debugging</a>
+      </div>
+
+      <!-- Phase 08: DOM & Web Browser APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">DOM & Web Browser APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/dom.html">16. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 1: Welcome & JavaScript Fundamentals</span>
+    </div>
+
+    <h1 class="page-title">Welcome & JavaScript Fundamentals</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 1</span>
+      <span class="badge">📂 Phase 01: JavaScript Fundamentals</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>JS ante enti? · History & Uses · JS vs Java · Browser Role & V8 Engine · First Program · 3 Methods to Add JS to HTML (Inline/Internal/External) · console.log() · Strict Mode ("use strict")</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to the <strong>Complete JavaScript Masterclass (Phase 1: JavaScript Fundamentals)</strong>! JavaScript (JS) is the world's most popular programming language and the undeniable backbone of the Web. Over <strong>98% of all websites</strong> on the internet run JavaScript to deliver responsive user interfaces, dynamic interactivity, and server-side APIs via Node.js. In this comprehensive lesson, we will cover what JavaScript is, its history, browser execution engines, methods to include JS in HTML, <code>console.log()</code>, and modern strict mode (<code>"use strict"</code>).</p>
+    </div>
+
+    <!-- SECTION 1: JavaScript Ante Enti? -->
+    <div class="section-title"><span class="num">1</span>JavaScript Ante Enti? (What is JavaScript?)</div>
+    <div class="section-body">
+      <p><strong>JavaScript</strong> anedhi oka high-level, dynamically typed, prototype-based, interpreted/JIT-compiled programming language. Idi HTML (structure) mariyu CSS (styling) tho kalisi web pages ni <strong>dynamic & interactive</strong> ga marusthundi.</p>
+      
+      <p>Traditional static web page lo HTML/CSS undhi anukundam — adhi purely static content chupisthundhi. Kani JavaScript tho meeru animations, form validations, button clicks, live search suggestions, dark mode toggles, and server data fetching (API calls without reloading page) acheive cheyyavachu.</p>
+    </div>
+
+    <!-- SECTION 2: History & Uses -->
+    <div class="section-title"><span class="num">2</span>JavaScript History & Modern Industry Uses</div>
+    <div class="section-body">
+      <p>1995 lo Netscape Communications lo unna <strong>Brendan Eich</strong> direct ga <strong>just 10 days lo</strong> JavaScript language ni create chesaru! Modatlo dheeni peru <em>Mocha</em>, tharvatha <em>LiveScript</em>, mariyu aurojullo popular ga unna Java language marketing trend ni thagattu final ga <strong>JavaScript</strong> ani perupettaru.</p>
+      
+      <p>Ippudu JavaScript <strong>ECMAScript (ES6 / ES2026+)</strong> standard dwara manage cheyyabaduthundhi.</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <strong style="color:#10b981; font-size:15px;">🌐 1. Front-End Web Development</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:6px; line-height:1.6;">React, Vue.js, Angular, Next.js frameworks dwara dynamic single-page applications (SPAs) build cheyyavachu.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:16px;">
+          <strong style="color:#38bdf8; font-size:15px;">🖥️ 2. Back-End Server Development</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:6px; line-height:1.6;"><strong>Node.js & Express.js</strong> dwara server-side backend REST APIs and microservices run cheyyavachu.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
+          <strong style="color:#3fb950; font-size:15px;">📱 3. Mobile & Desktop Apps</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:6px; line-height:1.6;"><strong>React Native</strong> for iOS/Android apps & <strong>Electron.js</strong> for desktop apps (VS Code, Discord, Slack are built on JS!).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: JS vs Java -->
+    <div class="section-title"><span class="num">3</span>JavaScript vs Java (Crucial Differences)</div>
+    <div class="section-body">
+      <p>Chaala mandhi beginners Java & JavaScript renduu okate anukuntaru. Kani avi renduu completely different languages! A famous developer quote says: <em>"Java is to JavaScript as Car is to Carpet!"</em> 🚗 vs 🧹</p>
+
+      <table class="tbl">
+        <tr><th>Feature</th><th>Java</th><th>JavaScript</th></tr>
+        <tr>
+          <td><strong>Language Type</strong></td>
+          <td>Statically Typed (Type specified at compile time)</td>
+          <td>Dynamically Typed (Type determined at runtime)</td>
+        </tr>
+        <tr>
+          <td><strong>Execution Model</strong></td>
+          <td>Compiled to Bytecode (<code>.class</code>) &rarr; Runs on JVM</td>
+          <td>Interpreted / JIT-compiled directly in JS Engine</td>
+        </tr>
+        <tr>
+          <td><strong>OOP Model</strong></td>
+          <td>Strict Class-based Object Oriented</td>
+          <td>Prototype-based Object Oriented</td>
+        </tr>
+        <tr>
+          <td><strong>Variable Syntax</strong></td>
+          <td><code>int score = 95;</code></td>
+          <td><code>let score = 95;</code></td>
+        </tr>
+        <tr>
+          <td><strong>Primary Ecosystem</strong></td>
+          <td>Enterprise Backends, Android, Banking</td>
+          <td>Web Browsers, Full-Stack Web, Node.js</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- SECTION 4: Browser Role & JS Engines -->
+    <div class="section-title"><span class="num">4</span>Browser lo JavaScript Role & JS Engines</div>
+    <div class="section-body">
+      <p>Web Browser (Chrome, Firefox, Safari, Edge) lo JavaScript key role play chesthundi. Computer CPU ki direct ga JavaScript execution theliyadhu, andhuke prati browser lo oka <strong>JavaScript Engine</strong> built-in ga untundhi:</p>
+
+      <table class="tbl">
+        <tr><th>Web Browser</th><th>JavaScript Engine Name</th><th>Developer / Maintainer</th></tr>
+        <tr><td><strong>Google Chrome & Node.js</strong></td><td><strong>V8 Engine</strong></td><td>Google (Written in C++)</td></tr>
+        <tr><td><strong>Mozilla Firefox</strong></td><td><strong>SpiderMonkey</strong></td><td>Mozilla Foundation</td></tr>
+        <tr><td><strong>Apple Safari</strong></td><td><strong>JavaScriptCore (Nitro)</strong></td><td>Apple Inc.</td></tr>
+        <tr><td><strong>Microsoft Edge</strong></td><td><strong>V8 Engine</strong> (Chromium-based)</td><td>Microsoft / Google</td></tr>
+      </table>
+    </div>
+
+    <!-- SECTION 5: 3 Methods to Add JS to HTML -->
+    <div class="section-title"><span class="num">5</span>Adding JavaScript to HTML (3 Methods)</div>
+    <div class="section-body">
+      <p>HTML page lo JavaScript add cheyyadaniki 3 main approaches unnaayi:</p>
+
+      <!-- Method 1: Inline JS -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px; margin:14px 0;">
+        <h4 style="color:#ff7b72; margin-bottom:6px;">Method 1: Inline JavaScript (Not Recommended for Large Apps)</h4>
+        <p style="font-size:13px; color:var(--text2);">Direct ga HTML element tag inner event attributes lo code rayadam:</p>
+        <code style="display:block; margin-top:6px; background:#0d1117; padding:8px 12px; border-radius:6px; color:#e6edf3;">&lt;button onclick="alert('Button clicked!')"&gt;Click Me&lt;/button&gt;</code>
+      </div>
+
+      <!-- Method 2: Internal JS -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:16px; margin:14px 0;">
+        <h4 style="color:#58a6ff; margin-bottom:6px;">Method 2: Internal JavaScript</h4>
+        <p style="font-size:13px; color:var(--text2);">HTML file lo <code>&lt;script&gt;</code> tags lopala JavaScript logic rayadam:</p>
+        <div class="code-block" style="margin-top:8px;">
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Internal JS Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to Our Compiler&lt;/h1&gt;
+    &lt;script&gt;
+        console.log("Internal JavaScript Executed!");
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Method 3: External JS -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px; margin:14px 0;">
+        <h4 style="color:#3fb950; margin-bottom:6px;">Method 3: External JavaScript (Industry Best Practice ⭐)</h4>
+        <p style="font-size:13px; color:var(--text2);">Separate <code>script.js</code> file maintain chesi, HTML file lo <code>&lt;script src="script.js" defer&gt;&lt;/script&gt;</code> dwara link cheyyadam. Code organization, caching, and maintainability ki idhe standard!</p>
+      </div>
+    </div>
+
+    <!-- SECTION 6: console.log() and Strict Mode -->
+    <div class="section-title"><span class="num">6</span>console.log() & Strict Mode ("use strict")</div>
+    <div class="section-body">
+      <p>JavaScript lo debugging and console output print cheyyadaniki <code>console.log()</code> vadathamu. Browser DevTools Console (F12) or terminal lo idhi print avthundhi.</p>
+
+      <h4 style="color:#10b981; margin:14px 0 6px;">Strict Mode ("use strict";)</h4>
+      <p>ECMAScript 5 lo introduce chesina <strong>Strict Mode</strong> JavaScript engine ki strict execution rules enforcement isthundi. Undeclared global variables, accidental silent bugs, and unsafe operations ni errors ga throw chesthundi.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Strict Mode & console.log</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+// 1. Standard Console Output
+console.log("Hello, JavaScript!");
+console.log("Welcome to Our Compiler Masterclass 🚀");
+
+// 2. Logging Variables
+let userRole = "Full Stack Engineer";
+let experienceYears = 2026;
+console.log("Role:", userRole, "| Year:", experienceYears);
+
+// 3. Strict Mode Error Prevention:
+// Without "use strict", x = 10 creates an accidental global variable.
+// With "use strict", the line below throws: ReferenceError: x is not defined
+// x = 10;</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 7: Try It Yourself Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — First JS Challenge</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this interactive JavaScript program that calculates portfolio stats and logs formatted messages:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+console.log("=================================");
+console.log("⚡ DEVELOPER PROFILE CARD");
+console.log("=================================");
+
+let developerName = "Balaji Nayak";
+let targetStack = "JavaScript (React & Node.js)";
+let isCompletedPhase1 = true;
+
+console.log("Name:", developerName);
+console.log("Stack:", targetStack);
+console.log("Phase 1 Status:", isCompletedPhase1 ? "Completed ✅" : "In Progress ⏳");
+console.log("=================================");</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run This Code in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="/blog-javascript.html" class="nav-btn">
+        <span class="label">← JS Overview</span>
+        <span class="title">Course Index</span>
+      </a>
+
+      
+      <a href="02-javascript-syntax-and-errors.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">2. Syntax & Error Handling</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

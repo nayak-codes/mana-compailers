@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Date and Time API (java.time): LocalDate, ZonedDateTime, Period & Duration | Our Compiler</title>
+  <meta name="description" content="Master modern Java Date and Time API (Phase 20): Limitations of legacy Date & Calendar, LocalDate, LocalTime, LocalDateTime, ZonedDateTime, DateTimeFormatter, parsing, date arithmetic (plus/minus), date comparisons, Period vs Duration, and time zone conversions." />
+  <meta name="keywords" content="java 21 tutorial, java date and time api (java.time): localdate, zoneddatetime, period & duration, learn java, java programming, java backend, spring boot" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/51-java-date-and-time-api.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .code-action-btn {
+      background: #21262d;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .code-action-btn:hover {
+      background: #30363d;
+      color: #ffffff;
+      border-color: #8b949e;
+    }
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 18px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.65;
+      margin: 0;
+    }
+    .memory-diagram {
+      background: #12161c;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #79c0ff;
+      line-height: 1.8;
+      margin: 16px 0;
+    }
+    .tbl th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+      });
+    })();
+  </script>
+</head>
+<body class="lang-java">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html" class="active">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Java Master Course</div>
+    <a href="/blog-java.html" class="sidebar-home-link">☕ Java Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 18: Lambda Expressions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/49-java-lambda-expressions-and-functional-interfaces.html">49. Lambdas & Functional Interfaces</a>
+      </div>
+
+      <!-- Phase 19: Stream API & Pipelines -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Stream API & Pipelines</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/50-java-stream-api-and-pipelines.html">50. Stream API & Pipelines</a>
+      </div>
+
+      <!-- Phase 20: Date & Time (java.time) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏱️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Date & Time (java.time)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/51-java-date-and-time-api.html" class="active">51. Date & Time (java.time)</a>
+      </div>
+    </div>
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java 21 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 51: Java Date and Time API (java.time): LocalDate, ZonedDateTime, Period & Duration</span>
+    </div>
+
+    <h1 class="page-title">Java Date and Time API (java.time): LocalDate, ZonedDateTime, Period & Duration</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java 21 LTS</span>
+      <span class="badge">🟢 Lesson 51</span>
+      <span class="badge">📂 Phase 20: Date & Time (java.time)</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Old Date class limitations · LocalDate · LocalTime · LocalDateTime · ZonedDateTime · DateTimeFormatter (Formatting & Parsing) · Date Arithmetic (+/-) · isBefore / isAfter · Period vs Duration · Time Zones (ZoneId)</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 20: Java Date and Time API (<code>java.time</code>) Masterclass</strong>! Prior to Java 8, handling dates and times in Java using legacy <code>java.util.Date</code> and <code>java.util.Calendar</code> was notoriously error-prone, mutable, and thread-unsafe. Java 8 introduced the modern <strong>JSR-310 <code>java.time</code> package</strong>, designed from the ground up to be <strong>immutable, thread-safe, domain-driven, and ISO-8601 compliant</strong>. In this comprehensive in-depth guide, you will master <code>LocalDate</code>, <code>LocalTime</code>, <code>LocalDateTime</code>, <code>ZonedDateTime</code>, <code>DateTimeFormatter</code> for formatting and parsing, date math, date comparisons, the crucial difference between <code>Period</code> and <code>Duration</code>, and global time zone conversions.</p>
+    </div>
+
+    <!-- 1. Legacy Date Limitations -->
+    <div class="section-title"><span class="num">1</span>Legacy Date Limitations (Why java.util.Date was Replaced)</div>
+    <div class="section-body">
+      <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
+        <h4 style="color:#ff7b72;">⚠️ The 4 Major Flaws of Legacy java.util.Date & Calendar:</h4>
+        <p>1. <strong>Mutability (Thread-Unsafe):</strong> <code>Date</code> objects are mutable (e.g. <code>date.setTime(...)</code>). Two threads sharing a date object cause race conditions!<br>
+        2. <strong>Confusing 0-Indexed Months:</strong> January is <code>0</code> and December is <code>11</code>! (Passing <code>12</code> rolled over to January next year). Years started from 1900!<br>
+        3. <strong>SimpleDateFormat is NOT Thread-Safe:</strong> Using a shared <code>SimpleDateFormat</code> in multi-threaded Spring Boot backends corrupted timestamps.<br>
+        4. <strong>No Domain Separation:</strong> <code>java.util.Date</code> represented both Date and Time combined, even when only a date (e.g. Birthday) was needed.</p>
+      </div>
+
+      <table class="tbl">
+        <tr><th>Modern Class (<code>java.time</code>)</th><th>Domain Meaning</th><th>Contains Timezone?</th><th>Example Representation</th></tr>
+        <tr><td><strong><code>LocalDate</code></strong></td><td>Date Only (Year, Month, Day)</td><td>No</td><td><code>2026-08-17</code> (Birthdays, Holidays)</td></tr>
+        <tr><td><strong><code>LocalTime</code></strong></td><td>Time Only (Hour, Min, Sec, Nano)</td><td>No</td><td><code>14:30:45.123</code> (Store opening hours)</td></tr>
+        <tr><td><strong><code>LocalDateTime</code></strong></td><td>Date + Time combined</td><td>No</td><td><code>2026-08-17T14:30:45</code> (Scheduled Meeting)</td></tr>
+        <tr><td><strong><code>ZonedDateTime</code></strong></td><td>Date + Time + ZoneId</td><td><strong>Yes</strong></td><td><code>2026-08-17T14:30:45+05:30[Asia/Kolkata]</code></td></tr>
+        <tr><td><strong><code>Instant</code></strong></td><td>Machine Timestamp (Epoch Seconds)</td><td>UTC</td><td><code>2026-08-17T09:00:45Z</code> (Database Audit Logs)</td></tr>
+      </table>
+    </div>
+
+    <!-- 2. LocalDate, LocalTime & LocalDateTime Deep Dive -->
+    <div class="section-title"><span class="num">2</span>LocalDate, LocalTime & LocalDateTime in Practice</div>
+    <div class="section-body">
+      <p>Modern date-time classes provide clear factory constructors (<code>now()</code>, <code>of()</code>) and getter methods:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Core java.time Creation & Inspection</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.Month;
+
+public class DateTimeBasicsDemo {
+    public static void main(String[] args) {
+        // 1. LocalDate (Date only)
+        LocalDate today = LocalDate.now();
+        LocalDate independenceDay = LocalDate.of(1947, Month.AUGUST, 15);
+        System.out.println("Today's Date: " + today);
+        System.out.println("Year: " + today.getYear() + " | Month: " + today.getMonth() + " | Day: " + today.getDayOfMonth());
+
+        // 2. LocalTime (Time only)
+        LocalTime currentTime = LocalTime.now();
+        LocalTime meetingTime = LocalTime.of(10, 30, 0); // 10:30 AM
+        System.out.println("Current Time: " + currentTime);
+
+        // 3. LocalDateTime (Date + Time)
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime newYear2027 = LocalDateTime.of(2027, 1, 1, 0, 0, 0);
+        System.out.println("New Year: " + newYear2027);
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Formatting & Parsing with DateTimeFormatter -->
+    <div class="section-title"><span class="num">3</span>Formatting & Parsing Dates with DateTimeFormatter (Thread-Safe!)</div>
+    <div class="section-body">
+      <p><code>DateTimeFormatter</code> is completely <strong>immutable and thread-safe</strong>. It converts dates to custom formatted strings and parses input strings into date objects:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Formatting & Parsing</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class FormattingAndParsingDemo {
+    public static void main(String[] args) {
+        LocalDateTime now = LocalDateTime.now();
+
+        // 1. Formatting Date -> Custom String
+        DateTimeFormatter customFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a");
+        String formattedOutput = now.format(customFormat);
+        System.out.println("Formatted Indian Timestamp: " + formattedOutput);
+
+        // 2. Parsing String -> LocalDate
+        String userInputDate = "25/12/2026";
+        DateTimeFormatter inputParser = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate parsedChristmas = LocalDate.parse(userInputDate, inputParser);
+        System.out.println("Parsed Date: " + parsedChristmas + " (Day of week: " + parsedChristmas.getDayOfWeek() + ")");
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. Date Arithmetic & Comparison -->
+    <div class="section-title"><span class="num">4</span>Date Arithmetic (plus/minus) & Date Comparisons</div>
+    <div class="section-body">
+      <p>Because <code>java.time</code> objects are immutable, math operations return a <strong>new updated instance</strong> without modifying the original:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Date Arithmetic & Comparisons</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>import java.time.LocalDate;
+
+public class DateArithmeticDemo {
+    public static void main(String[] args) {
+        LocalDate today = LocalDate.now();
+
+        // 1. Adding and Subtracting
+        LocalDate nextWeek = today.plusDays(7);
+        LocalDate threeMonthsAgo = today.minusMonths(3);
+        LocalDate nextYear = today.plusYears(1);
+
+        System.out.println("Today: " + today);
+        System.out.println("1 Week Later: " + nextWeek);
+        System.out.println("3 Months Ago: " + threeMonthsAgo);
+
+        // 2. Comparing Dates (isBefore, isAfter, isEqual)
+        LocalDate expiryDate = LocalDate.of(2026, 12, 31);
+        if (today.isBefore(expiryDate)) {
+            System.out.println("✅ Product license is ACTIVE.");
+        } else {
+            System.out.println("❌ Product license has EXPIRED.");
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Period vs Duration Deep Dive -->
+    <div class="section-title"><span class="num">5</span>Period vs Duration (Critical Difference ⭐)</div>
+    <div class="section-body">
+      <div class="concept-box">
+        <h4>💡 Period vs Duration — Must-Know Interview Distinction</h4>
+        <p>• <strong><code>Period</code> (Date-Based):</strong> Measures difference in <strong>Years, Months, and Days</strong> (e.g. Age calculation between two <code>LocalDate</code> instances).<br>
+        • <strong><code>Duration</code> (Time-Based):</strong> Measures difference in <strong>Seconds, Milliseconds, and Nanoseconds</strong> (e.g. Measuring execution time benchmark between two <code>LocalTime</code> or <code>Instant</code> instances).</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Period & Duration in Action</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Period;
+import java.time.Duration;
+
+public class PeriodDurationDemo {
+    public static void main(String[] args) {
+        // 1. Period: Age Calculator
+        LocalDate birthDate = LocalDate.of(2000, 5, 15);
+        LocalDate today = LocalDate.now();
+        Period age = Period.between(birthDate, today);
+        System.out.println("Exact Age: " + age.getYears() + " Years, " + 
+                           age.getMonths() + " Months, and " + age.getDays() + " Days.");
+
+        // 2. Duration: Benchmark Execution Time
+        LocalTime startTime = LocalTime.of(10, 15, 30);
+        LocalTime endTime = LocalTime.of(12, 45, 50);
+        Duration taskDuration = Duration.between(startTime, endTime);
+        System.out.println("Task Duration: " + taskDuration.toHours() + " hours and " + 
+                           (taskDuration.toMinutes() % 60) + " minutes (" + taskDuration.toSeconds() + " total seconds).");
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. ZonedDateTime & Time Zones -->
+    <div class="section-title"><span class="num">6</span>ZonedDateTime & Global Time Zone Conversions</div>
+    <div class="section-body">
+      <p>International applications and flight ticketing systems require exact time zone awareness via <code>ZoneId</code>:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Time Zone Conversion Engine</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>import java.time.ZonedDateTime;
+import java.time.ZoneId;
+
+public class TimeZoneDemo {
+    public static void main(String[] args) {
+        // Current Time in India (IST)
+        ZoneId istZone = ZoneId.of("Asia/Kolkata");
+        ZonedDateTime indiaTime = ZonedDateTime.now(istZone);
+        System.out.println("India Time (IST): " + indiaTime);
+
+        // Convert Same Instant to New York (EST) & Tokyo (JST)
+        ZonedDateTime newYorkTime = indiaTime.withZoneSameInstant(ZoneId.of("America/New_York"));
+        ZonedDateTime tokyoTime = indiaTime.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+
+        System.out.println("New York Time (EST): " + newYorkTime);
+        System.out.println("Tokyo Time (JST):    " + tokyoTime);
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test in Live Java 21 Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this complete date and time formatter in our online Java compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21</span>
+          <a class="try-btn" href="/online-java-compiler.html">▶ Open Java Compiler</a>
+        </div>
+        <pre><code>import java.time.LocalDate;
+import java.time.Period;
+
+public class Main {
+    public static void main(String[] args) {
+        LocalDate start = LocalDate.of(2024, 1, 1);
+        LocalDate current = LocalDate.now();
+
+        Period period = Period.between(start, current);
+        System.out.println("Time elapsed since Jan 1, 2024: " + 
+            period.getYears() + " years, " + period.getMonths() + " months, " + period.getDays() + " days.");
+    }
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/online-java-compiler.html">Open in Online Java Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for Java 21 LTS (2026 Edition)</div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="50-java-stream-api-and-pipelines.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">50. Stream API & Pipelines</span>
+      </a>
+
+      
+      <a href="/blog-java.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Java Course Completed 🎉</span>
+        <span class="title">Java Master Index</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

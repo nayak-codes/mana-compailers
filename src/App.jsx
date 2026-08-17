@@ -1,8 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
-import { LANGUAGES, TEMPLATES } from './languages'
+import { LANGUAGES, TEMPLATES, DEFAULT_HTML_FILES } from './languages'
 import AppTopnav from './components/AppTopnav'
 import CompilerHeader from './components/CompilerHeader'
+import WebPreview from './components/WebPreview'
+import TerminalLoader from './components/TerminalLoader'
+
 
 
 // ── Code Clipboard Modal ─────────────────────────────────────────────────
@@ -228,11 +231,66 @@ const ms = {
   pinDigit: { width: 56, height: 72, background: '#0d1117', border: '2px solid #3fb950', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, fontWeight: 800, color: '#3fb950', fontFamily: 'JetBrains Mono, monospace', boxShadow: '0 0 16px rgba(63,185,80,0.2)' },
   copyBtn: { background: 'rgba(63,185,80,0.15)', color: '#3fb950', border: '1px solid rgba(63,185,80,0.4)', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
   resetBtn: { width: '100%', marginTop: 12, padding: '8px', background: 'transparent', color: '#8b949e', border: '1px solid #30363d', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: 'Inter, sans-serif' },
-  pinInput: { width: 60, height: 72, textAlign: 'center', fontSize: 28, fontWeight: 800, background: '#0d1117', color: '#58a6ff', border: '2px solid #30363d', borderRadius: 12, outline: 'none', fontFamily: 'JetBrains Mono, monospace', transition: 'border-color 0.2s' },
 }
 
 
+function getDefaultFileName(language, index = 1) {
+  const ext = language?.ext || 'txt'
+  if (language?.id === 'java') return index === 1 ? 'Main.java' : `Program${index}.java`
+  if (language?.id === 'csharp') return index === 1 ? 'Program.cs' : `Program${index}.cs`
+  if (language?.id === 'php') return index === 1 ? 'index.php' : `program${index}.php`
+  if (language?.id === 'html') return index === 1 ? 'index.html' : `page${index}.html`
+  return index === 1 ? `main.${ext}` : `program${index}.${ext}`
+}
+
+function getStarterTemplate(language, fileName) {
+  if (language?.id === 'java') {
+    const rawName = fileName ? fileName.replace(/\.java$/i, '') : 'Main'
+    const className = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(rawName) ? rawName : 'Main'
+    return `public class ${className} {\n    public static void main(String[] args) {\n        System.out.println("Hello from ${className}!");\n    }\n}`
+  }
+  if (language?.id === 'csharp') {
+    const rawName = fileName ? fileName.replace(/\.cs$/i, '') : 'Program'
+    const className = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(rawName) ? rawName : 'Program'
+    return `using System;\n\nclass ${className} {\n    static void Main() {\n        Console.WriteLine("Hello from ${className}!");\n    }\n}`
+  }
+  if (language?.id === 'c') {
+    return `#include <stdio.h>\n\nint main() {\n    printf("Hello from ${fileName || 'C'}!\\n");\n    return 0;\n}`
+  }
+  if (language?.id === 'cpp17') {
+    return `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from ${fileName || 'C++'}!" << endl;\n    return 0;\n}`
+  }
+  if (language?.id === 'python3') {
+    return `print("Hello from ${fileName || 'Python'}!")`
+  }
+  if (language?.id === 'nodejs') {
+    return `console.log("Hello from ${fileName || 'JavaScript'}!");`
+  }
+  return TEMPLATES[language?.id] || `// ${fileName || 'New Program'}\n`
+}
+
+function loadProgramsForLang(language) {
+  try {
+    const saved = localStorage.getItem(`programs_${language.id}`)
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed
+      }
+    }
+  } catch (e) {}
+
+  const legacyCode = localStorage.getItem(`code_${language.id}`)
+  const initialCode = (legacyCode !== null && legacyCode.trim() !== '') ? legacyCode : (TEMPLATES[language.id] || '')
+  return [{
+    id: 'file_1',
+    name: getDefaultFileName(language, 1),
+    code: initialCode
+  }]
+}
+
 const DEFAULT = LANGUAGES[0]
+
 
 
 const TerminalInput = ({ onSubmit }) => {
@@ -396,6 +454,11 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
   const lines = cleanedText.split('\n');
 
   return lines.map((line, idx) => {
+    // Hide scary internal C/C++ linker noise lines from students
+    if (line.includes('/usr/bin/ld:') || line.includes('/tmp/cc') || line.includes('collect2: error: ld returned')) {
+      return null;
+    }
+
     let style = { color: isErrorStatus ? '#ff6b6b' : 'var(--green)' };
     let lineElements = [];
 
@@ -447,6 +510,266 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
     );
   });
 }
+
+const analyzeStudentError = (rawText, code = '', langId = '') => {
+  if (!rawText) return null;
+
+  const isErrorPattern = /error|exception|failed|invalid syntax|traceback/i.test(rawText);
+  if (!isErrorPattern) return null;
+
+  // Extract line number if present
+  let lineNum = null;
+  const lineMatch = rawText.match(/line\s+(\d+)/i) || rawText.match(/:\s*(\d+)\s*:/) || rawText.match(/\[(\d+)\]/);
+  if (lineMatch) {
+    lineNum = parseInt(lineMatch[1], 10);
+  }
+
+  // Extract source line if code and lineNum are available
+  const codeLines = code ? code.split('\n') : [];
+  const problematicLine = (lineNum && codeLines[lineNum - 1]) ? codeLines[lineNum - 1].trim() : '';
+
+  // Check specific error patterns
+  const isIndentationError = /IndentationError|TabError|unexpected indent|expected an indented block/i.test(rawText);
+  const isSyntaxError = /SyntaxError/i.test(rawText);
+  const isUnclosedBracket = /'\(|'\[|'\{'|\) was never closed|was never closed|unmatched '\)'|unexpected EOF while parsing/i.test(rawText);
+  const isUnterminatedString = /unterminated string literal|EOL while scanning string literal/i.test(rawText);
+  const nameErrorMatch = rawText.match(/NameError:\s*name\s*['"](\w+)['"]\s*is not defined/i);
+  const typeErrorMatch = rawText.match(/TypeError:\s*(.*)/i);
+  const isZeroDivision = /ZeroDivisionError/i.test(rawText);
+  const isIndexError = /IndexError:\s*list index out of range/i.test(rawText);
+
+  // C / C++ / Java Compiler "Did you mean?" & Function Typo Detection
+  const didYouMeanMatch = rawText.match(/did you mean\s*[`'"]?(\w+)[`'"]?/i);
+  const undefinedRefMatch = rawText.match(/(?:undefined reference to|implicit declaration of function)\s*[`'"]?(\w+)[`'"]?/i);
+  const missingSemicolonMatch = /expected\s*[`'"]?;[`'"]?|missing\s*[`'"]?;[`'"]?|';'\s*expected/i.test(rawText);
+
+  if (undefinedRefMatch || didYouMeanMatch) {
+    const wrongFn = undefinedRefMatch ? undefinedRefMatch[1] : '';
+    let suggestedFn = didYouMeanMatch ? didYouMeanMatch[1] : '';
+
+    // Smart fallback suggestions for common C typos
+    if (!suggestedFn && wrongFn === 'scan') suggestedFn = 'scanf';
+    if (!suggestedFn && wrongFn === 'print') suggestedFn = 'printf';
+    if (!suggestedFn && wrongFn === 'println') suggestedFn = 'printf';
+
+    const fnNameDisplay = wrongFn || 'function';
+
+    let specificDetail = `The function '${fnNameDisplay}' on line ${lineNum || ''} is not recognized by the compiler.`;
+    if (suggestedFn) {
+      if (suggestedFn.startsWith(fnNameDisplay)) {
+        const missingChar = suggestedFn.replace(fnNameDisplay, '');
+        specificDetail = `On line ${lineNum || ''}, you wrote '${fnNameDisplay}' instead of '${suggestedFn}'. You missed the letter '${missingChar}' at the end!`;
+      } else {
+        specificDetail = `On line ${lineNum || ''}, you wrote '${fnNameDisplay}'. Did you mean '${suggestedFn}'?`;
+      }
+    }
+
+    return {
+      title: `⚠️ Function Typo ('${fnNameDisplay}' → '${suggestedFn || 'printf'}')`,
+      line: lineNum,
+      problem: specificDetail,
+      fix: suggestedFn
+        ? `Change '${fnNameDisplay}' to '${suggestedFn}' on line ${lineNum || ''}. (Example: \`${suggestedFn}(...)\`)`
+        : `Check the spelling of '${fnNameDisplay}' or ensure you included the required header file at the top (e.g. #include <stdio.h>).`,
+      snippet: problematicLine
+    };
+  }
+
+  if (missingSemicolonMatch) {
+    return {
+      title: '⚠️ Missing Semicolon Error (;)',
+      line: lineNum,
+      problem: `Line ${lineNum || ''} is missing a semicolon ';' at the end of the statement.`,
+      fix: `Add a semicolon ';' at the end of line ${lineNum || ''}. (Example: \`${problematicLine};\`)`,
+      snippet: problematicLine
+    };
+  }
+
+  if (isIndentationError) {
+    return {
+      title: '⚠️ Indentation Error',
+      line: lineNum,
+      problem: 'Python requires consistent spacing (indentation). Code blocks inside statements like if, else, for, while, or def must be indented properly.',
+      fix: `1. Remove extra leading spaces or add 4 spaces (or 1 Tab) at the beginning of line ${lineNum || ''}.\n2. Ensure 'else:' or 'elif:' is aligned at the same indentation level as its matching 'if'.`,
+      snippet: problematicLine
+    };
+  }
+
+  if (isSyntaxError && problematicLine) {
+    const isControlKeyword = /^(if|else|elif|for|while|def|class)\b/i.test(problematicLine);
+    const hasColon = problematicLine.includes(':');
+    if (isControlKeyword && !hasColon) {
+      const kw = problematicLine.split(' ')[0];
+      return {
+        title: "⚠️ Missing Colon Error",
+        line: lineNum,
+        problem: `You forgot to put a colon ':' at the end of '${kw}' on line ${lineNum || ''}.`,
+        fix: `Add a colon ':' at the end of line ${lineNum || ''}. (Example: \`${problematicLine}:\`)`,
+        snippet: problematicLine
+      };
+    }
+  }
+
+  if (isSyntaxError) {
+    let problemDesc = 'A syntax error occurred in your code.';
+    let fixDesc = 'Check line numbers for missing colons (:), quotation marks (""), brackets (), commas (,), or incorrect indentation.';
+
+    if (problematicLine) {
+      if (/\belse\b/.test(problematicLine) && !problematicLine.endsWith(':')) {
+        problemDesc = `Line ${lineNum || ''} has an 'else' statement that is either missing a colon ':' or has incorrect indentation.`;
+        fixDesc = `Align 'else:' directly with its matching 'if' statement and ensure it ends with a colon ':'.`;
+      } else if (!problematicLine.includes(',') && problematicLine.includes('print')) {
+        problemDesc = `Line ${lineNum || ''} might be missing a comma ',' or quote marks in the print/function call parameters.`;
+        fixDesc = `Ensure all parameters are separated by commas ',' and strings are enclosed in quotes "".`;
+      }
+    }
+
+    return {
+      title: '⚠️ Syntax Error',
+      line: lineNum,
+      problem: problemDesc,
+      fix: fixDesc,
+      snippet: problematicLine
+    };
+  }
+
+  if (isUnclosedBracket) {
+    return {
+      title: '⚠️ Missing Bracket Error',
+      line: lineNum,
+      problem: 'An opening bracket (, [, or { was not properly closed.',
+      fix: `Check line ${lineNum || ''} and ensure every opening bracket has a matching closing bracket ), ], or }.`,
+      snippet: problematicLine
+    };
+  }
+
+  if (isUnterminatedString) {
+    return {
+      title: '⚠️ Missing Quote Error',
+      line: lineNum,
+      problem: 'A string/text literal was started with a quote (" or \') but never closed.',
+      fix: `Add the matching quote mark (" or \') at the end of the text on line ${lineNum || ''}.`,
+      snippet: problematicLine
+    };
+  }
+
+  if (nameErrorMatch) {
+    const varName = nameErrorMatch[1];
+    return {
+      title: `⚠️ NameError ('${varName}' is not defined)`,
+      line: lineNum,
+      problem: `The variable or function name '${varName}' has not been defined.`,
+      fix: `1. Check '${varName}' for spelling or capitalization typos (Python is case-sensitive).\n2. Ensure '${varName}' is declared or assigned a value before using it.`,
+      snippet: problematicLine
+    };
+  }
+
+  if (typeErrorMatch) {
+    return {
+      title: '⚠️ TypeError',
+      line: lineNum,
+      problem: 'An operation was attempted on incompatible data types (e.g., combining a String and an Integer).',
+      fix: 'Use type conversion functions like str(), int(), or float() before performing the operation.',
+      snippet: problematicLine
+    };
+  }
+
+  if (isZeroDivision) {
+    return {
+      title: '⚠️ ZeroDivisionError',
+      line: lineNum,
+      problem: 'Division by zero (0) is not allowed in mathematics or programming.',
+      fix: 'Ensure the divisor variable or number is not zero before performing division.',
+      snippet: problematicLine
+    };
+  }
+
+  if (isIndexError) {
+    return {
+      title: '⚠️ IndexError (Out of Bounds)',
+      line: lineNum,
+      problem: 'Attempted to access an index that is outside the range of the list.',
+      fix: 'Remember that list indices start at 0 and go up to (length - 1).',
+      snippet: problematicLine
+    };
+  }
+
+  return {
+    title: '💡 Student Error Assistant',
+    line: lineNum,
+    problem: lineNum ? `An execution or syntax error occurred on line ${lineNum}.` : 'An error occurred while running your code.',
+    fix: lineNum ? `Review line ${lineNum} and check the error message in the terminal.` : 'Review your code and check the terminal output for details.',
+    snippet: problematicLine
+  };
+};
+
+const StudentErrorCard = ({ analysis }) => {
+  if (!analysis) return null;
+
+  return (
+    <div style={{
+      marginTop: 14,
+      marginBottom: 10,
+      background: 'rgba(255, 107, 107, 0.08)',
+      border: '1px solid rgba(255, 107, 107, 0.3)',
+      borderRadius: 12,
+      padding: '14px 16px',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      textAlign: 'left'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, borderBottom: '1px solid rgba(255,107,107,0.2)', paddingBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 18 }}>💡</span>
+          <span style={{ fontWeight: 700, color: '#ff6b6b', fontSize: 14 }}>
+            {analysis.title}
+          </span>
+        </div>
+        {analysis.line && (
+          <span style={{
+            fontSize: 12,
+            fontWeight: 700,
+            background: '#ff6b6b',
+            color: '#fff',
+            padding: '2px 10px',
+            borderRadius: 6,
+            fontFamily: 'JetBrains Mono, monospace'
+          }}>
+            Line {analysis.line}
+          </span>
+        )}
+      </div>
+
+      {analysis.snippet && (
+        <div style={{
+          background: '#0d1117',
+          border: '1px solid #30363d',
+          borderRadius: 6,
+          padding: '6px 10px',
+          fontSize: 12,
+          fontFamily: 'JetBrains Mono, monospace',
+          color: '#e6edf3',
+          marginBottom: 10,
+          whiteSpace: 'pre-wrap',
+          overflowX: 'auto'
+        }}>
+          <span style={{ color: '#8b949e', marginRight: 8, fontSize: 11 }}>Code:</span>
+          {analysis.snippet}
+        </div>
+      )}
+
+      <div style={{ fontSize: 13, color: '#e6edf3', lineHeight: 1.6, marginBottom: 8 }}>
+        <strong style={{ color: '#f85149' }}>🔍 What went wrong?:</strong>
+        <div style={{ color: '#c9d1d9', marginTop: 2, paddingLeft: 4 }}>{analysis.problem}</div>
+      </div>
+
+      <div style={{ fontSize: 13, color: '#e6edf3', lineHeight: 1.6 }}>
+        <strong style={{ color: '#3fb950' }}>🛠️ How to fix it?:</strong>
+        <div style={{ color: '#8b949e', marginTop: 2, paddingLeft: 4, whiteSpace: 'pre-wrap' }}>{analysis.fix}</div>
+      </div>
+    </div>
+  );
+};
 
 function preprocessJavaCode(code) {
   // 1. Escape non-ASCII characters to \uXXXX unicode escapes
@@ -507,13 +830,14 @@ export default function App() {
     else if (pathname.includes('online-rust-compiler')) urlLangId = 'rust'
     else if (pathname.includes('online-php-compiler')) urlLangId = 'php'
     else if (pathname.includes('online-ruby-compiler')) urlLangId = 'ruby'
+    else if (pathname.includes('online-html-editor') || pathname.includes('online-html-compiler')) urlLangId = 'html'
   }
 
   const initialLang = urlLangId ? (LANGUAGES.find(x => x.id === urlLangId) || DEFAULT) : DEFAULT
   const initialView = (urlLangId || pathname.includes('online-')) ? 'compiler' : 'home'
 
   // 🔄 Cache busting — if template version changed, clear old saved code
-  const TEMPLATE_VERSION = 'v2'
+  const TEMPLATE_VERSION = 'v3'
   if (localStorage.getItem('template_version') !== TEMPLATE_VERSION) {
     LANGUAGES.forEach(l => localStorage.removeItem(`code_${l.id}`))
     localStorage.setItem('template_version', TEMPLATE_VERSION)
@@ -526,7 +850,32 @@ export default function App() {
 
   const [view, setView] = useState(initialView)
   const [lang, setLang] = useState(initialLang)
-  const [code, setCode] = useState(initialCode)
+  const [programs, setPrograms] = useState(() => loadProgramsForLang(initialLang))
+  const [activeFileId, setActiveFileId] = useState(() => {
+    const loaded = loadProgramsForLang(initialLang)
+    return loaded[0]?.id || 'file_1'
+  })
+  const [editingFileId, setEditingFileId] = useState(null)
+  const [editingFileName, setEditingFileName] = useState('')
+
+  const activeFile = programs.find(p => p.id === activeFileId) || programs[0] || { id: 'file_1', name: getDefaultFileName(lang, 1), code: '' }
+
+  const getInitialHtmlFiles = () => {
+    try {
+      const saved = localStorage.getItem('code_html_files')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed && typeof parsed === 'object' && parsed.html !== undefined) return parsed
+      }
+    } catch (e) {}
+    return DEFAULT_HTML_FILES
+  }
+
+  const [htmlFiles, setHtmlFiles] = useState(getInitialHtmlFiles)
+  const [activeHtmlTab, setActiveHtmlTab] = useState('html') // 'html' | 'css' | 'js'
+
+  const currentCode = lang.id === 'html' ? (htmlFiles[activeHtmlTab] ?? '') : (activeFile?.code ?? '')
+
   const [tutorialHtml, setTutorialHtml] = useState('')
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark')
 
@@ -544,6 +893,7 @@ export default function App() {
     if (lang.id === 'python3') langFile = 'python'
     if (lang.id === 'nodejs') langFile = 'javascript'
     if (lang.id === 'cpp17') langFile = 'cpp'
+    if (lang.id === 'html') langFile = 'html'
     
     setTutorialHtml('')
     fetch(`/blog-${langFile}.html`)
@@ -608,8 +958,27 @@ export default function App() {
           const newUrl = getCompilerUrl(targetLang.id)
           window.history.replaceState({ view: 'compiler', lang: targetLang.id }, '', newUrl)
         }
-        setCode(data.code)
-        localStorage.setItem(`code_${data.language}`, data.code)
+        if (data.language === 'html') {
+          try {
+            const parsed = JSON.parse(data.code)
+            if (parsed && typeof parsed === 'object' && parsed.html !== undefined) {
+              setHtmlFiles(parsed)
+              localStorage.setItem('code_html_files', JSON.stringify(parsed))
+            } else {
+              setHtmlFiles(prev => ({ ...prev, html: data.code }))
+            }
+          } catch (e) {
+            setHtmlFiles(prev => ({ ...prev, html: data.code }))
+          }
+        } else {
+          setPrograms(prev => {
+            const existing = prev.length > 0 ? prev : [{ id: 'file_1', name: getDefaultFileName(targetLang || lang, 1), code: data.code }]
+            const updated = existing.map((p, idx) => idx === 0 ? { ...p, code: data.code } : p)
+            localStorage.setItem(`programs_${data.language}`, JSON.stringify(updated))
+            localStorage.setItem(`code_${data.language}`, data.code)
+            return updated
+          })
+        }
         setView('compiler')
         setOutput(null)
         setInputs([])
@@ -622,14 +991,16 @@ export default function App() {
     if (id === 'python3') slug = 'python'
     else if (id === 'nodejs') slug = 'javascript'
     else if (id === 'cpp17') slug = 'cpp'
+    else if (id === 'html') return '/online-html-editor.html'
     return `/online-${slug}-compiler.html`
   }
 
   const selectLanguage = (id) => {
-    const l = LANGUAGES.find(x => x.id === id)
+    const l = LANGUAGES.find(x => x.id === id) || DEFAULT
     setLang(l)
-    const savedCode = localStorage.getItem(`code_${id}`)
-    setCode(savedCode !== null && savedCode.trim() !== '' ? savedCode : (TEMPLATES[id] || ''))
+    const loaded = loadProgramsForLang(l)
+    setPrograms(loaded)
+    setActiveFileId(loaded[0]?.id || 'file_1')
     setOutput(null)
     setInputs([])
     setView('compiler')
@@ -639,10 +1010,11 @@ export default function App() {
   }
 
   const changeLang = (id) => {
-    const l = LANGUAGES.find(x => x.id === id)
+    const l = LANGUAGES.find(x => x.id === id) || DEFAULT
     setLang(l)
-    const savedCode = localStorage.getItem(`code_${id}`)
-    setCode(savedCode !== null && savedCode.trim() !== '' ? savedCode : (TEMPLATES[id] || ''))
+    const loaded = loadProgramsForLang(l)
+    setPrograms(loaded)
+    setActiveFileId(loaded[0]?.id || 'file_1')
     setOutput(null)
     setInputs([])
     // Update URL to clean SEO path
@@ -660,6 +1032,119 @@ export default function App() {
     } else {
       window.history.replaceState({ view: 'home' }, '', window.location.pathname)
     }
+  }
+
+  // Multi-Program tab operations
+  const addProgram = () => {
+    setPrograms(prev => {
+      const nextIndex = prev.length + 1
+      const newName = getDefaultFileName(lang, nextIndex)
+      const newFile = {
+        id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        name: newName,
+        code: getStarterTemplate(lang, newName)
+      }
+      const updated = [...prev, newFile]
+      try {
+        localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+      } catch (e) {}
+      setActiveFileId(newFile.id)
+      return updated
+    })
+  }
+
+  const closeProgram = (idToClose, e) => {
+    if (e) e.stopPropagation()
+    if (programs.length <= 1) {
+      const resetFile = {
+        ...programs[0],
+        code: getStarterTemplate(lang, programs[0].name)
+      }
+      setPrograms([resetFile])
+      localStorage.setItem(`programs_${lang.id}`, JSON.stringify([resetFile]))
+      localStorage.setItem(`code_${lang.id}`, resetFile.code)
+      return
+    }
+
+    // Direct deletion without popup
+    setPrograms(prev => {
+      const updated = prev.filter(p => p.id !== idToClose)
+      try {
+        localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+      } catch (e) {}
+      if (activeFileId === idToClose) {
+        const nextActive = updated[0]?.id || 'file_1'
+        setActiveFileId(nextActive)
+      }
+      return updated
+    })
+  }
+
+  const duplicateProgram = () => {
+    if (!activeFile) return
+    const baseName = activeFile.name.replace(/(\.[^.]+)$/, '')
+    const ext = activeFile.name.match(/(\.[^.]+)$/)?.[1] || ('.' + (lang.ext || 'txt'))
+    const newName = `${baseName}_copy${ext}`
+    const newFile = {
+      id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      name: newName,
+      code: activeFile.code
+    }
+    setPrograms(prev => {
+      const updated = [...prev, newFile]
+      try {
+        localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+      } catch (e) {}
+      return updated
+    })
+    setActiveFileId(newFile.id)
+  }
+
+  const resetPrograms = () => {
+    const defaultFile = {
+      id: 'file_1',
+      name: getDefaultFileName(lang, 1),
+      code: TEMPLATES[lang.id] || ''
+    }
+    setPrograms([defaultFile])
+    setActiveFileId('file_1')
+    localStorage.setItem(`programs_${lang.id}`, JSON.stringify([defaultFile]))
+    localStorage.setItem(`code_${lang.id}`, defaultFile.code)
+  }
+
+  const startInlineRename = (file) => {
+    if (!file) return
+    setEditingFileId(file.id)
+    setEditingFileName(file.name)
+  }
+
+  const saveInlineRename = (fileId) => {
+    if (!editingFileId) return
+    let trimmed = editingFileName.trim()
+    if (!trimmed) {
+      setEditingFileId(null)
+      return
+    }
+    const defaultExt = '.' + (lang?.ext || 'txt')
+    if (!trimmed.includes('.')) {
+      trimmed += defaultExt
+    }
+
+    setPrograms(prev => {
+      const updated = prev.map(p => p.id === fileId ? { ...p, name: trimmed } : p)
+      try {
+        localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+        if (fileId === activeFileId) {
+          localStorage.setItem(`code_${lang.id}`, p.code || '')
+        }
+      } catch (e) {}
+      return updated
+    })
+    setEditingFileId(null)
+  }
+
+  const cancelInlineRename = () => {
+    setEditingFileId(null)
   }
 
   // ⚡ Silent backend warmup — wakes Render server in background on page load
@@ -680,8 +1165,9 @@ export default function App() {
           const l = LANGUAGES.find(x => x.id === langId)
           if (l) {
             setLang(l)
-            const savedCode = localStorage.getItem(`code_${l.id}`)
-            setCode(savedCode !== null ? savedCode : (TEMPLATES[l.id] || ''))
+            const loaded = loadProgramsForLang(l)
+            setPrograms(loaded)
+            setActiveFileId(loaded[0]?.id || 'file_1')
           }
           setView('compiler')
         } else {
@@ -742,8 +1228,21 @@ export default function App() {
   const showResizer = maximizedPanel === null
 
   const executeCode = useCallback(async (inputVal) => {
+    if (lang.id === 'html') {
+      // In-browser live execution for HTML / CSS / JS
+      setOutput({
+        status: 'ok',
+        text: 'Live Web Preview updated at ' + new Date().toLocaleTimeString(),
+        elapsed: '0.01',
+        label: 'Live Preview',
+      })
+      if (isMobile) setMobileTab('terminal')
+      return
+    }
+
+    const codeToRun = currentCode
     const inputToSend = inputVal !== undefined ? inputVal : inputs.join('\n')
-    if (!code.trim() || running) return
+    if (!codeToRun.trim() || running) return
     setRunning(true)
     setOutput(prev => (prev && prev.text ? { ...prev, status: 'running' } : { status: 'running' }))
     const start = Date.now()
@@ -755,7 +1254,7 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           language: lang.id,
-          code: lang.id === 'java' ? preprocessJavaCode(code) : code,
+          code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
           stdin: inputToSend || ''
         })
       })
@@ -764,7 +1263,7 @@ export default function App() {
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
 
       let isEofError = false
-      if (data.error && detectsInput(code, lang.id)) {
+      if (data.error && detectsInput(codeToRun, lang.id)) {
         const eofPatterns = /(EOFError|NoSuchElementException|No line found|readline|stdin|EOF)/i
         if (eofPatterns.test(data.error)) {
           isEofError = true
@@ -788,7 +1287,7 @@ export default function App() {
     } finally {
       setRunning(false)
     }
-  }, [code, lang, inputs, running])
+  }, [currentCode, lang, inputs, running, isMobile])
 
   const runCode = useCallback(() => {
     setInputs([])
@@ -832,7 +1331,7 @@ export default function App() {
                   disabled={running} 
                   style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}
                 >
-                  {running ? '⏳ Running...' : '▶ Run Code'}
+                  {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh Preview' : '▶ Run Code'}
                 </button>
               )}
             </div>
@@ -853,7 +1352,7 @@ export default function App() {
                   disabled={running} 
                   style={{ ...s.btnRun, opacity: running ? 0.6 : 1, cursor: running ? 'not-allowed' : 'pointer' }}
                 >
-                  {running ? '⏳ Running...' : '▶ Run Code'}
+                  {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh Preview' : '▶ Run Code'}
                 </button>
               )}
             </div>
@@ -872,7 +1371,7 @@ export default function App() {
                 onClick={() => setMobileTab('terminal')}
                 className={`compiler-mobile-tab-btn ${mobileTab === 'terminal' ? 'active' : ''}`}
               >
-                🖥️ Terminal Output
+                {lang.id === 'html' ? '🌐 Live Preview' : '🖥️ Terminal Output'}
                 {output && output.status !== 'running' && (
                   <span style={{
                     width: 8, height: 8, borderRadius: '50%',
@@ -905,14 +1404,30 @@ export default function App() {
               <div style={s.panelHead} className="compiler-panel-head">
                 <span style={{ fontSize: 13, fontWeight: 600 }}>📝 Editor</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 12, color: 'var(--text2)' }}>{lang.icon} {lang.label}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text2)', fontFamily: 'var(--mono)' }}>
+                    {lang.id === 'html'
+                      ? (activeHtmlTab === 'html' ? '🌐 index.html' : activeHtmlTab === 'css' ? '🎨 styles.css' : '⚡ script.js')
+                      : `${lang.icon} ${activeFile?.name || lang.label}`}
+                  </span>
                   <button 
                     onClick={() => { 
-                      setCode(''); 
-                      localStorage.setItem(`code_${lang.id}`, '');
+                      if (lang.id === 'html') {
+                        const updated = { ...htmlFiles, [activeHtmlTab]: '' }
+                        setHtmlFiles(updated)
+                        localStorage.setItem('code_html_files', JSON.stringify(updated))
+                      } else {
+                        setPrograms(prev => {
+                          const updated = prev.map(p => p.id === activeFileId ? { ...p, code: '' } : p)
+                          try {
+                            localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+                            localStorage.setItem(`code_${lang.id}`, '')
+                          } catch (e) {}
+                          return updated
+                        })
+                      }
                     }} 
                     style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
-                    title="Clear editor code"
+                    title={lang.id === 'html' ? `Clear current ${activeHtmlTab === 'html' ? 'HTML' : activeHtmlTab === 'css' ? 'CSS' : 'JS'} file` : 'Clear editor code'}
                   >
                     🧹 Clear Code
                   </button>
@@ -923,15 +1438,197 @@ export default function App() {
                   )}
                 </div>
               </div>
+
+              {/* TABS: HTML/CSS/JS (FOR HTML) OR MULTI-PROGRAM TABS (VS CODE & ANTIGRAVITY STYLE FOR OTHER LANGUAGES) */}
+              {lang.id === 'html' ? (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: 'var(--bg3)',
+                  borderBottom: '1px solid var(--border)',
+                  padding: '4px 8px 0',
+                  gap: 4,
+                  overflowX: 'auto',
+                  flexShrink: 0,
+                }}>
+                  {[
+                    { key: 'html', name: 'index.html', icon: '<>', color: '#e44d26', label: 'HTML' },
+                    { key: 'css', name: 'styles.css', icon: '#', color: '#264de4', label: 'CSS' },
+                    { key: 'js', name: 'script.js', icon: 'JS', color: '#f7df1e', label: 'JS' },
+                  ].map(tabItem => (
+                    <button
+                      key={tabItem.key}
+                      type="button"
+                      onClick={() => setActiveHtmlTab(tabItem.key)}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 7,
+                        padding: '6px 14px',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        background: activeHtmlTab === tabItem.key ? 'var(--bg2)' : 'transparent',
+                        color: activeHtmlTab === tabItem.key ? 'var(--text)' : 'var(--text2)',
+                        border: '1px solid',
+                        borderColor: activeHtmlTab === tabItem.key ? 'var(--border)' : 'transparent',
+                        borderBottomColor: activeHtmlTab === tabItem.key ? 'var(--bg2)' : 'transparent',
+                        borderTop: activeHtmlTab === tabItem.key ? '2px solid #58a6ff' : '2px solid transparent',
+                        borderRadius: '6px 6px 0 0',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        whiteSpace: 'nowrap',
+                        marginBottom: -1,
+                      }}
+                    >
+                      <span style={{
+                        color: tabItem.color,
+                        fontWeight: 800,
+                        fontSize: 11.5,
+                        background: `${tabItem.color}18`,
+                        padding: '1px 5px',
+                        borderRadius: 4,
+                      }}>
+                        {tabItem.icon}
+                      </span>
+                      <span>{tabItem.name}</span>
+                    </button>
+                  ))}
+
+                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 4 }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm('Reset index.html, styles.css, and script.js to default starter templates?')) {
+                          setHtmlFiles(DEFAULT_HTML_FILES)
+                          localStorage.setItem('code_html_files', JSON.stringify(DEFAULT_HTML_FILES))
+                        }
+                      }}
+                      style={{
+                        background: 'transparent',
+                        color: 'var(--text3)',
+                        border: '1px solid var(--border)',
+                        borderRadius: 4,
+                        padding: '2px 8px',
+                        fontSize: 11,
+                        cursor: 'pointer',
+                      }}
+                      title="Reset all files to default starter templates"
+                    >
+                      ↺ Reset Files
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="multi-program-tabbar">
+                  <div className="multi-program-tabs-scroll">
+                    {programs.map((p) => {
+                      const isActive = p.id === activeFileId
+                      const isEditing = p.id === editingFileId
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          className={`program-tab-item ${isActive ? 'tab-active' : ''} ${isEditing ? 'tab-editing' : ''}`}
+                          onClick={() => {
+                            if (!isEditing) setActiveFileId(p.id)
+                          }}
+                          onDoubleClick={(e) => {
+                            e.stopPropagation()
+                            startInlineRename(p)
+                          }}
+                          title={isEditing ? 'Press Enter to save, Esc to cancel' : `Double-click to rename (${p.name})`}
+                        >
+                          <span className="program-tab-icon">{lang.icon}</span>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editingFileName}
+                              autoFocus
+                              ref={(el) => {
+                                if (el) {
+                                  el.select()
+                                }
+                              }}
+                              onFocus={(e) => e.target.select()}
+                              className="inline-tab-rename-input"
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={(e) => setEditingFileName(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault()
+                                  saveInlineRename(p.id)
+                                } else if (e.key === 'Escape') {
+                                  e.preventDefault()
+                                  cancelInlineRename()
+                                }
+                              }}
+                              onBlur={() => saveInlineRename(p.id)}
+                            />
+                          ) : (
+                            <span className="program-tab-name">{p.name}</span>
+                          )}
+                          {!isEditing && programs.length > 1 && (
+                            <span
+                              className="program-tab-close-btn"
+                              onClick={(e) => closeProgram(p.id, e)}
+                              title={`Close ${p.name}`}
+                            >
+                              ✕
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
+
+                    <button
+                      type="button"
+                      className="program-tab-add-btn"
+                      onClick={addProgram}
+                      title={`Add new ${lang.label} program tab`}
+                    >
+                      ➕ <span style={{ fontSize: 11.5 }}>New Tab</span>
+                    </button>
+                  </div>
+
+                  <div className="multi-program-actions">
+                    <button
+                      type="button"
+                      className="tabbar-action-btn"
+                      onClick={() => {
+                        if (activeFile) {
+                          startInlineRename(activeFile)
+                        }
+                      }}
+                      title="Rename active program in place"
+                    >
+                      ✏️ Rename
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div style={{ flex: 1, overflow: 'hidden' }}>
                 <Editor
                   height="100%"
-                  language={lang.monacoLang}
-                  value={code}
+                  language={lang.id === 'html' ? (activeHtmlTab === 'html' ? 'html' : activeHtmlTab === 'css' ? 'css' : 'javascript') : lang.monacoLang}
+                  value={currentCode}
                   onChange={v => {
                     const newCode = v || ''
-                    setCode(newCode)
-                    localStorage.setItem(`code_${lang.id}`, newCode)
+                    if (lang.id === 'html') {
+                      const updated = { ...htmlFiles, [activeHtmlTab]: newCode }
+                      setHtmlFiles(updated)
+                      localStorage.setItem('code_html_files', JSON.stringify(updated))
+                    } else {
+                      setPrograms(prev => {
+                        const updated = prev.map(p => p.id === activeFileId ? { ...p, code: newCode } : p)
+                        try {
+                          localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+                          localStorage.setItem(`code_${lang.id}`, newCode)
+                        } catch (e) {}
+                        return updated
+                      })
+                    }
                   }}
                   theme={theme === 'light' ? 'vs' : 'vs-dark'}
                   onMount={(editor, monaco) => {
@@ -962,120 +1659,151 @@ export default function App() {
               />
             )}
 
-            {/* UNIFIED TERMINAL PANEL */}
-            <div
-              onClick={handleTerminalClick}
-              style={{
-                ...s.outPanel,
-                flex: isMobile ? (mobileTab === 'terminal' ? '1 1 100%' : '0 0 0') : (maximizedPanel === 'output' ? '1 1 100%' : maximizedPanel === 'editor' ? '0 0 0' : `0 0 ${outputPct}%`),
-                maxWidth: isMobile ? (mobileTab === 'terminal' ? '100%' : '0') : (maximizedPanel === 'output' ? '100%' : maximizedPanel === 'editor' ? '0' : `${outputPct}%`),
-                display: isMobile && mobileTab !== 'terminal' ? 'none' : 'flex',
-                borderLeft: isMobile ? 'none' : '1px solid var(--border)',
-                cursor: 'text',
-              }}
-            >
-              {/* TERMINAL HEADER */}
-              <div style={s.tabs} className="compiler-panel-head">
-                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  🖥️ Terminal
-                </span>
-                {output && output.status !== 'running' && (
-                  <span style={{
-                    marginLeft: 'auto', marginRight: 10, fontSize: 11, padding: '2px 10px', borderRadius: 999, fontWeight: 600,
-                    background: output.status === 'ok' ? '#1a3a25' : '#3d1a1a',
-                    color: output.status === 'ok' ? 'var(--green)' : 'var(--red)'
-                  }}>
-                    {output.label}
-                  </span>
-                )}
-                {!isMobile && (
-                  <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: !output || output.status === 'running' ? 'auto' : 0 }}>
-                    {maximizedPanel === 'output' ? '🗗' : '⛶'}
-                  </button>
-                )}
+            {/* RIGHT PANEL: WEB PREVIEW (HTML) OR UNIFIED TERMINAL PANEL (OTHER LANGUAGES) */}
+            {lang.id === 'html' ? (
+              <div
+                style={{
+                  ...s.outPanel,
+                  flex: isMobile ? (mobileTab === 'terminal' ? '1 1 100%' : '0 0 0') : (maximizedPanel === 'output' ? '1 1 100%' : maximizedPanel === 'editor' ? '0 0 0' : `0 0 ${outputPct}%`),
+                  maxWidth: isMobile ? (mobileTab === 'terminal' ? '100%' : '0') : (maximizedPanel === 'output' ? '100%' : maximizedPanel === 'editor' ? '0' : `${outputPct}%`),
+                  display: isMobile && mobileTab !== 'terminal' ? 'none' : 'flex',
+                  borderLeft: isMobile ? 'none' : '1px solid var(--border)',
+                }}
+              >
+                <WebPreview
+                  files={htmlFiles}
+                  code={currentCode}
+                  theme={theme}
+                  isMobile={isMobile}
+                  maximized={maximizedPanel === 'output'}
+                  onToggleMaximize={() => toggleMaximize('output')}
+                />
               </div>
+            ) : (
+              <div
+                onClick={handleTerminalClick}
+                style={{
+                  ...s.outPanel,
+                  flex: isMobile ? (mobileTab === 'terminal' ? '1 1 100%' : '0 0 0') : (maximizedPanel === 'output' ? '1 1 100%' : maximizedPanel === 'editor' ? '0 0 0' : `0 0 ${outputPct}%`),
+                  maxWidth: isMobile ? (mobileTab === 'terminal' ? '100%' : '0') : (maximizedPanel === 'output' ? '100%' : maximizedPanel === 'editor' ? '0' : `${outputPct}%`),
+                  display: isMobile && mobileTab !== 'terminal' ? 'none' : 'flex',
+                  borderLeft: isMobile ? 'none' : '1px solid var(--border)',
+                  cursor: 'text',
+                }}
+              >
+                {/* TERMINAL HEADER */}
+                <div style={s.tabs} className="compiler-panel-head">
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    🖥️ Terminal {activeFile?.name && <span style={{ fontSize: 11.5, color: 'var(--text2)', fontWeight: 500, fontFamily: 'var(--mono)' }}>({activeFile.name})</span>}
+                  </span>
+                  {output && output.status !== 'running' && (
+                    <span style={{
+                      marginLeft: 'auto', marginRight: 10, fontSize: 11, padding: '2px 10px', borderRadius: 999, fontWeight: 600,
+                      background: output.status === 'ok' ? '#1a3a25' : '#3d1a1a',
+                      color: output.status === 'ok' ? 'var(--green)' : 'var(--red)'
+                    }}>
+                      {output.label}
+                    </span>
+                  )}
+                  {!isMobile && (
+                    <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: !output || output.status === 'running' ? 'auto' : 0 }}>
+                      {maximizedPanel === 'output' ? '🗗' : '⛶'}
+                    </button>
+                  )}
+                </div>
 
-              {/* TERMINAL BODY */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--bg2)' }}>
-                {/* Output content area */}
-                <div style={s.outContent}>
-                  {!output && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
-                  {output?.status === 'running' && !output?.text && <div style={s.ph}>⏳ Executing...</div>}
-                  {output?.text && (
-                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                      <div style={{
-                        ...s.outText,
-                        color: 'var(--green)',
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                        fontSize: isMobile ? 13 : 14,
-                        lineHeight: 1.6,
-                        opacity: running ? 0.7 : 1,
-                        transition: 'opacity 0.15s ease'
-                      }}>
+                {/* TERMINAL BODY */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--bg2)' }}>
+                  {/* Output content area */}
+                  <div style={s.outContent}>
+                    {running && (
+                      <TerminalLoader lang={lang} fileName={activeFile?.name} isMobile={isMobile} />
+                    )}
+                    {!output && !running && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
+                    {output?.text && (
+                      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                         {(() => {
-                          if (output.status === 'error') {
-                            return <div>{formatTerminalOutput(output.text, lang.id, true)}</div>
-                          }
-                          const tv = parseTerminalSession(output.text, inputs, code, lang.id, output.isEofError)
-                          return tv.map((seg, idx) => {
-                            if (seg.type === 'output') {
-                              const nextSeg = tv[idx + 1]
-                              // Render inline if followed by an input box or echoed input value
-                              // so they appear on the same line: "Enter number of terms: 2"
-                              if (nextSeg && (nextSeg.type === 'active-input' || nextSeg.type === 'input')) {
-                                return <span key={idx} style={{ color: 'var(--green)', whiteSpace: 'pre-wrap' }}>{seg.text}</span>
+                          const studentAnalysis = analyzeStudentError(output.text, currentCode, lang.id)
+                          return studentAnalysis ? <StudentErrorCard analysis={studentAnalysis} /> : null
+                        })()}
+                        <div style={{
+                          ...s.outText,
+                          color: 'var(--green)',
+                          whiteSpace: 'pre-wrap',
+                          fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                          fontSize: isMobile ? 13 : 14,
+                          lineHeight: 1.6,
+                          opacity: running ? 0.35 : 1,
+                          transition: 'opacity 0.15s ease'
+                        }}>
+                          {(() => {
+                            if (output.status === 'error') {
+                              return <div>{formatTerminalOutput(output.text, lang.id, true)}</div>
+                            }
+                            const tv = parseTerminalSession(output.text, inputs, currentCode, lang.id, output.isEofError)
+                            return tv.map((seg, idx) => {
+                              if (seg.type === 'output') {
+                                const nextSeg = tv[idx + 1]
+                                if (nextSeg && (nextSeg.type === 'active-input' || nextSeg.type === 'input')) {
+                                  return <span key={idx} style={{ color: 'var(--green)', whiteSpace: 'pre-wrap' }}>{seg.text}</span>
+                                }
+                                if (seg.text === '\n') {
+                                  return <br key={idx} />
+                                }
+                                return <div key={idx} style={{ display: 'inline' }}>{formatTerminalOutput(seg.text, lang.id)}</div>
                               }
-                              // The '\n' pushed after each echoed input — render as a simple line break
-                              if (seg.text === '\n') {
-                                return <br key={idx} />
+                              if (seg.type === 'input') {
+                                return <span key={idx} style={{ color: '#58a6ff', fontWeight: 600 }}>{seg.text}</span>
                               }
-                              return <div key={idx} style={{ display: 'inline' }}>{formatTerminalOutput(seg.text, lang.id)}</div>
-                            }
-                            if (seg.type === 'input') {
-                              // Render echoed input inline (same line as the prompt)
-                              return <span key={idx} style={{ color: '#58a6ff', fontWeight: 600 }}>{seg.text}</span>
-                            }
-                            if (seg.type === 'active-input') {
-                              return (
-                                <TerminalInput
-                                  key={idx}
-                                  onSubmit={(val) => {
-                                    const nextInputs = [...inputs, val]
-                                    setInputs(nextInputs)
-                                    executeCode(nextInputs.join('\n'))
-                                  }}
-                                />
-                              )
-                            }
-                            if (seg.type === 'generic-active-input') {
-                              return (
-                                <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                                  <span style={{ color: 'var(--green)', fontWeight: 700 }}>❯</span>
+                              if (seg.type === 'active-input') {
+                                return (
                                   <TerminalInput
+                                    key={idx}
                                     onSubmit={(val) => {
                                       const nextInputs = [...inputs, val]
                                       setInputs(nextInputs)
                                       executeCode(nextInputs.join('\n'))
                                     }}
                                   />
-                                </div>
-                              )
-                            }
-                            return null
-                          })
-                        })()}
-                      </div>
-                      {output.elapsed && (
-                        <div style={{ marginTop: 16, fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--mono)' }}>
-                          ⏱ {output.elapsed}s · {lang.label}
+                                )
+                              }
+                              if (seg.type === 'generic-active-input') {
+                                return (
+                                  <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                    <span style={{ color: 'var(--green)', fontWeight: 700 }}>❯</span>
+                                    <TerminalInput
+                                      onSubmit={(val) => {
+                                        const nextInputs = [...inputs, val]
+                                        setInputs(nextInputs)
+                                        executeCode(nextInputs.join('\n'))
+                                      }}
+                                    />
+                                  </div>
+                                )
+                              }
+                              return null
+                            })
+                          })()}
                         </div>
-                      )}
-                    </div>
-                  )}
+                        {output.elapsed && (
+                          <div style={{ marginTop: 16, fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--mono)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span>⏱ {output.elapsed}s</span>
+                            <span>·</span>
+                            <span>{lang.label}</span>
+                            {activeFile?.name && (
+                              <>
+                                <span>·</span>
+                                <span style={{ color: '#58a6ff' }}>({activeFile.name})</span>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
           </div>
 
@@ -1113,7 +1841,7 @@ export default function App() {
           {/* CODE CLIPBOARD MODAL */}
           {showClipboard && (
             <ClipboardModal
-              code={code}
+              code={lang.id === 'html' ? JSON.stringify(htmlFiles) : currentCode}
               lang={lang}
               onClose={() => setShowClipboard(false)}
               onReceive={(data) => {
@@ -1123,13 +1851,34 @@ export default function App() {
                   const newUrl = getCompilerUrl(targetLang.id)
                   window.history.pushState({ view: 'compiler', lang: targetLang.id }, '', newUrl)
                 }
-                setCode(data.code)
-                localStorage.setItem(`code_${data.language}`, data.code)
+                if (data.language === 'html') {
+                  try {
+                    const parsed = JSON.parse(data.code)
+                    if (parsed && typeof parsed === 'object' && parsed.html !== undefined) {
+                      setHtmlFiles(parsed)
+                      localStorage.setItem('code_html_files', JSON.stringify(parsed))
+                    } else {
+                      setHtmlFiles(prev => ({ ...prev, html: data.code }))
+                    }
+                  } catch (e) {
+                    setHtmlFiles(prev => ({ ...prev, html: data.code }))
+                  }
+                } else {
+                  setPrograms(prev => {
+                    const updated = prev.map(p => p.id === activeFileId ? { ...p, code: data.code } : p)
+                    localStorage.setItem(`programs_${data.language}`, JSON.stringify(updated))
+                    localStorage.setItem(`code_${data.language}`, data.code)
+                    return updated
+                  })
+                }
                 setOutput(null)
                 setInputs([])
               }}
             />
           )}
+
+
+
 
           <footer style={s.footer}>
             <div><a href="/about.html" style={{ color: 'var(--text2)', textDecoration: 'none' }}>About</a> • <a href="/features.html" style={{ color: 'var(--text2)' }}>Features</a> • <a href="/blog.html" style={{ color: 'var(--text2)' }}>Tutorials</a> • <a href="/contact.html" style={{ color: 'var(--text2)' }}>Contact</a> • <a href="/privacy-policy.html" style={{ color: 'var(--text2)' }}>Privacy Policy</a></div>
@@ -1224,122 +1973,202 @@ const LangLogos = {
   ),
   nodejs: (
     <svg viewBox="0 0 128 128" width="48" height="48">
-      <path fill="#F0DB4F" d="M1.408 63.945v62.304l17.384 9.938 17.04-9.938V82.76h-8.978v37.37l-8.064 4.668-8.062-4.668V68.38z"/>
-      <path fill="#323330" d="M1.408 63.945v62.304l17.384 9.938 17.04-9.938V82.76h-8.978v37.37l-8.064 4.668-8.062-4.668V68.38z" opacity=".05"/>
-      <path fill="#F0DB4F" d="M44.217 126.249l17.041 9.594V82.76h-8.978v37.115l-8.063 4.668z"/>
-      <path fill="#323330" d="M64 1.408C29.64 1.408 1.408 29.64 1.408 64S29.64 126.592 64 126.592 126.592 98.36 126.592 64 98.36 1.408 64 1.408zm0 19.35c24.474 0 44.242 19.768 44.242 44.242 0 24.474-19.768 44.242-44.242 44.242-24.474 0-44.242-19.768-44.242-44.242 0-24.474 19.768-44.242 44.242-44.242z"/>
-      <text x="64" y="87" textAnchor="middle" fill="#323330" fontSize="55" fontWeight="bold" fontFamily="Arial">JS</text>
+      <rect width="128" height="128" rx="20" fill="#F7DF1E" />
+      <path fill="#000000" d="M67.8 84.1c2 3.4 4.7 6.1 9.6 6.1 4.1 0 6.7-2 6.7-4.8 0-3.3-2.7-4.6-7.3-6.5l-2.5-1.1c-7.3-3.1-12.1-7-12.1-15.3 0-7.6 5.8-13.4 14.9-13.4 6.5 0 11.2 2.3 14.6 8.3l-7.7 4.9c-1.7-2.9-3.5-4.1-6.9-4.1-3.2 0-5.3 2-5.3 4.4 0 3.1 2 4.3 6.6 6.3l2.5 1.1c8.6 3.7 13 7.5 13 15.8 0 9-7.1 14.1-16.8 14.1-9.5 0-15.3-4.6-18.1-10.8l8.8-5zm-38.3.7c1.8 3.1 3.5 5.7 7.4 5.7 3.8 0 6.3-1.5 6.3-7.5V49.7h10.4v33.4c0 11.4-6.7 16.5-16.4 16.5-8.2 0-13.1-4.3-15.8-9.8l8.1-5z"/>
     </svg>
   ),
   go: (
-    <svg viewBox="0 0 207.436 78" width="60" height="30" style={{marginBottom:4}}>
-      <path fill="#00ACD7" d="M16.2 24.1c-.4 0-.5-.2-.3-.5l2.1-2.7c.2-.3.7-.5 1.1-.5h35.7c.4 0 .5.3.3.6l-1.7 2.6c-.2.3-.7.6-1 .6z"/>
-      <path fill="#00ACD7" d="M1.1 33.3c-.4 0-.5-.2-.3-.5l2.1-2.7c.2-.3.7-.5 1.1-.5h45.6c.4 0 .6.3.5.6l-.8 2.4c-.1.4-.5.6-.9.6z"/>
-      <path fill="#00ACD7" d="M25.3 42.5c-.4 0-.5-.3-.3-.6l1.4-2.5c.2-.3.6-.6 1-.6h20c.4 0 .6.3.6.7l-.2 2.4c0 .4-.4.7-.7.7z"/>
-      <path fill="#00ACD7" d="M155.1 19.6c-6.3 1.6-10.6 2.8-16.8 4.4-1.5.4-1.6.5-2.9-1-1.5-1.7-2.6-2.8-4.7-3.8-6.3-3.1-12.4-2.2-18.1 1.5-6.8 4.4-10.3 10.9-10.2 19 .1 8 5.6 14.6 13.5 15.7 6.8.9 12.5-1.5 17-6.6.9-1.1 1.7-2.3 2.7-3.7h-19.3c-2.1 0-2.6-1.3-1.9-3 1.3-3.1 3.7-8.3 5.1-10.9.3-.6 1-1.6 2.5-1.6h36.4c-.2 2.7-.2 5.4-.6 8.1-1.1 7.2-3.8 13.8-8.2 19.6-7.2 9.5-16.6 15.4-28.5 17-9.8 1.3-18.9-.6-26.9-6.6-7.4-5.6-11.6-13-12.7-22.2-1.3-10.9 1.9-20.7 8.5-29.3C101.1 9.3 111.1 3.6 123.1 2c9.8-1.3 19.1.3 27.3 6.4 5.2 3.9 8.9 9 11.1 15.1.5.6.2 1-.4 1.1z"/>
-      <path fill="#00ACD7" d="M186.2 64.1c-9.1-.2-17.4-2.8-24.4-8.8-5.9-5.1-9.6-11.6-10.8-19.3-1.8-11.3 1.3-21.3 8.1-30.1 7.3-9.3 16.7-14.6 28.3-16.7 9.9-1.8 19.6-.8 28.5 4.5 8.1 4.9 13.2 11.8 14.9 21.1 2.3 12.5-1 23-9.2 32-5.9 6.5-13.1 10.6-21.5 12.6-4.6 1.1-9.3 1.5-13.9 1.7zm23.8-40.4c-.1-1.3-.1-2.3-.3-3.3-1.8-9.9-10.9-15.5-20.4-13.3-9.3 2.1-15.3 8-17.5 17.4-1.8 7.8 2 15.7 9.2 18.9 5.5 2.4 11 2.1 16.3-.6 7.9-4.1 12.2-10.5 12.7-19.1z"/>
-    </svg>
-  ),
-  rust: (
     <svg viewBox="0 0 128 128" width="48" height="48">
-      <path d="M62.27 5.6L30.4 22.16 6.88 42.84 2.5 70.32l13.9 24.26 26.42 17.03 27.06 5.35 24.56-8.66 17.86-20.8 5.13-25.63-7.9-24.04-21.52-19.42zM64.98 3.78l3.79 2.06L56.2 8.08z"/>
-      <path fill="#CE422B" d="M64 9.15l38.68 22.3v44.59L64 118.35 25.32 76.04V31.45z"/>
-      <path fill="#fff" d="M86.64 46.22c0-5.45-3.74-8.16-10.54-8.16H60.87v28.98h6.33V57.4h5.35c2.07 0 3.22.8 3.78 2.94.69 2.55.72 4.87 1.38 6.7h6.33c-.84-2.17-.95-4.87-1.64-7.55-.57-2.25-1.61-3.93-3.45-4.73 2.91-1.22 4.69-3.62 4.69-7.54zm-11.3 5.74h-8.14v-7.97h8.14c2.79 0 4.38 1.3 4.38 3.94 0 2.73-1.6 4.03-4.38 4.03z"/>
-      <path fill="#fff" d="M51.59 38.06H42.3v28.98h6.33V55.8h3.3c7.49 0 12.19-3.39 12.19-9.13 0-5.47-3.82-8.61-12.53-8.61zm-.46 12.28H48.63V43.53h2.5c4.15 0 5.8 1.1 5.8 3.44 0 2.23-1.65 3.37-5.8 3.37z"/>
-      <path fill="#fff" d="M91.6 65.39l-6.29-9.35c3.76-1.14 6.02-4.03 6.02-8.4 0-5.9-4.07-9.57-11.38-9.57H65.86v28.98h6.33V57.17h3.71c.46 0 .9-.03 1.34-.08l5.56 8.3z"/>
+      <path fill="#00ACD7" d="M10 52c-.4 0-.6-.3-.3-.6l2.5-3.3c.2-.4.8-.6 1.3-.6h38c.5 0 .6.3.4.7l-2 3.2c-.2.4-.8.6-1.2.6H10zm-6 11c-.4 0-.6-.3-.3-.6l2.5-3.3c.2-.4.8-.6 1.3-.6h48c.5 0 .7.3.6.7l-.8 3c-.1.4-.6.8-1 .8H4zm26 11c-.4 0-.6-.3-.3-.7l1.7-3.1c.2-.4.7-.7 1.2-.7h21c.5 0 .7.3.7.8l-.3 3c0 .4-.4.8-.9.8H30zm54-32c-6.8 1.7-11.4 3-18 4.7-1.6.4-1.7.5-3.1-1.1-1.6-1.8-2.8-3-5.1-4.1-6.8-3.3-13.3-2.3-19.4 1.6-7.3 4.7-11 11.7-10.9 20.3.1 8.5 6 15.6 14.5 16.8 7.3 1 13.4-1.6 18.2-7 1-1.2 1.8-2.5 2.9-3.9H59.5c-2.2 0-2.8-1.4-2-3.2 1.4-3.3 3.9-8.9 5.4-11.7.3-.7 1.1-1.7 2.7-1.7h39c-.2 2.9-.2 5.8-.7 8.7-1.2 7.7-4.1 14.8-8.8 21-7.7 10.2-17.8 16.5-30.5 18.2-10.5 1.4-20.2-.7-28.8-7.1-7.9-6-12.4-13.9-13.6-23.7-1.4-11.7 2-22.2 9.1-31.4C41 24.3 51.7 18.2 64.5 16.5c10.5-1.4 20.5.3 29.3 6.9 5.6 4.2 9.5 9.6 11.9 16.1.5.7.2 1.1-.5 1.2z"/>
     </svg>
   ),
   php: (
     <svg viewBox="0 0 128 128" width="48" height="48">
-      <path fill="#6181B6" d="M64 33.039C30.26 33.039 2.906 47.401 2.906 64.971 2.906 82.54 30.26 96.9 64 96.9c33.74 0 61.094-14.359 61.094-31.929 0-17.569-27.354-31.931-61.094-31.931z"/>
-      <path fill="#fff" d="M85.51 64.875l2.588-12.802H80.3l-2.588 12.802H85.51zM43.1 52.072l-2.588 12.803H47.9l2.588-12.803H43.1zM51.812 64.875l2.588-12.802H46.6l-2.588 12.802H51.812zM58.6 64.875H65.4l2.588-12.802H61.188L58.6 64.875z"/>
+      <ellipse cx="64" cy="64" rx="58" ry="36" fill="#777BB4" />
+      <path fill="#232531" d="M34 50h14c6 0 10.5 3 9.2 8.5-1.2 5.5-6.5 8.5-12.5 8.5h-5.2l-2.5 11H26l9-28zm7.8 11.2h4.5c3.2 0 5.2-1.2 5.8-3.5.5-2.2-.9-3.7-4.2-3.7h-4.8l-1.3 7.2zM56.5 50h8.2l-1.8 8h7.5c6.5 0 9.5 3.2 8.2 8.8l-2.5 11.2h-8.8l2.2-10c.5-2.2-.5-3.5-2.8-3.5h-5.2l-3 13.5H47l9-28zM78.5 50h14c6 0 10.5 3 9.2 8.5-1.2 5.5-6.5 8.5-12.5 8.5H84l-2.5 11H70.5l8-28zm7.8 11.2h4.5c3.2 0 5.2-1.2 5.8-3.5.5-2.2-.9-3.7-4.2-3.7h-4.8l-1.3 7.2z"/>
     </svg>
   ),
   ruby: (
     <svg viewBox="0 0 128 128" width="48" height="48">
-      <linearGradient id="rb-a" x1="84.75" y1="111.15" x2="59.25" y2="66.26" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stopColor="#FB7655"/><stop offset="1" stopColor="#E82D09"/>
-      </linearGradient>
-      <linearGradient id="rb-b" x1="116.52" y1="55.98" x2="20.78" y2="115.63" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stopColor="#FB7655"/><stop offset="1" stopColor="#E82D09"/>
-      </linearGradient>
-      <path fill="url(#rb-a)" d="M97.078 83.214L28.34 124l78.914-6.408 15.236-56.514z"/>
-      <path fill="url(#rb-b)" d="M124.873 67.178L118.03 7.492l-43.795 40.47 50.638 19.216z"/>
-      <path fill="#E82D09" d="M124.297 66.947l-2.844-28.815-23.124 27.837z"/>
-      <path fill="#8B1A0E" d="M98.329 65.969l-14.237-32.87-37.677 29.328z"/>
-      <path fill="#FB7655" d="M3.802 100.898l10.239-48.178 56.988 14.064z"/>
-      <path fill="#E82D09" d="M3.802 100.898l-1.186-40.394 11.319-7.784z"/>
-      <path fill="#8B1A0E" d="M2.616 60.504l19.063-16.015L3.802 100.898z"/>
-      <path fill="#FB7655" d="M21.679 44.489l61.73-12.534-29.012-21.483z"/>
-      <path fill="#E82D09" d="M21.679 44.489L54.397 10.472 21.679 44.489z"/>
-      <path fill="#E82D09" d="M54.397 10.472l29.012 21.483 35.164-16.8z"/>
-      <path fill="#8B1A0E" d="M118.573 15.155L54.397 10.472l64.176 4.683z"/>
+      <path fill="#CC342D" d="M18 44l22-24h48l22 24-46 66z"/>
+      <path fill="#E03C35" d="M40 20h48L64 44z"/>
+      <path fill="#F04E47" d="M40 20L18 44h26z"/>
+      <path fill="#F86A64" d="M88 20l22 24H84z"/>
+      <path fill="#B82B25" d="M18 44l46 66V44z"/>
+      <path fill="#A5231E" d="M110 44L64 110V44z"/>
+      <path fill="#E03C35" d="M44 44l20 66 20-66z"/>
+      <path fill="#FFFFFF" opacity="0.35" d="M40 20h48l-5 7H45z"/>
+    </svg>
+  ),
+  rust: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <g fill="#CE412B">
+        <path d="M117.8 54.7c-.4-1.2-1.3-2.1-2.5-2.5l-6.8-2.2-.3-7.2c0-1.3-.7-2.4-1.9-3l-6.1-3.7-2.7-6.7c-.5-1.2-1.6-1.9-2.9-1.9l-7.1.3-4.8-5.3c-.9-.9-2.2-1.3-3.4-.9l-6.9 2-6.4-3.3c-1.1-.6-2.5-.5-3.6.2L60 22.8l-7.1-1.3c-1.2-.2-2.5.3-3.2 1.3L44.8 28l-7.1.4c-1.3.1-2.4.9-2.9 2.1l-3.3 6.4-6.6 2.7c-1.2.5-2 1.6-2.1 2.9l-.5 7.1-5.7 4.2c-1 .8-1.5 2-1.3 3.3l1.1 7.1-4.4 5.6c-.8 1-1 2.3-.6 3.5l2.7 6.6-2.9 6.6c-.5 1.2-.3 2.5.5 3.5l4.4 5.6-1.1 7.1c-.2 1.3.3 2.5 1.3 3.3l5.7 4.2.5 7.1c.1 1.3.9 2.4 2.1 2.9l6.6 2.7 3.3 6.4c.5 1.2 1.6 2 2.9 2.1l7.1.4 4.9 5.2c.7 1 2 1.5 3.2 1.3l7.1-1.3 5.4 4.7c1.1.7 2.5.8 3.6.2l6.4-3.3 6.9 2c1.2.4 2.5 0 3.4-.9l4.8-5.3 7.1.3c1.3 0 2.4-.7 2.9-1.9l2.7-6.7 6.1-3.7c1.2-.6 1.9-1.7 1.9-3l.3-7.2 6.8-2.2c1.2-.4 2.1-1.3 2.5-2.5l2-6.9-2-6.9zM64 96c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"/>
+      </g>
+    </svg>
+  ),
+  html: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#E44D26" d="M19.2 115.6L9.6 8h108.8l-9.6 107.6L64 120.4z"/>
+      <path fill="#F16529" d="M64 112.5l36.5-10.1 8.2-91.8H64z"/>
+      <path fill="#EBEBEB" d="M64 54.2H46.4l-1.2-13.8H64V26.8H31.1l3.6 40.9H64zm0 35.8l-.2.1-16.4-4.4-1-11.8H32.7l2 23.2 29.1 8.1.2-.1z"/>
+      <path fill="#fff" d="M63.9 54.2v13.6h16.4l-1.5 17.3-14.9 4v13.9l29-8.1 3.5-39.7H63.9zm0-27.4v13.6h33.8l1.2-13.6z"/>
+    </svg>
+  ),
+  css: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#1572B6" d="M19.2 115.6L9.6 8h108.8l-9.6 107.6L64 120.4z"/>
+      <path fill="#33A9DC" d="M64 112.5l36.5-10.1 8.2-91.8H64z"/>
+      <path fill="#EBEBEB" d="M64 54.2H46.4l-1.2-13.8H64V26.8H31.1l3.6 40.9H64zm0 35.8l-.2.1-16.4-4.4-1-11.8H32.7l2 23.2 29.1 8.1.2-.1z"/>
+      <path fill="#fff" d="M63.9 54.2v13.6h16.4l-1.5 17.3-14.9 4v13.9l29-8.1 3.5-39.7H63.9zm0-27.4v13.6h33.8l1.2-13.6z"/>
+    </svg>
+  ),
+  react: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <g fill="none" stroke="#61DAFB" strokeWidth="6">
+        <ellipse cx="64" cy="64" rx="54" ry="20"/>
+        <ellipse cx="64" cy="64" rx="54" ry="20" transform="rotate(60 64 64)"/>
+        <ellipse cx="64" cy="64" rx="54" ry="20" transform="rotate(120 64 64)"/>
+        <circle cx="64" cy="64" r="10" fill="#61DAFB"/>
+      </g>
+    </svg>
+  ),
+  nextjs: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <circle cx="64" cy="64" r="60" fill="#000"/>
+      <path fill="#fff" d="M86.5 96.5L46.2 45h-7.7v38h7v-25.8l35.8 45.8c1.7-2.1 3.4-4.4 5.2-6.5zm-5.7-41.5h7.2v23.2l-7.2-9.3z"/>
+    </svg>
+  ),
+  vue: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#42B883" d="M78.8 11.2h28.4L64 85.8 20.8 11.2h28.4L64 37z"/>
+      <path fill="#35495E" d="M49.2 11.2L64 37l14.8-25.8H49.2z"/>
+    </svg>
+  ),
+  angular: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#E23237" d="M64 8.5L9.6 28l8.3 71.9L64 119.5l46.1-19.6 8.3-71.9z"/>
+      <path fill="#B52E31" d="M64 8.5v111l46.1-19.6 8.3-71.9z"/>
+      <path fill="#fff" d="M64 28.5L38.4 86h11.2l5.1-12.8h18.6L78.4 86h11.2zm6.7 35.8H57.3L64 47.4z"/>
+    </svg>
+  ),
+  django: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#092E20" d="M57.6 11.2h12.8v64c0 17.6-8.8 26.4-24.8 26.4-4.8 0-8.8-.8-12-2.4l4-10.4c2.4 1.2 4.8 1.6 7.6 1.6 8 0 12.4-4 12.4-14V11.2zm-28 32h12.8v56.8H29.6V43.2zm6.4-24c4.4 0 8 3.6 8 8s-3.6 8-8 8-8-3.6-8-8 3.6-8 8-8z"/>
+    </svg>
+  ),
+  flask: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#000" d="M64 12c-2.2 0-4 1.8-4 4v20.4L33.7 82.9C30.2 89 34.6 96.5 41.7 96.5h44.6c7.1 0 11.5-7.5 8-13.6L68 36.4V16c0-2.2-1.8-4-4-4zm0 32l20.8 36H43.2L64 44z"/>
+    </svg>
+  ),
+  express: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <rect width="128" height="128" rx="20" fill="#333"/>
+      <text x="64" y="78" fill="#fff" fontSize="38" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">ex</text>
+    </svg>
+  ),
+  mysql: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#00758F" d="M64 20c-26.5 0-48 17.9-48 40 0 17.5 13.5 32.3 32.5 37.7v10.3l15.5-10c26.5 0 48-17.9 48-40s-21.5-38-48-38zm-6.5 54c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10z"/>
+    </svg>
+  ),
+  mongodb: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#47A248" d="M64 6.4c-4.2 16.8-29.2 39.4-29.2 64 0 24.6 25 45.2 29.2 51.2 4.2-6 29.2-26.6 29.2-51.2 0-24.6-25-47.2-29.2-64z"/>
+      <path fill="#4BA148" d="M64 121.6c-2.3-5-29.2-25.6-29.2-51.2 0-24.6 25-47.2 29.2-64v115.2z"/>
+    </svg>
+  ),
+  graphql: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#E10098" d="M64 11.2L16.2 38.8v55.4L64 121.8l47.8-27.6V38.8zm0 13.8l35.8 20.7L64 66.4 28.2 45.7zm-39.8 27.6l35.8 20.7v41.4L24.2 94zm47.8 62.1V73.3l35.8-20.7v41.4z"/>
     </svg>
   ),
   csharp: (
     <svg viewBox="0 0 128 128" width="48" height="48">
       <path fill="#9B4F96" d="M115.4 30.7L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.4 1 3.5l106.8-62c-.6-1.2-1.5-2.1-2.4-2.7z"/>
       <path fill="#68217A" d="M10.7 95.3c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c0-.9-.1-1.9-.6-2.8l-106.6 62z"/>
-      <path fill="#fff" d="M85.3 76.1C81.1 83.5 73.1 88.5 64 88.5c-13.5 0-24.5-11-24.5-24.5s11-24.5 24.5-24.5c9.1 0 17.1 5 21.3 12.5l13-7.5c-6.8-11.9-19.6-20-34.3-20-21.8 0-39.5 17.7-39.5 39.5s17.7 39.5 39.5 39.5c14.6 0 27.4-8 34.2-19.8l-13-7.6zM97 66.5v-5H92v5h-5v5h5v5h5v-5h5v-5zm13 0v-5h-5v5h-5v5h5v5h5v-5h5v-5z"/>
+      <path fill="#fff" d="M85.3 76.1C81.1 83.5 73.1 88.5 64 88.5c-13.5 0-24.5-11-24.5-24.5s11-24.5 24.5-24.5c9.1 0 17.1 5 21.3 12.5l13-7.5c-6.8-11.9-19.6-20-34.3-20-21.8 0-39.5 17.7-39.5 39.5s17.7 39.5 39.5 39.5c14.6 0 27.4-8 34.2-19.8l-13-7.6z"/>
+    </svg>
+  ),
+  git: (
+    <svg viewBox="0 0 128 128" width="48" height="48">
+      <path fill="#F05032" d="M123.6 57.5L70.5 4.4c-4.5-4.5-11.9-4.5-16.4 0L4.4 54.1c-4.5 4.5-4.5 11.9 0 16.4l53.1 53.1c4.5 4.5 11.9 4.5 16.4 0l49.7-49.7c4.5-4.5 4.5-11.9 0-16.4zM72 87.7v-1.1c-2.4-1.2-4.1-3.6-4.4-6.4l-11.3-4.7c-1.3 1.9-3.4 3.1-5.8 3.1-4 0-7.2-3.2-7.2-7.2s3.2-7.2 7.2-7.2c2.6 0 4.9 1.4 6.1 3.5l11-4.6c.1-2.9 2-5.3 4.5-6.3V38.2c-1.8-1.1-3.1-3.1-3.1-5.4 0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5c0 2.3-1.2 4.3-3.1 5.4v18.7c2.5 1 4.3 3.4 4.5 6.3l12 5c1.3-1.8 3.4-3 5.7-3 4 0 7.2 3.2 7.2 7.2s-3.2 7.2-7.2 7.2c-2.5 0-4.6-1.3-5.9-3.2l-12.2-5.1c-.5 2.8-2.3 5-4.8 6.1v8.4c1.8 1.1 3.1 3.1 3.1 5.4 0 3.6-2.9 6.5-6.5 6.5s-6.5-2.9-6.5-6.5c.1-2.3 1.4-4.3 3.2-5.4z"/>
     </svg>
   ),
 }
 
 // ── Language metadata for the homepage cards ───────────────────────────
 const LANG_CARDS = [
-  { id: 'python3',  label: 'Python 3',   accentColor: '#3776AB', bgGlow: 'rgba(55,118,171,0.18)', desc: 'Beginner-friendly, versatile' },
-  { id: 'java',     label: 'Java',       accentColor: '#f0a500', bgGlow: 'rgba(240,165,0,0.15)',  desc: 'Object-oriented, enterprise' },
-  { id: 'c',        label: 'C',          accentColor: '#659AD3', bgGlow: 'rgba(101,154,211,0.18)', desc: 'Systems, low-level, fast' },
-  { id: 'cpp17',    label: 'C++',        accentColor: '#9C033A', bgGlow: 'rgba(156,3,58,0.18)',   desc: 'High-performance, STL' },
-  { id: 'nodejs',   label: 'JavaScript', accentColor: '#F0DB4F', bgGlow: 'rgba(240,219,79,0.15)', desc: 'Web, async, Node.js' },
-  { id: 'go',       label: 'Go',         accentColor: '#00ACD7', bgGlow: 'rgba(0,172,215,0.18)', desc: 'Concurrency, cloud-native' },
-  { id: 'rust',     label: 'Rust',       accentColor: '#CE422B', bgGlow: 'rgba(206,66,43,0.18)',  desc: 'Memory-safe, blazing fast' },
-  { id: 'php',      label: 'PHP',        accentColor: '#8892BF', bgGlow: 'rgba(136,146,191,0.18)', desc: 'Server-side, web scripting' },
-  { id: 'ruby',     label: 'Ruby',       accentColor: '#E82D09', bgGlow: 'rgba(232,45,9,0.18)',   desc: 'Elegant, Rails-ready' },
-  { id: 'csharp',   label: 'C#',         accentColor: '#9B4F96', bgGlow: 'rgba(155,79,150,0.18)', desc: '.NET, Unity, enterprise' },
+  { id: 'python3',  label: 'Python 3 Compiler',    accentColor: '#3776AB', bgGlow: 'rgba(55,118,171,0.18)' },
+  { id: 'java',     label: 'Java Compiler',          accentColor: '#f0a500', bgGlow: 'rgba(240,165,0,0.15)' },
+  { id: 'html',     label: 'HTML/CSS/JS Editor',     accentColor: '#E44D26', bgGlow: 'rgba(228,77,38,0.18)', badge: 'Live Preview' },
+  { id: 'c',        label: 'C Compiler',             accentColor: '#659AD3', bgGlow: 'rgba(101,154,211,0.18)' },
+  { id: 'cpp17',    label: 'C++ Compiler',           accentColor: '#9C033A', bgGlow: 'rgba(156,3,58,0.18)' },
+  { id: 'nodejs',   label: 'JavaScript Compiler',    accentColor: '#F0DB4F', bgGlow: 'rgba(240,219,79,0.15)' },
+  { id: 'csharp',   label: 'C# Compiler',            accentColor: '#9B4F96', bgGlow: 'rgba(155,79,150,0.18)' },
+  { id: 'go',       label: 'Go Compiler',            accentColor: '#00ACD7', bgGlow: 'rgba(0,172,215,0.18)' },
+  { id: 'rust',     label: 'Rust Compiler',          accentColor: '#CE412B', bgGlow: 'rgba(206,65,43,0.18)' },
+  { id: 'php',      label: 'PHP Compiler',           accentColor: '#8892BF', bgGlow: 'rgba(136,146,191,0.18)' },
+  { id: 'ruby',     label: 'Ruby Compiler',          accentColor: '#E82D09', bgGlow: 'rgba(232,45,9,0.18)' },
 ]
 
-// ── Tutorial guide list ───────────────────────────────────────────────
+// ── Complete Categorized Tutorials Catalog (24 Guides) ──────────────────
 const TUTORIAL_GUIDES = [
-  { path: '/blog-python.html',     id: 'python3',  title: 'Python 3',   color: '#3776AB', desc: 'From variables to OOP — the most beginner-friendly guide to Python 3 with 15 in-depth lessons.', badge: 'Most Popular' },
-  { path: '/blog-java.html',       id: 'java',     title: 'Java',       color: '#f0a500', desc: 'Classes, inheritance, exceptions — everything you need to master Java from scratch to advanced.' },
-  { path: '/blog-c.html',          id: 'c',        title: 'C',          color: '#659AD3', desc: 'Pointers, memory, structs — the foundation of systems programming explained step by step.' },
-  { path: '/blog-cpp.html',        id: 'cpp17',    title: 'C++',        color: '#9C033A', desc: 'STL, templates, modern C++17 — high-performance programming with in-depth 15-lesson guide.' },
-  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript', color: '#F0DB4F', desc: 'Promises, async/await, and ES6+ features — master JavaScript for web and Node.js development.' },
-  { path: '/blog-go.html',         id: 'go',       title: 'Go',         color: '#00ACD7', desc: 'Goroutines, channels, and idiomatic Go — cloud-native concurrency made simple.' },
-  { path: '/blog-rust.html',       id: 'rust',     title: 'Rust',       color: '#CE422B', desc: 'Ownership, borrowing, and memory safety — no garbage collector, maximum performance.' },
-  { path: '/blog-php.html',        id: 'php',      title: 'PHP',        color: '#8892BF', desc: 'Server-side scripting, arrays, OOP, and web development — PHP from beginner to advanced.' },
-  { path: '/blog-ruby.html',       id: 'ruby',     title: 'Ruby',       color: '#E82D09', desc: 'Elegant blocks, iterators, and OOP design — Ruby programming the beautiful way.' },
+  // Core Languages (10)
+  { path: '/blog-python.html',     id: 'python3',  title: 'Python Tutorial',     category: 'core', color: '#3776AB', badge: 'Popular' },
+  { path: '/blog-java.html',       id: 'java',     title: 'Java Tutorial',       category: 'core', color: '#f0a500' },
+  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript Tutorial', category: 'core', color: '#F0DB4F', badge: 'Hot' },
+  { path: '/blog-c.html',          id: 'c',        title: 'C Tutorial',          category: 'core', color: '#659AD3' },
+  { path: '/blog-cpp.html',        id: 'cpp17',    title: 'C++ Tutorial',        category: 'core', color: '#9C033A' },
+  { path: '/blog-csharp.html',     id: 'csharp',   title: 'C# Tutorial',         category: 'core', color: '#9B4F96' },
+  { path: '/blog-go.html',         id: 'go',       title: 'Go Tutorial',         category: 'core', color: '#00ACD7' },
+  { path: '/blog-rust.html',       id: 'rust',     title: 'Rust Tutorial',       category: 'core', color: '#CE412B' },
+  { path: '/blog-php.html',        id: 'php',      title: 'PHP Tutorial',        category: 'core', color: '#8892BF' },
+  { path: '/blog-ruby.html',       id: 'ruby',     title: 'Ruby Tutorial',       category: 'core', color: '#E82D09' },
+
+  // Web & Frameworks (10)
+  { path: '/blog-html.html',       id: 'html',     title: 'HTML5 Tutorial',      category: 'web',  color: '#E44D26' },
+  { path: '/blog-css.html',        id: 'css',      title: 'CSS3 Tutorial',       category: 'web',  color: '#1572B6' },
+  { path: '/blog-react.html',      id: 'react',    title: 'React Tutorial',      category: 'web',  color: '#61DAFB', badge: 'Popular' },
+  { path: '/blog-nextjs.html',     id: 'nextjs',   title: 'Next.js Tutorial',    category: 'web',  color: '#000000', badge: 'New' },
+  { path: '/blog-angular.html',    id: 'angular',  title: 'Angular Tutorial',    category: 'web',  color: '#E23237' },
+  { path: '/blog-vue.html',        id: 'vue',      title: 'Vue.js Tutorial',     category: 'web',  color: '#42B883' },
+  { path: '/blog-nodejs.html',     id: 'nodejs',   title: 'Node.js Tutorial',    category: 'web',  color: '#68A063' },
+  { path: '/blog-express.html',    id: 'express',  title: 'Express.js Tutorial', category: 'web',  color: '#666666' },
+  { path: '/blog-django.html',     id: 'django',   title: 'Django Tutorial',     category: 'web',  color: '#092E20' },
+  { path: '/blog-flask.html',      id: 'flask',    title: 'Flask Tutorial',      category: 'web',  color: '#444444' },
+
+  // Databases & Tools (4)
+  { path: '/blog-mysql.html',      id: 'mysql',    title: 'MySQL Tutorial',      category: 'db',   color: '#00758F' },
+  { path: '/blog-mongodb.html',    id: 'mongodb',  title: 'MongoDB Tutorial',    category: 'db',   color: '#47A248' },
+  { path: '/blog-graphql.html',    id: 'graphql',  title: 'GraphQL Tutorial',    category: 'db',   color: '#E10098' },
+  { path: '/blog-git.html',        id: 'git',      title: 'Git & GitHub Guide',  category: 'tools',color: '#F05032' },
 ]
 
 function HomePage({ selectLanguage, theme, setTheme }) {
+  const [tutCategory, setTutCategory] = useState('all')
+
+  const displayedTutorials = tutCategory === 'all'
+    ? TUTORIAL_GUIDES
+    : TUTORIAL_GUIDES.filter(g => tutCategory === 'db_tools' ? (g.category === 'db' || g.category === 'tools') : g.category === tutCategory)
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* HERO HEADER */}
-      <header style={{
-        background: 'var(--bg2)',
-        textAlign: 'center',
-        padding: '40px 20px',
-        position: 'relative'
-      }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        </div>
-      </header>
-
       {/* MAIN CONTENT */}
-      <main style={{ flex: 1, padding: '60px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+      <main style={{ flex: 1, padding: '40px 20px 80px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         {/* CHOOSE LANGUAGE SECTION */}
-        <section style={{ marginBottom: 80 }}>
-          <div style={{ marginBottom: 32 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#58a6ff', textTransform: 'uppercase', marginBottom: 10 }}>⚡ Online Compiler</p>
+        <section style={{ marginBottom: 70 }}>
+          <div style={{ marginBottom: 28 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#58a6ff', textTransform: 'uppercase', marginBottom: 8 }}>⚡ Online Compiler &amp; Web Editor</p>
             <h2 style={{
-              fontSize: 'clamp(24px,4vw,38px)',
+              fontSize: 'clamp(24px,4vw,36px)',
               fontWeight: 800,
-              marginBottom: 12,
+              marginBottom: 10,
               color: 'var(--text)',
               letterSpacing: '-0.5px'
             }}>
-              Choose Your Language
+              Choose Your Compiler
             </h2>
             <p style={{
               color: 'var(--text2)',
@@ -1347,126 +2176,284 @@ function HomePage({ selectLanguage, theme, setTheme }) {
               margin: 0,
               maxWidth: '600px'
             }}>
-              10 languages supported — click any card to open the editor instantly. No login, no setup, always free.
+              11 free online compilers &amp; live web editors — click any compiler to run code instantly in your browser.
             </p>
           </div>
 
-          {/* LANGUAGE GRID — Real SVG Logos */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-            gap: 18,
-            marginBottom: 20
-          }}>
-            {LANG_CARDS.map(lang => (
-              <button
-                key={lang.id}
-                onClick={() => selectLanguage(lang.id)}
-                style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
-                  padding: '28px 16px 22px',
-                  background: 'var(--bg2)',
-                  border: `1px solid var(--border)`,
-                  borderRadius: 18,
-                  cursor: 'pointer',
-                  transition: 'all 0.28s cubic-bezier(0.4,0,0.2,1)',
-                  fontSize: 14, color: 'var(--text)', fontWeight: 700,
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.22)',
-                  position: 'relative', overflow: 'hidden',
-                  textAlign: 'center'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = lang.bgGlow
-                  e.currentTarget.style.borderColor = lang.accentColor
-                  e.currentTarget.style.transform = 'translateY(-9px) scale(1.03)'
-                  e.currentTarget.style.boxShadow = `0 18px 38px ${lang.accentColor}33`
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'var(--bg2)'
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                  e.currentTarget.style.boxShadow = '0 2px 10px rgba(0,0,0,0.22)'
-                }}
-              >
-                {/* top accent line */}
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${lang.accentColor}, transparent)`, opacity: 0.7 }} />
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 64, height: 64 }}>
-                  {LangLogos[lang.id] || <span style={{ fontSize: 40 }}>💻</span>}
-                </div>
-                <span style={{ fontSize: 14, fontWeight: 800, letterSpacing: 0.2, color: 'var(--text)' }}>{lang.label}</span>
-                <span style={{ fontSize: 11, color: 'var(--text3)', fontWeight: 500 }}>{lang.desc}</span>
-              </button>
-            ))}
+          {/* LANGUAGE GRID — Responsive 3-Column Grid */}
+          <div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: 16,
+            }}>
+              {LANG_CARDS.map(lang => (
+                <button
+                  key={lang.id}
+                  onClick={() => selectLanguage(lang.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px 22px',
+                    minHeight: '62px',
+                    background: 'var(--bg2)',
+                    border: '1px solid var(--border)',
+                    borderLeft: `4px solid ${lang.accentColor}`,
+                    borderRadius: 10,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                    textAlign: 'left',
+                    width: '100%',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = lang.bgGlow
+                    e.currentTarget.style.borderColor = lang.accentColor
+                    e.currentTarget.style.transform = 'translateX(4px)'
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.08)'
+                    const arrow = e.currentTarget.querySelector('.programiz-arrow')
+                    if (arrow) {
+                      arrow.style.transform = 'translateX(3px)'
+                      arrow.style.opacity = '1'
+                      arrow.style.color = lang.accentColor
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'var(--bg2)'
+                    e.currentTarget.style.borderColor = 'var(--border)'
+                    e.currentTarget.style.borderLeftColor = lang.accentColor
+                    e.currentTarget.style.transform = 'translateX(0)'
+                    e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'
+                    const arrow = e.currentTarget.querySelector('.programiz-arrow')
+                    if (arrow) {
+                      arrow.style.transform = 'translateX(0)'
+                      arrow.style.opacity = '0.45'
+                      arrow.style.color = 'var(--text2)'
+                    }
+                  }}
+                >
+                  {/* Left: Logo + Compiler Label */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+                    <div style={{
+                      width: 30, height: 30, flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <div style={{ transform: 'scale(0.62)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {LangLogos[lang.id] || <span style={{ fontSize: 20 }}>💻</span>}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{
+                        fontSize: 15.5,
+                        fontWeight: 700,
+                        color: 'var(--text)',
+                        whiteSpace: 'nowrap',
+                        letterSpacing: '-0.2px',
+                      }}>
+                        {lang.label}
+                      </span>
+                      {lang.badge && (
+                        <span style={{
+                          fontSize: 9.5,
+                          fontWeight: 700,
+                          letterSpacing: 0.6,
+                          textTransform: 'uppercase',
+                          color: '#3fb950',
+                          background: 'rgba(63,185,80,0.12)',
+                          border: '1px solid rgba(63,185,80,0.3)',
+                          borderRadius: 999,
+                          padding: '2px 7px',
+                          flexShrink: 0,
+                        }}>
+                          {lang.badge}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right: Thin Minimal Arrow */}
+                  <svg
+                    className="programiz-arrow"
+                    width="17" height="17" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    style={{
+                      flexShrink: 0,
+                      opacity: 0.45,
+                      color: 'var(--text2)',
+                      transition: 'all 0.2s ease',
+                      marginLeft: 10,
+                    }}
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
-
-
-        {/* ── TUTORIALS GRID ── */}
-        <section style={{ marginBottom: 96 }}>
-          <div style={{ marginBottom: 40 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#3fb950', textTransform: 'uppercase', marginBottom: 10 }}>📚 Learn Programming</p>
-            <h2 style={{ fontSize: 'clamp(24px,4vw,38px)', fontWeight: 800, color: 'var(--text)', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
-              Free Step-by-Step Tutorials
-            </h2>
-            <p style={{ color: 'var(--text2)', fontSize: 15, margin: 0, maxWidth: 560 }}>
-              Each guide has <strong style={{ color: 'var(--text)' }}>15 in-depth lessons</strong> — structured with deep-dive explanations, code examples, and live runnable demos.
-            </p>
+        {/* ── TUTORIALS GRID WITH CATEGORY FILTER TABS ── */}
+        <section style={{ marginBottom: 80 }}>
+          <div style={{ marginBottom: 20, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#3fb950', textTransform: 'uppercase', marginBottom: 8 }}>📚 Learn Programming</p>
+              <h2 style={{ fontSize: 'clamp(24px,4vw,36px)', fontWeight: 800, color: 'var(--text)', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
+                Free Step-by-Step Tutorials
+              </h2>
+              <p style={{ color: 'var(--text2)', fontSize: 15, margin: 0, maxWidth: 580 }}>
+                Comprehensive structured lessons with code snippets, diagrams, and live runnable examples.
+              </p>
+            </div>
+            <a href="/blog.html" style={{ fontSize: 13.5, fontWeight: 700, color: '#58a6ff', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
+              View all tutorials →
+            </a>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 22 }}>
-            {TUTORIAL_GUIDES.map(guide => (
+          {/* Interactive Category Filter Pills */}
+          <div style={{
+            display: 'flex',
+            gap: 10,
+            marginBottom: 24,
+            overflowX: 'auto',
+            paddingBottom: 4,
+            flexWrap: 'wrap',
+          }}>
+            {[
+              { key: 'all', label: `⭐ All Tutorials (${TUTORIAL_GUIDES.length})` },
+              { key: 'core', label: `💻 Core Languages (10)` },
+              { key: 'web', label: `🌐 Web & Frameworks (10)` },
+              { key: 'db_tools', label: `🗄️ Databases & Tools (4)` },
+            ].map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setTutCategory(tab.key)}
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: 999,
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  transition: 'all 0.18s ease',
+                  borderColor: tutCategory === tab.key ? '#3fb950' : 'var(--border)',
+                  background: tutCategory === tab.key ? 'rgba(63,185,80,0.12)' : 'var(--bg2)',
+                  color: tutCategory === tab.key ? '#3fb950' : 'var(--text2)',
+                  boxShadow: tutCategory === tab.key ? '0 2px 8px rgba(63,185,80,0.2)' : 'none',
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Dynamic Tutorials Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: 16,
+          }}>
+            {displayedTutorials.map(guide => (
               <a
                 key={guide.path}
                 href={guide.path}
                 style={{
-                  display: 'flex', flexDirection: 'column',
-                  textDecoration: 'none', color: 'inherit',
-                  background: 'var(--bg2)', border: '1px solid var(--border)',
-                  borderRadius: 20, padding: '0',
-                  transition: 'all 0.28s cubic-bezier(0.4,0,0.2,1)',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.22)',
-                  position: 'relative', overflow: 'hidden'
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px 22px',
+                  minHeight: '62px',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  background: 'var(--bg2)',
+                  border: '1px solid var(--border)',
+                  borderLeft: `4px solid ${guide.color}`,
+                  borderRadius: 10,
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
                 }}
                 onMouseEnter={e => {
+                  e.currentTarget.style.background = `${guide.color}12`
                   e.currentTarget.style.borderColor = guide.color
-                  e.currentTarget.style.transform = 'translateY(-6px)'
-                  e.currentTarget.style.boxShadow = `0 20px 40px ${guide.color}28`
+                  e.currentTarget.style.transform = 'translateX(4px)'
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.08)'
+                  const arrow = e.currentTarget.querySelector('.programiz-tut-arrow')
+                  if (arrow) {
+                    arrow.style.transform = 'translateX(3px)'
+                    arrow.style.opacity = '1'
+                    arrow.style.color = guide.color
+                  }
                 }}
                 onMouseLeave={e => {
+                  e.currentTarget.style.background = 'var(--bg2)'
                   e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.22)'
+                  e.currentTarget.style.borderLeftColor = guide.color
+                  e.currentTarget.style.transform = 'translateX(0)'
+                  e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'
+                  const arrow = e.currentTarget.querySelector('.programiz-tut-arrow')
+                  if (arrow) {
+                    arrow.style.transform = 'translateX(0)'
+                    arrow.style.opacity = '0.45'
+                    arrow.style.color = 'var(--text2)'
+                  }
                 }}
               >
-                {/* top color bar */}
-                <div style={{ height: 4, background: `linear-gradient(90deg, ${guide.color} 0%, ${guide.color}55 100%)` }} />
-                <div style={{ padding: '22px 24px 20px' }}>
-                  {/* Logo + Title row */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
-                    <div style={{ width: 52, height: 52, borderRadius: 12, background: `${guide.color}14`, border: `1px solid ${guide.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      {LangLogos[guide.id] ? (
-                        <div style={{ transform: 'scale(0.85)', display: 'flex' }}>{LangLogos[guide.id]}</div>
-                      ) : <span style={{ fontSize: 26 }}>💻</span>}
-                    </div>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.2px' }}>{guide.title}</h3>
-                        {guide.badge && (
-                          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase', color: '#3fb950', background: 'rgba(63,185,80,0.14)', border: '1px solid rgba(63,185,80,0.35)', borderRadius: 999, padding: '2px 8px' }}>
-                            {guide.badge}
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ marginTop: 3, fontSize: 11.5, color: guide.color, fontWeight: 600 }}>15 Lessons · Free</div>
+                {/* Left: Logo + Tutorial Title */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+                  <div style={{
+                    width: 30, height: 30, flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <div style={{ transform: 'scale(0.62)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {LangLogos[guide.id] || <span style={{ fontSize: 20 }}>📚</span>}
                     </div>
                   </div>
-                  <p style={{ margin: 0, fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.7 }}>{guide.desc}</p>
-                  <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 12, color: guide.color, fontWeight: 700 }}>Start Learning →</span>
-                    <span style={{ fontSize: 11, color: 'var(--text3)', background: 'var(--bg3)', borderRadius: 6, padding: '3px 9px', fontWeight: 600 }}>Tutorial</span>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{
+                      fontSize: 15.5,
+                      fontWeight: 700,
+                      color: 'var(--text)',
+                      whiteSpace: 'nowrap',
+                      letterSpacing: '-0.2px',
+                    }}>
+                      {guide.title}
+                    </span>
+                    {guide.badge && (
+                      <span style={{
+                        fontSize: 9.5,
+                        fontWeight: 700,
+                        letterSpacing: 0.6,
+                        textTransform: 'uppercase',
+                        color: '#3fb950',
+                        background: 'rgba(63,185,80,0.12)',
+                        border: '1px solid rgba(63,185,80,0.3)',
+                        borderRadius: 999,
+                        padding: '2px 7px',
+                        flexShrink: 0,
+                      }}>
+                        {guide.badge}
+                      </span>
+                    )}
                   </div>
                 </div>
+
+                {/* Right: Thin Minimal Arrow */}
+                <svg
+                  className="programiz-tut-arrow"
+                  width="17" height="17" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  style={{
+                    flexShrink: 0,
+                    opacity: 0.45,
+                    color: 'var(--text2)',
+                    transition: 'all 0.2s ease',
+                    marginLeft: 10,
+                  }}
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
               </a>
             ))}
           </div>

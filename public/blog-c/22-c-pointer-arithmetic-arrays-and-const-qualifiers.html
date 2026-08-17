@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Pointer Arithmetic, Arrays, String Iteration & const Qualifiers — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Comprehensive textbook-grade masterclass on C Pointer Manipulation (Phase 9 Part 2): The Pointer Arithmetic Scaling Rule (sizeof stride), pointer subtraction (ptrdiff_t), pointers and 1D/2D arrays, string pointer traversal, the 3 degrees of const with pointers, and generic void* pointers." />
+  <meta name="keywords" content="c tutorial, c pointer arithmetic, arrays, string iteration & const qualifiers, c pointers, dereferencing c, pointer arithmetic c, double pointer c, function pointer c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/22-c-pointer-arithmetic-arrays-and-const-qualifiers.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: #e6edf3;
+      font-size: 15.5px;
+      margin-bottom: 8px;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: C Basics & Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C Basics & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
+        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html">3. Data Types, sizeof & Type Casting</a>
+      </div>
+
+      <!-- Phase 03: Input & Operators -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input & Operators</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html">4. User Input (scanf, fgets & Buffer Traps)</a>
+        <a href="/blog-c/05-c-operators-expressions-and-precedence.html">5. Operators, Precedence & 6 Programs</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements & Branching -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements & Branching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html">6. if-else Ladders, Nested if & Logical Logic</a>
+        <a href="/blog-c/07-c-switch-case-and-decision-practice-programs.html">7. switch-case, Fall-Through & 7 Programs</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/08-c-loops-for-while-do-while-and-control-flow.html">8. for, while, do-while, break & continue</a>
+        <a href="/blog-c/09-c-nested-loops-patterns-and-practice-programs.html">9. Nested Loops, Patterns & 9 Core Programs</a>
+      </div>
+
+      <!-- Phase 06: Functions & Modular Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Functions & Modular Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/10-c-functions-declaration-definition-and-prototypes.html">10. Function Architecture & Prototypes</a>
+        <a href="/blog-c/11-c-variable-scope-lifetime-and-static-storage.html">11. Scope, static Variables & Header Files</a>
+        <a href="/blog-c/12-c-parameter-passing-value-vs-reference.html">12. Pass-by-Value vs Pass-by-Address</a>
+        <a href="/blog-c/13-c-recursion-call-stack-and-modular-projects.html">13. Recursion, Call Stack & 5 Projects</a>
+      </div>
+
+      <!-- Phase 07: Arrays & Memory Organization -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays & Memory Organization</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/14-c-arrays-fundamentals-memory-model-and-indexing.html">14. 1D Arrays, RAM Architecture & Indexing</a>
+        <a href="/blog-c/15-c-multidimensional-arrays-and-matrices.html">15. 2D/3D Arrays, Row-Major & Matrices</a>
+        <a href="/blog-c/16-c-passing-arrays-to-functions-and-pointer-decay.html">16. Passing Arrays to Functions & Pointer Decay</a>
+        <a href="/blog-c/17-c-array-algorithms-searching-sorting-and-manipulation.html">17. Array Algorithms (Search, Sort & Reverse)</a>
+      </div>
+
+      <!-- Phase 08: Strings & Text Processing -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔤</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Strings & Text Processing</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/18-c-strings-null-terminator-and-safe-io.html">18. Strings, Null Terminator & Safe I/O</a>
+        <a href="/blog-c/19-c-string-library-functions-and-security.html">19. <string.h> Functions & Buffer Security</a>
+        <a href="/blog-c/20-c-string-algorithms-and-text-processing-projects.html">20. String Algorithms & 6 Text Projects</a>
+      </div>
+
+      <!-- Phase 09: Pointers & Memory Architecture -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Pointers & Memory Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/21-c-pointers-memory-addresses-and-dereferencing.html">21. Pointers, RAM Addresses & Dereferencing</a>
+        <a href="/blog-c/22-c-pointer-arithmetic-arrays-and-const-qualifiers.html" class="active">22. Pointer Arithmetic, Arrays & const Qualifiers</a>
+        <a href="/blog-c/23-c-double-pointers-function-pointers-and-safety.html">23. Double Pointers, Function Pointers & Safety</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 22: C Pointer Arithmetic, Arrays, String Iteration & const Qualifiers</span>
+    </div>
+
+    <h1 class="page-title">C Pointer Arithmetic, Arrays, String Iteration & const Qualifiers</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 22</span>
+      <span class="badge">📂 Phase 09: Pointers & Memory Architecture</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Pointer Arithmetic & Scaling Rule · Pointers and 1D/2D Arrays · Pointers & String Iteration · 3 Degrees of const with Pointers · Generic void* Pointers</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 9 (Chapter 22): C Pointer Arithmetic, Arrays, String Traversal & const Qualifiers Masterclass</strong>! Once you understand that pointers hold memory addresses, the real engineering power comes from performing mathematical arithmetic directly on those addresses. Unlike standard integer math where <code>100 + 1 = 101</code>, <strong>Pointer Arithmetic is automatically scaled by the size of the underlying data type in physical RAM</strong>. In this exhaustive textbook-grade guide, you will master the Pointer Scaling Rule, explore the deep architectural equivalence between arrays and pointers, learn how pointers traverse strings at lightning speed, master the 3 degrees of <code>const</code> pointer qualifiers, and understand generic <code>void*</code> pointers.</p>
+    </div>
+
+    <!-- 1. Pointer Arithmetic & The Scaling Rule -->
+    <div class="section-title"><span class="num">1</span>Pointer Arithmetic &amp; The Hardware Scaling Rule ⭐</div>
+    <div class="section-body">
+      <p class="text-prose">
+        When you add an integer $N$ to a pointer (<code>ptr + N</code>), the CPU does NOT add $N$ raw bytes. 
+        Instead, it adds <strong>$N \times \text{sizeof(*ptr)}$ Bytes</strong>:
+      </p>
+
+      <div class="concept-box">
+        <h4>📐 The Core Pointer Arithmetic Formula:</h4>
+        <p>$$\text{New Address} = \text{Current Address} + (N \times \text{sizeof(Type)})$$<br>
+        • For <code>char*</code> (1 Byte): <code>0x1000 + 1</code> $\rightarrow$ <strong>0x1001</strong> (jumps 1 byte).<br>
+        • For <code>int*</code> (4 Bytes): <code>0x1000 + 1</code> $\rightarrow$ <strong>0x1004</strong> (jumps 4 bytes).<br>
+        • For <code>double*</code> (8 Bytes): <code>0x1000 + 1</code> $\rightarrow$ <strong>0x1008</strong> (jumps 8 bytes)!<br>
+        <br>
+        💡 <em>Pointer Subtraction:</em> Subtracting two pointers of the same type (<code>ptr2 - ptr1</code>) yields the <strong>Exact number of elements between them</strong> (type <code>ptrdiff_t</code>), NOT the raw byte count!</p>
+      </div>
+
+      <div class="memory-diagram">
+        <strong>Hardware Pointer Arithmetic Scaling for: int arr[3] = {10, 20, 30}; int* p = arr;</strong><br>
+        <br>
+        p:          0x5000 (Points to arr[0] = 10)<br>
+        p + 1:      0x5000 + (1 * 4) = 0x5004 (Points to arr[1] = 20)<br>
+        p + 2:      0x5000 + (2 * 4) = 0x5008 (Points to arr[2] = 30)<br>
+        <br>
+        *(p + 1) dereferences value at 0x5004 -&gt; yields 20!
+      </div>
+    </div>
+
+    <!-- 2. Deep Equivalence: Pointers and Arrays -->
+    <div class="section-title"><span class="num">2</span>Deep Equivalence: Pointers and Arrays in C</div>
+    <div class="section-body">
+      <p class="text-prose">
+        In C, array bracket notation is purely syntactic sugar for pointer arithmetic! Under the hood:
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🔍 The Universal Array-Pointer Identity</h3>
+        <p style="color:var(--text2); font-size:15px; line-height:1.8;">
+          $$\mathbf{arr[i] \equiv *(arr + i) \equiv *(i + arr) \equiv i[arr]}$$<br>
+          Because addition is commutative ($a + b = b + a$), in C writing <code>3[arr]</code> is 100% valid syntax and produces the exact same result as <code>arr[3]</code>!
+        </p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Pointer Arithmetic & String Traversal Demo</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// Lightning-fast string length using pointer subtraction
+size_t fastStrLen(const char *s) {
+    const char *p = s;
+    while (*p) p++; // Advances pointer until null terminator ' '
+    return p - s;   // Pointer subtraction yields character count!
+}
+
+int main(void) {
+    int numbers[] = {10, 20, 30, 40, 50};
+    int *ptr = numbers;
+
+    printf("First element via *ptr:     %d\n", *ptr);
+    printf("Third element via *(ptr+2): %d\n", *(ptr + 2));
+
+    const char message[] = "Dennis Ritchie";
+    printf("Length of '%s' = %zu chars\n", message, fastStrLen(message));
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. The 3 Degrees of const with Pointers -->
+    <div class="section-title"><span class="num">3</span>The 3 Degrees of const with Pointers ⭐</div>
+    <div class="section-body">
+      <p class="text-prose">
+        Placing the <code>const</code> keyword relative to the asterisk <code>*</code> creates 3 fundamentally different memory safety rules:
+      </p>
+
+      <table class="tbl spec-table">
+        <tr><th>Declaration Syntax</th><th>What is Constant?</th><th>Can Modify Value (<code>*ptr = x</code>)?</th><th>Can Redirect Pointer (<code>ptr = &amp;y</code>)?</th></tr>
+        <tr>
+          <td><code>const int* ptr;</code></td>
+          <td><strong>Data Pointed To</strong></td>
+          <td>❌ <strong>NO (Read-Only Data)</strong></td>
+          <td>✅ <strong>YES</strong></td>
+        </tr>
+        <tr>
+          <td><code>int* const ptr;</code></td>
+          <td><strong>Pointer Address Itself</strong></td>
+          <td>✅ <strong>YES</strong></td>
+          <td>❌ <strong>NO (Locked Address)</strong></td>
+        </tr>
+        <tr>
+          <td><code>const int* const ptr;</code></td>
+          <td><strong>Both Data and Address</strong></td>
+          <td>❌ <strong>NO</strong></td>
+          <td>❌ <strong>NO (Completely Locked)</strong></td>
+        </tr>
+      </table>
+
+      <div class="concept-box">
+        <h4>💡 The Clockwise/Spiral Reading Rule:</h4>
+        <p>• <code>const int *p</code> $ightarrow$ Read right-to-left: "<code>p</code> is a pointer to an <code>int</code> that is <code>const</code>".<br>
+        • <code>int * const p</code> $ightarrow$ "<code>p</code> is a <code>const</code> pointer to an <code>int</code>".</p>
+      </div>
+    </div>
+
+    <!-- 4. Generic Pointers: void* -->
+    <div class="section-title"><span class="num">4</span>Generic Pointers: void* &amp; Type Erasure</div>
+    <div class="section-body">
+      <p class="text-prose">
+        A <strong><code>void*</code></strong> pointer (Generic Pointer) can hold the memory address of <em>any data type</em> (int, float, struct, array) without explicit type casting. 
+        It powers generic system functions like <code>malloc()</code>, <code>memcpy()</code>, and <code>qsort()</code>.
+      </p>
+
+      <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
+        <h4 style="color:#ff7b72;">🛑 The Two Rules of void* Pointers:</h4>
+        <p>1. <strong>Cannot Dereference Directly:</strong> <code>*voidPtr</code> is a compile error because the compiler does not know whether to fetch 1, 4, or 8 bytes!<br>
+        2. <strong>Cannot Perform Pointer Arithmetic:</strong> <code>voidPtr + 1</code> is undefined in ISO C (though GCC allows it as an extension treating it as 1 byte).<br>
+        ✅ <strong>Solution:</strong> Always cast to a concrete type first: <code>*(int*)voidPtr</code>.</p>
+      </div>
+    </div>
+
+    <!-- 5. Comprehensive FAQ & Interview Section -->
+    <div class="section-title"><span class="num">5</span>Frequently Asked Questions &amp; Technical Interview Deep-Dive</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: Why is <code>*p++</code> different from <code>(*p)++</code>?</h4>
+          <p>Postfix <code>++</code> has higher precedence than dereference <code>*</code>. <code>*p++</code> yields the current value and then advances the pointer to the next memory address. <code>(*p)++</code> increments the value stored at the current memory address without moving the pointer.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Can we add two pointers together (<code>ptr1 + ptr2</code>)?</h4>
+          <p>No! Adding two memory addresses is mathematically meaningless in computer architecture and is strictly illegal in C. You can only subtract two pointers (to find the distance between them) or add an integer offset to a pointer.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test const Pointers in Online C Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this generic byte inspection demo in our live GCC compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+void printHexBytes(const void *ptr, size_t numBytes) {
+    const unsigned char *bytePtr = (const unsigned char*)ptr;
+    for (size_t i = 0; i &lt; numBytes; i++) {
+        printf("0x%02X ", bytePtr[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int val = 0x12345678;
+    printf("Raw RAM bytes of 0x12345678 (Little Endian):\n");
+    printHexBytes(&amp;val, sizeof(val));
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="21-c-pointers-memory-addresses-and-dereferencing.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">21. Pointers, RAM Addresses & Dereferencing</span>
+      </a>
+
+      
+      <a href="23-c-double-pointers-function-pointers-and-safety.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">23. Double Pointers, Function Pointers & Safety</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

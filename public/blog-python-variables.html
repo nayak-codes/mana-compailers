@@ -3,15 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python 3 Variables & Core Types | Our Compiler</title>
-  <meta name="description" content="Learn Python 3 — Python 3 Variables & Core Types with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <title>Python Variables & Data Types — Complete Guide with Examples | Our Compiler</title>
+  <meta name="description" content="Learn Python variables and data types from scratch. Covers int, float, str, bool, type(), type conversion, naming rules, constants, and hands-on exercises you can run directly in our free online Python compiler." />
+  <meta name="keywords" content="python variables, python data types, python int float string bool, python tutorial, learn python variables, python type conversion" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python-variables.html" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-python-lesson-style.css" />
+
+  <!-- JSON-LD: Article Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Python Variables & Data Types — Complete Guide with Examples",
+    "description": "Learn Python variables and data types from scratch with clear explanations, annotated code examples, reference tables, common mistakes, and hands-on exercises.",
+    "url": "https://www.ourcompiler.com/blog-python-variables.html",
+    "datePublished": "2026-08-01",
+    "dateModified": "2026-08-13",
+    "author": { "@type": "Organization", "name": "Our Compiler", "url": "https://www.ourcompiler.com" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com",
+      "logo": { "@type": "ImageObject", "url": "https://www.ourcompiler.com/logo.png" }
+    },
+    "educationalLevel": "Beginner",
+    "learningResourceType": "Tutorial",
+    "inLanguage": "en",
+    "about": { "@type": "Thing", "name": "Python Programming" }
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a variable in Python?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A variable in Python is a named reference to a value stored in memory. Unlike C or Java, Python variables do not need an explicit type declaration — the type is automatically determined from the value assigned. You create a variable by simply writing name = value."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Python have different data types like int and float?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Python has four core built-in primitive types: int (whole numbers), float (decimal numbers), str (text), and bool (True/False). Python also automatically selects the correct type when you assign a value, so writing age = 25 automatically makes age an int."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you convert between data types in Python?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Python provides built-in conversion functions: int() converts to integer, float() converts to float, str() converts to string, and bool() converts to boolean. For example, int('42') returns the integer 42, and str(100) returns the string '100'."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Python dynamically typed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Python is dynamically typed, which means you can reassign a variable to a different type at any point in your program. For example, x = 5 followed by x = 'hello' is perfectly valid Python. The type of x changes from int to str after the second assignment."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Theme + Code Block Helpers -->
   <script>
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
@@ -22,20 +91,12 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
+        // Theme Toggle
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#ffffff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -44,73 +105,70 @@
           toggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
             updateText();
           });
           topnav.appendChild(toggleBtn);
         }
 
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        // Code Blocks: Copy + Run
         document.querySelectorAll('.code-block').forEach(block => {
           const header = block.querySelector('.code-block-header');
           const codeEl = block.querySelector('pre code');
           if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
           let actionsContainer = header.querySelector('.code-actions');
           if (!actionsContainer) {
             actionsContainer = document.createElement('div');
             actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            actionsContainer.style.cssText = 'display:flex;gap:8px;align-items:center;margin-left:auto;';
             const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
             header.appendChild(actionsContainer);
           }
-
-          // Inject Copy Button
           const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
+          copyBtn.style.cssText = 'background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:"Inter",sans-serif;white-space:nowrap;';
           copyBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(codeEl.textContent).then(() => {
               copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
             });
           });
           actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
           const tryBtn = actionsContainer.querySelector('.try-btn');
           if (tryBtn) {
             tryBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'python3';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/?lang=python3';
             });
           }
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+          });
+        });
+
+        // Exercise Run Buttons
+        document.querySelectorAll('.exercise-run-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const box = btn.closest('.exercise-box');
+            const code = box.querySelector('pre code');
+            if (code) localStorage.setItem('code_python3', code.textContent);
+            window.location.href = '/?lang=python3';
+          });
         });
       });
     })();
   </script>
+  <link rel="stylesheet" href="/site-nav.css" />
 </head>
 <body class="lang-python">
 
@@ -127,191 +185,762 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
   <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
 </nav>
 
 <div class="layout">
   <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    
     <div class="sidebar-heading">Python 3 Tutorial</div>
-    <a href="/blog-python.html">Python 3 HOME</a>
-    <a href="/blog-python-intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-python-variables.html" class="active">2. Variables & Core Types</a>
-    <a href="/blog-python-operators.html">3. Basic Operators & Math</a>
-    <a href="/blog-python-strings.html">4. String Slicing & Methods</a>
+    <a href="/blog-python.html">Python HOME</a>
+    <a href="/blog-python-intro.html">1. Welcome &amp; Hello World</a>
+    <a href="/blog-python-variables.html" class="active">2. Variables &amp; Core Types</a>
+    <a href="/blog-python-operators.html">3. Basic Operators &amp; Math</a>
+    <a href="/blog-python-strings.html">4. String Slicing &amp; Methods</a>
     <a href="/blog-python-conditionals.html">5. Conditionals (if-else)</a>
-    <a href="/blog-python-loops.html">6. Loops & Ranges</a>
+    <a href="/blog-python-loops.html">6. Loops &amp; Ranges</a>
     <a href="/blog-python-input.html">7. Reading User Inputs</a>
-    <a href="/blog-python-lists.html">8. Lists & Tuples</a>
-    <a href="/blog-python-dicts.html">9. Dictionaries & Sets</a>
-    <a href="/blog-python-functions.html">10. Functions & Reusable Code</a>
-    <a href="/blog-python-modules.html">11. Modules & Standard Lib</a>
+    <a href="/blog-python-lists.html">8. Lists &amp; Tuples</a>
+    <a href="/blog-python-dicts.html">9. Dictionaries &amp; Sets</a>
+    <a href="/blog-python-functions.html">10. Functions &amp; Reusable Code</a>
+    <a href="/blog-python-modules.html">11. Modules &amp; Standard Lib</a>
     <a href="/blog-python-files.html">12. File I/O Operations</a>
     <a href="/blog-python-errors.html">13. Exception Handling</a>
-    <a href="/blog-python-oop-basics.html">14. OOP: Classes & Objects</a>
-    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance & Dunder</a>
+    <a href="/blog-python-oop-basics.html">14. OOP: Classes &amp; Objects</a>
+    <a href="/blog-python-oop-advanced.html">15. OOP: Inheritance &amp; Dunder</a>
 
     <div class="sidebar-heading">Reference</div>
     <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=python3">▶ Try Python 3 Online</a>
+    <a href="/?lang=python3">▶ Try Python Online</a>
 
     <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-c.html">C Language</a>
     <a href="/blog-java.html">Java</a>
     <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-c.html">C</a>
     <a href="/blog-cpp.html">C++</a>
     <a href="/blog-go.html">Go</a>
     <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
-
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
-    
-<div class="breadcrumb">
-  <a href="/">Home</a><span>›</span>
-  <a href="/blog.html">Tutorials</a><span>›</span>
-  <a href="/blog-python.html">Python 3</a><span>›</span>
-  <span>Variables & Core Types</span>
-</div>
-<h1 class="page-title">Python 3 — Variables & Core Data Types</h1>
-<div class="page-meta">
-  <span class="badge">🐍 Python 3</span>
-  <span class="badge">🟢 Lesson 2</span>
-  <span class="badge">📅 July 2026</span>
-</div>
 
-<div class="intro-box">
-  <p>Think of a variable as a storage box with a label stuck to it. You write a label on the box (the variable name), put something inside it (the value), and then look it up whenever you need it. Python handles variables dynamically, meaning you don't have to state what type of data goes in the box beforehand.</p>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">1</span> Creating Variables</div>
-  <p>To store a value in a variable, we use the assignment operator (<code>=</code>). The variable name goes on the left, and the value goes on the right:</p>
-  
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">Python 3 — Variable Assignment</span>
-      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Lesson 2: Variables &amp; Data Types</span>
     </div>
-    <pre><code># Storing data in variables
-username = "Balaji"
-age = 25
-height = 5.9
-is_developer = True
 
-# Printing the variables
-print(username)
+    <!-- LESSON PROGRESS BAR -->
+    <div class="lesson-progress">
+      <span class="lesson-progress-label">Course Progress</span>
+      <div class="lesson-progress-bar-wrap">
+        <div class="lesson-progress-fill" style="width: 13%;"></div>
+      </div>
+      <span class="lesson-progress-text">Lesson 2 / 15</span>
+    </div>
+
+    <!-- TITLE + META -->
+    <h1 class="page-title">Python Variables &amp; Data Types</h1>
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Beginner</span>
+      <span class="badge">📅 2026 Edition</span>
+      <span class="reading-time">⏱️ ~10 min read</span>
+    </div>
+
+    <!-- PREREQUISITES -->
+    <div class="prereq-box">
+      <span class="prereq-icon">📌</span>
+      <div class="prereq-content">
+        <div class="prereq-title">Prerequisites</div>
+        <p>This lesson assumes you have completed <a href="/blog-python-intro.html">Lesson 1: Welcome &amp; Hello World</a>. You should know how to write a <code>print()</code> statement and run code in our online compiler. No prior programming experience required beyond that.</p>
+      </div>
+    </div>
+
+    <!-- WHAT YOU'LL LEARN -->
+    <div class="what-you-learn">
+      <div class="what-you-learn-title">✦ What You'll Learn in This Lesson</div>
+      <ul>
+        <li>How Python variables work and how to create them</li>
+        <li>The four core data types: int, float, str, and bool</li>
+        <li>How to check a variable's type with <code>type()</code></li>
+        <li>Variable naming rules and Python naming conventions</li>
+        <li>How to convert between types (type casting)</li>
+        <li>The difference between mutable and immutable types</li>
+        <li>How to define constants using UPPER_CASE convention</li>
+        <li>Common beginner mistakes and how to avoid them</li>
+      </ul>
+    </div>
+
+    <!-- INTRO -->
+    <div class="lesson-intro">
+      <p>In Python, a <strong>variable</strong> is simply a name that points to a value stored in your computer's memory. Unlike languages such as C or Java, Python never requires you to declare a variable's type before using it — you just write <code>name = value</code>, and Python figures out the type automatically.</p>
+      <p>This makes Python extremely beginner-friendly, but it also means you need to understand how Python thinks about types internally. This lesson walks you through every detail, with real annotated examples you can run instantly in our online compiler.</p>
+    </div>
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc-box">
+      <div class="toc-title">📋 In this lesson</div>
+      <ol>
+        <li><a href="#creating-variables">Creating Variables</a></li>
+        <li><a href="#core-types">The Four Core Data Types</a></li>
+        <li><a href="#type-function">Checking Types with type()</a></li>
+        <li><a href="#reference-table">Quick Reference Table</a></li>
+        <li><a href="#naming-rules">Variable Naming Rules &amp; Conventions</a></li>
+        <li><a href="#type-conversion">Type Conversion (Casting)</a></li>
+        <li><a href="#constants">Constants in Python</a></li>
+        <li><a href="#pro-tip">Pro Tip: Dynamic Typing Explained</a></li>
+        <li><a href="#common-mistakes">Common Mistakes</a></li>
+        <li><a href="#exercises">Hands-On Exercises</a></li>
+        <li><a href="#key-takeaways">Key Takeaways</a></li>
+        <li><a href="#faq">Frequently Asked Questions</a></li>
+      </ol>
+    </div>
+
+    <!-- ─── SECTION 1: CREATING VARIABLES ─── -->
+    <div id="creating-variables">
+      <div class="section-title"><span class="num">1</span> Creating Variables</div>
+      <p>Creating a variable in Python takes exactly one step: assign a value to a name using the <code>=</code> operator. There is no "declare" step, no type keyword, and no semicolon needed.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>name = "Alice"       # str — text inside quotes
+age = 28             # int — whole number
+height = 1.68        # float — decimal number
+is_student = True    # bool — True or False
+
+print(name)
 print(age)
 print(height)
-print(is_developer)</code></pre>
-  </div>
-</div>
+print(is_student)</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">Alice
+28
+1.68
+True</span>
+      </div>
 
-<div class="section">
-  <div class="section-title"><span class="num">2</span> Core Data Types</div>
-  <p>Every piece of data stored in Python belongs to a specific category. Here are the 4 fundamental types you must know:</p>
-  <table class="tbl">
-    <tr><th>Type</th><th>Class Name</th><th>Description</th><th>Example</th></tr>
-    <tr><td>Text</td><td><code>str</code> (String)</td><td>Unicode characters wrapped in quotes</td><td><code>"Python 3"</code></td></tr>
-    <tr><td>Whole Number</td><td><code>int</code> (Integer)</td><td>Positive or negative whole values</td><td><code>-42</code></td></tr>
-    <tr><td>Decimal</td><td><code>float</code> (Float)</td><td>Numbers with decimal points</td><td><code>3.1415</code></td></tr>
-    <tr><td>Boolean</td><td><code>bool</code> (Boolean)</td><td>Logical state representing true/false</td><td><code>True</code> or <code>False</code></td></tr>
-  </table>
-  <p>You can check the type of any variable using the built-in <code>type()</code> function:</p>
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">Python 3 — Checking Types</span>
-      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+      <p>Python reads the right side of <code>=</code>, determines the type from the value, and stores both the value and its type in memory under the name you chose. The equals sign here is the <strong>assignment operator</strong>, not a mathematical equality check.</p>
+
+      <p>You can also assign multiple variables on one line using Python's <strong>tuple unpacking</strong> shorthand:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code># Assign multiple variables at once
+x, y, z = 10, 20, 30
+print(x, y, z)  # 10 20 30
+
+# Assign the same value to multiple names
+a = b = c = 0
+print(a, b, c)  # 0 0 0</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">10 20 30
+0 0 0</span>
+      </div>
     </div>
-    <pre><code>score = 99
-print(type(score))  # Outputs: &lt;class 'int'&gt;
 
-is_online = False
-print(type(is_online))  # Outputs: &lt;class 'bool'&gt;</code></pre>
-  </div>
-</div>
+    <!-- ─── SECTION 2: CORE TYPES ─── -->
+    <div id="core-types">
+      <div class="section-title"><span class="num">2</span> The Four Core Data Types</div>
+      <p>Python has four built-in <strong>primitive data types</strong> that you'll use in virtually every program you write. Understanding them deeply is essential before moving to lists, dictionaries, and objects.</p>
 
-<div class="section">
-  <div class="section-title"><span class="num">3</span> Dynamic Typing in Python</div>
-  <p>In languages like Java or C++, once you declare a variable as an integer, you can never store a string inside it. Python is **dynamically typed**, meaning variables can change their type easily as you assign new values:</p>
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">Python 3 — Dynamic Types</span>
-      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+      <h3 class="sub-heading"><span class="sub-heading-num">2.1</span> int — Whole Numbers</h3>
+      <p><code>int</code> stores whole numbers of any size — positive, negative, or zero. Python integers are not limited to 32 or 64 bits like in C or Java; they can grow to any size your RAM allows.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>population = 8_000_000_000   # underscores improve readability
+negative = -42
+big_num = 999999999999999999999  # Python handles any size!
+
+print(population)
+print(type(population))   # &lt;class 'int'&gt;</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">8000000000
+&lt;class 'int'&gt;</span>
+      </div>
+
+      <h3 class="sub-heading"><span class="sub-heading-num">2.2</span> float — Decimal Numbers</h3>
+      <p><code>float</code> stores numbers with a fractional part. Internally, Python uses 64-bit double-precision floating-point (IEEE 754), which gives you about 15–17 significant decimal digits of accuracy.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>pi = 3.14159265358979
+temperature = -7.5
+small = 0.000_001        # scientific-style
+
+print(pi)
+print(type(pi))          # &lt;class 'float'&gt;
+
+# Beware of floating-point precision:
+print(0.1 + 0.2)         # 0.30000000000000004 ← expected in IEEE 754</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">3.14159265358979
+&lt;class 'float'&gt;
+0.30000000000000004</span>
+      </div>
+
+      <h3 class="sub-heading"><span class="sub-heading-num">2.3</span> str — Text Strings</h3>
+      <p><code>str</code> stores any sequence of characters — letters, digits, spaces, emoji, or symbols. Strings can be wrapped in single quotes, double quotes, or triple quotes for multiline text.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>greeting = "Hello, World!"
+city = 'Hyderabad'
+multiline = """Line one
+Line two
+Line three"""
+
+# f-strings let you embed variables directly
+name = "Balaji"
+message = f"Welcome, {name}! You are learning Python."
+print(message)</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">Welcome, Balaji! You are learning Python.</span>
+      </div>
+
+      <h3 class="sub-heading"><span class="sub-heading-num">2.4</span> bool — True or False</h3>
+      <p><code>bool</code> has exactly two possible values: <code>True</code> and <code>False</code> (capital T and F — Python is case-sensitive). Booleans are the foundation of all conditional logic and are technically a subtype of <code>int</code> in Python (<code>True == 1</code> and <code>False == 0</code>).</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>is_logged_in = True
+has_premium = False
+
+print(is_logged_in)             # True
+print(type(has_premium))        # &lt;class 'bool'&gt;
+
+# Booleans are ints under the hood:
+print(True + True)              # 2
+print(True * 10)                # 10
+print(int(False))               # 0</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">True
+&lt;class 'bool'&gt;
+2
+10
+0</span>
+      </div>
     </div>
-    <pre><code>data = 100
-print(type(data))  # &lt;class 'int'&gt;
 
-data = "Now I am text!"
-print(type(data))  # &lt;class 'str'&gt;</code></pre>
-  </div>
-</div>
+    <!-- ─── SECTION 3: type() FUNCTION ─── -->
+    <div id="type-function">
+      <div class="section-title"><span class="num">3</span> Checking Types with <code>type()</code></div>
+      <p>The built-in <code>type()</code> function tells you the exact data type of any variable or value. This is invaluable for debugging, especially because Python can silently change what type a variable holds.</p>
 
-<div class="info-box">
-  <strong>⚠️ Variable Naming Rules:</strong>
-  <ul>
-    <li>Variable names can only contain letters, numbers, and underscores (e.g., <code>user_1</code>).</li>
-    <li>They must **never** start with a number (e.g., <code>1user</code> is invalid).</li>
-    <li>Use standard **snake_case** (all lowercase words connected by underscores) to follow clean Python guidelines (PEP 8).</li>
-    <li>Do not use reserved keywords like <code>if</code>, <code>else</code>, <code>class</code>, or <code>print</code> as variable names.</li>
-  </ul>
-</div>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>print(type(42))          # &lt;class 'int'&gt;
+print(type(3.14))        # &lt;class 'float'&gt;
+print(type("hello"))     # &lt;class 'str'&gt;
+print(type(True))        # &lt;class 'bool'&gt;
+print(type(None))        # &lt;class 'NoneType'&gt;
 
-<div class="section">
-  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
-  <p>Write a program that declares a variable representing a product price, discount rate, product name, and whether it is in stock. Output their values and their types to the terminal.</p>
-</div>
+# isinstance() — better for conditional checks:
+x = 100
+if isinstance(x, int):
+    print("x is an integer!")</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">&lt;class 'int'&gt;
+&lt;class 'float'&gt;
+&lt;class 'str'&gt;
+&lt;class 'bool'&gt;
+&lt;class 'NoneType'&gt;
+x is an integer!</span>
+      </div>
 
+      <div class="note-box">
+        <strong>Note:</strong> Python also has a special value called <code>None</code> — it represents the absence of a value, similar to <code>null</code> in other languages. Its type is <code>NoneType</code>. You'll encounter it often in functions that don't explicitly return a value.
+      </div>
+    </div>
+
+    <!-- ─── SECTION 4: REFERENCE TABLE ─── -->
+    <div id="reference-table">
+      <div class="section-title"><span class="num">4</span> Quick Reference Table — Python Core Types</div>
+      <p>Use this table as a quick cheat sheet whenever you need to compare the core Python types:</p>
+
+      <div class="ref-table-wrap">
+        <div class="ref-table-title">🐍 Python 3 — Primitive Data Types</div>
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Example</th>
+              <th>Description</th>
+              <th>Mutable?</th>
+              <th>Typical Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>int</code></td>
+              <td><code>42</code>, <code>-7</code>, <code>0</code></td>
+              <td>Whole numbers, unlimited size</td>
+              <td>No</td>
+              <td>Counting, indexing, loops</td>
+            </tr>
+            <tr>
+              <td><code>float</code></td>
+              <td><code>3.14</code>, <code>-0.5</code></td>
+              <td>Decimal numbers (64-bit IEEE 754)</td>
+              <td>No</td>
+              <td>Math, measurements, percentages</td>
+            </tr>
+            <tr>
+              <td><code>str</code></td>
+              <td><code>"hello"</code>, <code>'abc'</code></td>
+              <td>Sequence of Unicode characters</td>
+              <td>No</td>
+              <td>Names, messages, text processing</td>
+            </tr>
+            <tr>
+              <td><code>bool</code></td>
+              <td><code>True</code>, <code>False</code></td>
+              <td>Logic values, subtype of int</td>
+              <td>No</td>
+              <td>Conditions, flags, toggles</td>
+            </tr>
+            <tr>
+              <td><code>NoneType</code></td>
+              <td><code>None</code></td>
+              <td>Represents "no value"</td>
+              <td>No</td>
+              <td>Default function returns, optional values</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 5: NAMING RULES ─── -->
+    <div id="naming-rules">
+      <div class="section-title"><span class="num">5</span> Variable Naming Rules &amp; Conventions</div>
+      <p>Python enforces some <strong>rules</strong> for variable names (your code will crash if you break them) and has <strong>conventions</strong> that are best practices (your code still runs, but it looks unprofessional).</p>
+
+      <div class="ref-table-wrap">
+        <div class="ref-table-title">Python Naming Rules &amp; Conventions</div>
+        <table class="ref-table">
+          <thead>
+            <tr><th>Category</th><th>Rule / Convention</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>✅ Valid characters</td>
+              <td>Letters, digits, underscore <code>_</code> only</td>
+              <td><code>score_1</code>, <code>_count</code></td>
+            </tr>
+            <tr>
+              <td>❌ Can't start with digit</td>
+              <td>First character must be a letter or <code>_</code></td>
+              <td><code>1name</code> → SyntaxError</td>
+            </tr>
+            <tr>
+              <td>❌ Reserved words</td>
+              <td>Can't use Python keywords</td>
+              <td><code>class</code>, <code>for</code>, <code>if</code> → error</td>
+            </tr>
+            <tr>
+              <td>⚠️ Case-sensitive</td>
+              <td><code>Name</code> and <code>name</code> are different variables</td>
+              <td><code>Age = 30</code> vs <code>age = 30</code></td>
+            </tr>
+            <tr>
+              <td>✅ Style: snake_case</td>
+              <td>Use underscores for multi-word names (PEP 8)</td>
+              <td><code>user_name</code>, <code>total_score</code></td>
+            </tr>
+            <tr>
+              <td>✅ Style: UPPER_CASE</td>
+              <td>Constants use all-caps (convention, not enforced)</td>
+              <td><code>MAX_RETRIES = 3</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="comparison-grid">
+        <div>
+          <div class="comparison-label">❌ Bad Names</div>
+          <div class="code-block" style="margin:0;">
+            <div class="code-block-header"><span class="lang-tag">Python 3</span></div>
+            <pre><code>x = 42          # meaningless
+a1 = "Alice"    # cryptic
+MyVar = True    # camelCase (not Pythonic)
+class = "math"  # reserved word → crashes!</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="comparison-label">✅ Good Names</div>
+          <div class="code-block" style="margin:0;">
+            <div class="code-block-header"><span class="lang-tag">Python 3</span></div>
+            <pre><code>student_age = 42
+student_name = "Alice"
+is_enrolled = True
+MAX_STUDENTS = 30  # constant</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 6: TYPE CONVERSION ─── -->
+    <div id="type-conversion">
+      <div class="section-title"><span class="num">6</span> Type Conversion (Casting)</div>
+      <p>Python does <strong>not</strong> automatically convert between types the way JavaScript does. If you want to combine an integer with a string, you must explicitly convert first. This explicit approach prevents many hidden bugs.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code>age = 25
+score = 97.8
+user_input = "42"   # comes in as string from input()
+
+# str() — convert to string for concatenation
+print("Age: " + str(age))        # "Age: 25"
+
+# int() — convert string or float to integer
+print(int(user_input) + 8)       # 50
+print(int(score))                 # 97 (truncates, no rounding!)
+
+# float() — convert int or string to float
+print(float("3.14"))             # 3.14
+print(float(10))                 # 10.0
+
+# bool() — falsy vs truthy
+print(bool(0))        # False   ← zero is falsy
+print(bool(""))       # False   ← empty string is falsy
+print(bool("hello"))  # True    ← any non-empty string is truthy
+print(bool(42))       # True    ← any non-zero number is truthy</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">Age: 25
+50
+97
+3.14
+10.0
+False
+False
+True
+True</span>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">⚠️ Common Mistake: Forgetting to Convert input()</div>
+        <p>The <code>input()</code> function <strong>always</strong> returns a string — even if the user types a number. So <code>age = input("Enter age: ")</code> gives you <code>"25"</code> as a string, not the integer <code>25</code>. Always wrap with <code>int()</code> or <code>float()</code> when you need to do math:</p>
+        <div class="code-block" style="margin-top:12px;">
+          <div class="code-block-header"><span class="lang-tag">Python 3</span></div>
+          <pre><code># WRONG — this crashes with TypeError
+age = input("Enter your age: ")
+print(age + 5)                   # TypeError: can only concatenate str (not "int") to str
+
+# CORRECT — convert first
+age = int(input("Enter your age: "))
+print(age + 5)                   # works perfectly!</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 7: CONSTANTS ─── -->
+    <div id="constants">
+      <div class="section-title"><span class="num">7</span> Constants in Python</div>
+      <p>Python has no built-in <code>const</code> keyword. Instead, the community convention (PEP 8) is to write constants in <code>UPPER_CASE_WITH_UNDERSCORES</code> at the top of your file. This signals to other developers: "don't change this value."</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+        </div>
+        <pre><code># Constants — by convention, UPPER_CASE
+MAX_LOGIN_ATTEMPTS = 5
+PI = 3.14159265358979
+APP_VERSION = "2.1.0"
+DATABASE_URL = "postgresql://localhost/mydb"
+
+# Usage in code
+attempts = 0
+while attempts < MAX_LOGIN_ATTEMPTS:
+    print(f"Attempt {attempts + 1} of {MAX_LOGIN_ATTEMPTS}")
+    attempts += 1</code></pre>
+      </div>
+      <div class="code-output">
+        <span class="code-output-label">Output</span>
+        <span class="code-output-text">Attempt 1 of 5
+Attempt 2 of 5
+Attempt 3 of 5
+Attempt 4 of 5
+Attempt 5 of 5</span>
+      </div>
+
+      <p>If you need <em>truly</em> immutable constants in a serious project, Python developers typically use the <code>Final</code> type hint from Python 3.8+: <code>from typing import Final; MAX: Final = 100</code>. This doesn't prevent reassignment at runtime but causes static type checkers like mypy to flag it as an error.</p>
+    </div>
+
+    <!-- ─── SECTION 8: PRO TIP ─── -->
+    <div id="pro-tip">
+      <div class="pro-tip">
+        <div class="pro-tip-title">🚀 Pro Tip — Python's Dynamic Typing in Depth</div>
+        <p>Python variables are not "typed containers" — they are <strong>references (pointers)</strong> to objects. When you write <code>x = 10</code>, Python creates an <code>int</code> object with value <code>10</code> in memory, and <code>x</code> becomes a reference pointing to it. When you later write <code>x = "hello"</code>, <code>x</code> now points to a new <code>str</code> object — the old <code>int</code> object is garbage-collected if nothing else references it.</p>
+        <p>This is why Python is called <strong>dynamically typed</strong>: the type travels with the <em>object</em>, not the variable name. You can verify this with <code>id()</code>, which returns the memory address of an object:</p>
+        <div class="code-block" style="margin-top:12px;">
+          <div class="code-block-header"><span class="lang-tag">Python 3</span></div>
+          <pre><code>x = 10
+print(id(x))    # e.g. 140723456788080
+
+x = 10          # CPython caches small ints (-5 to 256)
+print(id(x))    # same address — Python reuses the cached object!
+
+x = 99999999    # large int — new object
+print(id(x))    # different address each run</code></pre>
+        </div>
+        <p>This object-reference model is the reason Python handles reassignment, multiple assignment, and function arguments the way it does — understanding it will save you hours of debugging later.</p>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 9: COMMON MISTAKES ─── -->
+    <div id="common-mistakes">
+      <div class="section-title"><span class="num">8</span> Common Beginner Mistakes</div>
+
+      <div class="callout" style="margin-bottom:20px;">
+        <div class="callout-title">⚠️ Mistake 1: Using a Variable Before Assigning It</div>
+        <p>Python will raise a <code>NameError</code> if you try to use a variable that hasn't been assigned yet. Unlike some languages, there is no "default" value for an uninitialized variable.</p>
+        <div class="code-block" style="margin-top:12px;">
+          <div class="code-block-header"><span class="lang-tag">Python 3</span></div>
+          <pre><code>print(total)      # NameError: name 'total' is not defined
+total = 0
+print(total)      # 0 — works now</code></pre>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-bottom:20px;">
+        <div class="callout-title">⚠️ Mistake 2: Confusing = (Assignment) with == (Comparison)</div>
+        <p>A single <code>=</code> assigns a value to a variable. Two equals <code>==</code> checks whether two values are equal and returns <code>True</code> or <code>False</code>. Mixing these up is one of the most common bugs in all of programming.</p>
+        <div class="code-block" style="margin-top:12px;">
+          <div class="code-block-header"><span class="lang-tag">Python 3</span></div>
+          <pre><code>score = 95          # assignment — score is now 95
+score == 100        # comparison — returns False (no output unless printed!)
+print(score == 100) # False
+print(score == 95)  # True</code></pre>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">⚠️ Mistake 3: Mixing Strings and Numbers Without Casting</div>
+        <p>Python does not auto-convert types the way JavaScript does. Adding a string to a number crashes immediately.</p>
+        <div class="code-block" style="margin-top:12px;">
+          <div class="code-block-header"><span class="lang-tag">Python 3</span></div>
+          <pre><code>price = 49.99
+message = "Total: " + price       # TypeError! Can't add str + float
+
+# Fix: convert explicitly
+message = "Total: " + str(price)  # "Total: 49.99"
+# Or better, use an f-string:
+message = f"Total: {price}"       # "Total: 49.99"
+print(message)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── EXERCISES ─── -->
+    <div id="exercises">
+      <div class="section-title"><span class="num">9</span> Hands-On Exercises</div>
+
+      <!-- Exercise 1 -->
+      <div class="exercise-box">
+        <div class="exercise-header">
+          <div class="exercise-title">💻 Exercise 1: Student Profile</div>
+          <span class="exercise-level beginner">🟢 Beginner</span>
+        </div>
+        <div class="exercise-task">
+          Create variables for a student: <code>student_name</code> (str), <code>student_age</code> (int), <code>gpa</code> (float), and <code>is_enrolled</code> (bool). Print each one with <code>type()</code> to verify, then print a formatted summary sentence using an f-string.
+        </div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3 — Starter Code</span>
+          </div>
+          <pre><code>student_name = "Riya Sharma"
+student_age = 20
+gpa = 3.85
+is_enrolled = True
+
+# Print each variable and its type
+print(student_name, type(student_name))
+print(student_age, type(student_age))
+print(gpa, type(gpa))
+print(is_enrolled, type(is_enrolled))
+
+# Print a formatted summary
+print(f"\n{student_name} | Age: {student_age} | GPA: {gpa} | Enrolled: {is_enrolled}")</code></pre>
+        </div>
+        <div class="exercise-hint">💡 Hint: f-strings use <code>f"text {variable} more text"</code> — expressions inside <code>{}</code> are evaluated and converted to strings automatically.</div>
+        <a class="exercise-run-btn" href="/?lang=python3">▶ Run This in Our Compiler</a>
+      </div>
+
+      <!-- Exercise 2 -->
+      <div class="exercise-box">
+        <div class="exercise-header">
+          <div class="exercise-title">💻 Exercise 2: Type Conversion Challenge</div>
+          <span class="exercise-level intermediate">🟡 Intermediate</span>
+        </div>
+        <div class="exercise-task">
+          Given the values below (all as strings), convert each to the correct numeric type, perform a calculation, and print the result. This simulates a real-world scenario where data arrives as text (e.g., from an API or CSV file).
+        </div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3 — Starter Code</span>
+          </div>
+          <pre><code>price_str = "1499.50"
+quantity_str = "3"
+discount_str = "10"   # percentage
+
+# TODO: Convert to correct types and compute:
+# 1. total = price * quantity
+# 2. discount_amount = total * (discount / 100)
+# 3. final_price = total - discount_amount
+# 4. Print: "Final Price: ₹XXXX.XX" (rounded to 2 decimals)
+
+price = float(price_str)
+quantity = int(quantity_str)
+discount = float(discount_str)
+
+total = price * quantity
+discount_amount = total * (discount / 100)
+final_price = total - discount_amount
+
+print(f"Total: ₹{total:.2f}")
+print(f"Discount ({discount}%): -₹{discount_amount:.2f}")
+print(f"Final Price: ₹{final_price:.2f}")</code></pre>
+        </div>
+        <div class="exercise-hint">💡 Hint: <code>:.2f</code> inside an f-string formats a float to exactly 2 decimal places — very useful for prices and percentages.</div>
+        <a class="exercise-run-btn" href="/?lang=python3">▶ Run This in Our Compiler</a>
+      </div>
+    </div>
+
+    <!-- ─── KEY TAKEAWAYS ─── -->
+    <div id="key-takeaways" class="key-takeaways">
+      <div class="key-takeaways-title">✅ Key Takeaways — Lesson 2</div>
+      <ol>
+        <li><strong>Variables are created with <code>=</code></strong> — no type declaration needed. Python determines the type from the value automatically.</li>
+        <li><strong>Python has four primitive types</strong>: <code>int</code> (whole numbers), <code>float</code> (decimals), <code>str</code> (text), and <code>bool</code> (True/False). <code>None</code> is also widely used to represent "no value."</li>
+        <li><strong><code>type()</code> reveals the type</strong> of any variable or value at runtime. Use <code>isinstance()</code> for type-checking in conditions.</li>
+        <li><strong>Type casting is explicit</strong> — use <code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>. Python will not silently coerce types for you, unlike JavaScript.</li>
+        <li><strong>Always wrap <code>input()</code> with a conversion</strong> — <code>input()</code> always returns a string. Use <code>int(input(...))</code> or <code>float(input(...))</code> when you need numbers.</li>
+        <li><strong>Use <code>snake_case</code> for variable names</strong> and <code>UPPER_CASE</code> for constants to follow PEP 8 — Python's official style guide.</li>
+        <li><strong>Python variables are references</strong>, not containers. They point to objects in memory, which is why two variable names can point to the same object.</li>
+      </ol>
+    </div>
+
+    <!-- ─── FAQ ─── -->
+    <div id="faq" class="faq-section">
+      <div class="faq-header">❓ Frequently Asked Questions</div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          What is a variable in Python?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>A variable in Python is a named reference to an object stored in memory. When you write <code>age = 25</code>, Python creates an integer object <code>25</code> in memory and makes the name <code>age</code> point to it. Variables can be reassigned to any value at any time — you don't lock them to a particular type like in C or Java.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          Does Python have different data types like int and float?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>Yes. Python's core primitive types are <code>int</code> (whole numbers), <code>float</code> (decimals), <code>str</code> (text), and <code>bool</code> (True/False). Python automatically assigns the correct type based on the literal value you write: <code>5</code> is an <code>int</code>, <code>5.0</code> is a <code>float</code>, <code>"5"</code> is a <code>str</code>, and <code>True</code>/<code>False</code> are <code>bool</code>.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          How do you convert between data types in Python?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>Use the built-in constructor functions: <code>int()</code>, <code>float()</code>, <code>str()</code>, and <code>bool()</code>. For example, <code>int("42")</code> converts the string <code>"42"</code> to the integer <code>42</code>. <code>float(10)</code> converts the integer <code>10</code> to <code>10.0</code>. Note that <code>int(3.9)</code> truncates to <code>3</code>, not <code>4</code> — it does not round.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          Is Python dynamically typed? What does that mean?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>Yes — Python is dynamically typed, meaning type information is attached to <em>objects</em> (values), not to variable names. This means the same variable can hold an <code>int</code> at one point and a <code>str</code> at another: <code>x = 5; x = "hello"</code> is valid Python. The type is checked at <em>runtime</em> (when the code runs), not at compile time. This is the opposite of statically-typed languages like Java or C++, where variable types are fixed at compile time.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTHOR -->
+    <div class="lesson-author">
+      <div class="lesson-author-avatar">OC</div>
+      <div class="lesson-author-info">
+        <div class="lesson-author-name">Our Compiler Editorial Team</div>
+        <div class="lesson-author-meta">
+          <span>✍️ Written by experienced Python developers</span>
+          <span>🔍 Reviewed for accuracy</span>
+          <span>📅 Updated August 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREV / NEXT -->
     <div class="nav-footer">
       <a href="/blog-python-intro.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">Welcome & Hello World</span>
+        <span class="title">1. Welcome &amp; Hello World</span>
       </a>
       <a href="/blog-python-operators.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">Basic Operators & Math</span>
+        <span class="title">3. Basic Operators &amp; Math</span>
       </a>
     </div>
+
   </main>
 </div>
+
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>

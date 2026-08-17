@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C User Input: scanf(), Address Operator (&), Buffer Pitfalls & fgets() — C Tutorial | Our Compiler</title>
+  <meta name="description" content="Master C User Input (Phase 3 Part 1): scanf() mechanics, why the address-of operator (&) is required, reading ints, floats, chars, and strings, the infamous input buffer newline pitfall and how to clear it, safe text reading with fgets(), and robust input validation." />
+  <meta name="keywords" content="c tutorial, c user input: scanf(), address operator (&), buffer pitfalls & fgets(), learn c programming, c scanf, c operators, c input buffer, c fgets, c precedence" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/04-c-user-input-scanf-and-buffer-handling.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      line-height: 1.8;
+      margin: 22px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: C Basics & Program Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C Basics & Program Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
+        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html">3. Data Types, sizeof & Type Casting</a>
+      </div>
+
+      <!-- Phase 03: Input & Operators -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input & Operators</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html" class="active">4. User Input (scanf, fgets & Buffer Traps)</a>
+        <a href="/blog-c/05-c-operators-expressions-and-precedence.html">5. Operators, Precedence & 6 Programs</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 4: C User Input: scanf(), Address Operator (&), Buffer Pitfalls & fgets()</span>
+    </div>
+
+    <h1 class="page-title">C User Input: scanf(), Address Operator (&), Buffer Pitfalls & fgets()</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 4</span>
+      <span class="badge">📂 Phase 03: Input & Operators</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>scanf() Mechanics · Address Operator (&) · Reading Primitives & Strings · Stdin Buffer Pitfall (\n) · fgets() Safe Text Input · Input Validation</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 3 (Part 1): C User Input, scanf(), Buffer Mechanics & fgets() Masterclass</strong>! Writing interactive software requires receiving runtime input from users via the keyboard (Standard Input: <code>stdin</code>). In C, the standard input function is <strong><code>scanf()</code> (Scan Formatted)</strong>. However, because C operates directly with memory addresses, using <code>scanf()</code> requires understanding pointers, the address-of operator (<code>&</code>), and the notorious <strong>stdin input buffer trap</strong> where leftover newline characters corrupt subsequent reads. In this comprehensive guide, you will master reading all data types, solving the buffer newline glitch, reading multi-word strings safely with <code>fgets()</code>, and validating user inputs.</p>
+    </div>
+
+    <!-- 1. scanf() & The Address Operator & -->
+    <div class="section-title"><span class="num">1</span>scanf() Mechanics & Why the Address Operator (&amp;) is Required</div>
+    <div class="section-body">
+      <p>In C, functions receive arguments by value (copy). Kani <code>scanf()</code> function user enter chesina value ni manam declare chesina variable lo <strong>Direct ga RAM Memory Address lo write cheyyali</strong>. Andhuke variable peru mundhu <strong>Address-of Operator (<code>&amp;</code>)</strong> pass chesthamu:</p>
+
+      <div class="memory-diagram">
+        <strong>How scanf() writes directly into RAM:</strong><br>
+        int age;                   // Allocated at RAM address 0x2000 (currently Garbage value)<br>
+        scanf("%d", &amp;age);         // User enters "21"<br>
+        <br>
+        1. scanf() parses text "21" -&gt; binary 21<br>
+        2. scanf() takes address 0x2000 and writes 21 directly into that RAM slot!<br>
+        <br>
+        RAM Address 0x2000: [  21  ]  &lt;--- age is now safely updated!
+      </div>
+
+      <div class="concept-box">
+        <h4>⚠️ When is &amp; NOT needed in scanf()?</h4>
+        <p>Strings (character arrays, e.g. <code>char name[50];</code>) lo <code>&amp;</code> pettakkarledu: <code>scanf("%s", name);</code>.<br>
+        <strong>Why?</strong> C lo array name automatically memory lo unna first element address (<code>&amp;name[0]</code>) ni represent chesthundi!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — User Curriculum Example</span>
+          <a class="try-btn" href="/?lang=c">▶ Run in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int age;
+
+    printf("Enter your age: ");
+    scanf("%d", &amp;age);
+
+    printf("Your age is %d\n", age);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 2. Reading Primitives & Format Specifiers in scanf -->
+    <div class="section-title"><span class="num">2</span>Reading Different Data Types with scanf()</div>
+    <div class="section-body">
+      <p><code>scanf()</code> requires the matching format specifier for each data type:</p>
+
+      <table class="tbl spec-table">
+        <tr><th>Data Type</th><th>scanf Format Specifier</th><th>Syntax Example</th><th>Crucial Notes</th></tr>
+        <tr><td><code>int</code></td><td><code>%d</code></td><td><code>scanf("%d", &amp;num);</code></td><td>Skips leading whitespaces/newlines automatically.</td></tr>
+        <tr><td><code>float</code></td><td><code>%f</code></td><td><code>scanf("%f", &amp;gpa);</code></td><td>Reads 32-bit single precision float.</td></tr>
+        <tr><td><code>double</code></td><td><strong><code>%lf</code></strong> (Long Float)</td><td><code>scanf("%lf", &amp;price);</code></td><td>⚠️ Must use <code>%lf</code> in <code>scanf</code> (using <code>%f</code> will corrupt memory!).</td></tr>
+        <tr><td><code>char</code></td><td><code>%c</code></td><td><code>scanf(" %c", &amp;grade);</code></td><td>⚠️ Does NOT skip whitespace; leading space in <code>" %c"</code> is mandatory!</td></tr>
+        <tr><td><code>char[]</code> (Word)</td><td><code>%s</code></td><td><code>scanf("%s", name);</code></td><td>Reads single word; <strong>stops at first space</strong> or newline.</td></tr>
+      </table>
+    </div>
+
+    <!-- 3. The Dangerous Input Buffer Trap (
+) & How to Fix It -->
+    <div class="section-title"><span class="num">3</span>The Dangerous Input Buffer Trap (
+) &amp; How to Fix It ⚠️</div>
+    <div class="section-body">
+      <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
+        <h4 style="color:#ff7b72;">⚠️ Why Does scanf("%c") Skip Input After scanf("%d")?</h4>
+        <p>User keyboard meedha <code>25</code> type chesi <code>ENTER</code> press chesinappudu, <code>stdin</code> input buffer lo <code>'2', '5', '\n'</code> store avthayi.<br>
+        1. <code>scanf("%d", &amp;age)</code> కేవలం <code>25</code> ని read chesi <code>'\n'</code> ని buffer lo వదిలేస్తుంది.<br>
+        2. Next line lo <code>scanf("%c", &amp;grade)</code> call ayinappudu, adhi user input kosam wait cheyyakunda, buffer lo unna leftover <code>'\n'</code> ని read chesi skip aypothundhi!<br>
+        <br>
+        ✅ <strong>Solution 1:</strong> <code>scanf(" %c", &amp;grade);</code> (Leading space pedithe whitespace/newline ignore avthundhi).<br>
+        ✅ <strong>Solution 2:</strong> Clear remaining buffer characters with: <code>while((c = getchar()) != '\n' &amp;&amp; c != EOF);</code></p>
+      </div>
+    </div>
+
+    <!-- 4. Safe Multi-Word String Reading with fgets() -->
+    <div class="section-title"><span class="num">4</span>Safe Multi-Word Text Input with fgets() (Preventing Buffer Overflow)</div>
+    <div class="section-body">
+      <p><code>scanf("%s", str)</code> is dangerous because it stops at spaces and causes <strong>Buffer Overflow crashes</strong> if input exceeds array size. Professional C developers use <strong><code>fgets()</code></strong>:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Safe String Input with fgets() & Input Validation</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void) {
+    char fullName[50];
+    int rollNumber;
+
+    // 1. Reading multi-word line safely with fgets
+    printf("Enter your Full Name (with spaces): ");
+    fgets(fullName, sizeof(fullName), stdin);
+
+    // Remove trailing newline captured by fgets
+    fullName[strcspn(fullName, "\n")] = 0;
+
+    // 2. Robust Input Validation with scanf return value
+    printf("Enter your Roll Number: ");
+    if (scanf("%d", &amp;rollNumber) != 1) {
+        printf("❌ Invalid Input! You must enter a numeric integer.\n");
+        return 1; // Exit with error code
+    }
+
+    printf("\n--- Student Card ---\n");
+    printf("Name: %s\n", fullName);
+    printf("Roll No: %d\n", rollNumber);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test Interactive Input in C Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this interactive user greeting program in our online C compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    char name[30];
+    int luckyNumber;
+
+    printf("Enter your name: ");
+    scanf("%29s", name); // %29s limits max characters to prevent overflow
+
+    printf("Enter your lucky number: ");
+    scanf("%d", &amp;luckyNumber);
+
+    printf("Namaste, %s! Your lucky number squared is %d.\n", name, luckyNumber * luckyNumber);
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+
+    
+  
+
+    <div class="nav-footer">
+      
+      <a href="03-c-data-types-format-specifiers-and-type-casting.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">3. Data Types, sizeof & Type Casting</span>
+      </a>
+
+      
+      <a href="05-c-operators-expressions-and-precedence.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">5. Operators, Precedence & 6 Programs</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

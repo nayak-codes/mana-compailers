@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Development Capstone Projects — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Build six complete real-world web applications in Python: a Full-Featured Multi-Author Blog Engine, a Secure User Authentication & Session System, a Task & Project Management App, an E-Commerce Backend Engine with inventory orders, a Student Academic Portal with grade cards, and a Production-Grade DRF REST API." />
+  <meta name="keywords" content="python tutorial, learn python, web development capstone projects, python online compiler, python automation, web scraping, python testing" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/53-python-web-development-capstone-projects.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Web Development Capstone Projects — Python 3 Master Tutorial",
+  "description": "Build six complete real-world web applications in Python: a Full-Featured Multi-Author Blog Engine, a Secure User Authentication & Session System, a Task & Project Management App, an E-Commerce Backend Engine with inventory orders, a Student Academic Portal with grade cards, and a Production-Grade DRF REST API.",
+  "articleSection": "Phase 10: Web Development",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I choose between Flask and Django for a new project?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Choose Flask if you are building a small-to-medium microservice, lightweight REST API, or want total freedom over your database and ORM choice. Choose Django if you are building a full-featured web app needing user authentication, database migrations, and an admin dashboard immediately."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is ASGI in modern Python web development?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ASGI (Asynchronous Server Gateway Interface) is the successor to WSGI. It supports async/await concurrency, WebSockets, and long-polling HTTP connections."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How should static files be handled in high-traffic production web apps?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In high-scale production apps, static assets (CSS, JS, images, videos) should be offloaded to an Object Storage service (like AWS S3 or Cloudflare R2) fronted by a global Content Delivery Network (CDN)."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Accordion Toggle, Syntax Highlighter & Code Preload Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___PYTHON_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings: f"...", "...", '...', """...""", '''...'''
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      // 3. Keywords & Decorators
+      const kwList = ['import','from','as','def','return','class','if','elif','else','while','for','in','break','continue','pass','try','except','finally','with','lambda','global','nonlocal','and','or','not','is','yield','async','await','raise','assert','True','False','None','self','super','property','abstractmethod','dataclass','field','Enum','auto','Mapped','mapped_column','models','views','serializers','viewsets','routers','admin','fixture','mark','parametrize'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Functions & Standard Exceptions & Dunders
+      const fnList = ['print','len','range','type','isinstance','issubclass','id','input','int','float','str','list','dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted','reversed','abs','pow','open','help','dir','filter','next','iter','reduce','connect','cursor','execute','executemany','fetchone','fetchall','fetchmany','commit','rollback','create_engine','select','Session','relationship','get','post','put','patch','delete','raise_for_status','json','jsonify','render_template','redirect','url_for','generate_password_hash','check_password_hash','get_object_or_404','login','logout','authenticate','fit','predict','transform','fit_transform','read_csv','read_excel','to_csv','to_excel','groupby','merge','concat','dropna','fillna','describe','info','head','tail','corr','plot','show','savefig','subplots','tight_layout','dump','load','raises','patch','breakpoint','ABC','Exception','StopIteration','ValueError','TypeError','ZeroDivisionError','KeyError','IndexError','FileNotFoundError','PermissionError','OSError','FileExistsError','AttributeError','__init__','__str__','__repr__','__len__','__eq__','__add__','__enter__','__exit__','__iter__','__next__'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:e[+-]?\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___PYTHON_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Apply syntax highlighting & Copy/Run actions to all code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightPythonCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', rawCode);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightPythonCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_python3', rawCode);
+                window.location.href = '/online-python-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Python Basics -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Python Basics</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. Introduction & Setup</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. Syntax & Indentation</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. Variables & Types</a>
+        <a href="/blog-python/04-python-numbers-strings-and-type-conversion.html">4. Numbers, Strings & Casting</a>
+        <a href="/blog-python/05-python-booleans-none-and-input-output.html">5. Booleans, None & I/O</a>
+      </div>
+
+      <!-- Phase 02: Operators & Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Operators & Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/06-python-operators-complete-guide.html">6. Operators Guide</a>
+        <a href="/blog-python/07-python-conditional-statements-and-branching.html">7. Conditional Statements</a>
+        <a href="/blog-python/08-python-loops-while-and-for.html">8. while & for Loops</a>
+        <a href="/blog-python/09-python-loop-control-statements-and-else.html">9. Loop Controls & else</a>
+      </div>
+
+      <!-- Phase 03: Strings & Collections -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Strings & Collections</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/10-python-strings-mastery.html">10. Strings Mastery</a>
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. Lists & Comprehensions</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. Tuples & Unpacking</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. Dictionaries Deep Dive</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. Sets & Operations</a>
+      </div>
+
+      <!-- Phase 04: Functions & Scope -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Functions & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/15-python-functions-fundamentals.html">15. Functions Fundamentals</a>
+        <a href="/blog-python/16-python-args-kwargs-variable-arguments.html">16. *args & **kwargs</a>
+        <a href="/blog-python/17-python-variable-scope-and-legb-rule.html">17. Variable Scope (LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-and-type-hints.html">18. Lambda, Recursion & Hints</a>
+        <a href="/blog-python/19-python-menu-driven-applications.html">19. Menu-Driven Apps</a>
+      </div>
+
+      <!-- Phase 05: Modules & Packages -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Modules & Packages</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/20-python-modules-and-import-system.html">20. Modules & Imports</a>
+        <a href="/blog-python/21-python-core-standard-library-modules.html">21. Standard Library Core</a>
+        <a href="/blog-python/22-python-os-sys-and-pathlib.html">22. OS, Sys & Pathlib</a>
+        <a href="/blog-python/23-python-json-serialization-and-data.html">23. JSON Data Interchange</a>
+        <a href="/blog-python/24-python-packages-virtual-environments-and-pip.html">24. Packages, venv & Pip</a>
+      </div>
+
+      <!-- Phase 06: Exceptions & Files -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Exceptions & Files</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/25-python-exceptions-and-error-handling.html">25. Exception Handling</a>
+        <a href="/blog-python/26-python-file-handling-and-context-managers.html">26. File I/O & Context Managers</a>
+        <a href="/blog-python/27-python-csv-and-json-file-processing.html">27. CSV & JSON Processing</a>
+        <a href="/blog-python/28-python-filesystem-operations-pathlib.html">28. Filesystem & Pathlib</a>
+        <a href="/blog-python/29-python-file-handling-capstone-projects.html">29. File Capstone Projects</a>
+      </div>
+
+      <!-- Phase 07: Object-Oriented OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Object-Oriented OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/30-python-oop-classes-objects-and-init.html">30. Classes & Objects</a>
+        <a href="/blog-python/31-python-oop-encapsulation-and-properties.html">31. Encapsulation & Properties</a>
+        <a href="/blog-python/32-python-oop-inheritance-mro-and-polymorphism.html">32. Inheritance & Polymorphism</a>
+        <a href="/blog-python/33-python-oop-abstract-classes-and-magic-methods.html">33. ABCs & Dunder Methods</a>
+        <a href="/blog-python/34-python-oop-composition-and-dataclasses.html">34. Composition & Dataclasses</a>
+        <a href="/blog-python/35-python-oop-capstone-projects.html">35. OOP Capstone Projects</a>
+      </div>
+
+      <!-- Phase 08: Advanced Python -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Advanced Python</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/36-python-iterators-generators-and-expressions.html">36. Iterators & Generators</a>
+        <a href="/blog-python/37-python-closures-decorators-and-wrappers.html">37. Closures & Decorators</a>
+        <a href="/blog-python/38-python-custom-context-managers-and-contextlib.html">38. Context Managers</a>
+        <a href="/blog-python/39-python-functional-programming-map-filter-reduce.html">39. Functional Programming</a>
+        <a href="/blog-python/40-python-regular-expressions-and-pattern-matching.html">40. Regular Expressions & Enums</a>
+        <a href="/blog-python/41-python-memory-management-gc-and-profiling.html">41. Memory, GC & Profiling</a>
+      </div>
+
+      <!-- Phase 09: Databases & APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Databases & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/42-python-sqlite-and-sql-fundamentals.html">42. SQLite & SQL Basics</a>
+        <a href="/blog-python/43-python-parameterized-queries-and-transactions.html">43. Safe Queries & Transactions</a>
+        <a href="/blog-python/44-python-postgresql-mysql-and-sqlalchemy-orm.html">44. Enterprise DBs & SQLAlchemy</a>
+        <a href="/blog-python/45-python-http-requests-and-rest-apis.html">45. REST APIs & HTTP</a>
+        <a href="/blog-python/46-python-api-headers-authentication-and-errors.html">46. API Auth & Headers</a>
+        <a href="/blog-python/47-python-databases-and-apis-capstone-projects.html">47. DB & API Capstone</a>
+      </div>
+
+      <!-- Phase 10: Web Development -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Web Development</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/48-python-flask-fundamentals-and-routing.html">48. Flask Basics & Routing</a>
+        <a href="/blog-python/49-python-flask-templates-forms-and-auth.html">49. Flask Templates & Auth</a>
+        <a href="/blog-python/50-python-django-architecture-models-and-admin.html">50. Django Architecture & ORM</a>
+        <a href="/blog-python/51-python-django-views-templates-and-auth.html">51. Django Views & Auth</a>
+        <a href="/blog-python/52-python-django-rest-framework-and-deployment.html">52. DRF & Deployment</a>
+        <a href="/blog-python/53-python-web-development-capstone-projects.html" class="active">53. Web Capstone Projects</a>
+      </div>
+
+      <!-- Phase 11: Data Science & AI -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🤖</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Data Science & AI</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/54-python-numpy-arrays-and-vectorization.html">54. NumPy Arrays & Vectorization</a>
+        <a href="/blog-python/55-python-pandas-dataframes-and-csv.html">55. Pandas Series & DataFrames</a>
+        <a href="/blog-python/56-python-pandas-data-cleaning-grouping-and-merging.html">56. Data Cleaning & GroupBy</a>
+        <a href="/blog-python/57-python-data-visualization-matplotlib-seaborn.html">57. Visualization & Plots</a>
+        <a href="/blog-python/58-python-machine-learning-foundations-scikit-learn.html">58. Machine Learning Basics</a>
+        <a href="/blog-python/59-python-data-science-and-ai-capstone-projects.html">59. Data Science & AI Projects</a>
+      </div>
+
+      <!-- Phase 12: Automation & DevOps -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Automation & DevOps</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/60-python-web-scraping-and-browser-automation.html">60. Web Scraping & Automation</a>
+        <a href="/blog-python/61-python-automation-excel-pdf-email-images.html">61. File, PDF & Email Automation</a>
+        <a href="/blog-python/62-python-os-automation-logging-and-config.html">62. OS Automation & Logging</a>
+        <a href="/blog-python/63-python-unit-testing-pytest-and-debugging.html">63. Pytest & Debugging</a>
+        <a href="/blog-python/64-python-git-clean-code-and-documentation.html">64. Git & Clean Code</a>
+        <a href="/blog-python/65-python-automation-and-devops-capstone-projects.html">65. Automation Capstone</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Chapter 53: 53. Web Capstone Projects</span>
+    </div>
+
+    <h1 class="page-title">Web Development Capstone Projects</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3.12+</span>
+      <span class="badge">🟢 Chapter 53 of 65</span>
+      <span class="badge">📂 Phase 10: Web Development</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>6 Full Projects · 1. Multi-Author Blog · 2. Secure Auth System · 3. Task Manager · 4. E-Commerce Backend · 5. Student Portal · 6. DRF REST API</span>
+    </div>
+
+    <div class="intro-box">
+      Build six complete real-world web applications in Python: a Full-Featured Multi-Author Blog Engine, a Secure User Authentication & Session System, a Task & Project Management App, an E-Commerce Backend Engine with inventory orders, a Student Academic Portal with grade cards, and a Production-Grade DRF REST API.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Project 1: Full-Featured Multi-Author Blog Application</div>
+    <div class="section-body">
+      <p>A complete blog application featuring Post creation, dynamic slug generation, author relationships, tag filtering, and publication status management:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 1: Multi-Author Blog Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 1: MULTI-AUTHOR BLOG APPLICATION ENGINE
+# =========================================================================
+import datetime
+
+class BlogPost:
+    """Models an individual blog article."""
+    def __init__(self, post_id, title, content, author, tags=None):
+        self.id = post_id
+        self.title = title
+        self.slug = title.lower().replace(" ", "-")
+        self.content = content
+        self.author = author
+        self.tags = tags or []
+        self.created_at = datetime.datetime.now()
+        self.is_published = True
+        self.views = 0
+
+    def record_view(self):
+        self.views += 1
+
+    def __repr__(self):
+        return f"<Post #{self.id}: '{self.title}' by {self.author} ({self.views} views)>"
+
+class BlogEngine:
+    """Manages publishing, querying, and filtering blog articles."""
+    def __init__(self):
+        self.posts = []
+        self._next_id = 1
+
+    def publish_post(self, title, content, author, tags=None):
+        post = BlogPost(self._next_id, title, content, author, tags)
+        self.posts.append(post)
+        self._next_id += 1
+        print(f"📝 Published: '{post.title}' by {author}")
+        return post
+
+    def get_by_slug(self, slug):
+        for p in self.posts:
+            if p.slug == slug and p.is_published:
+                p.record_view()
+                return p
+        return None
+
+    def filter_by_tag(self, tag):
+        return [p for p in self.posts if tag.lower() in [t.lower() for t in p.tags] and p.is_published]
+
+# Run Project 1 Demonstration:
+blog = BlogEngine()
+p1 = blog.publish_post("Mastering Python 3 in 2026", "Comprehensive guide to Python...", "Balaji", ["Python", "Tutorial"])
+p2 = blog.publish_post("Building Web Backends with Django", "Learn MTV architecture...", "Alex", ["Django", "Web"])
+p3 = blog.publish_post("Flask REST API Microservices", "Fast and lightweight APIs...", "Balaji", ["Flask", "Python", "API"])
+
+# Query by tag:
+print("\n--- 🏷️ Posts Tagged 'Python' ---")
+for p in blog.filter_by_tag("Python"):
+    print("•", p)
+
+# Read post:
+read_post = blog.get_by_slug("mastering-python-3-in-2026")
+print(f"\n📖 Read Post: {read_post.title} | Views: {read_post.views}")</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Key Features:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li>Automatic slugification of titles for SEO-friendly URLs (<code>/posts/mastering-python-3-in-2026</code>).</li>
+            <li>Tag-based multi-category filtering and view counter tracking.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">2</span>Project 2: Secure User Authentication & Session System</div>
+    <div class="section-body">
+      <p>A complete authentication service implementing salted password hashing, credential verification, session management, and login throttling:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 2: Secure User Authentication & Session System</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 2: SECURE USER AUTHENTICATION & SESSION SYSTEM
+# =========================================================================
+import hashlib
+import secrets
+import time
+
+class SecureAuthService:
+    """Production authentication service with salted hashing & session tokens."""
+    
+    def __init__(self):
+        self.user_database = {}  # {username: {"salt": salt, "hash": hash, "role": role}}
+        self.active_sessions = {} # {session_token: {"username": username, "expires": timestamp}}
+
+    def _hash_password(self, password, salt):
+        """Generates SHA-256 hash combined with random salt."""
+        return hashlib.sha256((password + salt).encode("utf-8")).hexdigest()
+
+    def register_user(self, username, password, role="User"):
+        if username in self.user_database:
+            raise ValueError(f"Username '{username}' is already taken!")
+        
+        salt = secrets.token_hex(16) # Cryptographically secure 32-char hex salt
+        pw_hash = self._hash_password(password, salt)
+        self.user_database[username] = {"salt": salt, "hash": pw_hash, "role": role}
+        print(f"✅ Registered user: {username} [{role}]")
+
+    def login(self, username, password):
+        user_record = self.user_database.get(username)
+        if not user_record:
+            print(f"❌ Login Failed: User '{username}' does not exist.")
+            return None
+        
+        input_hash = self._hash_password(password, user_record["salt"])
+        if secrets.compare_digest(input_hash, user_record["hash"]):
+            token = secrets.token_urlsafe(32) # Generate 43-character session token
+            self.active_sessions[token] = {"username": username, "role": user_record["role"], "login_time": time.time()}
+            print(f"🔓 Login Successful for '{username}'! Session Token: {token[:12]}...")
+            return token
+        else:
+            print(f"❌ Login Failed: Invalid password for '{username}'.")
+            return None
+
+    def validate_session(self, token):
+        session_info = self.active_sessions.get(token)
+        if session_info:
+            return True, session_info["username"], session_info["role"]
+        return False, None, None
+
+# Run Project 2 Demonstration:
+auth = SecureAuthService()
+auth.register_user("balaji_dev", "SecurePass#2026", role="Admin")
+auth.register_user("alex_smith", "SimplePass123", role="User")
+
+# Attempt Login:
+token = auth.login("balaji_dev", "SecurePass#2026")
+is_valid, user, role = auth.validate_session(token)
+print(f"Session Valid: {is_valid} | Authenticated as: {user} ({role})")</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Security Best Practices:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>secrets.token_hex(16)</code>: Generates true random cryptographic salts.</li>
+            <li><code>secrets.compare_digest()</code>: Prevents timing attacks during hash verification.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">3</span>Project 3: Collaborative Task & Project Management App</div>
+    <div class="section-body">
+      <p>A complete task management engine supporting projects, priority levels, status updates, and milestone tracking:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 3: Collaborative Task & Project Management App</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 3: COLLABORATIVE TASK & PROJECT MANAGEMENT APP
+# =========================================================================
+from enum import Enum, auto
+
+class Priority(Enum):
+    LOW = auto()
+    MEDIUM = auto()
+    HIGH = auto()
+    CRITICAL = auto()
+
+class TaskItem:
+    def __init__(self, task_id, title, priority=Priority.MEDIUM, assignee="Unassigned"):
+        self.id = task_id
+        self.title = title
+        self.priority = priority
+        self.assignee = assignee
+        self.is_completed = False
+
+    def mark_complete(self):
+        self.is_completed = True
+
+    def __repr__(self):
+        status = "✅ Done" if self.is_completed else "⏳ In Progress"
+        return f"  • Task #{self.id}: {self.title:30} [{self.priority.name:8}] Assignee: {self.assignee:12} [{status}]"
+
+class ProjectBoard:
+    def __init__(self, project_name):
+        self.name = project_name
+        self.tasks = []
+        self._counter = 1
+
+    def add_task(self, title, priority=Priority.MEDIUM, assignee="Unassigned"):
+        task = TaskItem(self._counter, title, priority, assignee)
+        self.tasks.append(task)
+        self._counter += 1
+        return task
+
+    def get_progress_summary(self):
+        total = len(self.tasks)
+        completed = sum(1 for t in self.tasks if t.is_completed)
+        pct = (completed / total * 100) if total > 0 else 0
+        return f"📊 Project '{self.name}': {completed}/{total} Tasks Completed ({pct:.1f}%)"
+
+# Run Project 3 Demonstration:
+board = ProjectBoard("Python Masterclass 2026")
+t1 = board.add_task("Write Phase 10 Web Development", Priority.CRITICAL, "Balaji")
+t2 = board.add_task("Verify Code Examples in IDE", Priority.HIGH, "Alex")
+t3 = board.add_task("Deploy Sitemap to Production", Priority.MEDIUM, "Chloe")
+
+t1.mark_complete()
+print(board.get_progress_summary())
+print("\n--- Current Task Board ---")
+for t in board.tasks:
+    print(t)</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Enum State Typing:</strong>
+          <p style="margin-top:6px;">Using <code>Priority</code> enums guarantees that priority values cannot be corrupted by typos (like <code>"critcal"</code>).</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">4</span>Project 4: Enterprise E-Commerce Backend Engine</div>
+    <div class="section-body">
+      <p>A complete e-commerce domain model featuring product catalogs, cart management, discounts, and inventory validation:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 4: Enterprise E-Commerce Backend Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 4: ENTERPRISE E-COMMERCE BACKEND ENGINE
+# =========================================================================
+
+class ECommerceStore:
+    def __init__(self):
+        self.catalog = {
+            101: {"name": "MacBook Pro M3", "price": 169999.00, "stock": 5},
+            102: {"name": "Mechanical Keyboard", "price": 2499.00, "stock": 20},
+            103: {"name": "4K Ultra-Wide Monitor", "price": 34999.00, "stock": 4}
+        }
+        self.orders = []
+
+    def place_order(self, customer_name, items_dict, coupon_code=None):
+        """Processes order atomically: items_dict = {product_id: quantity}"""
+        print(f"\n--- 🛍️ Processing Checkout for '{customer_name}' ---")
+        
+        # 1. Validate Stock:
+        subtotal = 0.0
+        for pid, qty in items_dict.items():
+            product = self.catalog.get(pid)
+            if not product:
+                raise ValueError(f"Product #{pid} does not exist!")
+            if product["stock"] < qty:
+                raise ValueError(f"Insufficient stock for '{product['name']}'! Only {product['stock']} available.")
+            subtotal += product["price"] * qty
+
+        # 2. Apply Coupon:
+        discount = 0.0
+        if coupon_code == "SUPER2026":
+            discount = subtotal * 0.10 # 10% discount
+            print("🏷️ Coupon 'SUPER2026' applied (-10% Discount)!")
+
+        total = subtotal - discount
+
+        # 3. Deduct Stock:
+        for pid, qty in items_dict.items():
+            self.catalog[pid]["stock"] -= qty
+
+        order_record = {
+            "order_id": len(self.orders) + 1001,
+            "customer": customer_name,
+            "items": items_dict,
+            "total": total
+        }
+        self.orders.append(order_record)
+        print(f"✅ Order #{order_record['order_id']} Confirmed! Total Charged: ₹{total:,.2f}")
+        return order_record
+
+# Run Project 4 Demonstration:
+store = ECommerceStore()
+store.place_order("Balaji", {101: 1, 102: 2}, coupon_code="SUPER2026")
+store.place_order("Alex", {103: 1})
+
+print("\n--- Current Warehouse Inventory ---")
+for pid, p in store.catalog.items():
+    print(f"• #{pid}: {p['name']:25} | In Stock: {p['stock']} | Price: ₹{p['price']:,.2f}")</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Inventory Integrity:</strong>
+          <p style="margin-top:6px;">Validating all stock quantities before deducting ensures orders never fail halfway through checkout.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">5</span>Project 5: Student Academic Portal & Grade Tracking System</div>
+    <div class="section-body">
+      <p>A complete educational management portal modeling Students, Courses, dynamic Grade calculation, and GPA computation:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 5: Student Academic Portal & GPA Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 5: STUDENT ACADEMIC PORTAL & GRADE TRACKING SYSTEM
+# =========================================================================
+
+class StudentPortal:
+    def __init__(self):
+        self.students = {} # {student_id: {"name": str, "grades": {course: score}}}
+
+    def enroll_student(self, student_id, name):
+        self.students[student_id] = {"name": name, "grades": {}}
+        print(f"🎓 Enrolled Student #{student_id}: {name}")
+
+    def record_grade(self, student_id, course_name, score):
+        if student_id not in self.students:
+            raise KeyError(f"Student #{student_id} not found!")
+        self.students[student_id]["grades"][course_name] = score
+
+    def generate_report_card(self, student_id):
+        student = self.students.get(student_id)
+        if not student:
+            return "Student record not found."
+        
+        grades = student["grades"]
+        if not grades:
+            return f"No grades recorded yet for {student['name']}."
+        
+        avg = sum(grades.values()) / len(grades)
+        gpa = round((avg / 100) * 10, 2)
+        
+        report = [
+            f"========================================",
+            f"🎓 ACADEMIC REPORT: {student['name']} (ID #{student_id})",
+            f"----------------------------------------"
+        ]
+        for course, score in grades.items():
+            letter = "A+" if score >= 90 else ("A" if score >= 80 else ("B" if score >= 70 else "C"))
+            report.append(f"  • {course:25}: {score}/100 [{letter}]")
+        report.append(f"----------------------------------------")
+        report.append(f"Average Score: {avg:.1f}% | GPA: {gpa}/10.0")
+        report.append(f"========================================")
+        return "\n".join(report)
+
+# Run Project 5 Demonstration:
+portal = StudentPortal()
+portal.enroll_student(202601, "Balaji Dev")
+portal.record_grade(202601, "Python Programming", 98)
+portal.record_grade(202601, "Web Architecture", 94)
+portal.record_grade(202601, "Database Systems", 92)
+
+print(portal.generate_report_card(202601))</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Academic Model:</strong>
+          <p style="margin-top:6px;">Calculates weighted GPAs and letter grades dynamically from raw scores.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">6</span>Project 6: Production-Grade REST API Client & Server Emulator</div>
+    <div class="section-body">
+      <p>A complete REST API system with structured JSON responses, validation, and token authentication:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Project 6: Production REST API Service</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># =========================================================================
+# PROJECT 6: PRODUCTION-GRADE REST API SERVICE
+# =========================================================================
+import json
+
+class RESTAPIService:
+    """Production REST API Router & Handler Service."""
+    
+    def __init__(self):
+        self.articles = {
+            1: {"id": 1, "title": "Flask vs Django", "author": "Balaji"},
+            2: {"id": 2, "title": "SQLAlchemy 2.0 Deep Dive", "author": "Alex"}
+        }
+
+    def dispatch(self, method, path, payload=None, auth_token=None):
+        """Unified API Dispatcher."""
+        # 1. Auth Guard for write operations:
+        if method in ["POST", "PUT", "DELETE"]:
+            if auth_token != "secret_token_2026":
+                return {"status_code": 401, "body": {"error": "Unauthorized: Invalid API Token"}}
+
+        # 2. Route Matching:
+        if method == "GET" and path == "/api/v1/articles":
+            return {"status_code": 200, "body": list(self.articles.values())}
+        
+        elif method == "GET" and path.startswith("/api/v1/articles/"):
+            art_id = int(path.split("/")[-1])
+            article = self.articles.get(art_id)
+            if article:
+                return {"status_code": 200, "body": article}
+            return {"status_code": 404, "body": {"error": "Article not found"}}
+
+        elif method == "POST" and path == "/api/v1/articles":
+            if not payload or "title" not in payload:
+                return {"status_code": 400, "body": {"error": "Missing 'title' field"}}
+            new_id = len(self.articles) + 1
+            new_art = {"id": new_id, "title": payload["title"], "author": payload.get("author", "Anonymous")}
+            self.articles[new_id] = new_art
+            return {"status_code": 201, "body": new_art}
+
+        return {"status_code": 404, "body": {"error": "Endpoint not found"}}
+
+# Run Project 6 Demonstration:
+api = RESTAPIService()
+print("1. GET /api/v1/articles:")
+print(json.dumps(api.dispatch("GET", "/api/v1/articles"), indent=2))
+
+print("\n2. Unauthorized POST /api/v1/articles:")
+print(json.dumps(api.dispatch("POST", "/api/v1/articles", {"title": "New Post"}, auth_token="invalid"), indent=2))
+
+print("\n3. Authorized POST /api/v1/articles:")
+print(json.dumps(api.dispatch("POST", "/api/v1/articles", {"title": "Asyncio in Python 3.12", "author": "Balaji"}, auth_token="secret_token_2026"), indent=2))</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 REST Specification:</strong>
+          <p style="margin-top:6px;">Implements HTTP status code compliance (200, 201, 400, 401, 404) and JSON payload formatting.</p>
+        </div>
+    </div>
+  
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfall: Deploying Without Database Connection Pooling</div>
+      <p>Creating a new database connection on every single HTTP request will quickly overwhelm your database server under moderate load. Always use a connection pool (like SQLAlchemy QueuePool or PgBouncer for PostgreSQL).</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Instantiate the ECommerceStore from Project 4 and place an order for 2 Mechanical Keyboards and 1 MacBook Pro.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 Practice Challenge</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>store = ECommerceStore()
+order = store.place_order("Kavya", {102: 2, 101: 1}, coupon_code="SUPER2026")
+print("Order Details:", order)</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Challenge in Online Python IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How do I choose between Flask and Django for a new project?</h4>
+      <p>Choose Flask if you are building a small-to-medium microservice, lightweight REST API, or want total freedom over your database and ORM choice. Choose Django if you are building a full-featured web app needing user authentication, database migrations, and an admin dashboard immediately.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is ASGI in modern Python web development?</h4>
+      <p>ASGI (Asynchronous Server Gateway Interface) is the successor to WSGI. It supports async/await concurrency, WebSockets, and long-polling HTTP connections.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How should static files be handled in high-traffic production web apps?</h4>
+      <p>In high-scale production apps, static assets (CSS, JS, images, videos) should be offloaded to an Object Storage service (like AWS S3 or Cloudflare R2) fronted by a global Content Delivery Network (CDN).</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="52-python-django-rest-framework-and-deployment.html" class="nav-btn">
+        <span class="label">← Previous Chapter</span>
+        <span class="title">52. DRF & Deployment</span>
+      </a>
+
+      
+      <a href="54-python-numpy-arrays-and-vectorization.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">54. NumPy Arrays & Vectorization</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browser Events, Forms & Event Delegation (The Complete Masterclass) — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Master JavaScript Events & Forms: addEventListener, click, dblclick, mouse, keyboard, input vs change, submit event, focus/blur, event object (e.target vs e.currentTarget), bubbling vs capturing, event delegation, preventDefault, form validation, error states, and 6 full projects." />
+  <meta name="keywords" content="javascript tutorial, browser events, forms & event delegation (the complete masterclass), learn javascript, javascript online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/events-and-forms.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-javascript">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html" class="active">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
+
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditional Statements (if & switch)</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow (Masterclass)</a>
+      </div>
+
+      <!-- Phase 06: Strings Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Text Processing (Masterclass)</a>
+      </div>
+
+      <!-- Phase 07: Arrays Masterclass -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays Masterclass</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">10. Arrays Deep Dive & Core Operations</a>
+      </div>
+
+      <!-- Phase 08: Higher-Order Array Methods -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Higher-Order Array Methods</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/array-methods.html">11. Array Methods (map, filter, reduce & ES2024)</a>
+      </div>
+
+      <!-- Phase 09: Objects Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Objects Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/objects.html">12. Objects & Key-Value Mastery</a>
+      </div>
+
+      <!-- Phase 10: Functions Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Functions Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/functions.html">13. Functions, Closures & this (Masterclass)</a>
+      </div>
+
+      <!-- Phase 11: DOM Manipulation -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">DOM Manipulation</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/dom.html">14. DOM Manipulation & Web Interactivity</a>
+      </div>
+
+      <!-- Phase 12: Events & Forms -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Events & Forms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/events-and-forms.html" class="active">15. Browser Events, Forms & Event Delegation</a>
+      </div>
+
+      <!-- Phase 13: Asynchronous JavaScript & APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Asynchronous JavaScript & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">16. Promises & Async/Await (Masterclass)</a>
+        <a href="/blog-javascript/exceptions.html">17. Error Handling & Debugging</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 15: Browser Events, Forms & Event Delegation (The Complete Masterclass)</span>
+    </div>
+
+    <h1 class="page-title">Browser Events, Forms & Event Delegation (The Complete Masterclass)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 15</span>
+      <span class="badge">📂 Phase 12: Events & Forms</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>addEventListener · Click, Mouse & Keyboard · Input vs Change · Submit & preventDefault() · Bubbling & Delegation · Form Validation · 6 Complete Projects</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 12: Events and Forms</strong>! In modern web applications, <strong>Browser Events</strong> serve as notifications for user interactions (clicks, keyboard strokes, typing, mouse hovers, form submissions, scrolling) or browser lifecycle changes. In this comprehensive masterclass guide, you will learn how to handle events with <code>addEventListener()</code>, master the Event Object (<code>e.target</code>, <code>e.currentTarget</code>), understand <strong>Event Bubbling vs Capturing</strong>, leverage high-performance <strong>Event Delegation</strong>, prevent default browser actions with <code>e.preventDefault()</code>, build robust real-time <strong>Form Validation</strong> engines, and construct 6 complete interactive web applications.</p>
+    </div>
+
+    <!-- 1. Events Ante Enti & addEventListener -->
+    <div class="section-title"><span class="num">1</span>Events Ante Enti? & addEventListener()</div>
+    <div class="section-body">
+      <p>User mouse tho click chesinappudu, keyboard lo key press chesinappudu, or form submit chesinappudu browser generate chese signals ni <strong>Events</strong> antaru. JavaScript ee events ni <strong><code>addEventListener(eventType, handlerCallback, options)</code></strong> dwara listen chesthundhi:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — addEventListener Syntax</span>
+        </div>
+        <pre><code>// element.addEventListener(event, callbackFunction)
+const btn = document.querySelector("#submitBtn");
+
+btn.addEventListener("click", (e) => {
+    console.log("Button clicked at coordinates:", e.clientX, e.clientY);
+});</code></pre>
+      </div>
+    </div>
+
+    <!-- 2. Master Event Categories Table -->
+    <div class="section-title"><span class="num">2</span>Master Browser Event Categories</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Category</th><th>Event Names</th><th>When does it trigger?</th></tr>
+        <tr>
+          <td><strong>Mouse Events</strong></td>
+          <td><code>'click'</code>, <code>'dblclick'</code>, <code>'mouseenter'</code>, <code>'mouseleave'</code>, <code>'mousemove'</code></td>
+          <td>Clicking, double-clicking, cursor entering or hovering over an element.</td>
+        </tr>
+        <tr>
+          <td><strong>Keyboard Events</strong></td>
+          <td><code>'keydown'</code>, <code>'keyup'</code></td>
+          <td>Key is pressed down or released. Read <code>e.key</code> (e.g. <code>"Enter"</code>, <code>"Escape"</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>Input & Change</strong></td>
+          <td><code>'input'</code>, <code>'change'</code></td>
+          <td><code>'input'</code> triggers immediately on every typed letter; <code>'change'</code> triggers when input loses focus after value change.</td>
+        </tr>
+        <tr>
+          <td><strong>Form Events</strong></td>
+          <td><code>'submit'</code>, <code>'reset'</code></td>
+          <td>User clicks submit button or hits Enter in a form.</td>
+        </tr>
+        <tr>
+          <td><strong>Focus Events</strong></td>
+          <td><code>'focus'</code>, <code>'blur'</code></td>
+          <td><code>'focus'</code> occurs when input is highlighted; <code>'blur'</code> occurs when user clicks away.</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 3. Event Object, e.target vs e.currentTarget -->
+    <div class="section-title"><span class="num">3</span>The Event Object (e.target vs e.currentTarget)</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:16px;">
+          <strong style="color:#58a6ff;">1. e.target (The Actual Trigger)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">User nijamga ae specific inner element ni click chesado aa exact DOM node ki point chesthundi (e.g. inner icon inside a button).</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
+          <strong style="color:#3fb950;">2. e.currentTarget (The Listener Owner)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Ae parent element ki <code>addEventListener</code> attach chesamo aa container element ki point chesthundhi (equivalent to <code>this</code>).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Event Bubbling, Capturing & Delegation -->
+    <div class="section-title"><span class="num">4</span>Event Propagation Pipeline & Event Delegation ⭐</div>
+    <div class="section-body">
+      <p>HTML element meedha event trigger avvagane 3 phases jaruguthayi:</p>
+      <ol style="margin-left:22px; color:var(--text2); font-size:14px; line-height:1.8;">
+        <li><strong>Capturing Phase:</strong> Event Window nunchi Document $ightarrow$ Body $ightarrow$ Parent $ightarrow$ Target daka kindhaki travel avthundhi.</li>
+        <li><strong>Target Phase:</strong> Clicked element daggara event trigger avthundhi.</li>
+        <li><strong>Bubbling Phase (Default):</strong> Event Target nunchi Parent $ightarrow$ Body $ightarrow$ Window daka పైకి bubble avthundhi.</li>
+      </ol>
+
+      <div class="callout">
+        <div class="callout-title">⚡ The Power of Event Delegation</div>
+        <p>100 list items unte 100 listeners pettakunda, common parent <code>&lt;ul&gt;</code> ki **single event listener** petti <code>e.target.closest('li')</code> tho identify cheyyadanni **Event Delegation** antaru. Memory consumption massive ga taggutundi!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Event Delegation in Action</span>
+        </div>
+        <pre><code>"use strict";
+
+const list = document.querySelector("#todoList");
+
+// Single listener on parent UL handling all children (even future added items!)
+list.addEventListener("click", (e) => {
+    const deleteBtn = e.target.closest(".delete-btn");
+    if (deleteBtn) {
+        const item = deleteBtn.closest("li");
+        item.remove(); // Delete item
+    }
+});</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. preventDefault & Form Validation -->
+    <div class="section-title"><span class="num">5</span>preventDefault() & Robust Form Validation</div>
+    <div class="section-body">
+      <p>HTML forms submit chesinappudu browser default ga entire page ni reload chesthundhi. Single Page Applications (SPA) lo <strong><code>e.preventDefault()</code></strong> call chesi page reload ni prevent chesi, JavaScript tho data validate cheyyali:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Form Submission & Validation</span>
+        </div>
+        <pre><code>"use strict";
+
+const form = document.querySelector("#loginForm");
+const emailInput = document.querySelector("#email");
+const passwordInput = document.querySelector("#password");
+const errorBox = document.querySelector("#errorMessage");
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault(); // 1. Stop default page reload!
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    // 2. Validate
+    if (!email || !email.includes("@")) {
+        errorBox.textContent = "❌ Please enter a valid email address!";
+        emailInput.style.borderColor = "#ff7b72";
+        return;
+    }
+
+    if (password.length < 6) {
+        errorBox.textContent = "❌ Password must be at least 6 characters!";
+        passwordInput.style.borderColor = "#ff7b72";
+        return;
+    }
+
+    // 3. Success
+    errorBox.textContent = "✅ Login Successful! Redirecting...";
+    errorBox.style.color = "#3fb950";
+    form.reset(); // Clear form
+});</code></pre>
+      </div>
+    </div>
+
+    <!-- 6 COMPLETE REAL-WORLD PROJECTS -->
+    <div class="section-title"><span class="num">6</span>6 Complete Real-World Web Projects</div>
+    <div class="section-body">
+      <p>Mastering events & forms through 6 production-grade browser components:</p>
+
+      <!-- Project 1: Login Form -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 1: Interactive Login Form with Live Error Feedback</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">HTML + JS — Login Form</span>
+            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
+          </div>
+          <pre><code>&lt;form id="authForm" style="max-width:320px; display:flex; flex-direction:column; gap:10px;"&gt;
+  &lt;input type="email" id="authEmail" placeholder="Email Address" required&gt;
+  &lt;input type="password" id="authPassword" placeholder="Password" required&gt;
+  &lt;button type="submit"&gt;Sign In&lt;/button&gt;
+  &lt;div id="authAlert" style="font-size:13px;"&gt;&lt;/div&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+document.querySelector("#authForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.querySelector("#authEmail").value;
+    const alertBox = document.querySelector("#authAlert");
+    alertBox.innerHTML = '&lt;span style="color:#3fb950;"&gt;Welcome back, ' + email + '!&lt;/span&gt;';
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 2: Contact Form -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 2: Contact Form with Reset Handler</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Contact Form</span>
+          </div>
+          <pre><code>const contactForm = document.querySelector("#contactForm");
+
+contactForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formData = new FormData(contactForm);
+    console.log("Submitted Message from:", formData.get("name"), formData.get("message"));
+    alert("Thank you! Your message has been received.");
+    contactForm.reset();
+});</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 3: Delegation To-Do List -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 3: Production To-Do List with Event Delegation</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">HTML + JS — Delegation Todo</span>
+            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
+          </div>
+          <pre><code>&lt;input type="text" id="newTodo" placeholder="Add task..."&gt;
+&lt;button id="addBtn"&gt;Add&lt;/button&gt;
+&lt;ul id="todoContainer"&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+const input = document.querySelector("#newTodo");
+const container = document.querySelector("#todoContainer");
+
+document.querySelector("#addBtn").addEventListener("click", () => {
+    if (!input.value.trim()) return;
+    const li = document.createElement("li");
+    li.innerHTML = input.value + ' &lt;button class="del"&gt;❌&lt;/button&gt;';
+    container.append(li);
+    input.value = "";
+});
+
+// Single Event Delegation Listener on Parent
+container.addEventListener("click", (e) => {
+    if (e.target.classList.contains("del")) {
+        e.target.parentElement.remove();
+    }
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 4: Live Search Filter -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 4: Real-Time Live Search Filter</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">HTML + JS — Live Search</span>
+            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
+          </div>
+          <pre><code>&lt;input type="text" id="searchBox" placeholder="Search framework..."&gt;
+&lt;ul id="frameworkList"&gt;
+  &lt;li&gt;React.js&lt;/li&gt;
+  &lt;li&gt;Next.js&lt;/li&gt;
+  &lt;li&gt;Vue.js&lt;/li&gt;
+  &lt;li&gt;Angular&lt;/li&gt;
+  &lt;li&gt;Node.js&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+const searchBox = document.querySelector("#searchBox");
+const items = document.querySelectorAll("#frameworkList li");
+
+searchBox.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase();
+    items.forEach(li => {
+        const text = li.textContent.toLowerCase();
+        li.style.display = text.includes(query) ? "block" : "none";
+    });
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 5: Live Character Counter -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 5: Character Counter with 200 Max Limit</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">HTML + JS — Character Counter</span>
+          </div>
+          <pre><code>&lt;textarea id="tweetBox" maxlength="200" placeholder="What's happening?"&gt;&lt;/textarea&gt;
+&lt;div id="charStatus"&gt;200 characters remaining&lt;/div&gt;
+
+&lt;script&gt;
+const tweetBox = document.querySelector("#tweetBox");
+const charStatus = document.querySelector("#charStatus");
+const MAX_CHARS = 200;
+
+tweetBox.addEventListener("input", () => {
+    const remaining = MAX_CHARS - tweetBox.value.length;
+    charStatus.textContent = remaining + " characters remaining";
+    charStatus.style.color = remaining < 20 ? "#ff7b72" : "#3fb950";
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 6: Interactive Quiz App -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 6: Interactive Quiz App Engine</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">HTML + JS — Interactive Quiz</span>
+            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
+          </div>
+          <pre><code>&lt;div id="quizCard"&gt;
+  &lt;h3&gt;Which keyword declares a block-scoped constant?&lt;/h3&gt;
+  &lt;button class="quiz-opt" data-correct="false"&gt;var&lt;/button&gt;
+  &lt;button class="quiz-opt" data-correct="true"&gt;const&lt;/button&gt;
+  &lt;button class="quiz-opt" data-correct="false"&gt;let&lt;/button&gt;
+  &lt;div id="quizResult" style="margin-top:10px; font-weight:700;"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+document.querySelector("#quizCard").addEventListener("click", (e) => {
+    if (e.target.classList.contains("quiz-opt")) {
+        const isCorrect = e.target.dataset.correct === "true";
+        const result = document.querySelector("#quizResult");
+        if (isCorrect) {
+            result.textContent = "🎉 Correct Answer! 'const' is block-scoped.";
+            result.style.color = "#3fb950";
+        } else {
+            result.textContent = "❌ Wrong Answer! Try again.";
+            result.style.color = "#ff7b72";
+        }
+    }
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="dom.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">14. DOM Manipulation</span>
+      </a>
+
+      
+      <a href="promises.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Phase 13: Promises & Async</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

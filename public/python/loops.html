@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 3 Loops & Ranges | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 — Python 3 Loops & Ranges with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  <!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="/site-nav.css" />
+</head>
+<body class="lang-python">
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Python 3 Tutorial</div>
+    <a href="/blog-python.html">Python 3 HOME</a>
+    <a href="/python/intro.html">1. Welcome & Hello World</a>
+    <a href="/python/variables.html">2. Variables & Core Types</a>
+    <a href="/python/operators.html">3. Basic Operators & Math</a>
+    <a href="/python/strings.html">4. String Slicing & Methods</a>
+    <a href="/python/conditionals.html">5. Conditionals (if-else)</a>
+    <a href="/python/loops.html" class="active">6. Loops & Ranges</a>
+    <a href="/python/input.html">7. Reading User Inputs</a>
+    <a href="/python/lists.html">8. Lists & Tuples</a>
+    <a href="/python/dicts.html">9. Dictionaries & Sets</a>
+    <a href="/python/functions.html">10. Functions & Reusable Code</a>
+    <a href="/python/modules.html">11. Modules & Standard Lib</a>
+    <a href="/python/files.html">12. File I/O Operations</a>
+    <a href="/python/errors.html">13. Exception Handling</a>
+    <a href="/python/oop-basics.html">14. OOP: Classes & Objects</a>
+    <a href="/python/oop-advanced.html">15. OOP: Inheritance & Dunder</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/python/quiz.html" style="color:#a8a3ff;font-weight:700;">🧠 Python Quiz</a>
+    <a href="/?lang=python3">▶ Try Python 3 Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/blog.html">Tutorials</a><span>›</span>
+  <a href="/blog-python.html">Python 3</a><span>›</span>
+  <span>Loops & Ranges</span>
+</div>
+<h1 class="page-title">Python 3 — Repeating Actions with Loops</h1>
+<div class="page-meta">
+  <span class="badge">🐍 Python 3</span>
+  <span class="badge">🟢 Lesson 6</span>
+  <span class="badge">📅 July 2026</span>
+</div>
+
+<div class="intro-box">
+  <p>Loops allow you to run the same block of code multiple times. Instead of copy-pasting the same instruction ten times, you can tell the computer to repeat it using a loop. Python offers two main types of loops: 'while' loops and 'for' loops.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> While Loops</div>
+  <p>A <code>while</code> loop runs as long as a specified condition remains <code>True</code>. Be careful to change the variable inside the loop, or it will run forever (creating an infinite loop):</p>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — While Loop</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code>countdown = 5
+
+while countdown > 0:
+    print(f"Countdown: {countdown}")
+    countdown = countdown - 1  # Decrement variable
+
+print("Blast off! 🚀")</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">2</span> For Loops & The range() Function</div>
+  <p>A <code>for</code> loop iterates over a sequence. In Python, you frequently pair it with the <code>range()</code> function to run code a specific number of times. Note that <code>range(start, stop)</code> goes up to but does not include the 'stop' value:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — For Loop & Range</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code># Loop from 0 to 4 (runs 5 times)
+for i in range(5):
+    print(f"Count: {i}")
+
+print("-" * 20)
+
+# Loop from 1 to 5
+for num in range(1, 6):
+    print(f"Number: {num}")</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Loop Controls: break & continue</div>
+  <p>Sometimes you need to alter the loop's natural flow:</p>
+  <ul>
+    <li><code>break</code>: Instantly terminates the loop, jumping to code below it.</li>
+    <li><code>continue</code>: Skips the rest of the current iteration and jumps back to the top to start the next iteration.</li>
+  </ul>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — Loop Controls</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code># Break example
+for n in range(1, 10):
+    if n == 5:
+        break # Exit loop
+    print(n) # Prints 1, 2, 3, 4
+
+print("-" * 20)
+
+# Continue example
+for val in range(1, 6):
+    if val == 3:
+        continue # Skip 3
+    print(val) # Prints 1, 2, 4, 5</code></pre>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>⚠️ Infinite Loop Recovery:</strong>
+  <p>If you accidentally write a program with an infinite loop (e.g. <code>while True: print("Help!")</code>), the compiler output panel will lag or timeout. In Our Compiler, you can simply click the **Stop** button to kill the Docker container instantly!</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
+  <p>Write a program that prints only the **even** numbers between 1 and 20. Use a 'for' loop and an 'if' statement to check if the remainder of the number divided by 2 is 0 (using the modulo <code>%</code> operator).</p>
+</div>
+
+    <div class="nav-footer">
+      <a href="/python/conditionals.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">Conditionals (if-else)</span>
+      </a>
+      <a href="/python/input.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Reading User Inputs</span>
+      </a>
+    </div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

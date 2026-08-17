@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Conditional Branching: if, else-if Ladders, Nested if & Common Traps — C Tutorial | Our Compiler</title>
+  <meta name="description" content="Master C Conditional Statements (Phase 4 Part 1): Boolean truth in C (0 vs non-zero), if, if-else, else-if ladders, nested if, guard clauses, multiple conditions with logical AND/OR/NOT, short-circuit evaluation, ternary operator, character comparisons, and critical compiler traps (if (x = 5), dangling else)." />
+  <meta name="keywords" content="c tutorial, c conditional branching: if, else-if ladders, nested if & common traps, learn c programming, c if else, c switch case, c conditions, c leap year program, c calculator switch" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .flow-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      line-height: 1.8;
+      margin: 22px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: C Basics & Program Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C Basics & Program Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
+        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html">3. Data Types, sizeof & Type Casting</a>
+      </div>
+
+      <!-- Phase 03: Input & Operators -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input & Operators</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html">4. User Input (scanf, fgets & Buffer Traps)</a>
+        <a href="/blog-c/05-c-operators-expressions-and-precedence.html">5. Operators, Precedence & 6 Programs</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements & Branching -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements & Branching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html" class="active">6. if-else Ladders, Nested if & Logical Logic</a>
+        <a href="/blog-c/07-c-switch-case-and-decision-practice-programs.html">7. switch-case, Fall-Through & 7 Programs</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 6: C Conditional Branching: if, else-if Ladders, Nested if & Common Traps</span>
+    </div>
+
+    <h1 class="page-title">C Conditional Branching: if, else-if Ladders, Nested if & Common Traps</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 6</span>
+      <span class="badge">📂 Phase 04: Conditions & Branching</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Boolean Truth in C · if, if-else & else-if · Nested if & Guard Clauses · Logical Operators & Short-Circuit · Ternary · Comparing Chars · Common Traps</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 4 (Part 1): C Conditional Branching, if-else Ladders, Nested if & Logical Evaluation Masterclass</strong>! In real-world software, programs must make dynamic decisions based on runtime user input and system conditions. In C, decision-making is rooted in <strong>integer-based Boolean logic</strong>, where <code>0</code> represents <code>FALSE</code> and <strong>any non-zero value</strong> represents <code>TRUE</code>. In this comprehensive guide, you will master the mechanics of <code>if</code>, <code>if-else</code>, multi-branch <code>else-if</code> ladders, nested conditions, short-circuit logical operators, character comparisons, and critical traps like accidental assignment in condition statements.</p>
+    </div>
+
+    <!-- 1. Boolean Truth in C & if Syntax -->
+    <div class="section-title"><span class="num">1</span>Boolean Truth in C &amp; The if / if-else Mechanics</div>
+    <div class="section-body">
+      <div class="concept-box">
+        <h4>💡 The Golden Rule of Boolean Truth in C:</h4>
+        <p>• <strong><code>0</code> (Zero):</strong> Evaluates strictly to <strong><code>FALSE</code></strong>.<br>
+        • <strong>Any Non-Zero Value (<code>1</code>, <code>-5</code>, <code>100</code>, <code>0.5</code>):</strong> Evaluates strictly to <strong><code>TRUE</code></strong>!</p>
+      </div>
+
+      <div class="flow-diagram">
+        <strong>Control Flow Architecture — if-else:</strong><br>
+        <br>
+                 [ Start Condition: (marks &gt;= 40) ]<br>
+                              │<br>
+                  ┌───────────┴───────────┐<br>
+                  ▼ (TRUE)                ▼ (FALSE)<br>
+            [ Grade: PASS ]         [ Grade: FAIL ]<br>
+                  │                       │<br>
+                  └───────────┬───────────┘<br>
+                              ▼<br>
+                   [ Continue Execution ]
+      </div>
+    </div>
+
+    <!-- 2. else-if Ladder (User Curriculum Standard) -->
+    <div class="section-title"><span class="num">2</span>The else-if Ladder (Multi-Way Decision Making)</div>
+    <div class="section-body">
+      <p>Multiple mutually exclusive conditions unnapudu <strong><code>else-if</code> ladder</strong> sequential order lo top-to-bottom evaluate avthundhi. First match ayina block execute avvagane migilina conditions skip aypothayi:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — User Curriculum Grade Calculator</span>
+          <a class="try-btn" href="/?lang=c">▶ Run in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int marks;
+
+    printf("Enter marks: ");
+    if (scanf("%d", &amp;marks) != 1) {
+        printf("❌ Invalid input! Please enter an integer.\n");
+        return 1;
+    }
+
+    if (marks &gt;= 90) {
+        printf("Grade A\n");
+    } else if (marks &gt;= 60) {
+        printf("Grade B\n");
+    } else if (marks &gt;= 40) {
+        printf("Grade C\n");
+    } else {
+        printf("Fail\n");
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Nested if & Logical Operators with Short-Circuiting -->
+    <div class="section-title"><span class="num">3</span>Nested if &amp; Logical Operators with Short-Circuit Evaluation ⭐</div>
+    <div class="section-body">
+      <div class="concept-box">
+        <h4>⚡ Short-Circuit Evaluation in C</h4>
+        <p>• <strong>Logical AND (<code>&amp;&amp;</code>):</strong> First expression <code>FALSE</code> ayithe, second expression ni compiler evaluate kuda cheyyadhu (because entire result will definitely be false).<br>
+        • <strong>Logical OR (<code>||</code>):</strong> First expression <code>TRUE</code> ayithe, second expression ni evaluate cheyyadhu (because entire result is already true).<br>
+        ⚡ <em>Performance Tip:</em> Inexpensive fast checks ni left side pettali!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Multiple Logical Conditions & Character Comparison</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    char ch;
+    printf("Enter any single character: ");
+    scanf(" %c", &amp;ch);
+
+    // Character comparison using ASCII integer values
+    if (ch &gt;= 'A' &amp;&amp; ch &lt;= 'Z') {
+        printf("'%c' is an UPPERCASE alphabet (ASCII: %d)\n", ch, ch);
+    } else if (ch &gt;= 'a' &amp;&amp; ch &lt;= 'z') {
+        printf("'%c' is a LOWERCASE alphabet (ASCII: %d)\n", ch, ch);
+    } else if (ch &gt;= '0' &amp;&amp; ch &lt;= '9') {
+        printf("'%c' is a numeric DIGIT.\n", ch);
+    } else {
+        printf("'%c' is a SPECIAL symbol / punctuation.\n", ch);
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. Common Condition Mistakes in C -->
+    <div class="section-title"><span class="num">4</span>Critical Condition Mistakes in C Programming ⚠️</div>
+    <div class="section-body">
+      <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
+        <h4 style="color:#ff7b72;">🛑 The 3 Most Dangerous C Conditional Bugs:</h4>
+        <p>1. <strong>Accidental Assignment (<code>=</code> instead of <code>==</code>):</strong><br>
+        <code>if (x = 5)</code> — Idhi equality check kaadhu! <code>x</code> lo 5 assign ayyi non-zero number return avvadam tho condition <strong>Always TRUE</strong> aypothundhi!<br>
+        💡 <em>Yoda Notation Defense:</em> <code>if (5 == x)</code> ani raste, accidental <code>if (5 = x)</code> compile error tho catch aypothundhi!<br>
+        <br>
+        2. <strong>Accidental Semicolon after if:</strong><br>
+        <code>if (x &gt; 10); { printf("Positive"); }</code> — Semicolon <code>;</code> empty statement ga act chesi if condition ni terminate chesthundhi. Braces lopala unna code condition fail ayina compulsorily execute avthundhi!<br>
+        <br>
+        3. <strong>Floating-Point Equality Check:</strong><br>
+        <code>float f = 0.1f + 0.2f; if (f == 0.3f)</code> is FALSE due to IEEE-754 precision rounding. Use <code>fabs(f - 0.3f) &lt; 0.0001</code> instead!</p>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test Condition Branching in Live C Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this positive/negative number and voting eligibility checker in our online C compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int age = 19;
+
+    // Ternary operator expression
+    const char* status = (age &gt;= 18) ? "ELIGIBLE to Vote" : "NOT Eligible to Vote";
+    printf("Age %d: %s\n", age, status);
+
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+
+    
+  
+
+    <div class="nav-footer">
+      
+      <a href="05-c-operators-expressions-and-precedence.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">5. Operators, Precedence & 6 Programs</span>
+      </a>
+
+      
+      <a href="07-c-switch-case-and-decision-practice-programs.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">7. switch-case, Fall-Through & 7 Programs</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

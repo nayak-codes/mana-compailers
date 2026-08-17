@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Operators, Precedence & 6 Real-World Practice Programs — C Tutorial | Our Compiler</title>
+  <meta name="description" content="Master C Operators (Phase 3 Part 2): Arithmetic, Relational, Logical (short-circuit evaluation), Prefix vs Postfix increment/decrement, Bitwise operators, Ternary operator, Precedence & Associativity Table, and 6 step-by-step practical programs." />
+  <meta name="keywords" content="c tutorial, c operators, precedence & 6 real-world practice programs, learn c programming, c if else, c switch case, c conditions, c leap year program, c calculator switch" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/05-c-operators-expressions-and-precedence.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .flow-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      line-height: 1.8;
+      margin: 22px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: C Basics & Program Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C Basics & Program Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
+        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html">3. Data Types, sizeof & Type Casting</a>
+      </div>
+
+      <!-- Phase 03: Input & Operators -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input & Operators</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html">4. User Input (scanf, fgets & Buffer Traps)</a>
+        <a href="/blog-c/05-c-operators-expressions-and-precedence.html" class="active">5. Operators, Precedence & 6 Programs</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements & Branching -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements & Branching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html">6. if-else Ladders, Nested if & Logical Logic</a>
+        <a href="/blog-c/07-c-switch-case-and-decision-practice-programs.html">7. switch-case, Fall-Through & 7 Programs</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 5: C Operators, Precedence & 6 Real-World Practice Programs</span>
+    </div>
+
+    <h1 class="page-title">C Operators, Precedence & 6 Real-World Practice Programs</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 5</span>
+      <span class="badge">📂 Phase 03: Input & Operators</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Arithmetic & Modulus · Relational & Logical · Prefix vs Postfix (++x/x++) · Bitwise · Ternary · Precedence Table · 6 Practice Programs</span>
+    </div>
+
+<div class="intro-box">
+      <p>Welcome to <strong>Phase 3 (Part 2): C Operators, Expression Evaluation & 6 Practice Programs Masterclass</strong>! Operators are the fundamental building blocks that allow you to perform computations, make logical decisions, and manipulate raw binary bits in memory. In this comprehensive guide, you will master all C operator categories (Arithmetic, Relational, Logical, Bitwise, Ternary), prefix vs postfix increment/decrement mechanics, operator precedence & associativity rules, and construct <strong>6 real-world practical computation programs</strong>.</p>
+    </div>
+
+    <!-- 1. All Operator Categories -->
+    <div class="section-title"><span class="num">1</span>Complete C Operators Classification</div>
+    <div class="section-body">
+      <p>C language provides 6 major families of operators:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <strong style="color:#10b981;">1. Arithmetic Operators</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>+</code> (Addition), <code>-</code> (Subtraction)</li>
+            <li><code>*</code> (Multiplication), <code>/</code> (Division)</li>
+            <li><code>%</code> (Modulus / Remainder) ⚠️ <em>Integers only!</em></li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:16px;">
+          <strong style="color:#38bdf8;">2. Relational (Comparison)</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>==</code> (Equal to), <code>!=</code> (Not equal)</li>
+            <li><code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code></li>
+            <li>Returns <code>1</code> for True, <code>0</code> for False</li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #a855f7; border-radius:8px; padding:16px;">
+          <strong style="color:#a855f7;">3. Logical Operators</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>&amp;&amp;</code> (Logical AND — Short-circuit!)</li>
+            <li><code>||</code> (Logical OR — Short-circuit!)</li>
+            <li><code>!</code> (Logical NOT / Inversion)</li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #eab308; border-radius:8px; padding:16px;">
+          <strong style="color:#eab308;">4. Bitwise Operators</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>&amp;</code> (Bitwise AND), <code>|</code> (Bitwise OR)</li>
+            <li><code>^</code> (XOR), <code>~</code> (NOT / Invert bits)</li>
+            <li><code>&lt;&lt;</code> (Left Shift), <code>&gt;&gt;</code> (Right Shift)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Prefix vs Postfix & Ternary Operator -->
+    <div class="section-title"><span class="num">2</span>Prefix vs Postfix (++x / x++) &amp; Ternary Operator</div>
+    <div class="section-body">
+      <div class="concept-box">
+        <h4>⚡ Prefix (++x) vs Postfix (x++) Mechanics</h4>
+        <p>• <strong>Prefix (<code>++x</code>):</strong> Value ni <strong>First increment chesi</strong>, tharvatha current expression lo use chesthundhi ("Increment first, use later").<br>
+        • <strong>Postfix (<code>x++</code>):</strong> Current expression lo <strong>Original value ni use chesi</strong>, tharvatha increment chesthundhi ("Use first, increment later").</p>
+      </div>
+
+      <div class="concept-box">
+        <h4>Conditional (Ternary) Operator: <code>condition ? expr1 : expr2</code></h4>
+        <p>Simple <code>if-else</code> conditions ni single-line expression ga rayadaniki vadathamu:<br>
+        <code>int max = (a &gt; b) ? a : b;</code></p>
+      </div>
+    </div>
+
+    <!-- 3. Precedence & Associativity Table -->
+    <div class="section-title"><span class="num">3</span>Operator Precedence &amp; Associativity Master Table ⭐</div>
+    <div class="section-body">
+      <p>Complex expressions lo eeh operator mundhu evaluate avvali anedhi <strong>Precedence</strong> decide chesthundhi:</p>
+
+      <table class="tbl spec-table">
+        <tr><th>Priority</th><th>Operators</th><th>Description</th><th>Associativity</th></tr>
+        <tr><td><strong>1 (Highest)</strong></td><td><code>()</code>, <code>[]</code>, <code>-&gt;</code>, <code>.</code></td><td>Parentheses, Array Subscript, Member Access</td><td>Left to Right</td></tr>
+        <tr><td><strong>2</strong></td><td><code>++</code>, <code>--</code>, <code>!</code>, <code>~</code>, <code>+</code>, <code>-</code>, <code>(type)</code>, <code>*</code>, <code>&amp;</code>, <code>sizeof</code></td><td>Unary operators, Type cast, Address, Dereference</td><td><strong>Right to Left</strong></td></tr>
+        <tr><td><strong>3</strong></td><td><code>*</code>, <code>/</code>, <code>%</code></td><td>Multiplication, Division, Modulus</td><td>Left to Right</td></tr>
+        <tr><td><strong>4</strong></td><td><code>+</code>, <code>-</code></td><td>Addition, Subtraction</td><td>Left to Right</td></tr>
+        <tr><td><strong>5</strong></td><td><code>&lt;&lt;</code>, <code>&gt;&gt;</code></td><td>Bitwise Left and Right Shifts</td><td>Left to Right</td></tr>
+        <tr><td><strong>6</strong></td><td><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></td><td>Relational Comparisons</td><td>Left to Right</td></tr>
+        <tr><td><strong>7</strong></td><td><code>==</code>, <code>!=</code></td><td>Equality / Inequality</td><td>Left to Right</td></tr>
+        <tr><td><strong>8</strong></td><td><code>&amp;</code></td><td>Bitwise AND</td><td>Left to Right</td></tr>
+        <tr><td><strong>9</strong></td><td><code>^</code></td><td>Bitwise XOR</td><td>Left to Right</td></tr>
+        <tr><td><strong>10</strong></td><td><code>|</code></td><td>Bitwise OR</td><td>Left to Right</td></tr>
+        <tr><td><strong>11</strong></td><td><code>&amp;&amp;</code></td><td>Logical AND</td><td>Left to Right</td></tr>
+        <tr><td><strong>12</strong></td><td><code>||</code></td><td>Logical OR</td><td>Left to Right</td></tr>
+        <tr><td><strong>13</strong></td><td><code>?:</code></td><td>Ternary Conditional</td><td><strong>Right to Left</strong></td></tr>
+        <tr><td><strong>14 (Lowest)</strong></td><td><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code></td><td>Assignment &amp; Compound Assignments</td><td><strong>Right to Left</strong></td></tr>
+      </table>
+    </div>
+
+    <!-- 4. 6 Real-World Practice Programs -->
+    <div class="section-title"><span class="num">4</span>6 Real-World Practice Programs (Formulas &amp; Walkthroughs)</div>
+    <div class="section-body">
+      <p>Practical implementation of arithmetic and operator logic across 6 essential algorithms:</p>
+
+      <div class="concept-box">
+        <h4>📌 Formulas Used in the 6 Programs:</h4>
+        <p>1. <strong>Add Two Numbers:</strong> $Sum = a + b$<br>
+        2. <strong>Simple Interest:</strong> $SI = rac{P 	imes T 	imes R}{100}$<br>
+        3. <strong>Rectangle Area & Perimeter:</strong> $Area = L 	imes W$, $Perimeter = 2(L + W)$<br>
+        4. <strong>Celsius to Fahrenheit:</strong> $F = (C 	imes rac{9.0}{5.0}) + 32.0$<br>
+        5. <strong>Student Average:</strong> $Avg = rac{M_1 + M_2 + M_3}{3.0}$<br>
+        6. <strong>Bill Calculator:</strong> $Final = Subtotal + (Subtotal 	imes rac{GST%}{100})$</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — All 6 Practice Programs in One Comprehensive Suite</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Programs</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    // 1. Add Two Numbers
+    int num1 = 45, num2 = 30;
+    printf("1. Sum of %d + %d = %d\n", num1, num2, num1 + num2);
+
+    // 2. Simple Interest: P = 10000, T = 2 years, R = 7.5%
+    double P = 10000.0, T = 2.0, R = 7.5;
+    double SI = (P * T * R) / 100.0;
+    printf("2. Simple Interest on Rs.%.0f: Rs.%.2f\n", P, SI);
+
+    // 3. Rectangle Area & Perimeter (L = 12.5, W = 6.0)
+    double length = 12.5, width = 6.0;
+    double area = length * width;
+    double perimeter = 2.0 * (length + width);
+    printf("3. Rectangle Area = %.2f sq.units | Perimeter = %.2f units\n", area, perimeter);
+
+    // 4. Celsius to Fahrenheit (37°C normal body temp)
+    double celsius = 37.0;
+    double fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
+    printf("4. 37°C in Fahrenheit = %.1f°F\n", fahrenheit);
+
+    // 5. Student Average Marks (85, 92, 78)
+    int m1 = 85, m2 = 92, m3 = 78;
+    double average = (m1 + m2 + m3) / 3.0; // Using 3.0 avoids integer division!
+    printf("5. Student Average: %.2f%%\n", average);
+
+    // 6. Supermarket Bill Calculator with 18% GST
+    double itemPrice = 1250.0;
+    int quantity = 3;
+    double subtotal = itemPrice * quantity;
+    double finalBill = subtotal + (subtotal * 0.18);
+    printf("6. Bill: Subtotal = Rs.%.2f | With 18%% GST = Rs.%.2f\n", subtotal, finalBill);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Run Arithmetic Suite in Live C Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Test arithmetic operations, Celsius conversion, and student average in our live GCC compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    double celsius = 100.0; // Boiling point of water
+    double fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
+
+    printf("%.1f°C = %.1f°F\n", celsius, fahrenheit);
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+
+    
+  
+
+    
+
+    <div class="nav-footer">
+      
+      <a href="04-c-user-input-scanf-and-buffer-handling.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">4. User Input (scanf, fgets & Buffer Traps)</span>
+      </a>
+
+      
+      <a href="06-c-conditional-branching-if-else-and-logical-operators.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">6. if-else Ladders, Nested if & Logical Logic</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

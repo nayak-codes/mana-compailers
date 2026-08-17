@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C switch-case, Fall-Through Behavior & 7 Decision Practice Programs — C Tutorial | Our Compiler</title>
+  <meta name="description" content="Master C switch-case Statements (Phase 4 Part 2): switch mechanics, jump table branch optimization, break and default rules, intentional fall-through, and 7 step-by-step practical programs." />
+  <meta name="keywords" content="c tutorial, c switch-case, fall-through behavior & 7 decision practice programs, learn c programming, c for loop, c while loop, c do while, c prime number, c fibonacci, c star patterns" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/07-c-switch-case-and-decision-practice-programs.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .loop-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      line-height: 1.8;
+      margin: 22px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: C Basics & Program Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C Basics & Program Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
+        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html">3. Data Types, sizeof & Type Casting</a>
+      </div>
+
+      <!-- Phase 03: Input & Operators -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input & Operators</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html">4. User Input (scanf, fgets & Buffer Traps)</a>
+        <a href="/blog-c/05-c-operators-expressions-and-precedence.html">5. Operators, Precedence & 6 Programs</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements & Branching -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements & Branching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html">6. if-else Ladders, Nested if & Logical Logic</a>
+        <a href="/blog-c/07-c-switch-case-and-decision-practice-programs.html" class="active">7. switch-case, Fall-Through & 7 Programs</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/08-c-loops-for-while-do-while-and-control-flow.html">8. for, while, do-while, break & continue</a>
+        <a href="/blog-c/09-c-nested-loops-patterns-and-practice-programs.html">9. Nested Loops, Patterns & 9 Core Programs</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 7: C switch-case, Fall-Through Behavior & 7 Decision Practice Programs</span>
+    </div>
+
+    <h1 class="page-title">C switch-case, Fall-Through Behavior & 7 Decision Practice Programs</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 7</span>
+      <span class="badge">📂 Phase 04: Conditions & Branching</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>switch-case Mechanics · Jump Tables · break & default · Fall-Through Behavior · if-else vs switch · 7 Practice Programs (Leap Year, Calculator, Largest of 3)</span>
+    </div>
+
+<div class="intro-box">
+      <p>Welcome to <strong>Phase 4 (Part 2): C switch-case, Fall-Through Mechanics & 7 Decision Programs Masterclass</strong>! When a program must branch across numerous fixed constant options (such as menu choices, state machines, or arithmetic operations), writing long <code>else-if</code> chains becomes verbose and slow. The C <strong><code>switch-case</code></strong> construct solves this by allowing compilers to generate ultra-fast <strong>$O(1)$ Jump Tables</strong>. In this comprehensive guide, you will master the internal architecture of <code>switch</code>, the critical role of <code>break</code>, intentional fall-through grouping, and construct <strong>7 complete production-grade practical decision algorithms</strong>.</p>
+    </div>
+
+    <!-- 1. switch-case Architecture & Jump Tables -->
+    <div class="section-title"><span class="num">1</span>switch-case Mechanics &amp; Jump Table Optimization Under the Hood</div>
+    <div class="section-body">
+      <p>In C, <code>switch</code> operates exclusively on <strong>Integral Values (<code>int</code>, <code>char</code>, <code>enum</code>)</strong>. Floating-point numbers (<code>float</code>, <code>double</code>) and strings (<code>char[]</code>) are NOT allowed in C switch statements!</p>
+
+      <div class="concept-box">
+        <h4>⚙️ Why switch is Faster than else-if (Jump Tables)</h4>
+        <p>• <strong><code>else-if</code> Chain:</strong> Checks conditions linearly one-by-one ($O(N)$ time complexity). If matching branch is at the 10th position, 10 comparisons are executed.<br>
+        • <strong><code>switch-case</code>:</strong> GCC compiler case values ni array of jump memory addresses (<strong>Jump Table / Branch Table</strong>) ga compile chesthundi. CPU directly computes target branch address in <strong>$O(1)$ Instant Time</strong>!</p>
+      </div>
+
+      <div class="flow-diagram">
+        <strong>switch-case Jump Table Execution:</strong><br>
+        switch(choice) ──► JumpTable[choice] ──► Direct Jump to Case Block (No linear checks!)
+      </div>
+    </div>
+
+    <!-- 2. Fall-Through Behavior & Case Grouping -->
+    <div class="section-title"><span class="num">2</span>The break Statement &amp; Fall-Through Behavior</div>
+    <div class="section-body">
+      <p>In C, when a matching <code>case</code> is found, execution continues sequentially into subsequent cases until a <strong><code>break;</code></strong> is reached or switch block ends. This is called <strong>Fall-Through</strong>:</p>
+
+      <div class="concept-box">
+        <h4>💡 Deliberate Fall-Through for Grouping Cases</h4>
+        <p>Multiple cases ki same execution logic unte, <code>break</code> omit chesi group cheyyavachu:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Grouped Fall-Through Vowel Checker</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    char ch = 'E';
+
+    switch(ch) {
+        case 'A': case 'a':
+        case 'E': case 'e':
+        case 'I': case 'i':
+        case 'O': case 'o':
+        case 'U': case 'u':
+            printf("'%c' is a VOWEL.\n", ch);
+            break;
+        default:
+            printf("'%c' is a CONSONANT or non-alphabetic character.\n", ch);
+            break;
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. 7 Real-World Decision Practice Programs -->
+    <div class="section-title"><span class="num">3</span>7 Real-World Practical Decision Programs (Step-by-Step)</div>
+    <div class="section-body">
+      <p>Mastering conditions through 7 foundational programming algorithms:</p>
+
+      <!-- Program 1 & 2: Even/Odd & Positive/Negative -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Programs 1 &amp; 2: Even/Odd &amp; Positive/Negative/Zero Checker</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C — Number Classification</span>
+            <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+          </div>
+          <pre><code>#include &lt;stdio.h&gt;
+
+void checkNumber(int n) {
+    // 1. Even or Odd
+    if (n % 2 == 0) {
+        printf("%d is EVEN. ", n);
+    } else {
+        printf("%d is ODD. ", n);
+    }
+
+    // 2. Positive, Negative, or Zero
+    if (n &gt; 0) {
+        printf("State: POSITIVE\n");
+    } else if (n &lt; 0) {
+        printf("State: NEGATIVE\n");
+    } else {
+        printf("State: ZERO\n");
+    }
+}
+
+int main(void) {
+    checkNumber(14);
+    checkNumber(-7);
+    checkNumber(0);
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Program 3 & 4: Largest of Three & Leap Year -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Programs 3 &amp; 4: Largest of Three Numbers &amp; Leap Year Checker</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C — Advanced Decision Algorithms</span>
+            <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+          </div>
+          <pre><code>#include &lt;stdio.h&gt;
+
+int findLargest(int a, int b, int c) {
+    if (a &gt;= b &amp;&amp; a &gt;= c) return a;
+    if (b &gt;= a &amp;&amp; b &gt;= c) return b;
+    return c;
+}
+
+int isLeapYear(int year) {
+    // Leap year rule: Divisible by 4 AND not 100, UNLESS divisible by 400!
+    return (year % 4 == 0 &amp;&amp; year % 100 != 0) || (year % 400 == 0);
+}
+
+int main(void) {
+    printf("Largest of (45, 92, 78): %d\n", findLargest(45, 92, 78));
+    printf("Is 2024 a Leap Year? %s\n", isLeapYear(2024) ? "YES" : "NO");
+    printf("Is 1900 a Leap Year? %s\n", isLeapYear(1900) ? "YES" : "NO (Century exception)");
+    printf("Is 2000 a Leap Year? %s\n", isLeapYear(2000) ? "YES (400 rule)" : "NO");
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Program 5, 6, 7: Calculator with switch & Voting -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Programs 5, 6 &amp; 7: Menu Calculator using switch &amp; Voting Eligibility</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C — Menu Calculator using switch</span>
+            <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+          </div>
+          <pre><code>#include &lt;stdio.h&gt;
+
+void calculate(double a, double b, char op) {
+    switch(op) {
+        case '+':
+            printf("%.2f + %.2f = %.2f\n", a, b, a + b);
+            break;
+        case '-':
+            printf("%.2f - %.2f = %.2f\n", a, b, a - b);
+            break;
+        case '*':
+            printf("%.2f * %.2f = %.2f\n", a, b, a * b);
+            break;
+        case '/':
+            if (b == 0.0) {
+                printf("❌ Error: Division by zero is undefined!\n");
+            } else {
+                printf("%.2f / %.2f = %.2f\n", a, b, a / b);
+            }
+            break;
+        default:
+            printf("❌ Unknown Operator '%c'\n", op);
+            break;
+    }
+}
+
+int main(void) {
+    printf("--- Multi-Operation Switch Calculator ---\n");
+    calculate(120.0, 30.0, '+');
+    calculate(120.0, 30.0, '/');
+    calculate(50.0, 0.0, '/');
+
+    // Voting Eligibility Check
+    int age = 17;
+    printf("\nAge %d Voting Status: %s\n", age, (age &gt;= 18) ? "Eligible" : "Underage");
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test the Calculator in Live C Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this multi-operator switch calculator in our online GCC compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int year = 2028;
+    if ((year % 4 == 0 &amp;&amp; year % 100 != 0) || (year % 400 == 0)) {
+        printf("Year %d is a LEAP YEAR (366 days).\n", year);
+    } else {
+        printf("Year %d is a COMMON YEAR (365 days).\n", year);
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+
+    
+  
+
+    
+
+    <div class="nav-footer">
+      
+      <a href="06-c-conditional-branching-if-else-and-logical-operators.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">6. if-else Ladders, Nested if & Logical Logic</span>
+      </a>
+
+      
+      <a href="08-c-loops-for-while-do-while-and-control-flow.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">8. for, while, do-while, break & continue</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

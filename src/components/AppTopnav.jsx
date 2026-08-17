@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef } from 'react'
 
 const COMPILER_LANGS = [
-  { name: 'Python', url: '/?lang=python3', blog: '/blog-python.html' },
-  { name: 'Java', url: '/?lang=java', blog: '/blog-java.html' },
-  { name: 'JavaScript', url: '/?lang=nodejs', blog: '/blog-javascript.html' },
-  { name: 'C', url: '/?lang=c', blog: '/blog-c.html' },
-  { name: 'C++', url: '/?lang=cpp17', blog: '/blog-cpp.html' },
-  { name: 'C#', url: '/?lang=csharp', blog: '/blog-csharp.html' },
-  { name: 'Go', url: '/?lang=go', blog: '/blog-go.html' },
-  { name: 'Rust', url: '/?lang=rust', blog: '/blog-rust.html' },
-  { name: 'PHP', url: '/?lang=php', blog: '/blog-php.html' },
-  { name: 'Ruby', url: '/?lang=ruby', blog: '/blog-ruby.html' },
+  { name: 'Python', url: '/online-python-compiler.html', blog: '/blog-python.html' },
+  { name: 'Java', url: '/online-java-compiler.html', blog: '/blog-java.html' },
+  { name: 'HTML / CSS / JS', url: '/online-html-editor.html', blog: '/blog-html.html' },
+  { name: 'JavaScript', url: '/online-javascript-compiler.html', blog: '/blog-javascript.html' },
+  { name: 'C', url: '/online-c-compiler.html', blog: '/blog-c.html' },
+  { name: 'C++', url: '/online-cpp-compiler.html', blog: '/blog-cpp.html' },
+  { name: 'C#', url: '/online-csharp-compiler.html', blog: '/blog-csharp.html' },
+  { name: 'Go', url: '/online-go-compiler.html', blog: '/blog-go.html' },
+  { name: 'Rust', url: '/online-rust-compiler.html', blog: '/blog-rust.html' },
+  { name: 'PHP', url: '/online-php-compiler.html', blog: '/blog-php.html' },
+  { name: 'Ruby', url: '/online-ruby-compiler.html', blog: '/blog-ruby.html' },
 ]
 
 const TUTORIAL_GROUPS = [

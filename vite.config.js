@@ -17,6 +17,7 @@ export default defineConfig({
         csharp: resolve(__dirname, 'online-csharp-compiler.html'),
         go: resolve(__dirname, 'online-go-compiler.html'),
         rust: resolve(__dirname, 'online-rust-compiler.html'),
+        html: resolve(__dirname, 'online-html-editor.html'),
         php: resolve(__dirname, 'online-php-compiler.html'),
         ruby: resolve(__dirname, 'online-ruby-compiler.html'),
       }

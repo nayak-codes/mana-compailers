@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Strings Mastery — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Master Python string manipulation: single/double quotes, escape sequences, zero-based positive & negative slicing, built-in string methods, f-strings, and palindrome algorithms." />
+  <meta name="keywords" content="python tutorial, learn python, python strings mastery, python online compiler, python automation, web scraping, python testing" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/10-python-strings-mastery.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Python Strings Mastery — Python 3 Master Tutorial",
+  "description": "Master Python string manipulation: single/double quotes, escape sequences, zero-based positive & negative slicing, built-in string methods, f-strings, and palindrome algorithms.",
+  "articleSection": "Phase 3: Strings and Collections",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why are strings in Python immutable?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Immutability allows strings to be hashable (usable as dictionary keys and set members), memory-efficient (via CPython string interning), and thread-safe in concurrent applications."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between find() and index()?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "find() returns -1 if the substring is not found, while index() raises a ValueError exception."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can f-strings execute arbitrary Python expressions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Inside {expr} in an f-string, you can call functions, perform math (f\"{2+2}\"), access dictionary keys, or format numbers (f\"{price:,.2f}\")."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Accordion Toggle, Syntax Highlighter & Code Preload Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___PYTHON_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings: f"...", "...", '...', """...""", '''...'''
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      // 3. Keywords & Decorators
+      const kwList = ['import','from','as','def','return','class','if','elif','else','while','for','in','break','continue','pass','try','except','finally','with','lambda','global','nonlocal','and','or','not','is','yield','async','await','raise','assert','True','False','None','self','super','property','abstractmethod','dataclass','field','Enum','auto','Mapped','mapped_column','models','views','serializers','viewsets','routers','admin','fixture','mark','parametrize'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Functions & Standard Exceptions & Dunders
+      const fnList = ['print','len','range','type','isinstance','issubclass','id','input','int','float','str','list','dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted','reversed','abs','pow','open','help','dir','filter','next','iter','reduce','connect','cursor','execute','executemany','fetchone','fetchall','fetchmany','commit','rollback','create_engine','select','Session','relationship','get','post','put','patch','delete','raise_for_status','json','jsonify','render_template','redirect','url_for','generate_password_hash','check_password_hash','get_object_or_404','login','logout','authenticate','fit','predict','transform','fit_transform','read_csv','read_excel','to_csv','to_excel','groupby','merge','concat','dropna','fillna','describe','info','head','tail','corr','plot','show','savefig','subplots','tight_layout','dump','load','raises','patch','breakpoint','ABC','Exception','StopIteration','ValueError','TypeError','ZeroDivisionError','KeyError','IndexError','FileNotFoundError','PermissionError','OSError','FileExistsError','AttributeError','__init__','__str__','__repr__','__len__','__eq__','__add__','__enter__','__exit__','__iter__','__next__'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:e[+-]?\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___PYTHON_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Apply syntax highlighting & Copy/Run actions to all code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightPythonCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', rawCode);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightPythonCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_python3', rawCode);
+                window.location.href = '/online-python-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Python Basics -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Python Basics</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. Introduction & Setup</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. Syntax & Indentation</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. Variables & Types</a>
+        <a href="/blog-python/04-python-numbers-strings-and-type-conversion.html">4. Numbers, Strings & Casting</a>
+        <a href="/blog-python/05-python-booleans-none-and-input-output.html">5. Booleans, None & I/O</a>
+      </div>
+
+      <!-- Phase 02: Operators & Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Operators & Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/06-python-operators-complete-guide.html">6. Operators Guide</a>
+        <a href="/blog-python/07-python-conditional-statements-and-branching.html">7. Conditional Statements</a>
+        <a href="/blog-python/08-python-loops-while-and-for.html">8. while & for Loops</a>
+        <a href="/blog-python/09-python-loop-control-statements-and-else.html">9. Loop Controls & else</a>
+      </div>
+
+      <!-- Phase 03: Strings & Collections -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Strings & Collections</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/10-python-strings-mastery.html" class="active">10. Strings Mastery</a>
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. Lists & Comprehensions</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. Tuples & Unpacking</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. Dictionaries Deep Dive</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. Sets & Operations</a>
+      </div>
+
+      <!-- Phase 04: Functions & Scope -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Functions & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/15-python-functions-fundamentals.html">15. Functions Fundamentals</a>
+        <a href="/blog-python/16-python-args-kwargs-variable-arguments.html">16. *args & **kwargs</a>
+        <a href="/blog-python/17-python-variable-scope-and-legb-rule.html">17. Variable Scope (LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-and-type-hints.html">18. Lambda, Recursion & Hints</a>
+        <a href="/blog-python/19-python-menu-driven-applications.html">19. Menu-Driven Apps</a>
+      </div>
+
+      <!-- Phase 05: Modules & Packages -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Modules & Packages</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/20-python-modules-and-import-system.html">20. Modules & Imports</a>
+        <a href="/blog-python/21-python-core-standard-library-modules.html">21. Standard Library Core</a>
+        <a href="/blog-python/22-python-os-sys-and-pathlib.html">22. OS, Sys & Pathlib</a>
+        <a href="/blog-python/23-python-json-serialization-and-data.html">23. JSON Data Interchange</a>
+        <a href="/blog-python/24-python-packages-virtual-environments-and-pip.html">24. Packages, venv & Pip</a>
+      </div>
+
+      <!-- Phase 06: Exceptions & Files -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Exceptions & Files</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/25-python-exceptions-and-error-handling.html">25. Exception Handling</a>
+        <a href="/blog-python/26-python-file-handling-and-context-managers.html">26. File I/O & Context Managers</a>
+        <a href="/blog-python/27-python-csv-and-json-file-processing.html">27. CSV & JSON Processing</a>
+        <a href="/blog-python/28-python-filesystem-operations-pathlib.html">28. Filesystem & Pathlib</a>
+        <a href="/blog-python/29-python-file-handling-capstone-projects.html">29. File Capstone Projects</a>
+      </div>
+
+      <!-- Phase 07: Object-Oriented OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Object-Oriented OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/30-python-oop-classes-objects-and-init.html">30. Classes & Objects</a>
+        <a href="/blog-python/31-python-oop-encapsulation-and-properties.html">31. Encapsulation & Properties</a>
+        <a href="/blog-python/32-python-oop-inheritance-mro-and-polymorphism.html">32. Inheritance & Polymorphism</a>
+        <a href="/blog-python/33-python-oop-abstract-classes-and-magic-methods.html">33. ABCs & Dunder Methods</a>
+        <a href="/blog-python/34-python-oop-composition-and-dataclasses.html">34. Composition & Dataclasses</a>
+        <a href="/blog-python/35-python-oop-capstone-projects.html">35. OOP Capstone Projects</a>
+      </div>
+
+      <!-- Phase 08: Advanced Python -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Advanced Python</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/36-python-iterators-generators-and-expressions.html">36. Iterators & Generators</a>
+        <a href="/blog-python/37-python-closures-decorators-and-wrappers.html">37. Closures & Decorators</a>
+        <a href="/blog-python/38-python-custom-context-managers-and-contextlib.html">38. Context Managers</a>
+        <a href="/blog-python/39-python-functional-programming-map-filter-reduce.html">39. Functional Programming</a>
+        <a href="/blog-python/40-python-regular-expressions-and-pattern-matching.html">40. Regular Expressions & Enums</a>
+        <a href="/blog-python/41-python-memory-management-gc-and-profiling.html">41. Memory, GC & Profiling</a>
+      </div>
+
+      <!-- Phase 09: Databases & APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Databases & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/42-python-sqlite-and-sql-fundamentals.html">42. SQLite & SQL Basics</a>
+        <a href="/blog-python/43-python-parameterized-queries-and-transactions.html">43. Safe Queries & Transactions</a>
+        <a href="/blog-python/44-python-postgresql-mysql-and-sqlalchemy-orm.html">44. Enterprise DBs & SQLAlchemy</a>
+        <a href="/blog-python/45-python-http-requests-and-rest-apis.html">45. REST APIs & HTTP</a>
+        <a href="/blog-python/46-python-api-headers-authentication-and-errors.html">46. API Auth & Headers</a>
+        <a href="/blog-python/47-python-databases-and-apis-capstone-projects.html">47. DB & API Capstone</a>
+      </div>
+
+      <!-- Phase 10: Web Development -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Web Development</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/48-python-flask-fundamentals-and-routing.html">48. Flask Basics & Routing</a>
+        <a href="/blog-python/49-python-flask-templates-forms-and-auth.html">49. Flask Templates & Auth</a>
+        <a href="/blog-python/50-python-django-architecture-models-and-admin.html">50. Django Architecture & ORM</a>
+        <a href="/blog-python/51-python-django-views-templates-and-auth.html">51. Django Views & Auth</a>
+        <a href="/blog-python/52-python-django-rest-framework-and-deployment.html">52. DRF & Deployment</a>
+        <a href="/blog-python/53-python-web-development-capstone-projects.html">53. Web Capstone Projects</a>
+      </div>
+
+      <!-- Phase 11: Data Science & AI -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🤖</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Data Science & AI</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/54-python-numpy-arrays-and-vectorization.html">54. NumPy Arrays & Vectorization</a>
+        <a href="/blog-python/55-python-pandas-dataframes-and-csv.html">55. Pandas Series & DataFrames</a>
+        <a href="/blog-python/56-python-pandas-data-cleaning-grouping-and-merging.html">56. Data Cleaning & GroupBy</a>
+        <a href="/blog-python/57-python-data-visualization-matplotlib-seaborn.html">57. Visualization & Plots</a>
+        <a href="/blog-python/58-python-machine-learning-foundations-scikit-learn.html">58. Machine Learning Basics</a>
+        <a href="/blog-python/59-python-data-science-and-ai-capstone-projects.html">59. Data Science & AI Projects</a>
+      </div>
+
+      <!-- Phase 12: Automation & DevOps -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Automation & DevOps</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/60-python-web-scraping-and-browser-automation.html">60. Web Scraping & Automation</a>
+        <a href="/blog-python/61-python-automation-excel-pdf-email-images.html">61. File, PDF & Email Automation</a>
+        <a href="/blog-python/62-python-os-automation-logging-and-config.html">62. OS Automation & Logging</a>
+        <a href="/blog-python/63-python-unit-testing-pytest-and-debugging.html">63. Pytest & Debugging</a>
+        <a href="/blog-python/64-python-git-clean-code-and-documentation.html">64. Git & Clean Code</a>
+        <a href="/blog-python/65-python-automation-and-devops-capstone-projects.html">65. Automation Capstone</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Chapter 10: 10. Strings Mastery</span>
+    </div>
+
+    <h1 class="page-title">Python Strings Mastery</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3.12+</span>
+      <span class="badge">🟢 Chapter 10 of 65</span>
+      <span class="badge">📂 Phase 3: Strings and Collections</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Quotes · Indexing · Slicing · Escape Characters · String Methods · F-Strings · Palindrome</span>
+    </div>
+
+    <div class="intro-box">
+      Master Python string manipulation: single/double quotes, escape sequences, zero-based positive & negative slicing, built-in string methods, f-strings, and palindrome algorithms.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Creating Strings, Quotes & Escape Characters</div>
+    <div class="section-body">
+      <p>In Python, a <strong>string (<code>str</code>)</strong> is an <strong>immutable sequence of Unicode code points</strong>. Python 3 natively represents all text using UTF-8 encoding, allowing seamless support for international scripts, emojis, and scientific symbols.</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Ways to Create Strings:</h4>
+        <ul>
+          <li><strong>Single Quotes (<code>'...'</code>):</strong> Standard string literal. Useful when your text contains double quotation marks (e.g. <code>'She said "Hello"'</code>).</li>
+          <li><strong>Double Quotes (<code>"..."</code>):</strong> Functionally identical to single quotes. Useful when your text contains apostrophes (e.g. <code>"It's a sunny day"</code>).</li>
+          <li><strong>Triple Quotes (<code>"""..."""</code> or <code>'''...'''</code>):</strong> Multi-line string literals that preserve literal newlines and indentation blocks.</li>
+          <li><strong>Raw Strings (<code>r"..."</code>):</strong> Prefixing a string with <code>r</code> disables escape sequence processing (vital for regular expressions and Windows file paths like <code>r"C:\Users\name"</code>).</li>
+        </ul>
+        <p><strong>Escape Characters:</strong> When you need to include special control characters inside a standard string, use a backslash (<code>\</code>):</p>
+        <table class="tbl" style="margin-top:8px; font-size:12.5px;">
+          <tr><th>Escape Code</th><th>Meaning</th><th>Example</th></tr>
+          <tr><td><code>\n</code></td><td>Newline (Line feed)</td><td><code>"Line 1\nLine 2"</code></td></tr>
+          <tr><td><code>\t</code></td><td>Horizontal Tab space (4-8 spaces)</td><td><code>"Col 1\tCol 2"</code></td></tr>
+          <tr><td><code>\'</code></td><td>Literal single quote</td><td><code>'It\'s Python'</code></td></tr>
+          <tr><td><code>\"</code></td><td>Literal double quote</td><td><code>"She said \"Hi\""</code></td></tr>
+          <tr><td><code>\\</code></td><td>Literal backslash character</td><td><code>"path\\to\\file"</code></td></tr>
+        </table>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: String Creation and Escape Sequences</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># 1. Creating strings with single, double, and triple quotes
+msg1 = 'Hello with single quotes'
+msg2 = "Hello with double quotes (It's easy!)"
+msg3 = """This is a
+multi-line string
+preserving newlines!"""
+
+# 2. Escape characters demonstration
+escaped_text = "Name:\tBalaji\nRole:\tPython Backend Engineer\nQuote:\t\"Keep Building!\""
+
+print(msg1)
+print(msg2)
+print("\n--- Escape Characters Demo ---")
+print(escaped_text)</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Line-by-Line Breakdown:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>\t</code> inserts a clean tab spacing between column labels and values.</li>
+            <li><code>\n</code> forces the cursor to jump to a new line.</li>
+            <li><code>\"</code> embeds literal double quotation marks inside a double-quoted string without syntax error.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">2</span>String Indexing & Slicing ([start:stop:step])</div>
+    <div class="section-body">
+      <p>Because strings are ordered sequences, every character is assigned a numeric position (index). Python provides <strong>dual indexing</strong>:</p>
+        <div class="diagram-box">Positive Indices:   0   1   2   3   4   5
+String Characters:  P   y   t   h   o   n
+Negative Indices:  -6  -5  -4  -3  -2  -1</div>
+        <p><strong>Slicing Formula:</strong> <code>string[start : stop : step]</code></p>
+        <ul>
+          <li><code>start</code>: Index where the slice begins (inclusive, defaults to 0).</li>
+          <li><code>stop</code>: Index where the slice ends (<strong>exclusive</strong> — stops 1 character before!).</li>
+          <li><code>step</code>: Stride/increment between characters (defaults to 1; a negative step traverses backward!).</li>
+        </ul>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Indexing, Slicing and Reversing Strings</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>text = "Python Programming"
+
+# 1. Indexing (Single Characters)
+print("First character [0]:", text[0])    # P
+print("Last character [-1]:", text[-1])   # g
+
+# 2. Slicing sub-ranges
+print("First 6 chars [0:6]:", text[0:6])  # Python
+print("From index 7 to end [7:]:", text[7:]) # Programming
+print("Every 2nd character [::2]:", text[::2]) # Pto rgamn
+
+# 3. String Reversing with step=-1:
+print("Reversed string [::-1]:", text[::-1])</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Key Memory Concept:</strong>
+          <p style="margin-top:6px;">Strings in Python are <strong>IMMUTABLE</strong>. Slicing never modifies the original string; it extracts and creates a brand new string object in memory.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">3</span>Essential String Methods (Case, Strip, Replace)</div>
+    <div class="section-body">
+      <p>Python strings come equipped with dozens of built-in methods for data sanitization, transformation, and case normalization:</p>
+        <ul>
+          <li><code>len(s)</code>: Returns total character count (including whitespace).</li>
+          <li><code>s.upper()</code> / <code>s.lower()</code>: Converts all characters to uppercase or lowercase.</li>
+          <li><code>s.title()</code> / <code>s.capitalize()</code>: Capitalizes the first letter of each word or the sentence.</li>
+          <li><code>s.strip()</code>: Strips leading and trailing whitespace / newlines (use <code>.lstrip()</code> for left only, <code>.rstrip()</code> for right only).</li>
+          <li><code>s.replace(old, new, count)</code>: Replaces occurrences of a substring with new text.</li>
+        </ul>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: String Cleaning and Transformation Methods</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>raw_input = "   learn python programming today   "
+
+# 1. Length of string
+print("Original Length:", len(raw_input))
+
+# 2. Strip leading/trailing whitespace
+cleaned = raw_input.strip()
+print("Cleaned text:", repr(cleaned))
+print("Cleaned Length:", len(cleaned))
+
+# 3. Uppercase & Lowercase transformation
+print("Uppercase:", cleaned.upper())
+print("Title Case:", cleaned.title())
+
+# 4. Replace substring
+updated = cleaned.replace("python", "FastAPI & Python")
+print("Replaced text:", updated)</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Practical Use Case:</strong>
+          <p style="margin-top:6px;">Always apply <code>.strip().lower()</code> when validating user input (like email addresses or usernames) to avoid accidental whitespace or capitalization mismatch bugs.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">4</span>Searching & Validating (find, count, startswith, endswith)</div>
+    <div class="section-body">
+      <p>Inspect and validate string content using search helpers:</p>
+        <ul>
+          <li><code>s.find(sub)</code>: Returns index of first match (returns <code>-1</code> if not found).</li>
+          <li><code>s.count(sub)</code>: Counts non-overlapping occurrences of substring.</li>
+          <li><code>s.startswith(prefix)</code>: Returns <code>True</code> if string starts with prefix.</li>
+          <li><code>s.endswith(suffix)</code>: Returns <code>True</code> if string ends with suffix.</li>
+        </ul>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: String Searching and Validation</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>filename = "data_report_2026.pdf"
+
+# 1. Validating prefix and suffix
+print("Is PDF file?", filename.endswith(".pdf"))         # True
+print("Is data file?", filename.startswith("data_"))     # True
+
+# 2. Searching substring position
+pos = filename.find("report")
+print("Position of 'report': index", pos)                # index 5
+
+# 3. Counting character occurrences
+text_sample = "banana"
+print("Count of letter 'a' in 'banana':", text_sample.count("a")) # 3</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Pro Tip (find vs index):</strong>
+          <p style="margin-top:6px;"><code>.find()</code> returns <code>-1</code> when a substring is missing, whereas <code>.index()</code> crashes with a <code>ValueError</code>. Use <code>.find()</code> for safer code.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">5</span>Splitting, Joining & Modern F-Strings</div>
+    <div class="section-body">
+      <p>Converting between strings and lists is one of the most common programming tasks:</p>
+        <ul>
+          <li><code>s.split(delimiter)</code>: Breaks a string into a list of words or tokens based on a delimiter.</li>
+          <li><code>delimiter.join(list)</code>: Combines a list of strings into a single string joined by the delimiter.</li>
+          <li><strong>F-Strings (<code>f"..."</code>):</strong> Clean expression interpolation introduced in Python 3.6.</li>
+        </ul>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: split(), join(), and F-String Formatting</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># 1. Splitting CSV comma-separated data into a list
+csv_line = "Apple,Banana,Mango,Orange"
+fruits_list = csv_line.split(",")
+print("Splitted List:", fruits_list)
+
+# 2. Joining list items back with a custom separator
+joined_str = " | ".join(fruits_list)
+print("Joined String:", joined_str)
+
+# 3. Modern f-string interpolation
+user = "Balaji"
+score = 98.75
+message = f"Student {user} scored {score:.1f}% on the Python Exam!"
+print("F-String Message:", message)</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Why ".join()" syntax is delimiter-first:</strong>
+          <p style="margin-top:6px;">In Python, you write <code>", ".join(my_list)</code> instead of <code>my_list.join(", ")</code> because <code>join</code> is a method of the string delimiter, allowing it to join any iterable (lists, tuples, sets, generators).</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">6</span>Real-World Algorithm: Palindrome Checker</div>
+    <div class="section-body">
+      <p>A <strong>palindrome</strong> is a word or phrase that reads the same forwards and backwards (e.g. <em>"radar"</em>, <em>"madam"</em>, <em>"racecar"</em>).</p>
+        <p>In Python, string slicing makes checking palindromes remarkably clean and concise:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 6: Reusable Palindrome Checker Function</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>def is_palindrome(word):
+    # Step 1: Clean word (lowercase & strip whitespace)
+    cleaned = word.strip().lower()
+    
+    # Step 2: Compare cleaned word with its reversed slice [::-1]
+    return cleaned == cleaned[::-1]
+
+# Test palindrome cases:
+test_words = ["Radar", "Python", "madam", "Racecar", "Compiler"]
+
+for w in test_words:
+    result = "✅ Palindrome" if is_palindrome(w) else "❌ Not Palindrome"
+    print(f"{w:10} -> {result}")</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Step-by-Step Logic:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>Radar</code> is converted to lowercase <code>radar</code>.</li>
+            <li>Reversed slice <code>radar[::-1]</code> produces <code>radar</code>.</li>
+            <li><code>radar == radar</code> evaluates to <code>True</code>!</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfall: Attempting to Mutate String Characters in Place</div>
+      <p>Writing word[0] = "H" raises TypeError: 'str' object does not support item assignment. Because strings are immutable, create a new string using slicing: word = "H" + word[1:].</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Create a full name string, convert it to uppercase, count the vowels (a, e, i, o, u), and check if it is a palindrome.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 Practice Challenge</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>text = "racecar"
+
+print("Original:", text)
+print("Uppercase:", text.upper())
+print("Reversed:", text[::-1])
+print("Is Palindrome:", text == text[::-1])</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Challenge in Online Python IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Why are strings in Python immutable?</h4>
+      <p>Immutability allows strings to be hashable (usable as dictionary keys and set members), memory-efficient (via CPython string interning), and thread-safe in concurrent applications.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the difference between find() and index()?</h4>
+      <p>find() returns -1 if the substring is not found, while index() raises a ValueError exception.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Can f-strings execute arbitrary Python expressions?</h4>
+      <p>Yes! Inside {expr} in an f-string, you can call functions, perform math (f"{2+2}"), access dictionary keys, or format numbers (f"{price:,.2f}").</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="09-python-loop-control-statements-and-else.html" class="nav-btn">
+        <span class="label">← Previous Chapter</span>
+        <span class="title">9. Loop Controls & else</span>
+      </a>
+
+      
+      <a href="11-python-lists-and-comprehensions.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">11. Lists & Comprehensions</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

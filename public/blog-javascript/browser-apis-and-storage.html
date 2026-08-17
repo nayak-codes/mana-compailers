@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browser APIs, Web Storage & Timers (The Complete Masterclass) — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Master Browser APIs & Client Storage: window, document, console, setTimeout, setInterval, clearTimeout, clearInterval, localStorage vs sessionStorage vs Cookies, URL API, History API, Clipboard API, Geolocation API, Notifications, and Permissions." />
+  <meta name="keywords" content="javascript tutorial, browser apis, web storage & timers (the complete masterclass), learn javascript, javascript online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/browser-apis-and-storage.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN','localStorage','sessionStorage','Notification','navigator','history','URL'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-javascript">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html" class="active">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
+
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditional Statements (if & switch)</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow (Masterclass)</a>
+      </div>
+
+      <!-- Phase 06: Strings Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Text Processing (Masterclass)</a>
+      </div>
+
+      <!-- Phase 07: Arrays Masterclass -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays Masterclass</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">10. Arrays Deep Dive & Core Operations</a>
+      </div>
+
+      <!-- Phase 08: Higher-Order Array Methods -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Higher-Order Array Methods</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/array-methods.html">11. Array Methods (map, filter, reduce & ES2024)</a>
+      </div>
+
+      <!-- Phase 09: Objects Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Objects Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/objects.html">12. Objects & Key-Value Mastery</a>
+      </div>
+
+      <!-- Phase 10: Functions Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Functions Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/functions.html">13. Functions, Closures & this (Masterclass)</a>
+      </div>
+
+      <!-- Phase 11: DOM Manipulation -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">DOM Manipulation</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/dom.html">14. DOM Manipulation & Web Interactivity</a>
+      </div>
+
+      <!-- Phase 12: Events & Forms -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Events & Forms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/events-and-forms.html">15. Browser Events, Forms & Event Delegation</a>
+      </div>
+
+      <!-- Phase 13: Browser APIs & Storage -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Browser APIs & Storage</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/browser-apis-and-storage.html" class="active">16. Browser APIs, Storage & Timers</a>
+      </div>
+
+      <!-- Phase 14: Asynchronous JavaScript & APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">Asynchronous JavaScript & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">17. Promises & Async/Await (Masterclass)</a>
+        <a href="/blog-javascript/exceptions.html">18. Error Handling & Debugging</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 16: Browser APIs, Web Storage & Timers (The Complete Masterclass)</span>
+    </div>
+
+    <h1 class="page-title">Browser APIs, Web Storage & Timers (The Complete Masterclass)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 16</span>
+      <span class="badge">📂 Phase 13: Browser APIs & Storage</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>window & document · Timers (setTimeout/setInterval) · localStorage vs sessionStorage vs Cookies · URL API · History API · Clipboard API · Geolocation · Notifications & Permissions · 4 Projects</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 13: Browser APIs and Storage</strong>! While core JavaScript provides language syntax and data structures, modern web browsers equip developers with a powerful suite of <strong>Web APIs (Browser Object Model)</strong> and <strong>Client-Side Storage Engines</strong>. In this comprehensive masterclass guide, you will master the global <code>window</code> environment, scheduling with <code>setTimeout</code> & <code>setInterval</code>, persistent client storage with <strong><code>localStorage</code></strong>, session-based storage with <strong><code>sessionStorage</code></strong>, HTTP Cookies, dynamic routing with the <strong>URL & History APIs</strong>, seamless clipboard copying with the <strong>Clipboard API</strong>, user coordinates with the <strong>Geolocation API</strong>, and desktop alerts with the <strong>Notifications API</strong>.</p>
+    </div>
+
+    <!-- 1. The Global BOM Environment -->
+    <div class="section-title"><span class="num">1</span>The Global Browser Environment: window, document & console</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong><code>window</code>:</strong> The global execution root object in web browsers. All global variables, BOM APIs, and viewport metrics (<code>window.innerWidth</code>, <code>window.innerHeight</code>) belong to <code>window</code>.</li>
+        <li><strong><code>document</code>:</strong> The DOM root node representing the HTML page content currently loaded inside the window.</li>
+        <li><strong><code>console</code>:</strong> Rich developer diagnostics (<code>console.log()</code>, <code>console.warn()</code>, <code>console.error()</code>, <code>console.table()</code>, and performance timers <code>console.time()</code> / <code>console.timeEnd()</code>).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Console Diagnostics</span>
+        </div>
+        <pre><code>"use strict";
+
+const students = [
+    { name: "Ravi", role: "Frontend Dev", score: 95 },
+    { name: "Sneha", role: "Backend Dev", score: 92 }
+];
+
+console.table(students); // Prints formatted interactive table in DevTools!
+
+console.time("ArrayProcess");
+const filtered = students.filter(s => s.score > 90);
+console.timeEnd("ArrayProcess"); // Prints exact execution time in milliseconds</code></pre>
+      </div>
+    </div>
+
+    <!-- 2. Timers & Scheduling -->
+    <div class="section-title"><span class="num">2</span>Timers & Scheduling: setTimeout vs setInterval</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Timer API</th><th>Execution Pattern</th><th>Cancellation Method</th></tr>
+        <tr>
+          <td><strong><code>setTimeout(callback, delayMs)</code></strong></td>
+          <td>Runs <strong>ONCE</strong> after delay milliseconds.</td>
+          <td><code>clearTimeout(timerId)</code></td>
+        </tr>
+        <tr>
+          <td><strong><code>setInterval(callback, intervalMs)</code></strong></td>
+          <td>Repeats <strong>CONTINUOUSLY</strong> every interval milliseconds.</td>
+          <td><code>clearInterval(intervalId)</code> ⭐ Crucial to avoid memory leaks!</td>
+        </tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Countdown Timer with setInterval</span>
+        </div>
+        <pre><code>"use strict";
+
+let count = 5;
+
+const countdownTimer = setInterval(() => {
+    console.log("Countdown:", count);
+    count--;
+
+    if (count < 0) {
+        clearInterval(countdownTimer); // Stop timer!
+        console.log("🚀 Blast Off! Mission Started.");
+    }
+}, 1000);</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Client-Side Storage -->
+    <div class="section-title"><span class="num">3</span>Client Storage: localStorage vs sessionStorage vs Cookies</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Feature</th><th>localStorage ⭐</th><th>sessionStorage</th><th>Cookies (document.cookie)</th></tr>
+        <tr><td><strong>Persistence</strong></td><td><strong>Permanent</strong> (survives tab & browser close)</td><td>Tab Session Only (cleared on tab close)</td><td>Expires based on Max-Age / Expiry date</td></tr>
+        <tr><td><strong>Storage Capacity</strong></td><td><strong>~5MB - 10MB</strong></td><td>~5MB</td><td>~4KB (very small)</td></tr>
+        <tr><td><strong>Server Sent?</strong></td><td>❌ No (Pure Client-side)</td><td>❌ No</td><td>✅ Yes (Sent with every HTTP header)</td></tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — localStorage CRUD Operations</span>
+        </div>
+        <pre><code>// 1. Store single string
+localStorage.setItem("username", "Ravi");
+
+// 2. Read single string
+const username = localStorage.getItem("username");
+console.log("Retrieved Username:", username); // "Ravi"
+
+// 3. Storing Objects & Arrays with JSON
+const userPreferences = { theme: "dark", fontSize: 16 };
+localStorage.setItem("userPrefs", JSON.stringify(userPreferences));
+
+// 4. Reading & Parsing JSON
+const savedPrefs = JSON.parse(localStorage.getItem("userPrefs"));
+console.log("Saved Theme:", savedPrefs?.theme);
+
+// 5. Deleting item
+localStorage.removeItem("username");
+// localStorage.clear(); // Clears all keys for current origin</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. URL API & History API -->
+    <div class="section-title"><span class="num">4</span>URL API & History API (Single Page Application Routing)</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong><code>URL & URLSearchParams</code>:</strong> Effortlessly parsing URL queries without messy string splits: <code>const params = new URLSearchParams(window.location.search); const id = params.get("id");</code></li>
+        <li><strong><code>History API</code>:</strong> Updating browser URL without triggering a page reload (used by React Router / Next.js): <code>history.pushState({ page: 2 }, "Page 2", "/page-2");</code></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — URLSearchParams Demo</span>
+        </div>
+        <pre><code>"use strict";
+
+const sampleUrl = new URL("https://www.ourcompiler.com/blog-javascript/index.html?lang=nodejs&theme=dark&page=3");
+
+console.log("Host:", sampleUrl.hostname); // "www.ourcompiler.com"
+console.log("Path:", sampleUrl.pathname); // "/blog-javascript/index.html"
+
+// Access query params easily
+const params = sampleUrl.searchParams;
+console.log("Language Param:", params.get("lang"));   // "nodejs"
+console.log("Page Param:", params.get("page"));       // "3"
+console.log("Has Theme?", params.has("theme"));       // true</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Clipboard, Geolocation & Notifications -->
+    <div class="section-title"><span class="num">5</span>Modern Web APIs: Clipboard, Geolocation & Notifications</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Clipboard API:</strong> Asynchronously write/read clipboard data: <code>await navigator.clipboard.writeText("Code snippet");</code></li>
+        <li><strong>Geolocation API:</strong> Access device GPS coordinates: <code>navigator.geolocation.getCurrentPosition(pos => console.log(pos.coords.latitude));</code></li>
+        <li><strong>Notifications API & Permissions:</strong> Request permission and dispatch native operating system desktop alerts: <code>Notification.requestPermission()</code>.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Async Clipboard & Notification APIs</span>
+        </div>
+        <pre><code>// 1. One-click Copy Function
+async function copyToClipboard(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        console.log("✅ Copied to clipboard successfully!");
+    } catch (err) {
+        console.error("Failed to copy:", err);
+    }
+}
+
+// 2. Desktop Notification
+function triggerNotification() {
+    if (Notification.permission === "granted") {
+        new Notification("Code Executed!", {
+            body: "Your JavaScript code executed successfully on Our Compiler.",
+            icon: "/logo.png"
+        });
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission();
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
+    <div class="section-title"><span class="num">6</span>4 Real-World Practice Projects</div>
+    <div class="section-body">
+      <p>Mastering browser APIs and storage through 4 real-world production components:</p>
+
+      <!-- Project 1: User Theme Store -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 1: Persistent Theme Store with localStorage</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Theme Store</span>
+          </div>
+          <pre><code>const ThemeManager = {
+    KEY: "app_theme_preference",
+
+    saveTheme(themeName) {
+        localStorage.setItem(this.KEY, themeName);
+        document.body.className = themeName + "-theme";
+    },
+
+    loadTheme() {
+        const saved = localStorage.getItem(this.KEY) || "dark";
+        document.body.className = saved + "-theme";
+        return saved;
+    }
+};
+
+ThemeManager.loadTheme();</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 2: Stopwatch Component -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 2: Interactive Stopwatch with setInterval</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Stopwatch Engine</span>
+          </div>
+          <pre><code>class Stopwatch {
+    constructor() {
+        this.seconds = 0;
+        this.intervalId = null;
+    }
+
+    start() {
+        if (this.intervalId) return;
+        this.intervalId = setInterval(() => {
+            this.seconds++;
+            console.log("Elapsed Time:", this.seconds, "seconds");
+        }, 1000);
+    }
+
+    stop() {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+        console.log("Stopwatch Paused at:", this.seconds, "seconds");
+    }
+
+    reset() {
+        this.stop();
+        this.seconds = 0;
+        console.log("Stopwatch Reset to 0.");
+    }
+}
+
+const timer = new Stopwatch();
+timer.start();</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 3: Clipboard One-Click Copier -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 3: One-Click Code Snippet Copier</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Clipboard Copier</span>
+          </div>
+          <pre><code>function setupCopyButton(buttonSelector, codeSelector) {
+    const btn = document.querySelector(buttonSelector);
+    const codeBlock = document.querySelector(codeSelector);
+
+    btn?.addEventListener("click", async () => {
+        const text = codeBlock.textContent;
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "✅ Copied!";
+        setTimeout(() => { btn.textContent = "📋 Copy Code"; }, 2000);
+    });
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 4: Geolocation Coordinates Finder -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 4: Geolocation GPS Coordinates Finder</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Geolocation API</span>
+          </div>
+          <pre><code>function findUserLocation() {
+    if (!navigator.geolocation) {
+        console.error("Geolocation is not supported by your browser!");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const { latitude, longitude, accuracy } = position.coords;
+            console.log("Latitude:", latitude);
+            console.log("Longitude:", longitude);
+            console.log("Accuracy within:", accuracy, "meters");
+        },
+        (error) => {
+            console.warn("Location Access Denied or Unavailable:", error.message);
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+    );
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Test localStorage item storage and retrieval in our browser live compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript Storage</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>// Store item in browser storage
+localStorage.setItem("username", "Ravi");
+
+// Retrieve item
+const username = localStorage.getItem("username");
+console.log("Retrieved Username:", username);</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="events-and-forms.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">15. Events & Forms</span>
+      </a>
+
+      
+      <a href="promises.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Phase 14: Promises & Async/Await</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

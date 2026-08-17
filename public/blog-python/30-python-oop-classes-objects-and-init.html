@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Classes, Objects & __init__ — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Master foundational Object-Oriented Programming in Python: the paradigm shift from procedural to object-oriented code, the class blueprint analogy, the __init__() constructor, the self memory pointer, and the crucial distinction between instance variables and class variables." />
+  <meta name="keywords" content="python tutorial, learn python, python classes, objects & __init__, python online compiler, python automation, web scraping, python testing" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/30-python-oop-classes-objects-and-init.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Python Classes, Objects & __init__ — Python 3 Master Tutorial",
+  "description": "Master foundational Object-Oriented Programming in Python: the paradigm shift from procedural to object-oriented code, the class blueprint analogy, the __init__() constructor, the self memory pointer, and the crucial distinction between instance variables and class variables.",
+  "articleSection": "Phase 7: Object-Oriented Programming",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why do Python methods require \"self\" as the first argument explicitly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Explicit self adheres to Python's Zen principle: \"Explicit is better than implicit\". It makes instance variable access unambiguous and eliminates hidden scoping magic."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a class have multiple __init__ constructors in Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Python does not support traditional method overloading by signature. Defining multiple __init__ methods simply overrides previous ones. Instead, use default arguments (*args, **kwargs) or @classmethod alternative constructors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the __del__ method in Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "__del__ is the destructor method called when an object's reference count reaches zero right before CPython garbage collection frees its memory."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Accordion Toggle, Syntax Highlighter & Code Preload Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___PYTHON_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings: f"...", "...", '...', """...""", '''...'''
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      // 3. Keywords & Decorators
+      const kwList = ['import','from','as','def','return','class','if','elif','else','while','for','in','break','continue','pass','try','except','finally','with','lambda','global','nonlocal','and','or','not','is','yield','async','await','raise','assert','True','False','None','self','super','property','abstractmethod','dataclass','field','Enum','auto','Mapped','mapped_column','models','views','serializers','viewsets','routers','admin','fixture','mark','parametrize'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Functions & Standard Exceptions & Dunders
+      const fnList = ['print','len','range','type','isinstance','issubclass','id','input','int','float','str','list','dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted','reversed','abs','pow','open','help','dir','filter','next','iter','reduce','connect','cursor','execute','executemany','fetchone','fetchall','fetchmany','commit','rollback','create_engine','select','Session','relationship','get','post','put','patch','delete','raise_for_status','json','jsonify','render_template','redirect','url_for','generate_password_hash','check_password_hash','get_object_or_404','login','logout','authenticate','fit','predict','transform','fit_transform','read_csv','read_excel','to_csv','to_excel','groupby','merge','concat','dropna','fillna','describe','info','head','tail','corr','plot','show','savefig','subplots','tight_layout','dump','load','raises','patch','breakpoint','ABC','Exception','StopIteration','ValueError','TypeError','ZeroDivisionError','KeyError','IndexError','FileNotFoundError','PermissionError','OSError','FileExistsError','AttributeError','__init__','__str__','__repr__','__len__','__eq__','__add__','__enter__','__exit__','__iter__','__next__'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:e[+-]?\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___PYTHON_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Apply syntax highlighting & Copy/Run actions to all code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightPythonCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', rawCode);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightPythonCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_python3', rawCode);
+                window.location.href = '/online-python-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Python Basics -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Python Basics</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. Introduction & Setup</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. Syntax & Indentation</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. Variables & Types</a>
+        <a href="/blog-python/04-python-numbers-strings-and-type-conversion.html">4. Numbers, Strings & Casting</a>
+        <a href="/blog-python/05-python-booleans-none-and-input-output.html">5. Booleans, None & I/O</a>
+      </div>
+
+      <!-- Phase 02: Operators & Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Operators & Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/06-python-operators-complete-guide.html">6. Operators Guide</a>
+        <a href="/blog-python/07-python-conditional-statements-and-branching.html">7. Conditional Statements</a>
+        <a href="/blog-python/08-python-loops-while-and-for.html">8. while & for Loops</a>
+        <a href="/blog-python/09-python-loop-control-statements-and-else.html">9. Loop Controls & else</a>
+      </div>
+
+      <!-- Phase 03: Strings & Collections -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Strings & Collections</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/10-python-strings-mastery.html">10. Strings Mastery</a>
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. Lists & Comprehensions</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. Tuples & Unpacking</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. Dictionaries Deep Dive</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. Sets & Operations</a>
+      </div>
+
+      <!-- Phase 04: Functions & Scope -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Functions & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/15-python-functions-fundamentals.html">15. Functions Fundamentals</a>
+        <a href="/blog-python/16-python-args-kwargs-variable-arguments.html">16. *args & **kwargs</a>
+        <a href="/blog-python/17-python-variable-scope-and-legb-rule.html">17. Variable Scope (LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-and-type-hints.html">18. Lambda, Recursion & Hints</a>
+        <a href="/blog-python/19-python-menu-driven-applications.html">19. Menu-Driven Apps</a>
+      </div>
+
+      <!-- Phase 05: Modules & Packages -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Modules & Packages</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/20-python-modules-and-import-system.html">20. Modules & Imports</a>
+        <a href="/blog-python/21-python-core-standard-library-modules.html">21. Standard Library Core</a>
+        <a href="/blog-python/22-python-os-sys-and-pathlib.html">22. OS, Sys & Pathlib</a>
+        <a href="/blog-python/23-python-json-serialization-and-data.html">23. JSON Data Interchange</a>
+        <a href="/blog-python/24-python-packages-virtual-environments-and-pip.html">24. Packages, venv & Pip</a>
+      </div>
+
+      <!-- Phase 06: Exceptions & Files -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Exceptions & Files</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/25-python-exceptions-and-error-handling.html">25. Exception Handling</a>
+        <a href="/blog-python/26-python-file-handling-and-context-managers.html">26. File I/O & Context Managers</a>
+        <a href="/blog-python/27-python-csv-and-json-file-processing.html">27. CSV & JSON Processing</a>
+        <a href="/blog-python/28-python-filesystem-operations-pathlib.html">28. Filesystem & Pathlib</a>
+        <a href="/blog-python/29-python-file-handling-capstone-projects.html">29. File Capstone Projects</a>
+      </div>
+
+      <!-- Phase 07: Object-Oriented OOP -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Object-Oriented OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/30-python-oop-classes-objects-and-init.html" class="active">30. Classes & Objects</a>
+        <a href="/blog-python/31-python-oop-encapsulation-and-properties.html">31. Encapsulation & Properties</a>
+        <a href="/blog-python/32-python-oop-inheritance-mro-and-polymorphism.html">32. Inheritance & Polymorphism</a>
+        <a href="/blog-python/33-python-oop-abstract-classes-and-magic-methods.html">33. ABCs & Dunder Methods</a>
+        <a href="/blog-python/34-python-oop-composition-and-dataclasses.html">34. Composition & Dataclasses</a>
+        <a href="/blog-python/35-python-oop-capstone-projects.html">35. OOP Capstone Projects</a>
+      </div>
+
+      <!-- Phase 08: Advanced Python -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Advanced Python</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/36-python-iterators-generators-and-expressions.html">36. Iterators & Generators</a>
+        <a href="/blog-python/37-python-closures-decorators-and-wrappers.html">37. Closures & Decorators</a>
+        <a href="/blog-python/38-python-custom-context-managers-and-contextlib.html">38. Context Managers</a>
+        <a href="/blog-python/39-python-functional-programming-map-filter-reduce.html">39. Functional Programming</a>
+        <a href="/blog-python/40-python-regular-expressions-and-pattern-matching.html">40. Regular Expressions & Enums</a>
+        <a href="/blog-python/41-python-memory-management-gc-and-profiling.html">41. Memory, GC & Profiling</a>
+      </div>
+
+      <!-- Phase 09: Databases & APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Databases & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/42-python-sqlite-and-sql-fundamentals.html">42. SQLite & SQL Basics</a>
+        <a href="/blog-python/43-python-parameterized-queries-and-transactions.html">43. Safe Queries & Transactions</a>
+        <a href="/blog-python/44-python-postgresql-mysql-and-sqlalchemy-orm.html">44. Enterprise DBs & SQLAlchemy</a>
+        <a href="/blog-python/45-python-http-requests-and-rest-apis.html">45. REST APIs & HTTP</a>
+        <a href="/blog-python/46-python-api-headers-authentication-and-errors.html">46. API Auth & Headers</a>
+        <a href="/blog-python/47-python-databases-and-apis-capstone-projects.html">47. DB & API Capstone</a>
+      </div>
+
+      <!-- Phase 10: Web Development -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Web Development</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/48-python-flask-fundamentals-and-routing.html">48. Flask Basics & Routing</a>
+        <a href="/blog-python/49-python-flask-templates-forms-and-auth.html">49. Flask Templates & Auth</a>
+        <a href="/blog-python/50-python-django-architecture-models-and-admin.html">50. Django Architecture & ORM</a>
+        <a href="/blog-python/51-python-django-views-templates-and-auth.html">51. Django Views & Auth</a>
+        <a href="/blog-python/52-python-django-rest-framework-and-deployment.html">52. DRF & Deployment</a>
+        <a href="/blog-python/53-python-web-development-capstone-projects.html">53. Web Capstone Projects</a>
+      </div>
+
+      <!-- Phase 11: Data Science & AI -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🤖</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Data Science & AI</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/54-python-numpy-arrays-and-vectorization.html">54. NumPy Arrays & Vectorization</a>
+        <a href="/blog-python/55-python-pandas-dataframes-and-csv.html">55. Pandas Series & DataFrames</a>
+        <a href="/blog-python/56-python-pandas-data-cleaning-grouping-and-merging.html">56. Data Cleaning & GroupBy</a>
+        <a href="/blog-python/57-python-data-visualization-matplotlib-seaborn.html">57. Visualization & Plots</a>
+        <a href="/blog-python/58-python-machine-learning-foundations-scikit-learn.html">58. Machine Learning Basics</a>
+        <a href="/blog-python/59-python-data-science-and-ai-capstone-projects.html">59. Data Science & AI Projects</a>
+      </div>
+
+      <!-- Phase 12: Automation & DevOps -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Automation & DevOps</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/60-python-web-scraping-and-browser-automation.html">60. Web Scraping & Automation</a>
+        <a href="/blog-python/61-python-automation-excel-pdf-email-images.html">61. File, PDF & Email Automation</a>
+        <a href="/blog-python/62-python-os-automation-logging-and-config.html">62. OS Automation & Logging</a>
+        <a href="/blog-python/63-python-unit-testing-pytest-and-debugging.html">63. Pytest & Debugging</a>
+        <a href="/blog-python/64-python-git-clean-code-and-documentation.html">64. Git & Clean Code</a>
+        <a href="/blog-python/65-python-automation-and-devops-capstone-projects.html">65. Automation Capstone</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Chapter 30: 30. Classes & Objects</span>
+    </div>
+
+    <h1 class="page-title">Python Classes, Objects & __init__</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3.12+</span>
+      <span class="badge">🟢 Chapter 30 of 65</span>
+      <span class="badge">📂 Phase 7: Object-Oriented Programming</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>OOP Concepts · Class Blueprint vs Object Instance · __init__() Constructor · self Parameter · Instance vs Class Variables</span>
+    </div>
+
+    <div class="intro-box">
+      Master foundational Object-Oriented Programming in Python: the paradigm shift from procedural to object-oriented code, the class blueprint analogy, the __init__() constructor, the self memory pointer, and the crucial distinction between instance variables and class variables.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>What is OOP? Procedural vs Object-Oriented Programming</div>
+    <div class="section-body">
+      <p><strong>Object-Oriented Programming (OOP)</strong> is a programming paradigm based on the concept of <strong>"Objects"</strong> which contain both <strong>Data</strong> (in the form of fields or attributes) and <strong>Code</strong> (in the form of procedures or methods).</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Procedural vs Object-Oriented Programming:</h4>
+        <table class="tbl" style="margin-top:8px; font-size:12.5px;">
+          <tr><th>Feature</th><th>Procedural Programming</th><th>Object-Oriented Programming (OOP)</th></tr>
+          <tr><td><strong>Core Focus</strong></td><td>Functions and step-by-step algorithms</td><td>Real-world entities (Objects) and state</td></tr>
+          <tr><td><strong>Data Handling</strong></td><td>Data is separated from functions (global state risks)</td><td>Data and methods are <strong>encapsulated together</strong></td></tr>
+          <tr><td><strong>Reusability</strong></td><td>Function calls only</td><td>Inheritance, Polymorphism & Composition</td></tr>
+          <tr><td><strong>Security</strong></td><td>Data is freely accessible across modules</td><td>Access control (Encapsulation / Private fields)</td></tr>
+        </table>
+        <p><strong>The Blueprint Analogy:</strong> A <strong>Class</strong> is like an architectural blueprint for a house. The blueprint itself is not a physical house; it defines the dimensions, rooms, and doors. An <strong>Object (or Instance)</strong> is the actual physical house built from that blueprint in memory!</p>
+        <div class="diagram-box">┌────────────────────────────────────────────────────────┐
+│  Class Blueprint: BankAccount                          │
+│  ├── Attributes: owner, balance, account_number        │
+│  └── Methods: deposit(), withdraw(), show_balance()    │
+└───────────────────────────┬────────────────────────────┘
+                            │  [Instantiate: Account("Ravi", 5000)]
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│  Heap Memory Object Instance: (id: 0x7fa28b)           │
+│  ├── owner = "Ravi"                                    │
+│  └── balance = 5000                                    │
+└────────────────────────────────────────────────────────┘</div>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Defining a Class and Instantiating Objects</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># Defining your first Class and Instantiating an Object:
+class Car:
+    """A blueprint representing a motor vehicle."""
+    
+    # The __init__ method initializes attributes for every new instance:
+    def __init__(self, brand, model, year):
+        self.brand = brand  # Instance variable
+        self.model = model  # Instance variable
+        self.year = year    # Instance variable
+        self.is_running = False
+
+    # Instance method:
+    def start_engine(self):
+        self.is_running = True
+        return f"🚗 {self.brand} {self.model}'s engine is now RUNNING! Vroom!"
+
+# Instantiating two independent objects from the Car blueprint:
+car1 = Car("Tesla", "Model 3", 2024)
+car2 = Car("Toyota", "Supra", 2023)
+
+print("Car 1 Brand:", car1.brand, "| Model:", car1.model)
+print("Car 2 Brand:", car2.brand, "| Model:", car2.model)
+print(car1.start_engine())</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Step-by-Step Breakdown:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>class Car:</code> defines the class template.</li>
+            <li><code>car1 = Car("Tesla", "Model 3", 2024)</code> allocates memory on the heap and executes <code>__init__</code>.</li>
+            <li><code>car1</code> and <code>car2</code> maintain completely independent attributes in separate memory slots.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">2</span>The __init__() Constructor & The self Parameter Demystified</div>
+    <div class="section-body">
+      <p>In Python, <strong><code>__init__()</code></strong> is a special dunder (double-underscore) method known as the <strong>Instance Initializer / Constructor</strong>. It is automatically called by CPython whenever a new object is instantiated.</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">What is <code>self</code>?</h4>
+        <p><code>self</code> represents the <strong>exact instance of the object currently calling the method</strong>. When you write <code>account.deposit(500)</code>, Python translates this under the hood to <code>BankAccount.deposit(account, 500)</code>!</p>
+        <div class="diagram-box">Caller Code:         account1.show_balance()
+CPython Translation: BankAccount.show_balance(account1)  <-- 'account1' is passed as 'self'!</div>
+        <p>Because Python passes the active object as the first argument automatically, every instance method must explicitly declare <code>self</code> as its first parameter.</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: BankAccount Class with __init__ and self</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code># BankAccount Class Demonstration:
+class BankAccount:
+    def __init__(self, owner, balance):
+        # self binds the arguments to this specific instance:
+        self.owner = owner
+        self.balance = float(balance)
+
+    def deposit(self, amount):
+        if amount <= 0:
+            print("❌ Deposit amount must be positive!")
+            return
+        self.balance += amount
+        print(f"✅ Deposited ₹{amount:,.2f} to {self.owner}'s account.")
+
+    def show_balance(self):
+        print(f"💳 Account Holder: {self.owner} | Current Balance: ₹{self.balance:,.2f}")
+
+# Creating account and invoking methods:
+account = BankAccount("Ravi", 5000)
+account.show_balance()
+account.deposit(1000)
+account.show_balance()</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Why self is mandatory:</strong>
+          <p style="margin-top:6px;">Without <code>self.balance</code>, Python would create a temporary local variable inside <code>deposit()</code> that would be discarded the moment the function finishes. <code>self.balance</code> attaches the variable to the object permanently.</p>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">3</span>Instance Variables vs Class Variables</div>
+    <div class="section-body">
+      <p>One of the most critical concepts in OOP is the distinction between variable scopes:</p>
+        <ul>
+          <li><strong>Instance Variables (<code>self.name</code>):</strong> Variables defined inside <code>__init__</code> using <code>self</code>. Every object instance has its own unique, private copy stored in its <code>__dict__</code> table.</li>
+          <li><strong>Class Variables:</strong> Variables declared directly inside the class body outside any method. <strong>A single shared copy exists in memory</strong> for the entire class, shared across all instances!</li>
+        </ul>
+        <div class="diagram-box">┌────────────────────────────────────────────────────────┐
+│  Class: Employee (Class Variable: company = "TechCorp")│
+├────────────────────────────────────────────────────────┤
+│  ├── Instance 1 (emp1): name="Balaji", salary=95000    │
+│  └── Instance 2 (emp2): name="Alex", salary=75000      │
+└────────────────────────────────────────────────────────┘</div>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Instance Variables vs Shared Class Variables</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Python 3</span>
+            <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>class Employee:
+    # 1. Class Variable (Shared across ALL employees):
+    company_name = "Tech Innovations Ltd"
+    total_employees_count = 0
+
+    def __init__(self, name, department, salary):
+        # 2. Instance Variables (Unique to EACH employee):
+        self.name = name
+        self.department = department
+        self.salary = salary
+        
+        # Increment shared class counter:
+        Employee.total_employees_count += 1
+
+    def get_details(self):
+        return f"• {self.name:8} ({self.department}) | Salary: ₹{self.salary:,} | Company: {self.company_name}"
+
+# Creating employee instances:
+emp1 = Employee("Balaji", "Backend", 95000)
+emp2 = Employee("Alex", "DevOps", 82000)
+emp3 = Employee("Chloe", "AI/ML", 105000)
+
+print(emp1.get_details())
+print(emp2.get_details())
+print(emp3.get_details())
+print(f"\n🏢 Total Registered Employees across company: {Employee.total_employees_count}")</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Namespace Resolution:</strong>
+          <p style="margin-top:6px;">When accessing <code>emp1.company_name</code>, Python first checks <code>emp1.__dict__</code>. If not found, it falls back to <code>Employee.__dict__</code>.</p>
+        </div>
+    </div>
+  
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfall: Accidentally Modifying a Class Variable via an Instance (Shadowing)</div>
+      <p>Writing emp1.company_name = "NewCorp" does NOT change the class variable for all employees. It creates a new instance variable on emp1 that shadows the class variable! Always modify class variables via the Class name: Employee.company_name = "NewCorp".</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Create a Book class with title, author, and price attributes. Add a method apply_discount(percent) that reduces the price in place.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3 Practice Challenge</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>class Book:
+    def __init__(self, title, author, price):
+        self.title = title
+        self.author = author
+        self.price = price
+
+    def apply_discount(self, percent):
+        discount_amt = self.price * (percent / 100)
+        self.price -= discount_amt
+        print(f"Discount {percent}% applied on '{self.title}'! New Price: ₹{self.price:.2f}")
+
+book1 = Book("Python Mastery 2026", "Guido", 799.00)
+book1.apply_discount(15)</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Challenge in Online Python IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Why do Python methods require "self" as the first argument explicitly?</h4>
+      <p>Explicit self adheres to Python's Zen principle: "Explicit is better than implicit". It makes instance variable access unambiguous and eliminates hidden scoping magic.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Can a class have multiple __init__ constructors in Python?</h4>
+      <p>No. Python does not support traditional method overloading by signature. Defining multiple __init__ methods simply overrides previous ones. Instead, use default arguments (*args, **kwargs) or @classmethod alternative constructors.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the __del__ method in Python?</h4>
+      <p>__del__ is the destructor method called when an object's reference count reaches zero right before CPython garbage collection frees its memory.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="29-python-file-handling-capstone-projects.html" class="nav-btn">
+        <span class="label">← Previous Chapter</span>
+        <span class="title">29. File Capstone Projects</span>
+      </a>
+
+      
+      <a href="31-python-oop-encapsulation-and-properties.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">31. Encapsulation & Properties</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

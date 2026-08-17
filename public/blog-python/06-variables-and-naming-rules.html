@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Variables, Dynamic Typing & Naming Rules — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="In-depth exploration of Python variables as object references, dynamic typing, multiple assignments, id() memory inspection, naming rules, and keywords." />
+  <meta name="keywords" content="python tutorial, python 3 tutorial, learn python, python variables, dynamic typing & naming rules, python online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/06-variables-and-naming-rules.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Python Variables, Dynamic Typing & Naming Rules — Python 3 Tutorial",
+  "description": "In-depth exploration of Python variables as object references, dynamic typing, multiple assignments, id() memory inspection, naming rules, and keywords.",
+  "articleSection": "Phase 1: Python Basics",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is snake_case vs camelCase?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PEP 8 recommends snake_case (lowercase with underscores: total_price, user_id) for Python variables and functions, whereas CamelCase (UserProfile) is used for classes."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Code Preload & Theme Script -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        // Wire Try-Box run buttons
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Course</div>
+    <a href="/blog-python.html">🐍 Python HOME</a>
+    <a href="01-what-is-python-features-and-uses.html">1. Python ante enti</a>
+    <a href="02-python-installation-and-setup.html">2. Python Installation, VS Code & Environment Setup</a>
+    <a href="03-first-program-hello-world.html">3. First Python Program</a>
+    <a href="04-python-syntax-and-indentation.html">4. Python Syntax & Indentation Rules (PEP 8)</a>
+    <a href="05-python-comments.html">5. Python Comments</a>
+    <a href="06-variables-and-naming-rules.html" class="active">6. Python Variables, Dynamic Typing & Naming Rules</a>
+    <a href="07-numbers-and-math-operations.html">7. Python Numbers</a>
+    <a href="08-strings-slicing-and-methods.html">8. Python Strings</a>
+    <a href="09-booleans-and-truthiness.html">9. Python Booleans & Truthy vs Falsy Evaluation</a>
+    <a href="10-none-type.html">10. Python NoneType</a>
+    <a href="11-type-checking-and-conversion.html">11. Python Type Checking with type(), isinstance() & Type Casting</a>
+    <a href="12-basic-input-and-output.html">12. Python Input & Output</a>
+
+    <div class="sidebar-heading">Interactive Playground</div>
+    <a href="/online-python-compiler.html" style="color:#58a6ff; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Lesson 6: Python Variables, Dynamic Typing & Naming Rules</span>
+    </div>
+
+    <h1 class="page-title">Python Variables, Dynamic Typing & Naming Rules</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Lesson 6 of 12</span>
+      <span class="badge">📂 Phase 1: Python Basics</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="intro-box">
+      In-depth exploration of Python variables as object references, dynamic typing, multiple assignments, id() memory inspection, naming rules, and keywords.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Variables in Python: Names Bound to Objects</div>
+    <div class="section-content"><p>In Python, variables are not memory containers with fixed types (like in C or Java). Instead, variables are <strong>names (labels/pointers)</strong> that reference objects stored in memory.</p></div>
+  
+
+    <div class="section-title"><span class="num">2</span>Dynamic Typing in Action</div>
+    <div class="section-content"><p>A variable can reference an integer at one moment, and later reference a string or list without causing compile errors:</p>
+        <pre style="background:#0d1117; padding:12px; border-radius:6px; color:#3fb950;"><code>data = 42         # data points to an integer object
+data = "Now text" # data now points to a string object</code></pre></div>
+  
+
+    <div class="section-title"><span class="num">3</span>Python Naming Rules (Identifiers)</div>
+    <div class="section-content"><ul>
+          <li>Must start with a letter (<code>a-z</code>, <code>A-Z</code>) or an underscore (<code>_</code>).</li>
+          <li>Cannot start with a digit (e.g., <code>2user</code> is invalid, but <code>user2</code> is valid).</li>
+          <li>Can only contain alphanumeric characters and underscores (<code>a-z, A-Z, 0-9, _</code>).</li>
+          <li>Case-sensitive (<code>age</code>, <code>Age</code>, and <code>AGE</code> are three distinct variables).</li>
+          <li>Cannot be a <strong>Python reserved keyword</strong> (such as <code>if, for, class, def, return, while, import</code>).</li>
+        </ul></div>
+  
+
+    <div class="section-title"><span class="num">4</span>Memory Address Inspection with id()</div>
+    <div class="section-content"><div class="diagram-box">
+a = [1, 2, 3]
+b = a          # b points to the SAME list in memory (id(a) == id(b))
+c = [1, 2, 3]  # c is a NEW list with identical contents (id(a) != id(c))</div></div>
+  
+
+    <div class="section-title"><span class="num">💻</span> Complete Executable Code Example</div>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang-tag">Python 3</span>
+        <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+      </div>
+      <pre><code>import keyword
+
+# Multiple assignment in Python
+name, age, is_student = "Alex", 24, True
+print(f"👤 Name: {name}, Age: {age}, Student: {is_student}")
+
+# Swapping variables without a temp variable
+x, y = 10, 20
+print(f"Before swap: x = {x}, y = {y}")
+x, y = y, x
+print(f"After swap:  x = {x}, y = {y}")
+
+# Check memory identity
+num1 = 500
+num2 = num1
+print(f"Memory id of num1: {id(num1)}, num2: {id(num2)} (Same: {id(num1) == id(num2)})")
+
+# Display Python's 35 Reserved Keywords
+print(f"
+🔑 Total Reserved Keywords in Python 3: {len(keyword.kwlist)}")
+print(", ".join(keyword.kwlist[:12]), "...")</code></pre>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Pitfall: Naming Variables After Built-in Functions</div>
+      <p>Avoid naming variables list, str, int, dict, or sum. Doing so shadows Python’s built-in functions and causes unexpected errors later in your script.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Hands-on Practice Challenge</div>
+      <p>Observe how mutable lists vs immutable numbers behave during reassignment.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>list_a = [10, 20, 30]
+list_b = list_a
+list_b.append(40)
+
+print("list_a:", list_a)
+print("list_b:", list_b)
+print("Are they identical objects?", list_a is list_b)</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Code in Our Online Compiler →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4>Q: What is snake_case vs camelCase?</h4>
+      <p>PEP 8 recommends snake_case (lowercase with underscores: total_price, user_id) for Python variables and functions, whereas CamelCase (UserProfile) is used for classes.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="05-python-comments.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">5. Python Comments </span>
+      </a>
+
+      
+      <a href="07-numbers-and-math-operations.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">7. Python Numbers </span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

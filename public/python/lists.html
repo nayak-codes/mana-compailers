@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 3 Lists & Tuples | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 — Python 3 Lists & Tuples with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  <!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="/site-nav.css" />
+</head>
+<body class="lang-python">
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Python 3 Tutorial</div>
+    <a href="/blog-python.html">Python 3 HOME</a>
+    <a href="/python/intro.html">1. Welcome & Hello World</a>
+    <a href="/python/variables.html">2. Variables & Core Types</a>
+    <a href="/python/operators.html">3. Basic Operators & Math</a>
+    <a href="/python/strings.html">4. String Slicing & Methods</a>
+    <a href="/python/conditionals.html">5. Conditionals (if-else)</a>
+    <a href="/python/loops.html">6. Loops & Ranges</a>
+    <a href="/python/input.html">7. Reading User Inputs</a>
+    <a href="/python/lists.html" class="active">8. Lists & Tuples</a>
+    <a href="/python/dicts.html">9. Dictionaries & Sets</a>
+    <a href="/python/functions.html">10. Functions & Reusable Code</a>
+    <a href="/python/modules.html">11. Modules & Standard Lib</a>
+    <a href="/python/files.html">12. File I/O Operations</a>
+    <a href="/python/errors.html">13. Exception Handling</a>
+    <a href="/python/oop-basics.html">14. OOP: Classes & Objects</a>
+    <a href="/python/oop-advanced.html">15. OOP: Inheritance & Dunder</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/python/quiz.html" style="color:#a8a3ff;font-weight:700;">🧠 Python Quiz</a>
+    <a href="/?lang=python3">▶ Try Python 3 Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/blog.html">Tutorials</a><span>›</span>
+  <a href="/blog-python.html">Python 3</a><span>›</span>
+  <span>Lists & Tuples</span>
+</div>
+<h1 class="page-title">Python 3 — Managing Sequences with Lists & Tuples</h1>
+<div class="page-meta">
+  <span class="badge">🐍 Python 3</span>
+  <span class="badge">🟢 Lesson 8</span>
+  <span class="badge">📅 July 2026</span>
+</div>
+
+<div class="intro-box">
+  <p>So far, we have only stored single items in variables. But what if you have a list of user emails, a list of prices, or high scores? Python lists and tuples allow you to store multiple items in a single variable.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Python Lists (Mutable Sequences)</div>
+  <p>A list is an ordered, changeable (mutable) collection of elements wrapped in square brackets (<code>[]</code>). You can add, remove, and modify items in a list:</p>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — List Basics</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code>fruits = ["Apple", "Banana", "Cherry"]
+
+# Modifying an item
+fruits[1] = "Blueberry"
+
+# Appending a new item to the end
+fruits.append("Orange")
+
+# Removing an item
+fruits.remove("Apple")
+
+print(fruits)      # ['Blueberry', 'Cherry', 'Orange']
+print(len(fruits)) # 3 (size of list)</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Iterating Over Lists</div>
+  <p>To loop through every item in a list, pair it with a <code>for</code> loop. This reads naturally like English:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — List Iteration</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code>languages = ["Python", "Java", "Go", "Rust"]
+
+for lang in languages:
+    print(f"I can compile {lang} code!")</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Tuples (Immutable Sequences)</div>
+  <p>A tuple is similar to a list, but with one key difference: **once created, it can never be changed**. Tuples are written with parentheses (<code>()</code>) and are safer for data that should remain constant (like latitude/longitude coordinates):</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — Tuples</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code>dimensions = (1920, 1080)
+
+# This would crash: dimensions[0] = 1280
+print(dimensions[0]) # 1920</code></pre>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>⚠️ IndexOutOfBounds Warning:</strong>
+  <p>If your list has 3 items and you try to access <code>my_list[3]</code>, Python will throw an <code>IndexError: list index out of range</code>. Remember, indexing starts at 0, so a list of size 3 only has indices 0, 1, and 2!</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">4</span> Coding Challenge</div>
+  <p>Create a list containing five of your favorite songs. Append a new song to the end, print the length of the list, and use a loop to display each song title in uppercase letters.</p>
+</div>
+
+    <div class="nav-footer">
+      <a href="/python/input.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">Reading User Inputs</span>
+      </a>
+      <a href="/python/dicts.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Dictionaries & Sets</span>
+      </a>
+    </div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

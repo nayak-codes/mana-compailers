@@ -3,16 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Variables (var, let & const) | Our Compiler</title>
-  <meta name="description" content="Learn JavaScript — Variables (var, let & const) with clear explanations, unique examples, common mistakes, and interactive code execution." />
+  <title>Variables (let, const & var) & Scopes — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn JavaScript variables: Variables ante enti?, let vs const vs var, reassigning values, variable naming rules, global vs function vs block scopes, and Temporal Dead Zone (TDZ)." />
+  <meta name="keywords" content="javascript tutorial, variables (let, const & var) & scopes, learn javascript, javascript online compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/variables.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
   
-  <!-- Blog Theme Switcher -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +75,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -51,61 +95,61 @@
           topnav.appendChild(toggleBtn);
         }
 
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
         document.querySelectorAll('.code-block').forEach(block => {
           const header = block.querySelector('.code-block-header');
           const codeEl = block.querySelector('pre code');
           if (!header || !codeEl) return;
 
-          // Find or create actions container inside header
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
           let actionsContainer = header.querySelector('.code-actions');
           if (!actionsContainer) {
             actionsContainer = document.createElement('div');
             actionsContainer.className = 'code-actions';
             actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
             const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
             header.appendChild(actionsContainer);
           }
 
-          // Inject Copy Button
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
           copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            navigator.clipboard.writeText(rawCode).then(() => {
               copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
             });
           });
           actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
 
-          // Preload Code into Editor on Run Click
           const tryBtn = actionsContainer.querySelector('.try-btn');
           if (tryBtn) {
             tryBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'nodejs';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
             });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
           }
         });
       });
@@ -127,161 +171,408 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">JavaScript Tutorial</div>
-    <a href="/blog-javascript.html">JavaScript HOME</a>
-    <a href="/blog-javascript/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-javascript/variables.html" class="active">2. Variables (var, let & const)</a>
-    <a href="/blog-javascript/operators.html">3. Data Types & Operators</a>
-    <a href="/blog-javascript/strings.html">4. Strings & Template Literals</a>
-    <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
-    <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
-    <a href="/blog-javascript/functions.html">7. Functions & Arrow Syntax</a>
-    <a href="/blog-javascript/arrays.html">8. Arrays & Iteration Methods</a>
-    <a href="/blog-javascript/objects.html">9. Objects & JSON</a>
-    <a href="/blog-javascript/es6-features.html">10. ES6+ Destructuring & Spread</a>
-    <a href="/blog-javascript/oop.html">11. OOP: Classes & Prototypes</a>
-    <a href="/blog-javascript/closures.html">12. Closures & Callback Functions</a>
-    <a href="/blog-javascript/promises.html">13. Promises & Async/Await</a>
-    <a href="/blog-javascript/exceptions.html">14. Error Handling (try-catch)</a>
-    <a href="/blog-javascript/dom.html">15. DOM Basics & Event Listeners</a>
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=nodejs">▶ Try JavaScript Online</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
 
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/variables.html" class="active">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
 
+      <!-- Phase 03: Operators & Control Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
+        <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
+      </div>
+
+      <!-- Phase 04: Strings & Functions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Strings & Functions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">7. Strings & Template Literals</a>
+        <a href="/blog-javascript/functions.html">8. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 05: Arrays & Objects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Arrays & Objects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">9. Arrays & Iteration Methods</a>
+        <a href="/blog-javascript/objects.html">10. Objects & JSON</a>
+        <a href="/blog-javascript/es6-features.html">11. ES6+ Destructuring & Spread</a>
+      </div>
+
+      <!-- Phase 06: Advanced Functions & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Advanced Functions & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/closures.html">12. Closures & Higher-Order Functions</a>
+        <a href="/blog-javascript/oop.html">13. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 07: Asynchronous JavaScript -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Asynchronous JavaScript</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">14. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">15. Error Handling & Debugging</a>
+      </div>
+
+      <!-- Phase 08: DOM & Web Browser APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">DOM & Web Browser APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/dom.html">16. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-javascript.html">JavaScript</a><span>›</span>
-      <span>Lesson 2</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 3: Variables (let, const & var) & Scopes</span>
     </div>
-    
-    
-<h1 class="page-title">Variables (var, let & const)</h1>
-<div class="page-meta">
-  <span class="badge">🟨 JavaScript</span>
-  <span class="badge">Lesson 2</span>
-  <span class="badge">Beginner</span>
-</div>
 
-<div class="intro-box">
-  <p>In JavaScript, variables are containers storing data values. Modern JavaScript provides three keywords to declare variables: <code>var</code>, <code>let</code>, and <code>const</code>. Understanding their scope and hoisting behaviors is crucial.</p>
-</div>
+    <h1 class="page-title">Variables (let, const & var) & Scopes</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">1</span> Scoping & Hoisting (Temporal Dead Zone)</div>
-  <p>Scoping rules control where variable declarations are visible:</p>
-  <ul>
-    <li><strong>var</strong>: Function-scoped. If declared inside a block (like an `if` statement), it leaks out and is accessible outside the block. It is also **hoisted** to the top of its scope, initialized with `undefined`.</li>
-    <li><strong>let</strong>: Block-scoped. Accessible only inside the nearest curly braces `{}`. It is hoisted but remains uninitialized in the <strong>Temporal Dead Zone (TDZ)</strong> until execution reaches the line of declaration, throwing a ReferenceError if accessed early.</li>
-    <li><strong>const</strong>: Block-scoped like `let`. Must be initialized immediately on declaration, and its variable binding cannot be reassigned.</li>
-  </ul>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">2</span> Scoping Codes Check</div>
-  <p>Let's run a program showing block scoping behaviors and temporal errors:</p>
-
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">JavaScript — var, let and const Scope</span>
-      <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 3</span>
+      <span class="badge">📂 Phase 02: Variables & Data Types</span>
+      <span class="badge">📅 2026 Edition</span>
     </div>
-    <pre><code>if (true) {
-    var leakedVar = "I leak outside the block!";
-    let blockedLet = "I remain trapped inside.";
-    const blockedConst = "I am also trapped.";
-}
 
-console.log(leakedVar); // Succeeds
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Variables ante enti? · let · const · var · Reassigning Values · Variable Naming Rules · Global vs Function vs Block Scope · TDZ</span>
+    </div>
 
-try {
-    console.log(blockedLet);
-} catch (e) {
-    console.log("let access outside block failed: " + e.message);
-}
 
-const name = "Alice";
-// name = "Bob"; // 🚨 Raises TypeError: Assignment to constant variable.
-console.log("Const variable: " + name);</code></pre>
-  </div>
-</div>
+    <div class="intro-box">
+      <p>Welcome to Lesson 3 of <strong>Phase 2: Variables & Data Types</strong>! In JavaScript, data is stored and manipulated through <strong>Variables</strong>. ES6 (2015) introduced modern <code>let</code> and <code>const</code> keywords to replace legacy <code>var</code>. In this comprehensive lesson, you will learn what variables are, the critical differences between <code>let</code>, <code>const</code>, and <code>var</code>, value mutation vs reference mutation, variable naming conventions, and JavaScript scope mechanics.</p>
+    </div>
 
-<div class="section">
-  <div class="section-title"><span class="num">3</span> Code Challenge</div>
-  <div class="info-box">
-    <strong>Challenge:</strong> Write a block of code declaring a `const` object representing a product. Try modifying one of its properties (e.g. `product.price = 99`) and explain why changing properties is allowed on a constant declaration in JS.
-  </div>
-</div>
+    <!-- 1. Variables ante enti? -->
+    <div class="section-title"><span class="num">1</span>Variables Ante Enti? (What is a Variable?)</div>
+    <div class="section-body">
+      <p><strong>Variable</strong> anedhi JavaScript engine memory (RAM) lo values ni store chesukovadaniki allocate chesina oka <strong>Named Storage Box (Memory Container)</strong>. Program execution jarige time lo values ni retain cheyyadaniki mariyu mutate (vary) cheyyadaniki variables ni vadathamu.</p>
 
-    
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981;">📌 Variable Syntax:</strong>
+        <code style="display:block; margin-top:6px; font-size:14px;">keyword variableName = value;</code>
+      </div>
+    </div>
+
+    <!-- 2. let vs const vs var -->
+    <div class="section-title"><span class="num">2</span>The Big 3: let vs const vs var</div>
+    <div class="section-body">
+      <p>JavaScript lo variables declare cheyyadaniki 3 keywords unnaayi: <code>let</code>, <code>const</code>, and legacy <code>var</code>:</p>
+
+      <table class="tbl">
+        <tr><th>Feature</th><th><code>let</code> (Modern ES6)</th><th><code>const</code> (Modern ES6)</th><th><code>var</code> (Legacy ES5)</th></tr>
+        <tr>
+          <td><strong>Scope Type</strong></td>
+          <td>Block Scope <code>{ }</code></td>
+          <td>Block Scope <code>{ }</code></td>
+          <td>Function / Global Scope</td>
+        </tr>
+        <tr>
+          <td><strong>Re-assignable?</strong></td>
+          <td>✅ <strong>Yes</strong></td>
+          <td>❌ <strong>No</strong> (Read-only reference)</td>
+          <td>✅ <strong>Yes</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Re-declarable?</strong></td>
+          <td>❌ <strong>No</strong></td>
+          <td>❌ <strong>No</strong></td>
+          <td>✅ <strong>Yes</strong> (Dangerous!)</td>
+        </tr>
+        <tr>
+          <td><strong>Hoisting & TDZ</strong></td>
+          <td>Hoisted in <strong>Temporal Dead Zone</strong> (Cannot access before declaration)</td>
+          <td>Hoisted in <strong>Temporal Dead Zone</strong> (Cannot access before declaration)</td>
+          <td>Hoisted with <code>undefined</code> default value</td>
+        </tr>
+        <tr>
+          <td><strong>Initial Value Required?</strong></td>
+          <td>No (defaults to <code>undefined</code>)</td>
+          <td>✅ <strong>Must initialize immediately</strong></td>
+          <td>No (defaults to <code>undefined</code>)</td>
+        </tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — let vs const vs var</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+// 1. let — Block-scoped & Reassignable
+let age = 21;
+age = 22; // Reassignment allowed!
+console.log("Updated Age:", age);
+
+// 2. const — Block-scoped Constant Reference
+const name = "Ravi";
+// name = "Kalyan"; // TypeError: Assignment to constant variable!
+console.log("Name:", name);
+
+// 3. var — Legacy function-scoped variable
+var city = "Hyderabad";
+var city = "Bangalore"; // Allowed re-declaration (Bad practice!)
+console.log("City:", city);</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Reassigning Values -->
+    <div class="section-title"><span class="num">3</span>Reassigning Values vs Constant Objects</div>
+    <div class="section-body">
+      <p><code>const</code> primitive value ni re-assign cheyyanivvadu. Kani <code>const</code> tho declare chesina <strong>Object or Array properties ni mutate (change) cheyyavachu</strong>. Endhukante <code>const</code> memory address reference ni lock chesthundi, internal heap data ni kaadhu:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — const Object Mutation</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const student = {
+    name: "Ravi",
+    age: 21
+};
+
+// Modifying object properties IS ALLOWED:
+student.age = 22;
+student.city = "Hyderabad";
+
+console.log("Mutated Student:", student);
+
+// RE-ASSIGNING THE ENTIRE OBJECT IS FORBIDDEN:
+// student = { name: "Kalyan" }; // TypeError!</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. Variable Naming Rules -->
+    <div class="section-title"><span class="num">4</span>JavaScript Variable Naming Rules</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Allowed Characters:</strong> Letters (<code>a-z, A-Z</code>), Digits (<code>0-9</code>), Dollar Sign (<code>$</code>), and Underscore (<code>_</code>).</li>
+        <li><strong>Forbidden:</strong> Cannot start with a digit (e.g. <code>1stUser</code> is illegal, <code>user1</code> is legal).</li>
+        <li><strong>Forbidden:</strong> Reserved JavaScript keywords (e.g. <code>let</code>, <code>class</code>, <code>function</code>, <code>if</code>).</li>
+        <li><strong>Case Sensitivity:</strong> <code>userAge</code>, <code>UserAge</code>, <code>USERAGE</code> are 3 completely separate variables.</li>
+        <li><strong>Industry Convention:</strong> Always use <strong>camelCase</strong> for variable and function names (e.g. <code>isStudent</code>, <code>accountBalance</code>).</li>
+      </ul>
+    </div>
+
+    <!-- 5. Scope Basics -->
+    <div class="section-title"><span class="num">5</span>Scope Basics (Global, Function & Block Scope)</div>
+    <div class="section-body">
+      <p>Scope defines the accessibility (visibility) of variables in your code:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px;">
+          <strong style="color:#10b981;">1. Global Scope</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Anywhere outside functions/blocks. Accessible everywhere in the file.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:14px;">
+          <strong style="color:#38bdf8;">2. Function Scope</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Declared inside a <code>function() { }</code>. Accessible only inside that function.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:14px;">
+          <strong style="color:#3fb950;">3. Block Scope { }</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Declared inside <code>{ }</code> using <code>let</code> or <code>const</code>. Destroyed on block exit.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — User Example</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this variable profile example from the curriculum:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const name = "Ravi";
+let age = 21;
+const isStudent = true;
+
+console.log("Name:", name);
+console.log("Age:", age);
+console.log("Is Student:", isStudent);
+console.log("Type of Age:", typeof age);</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
     <div class="nav-footer">
-      <a href="/blog-javascript/intro.html" class="nav-btn">
+      
+      <a href="02-javascript-syntax-and-errors.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">Welcome & Hello World</span>
+        <span class="title">2. Syntax & Errors</span>
       </a>
-      <a href="/blog-javascript/operators.html" class="nav-btn" style="text-align:right;">
+
+      
+      <a href="operators.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">Data Types & Operators</span>
+        <span class="title">4. Data Types, typeof & Coercion</span>
       </a>
     </div>
   </main>
 </div>
+
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>

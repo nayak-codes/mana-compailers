@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operators, Expressions & Precedence — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Master JavaScript Operators: Arithmetic, Assignment, Comparison (== vs ===, != vs !==), Logical (&&, ||, !), Increment/Decrement, Ternary, Nullish Coalescing (??), Optional Chaining (?.), Bitwise, and Operator Precedence." />
+  <meta name="keywords" content="javascript tutorial, operators, expressions & precedence, learn javascript, javascript online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/05-operators-expressions-and-precedence.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-javascript">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html" class="active">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
+
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html" class="active">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Control Flow & Loops -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Control Flow & Loops</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditionals (if-else & switch)</a>
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow</a>
+      </div>
+
+      <!-- Phase 05: Strings & Functions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Strings & Functions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Template Literals</a>
+        <a href="/blog-javascript/functions.html">10. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 06: Arrays & Objects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Arrays & Objects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">11. Arrays & Iteration Methods</a>
+        <a href="/blog-javascript/objects.html">12. Objects & JSON</a>
+        <a href="/blog-javascript/es6-features.html">13. ES6+ Destructuring & Spread</a>
+      </div>
+
+      <!-- Phase 07: Advanced Functions & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Advanced Functions & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/closures.html">14. Closures & Higher-Order Functions</a>
+        <a href="/blog-javascript/oop.html">15. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 08: Asynchronous JavaScript & DOM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Asynchronous JavaScript & DOM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">16. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">17. Error Handling & Debugging</a>
+        <a href="/blog-javascript/dom.html">18. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 5: Operators, Expressions & Precedence</span>
+    </div>
+
+    <h1 class="page-title">Operators, Expressions & Precedence</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 5</span>
+      <span class="badge">📂 Phase 03: Operators & Input</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Arithmetic · Assignment · Comparison (== vs ===) · Inequality (!= vs !==) · Logical (&&, ||, !) · ++ / -- · Ternary Operator · Nullish Coalescing (??) · Optional Chaining (?.) · Bitwise · Operator Precedence</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to Lesson 5 of <strong>Phase 3: Operators & Input</strong>! An <strong>Operator</strong> is a special symbol used to perform calculations, compare values, assign variables, or evaluate logical decisions. In this masterclass chapter, we cover all 15 operator categories in JavaScript — including strict equality (<code>===</code> vs <code>==</code>), short-circuit logical evaluation, modern <code>??</code> (Nullish Coalescing) & <code>?.</code> (Optional Chaining), and Operator Precedence hierarchy.</p>
+    </div>
+
+    <!-- 1. Arithmetic Operators -->
+    <div class="section-title"><span class="num">1</span>Arithmetic Operators</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Operator</th><th>Name</th><th>Description</th><th>Code Example</th></tr>
+        <tr><td><code>+</code></td><td>Addition</td><td>Calculates sum of two numbers or concatenates strings.</td><td><code>10 + 5 // 15</code></td></tr>
+        <tr><td><code>-</code></td><td>Subtraction</td><td>Calculates difference between two numbers.</td><td><code>10 - 5 // 5</code></td></tr>
+        <tr><td><code>*</code></td><td>Multiplication</td><td>Multiplies two numeric values.</td><td><code>10 * 5 // 50</code></td></tr>
+        <tr><td><code>/</code></td><td>Division</td><td>Divides numerator by denominator.</td><td><code>10 / 4 // 2.5</code></td></tr>
+        <tr><td><code>%</code></td><td>Modulus (Remainder)</td><td>Returns remainder after integer division.</td><td><code>10 % 3 // 1</code></td></tr>
+        <tr><td><code>**</code></td><td>Exponentiation (Power)</td><td>Raises base to exponent power (ES2016).</td><td><code>2 ** 3 // 8</code></td></tr>
+      </table>
+    </div>
+
+    <!-- 2. Assignment Operators -->
+    <div class="section-title"><span class="num">2</span>Assignment Operators</div>
+    <div class="section-body">
+      <p>Assignment operators assign values to variables with optional compound arithmetic shortcutting:</p>
+      <ul style="margin-left:18px; color:var(--text2); line-height:1.7; font-size:14px;">
+        <li><code>x = 10</code> — Simple Assignment</li>
+        <li><code>x += 5</code> — Compound Addition (equivalent to <code>x = x + 5</code>)</li>
+        <li><code>x -= 3</code> — Compound Subtraction (equivalent to <code>x = x - 3</code>)</li>
+        <li><code>x *= 2</code> — Compound Multiplication (equivalent to <code>x = x * 2</code>)</li>
+        <li><code>x /= 4</code> — Compound Division (equivalent to <code>x = x / 4</code>)</li>
+      </ul>
+    </div>
+
+    <!-- 3. Comparison & Equality (== vs ===, != vs !==) -->
+    <div class="section-title"><span class="num">3</span>Comparison Operators (== vs ===, != vs !==)</div>
+    <div class="section-body">
+      <p>JavaScript has two types of equality operators: <strong>Abstract Equality (<code>==</code>)</strong> and <strong>Strict Equality (<code>===</code>)</strong>. Understanding this distinction is crucial to avoiding bugs!</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px;">
+          <strong style="color:#ff7b72;">1. Abstract Equality (==) — DANGEROUS!</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Compares values <strong>AFTER performing implicit type coercion</strong>. String <code>"5" == 5</code> evaluates to <code>true</code>!</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
+          <strong style="color:#3fb950;">2. Strict Equality (===) — RECOMMENDED ⭐</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Compares <strong>BOTH Data Type and Value</strong> without coercion. String <code>"5" === 5</code> evaluates to <code>false</code>!</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Equality Comparison</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+console.log('5' == 5);     // true (Coerces string "5" to number 5)
+console.log('5' === 5);    // false (Different Data Types!)
+
+console.log('5' != 5);     // false
+console.log('5' !== 5);    // true (Strict Inequality)
+
+console.log(null == undefined);  // true
+console.log(null === undefined); // false</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. Logical Operators (&&, ||, !) & Short-Circuiting -->
+    <div class="section-title"><span class="num">4</span>Logical Operators (&&, ||, !) & Short-Circuiting</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Logical AND (<code>&&</code>):</strong> Returns the first <strong>Falsy</strong> value, or the last value if all are truthy.</li>
+        <li><strong>Logical OR (<code>||</code>):</strong> Returns the first <strong>Truthy</strong> value, or the last value if all are falsy.</li>
+        <li><strong>Logical NOT (<code>!</code>):</strong> Inverts the boolean truthiness of a value. <code>!!value</code> converts any value to its boolean equivalent.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Short Circuit Logic</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+let loggedInUser = "Ravi";
+let displayName = loggedInUser || "Guest"; // Evaluates first truthy "Ravi"
+console.log("Display Name:", displayName);
+
+let emptyUser = "";
+let fallbackName = emptyUser || "Guest User"; // Empty string is falsy -> "Guest User"
+console.log("Fallback Name:", fallbackName);
+
+let isMember = true;
+let hasDiscount = isMember && "20% OFF"; // Evaluates second value if first is truthy
+console.log("Discount:", hasDiscount);</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Modern Operators: Nullish Coalescing (??) & Optional Chaining (?.) -->
+    <div class="section-title"><span class="num">5</span>Modern Operators: Nullish Coalescing (??) & Optional Chaining (?.)</div>
+    <div class="section-body">
+      <p>ES2020 introduced two powerful operators to simplify null checks:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <strong style="color:#10b981;">1. Nullish Coalescing (??)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Returns right side ONLY if left side is <code>null</code> or <code>undefined</code>. Unlike <code>||</code>, values like <code>0</code> or <code>""</code> are NOT overwritten!</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:16px;">
+          <strong style="color:#38bdf8;">2. Optional Chaining (?.)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Safely accesses nested object properties without throwing <code>TypeError</code> if object reference is nullish.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — ?? and ?. Demo</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+// Nullish Coalescing (??) vs Logical OR (||)
+let count = 0;
+let val1 = count || 100; // 100 (because 0 is falsy for ||)
+let val2 = count ?? 100; // 0 (because 0 is NOT nullish!)
+console.log("val1 (OR):", val1, "| val2 (Nullish):", val2);
+
+// Optional Chaining (?.)
+const user = {
+    name: "Ravi",
+    profile: {
+        city: "Hyderabad"
+    }
+};
+
+console.log("City:", user?.profile?.city); // "Hyderabad"
+console.log("ZipCode:", user?.address?.zipCode); // undefined (No TypeError crash!)</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. Increment, Decrement, Ternary, Bitwise & Precedence -->
+    <div class="section-title"><span class="num">6</span>Increment, Ternary, Bitwise & Operator Precedence</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Increment/Decrement:</strong> <code>++x</code> (Pre-increment: adds 1 before evaluating) vs <code>x++</code> (Post-increment: adds 1 after returning current value).</li>
+        <li><strong>Ternary Operator:</strong> <code>condition ? valueIfTrue : valueIfFalse</code> (Inline shorthand for simple if-else).</li>
+        <li><strong>Bitwise Operators:</strong> <code>&</code> (AND), <code>|</code> (OR), <code>^</code> (XOR), <code>~</code> (NOT), <code><<</code> (Left Shift), <code>>></code> (Right Shift). Operations performed on 32-bit binary representation.</li>
+        <li><strong>Operator Precedence Hierarchy:</strong> Grouping <code>()</code> $ightarrow$ Member Access <code>.</code> $ightarrow$ Exponentiation <code>**</code> $ightarrow$ Multiply/Divide <code>* / %</code> $ightarrow$ Add/Subtract <code>+ -</code> $ightarrow$ Comparison $ightarrow$ Equality $ightarrow$ Logical $ightarrow$ Assignment.</li>
+      </ul>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Challenge</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Test ternary operators and strict equality logic:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+let score = 85;
+let result = score >= 50 ? "PASS ✅" : "FAIL ❌";
+console.log("Score:", score, "| Result:", result);
+
+let inputVal = "100";
+let targetVal = 100;
+
+console.log("Strict Check (===):", inputVal === targetVal ? "Equal" : "Not Equal");</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="operators.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">4. Data Types & typeof</span>
+      </a>
+
+      
+      <a href="06-browser-input-and-number-parsing.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">6. Input & Output (alert, prompt...)</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

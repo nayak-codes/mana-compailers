@@ -3,16 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Objects & JSON | Our Compiler</title>
-  <meta name="description" content="Learn JavaScript — Objects & JSON with clear explanations, unique examples, common mistakes, and interactive code execution." />
+  <title>Objects Mastery: Properties, Methods, this, Destructuring & Optional Chaining — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Master JavaScript Objects: Object creation, properties & methods, dot vs bracket notation, CRUD property operations, nested structures, object destructuring, spread/rest, Object.keys/values/entries, Object.assign, computed properties, this context binding, and optional chaining (?.)." />
+  <meta name="keywords" content="javascript tutorial, objects mastery: properties, methods, this, destructuring & optional chaining, learn javascript, javascript online compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/objects.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
   
-  <!-- Blog Theme Switcher -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +75,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -51,61 +95,61 @@
           topnav.appendChild(toggleBtn);
         }
 
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
         document.querySelectorAll('.code-block').forEach(block => {
           const header = block.querySelector('.code-block-header');
           const codeEl = block.querySelector('pre code');
           if (!header || !codeEl) return;
 
-          // Find or create actions container inside header
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
           let actionsContainer = header.querySelector('.code-actions');
           if (!actionsContainer) {
             actionsContainer = document.createElement('div');
             actionsContainer.className = 'code-actions';
             actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
             const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
             header.appendChild(actionsContainer);
           }
 
-          // Inject Copy Button
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
           copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            navigator.clipboard.writeText(rawCode).then(() => {
               copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
             });
           });
           actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
 
-          // Preload Code into Editor on Run Click
           const tryBtn = actionsContainer.querySelector('.try-btn');
           if (tryBtn) {
             tryBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'nodejs';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
             });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
           }
         });
       });
@@ -127,157 +171,718 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">JavaScript Tutorial</div>
-    <a href="/blog-javascript.html">JavaScript HOME</a>
-    <a href="/blog-javascript/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-javascript/variables.html">2. Variables (var, let & const)</a>
-    <a href="/blog-javascript/operators.html">3. Data Types & Operators</a>
-    <a href="/blog-javascript/strings.html">4. Strings & Template Literals</a>
-    <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
-    <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
-    <a href="/blog-javascript/functions.html">7. Functions & Arrow Syntax</a>
-    <a href="/blog-javascript/arrays.html">8. Arrays & Iteration Methods</a>
-    <a href="/blog-javascript/objects.html" class="active">9. Objects & JSON</a>
-    <a href="/blog-javascript/es6-features.html">10. ES6+ Destructuring & Spread</a>
-    <a href="/blog-javascript/oop.html">11. OOP: Classes & Prototypes</a>
-    <a href="/blog-javascript/closures.html">12. Closures & Callback Functions</a>
-    <a href="/blog-javascript/promises.html">13. Promises & Async/Await</a>
-    <a href="/blog-javascript/exceptions.html">14. Error Handling (try-catch)</a>
-    <a href="/blog-javascript/dom.html">15. DOM Basics & Event Listeners</a>
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=nodejs">▶ Try JavaScript Online</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
 
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
 
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditional Statements (if & switch)</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow (Masterclass)</a>
+      </div>
+
+      <!-- Phase 06: Strings Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Text Processing (Masterclass)</a>
+      </div>
+
+      <!-- Phase 07: Arrays Masterclass -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays Masterclass</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">10. Arrays Deep Dive & Core Operations</a>
+      </div>
+
+      <!-- Phase 08: Higher-Order Array Methods -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Higher-Order Array Methods</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/array-methods.html">11. Array Methods (map, filter, reduce & ES2024)</a>
+      </div>
+
+      <!-- Phase 09: Objects Mastery -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Objects Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/objects.html" class="active">12. Objects & Key-Value Mastery</a>
+      </div>
+
+      <!-- Phase 10: Functions & Arrow Syntax -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Functions & Arrow Syntax</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/functions.html">13. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 11: Advanced ES6+ & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Advanced ES6+ & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/es6-features.html">14. ES6+ Advanced Features</a>
+        <a href="/blog-javascript/closures.html">15. Closures & Scope Chain</a>
+        <a href="/blog-javascript/oop.html">16. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 12: Asynchronous JavaScript & DOM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Asynchronous JavaScript & DOM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">17. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">18. Error Handling & Debugging</a>
+        <a href="/blog-javascript/dom.html">19. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-javascript.html">JavaScript</a><span>›</span>
-      <span>Lesson 9</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 12: Objects Mastery: Properties, Methods, this, Destructuring & Optional Chaining</span>
     </div>
-    
-    
-<h1 class="page-title">Objects & JSON</h1>
-<div class="page-meta">
-  <span class="badge">🟨 JavaScript</span>
-  <span class="badge">Lesson 9</span>
-  <span class="badge">Intermediate</span>
-</div>
 
-<div class="intro-box">
-  <p>Objects are collection mappings storing key-value pairs. JSON (JavaScript Object Notation) is a lightweight data interchange format based on JavaScript object syntax.</p>
-</div>
+    <h1 class="page-title">Objects Mastery: Properties, Methods, this, Destructuring & Optional Chaining</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">1</span> Object Literals & Methods</div>
-  <p>Objects map text keys to any data value (including other nested objects and functions, which act as **object methods**). Accessing properties is done via Dot notation (`obj.key`) or Bracket notation (`obj["key"]`), which allows dynamic property evaluation.</p>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">2</span> Object Manipulation & JSON Transformations</div>
-  <p>Let's run a program initializing objects, running methods via the `this` keyword, and encoding to and from JSON strings:</p>
-
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">JavaScript — Objects & JSON</span>
-      <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 12</span>
+      <span class="badge">📂 Phase 09: Objects Mastery</span>
+      <span class="badge">📅 2026 Edition</span>
     </div>
-    <pre><code>const student = {
-    name: "Alice",
-    age: 21,
-    skills: ["JS", "Node"],
-    // Object Method
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Object ante enti? · Properties & Methods · Dot vs Bracket · Adding/Updating/Deleting · Nested Objects · Destructuring · Spread & Rest · Object.keys/values/entries · Computed Properties · this Binding · Optional Chaining (?.) · 4 Projects</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 9: Objects Mastery</strong>! In JavaScript, nearly everything is an <strong>Object</strong>. An Object is a collection of related data and functionality represented as <strong>key-value pairs</strong> (properties and methods). Unlike primitive types that store a single value, objects allow you to model complex real-world entities (like Users, Products, Shopping Carts, and Application State) in structured Heap memory. In this comprehensive masterclass guide, you will master object creation, dot vs bracket notation, mutation operations, nested hierarchies, ES6 destructuring, static utilities (<code>Object.keys</code>, <code>Object.values</code>, <code>Object.entries</code>, <code>Object.assign</code>), computed keys, the <code>this</code> keyword, and safe traversal with <strong>Optional Chaining (<code>?.</code>)</strong>.</p>
+    </div>
+
+    <!-- 1. Object Ante Enti & Creation -->
+    <div class="section-title"><span class="num">1</span>Object Ante Enti? & Object Literals</div>
+    <div class="section-body">
+      <p>JavaScript lo <strong>Object</strong> ante named properties mariyu functions (methods) ni okate variable lo bundle chese reference data structure. Memory lo object references Heap memory lo reside avthayi:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px;">
+          <strong style="color:#10b981;">1. Object Literal (⭐ Standard)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Curly braces <code>{}</code> tho key-value pairs define cheyyadam: <code>const user = { name: "Ravi", age: 20 };</code></p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:14px;">
+          <strong style="color:#58a6ff;">2. Properties vs Methods</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Key lo string/number data unte <strong>Property</strong> antaru. Key lo function unte <strong>Method</strong> antaru.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Student Object with Method & this</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const student = {
+    name: "Ravi",
+    age: 20,
+    course: "JavaScript",
+
+    // ES6 Method Shorthand
     introduce() {
-        return `Hi, I am ${this.name} and I know ${this.skills.join(", ")}.`;
+        console.log(`I am ${this.name}`);
     }
 };
 
-console.log(student.introduce());
+console.log("Student Name:", student.name);
+student.introduce(); // Output: I am Ravi</code></pre>
+      </div>
+    </div>
 
-// JSON Conversions
-const jsonString = JSON.stringify(student);
-console.log("As JSON string: " + jsonString);
+    <!-- 2. Dot Notation vs Bracket Notation -->
+    <div class="section-title"><span class="num">2</span>Accessing Properties: Dot Notation vs Bracket Notation</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Feature</th><th>Dot Notation (<code>obj.prop</code>)</th><th>Bracket Notation (<code>obj["prop"]</code>) ⭐ Dynamic</th></tr>
+        <tr><td><strong>Syntax</strong></td><td><code>student.name</code></td><td><code>student["name"]</code></td></tr>
+        <tr><td><strong>Dynamic Variable Keys</strong></td><td>❌ Not supported (looks for literal property name)</td><td>✅ <code>student[variableKey]</code> dynamically resolves!</td></tr>
+        <tr><td><strong>Keys with Spaces / Hyphens</strong></td><td>❌ Syntax error: <code>obj.user-name</code> fails!</td><td>✅ Supported: <code>obj["user-name"]</code> works cleanly!</td></tr>
+      </table>
 
-const parsedObject = JSON.parse(jsonString);
-console.log("Parsed GPA (Dynamic field add):", parsedObject.name);</code></pre>
-  </div>
-</div>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Dot vs Bracket Access</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
 
-<div class="section">
-  <div class="section-title"><span class="num">3</span> Code Challenge</div>
-  <div class="info-box">
-    <strong>Challenge:</strong> Create an object called `book` with properties for title, author, and year. Write a method on the book object that returns a formatted description. Convert this book object into a JSON string and print the output.
-  </div>
-</div>
+const profile = {
+    "first-name": "Ravi",
+    role: "Developer",
+    experienceYears: 3
+};
 
-    
+// 1. Bracket required for hyphenated keys
+console.log("First Name:", profile["first-name"]);
+
+// 2. Dynamic key resolution
+const searchKey = "role";
+console.log("Dynamic Value:", profile[searchKey]); // "Developer"</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Adding, Updating & Deleting Properties -->
+    <div class="section-title"><span class="num">3</span>Mutating Objects: Adding, Updating & Deleting</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Adding:</strong> <code>student.email = "ravi@gmail.com";</code> (Creates new key-value pair).</li>
+        <li><strong>Updating:</strong> <code>student.age = 21;</code> (Mutates existing value).</li>
+        <li><strong>Deleting:</strong> <code>delete student.course;</code> (Permanently removes property and returns <code>true</code>).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Object Mutation Demo</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const car = { brand: "Tesla", model: "Model 3" };
+
+// 1. Add property
+car.year = 2026;
+car.color = "Red";
+
+// 2. Update property
+car.color = "Midnight Silver";
+
+// 3. Delete property
+delete car.model;
+
+console.log("Updated Car Object:", car); // { brand: 'Tesla', year: 2026, color: 'Midnight Silver' }</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. Nested Objects & Optional Chaining (?.) -->
+    <div class="section-title"><span class="num">4</span>Nested Objects & Optional Chaining (?.)</div>
+    <div class="section-body">
+      <p>Objects can contain nested sub-objects to represent hierarchical data structures. <strong>Optional Chaining (<code>?.</code>)</strong> guarantees that accessing deeply nested properties will never throw a <code>TypeError: Cannot read properties of undefined</code> crash:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Nested Objects & ?.</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const developer = {
+    id: 101,
+    name: "Ravi",
+    address: {
+        city: "Hyderabad",
+        state: "Telangana"
+        // zipCode is missing!
+    }
+};
+
+// Safe deep access with Optional Chaining (?.)
+console.log("City:", developer?.address?.city); // "Hyderabad"
+console.log("ZipCode:", developer?.address?.zipCode); // undefined (No crash!)
+console.log("Company:", developer?.work?.companyName); // undefined (No crash!)</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Object Destructuring, Spread & Rest -->
+    <div class="section-title"><span class="num">5</span>Object Destructuring, Property Shorthand & Spread/Rest</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Property Shorthand:</strong> <code>const name = "Ravi"; const obj = { name };</code> (If key matches variable name, no need to repeat <code>name: name</code>).</li>
+        <li><strong>Object Destructuring:</strong> Unpacking object keys into variables: <code>const { name, age } = student;</code></li>
+        <li><strong>Renaming & Defaults:</strong> <code>const { name: fullName, country = "India" } = student;</code></li>
+        <li><strong>Spread & Rest (<code>...</code>):</strong> Shallow cloning <code>{ ...student }</code>, merging <code>{ ...obj1, ...obj2 }</code>, and extracting remaining keys with rest <code>const { id, ...restDetails } = obj;</code>.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Destructuring & Spread</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const user = { id: 501, username: "ravi_dev", role: "admin", points: 1500 };
+
+// 1. Destructuring with Rest
+const { username, role, ...stats } = user;
+console.log("User:", username, "| Role:", role);
+console.log("Remaining Stats (Rest):", stats); // { id: 501, points: 1500 }
+
+// 2. Spread Cloning & Overriding
+const updatedUser = {
+    ...user,
+    role: "superadmin", // Overrides role
+    lastActive: "Today" // Adds new property
+};
+console.log("Updated User:", updatedUser);</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. Static Methods: keys, values, entries, assign & Computed Properties -->
+    <div class="section-title"><span class="num">6</span>Object.keys(), Object.values(), Object.entries() & Computed Properties</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Static Method</th><th>Description</th><th>Return Value</th></tr>
+        <tr><td><strong><code>Object.keys(obj)</code></strong></td><td>Extracts all own property names/keys</td><td>Array of strings: <code>["name", "age"]</code></td></tr>
+        <tr><td><strong><code>Object.values(obj)</code></strong></td><td>Extracts all property values</td><td>Array of values: <code>["Ravi", 20]</code></td></tr>
+        <tr><td><strong><code>Object.entries(obj)</code></strong></td><td>Extracts key-value pairs</td><td>Array of <code>[key, value]</code> pairs</td></tr>
+        <tr><td><strong><code>Object.assign(target, ...src)</code></strong></td><td>Copies properties into target object</td><td>Mutated target object</td></tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Object Static Methods & Computed Keys</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const scores = { Math: 95, Physics: 88, Chemistry: 92 };
+
+console.log("Keys:", Object.keys(scores));     // ['Math', 'Physics', 'Chemistry']
+console.log("Values:", Object.values(scores)); // [95, 88, 92]
+console.log("Entries:", Object.entries(scores)); // [['Math', 95], ['Physics', 88], ...]
+
+// Computed Property Names
+const dynamicKey = "subject_" + 4;
+const dynamicObj = {
+    [dynamicKey]: "Computer Science"
+};
+console.log("Computed Object:", dynamicObj); // { subject_4: 'Computer Science' }</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. this Keyword Context in Objects -->
+    <div class="section-title"><span class="num">7</span>The this Keyword & Arrow Function Context Trap</div>
+    <div class="section-body">
+      <div class="callout">
+        <div class="callout-title">⚠️ The Arrow Function this Binding Trap!</div>
+        <p>Object methods lo standard functions (or shorthand methods <code>fn() {}</code>) vadali. <strong>Arrow functions do NOT have their own <code>this</code></strong>! Arrow function lopala <code>this</code> vadithe adhi enclosing global window / module scope ki point chesthundi (returning <code>undefined</code>)!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — this Binding Comparison</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const account = {
+    owner: "Ravi",
+    balance: 5000,
+
+    // ✅ Correct Method: 'this' binds to account object
+    getBalance() {
+        return `Account owner: ${this.owner} | Balance: Rs.${this.balance}`;
+    },
+
+    // ❌ Arrow Function Bug: 'this' is NOT account!
+    buggyArrow: () => {
+        return `Owner: ${this?.owner}`; // 'this' is undefined in strict mode!
+    }
+};
+
+console.log(account.getBalance());
+console.log(account.buggyArrow()); // Owner: undefined</code></pre>
+      </div>
+    </div>
+
+    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
+    <div class="section-title"><span class="num">8</span>4 Real-World Practice Projects</div>
+    <div class="section-body">
+      <p>Mastering objects through 4 real-world production-grade architectures:</p>
+
+      <!-- Project 1: User Profile Manager -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 1: User Profile CRUD Store</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Profile CRUD</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+const profileStore = {
+    users: {},
+
+    addUser(id, name, email) {
+        this.users[id] = { name, email, createdAt: new Date().getFullYear() };
+        return `User ${name} added successfully!`;
+    },
+
+    updateEmail(id, newEmail) {
+        if (this.users[id]) {
+            this.users[id].email = newEmail;
+            return `Updated email for ${this.users[id].name}`;
+        }
+        return "User not found!";
+    },
+
+    deleteUser(id) {
+        if (this.users[id]) {
+            delete this.users[id];
+            return `User ${id} deleted.`;
+        }
+        return "User not found!";
+    }
+};
+
+console.log(profileStore.addUser(1, "Ravi", "ravi@dev.io"));
+console.log(profileStore.updateEmail(1, "ravi@ourcompiler.com"));
+console.log("Current Users Store:", profileStore.users);</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 2: Deep Cloning vs Shallow Cloning -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 2: Deep Cloning with structuredClone() vs Spread</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Deep Clone Demo</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+const originalConfig = {
+    theme: "dark",
+    preferences: {
+        fontSize: 16,
+        tabSize: 2
+    }
+};
+
+// 1. Deep Clone with built-in structuredClone() (ES2022 ⭐)
+const deepCloned = structuredClone(originalConfig);
+deepCloned.preferences.fontSize = 24; // Mutates ONLY deepCloned
+
+console.log("Original Config Font Size:", originalConfig.preferences.fontSize); // 16 (Safe!)
+console.log("Deep Cloned Font Size:", deepCloned.preferences.fontSize);         // 24</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 3: Object Key Renaming & Transformation -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 3: Object Key Renaming & Data Normalization</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Key Renamer</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+const rawServerData = {
+    user_name: "ravi2026",
+    user_email_address: "ravi@gmail.com",
+    account_status_code: 200
+};
+
+// Transform snake_case keys to camelCase keys
+const normalized = {
+    userName: rawServerData.user_name,
+    userEmail: rawServerData.user_email_address,
+    statusCode: rawServerData.account_status_code
+};
+
+console.log("Normalized Clean Object:", normalized);</code></pre>
+        </div>
+      </div>
+
+      <!-- Project 4: Dynamic Form State Store -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Project 4: Dynamic Form State Store with Computed Properties</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Form State</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+let formState = {};
+
+function handleInputChange(fieldName, fieldValue) {
+    formState = {
+        ...formState,
+        [fieldName]: fieldValue // Dynamic computed property key
+    };
+}
+
+handleInputChange("fullName", "Ravi Nayak");
+handleInputChange("email", "ravi@ourcompiler.com");
+handleInputChange("newsletterSubscribed", true);
+
+console.log("Final Form State:", formState);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this student object with methods and this binding in our live compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript Objects</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const student = {
+    name: "Ravi",
+    age: 20,
+    course: "JavaScript",
+
+    introduce() {
+        console.log(`I am ${this.name}`);
+    }
+};
+
+console.log("Student Name:", student.name);
+student.introduce();</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
     <div class="nav-footer">
-      <a href="/blog-javascript/arrays.html" class="nav-btn">
+      
+      <a href="array-methods.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">Arrays & Iteration Methods</span>
+        <span class="title">11. Higher-Order Array Methods</span>
       </a>
-      <a href="/blog-javascript/es6-features.html" class="nav-btn" style="text-align:right;">
+
+      
+      <a href="functions.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">ES6+ Destructuring & Spread</span>
+        <span class="title">Phase 10: Functions</span>
       </a>
     </div>
   </main>
 </div>
+
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>

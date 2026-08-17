@@ -5,31 +5,6 @@ const projectRoot = path.join(__dirname, '..');
 
 const languages = [
   {
-    filename: 'index.html',
-    slug: '',
-    langId: 'python3',
-    title: 'Our Compiler – Free Online Code Compiler | Python, Java, C, C++, JS',
-    heading: 'Free Online Code Compiler & IDE',
-    subheading: 'Write, compile, and execute code online in 10 programming languages including Python, Java, C, C++, JavaScript, Go, Rust, PHP, C#, and Ruby — instantly in your browser.',
-    metaDesc: 'Our Compiler is a free online code compiler supporting Python, Java, C, C++, JavaScript, Go, Rust, PHP, C#, and Ruby. Run code instantly in your browser with no setup required.',
-    canonical: 'https://www.ourcompiler.com/',
-    langName: 'Multi-Language Compiler',
-    badge: '⚡ 10 Languages Supported',
-    sampleCode: `# Free Online Code Compiler - Our Compiler
-def greet(name):
-    return f"Hello, {name}! Welcome to Our Compiler."
-
-print(greet("Developer"))`,
-    introText: 'Our Compiler is a fast, free, browser-based online code compiler designed for students, educators, and software engineers. Powered by Docker sandboxing and Monaco editor, it provides zero-setup code execution for over 10 major programming languages. Whether you are practicing algorithms, testing code snippets, or learning a new programming language, Our Compiler gives you an instant IDE right in your web browser.',
-    faqs: [
-      { q: 'Is Our Compiler completely free to use?', a: 'Yes! Our Compiler is 100% free to use with no hidden fees, subscriptions, or credit card requirements.' },
-      { q: 'Do I need to register or create an account to run code?', a: 'No registration or login is required. You can start typing and running code immediately when you open the website.' },
-      { q: 'Which programming languages are supported?', a: 'Our Compiler supports 10 popular languages: Python 3, Java, C, C++, JavaScript (Node.js), C#, Go (Golang), Rust, PHP, and Ruby.' },
-      { q: 'Is my source code stored or saved on your servers?', a: 'No. Your code is executed in isolated, short-lived Docker containers and is processed purely in memory. We never store or sell your programs.' },
-      { q: 'Does the compiler support custom input (stdin)?', a: 'Yes! You can provide interactive user inputs (stdin) for programs that require keyboard inputs like Python input(), Java Scanner, or C scanf().' }
-    ]
-  },
-  {
     filename: 'online-python-compiler.html',
     slug: 'python',
     langId: 'python3',

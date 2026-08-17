@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Data Types: Primary, Modifiers, sizeof, Format Specifiers & Type Casting — C Tutorial | Our Compiler</title>
+  <meta name="description" content="Master C Data Types (Phase 2 Part 2): Primary types (int, float, double, char, _Bool), modifiers (short, long, signed, unsigned), 2's complement ranges, the sizeof operator, Format Specifiers Master Guide (%d, %u, %f, %lf, %c, %s, %p), and Implicit Coercion vs Explicit Type Casting." />
+  <meta name="keywords" content="c tutorial, c data types: primary, modifiers, sizeof, format specifiers & type casting, learn c programming, c scanf, c operators, c input buffer, c fgets, c precedence" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/03-c-data-types-format-specifiers-and-type-casting.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      line-height: 1.8;
+      margin: 22px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: C Basics & Program Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C Basics & Program Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
+        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html" class="active">3. Data Types, sizeof & Type Casting</a>
+      </div>
+
+      <!-- Phase 03: Input & Operators -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input & Operators</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html">4. User Input (scanf, fgets & Buffer Traps)</a>
+        <a href="/blog-c/05-c-operators-expressions-and-precedence.html">5. Operators, Precedence & 6 Programs</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 3: C Data Types: Primary, Modifiers, sizeof, Format Specifiers & Type Casting</span>
+    </div>
+
+    <h1 class="page-title">C Data Types: Primary, Modifiers, sizeof, Format Specifiers & Type Casting</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 3</span>
+      <span class="badge">📂 Phase 02: Variables & Data Types</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Primary Types (int, float, double, char, _Bool) · Modifiers (short, long, signed, unsigned) · Integer Ranges · sizeof Operator · Format Specifiers (%d, %u, %f, %lf, %p) · Type Casting</span>
+    </div>
+
+<div class="intro-box">
+      <p>Welcome to <strong>Phase 2 (Part 2): C Data Types, Modifiers, sizeof, Format Specifiers & Type Casting Masterclass</strong>! C is a <strong>statically typed language</strong>, meaning the compiler must know the exact data type and memory byte size of every variable at compile time. In this comprehensive guide, you will master the 5 primary C data types (<code>int</code>, <code>float</code>, <code>double</code>, <code>char</code>, <code>_Bool</code>), size & sign modifiers (<code>short</code>, <code>long</code>, <code>signed</code>, <code>unsigned</code>), bit-level integer ranges, measuring memory with the <code>sizeof</code> operator, the universal Format Specifiers reference guide, and explicit type casting.</p>
+    </div>
+
+    <!-- 1. The 5 Primary Data Types & Modifiers -->
+    <div class="section-title"><span class="num">1</span>The 5 Primary Data Types & Type Modifiers (short, long, signed, unsigned)</div>
+    <div class="section-body">
+      <p>C provides 5 fundamental primary types and 4 type modifiers to customize size and sign representations:</p>
+
+      <table class="tbl spec-table">
+        <tr><th>Data Type</th><th>Typical Size in RAM</th><th>Range of Values (Typical 64-bit OS)</th><th>Common Format Specifier</th></tr>
+        <tr><td><strong><code>char</code></strong></td><td>1 Byte (8 bits)</td><td>-128 to +127 (or 0 to 255 if unsigned)</td><td><code>%c</code></td></tr>
+        <tr><td><strong><code>int</code></strong></td><td>4 Bytes (32 bits)</td><td>-2,147,483,648 to +2,147,483,647</td><td><code>%d</code> or <code>%i</code></td></tr>
+        <tr><td><strong><code>unsigned int</code></strong></td><td>4 Bytes (32 bits)</td><td>0 to 4,294,967,295 (Zero negatives, 2x positive!)</td><td><code>%u</code></td></tr>
+        <tr><td><strong><code>short int</code></strong></td><td>2 Bytes (16 bits)</td><td>-32,768 to +32,767</td><td><code>%hd</code></td></tr>
+        <tr><td><strong><code>long long int</code></strong></td><td>8 Bytes (64 bits)</td><td>$-2^{63}$ to $+2^{63}-1$ ($approx pm 9.22 	imes 10^{18}$)</td><td><code>%lld</code></td></tr>
+        <tr><td><strong><code>float</code></strong></td><td>4 Bytes (32 bits)</td><td>$approx pm 3.4 	imes 10^{38}$ (6-7 decimal precision digits)</td><td><code>%f</code></td></tr>
+        <tr><td><strong><code>double</code></strong></td><td>8 Bytes (64 bits)</td><td>$approx pm 1.7 	imes 10^{308}$ (15-17 decimal precision digits)</td><td><code>%lf</code> (in scanf) / <code>%f</code> (printf)</td></tr>
+        <tr><td><strong><code>_Bool</code></strong> (C99+)</td><td>1 Byte</td><td><code>0</code> (false) or <code>1</code> (true) (<code>&lt;stdbool.h&gt;</code>)</td><td><code>%d</code></td></tr>
+      </table>
+
+      <div class="concept-box">
+        <h4>💡 signed vs unsigned Explained</h4>
+        <p>• <strong><code>signed</code> (Default):</strong> Most significant bit (MSB) is the sign bit ($0 = +ve$, $1 = -ve$). Allows both positive and negative values.<br>
+        • <strong><code>unsigned</code>:</strong> Disallows negative numbers entirely. The MSB is used for magnitude, <strong>doubling the maximum positive range</strong> (e.g. <code>unsigned char</code> is 0 to 255 instead of -128 to 127)!</p>
+      </div>
+    </div>
+
+    <!-- 2. The sizeof Operator -->
+    <div class="section-title"><span class="num">2</span>The sizeof Operator (Measuring Memory Footprints in Bytes)</div>
+    <div class="section-body">
+      <p>The <strong><code>sizeof</code></strong> operator is evaluated at <strong>compile time</strong>. It returns the exact size in bytes occupied by a data type or variable in memory as a <code>size_t</code> integer (printed with <code>%zu</code> or <code>%lu</code>):</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — sizeof Inspection Demo</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdbool.h&gt;
+
+int main(void) {
+    printf("sizeof(char):        %zu byte\n", sizeof(char));
+    printf("sizeof(short):       %zu bytes\n", sizeof(short));
+    printf("sizeof(int):         %zu bytes\n", sizeof(int));
+    printf("sizeof(long long):   %zu bytes\n", sizeof(long long));
+    printf("sizeof(float):       %zu bytes\n", sizeof(float));
+    printf("sizeof(double):      %zu bytes\n", sizeof(double));
+    printf("sizeof(bool):        %zu byte\n", sizeof(bool));
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Format Specifiers Master Guide -->
+    <div class="section-title"><span class="num">3</span>Format Specifiers Master Reference Guide ⭐</div>
+    <div class="section-body">
+      <p>In C, <code>printf()</code> and <code>scanf()</code> functions need <strong>Format Specifiers (starting with <code>%</code>)</strong> to interpret binary bytes in memory correctly:</p>
+
+      <table class="tbl spec-table">
+        <tr><th>Format Specifier</th><th>Data Type Targeted</th><th>Example Usage</th><th>Output Produced</th></tr>
+        <tr><td><strong><code>%d</code></strong> or <strong><code>%i</code></strong></td><td>signed <code>int</code></td><td><code>printf("%d", 42);</code></td><td><code>42</code></td></tr>
+        <tr><td><strong><code>%u</code></strong></td><td><code>unsigned int</code></td><td><code>printf("%u", 4000000000U);</code></td><td><code>4000000000</code></td></tr>
+        <tr><td><strong><code>%c</code></strong></td><td>single <code>char</code></td><td><code>printf("%c", 'A');</code></td><td><code>A</code></td></tr>
+        <tr><td><strong><code>%s</code></strong></td><td>String (character array)</td><td><code>printf("%s", "Hello");</code></td><td><code>Hello</code></td></tr>
+        <tr><td><strong><code>%f</code></strong></td><td><code>float</code> (or <code>double</code> in printf)</td><td><code>printf("%.2f", 5.857f);</code></td><td><code>5.86</code> (Rounded to 2 decimals)</td></tr>
+        <tr><td><strong><code>%lf</code></strong></td><td><code>double</code> (Compulsory in <code>scanf</code>)</td><td><code>scanf("%lf", &amp;price);</code></td><td>Reads 64-bit double</td></tr>
+        <tr><td><strong><code>%p</code></strong></td><td>Pointer / Memory Address</td><td><code>printf("%p", (void*)&amp;age);</code></td><td><code>0x7ffee4b1a8</code> (Hex address)</td></tr>
+        <tr><td><strong><code>%x</code> / <code>%X</code></strong></td><td>Hexadecimal integer</td><td><code>printf("%X", 255);</code></td><td><code>FF</code></td></tr>
+        <tr><td><strong><code>%%</code></strong></td><td>Literal percent sign <code>%</code></td><td><code>printf("100%%");</code></td><td><code>100%</code></td></tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — User Curriculum Example</span>
+          <a class="try-btn" href="/?lang=c">▶ Run in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    char grade = 'A';
+    int age = 21;
+    float height = 5.8f;
+    double price = 99.99;
+
+    printf("Grade: %c\n", grade);
+    printf("Age: %d\n", age);
+    printf("Height: %.1f\n", height);
+    printf("Price: %.2f\n", price);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. Type Conversion vs Type Casting -->
+    <div class="section-title"><span class="num">4</span>Type Conversion (Implicit) vs Type Casting (Explicit)</div>
+    <div class="section-body">
+      <div class="concept-box">
+        <h4>1. Implicit Type Conversion (Automatic Type Promotion)</h4>
+        <p>Compiler different types unna expression lo chinna type ni pedda type ga automatic ga promote chesthundhi (Widening):<br>
+        <code>int a = 5; double b = 2.5; double result = a + b; // 'a' is automatically promoted to 5.0 (result = 7.5)</code></p>
+      </div>
+
+      <div class="concept-box">
+        <h4>2. Explicit Type Casting (Manual Operator: <code>(type)value</code>)</h4>
+        <p>Developer explicitly data type ni force chesi convert cheyyadam:<br>
+        ⚠️ <strong>Integer Division Trap:</strong> <code>int a = 5, b = 2; float div = a / b;</code> produces <code>2.0</code> (because integer / integer discards decimals!).<br>
+        ✅ <strong>Fixed with Cast:</strong> <code>float div = (float)a / b;</code> correctly produces <code>2.5</code>!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Type Casting Demo</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int totalMarks = 475;
+    int totalSubjects = 5;
+
+    // Integer division trap vs Explicit Casting
+    double wrongAvg = totalMarks / totalSubjects;        // 95.0
+    double exactAvg = (double)totalMarks / totalSubjects; // 95.0
+
+    int num1 = 7, num2 = 2;
+    printf("7 / 2 without cast (Integer division): %d\n", num1 / num2); // 3
+    printf("7 / 2 WITH cast ((float)7 / 2):        %.2f\n", (float)num1 / num2); // 3.50
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test Data Types in Online C Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this complete data types and format specifiers program in our live GCC compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    char grade = 'A';
+    int age = 21;
+    float height = 5.8f;
+    double price = 99.99;
+
+    printf("Grade: %c\n", grade);
+    printf("Age: %d\n", age);
+    printf("Height: %.1f\n", height);
+    printf("Price: %.2f\n", price);
+
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+
+    
+  
+
+    
+
+    <div class="nav-footer">
+      
+      <a href="02-c-variables-declaration-and-memory-model.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">2. Variables, Memory Model & Scope</span>
+      </a>
+
+      
+      <a href="04-c-user-input-scanf-and-buffer-handling.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">4. User Input (scanf, fgets & Buffer Traps)</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

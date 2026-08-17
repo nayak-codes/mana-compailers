@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Comments — Single-line, Multi-line & Docstrings — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="How to write readable comments, single-line hash syntax, multi-line blocks, function docstrings (__doc__), and best practices for self-documenting code." />
+  <meta name="keywords" content="python tutorial, python 3 tutorial, learn python, python comments — single-line, multi-line & docstrings, python online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/05-python-comments.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Python Comments — Single-line, Multi-line & Docstrings — Python 3 Tutorial",
+  "description": "How to write readable comments, single-line hash syntax, multi-line blocks, function docstrings (__doc__), and best practices for self-documenting code.",
+  "articleSection": "Phase 1: Python Basics",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between a comment and a docstring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Regular comments (#) are discarded by the compiler at parse time. Docstrings (\"\"\") are retained at runtime and stored in the __doc__ attribute of functions and classes for interactive help."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Code Preload & Theme Script -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        // Wire Try-Box run buttons
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Course</div>
+    <a href="/blog-python.html">🐍 Python HOME</a>
+    <a href="01-what-is-python-features-and-uses.html">1. Python ante enti</a>
+    <a href="02-python-installation-and-setup.html">2. Python Installation, VS Code & Environment Setup</a>
+    <a href="03-first-program-hello-world.html">3. First Python Program</a>
+    <a href="04-python-syntax-and-indentation.html">4. Python Syntax & Indentation Rules (PEP 8)</a>
+    <a href="05-python-comments.html" class="active">5. Python Comments</a>
+    <a href="06-variables-and-naming-rules.html">6. Python Variables, Dynamic Typing & Naming Rules</a>
+    <a href="07-numbers-and-math-operations.html">7. Python Numbers</a>
+    <a href="08-strings-slicing-and-methods.html">8. Python Strings</a>
+    <a href="09-booleans-and-truthiness.html">9. Python Booleans & Truthy vs Falsy Evaluation</a>
+    <a href="10-none-type.html">10. Python NoneType</a>
+    <a href="11-type-checking-and-conversion.html">11. Python Type Checking with type(), isinstance() & Type Casting</a>
+    <a href="12-basic-input-and-output.html">12. Python Input & Output</a>
+
+    <div class="sidebar-heading">Interactive Playground</div>
+    <a href="/online-python-compiler.html" style="color:#58a6ff; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Lesson 5: Python Comments </span>
+    </div>
+
+    <h1 class="page-title">Python Comments — Single-line, Multi-line & Docstrings</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Lesson 5 of 12</span>
+      <span class="badge">📂 Phase 1: Python Basics</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="intro-box">
+      How to write readable comments, single-line hash syntax, multi-line blocks, function docstrings (__doc__), and best practices for self-documenting code.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Why Comments Matter</div>
+    <div class="section-content"><p>Comments are non-executable text lines ignored by the Python interpreter. They explain the <em>why</em> behind complex logic, document API contracts, and help other engineers (and your future self) understand code rationale.</p></div>
+  
+
+    <div class="section-title"><span class="num">2</span>1. Single-Line Comments (#)</div>
+    <div class="section-content"><p>Any text following a hash character <code>#</code> on that line is ignored by Python:</p>
+        <pre style="background:#0d1117; padding:12px; border-radius:6px; color:#3fb950;"><code># This is a full-line comment
+x = 100  # This is an inline comment explaining x</code></pre></div>
+  
+
+    <div class="section-title"><span class="num">3</span>2. Multi-Line Comments & Triple-Quoted Strings</div>
+    <div class="section-content"><p>You can use consecutive single-line comments or triple quotes (<code>"""</code> or <code>'''</code>) for multi-line documentation:</p>
+        <pre style="background:#0d1117; padding:12px; border-radius:6px; color:#3fb950;"><code>"""
+This is a multi-line comment block.
+It can span across multiple lines
+without needing a # on every line.
+"""</code></pre></div>
+  
+
+    <div class="section-title"><span class="num">4</span>3. Docstrings (Documentation Strings)</div>
+    <div class="section-content"><p>When a triple-quoted string is placed as the very first statement inside a function, class, or module, it becomes its official <strong>docstring</strong>, accessible via <code>help(func)</code> or <code>func.__doc__</code>.</p></div>
+  
+
+    <div class="section-title"><span class="num">💻</span> Complete Executable Code Example</div>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang-tag">Python 3</span>
+        <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+      </div>
+      <pre><code>def calculate_discount(price: float, discount_percent: float) -> float:
+    """
+    Calculate final discounted price.
+    
+    Args:
+        price: Original item price in dollars
+        discount_percent: Discount rate (e.g. 20 for 20%)
+        
+    Returns:
+        Final discounted total
+    """
+    # Validate input discount range
+    if not (0 <= discount_percent <= 100):
+        raise ValueError("Discount must be between 0 and 100")
+        
+    discount_amount = price * (discount_percent / 100.0)
+    return round(price - discount_amount, 2)
+
+# Inspect the function's docstring dynamically
+print("📖 Function Docstring:")
+print(calculate_discount.__doc__)
+
+# Execute function
+print("💰 Final Price:", calculate_discount(150.0, 15.0))</code></pre>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Pitfall: Over-commenting Obvious Code</div>
+      <p>Avoid comments that explain WHAT the syntax does (e.g., x = 1 # assign 1 to x). Instead, write comments that explain WHY a specific business logic or formula was chosen.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Hands-on Practice Challenge</div>
+      <p>Add docstrings to a function and print help() metadata.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>def greet_user(name: str, language: str = "en") -> str:
+    """Returns a localized greeting for the specified user."""
+    greetings = {"en": "Hello", "es": "Hola", "te": "Namaskaram", "fr": "Bonjour"}
+    prefix = greetings.get(language, "Hello")
+    return f"{prefix}, {name}!"
+
+print(greet_user("Balaji", "te"))
+print(greet_user("Alex", "es"))
+print("Docstring content:", greet_user.__doc__)</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Code in Our Online Compiler →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4>Q: What is the difference between a comment and a docstring?</h4>
+      <p>Regular comments (#) are discarded by the compiler at parse time. Docstrings (""") are retained at runtime and stored in the __doc__ attribute of functions and classes for interactive help.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="04-python-syntax-and-indentation.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">4. Python Syntax & Indentation Rules (PEP 8)</span>
+      </a>
+
+      
+      <a href="06-variables-and-naming-rules.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">6. Python Variables, Dynamic Typing & Naming Rules</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

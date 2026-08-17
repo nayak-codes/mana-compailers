@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 3 OOP: Inheritance & Dunder | Our Compiler</title>
+  <meta name="description" content="Learn Python 3 — Python 3 OOP: Inheritance & Dunder with clear explanations, unique examples, common mistakes, and interactive execution." />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  
+  <!-- Blog Theme Switcher -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle Button
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.borderColor = '#ffffff';
+          });
+          toggleBtn.addEventListener('mouseleave', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks (Copy Code & Preload Run Code)
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          // Find or create actions container inside header
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) {
+              actionsContainer.appendChild(tryBtn);
+            }
+            header.appendChild(actionsContainer);
+          }
+
+          // Inject Copy Button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('mouseenter', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            copyBtn.style.borderColor = '#ffffff';
+          });
+          copyBtn.addEventListener('mouseleave', () => {
+            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          });
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => {
+                copyBtn.innerHTML = '📋 Copy';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy: ', err);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          // Preload Code into Editor on Run Click
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = tryBtn.getAttribute('href');
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const langId = urlParams.get('lang') || 'python3';
+              localStorage.setItem('code_' + langId, codeEl.textContent);
+              window.location.href = url;
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="/site-nav.css" />
+</head>
+<body class="lang-python">
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Python 3 Tutorial</div>
+    <a href="/blog-python.html">Python 3 HOME</a>
+    <a href="/python/intro.html">1. Welcome & Hello World</a>
+    <a href="/python/variables.html">2. Variables & Core Types</a>
+    <a href="/python/operators.html">3. Basic Operators & Math</a>
+    <a href="/python/strings.html">4. String Slicing & Methods</a>
+    <a href="/python/conditionals.html">5. Conditionals (if-else)</a>
+    <a href="/python/loops.html">6. Loops & Ranges</a>
+    <a href="/python/input.html">7. Reading User Inputs</a>
+    <a href="/python/lists.html">8. Lists & Tuples</a>
+    <a href="/python/dicts.html">9. Dictionaries & Sets</a>
+    <a href="/python/functions.html">10. Functions & Reusable Code</a>
+    <a href="/python/modules.html">11. Modules & Standard Lib</a>
+    <a href="/python/files.html">12. File I/O Operations</a>
+    <a href="/python/errors.html">13. Exception Handling</a>
+    <a href="/python/oop-basics.html">14. OOP: Classes & Objects</a>
+    <a href="/python/oop-advanced.html" class="active">15. OOP: Inheritance & Dunder</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/python/quiz.html" style="color:#a8a3ff;font-weight:700;">🧠 Python Quiz</a>
+    <a href="/?lang=python3">▶ Try Python 3 Online</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-c.html">C</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/blog-go.html">Go</a>
+    <a href="/blog-rust.html">Rust</a>
+    <a href="/blog-php.html">PHP</a>
+    <a href="/blog-ruby.html">Ruby</a>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/blog.html">Tutorials</a><span>›</span>
+  <a href="/blog-python.html">Python 3</a><span>›</span>
+  <span>OOP: Inheritance & Dunder</span>
+</div>
+<h1 class="page-title">Python 3 — OOP: Inheritance & Dunder Methods</h1>
+<div class="page-meta">
+  <span class="badge">🐍 Python 3</span>
+  <span class="badge">🟢 Lesson 15</span>
+  <span class="badge">📅 July 2026</span>
+</div>
+
+<div class="intro-box">
+  <p>In this final lesson, we will cover inheritance, which allows a child class to inherit attributes and methods from a parent class. We will also explore Dunder (Double-Underscore) methods, which let you customize Python's built-in behaviors on your classes.</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Class Inheritance</div>
+  <p>Inheritance promotes code reuse. To inherit from a parent class, pass the parent class inside parentheses when declaring the child class. Use <code>super().__init__()</code> to trigger the parent class's constructor:</p>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — Inheritance</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code># Parent Class
+class Animal:
+    def __init__(self, name):
+        self.name = name
+    def speak(self):
+        print(f"{self.name} makes a sound.")
+
+# Child Class
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name) # Run parent constructor
+        self.breed = breed
+        
+    def speak(self): # Overriding method
+        print(f"{self.name} the {self.breed} barks! 🐶")
+
+my_dog = Dog("Rex", "German Shepherd")
+my_dog.speak() # Rex the German Shepherd barks!</code></pre>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Dunder Methods (Special Magic Methods)</div>
+  <p>Dunder methods are built-in methods starting and ending with double underscores (e.g. <code>__init__</code>). By defining them, you tell Python how to interact with your objects during common language operations like printing or checking size:</p>
+  <ul>
+    <li><code>__str__(self)</code>: Dictates what text is returned when the object is printed.</li>
+    <li><code>__len__(self)</code>: Dictates what value is returned when <code>len(object)</code> is called.</li>
+  </ul>
+  
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">Python 3 — Dunder Methods</span>
+      <a class="try-btn" href="/?lang=python3">▶ Run Code</a>
+    </div>
+    <pre><code>class Playlist:
+    def __init__(self, name, songs):
+        self.name = name
+        self.songs = songs # list of songs
+        
+    def __str__(self):
+        return f"Playlist: {self.name}"
+        
+    def __len__(self):
+        return len(self.songs)
+
+my_list = Playlist("Chill Vibes", ["Song 1", "Song 2", "Song 3"])
+
+print(my_list)      # Triggers __str__ (Prints: Playlist: Chill Vibes)
+print(len(my_list)) # Triggers __len__ (Prints: 3)</code></pre>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>🎓 Congratulations!</strong>
+  <p>You have completed the entire Python 3 Boot Camp track! You now understand the basic building blocks (variables, math, decisions, loops), interactive terminal I/O, file storage, exception safety, and advanced classes. Start writing your own programs in the compiler above to master your skills!</p>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Coding Challenge</div>
+  <p>Create a class 'Book' with attributes 'title' and 'author'. Add a '__str__' dunder method that returns: "'[title]' by [author]". Instantiate a book and print it to verify the dunder format.</p>
+</div>
+
+    <div class="nav-footer">
+      <a href="/python/oop-basics.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">OOP: Classes & Objects</span>
+      </a>
+      <a href="/blog.html" class="nav-btn" style="text-align:right;">
+        <span class="label">All Tutorials →</span>
+        <span class="title">Learning Hub</span>
+      </a>
+    </div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

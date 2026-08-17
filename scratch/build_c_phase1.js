@@ -1,0 +1,784 @@
+const fs = require('fs');
+const path = require('path');
+
+const baseDir = path.join(__dirname, '..', 'public');
+const cDir = path.join(baseDir, 'blog-c');
+
+// Ensure public/blog-c directory exists
+if (!fs.existsSync(cDir)) {
+  fs.mkdirSync(cDir, { recursive: true });
+}
+
+// C Masterclass Curriculum Structure - ONLY Phase 1 for now (as user requested: define one by one)
+const C_CURRICULUM = [
+  {
+    id: 'phase1',
+    tag: 'Phase 01',
+    title: 'C Basics & Program Architecture',
+    icon: '⚡',
+    desc: 'What is C?, History (Dennis Ritchie) & Modern Uses, C Features, C vs C++, C Program Structure, What is a Compiler?, Source Code (.c) vs Executable (.exe), The 4-Stage Compilation Pipeline (Preprocessing, Compiling, Assembling, Linking), First C Program breakdown (#include <stdio.h>, int main(void), printf, \\n, return 0, semicolon, braces, comments), and 3 Error Types (Syntax, Runtime, Logical).',
+    lessons: [
+      { num: 1, file: '01-c-basics-and-program-structure.html', title: '1. C Fundamentals & Program Architecture', subtopics: 'C ante enti? · History & Uses · Features · C vs C++ · Program Structure · Compiler & 4-Stage Pipeline · First Program Breakdown · Comments, Semicolons & Braces · 3 Error Types' }
+    ]
+  }
+];
+
+function generateCAccordionSidebar(currentFile = null) {
+  let html = `    <div class="sidebar-accordion">\n`;
+
+  C_CURRICULUM.forEach(phase => {
+    const hasActive = phase.lessons.some(l => l.file === currentFile);
+    const isOpen = hasActive || (currentFile === null && phase.id === 'phase1');
+    const activeHeaderClass = isOpen ? ' active' : '';
+    const openContentClass = isOpen ? ' open' : '';
+
+    html += `      <!-- ${phase.tag}: ${phase.title} -->\n`;
+    html += `      <button class="accordion-header${activeHeaderClass}" onclick="toggleAccordion(this)">\n`;
+    html += `        <div class="accordion-header-main">\n`;
+    html += `          <span class="phase-icon-box">${phase.icon}</span>\n`;
+    html += `          <div class="phase-info">\n`;
+    html += `            <span class="phase-tag">${phase.tag}</span>\n`;
+    html += `            <span class="phase-title">${phase.title}</span>\n`;
+    html += `          </div>\n`;
+    html += `        </div>\n`;
+    html += `        <div class="accordion-header-meta">\n`;
+    html += `          <span class="phase-count-badge">${phase.lessons.length} Ch</span>\n`;
+    html += `          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n`;
+    html += `            <polyline points="9 18 15 12 9 6"></polyline>\n`;
+    html += `          </svg>\n`;
+    html += `        </div>\n`;
+    html += `      </button>\n`;
+    html += `      <div class="accordion-content${openContentClass}">\n`;
+
+    phase.lessons.forEach(l => {
+      const isActive = l.file === currentFile ? ' class="active"' : '';
+      html += `        <a href="/blog-c/${l.file}"${isActive}>${l.title}</a>\n`;
+    });
+
+    html += `      </div>\n\n`;
+  });
+
+  html += `    </div>\n`;
+  return html;
+}
+
+function wrapCPage(title, desc, filename, currentNum, subtopics, contentBody, prevFile, prevTitle, nextFile, nextTitle) {
+  const accordionSidebar = generateCAccordionSidebar(filename);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title} — C Tutorial | Our Compiler</title>
+  <meta name="description" content="${desc}" />
+  <meta name="keywords" content="c tutorial, ${title.toLowerCase()}, learn c programming, c basics, c compiler, gcc compilation pipeline, main function, printf" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/${filename}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .pipeline-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      line-height: 1.8;
+      margin: 22px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .anatomy-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: #10b981;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+${accordionSidebar}
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson ${currentNum}: ${title}</span>
+    </div>
+
+    <h1 class="page-title">${title}</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson ${currentNum}</span>
+      <span class="badge">📂 Phase 01: C Basics & Architecture</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>${subtopics}</span>
+    </div>
+
+${contentBody}
+
+    <div class="nav-footer">
+      ${prevFile ? `
+      <a href="${prevFile}" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">${prevTitle}</span>
+      </a>` : `
+      <a href="/blog-c.html" class="nav-btn">
+        <span class="label">← C Course Overview</span>
+        <span class="title">Course Home & Index</span>
+      </a>`}
+
+      ${nextFile ? `
+      <a href="${nextFile}" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">${nextTitle}</span>
+      </a>` : `
+      <a href="/blog-c.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Topic →</span>
+        <span class="title">Phase 2 Coming Next</span>
+      </a>`}
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>`;
+}
+
+// ── BUILD LESSON 1: C Basics & Architecture ──────────────────────────────
+function buildLesson1() {
+  const title = "C Basics: History, Features, Compiler Architecture & First Program";
+  const desc = "Comprehensive in-depth masterclass on C programming basics: C history (Dennis Ritchie), uses, C vs C++, C program structure, compiler mechanics, source code vs executable, the 4-stage GCC compilation pipeline (Preprocessing, Compiling, Assembling, Linking), step-by-step breakdown of first program (#include, main, printf, \\n, return 0, semicolon), and 3 error types.";
+  const filename = "01-c-basics-and-program-structure.html";
+  const subtopics = "C ante enti? · History & Uses · Features · C vs C++ · Program Structure · Compiler & 4-Stage Pipeline · First Program Breakdown · Comments, Semicolons & Braces · 3 Error Types";
+
+  const contentBody = `
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 1: C Language Basics & Program Architecture Masterclass</strong>! Developed by <strong>Dennis Ritchie</strong> in 1972 at Bell Laboratories, C is often hailed as the <em>"Mother of all modern programming languages"</em>. It directly influenced C++, Java, C#, JavaScript, PHP, Python, and Rust. C combines the high-level readability of structured languages with the raw hardware control and ultra-fast memory manipulation of low-level assembly language. In this comprehensive guide, you will master what C is, how computers execute C code, the internal 4-stage compiler pipeline, and a complete line-by-line anatomical breakdown of your first C program.</p>
+    </div>
+
+    <!-- 1. C Language Ante Enti? History & Uses -->
+    <div class="section-title"><span class="num">1</span>C Language Ante Enti? History & Modern Real-World Uses</div>
+    <div class="section-body">
+      <p><strong>C Language</strong> ante oka powerful, general-purpose, <strong>procedural (structured)</strong> programming language. C language computer hardware (CPU registers, RAM addresses) tho direct ga interact avvagalige capabilities ni provide chesthundhi. Dheeni valla software world lo C language ki unequaled execution speed mariyu resource efficiency untundhi.</p>
+
+      <div class="concept-box">
+        <h4>📜 History of C — Dennis Ritchie & Unix Revolution</h4>
+        <p>1972 lo Bell Laboratories (USA) lo <strong>Dennis Ritchie</strong> ane legendary computer scientist <strong>Unix Operating System</strong> ni develop cheyyadaniki C language ni design chesaru. Dheeniki mundhu unna <em>B language</em> (Ken Thompson design chesindi) mariyu <em>BCPL</em> nunchi inspiriation theesukuni type system and compiler optimizations add chesi "C" ga name chesaru.<br>
+        1973 lo Unix Kernel motham C language loni rewrite cheyyabaddadhi — idhi computer history lo first portable operating system ga marindhi!</p>
+      </div>
+
+      <div class="concept-box">
+        <h4>🌐 Where is C Used Today in 2026?</h4>
+        <p>• <strong>Operating System Kernels:</strong> Linux Kernel, Windows NT Kernel, macOS Kernel (XNU), and Android core.<br>
+        • <strong>Language Runtimes & Interpreters:</strong> CPython (official Python runtime), V8 Engine (Node.js/Chrome), JVM (Java Virtual Machine core), and Ruby VM.<br>
+        • <strong>Databases:</strong> MySQL, PostgreSQL, SQLite, and Redis core engines are written in C.<br>
+        • <strong>Embedded Systems & IoT:</strong> Smart TVs, Automotive ECUs, Medical devices, Microcontrollers, and Aerospace avionics.<br>
+        • <strong>Game Engines & Graphics Drivers:</strong> GPU drivers (NVIDIA/AMD), Unreal Engine core math libraries, and Audio DSP.</p>
+      </div>
+    </div>
+
+    <!-- 2. Core Features & C vs C++ -->
+    <div class="section-title"><span class="num">2</span>C Language Features & C vs C++ Comparison</div>
+    <div class="section-body">
+      <p>C language ni 50+ years ayina inka top technology systems lo endhuku vaduthunnaru ante dheeni unique features:</p>
+
+      <table class="tbl">
+        <tr><th>Feature</th><th>Technical Meaning & Advantage</th></tr>
+        <tr><td><strong>1. Procedural Paradigm</strong></td><td>Program functions (procedures) ga divide avthundhi. Execution top-to-bottom step-by-step sequential flow lo jaruguthundhi.</td></tr>
+        <tr><td><strong>2. Blazing Fast Execution Speed</strong></td><td>Zero runtime overhead, no garbage collector pauses, direct CPU machine code compilation.</td></tr>
+        <tr><td><strong>3. Low-Level Memory Access (Pointers)</strong></td><td>Direct memory addressing, dynamic heap management via <code>malloc()</code>/<code>free()</code>, and memory-mapped hardware I/O.</td></tr>
+        <tr><td><strong>4. Highly Portable (WORA via Compilers)</strong></td><td>Standard ANSI/ISO C code ni cross-compilers dwara ARM, x86, RISC-V, MIPS chips paina recompile chesi run cheyyavachu.</td></tr>
+        <tr><td><strong>5. Minimal Runtime & Small Footprint</strong></td><td>Compiled C binaries are extremely lightweight (often only few Kilobytes), ideal for constrained microcontrollers.</td></tr>
+      </table>
+
+      <div class="concept-box">
+        <h4>⚔️ C vs C++ — The Key Differences</h4>
+        <p>• <strong>Programming Model:</strong> C is purely <strong>Procedural / Structured</strong> (functions and data are separate). C++ supports <strong>Object-Oriented Programming (OOP)</strong> with Classes, Objects, Inheritance, and Polymorphism.<br>
+        • <strong>Memory Management:</strong> C uses functions <code>malloc()</code> and <code>free()</code>. C++ uses operators <code>new</code> and <code>delete</code> alongside RAII (Smart Pointers).<br>
+        • <strong>Abstraction & Complexity:</strong> C is small, simple, and transparent (what you write is what CPU executes). C++ is large with Templates, Exception Handling, Operator Overloading, and STL.</p>
+      </div>
+    </div>
+
+    <!-- 3. C Program Structure & Compiler Pipeline -->
+    <div class="section-title"><span class="num">3</span>C Program Structure & The 4-Stage Compilation Pipeline</div>
+    <div class="section-body">
+      <p>Oka standard C source file structure 5 main parts ga untundhi:</p>
+      <ol style="margin-left:22px; color:var(--text2); font-size:14.5px; line-height:1.8; margin-bottom:18px;">
+        <li><strong>Preprocessor Directives:</strong> <code>#include &lt;stdio.h&gt;</code>, <code>#define MAX 100</code> (Compiler run avvaka mundhe header files and constants expand avthayi).</li>
+        <li><strong>Function Declarations (Prototypes):</strong> User-defined functions యొక్క blueprint signatures.</li>
+        <li><strong>Global Variable Declarations:</strong> Program motham share chesukune variables.</li>
+        <li><strong>The <code>main()</code> Function:</strong> Every C program's compulsory execution starting point.</li>
+        <li><strong>User-Defined Function Definitions:</strong> Specific tasks perform chese sub-functions.</li>
+      </ol>
+
+      <div class="concept-box">
+        <h4>⚙️ What is a Compiler? Source Code (.c) vs Executable (.exe)</h4>
+        <p>Computers kevalam <strong>Binary Machine Code (0s and 1s)</strong> mathrame execute cheyyagalavu. Manam human-readable English syntax lo rase file ni <strong>Source Code (<code>.c</code>)</strong> antamu. C Source Code ni CPU direct ga run chese binary machine code <strong>Executable (<code>.exe</code> on Windows / binary on Linux)</strong> ga convert chese system software ni <strong>Compiler (e.g. GCC, Clang, MSVC)</strong> అంటారు.</p>
+      </div>
+
+      <div class="pipeline-diagram">
+        <strong>The 4-Stage GCC Compilation Pipeline Under the Hood:</strong><br>
+        <br>
+        [ 1. SOURCE CODE ]      hello.c (Human readable C text)<br>
+               │<br>
+               ▼ (Preprocessor: gcc -E)<br>
+        [ 2. PREPROCESSED CODE ] hello.i (Headers included, macros expanded, comments stripped)<br>
+               │<br>
+               ▼ (Compiler: gcc -S)<br>
+        [ 3. ASSEMBLY CODE ]    hello.s (Architecture-specific assembly instructions: mov, add, push)<br>
+               │<br>
+               ▼ (Assembler: gcc -c)<br>
+        [ 4. OBJECT CODE ]      hello.o / hello.obj (Raw machine code binary 0s and 1s)<br>
+               │<br>
+               ▼ (Linker: gcc -o)<br>
+        [ 5. EXECUTABLE BINARY ] hello.exe / ./a.out (Linked with C Standard Library libc.a & ready to execute!)
+      </div>
+    </div>
+
+    <!-- 4. First C Program & Line-by-Line Anatomy -->
+    <div class="section-title"><span class="num">4</span>First C Program & Detailed Line-by-Line Breakdown</div>
+    <div class="section-body">
+      <p>Here is your compulsory first foundational C program:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — First Program (Curriculum Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Hello, World!\\n");
+    return 0;
+}</code></pre>
+      </div>
+
+      <p style="margin-top:18px;">Now let's examine each line and symbol separately in comprehensive technical detail:</p>
+
+      <table class="tbl anatomy-table">
+        <tr><th>Syntax Component</th><th>Technical Role & Deep Explanation</th></tr>
+        <tr>
+          <td><code>#include &lt;stdio.h&gt;</code></td>
+          <td>
+            • <code>#</code> (Hash): <strong>Preprocessor Directive</strong> indicator. Compiling start avvaka mundhe run avthundhi.<br>
+            • <code>include</code>: Specified file contents ni ee line unna place lo copy-paste cheyyamani preprocessor ki chepthundhi.<br>
+            • <code>&lt;stdio.h&gt;</code>: <strong>Standard Input Output</strong> header file. Dheenilo <code>printf()</code>, <code>scanf()</code> laanti I/O functions యొక్క function prototypes (declarations) untayi.<br>
+            • Angle brackets <code>&lt; &gt;</code>: Compiler standard system include directories lo search cheyyalani specify chesthayi.
+          </td>
+        </tr>
+        <tr>
+          <td><code>int main(void)</code></td>
+          <td>
+            • <code>main()</code>: Every C program execution compulsorily starts here. OS program ni launch chesinappudu call chese first function <code>main()</code>.<br>
+            • <code>int</code>: Return type. Program execution complete ayyaka Operating System ki integer exit status code return chesthundhi.<br>
+            • <code>void</code>: Explicit ga ee function zero arguments accept chesthundhani C standard (C99/C11/C23) prakaram specify chesthundi.
+          </td>
+        </tr>
+        <tr>
+          <td><code>printf(...)</code></td>
+          <td>
+            • <strong>Print Formatted:</strong> C Standard Library (<code>stdio.h</code>) loni built-in output function.<br>
+            • Manam icchina text string ni terminal / console standard output stream (<code>stdout</code>) ki పంపిస్తుంది.
+          </td>
+        </tr>
+        <tr>
+          <td><code>\\n</code></td>
+          <td>
+            • <strong>Newline Escape Sequence:</strong> Cursor ni next line beginning ki move chesthundi (ASCII value 10: Line Feed).<br>
+            • ⚡ <strong>Buffer Flushing:</strong> C lo standard output stream <em>line-buffered</em> ga untundhi. <code>\\n</code> encounter avvagane buffer lo unna text ventane screen meedha flush ayyi display avthundhi!
+          </td>
+        </tr>
+        <tr>
+          <td><code>return 0;</code></td>
+          <td>
+            • <strong>Exit Status Code:</strong> Operating System (Windows/Linux) ki program execution status ni report chesthundi.<br>
+            • <code>0</code> ante <strong>EXIT_SUCCESS</strong> (Program successfully completed without any errors).<br>
+            • Non-zero values (e.g. <code>1</code>, <code>-1</code>) ante program error or failure valla terminate ayyindhani OS కి signal isthundhi.
+          </td>
+        </tr>
+        <tr>
+          <td><code>Semicolon ;</code></td>
+          <td>
+            • <strong>Statement Terminator:</strong> C language lo prati individual instruction / statement compulsory ga semicolon <code>;</code> thone end avvali. Missing semicolon will cause a <code>Syntax Error</code>!
+          </td>
+        </tr>
+        <tr>
+          <td><code>Braces { }</code></td>
+          <td>
+            • <strong>Block Delimiters:</strong> Function body, loops, and conditional statements యొక్క execution boundary (scope) ni define chesthayi.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 5. Comments & The 3 Error Types -->
+    <div class="section-title"><span class="num">5</span>Comments & The 3 Fundamental Error Types in C</div>
+    <div class="section-body">
+      <div class="concept-box">
+        <h4>📝 Comments in C</h4>
+        <p>Comments code readability and documentation kosam vadathamu. Preprocessor stage loni comments motham completely remove avthayi (Machine code lo zero memory space theesukuntayi):<br>
+        • <strong>Single-line comment:</strong> <code>// This is a single line comment</code> (C99+ standard)<br>
+        • <strong>Multi-line comment:</strong> <code>/* This is a multi-line comment spanning multiple lines */</code></p>
+      </div>
+
+      <div class="concept-box">
+        <h4>🛑 The 3 Fundamental Error Types in C Programming</h4>
+        <table class="tbl" style="margin-top:10px;">
+          <tr><th>Error Type</th><th>When Does it Occur?</th><th>Example</th><th>How to Fix?</th></tr>
+          <tr>
+            <td><strong>1. Syntax / Compile-time Error</strong></td>
+            <td>C grammar & language rules break chesinappudu. Compiler detect chesi compilation ni block chesthundi.</td>
+            <td>Missing semicolon (<code>;</code>), unmatched brace (<code>{</code>), misspelled keyword (<code>intr</code> instead of <code>int</code>).</td>
+            <td>Compiler error message line number chusi syntax fix cheyyali.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Runtime Error</strong></td>
+            <td>Program successfully compile ayyaka, execution time lo invalid operation perform chesinappudu crash avthundhi.</td>
+            <td>Division by Zero (<code>10 / 0</code>), Segmentation Fault (Accessing invalid/unallocated memory address), Stack Overflow.</td>
+            <td>Input validation, safe pointer checks, and boundary conditions verify cheyyali.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Logical Error (Bug)</strong></td>
+            <td>Program perfectly compile avthundhi, execute avthundhi without crashing, kaani <strong>Thappu (Incorrect) Output</strong> isthundhi.</td>
+            <td>Total sum calculate cheyyadaniki <code>total = a * b</code> rayadam (bad formula).</td>
+            <td>Code logic debug cheyyali, dry-run tracing & print statements use cheyyali.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Comments & Multiple Output Lines</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+/*
+ * C Masterclass - Lesson 01
+ * Multi-line program demonstration
+ */
+int main(void) {
+    // Printing welcome banners
+    printf("==============================\\n");
+    printf("  Welcome to C Masterclass!   \\n");
+    printf("  Fast. Low-level. Powerful.  \\n");
+    printf("==============================\\n");
+
+    return 0; // Successful exit
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge Box -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Live C Compiler Execution</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this C program in our high-performance online GCC compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Hello, World!\\n");
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for C17 / C23 Standard</div>
+    </div>
+  `;
+
+  const html = wrapCPage(title, desc, filename, 1, subtopics, contentBody, null, null, null, null);
+  fs.writeFileSync(path.join(cDir, filename), html, 'utf8');
+  console.log(`✅ Generated ${filename}`);
+}
+
+// ── UPDATE blog-c.html HOME PAGE ──────────────────────────────────────────
+function buildBlogCHome() {
+  const cHomePath = path.join(baseDir, 'blog-c.html');
+
+  let roadmapCardsHtml = '';
+  C_CURRICULUM.forEach(phase => {
+    roadmapCardsHtml += `
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">${phase.icon}</span>
+          <div>
+            <div class="phase-roadmap-tag">${phase.tag}</div>
+            <h3 class="phase-roadmap-title">${phase.title}</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">${phase.lessons.length} In-Depth Lesson</span>
+      </div>
+      <p class="phase-roadmap-desc">${phase.desc}</p>
+      <div class="phase-lessons-list">
+`;
+
+    phase.lessons.forEach(l => {
+      const padIdx = String(l.num).padStart(2, '0');
+      roadmapCardsHtml += `        <a href="/blog-c/${l.file}" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">${padIdx}</span>
+            <div class="lesson-info">
+              <span class="lesson-title">${l.title}</span>
+              <span class="lesson-subtopics">${l.subtopics}</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>\n`;
+    });
+
+    roadmapCardsHtml += `      </div>
+    </div>\n`;
+  });
+
+  const accordionSidebar = generateCAccordionSidebar(null);
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Programming Master Tutorial & Complete Roadmap (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master C Programming from fundamental architecture, GCC compilation pipeline, memory management, pointers, and data structures with live runnable code examples." />
+  <meta name="keywords" content="c tutorial, c course, learn c online, c basics, gcc compiler, pointers in c, c memory management, c programming language" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Accordion Toggle & Theme Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP NAVIGATION -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link active">⚡ C Course HOME</a>
+
+${accordionSidebar}
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">C Programming Masterclass</span>
+    </div>
+
+    <h1 class="page-title">C Programming Master Tutorial</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Phase-by-Phase Master Curriculum</span>
+      <span class="badge">📂 Unified Emerald Green Theme</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's C Programming Master Course</strong>. Designed by Dennis Ritchie at Bell Labs, C is the mother of modern computing powering operating system kernels (Linux, Windows, macOS), database engines (MySQL, PostgreSQL, Redis), embedded microcontrollers, and language runtimes. Each phase provides in-depth, hands-on architectural breakdowns with live runnable code.</p>
+    </div>
+
+    <!-- Quick Start Card -->
+    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(20, 24, 32, 0.6)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 24px; margin: 28px 0;">
+      <h3 style="color:#10b981; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning C?</h3>
+      <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Start from the absolute beginning with Phase 1: explore C history, the 4-stage compiler pipeline, program structure, and line-by-line first program anatomy:</p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/blog-c/01-c-basics-and-program-structure.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Start Phase 1: C Basics & Architecture →</a>
+      </div>
+    </div>
+
+    <!-- Full Curriculum Roadmap Cards -->
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum Roadmap</div>
+    <div class="curriculum-roadmap-container">
+${roadmapCardsHtml}
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC / Clang C17 runtimes · Last updated August 2026</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>`;
+
+  fs.writeFileSync(cHomePath, html, 'utf8');
+  console.log('✅ Updated public/blog-c.html with Phase 1!');
+}
+
+function updateCStyle() {
+  const pythonStylePath = path.join(baseDir, 'blog-python', 'style.css');
+  const pythonStyle = fs.readFileSync(pythonStylePath, 'utf8');
+  const cStylePath = path.join(cDir, 'style.css');
+  fs.writeFileSync(cStylePath, pythonStyle, 'utf8');
+  console.log('✅ Updated public/blog-c/style.css with unified Emerald Green theme!');
+}
+
+function run() {
+  console.log('🚀 Building C Masterclass Phase 1...');
+  updateCStyle();
+  buildLesson1();
+  buildBlogCHome();
+  console.log('🎉 C Phase 1 successfully created!');
+}
+
+run();

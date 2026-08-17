@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Input & Output — print(), input() & Stdin Formatting — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Master console output with print() sep and end parameters, reading user input via input(), handling interactive terminal inputs, and stdin pipelines." />
+  <meta name="keywords" content="python tutorial, python 3 tutorial, learn python, python input & output — print(), input() & stdin formatting, python online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/12-basic-input-and-output.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Python Input & Output — print(), input() & Stdin Formatting — Python 3 Tutorial",
+  "description": "Master console output with print() sep and end parameters, reading user input via input(), handling interactive terminal inputs, and stdin pipelines.",
+  "articleSection": "Phase 1: Python Basics",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-14"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you read multiple integers on a single line?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use string split and list comprehension or map: a, b = map(int, input().split())."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Code Preload & Theme Script -->
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Toggle
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Decorate Code Blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+
+        // Wire Try-Box run buttons
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python3', codeEl.textContent);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-python">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html" class="active">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Course</div>
+    <a href="/blog-python.html">🐍 Python HOME</a>
+    <a href="01-what-is-python-features-and-uses.html">1. Python ante enti</a>
+    <a href="02-python-installation-and-setup.html">2. Python Installation, VS Code & Environment Setup</a>
+    <a href="03-first-program-hello-world.html">3. First Python Program</a>
+    <a href="04-python-syntax-and-indentation.html">4. Python Syntax & Indentation Rules (PEP 8)</a>
+    <a href="05-python-comments.html">5. Python Comments</a>
+    <a href="06-variables-and-naming-rules.html">6. Python Variables, Dynamic Typing & Naming Rules</a>
+    <a href="07-numbers-and-math-operations.html">7. Python Numbers</a>
+    <a href="08-strings-slicing-and-methods.html">8. Python Strings</a>
+    <a href="09-booleans-and-truthiness.html">9. Python Booleans & Truthy vs Falsy Evaluation</a>
+    <a href="10-none-type.html">10. Python NoneType</a>
+    <a href="11-type-checking-and-conversion.html">11. Python Type Checking with type(), isinstance() & Type Casting</a>
+    <a href="12-basic-input-and-output.html" class="active">12. Python Input & Output</a>
+
+    <div class="sidebar-heading">Interactive Playground</div>
+    <a href="/online-python-compiler.html" style="color:#58a6ff; font-weight:700;">▶ Try Python 3 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Languages</div>
+    <a href="/blog-java.html">Java Course (27 Lessons)</a>
+    <a href="/blog-c.html">C Language (20 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript</a>
+    <a href="/blog-cpp.html">C++</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-python.html">Python 3</a><span class="sep">›</span>
+      <span class="current">Lesson 12: Python Input & Output </span>
+    </div>
+
+    <h1 class="page-title">Python Input & Output — print(), input() & Stdin Formatting</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐍 Python 3</span>
+      <span class="badge">🟢 Lesson 12 of 12</span>
+      <span class="badge">📂 Phase 1: Python Basics</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="intro-box">
+      Master console output with print() sep and end parameters, reading user input via input(), handling interactive terminal inputs, and stdin pipelines.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Mastering the print() Function Parameters</div>
+    <div class="section-content"><p>The <code>print()</code> function takes optional keyword arguments that control output formatting:</p>
+        <ul>
+          <li><code>sep="..."</code>: The separator string inserted between multiple arguments (default is a single space <code>' '</code>).</li>
+          <li><code>end="..."</code>: The string appended after the last argument (default is newline <code>'\n'</code>). Setting <code>end=""</code> keeps output on the same line!</li>
+          <li><code>file=...</code>: Redirects output stream (default is <code>sys.stdout</code>).</li>
+        </ul></div>
+  
+
+    <div class="section-title"><span class="num">2</span>Reading User Input with input()</div>
+    <div class="section-content"><p>The <code>input(prompt)</code> function pauses program execution, displays the prompt, and waits for the user to type text and press Enter.</p>
+        <p><strong>Crucial Rule:</strong> <code>input()</code> always returns data as a <strong>string (str)</strong>. If you want numbers, you must explicitly cast: <code>int(input())</code> or <code>float(input())</code>.</p></div>
+  
+
+    <div class="section-title"><span class="num">3</span>Interactive Stdin in Our Compiler</div>
+    <div class="section-content"><p>When executing Python programs in <strong>Our Compiler</strong> that call <code>input()</code>, you can type values directly into the interactive Terminal stdin console or pre-enter multiline inputs before clicking Run.</p></div>
+  
+
+    <div class="section-title"><span class="num">💻</span> Complete Executable Code Example</div>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang-tag">Python 3</span>
+        <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+      </div>
+      <pre><code>import sys
+
+# Custom separator and end characters
+print("2026", "08", "14", sep="-")  # Output: 2026-08-14
+print("Loading progress: ", end="")
+for step in range(1, 4):
+    print(f"[{step}/3] ", end="")
+print("Done! ✅")
+
+# Reading inputs and calculating result
+print("
+--- User Input Simulation ---")
+mock_name = "Alex"
+mock_age_str = "25"
+
+# Simulating input processing
+user_name = mock_name
+user_age = int(mock_age_str)
+birth_year = 2026 - user_age
+
+print(f"Hello, {user_name}!")
+print(f"Based on your age ({user_age}), you were born around {birth_year}.")</code></pre>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Pitfall: Adding Strings and Integers from input()</div>
+      <p>Writing total = input("Enter num: ") + 5 raises TypeError: can only concatenate str (not "int") to str. Always convert: total = int(input("Enter num: ")) + 5.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Hands-on Practice Challenge</div>
+      <p>Read two numbers and an operator to calculate the arithmetic result.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python 3</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code># Arithmetic Calculator Demo
+num1 = 50
+num2 = 8
+operator = "*"
+
+if operator == "+":
+    result = num1 + num2
+elif operator == "-":
+    result = num1 - num2
+elif operator == "*":
+    result = num1 * num2
+elif operator == "/" and num2 != 0:
+    result = num1 / num2
+else:
+    result = "Invalid Operation"
+
+print(f"🧮 Result of {num1} {operator} {num2} = {result}")</code></pre>
+      </div>
+      <a class="run-btn" href="/online-python-compiler.html">Run This Code in Our Online Compiler →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4>Q: How do you read multiple integers on a single line?</h4>
+      <p>Use string split and list comprehension or map: a, b = map(int, input().split()).</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Python 3.12+ runtime · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="11-type-checking-and-conversion.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">11. Python Type Checking with type(), isinstance() & Type Casting</span>
+      </a>
+
+      
+      <a href="/online-python-compiler.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Course Finished 🎉</span>
+        <span class="title">▶ Practice in Python IDE</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wrapper Classes, Autoboxing & Enums Masterclass — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="Comprehensive Java guide on Wrapper Classes (Integer, Double, Character, Boolean), Autoboxing, Unboxing, Integer Cache trap (-128 to 127), String Parsing (parseInt, parseDouble), Enums, Enum methods (values, valueOf, ordinal), and Enum-based CLI menus." />
+  <meta name="keywords" content="java wrapper classes, integer, double, character, boolean, autoboxing, unboxing, parseint, parsedouble, java enums, enum methods, enum menu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/48-java-wrapper-classes-autoboxing-and-enums.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .code-action-btn {
+      background: #21262d;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .code-action-btn:hover {
+      background: #30363d;
+      color: #ffffff;
+      border-color: #8b949e;
+    }
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 18px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.65;
+      margin: 0;
+    }
+    .memory-diagram {
+      background: #12161c;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #79c0ff;
+      line-height: 1.8;
+      margin: 16px 0;
+    }
+    .tbl th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+      });
+    })();
+  </script>
+</head>
+<body class="lang-java">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html" class="active">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Java Master Course</div>
+    <a href="/blog-java.html" class="sidebar-home-link">☕ Java Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 10: Encapsulation & Access -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Encapsulation & Access</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/43-java-access-modifiers-public-private-protected-default.html">43. Access Modifiers</a>
+        <a href="/blog-java/44-java-getters-setters-and-data-validation.html">44. Getters & Setters</a>
+        <a href="/blog-java/45-java-immutable-objects-and-read-only-properties.html">45. Immutable Objects</a>
+        <a href="/blog-java/46-java-good-class-design-and-package-access.html">46. Package Design</a>
+        <a href="/blog-java/47-java-encapsulation-capstone-projects.html">47. Capstone Projects (4)</a>
+      </div>
+
+      <!-- Phase 17: Wrapper Classes & Enums (ACTIVE) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Wrapper Classes & Enums</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/48-java-wrapper-classes-autoboxing-and-enums.html" class="active">48. Wrapper Classes, Autoboxing & Enums</a>
+      </div>
+    </div>
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java 21 Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 48: Wrapper Classes & Enums</span>
+    </div>
+
+    <h1 class="page-title">Wrapper Classes, Autoboxing & Enums Masterclass</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java 21 LTS</span>
+      <span class="badge">🟢 Lesson 48</span>
+      <span class="badge">📂 Phase 17: Wrapper Classes & Enums</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Wrapper Classes · Integer, Double, Character, Boolean · Autoboxing & Unboxing · Integer Cache Trap (-128 to 127) · String Parsing (parseInt, parseDouble) · Enums · Enum Methods (values, valueOf, ordinal) · Enum-Based CLI Menus</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Java is an Object-Oriented language, yet it maintains <strong>8 Primitive Data Types</strong> (such as <code>int</code>, <code>double</code>, <code>char</code>, <code>boolean</code>) for maximum raw CPU execution performance and zero memory allocation overhead on the Stack. However, modern Java frameworks (Spring Boot, Hibernate), <strong>Java Collections Framework (<code>ArrayList&lt;Integer&gt;</code>, <code>HashMap</code>)</strong>, Generics, and Serialization operate exclusively on <strong>Objects in Heap Memory</strong>. To bridge this divide, Java provides <strong>Wrapper Classes</strong> and compiler-driven <strong>Autoboxing / Unboxing</strong>. Additionally, Java provides <strong>Enums (Enumerations)</strong> — type-safe, rich objects representing fixed sets of constants. In this comprehensive guide, you will master the theory, memory architecture, parsing engines, caching traps, and production menu architectures.</p>
+    </div>
+
+    <!-- SECTION 1: Wrapper Classes & Need -->
+    <div class="section-title"><span class="num">1</span>Wrapper Classes Ante Enti? Why Does Java Need Them?</div>
+    <div class="section-body">
+      <p>Java lo <strong>Wrapper Class</strong> ante primitive data type ni wrap chesi (enclose chesi) oka <strong>Object</strong> ga represent chese class. Prati primitive type ki <code>java.lang</code> package lo corresponding Wrapper Class untundhi:</p>
+
+      <div class="concept-box">
+        <h4>💡 Why do we need Wrapper Classes instead of just Primitives?</h4>
+        <p>1. <strong>Java Collections & Generics Requirement:</strong> <code>ArrayList&lt;int&gt;</code> rayaleru (compile error)! Collections lo mathrame objects store cheyyagalamu, so <code>ArrayList&lt;Integer&gt;</code> vadali.<br>
+        2. <strong>Nullability Representation:</strong> Database columns or API request bodies lo value absent ga unte primitive <code>int</code> lo <code>null</code> pettaleru (default is <code>0</code>). Wrapper <code>Integer</code> allows <code>null</code>!<br>
+        3. <strong>Rich Utility Methods:</strong> Type conversion, parsing strings (<code>Integer.parseInt()</code>), binary conversion (<code>toBinaryString()</code>), and min/max constants.<br>
+        4. <strong>Multithreading & Synchronization:</strong> Primitives meedha lock pettaleru; Wrapper objects can be used for synchronization and serialization.</p>
+      </div>
+
+      <table class="tbl">
+        <tr><th>Primitive Type</th><th>Wrapper Class (Object in Heap)</th><th>Byte Size</th><th>Default Value</th></tr>
+        <tr><td><code>byte</code></td><td><code>java.lang.Byte</code></td><td>1 byte (8 bits)</td><td><code>0</code> (Primitive) vs <code>null</code> (Wrapper)</td></tr>
+        <tr><td><code>short</code></td><td><code>java.lang.Short</code></td><td>2 bytes (16 bits)</td><td><code>0</code> vs <code>null</code></td></tr>
+        <tr><td><code>int</code></td><td><code>java.lang.Integer</code></td><td>4 bytes (32 bits)</td><td><code>0</code> vs <code>null</code></td></tr>
+        <tr><td><code>long</code></td><td><code>java.lang.Long</code></td><td>8 bytes (64 bits)</td><td><code>0L</code> vs <code>null</code></td></tr>
+        <tr><td><code>float</code></td><td><code>java.lang.Float</code></td><td>4 bytes (32 bits)</td><td><code>0.0f</code> vs <code>null</code></td></tr>
+        <tr><td><code>double</code></td><td><code>java.lang.Double</code></td><td>8 bytes (64 bits)</td><td><code>0.0d</code> vs <code>null</code></td></tr>
+        <tr><td><code>char</code></td><td><code>java.lang.Character</code></td><td>2 bytes (Unicode 16-bit)</td><td><code>'\u0000'</code> vs <code>null</code></td></tr>
+        <tr><td><code>boolean</code></td><td><code>java.lang.Boolean</code></td><td>1 bit logical</td><td><code>false</code> vs <code>null</code></td></tr>
+      </table>
+
+      <div class="memory-diagram">
+        <strong>Memory Architecture Comparison:</strong><br>
+        [STACK MEMORY]                          [HEAP MEMORY]<br>
+        int x = 42;                             <br>
+        ┌─────────────┐                         <br>
+        │   val: 42   │ (Raw 4-byte primitive)  <br>
+        └─────────────┘                         <br>
+        <br>
+        Integer obj = 42; ───────────────────►  ┌───────────────────────────┐<br>
+        (Reference address in Stack)            │ Integer Object (Heap)     │<br>
+                                                │ - Object Header: 12 bytes │<br>
+                                                │ - int value: 42           │<br>
+                                                │ - Padding: 4 bytes        │<br>
+                                                │ Total: 24 bytes in Heap!  │<br>
+                                                └───────────────────────────┘
+      </div>
+    </div>
+
+    <!-- SECTION 2: Deep Dive into Key Wrapper Classes -->
+    <div class="section-title"><span class="num">2</span>Key Wrapper Classes Deep Dive: Integer, Double, Character & Boolean</div>
+    <div class="section-body">
+      <p>Prati Wrapper class thana specific domain ki useful ayina static utility methods mariyu boundary constants ni provide chesthundhi:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <strong style="color:#10b981;">1. Integer Utility Powerhouse</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>Integer.MAX_VALUE</code> ($2^{31}-1 = 2,147,483,647$)</li>
+            <li><code>Integer.MIN_VALUE</code> ($-2^{31} = -2,147,483,648$)</li>
+            <li><code>Integer.toBinaryString(10)</code> $ightarrow$ <code>"1010"</code></li>
+            <li><code>Integer.toHexString(255)</code> $ightarrow$ <code>"ff"</code></li>
+            <li><code>Integer.max(a, b)</code>, <code>Integer.compare(a, b)</code></li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:16px;">
+          <strong style="color:#58a6ff;">2. Double Floating-Point Engine</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>Double.NaN</code> (Not-a-Number from $0.0 / 0.0$)</li>
+            <li><code>Double.isNaN(val)</code> — Check if math result is invalid.</li>
+            <li><code>Double.POSITIVE_INFINITY</code> ($1.0 / 0.0$)</li>
+            <li><code>Double.isInfinite(val)</code></li>
+            <li><code>Double.compare(d1, d2)</code> (Safe comparison)</li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
+          <strong style="color:#3fb950;">3. Character Unicode Inspector</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>Character.isDigit('5')</code> $ightarrow$ <code>true</code></li>
+            <li><code>Character.isLetter('A')</code> $ightarrow$ <code>true</code></li>
+            <li><code>Character.isWhitespace(' ')</code> $ightarrow$ <code>true</code></li>
+            <li><code>Character.toUpperCase('a')</code> $ightarrow$ <code>'A'</code></li>
+            <li><code>Character.isUpperCase('Z')</code> $ightarrow$ <code>true</code></li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #d2a8ff; border-radius:8px; padding:16px;">
+          <strong style="color:#d2a8ff;">4. Boolean Logical Utility</strong>
+          <ul style="margin:8px 0 0 16px; font-size:13px; color:var(--text2); line-height:1.6;">
+            <li><code>Boolean.TRUE</code> / <code>Boolean.FALSE</code></li>
+            <li><code>Boolean.parseBoolean("true")</code> $ightarrow$ <code>true</code></li>
+            <li><code>Boolean.logicalAnd(b1, b2)</code></li>
+            <li><code>Boolean.logicalOr(b1, b2)</code></li>
+            <li><code>Boolean.compare(b1, b2)</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Wrapper Utilities Demo</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>public class WrapperDemo {
+    public static void main(String[] args) {
+        // Integer Utilities
+        System.out.println("Integer Range: " + Integer.MIN_VALUE + " to " + Integer.MAX_VALUE);
+        System.out.println("42 in Binary: " + Integer.toBinaryString(42));
+        System.out.println("255 in Hex: " + Integer.toHexString(255));
+
+        // Character Utilities
+        char ch = '9';
+        System.out.println("Is '" + ch + "' a digit? " + Character.isDigit(ch));
+        System.out.println("Is 'A' uppercase? " + Character.isUpperCase('A'));
+
+        // Double NaN and Infinity Check
+        double zeroDiv = 10.0 / 0.0;
+        System.out.println("10.0 / 0.0 = " + zeroDiv);
+        System.out.println("Is Infinite? " + Double.isInfinite(zeroDiv));
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Autoboxing, Unboxing & The Integer Cache Trap -->
+    <div class="section-title"><span class="num">3</span>Autoboxing, Unboxing & The Dangerous Integer Cache Trap ⚠️</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
+          <strong style="color:#3fb950;">1. Autoboxing (Primitive ➔ Object)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Primitive value ni Wrapper Object ga compiler automatic ga convert cheyyadam: <code>Integer obj = 100;</code>. Compiler internally <code>Integer.valueOf(100)</code> call chesthundi.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:16px;">
+          <strong style="color:#58a6ff;">2. Unboxing (Object ➔ Primitive)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Wrapper Object nunchi raw primitive value ni automatic ga extract cheyyadam: <code>int num = obj;</code>. Compiler internally <code>obj.intValue()</code> call chesthundi.</p>
+        </div>
+      </div>
+
+      <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
+        <h4 style="color:#ff7b72;">⚠️ Critical Interview Trap: The Integer Cache (-128 to 127)</h4>
+        <p>Java memory optimize cheyyadaniki <strong>-128 nunchi 127</strong> madhya unna Integer objects ni internal <code>IntegerCache</code> pool lo mundhe cache chesi pettukuntundhi.<br>
+        - <code>Integer a = 100; Integer b = 100; a == b</code> is <strong>true</strong> (Same cached reference!)<br>
+        - <code>Integer c = 200; Integer d = 200; c == d</code> is <strong>FALSE</strong> (Cache range దాటింది, so 2 different Heap Objects create avthayi!)<br>
+        ⭐ <strong>Golden Rule:</strong> Objects ni eppudu <code>.equals()</code> thone compare cheyyali, <code>==</code> vadakudadhu!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Integer Cache & NullPointerException Trap</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>public class AutoboxingPitfalls {
+    public static void main(String[] args) {
+        // 1. Inside Cache Range (-128 to 127)
+        Integer num1 = 127;
+        Integer num2 = 127;
+        System.out.println("num1 == num2 (127): " + (num1 == num2)); // true (Cached!)
+
+        // 2. Outside Cache Range
+        Integer num3 = 128;
+        Integer num4 = 128;
+        System.out.println("num3 == num4 (128): " + (num3 == num4)); // FALSE! (Different Heap references)
+        System.out.println("num3.equals(num4):  " + num3.equals(num4)); // true (Correct comparison!)
+
+        // 3. NullPointerException on Unboxing
+        Integer nullWrapper = null;
+        try {
+            int primitiveVal = nullWrapper; // Compiles fine, but crashes at runtime!
+        } catch (NullPointerException e) {
+            System.out.println("⚠️ Caught NullPointerException: Cannot unbox null reference!");
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Parsing Strings -->
+    <div class="section-title"><span class="num">4</span>Parsing Strings to Primitives (Integer.parseInt & Double.parseDouble)</div>
+    <div class="section-body">
+      <p>Real-world applications lo Web Forms, JSON payloads, Console inputs, and CSV files nunchi vacche data pure <code>String</code> format lo untundhi. Dhaanni calculations kosam numeric primitives ga convert cheyyali:</p>
+
+      <table class="tbl">
+        <tr><th>Method Signature</th><th>Return Type</th><th>Example</th><th>Description</th></tr>
+        <tr><td><strong><code>Integer.parseInt(str)</code></strong></td><td>primitive <code>int</code></td><td><code>int x = Integer.parseInt("450");</code></td><td>Parses decimal integer string.</td></tr>
+        <tr><td><strong><code>Integer.parseInt(str, radix)</code></strong></td><td>primitive <code>int</code></td><td><code>int bin = Integer.parseInt("1010", 2);</code></td><td>Parses binary (2), octal (8), or hex (16) string.</td></tr>
+        <tr><td><strong><code>Integer.valueOf(str)</code></strong></td><td><code>Integer</code> Object</td><td><code>Integer obj = Integer.valueOf("450");</code></td><td>Returns cached Integer object instance.</td></tr>
+        <tr><td><strong><code>Double.parseDouble(str)</code></strong></td><td>primitive <code>double</code></td><td><code>double p = Double.parseDouble("99.99");</code></td><td>Parses floating-point string.</td></tr>
+        <tr><td><strong><code>Boolean.parseBoolean(str)</code></strong></td><td>primitive <code>boolean</code></td><td><code>boolean b = Boolean.parseBoolean("true");</code></td><td>Returns <code>true</code> if matches "true" (case-insensitive).</td></tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Robust String Parsing Engine</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>public class ParsingDemo {
+    public static void main(String[] args) {
+        String ageStr = "25";
+        String priceStr = "1299.75";
+        String binaryStr = "1100100"; // 100 in binary
+
+        // Parsing to numbers
+        int age = Integer.parseInt(ageStr);
+        double price = Double.parseDouble(priceStr);
+        int decimalFromBinary = Integer.parseInt(binaryStr, 2);
+
+        System.out.println("Age + 5 years: " + (age + 5));
+        System.out.println("Price with 18% GST: Rs." + (price * 1.18));
+        System.out.println("Binary 1100100 in Decimal: " + decimalFromBinary); // 100
+
+        // Handling Invalid NumberFormatException safely
+        String dirtyInput = "100Rs";
+        try {
+            int val = Integer.parseInt(dirtyInput);
+        } catch (NumberFormatException e) {
+            System.err.println("❌ Parsing Error: Input '" + dirtyInput + "' is not a valid number!");
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Enums Basics & Methods -->
+    <div class="section-title"><span class="num">5</span>Java Enums (Enumerations), Under the Hood & Enum Methods</div>
+    <div class="section-body">
+      <p>An <strong><code>enum</code> (Enumeration)</strong> is a special Java reference type used to define a fixed collection of <strong>predefined named constants</strong> (e.g. Days of the week, Compass directions, Order Statuses, User Roles, Payment Modes):</p>
+
+      <div class="concept-box">
+        <h4>💡 Why Enums are Superior to 'public static final int' Constants:</h4>
+        <p>1. <strong>Type-Safety:</strong> Method <code>OrderStatus</code> enum ni expect chesthe, developer random number or string pass cheyyaleru. Compiler strictly enforce chesthundi!<br>
+        2. <strong>Built-in Iteration:</strong> <code>values()</code> method tho anni constants ni loop cheyyavachu.<br>
+        3. <strong>State & Behavior:</strong> Java Enums can have their own <strong>fields, constructors, getters, and custom methods</strong>!<br>
+        4. <strong>Singleton & Thread-Safe:</strong> JVM guarantees every enum constant is a thread-safe singleton instance.</p>
+      </div>
+
+      <table class="tbl">
+        <tr><th>Built-in Enum Method</th><th>Return Type</th><th>Description</th></tr>
+        <tr><td><strong><code>Enum.values()</code></strong></td><td><code>Enum[]</code> array</td><td>Returns an array containing all enum constants in declaration order.</td></tr>
+        <tr><td><strong><code>Enum.valueOf(String name)</code></strong></td><td>Enum constant</td><td>Converts string representation to exact enum constant (case-sensitive).</td></tr>
+        <tr><td><strong><code>enumObj.name()</code></strong></td><td><code>String</code></td><td>Returns the exact string name of the constant.</td></tr>
+        <tr><td><strong><code>enumObj.ordinal()</code></strong></td><td><code>int</code> (0-indexed)</td><td>Returns the position index of the constant in declaration order.</td></tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Rich Enum with Custom Fields & Methods</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>// Rich Enum representing E-Commerce Order Status
+enum OrderStatus {
+    PENDING("Order received, awaiting payment", 101),
+    PROCESSING("Items being packed in warehouse", 202),
+    SHIPPED("Dispatched via courier delivery", 303),
+    DELIVERED("Handed over to customer", 404),
+    CANCELLED("Order cancelled and refunded", 505);
+
+    // Custom Fields
+    private final String description;
+    private final int statusCode;
+
+    // Enum Constructor (Always private or package-private)
+    OrderStatus(String description, int statusCode) {
+        this.description = description;
+        this.statusCode = statusCode;
+    }
+
+    public String getDescription() { return description; }
+    public int getStatusCode() { return statusCode; }
+
+    public boolean isTerminalState() {
+        return this == DELIVERED || this == CANCELLED;
+    }
+}
+
+public class EnumDemo {
+    public static void main(String[] args) {
+        // 1. Iterating through all values()
+        System.out.println("=== All Order Statuses ===");
+        for (OrderStatus status : OrderStatus.values()) {
+            System.out.println(status.ordinal() + ". " + status.name() + 
+                               " [Code: " + status.getStatusCode() + "] -> " + status.getDescription());
+        }
+
+        // 2. Converting String to Enum with valueOf()
+        String serverStatus = "SHIPPED";
+        OrderStatus current = OrderStatus.valueOf(serverStatus);
+        System.out.println("\nCurrent Order: " + current);
+        System.out.println("Is order completed? " + current.isTerminalState());
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 6: Enum-Based Menus & Modern Switch Integration -->
+    <div class="section-title"><span class="num">6</span>Enum-Based Interactive Menus & Modern Switch Integration</div>
+    <div class="section-body">
+      <p>Real-world CLI applications and Banking kiosks use Enums to build clean, maintainable menu routers with Java 21 modern switch expressions:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21 — Enum Menu System Application</span>
+          <div class="code-actions">
+            <button class="code-action-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="code-action-btn" onclick="runInJavaCompiler(this)" style="background:#10b981; color:#121212; border-color:#10b981;">▶ Run Code</button>
+          </div>
+        </div>
+        <pre><code>import java.util.Scanner;
+
+enum MenuOption {
+    CHECK_BALANCE(1, "Check Account Balance"),
+    DEPOSIT_FUNDS(2, "Deposit Cash"),
+    WITHDRAW_FUNDS(3, "Withdraw Cash"),
+    EXIT(4, "Exit Application");
+
+    private final int optionNumber;
+    private final String label;
+
+    MenuOption(int optionNumber, String label) {
+        this.optionNumber = optionNumber;
+        this.label = label;
+    }
+
+    public int getOptionNumber() { return optionNumber; }
+    public String getLabel() { return label; }
+
+    // Lookup Enum by entered number
+    public static MenuOption fromNumber(int choice) {
+        for (MenuOption opt : values()) {
+            if (opt.optionNumber == choice) return opt;
+        }
+        return null; // Invalid option
+    }
+}
+
+public class EnumMenuApp {
+    private static double balance = 15000.00;
+
+    public static void main(String[] args) {
+        // Simulating menu choice 1 (Check Balance) and 2 (Deposit)
+        processUserChoice(1);
+        processUserChoice(2);
+        processUserChoice(4);
+    }
+
+    public static void processUserChoice(int userChoice) {
+        MenuOption selected = MenuOption.fromNumber(userChoice);
+
+        if (selected == null) {
+            System.out.println("❌ Invalid choice! Please select 1-4.");
+            return;
+        }
+
+        // Modern Pattern Matching & Arrow Switch with Enums
+        switch (selected) {
+            case CHECK_BALANCE -> System.out.println("💰 Current Balance: Rs." + balance);
+            case DEPOSIT_FUNDS -> {
+                double depositAmt = 5000.0;
+                balance += depositAmt;
+                System.out.println("✅ Deposited Rs." + depositAmt + " | New Balance: Rs." + balance);
+            }
+            case WITHDRAW_FUNDS -> System.out.println("🏧 Processing withdrawal...");
+            case EXIT -> System.out.println("👋 Thank you for banking with us. Goodbye!");
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test in Live Java 21 Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this complete wrapper parsing and Enum evaluation engine in our online Java compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Java 21</span>
+          <a class="try-btn" href="/online-java-compiler.html">▶ Open Java Compiler</a>
+        </div>
+        <pre><code>public class Main {
+    enum Role { ADMIN, DEVELOPER, GUEST }
+
+    public static void main(String[] args) {
+        Integer age = Integer.parseInt("24");
+        Double salary = Double.parseDouble("85000.50");
+        Role userRole = Role.valueOf("DEVELOPER");
+
+        System.out.println("User is " + age + " years old, earning Rs." + salary);
+        System.out.println("Role: " + userRole + " (Index: " + userRole.ordinal() + ")");
+    }
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/online-java-compiler.html">Open in Online Java Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for Java 21 LTS (2026 Edition)</div>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

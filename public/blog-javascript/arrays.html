@@ -3,16 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arrays & Iteration Methods | Our Compiler</title>
-  <meta name="description" content="Learn JavaScript — Arrays & Iteration Methods with clear explanations, unique examples, common mistakes, and interactive code execution." />
+  <title>Arrays Deep Dive, Methods, Sorting Quirks & ES6+ (Masterclass) — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Comprehensive JavaScript Arrays Masterclass: Array creation, indexing, length tricks, push/pop/shift/unshift, slice vs splice, includes, indexOf, join, reverse, sort() quirks with custom comparators, concat, nested 2D matrices, destructuring, spread, and rest operators." />
+  <meta name="keywords" content="javascript tutorial, arrays deep dive, methods, sorting quirks & es6+ (masterclass), learn javascript, javascript online compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/arrays.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
   
-  <!-- Blog Theme Switcher -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +75,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -51,61 +95,61 @@
           topnav.appendChild(toggleBtn);
         }
 
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
         document.querySelectorAll('.code-block').forEach(block => {
           const header = block.querySelector('.code-block-header');
           const codeEl = block.querySelector('pre code');
           if (!header || !codeEl) return;
 
-          // Find or create actions container inside header
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
           let actionsContainer = header.querySelector('.code-actions');
           if (!actionsContainer) {
             actionsContainer = document.createElement('div');
             actionsContainer.className = 'code-actions';
             actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
             const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
             header.appendChild(actionsContainer);
           }
 
-          // Inject Copy Button
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
           copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            navigator.clipboard.writeText(rawCode).then(() => {
               copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
             });
           });
           actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
 
-          // Preload Code into Editor on Run Click
           const tryBtn = actionsContainer.querySelector('.try-btn');
           if (tryBtn) {
             tryBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'nodejs';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
             });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
           }
         });
       });
@@ -127,161 +171,735 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">JavaScript Tutorial</div>
-    <a href="/blog-javascript.html">JavaScript HOME</a>
-    <a href="/blog-javascript/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-javascript/variables.html">2. Variables (var, let & const)</a>
-    <a href="/blog-javascript/operators.html">3. Data Types & Operators</a>
-    <a href="/blog-javascript/strings.html">4. Strings & Template Literals</a>
-    <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
-    <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
-    <a href="/blog-javascript/functions.html">7. Functions & Arrow Syntax</a>
-    <a href="/blog-javascript/arrays.html" class="active">8. Arrays & Iteration Methods</a>
-    <a href="/blog-javascript/objects.html">9. Objects & JSON</a>
-    <a href="/blog-javascript/es6-features.html">10. ES6+ Destructuring & Spread</a>
-    <a href="/blog-javascript/oop.html">11. OOP: Classes & Prototypes</a>
-    <a href="/blog-javascript/closures.html">12. Closures & Callback Functions</a>
-    <a href="/blog-javascript/promises.html">13. Promises & Async/Await</a>
-    <a href="/blog-javascript/exceptions.html">14. Error Handling (try-catch)</a>
-    <a href="/blog-javascript/dom.html">15. DOM Basics & Event Listeners</a>
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=nodejs">▶ Try JavaScript Online</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
 
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
 
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditional Statements (if & switch)</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow (Masterclass)</a>
+      </div>
+
+      <!-- Phase 06: Strings Mastery -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧵</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Strings Mastery</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Text Processing (Masterclass)</a>
+      </div>
+
+      <!-- Phase 07: Arrays Masterclass -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays Masterclass</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/arrays.html" class="active">10. Arrays Deep Dive & Methods</a>
+      </div>
+
+      <!-- Phase 08: Objects & Functions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Objects & Functions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/objects.html">11. Objects & JSON Mastery</a>
+        <a href="/blog-javascript/functions.html">12. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 09: Advanced ES6+ & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Advanced ES6+ & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/es6-features.html">13. ES6+ Advanced Features</a>
+        <a href="/blog-javascript/closures.html">14. Closures & Scope Chain</a>
+        <a href="/blog-javascript/oop.html">15. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 10: Asynchronous JavaScript & DOM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Asynchronous JavaScript & DOM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">16. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">17. Error Handling & Debugging</a>
+        <a href="/blog-javascript/dom.html">18. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-javascript.html">JavaScript</a><span>›</span>
-      <span>Lesson 8</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 10: Arrays Deep Dive, Methods, Sorting Quirks & ES6+ (Masterclass)</span>
     </div>
-    
-    
-<h1 class="page-title">Arrays & Iteration Methods</h1>
-<div class="page-meta">
-  <span class="badge">🟨 JavaScript</span>
-  <span class="badge">Lesson 8</span>
-  <span class="badge">Intermediate</span>
-</div>
 
-<div class="intro-box">
-  <p>Arrays are ordered, dynamically-resizable collections. JavaScript arrays store elements of any type and feature powerful built-in functional iteration methods.</p>
-</div>
+    <h1 class="page-title">Arrays Deep Dive, Methods, Sorting Quirks & ES6+ (Masterclass)</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">1</span> Core Iteration Helpers: map, filter, & reduce</div>
-  <p>Instead of using standard `for` loops, modern JavaScript processes arrays using functional iteration callbacks:</p>
-  <ul>
-    <li><strong>map()</strong>: Creates a new array by applying a modification function to every element of the original array.</li>
-    <li><strong>filter()</strong>: Creates a new array containing only elements that pass a validation check.</li>
-    <li><strong>reduce()</strong>: Condenses an entire array into a single accumulated value (like a sum or average).</li>
-  </ul>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">2</span> Array Manipulations</div>
-  <p>Let's run a program declaring arrays, modifying elements, and processing values with functional helpers:</p>
-
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">JavaScript — Arrays and Helpers</span>
-      <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 10</span>
+      <span class="badge">📂 Phase 07: Arrays Masterclass</span>
+      <span class="badge">📅 2026 Edition</span>
     </div>
-    <pre><code>let fruits = ["Apple", "Banana"];
-fruits.push("Mango"); // Add to end
-console.log("Fruits list: ", fruits);
 
-let numbers = [1, 2, 3, 4, 5];
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Array ante enti? · Indexes & Updating · length tricks · push/pop/shift/unshift · slice vs splice · includes/indexOf · join · reverse · sort() Quirks & Comparators · concat · Nested 2D Matrices · Array Destructuring · Spread & Rest · 5 Practice Algorithms</span>
+    </div>
 
-// map: Double all values
-let doubled = numbers.map(x => x * 2);
-console.log("Doubled: ", doubled);
 
-// filter: Get even values
-let evens = numbers.filter(x => x % 2 === 0);
-console.log("Evens: ", evens);
+    <div class="intro-box">
+      <p>Welcome to <strong>Phase 7: Arrays Masterclass</strong>! In JavaScript, an <strong>Array</strong> is an ordered, dynamically-sized collection of values stored sequentially in memory. Unlike strict typed languages (like C or Java) where arrays have fixed sizes and require uniform data types, JavaScript arrays can store heterogeneous data types (Numbers, Strings, Objects, Functions, and other Arrays) and expand or shrink dynamically on demand.</p>
+    </div>
 
-// reduce: Sum all values
-let sum = numbers.reduce((accum, curr) => accum + curr, 0);
-console.log("Sum: " + sum);</code></pre>
-  </div>
-</div>
+    <!-- 1. Array Ante Enti & Creation -->
+    <div class="section-title"><span class="num">1</span>Array Ante Enti? & Creating Arrays</div>
+    <div class="section-body">
+      <p>JavaScript lo <strong>Array</strong> ante multiple values ni single variable name kinda store cheyagala data structure. Internally, JS Arrays are specialized Objects where numeric indexes serve as keys and elements are placed in Heap memory.</p>
 
-<div class="section">
-  <div class="section-title"><span class="num">3</span> Code Challenge</div>
-  <div class="info-box">
-    <strong>Challenge:</strong> Write a program that filters an array of integers to retrieve only positive numbers, and then maps the filtered results to return their square values. Output the final array.
-  </div>
-</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px;">
+          <strong style="color:#10b981;">1. Array Literal (Recommended ⭐)</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Square brackets <code>[]</code> tho direct ga elements define cheyyadam: <code>const marks = [85, 90, 78, 92];</code></p>
+        </div>
 
-    
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:14px;">
+          <strong style="color:#58a6ff;">2. Array Constructor</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>new Array(5)</code> — ⚠️ Single number isthe 5 empty slots tho array create avthundhi, value kaadu!</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:14px;">
+          <strong style="color:#3fb950;">3. Array.of() & Array.from()</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>Array.of(5)</code> creates <code>[5]</code>. <code>Array.from("JS")</code> creates <code>['J', 'S']</code>.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Array Basics Example</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const marks = [85, 90, 78, 92];
+
+marks.push(88); // Adds 88 to the end
+
+console.log("Marks Array:", marks);
+console.log("First Element [0]:", marks[0]);
+console.log("Total Count (length):", marks.length);</code></pre>
+      </div>
+    </div>
+
+    <!-- 2. Indexing, Reading, Updating & Length Tricks -->
+    <div class="section-title"><span class="num">2</span>Indexes, Reading, Updating & The length Mutation Trick</div>
+    <div class="section-body">
+      <p>Arrays zero-indexed (<code>0</code> to <code>length - 1</code>):</p>
+      
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Reading Elements:</strong> <code>marks[0]</code> (first), <code>marks.at(-1)</code> (ES2022 last item). Out-of-bounds reading returns <code>undefined</code>.</li>
+        <li><strong>Updating Elements:</strong> <code>marks[1] = 95;</code> updates index 1 in place.</li>
+        <li><strong>Length Property & Truncation Trick:</strong> <code>length</code> property is writable! Setting <code>marks.length = 2</code> truncates the array down to 2 items! Setting <code>marks.length = 0</code> clears the entire array in memory!</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Length & Bounds Demo</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+let fruits = ["Apple", "Banana", "Mango", "Orange", "Grapes"];
+
+console.log("Last Fruit (.at(-1)):", fruits.at(-1)); // "Grapes"
+
+// Truncating array using length
+fruits.length = 3;
+console.log("After fruits.length = 3:", fruits); // ["Apple", "Banana", "Mango"]
+
+// Clearing array in memory
+fruits.length = 0;
+console.log("After fruits.length = 0 (Cleared):", fruits); // []</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Mutator Methods (push, pop, unshift, shift) -->
+    <div class="section-title"><span class="num">3</span>Mutator Methods: push(), pop(), unshift() & shift()</div>
+    <div class="section-body">
+      <p>Original array structure ni direct ga modify chese core four methods:</p>
+
+      <table class="tbl">
+        <tr><th>Method</th><th>Action Position</th><th>Return Value</th><th>Performance (Time Complexity)</th></tr>
+        <tr>
+          <td><strong><code>push(...items)</code></strong></td>
+          <td>Adds elements to <strong>END</strong></td>
+          <td>New array length</td>
+          <td>$O(1)$ Constant Time ⚡</td>
+        </tr>
+        <tr>
+          <td><strong><code>pop()</code></strong></td>
+          <td>Removes element from <strong>END</strong></td>
+          <td>Removed element</td>
+          <td>$O(1)$ Constant Time ⚡</td>
+        </tr>
+        <tr>
+          <td><strong><code>unshift(...items)</code></strong></td>
+          <td>Adds elements to <strong>START</strong></td>
+          <td>New array length</td>
+          <td>$O(N)$ Linear Time (re-indexes all items)</td>
+        </tr>
+        <tr>
+          <td><strong><code>shift()</code></strong></td>
+          <td>Removes element from <strong>START</strong></td>
+          <td>Removed element</td>
+          <td>$O(N)$ Linear Time (shifts all items left)</td>
+        </tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Stack & Queue Operations</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+let stack = [10, 20];
+
+// Push & Pop (End)
+stack.push(30); // [10, 20, 30]
+console.log("Pushed 30 ->", stack);
+
+let popped = stack.pop(); // Removes 30
+console.log("Popped item:", popped, "| Current Stack:", stack);
+
+// Unshift & Shift (Start)
+stack.unshift(5); // [5, 10, 20]
+console.log("Unshifted 5 ->", stack);
+
+let shifted = stack.shift(); // Removes 5
+console.log("Shifted item:", shifted, "| Current Stack:", stack);</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. slice() vs splice() (Critical Interview Question) -->
+    <div class="section-title"><span class="num">4</span>slice() vs splice() (The Crucial Interview Distinction)</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
+          <strong style="color:#3fb950;">1. slice(start, end) — IMMUTABLE (Safe)</strong>
+          <ul style="font-size:13px; color:var(--text2); margin-top:6px; margin-left:16px; line-height:1.6;">
+            <li>Original array ni <strong>modify cheyyadhu</strong>.</li>
+            <li>Returns a <strong>new shallow copy</strong> of specified range.</li>
+            <li>Negative indices support chesthundhi (e.g. <code>arr.slice(-2)</code>).</li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px;">
+          <strong style="color:#ff7b72;">2. splice(start, deleteCount, ...items) — MUTATING</strong>
+          <ul style="font-size:13px; color:var(--text2); margin-top:6px; margin-left:16px; line-height:1.6;">
+            <li>Original array ni <strong>in-place ga modify chesthundi</strong>.</li>
+            <li>Items ni delete, replace, or insert cheyyadaniki vadathamu.</li>
+            <li>Returns an array of <strong>deleted elements</strong>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — slice vs splice Code Comparison</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const original = ["A", "B", "C", "D", "E"];
+
+// 1. slice() does NOT change original
+const sliced = original.slice(1, 4);
+console.log("Sliced (1 to 4):", sliced);       // ["B", "C", "D"]
+console.log("Original untouched:", original);  // ["A", "B", "C", "D", "E"]
+
+// 2. splice() modifies original array
+// Syntax: splice(startIndex, deleteCount, insertItem1, insertItem2...)
+const deleted = original.splice(2, 2, "NEW_C", "NEW_D");
+console.log("Deleted by splice:", deleted);    // ["C", "D"]
+console.log("Original mutated:", original);    // ["A", "B", "NEW_C", "NEW_D", "E"]</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. includes, indexOf, join, reverse, concat -->
+    <div class="section-title"><span class="num">5</span>Search & Transform: includes, indexOf, join, reverse & concat</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong><code>includes(val)</code>:</strong> Returns <code>true</code> if element exists (handles <code>NaN</code> correctly).</li>
+        <li><strong><code>indexOf(val)</code>:</strong> Returns first matching index or <code>-1</code>.</li>
+        <li><strong><code>join(separator)</code>:</strong> Array elements ni custom string delimiter tho join chesthundi (e.g. <code>["a","b"].join("-") -> "a-b"</code>).</li>
+        <li><strong><code>reverse()</code>:</strong> Reverses the array elements in place (mutates original).</li>
+        <li><strong><code>concat(...arrays)</code>:</strong> Combines multiple arrays into a fresh new array without mutating originals.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Search & Transform Methods</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const fruits = ["Apple", "Mango", "Banana"];
+
+console.log("Has 'Mango'?", fruits.includes("Mango")); // true
+console.log("Index of 'Banana':", fruits.indexOf("Banana")); // 2
+console.log("Joined:", fruits.join(" ➔ ")); // "Apple ➔ Mango ➔ Banana"
+
+const reversed = fruits.reverse();
+console.log("Reversed array:", reversed);
+
+const numbers1 = [1, 2];
+const numbers2 = [3, 4];
+console.log("Concat:", numbers1.concat(numbers2, [5, 6])); // [1, 2, 3, 4, 5, 6]</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. sort() & The Famous Sorting Quirk -->
+    <div class="section-title"><span class="num">6</span>The sort() Method & Numeric Sorting Quirk (Deep Dive)</div>
+    <div class="section-body">
+      <div class="callout">
+        <div class="callout-title">⚠️ The Historic JavaScript Array sort() Quirk</div>
+        <p>JavaScript default <code>sort()</code> numbers ni direct ga sort cheyyadhu! Elements ni <strong>Strings ga convert chesi UTF-16 lexicographical (ASCII alphabetic) order</strong> lo sort chesthundi. Andhuke <code>[10, 2, 30].sort()</code> output <code>[10, 2, 30]</code> (or <code>[10, 20, 2]</code>) ga vasthundi, because string <code>"10"</code> comes before <code>"2"</code>!</p>
+      </div>
+
+      <p>Numeric values ni accurate ga sort cheyyadaniki <strong>Comparator Function</strong> <code>(a, b) => a - b</code> pass cheyyali:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — sort() Comparator Demo</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const numbers = [10, 2, 30];
+
+// ❌ Default string sort (Buggy for numbers!)
+// numbers.sort(); // Output: [10, 2, 30]
+
+// ✅ Correct Numeric Ascending Sort: (a, b) => a - b
+numbers.sort((a, b) => a - b);
+console.log("Ascending Sorted:", numbers); // [2, 10, 30]
+
+// ✅ Correct Numeric Descending Sort: (a, b) => b - a
+numbers.sort((a, b) => b - a);
+console.log("Descending Sorted:", numbers); // [30, 10, 2]</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Nested Arrays (2D Matrices) -->
+    <div class="section-title"><span class="num">7</span>Nested Arrays (Multi-Dimensional 2D Matrices)</div>
+    <div class="section-body">
+      <p>Oka array lopala maroka array unte dhaanni <strong>2D Array / Nested Array</strong> antaru. Matrix row and column format lo data access avthundi:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — 2D Matrix Grid</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+console.log("Row 0, Col 0:", matrix[0][0]); // 1
+console.log("Row 1, Col 1 (Center):", matrix[1][1]); // 5
+console.log("Row 2, Col 2:", matrix[2][2]); // 9
+
+// Flattening nested arrays with .flat()
+const nested = [1, [2, [3, 4]]];
+console.log("Flattened (depth 2):", nested.flat(2)); // [1, 2, 3, 4]</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Array Destructuring, Spread & Rest Operators -->
+    <div class="section-title"><span class="num">8</span>Array Destructuring, Spread & Rest Operators</div>
+    <div class="section-body">
+      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
+        <li><strong>Array Destructuring:</strong> Unpacking array elements into clean individual variables: <code>const [first, second] = arr;</code></li>
+        <li><strong>Spread Operator (<code>...</code> Expanding):</strong> Unpacks array items into comma-separated elements (ideal for merging and shallow cloning).</li>
+        <li><strong>Rest Operator (<code>...</code> Collecting):</strong> Gathers the remaining elements into a fresh array: <code>const [leader, ...members] = team;</code></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Destructuring & Spread/Rest</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const scores = [95, 88, 76, 62, 55];
+
+// 1. Destructuring with Rest (...)
+const [topper, runnerUp, ...others] = scores;
+console.log("Topper:", topper);       // 95
+console.log("Runner Up:", runnerUp);   // 88
+console.log("Others Array:", others);  // [76, 62, 55]
+
+// 2. Swapping variables in 1 line
+let x = 10, y = 20;
+[x, y] = [y, x];
+console.log("Swapped: x =", x, ", y =", y);
+
+// 3. Spread operator merging
+const batch1 = ["Ravi", "Kiran"];
+const batch2 = ["Sneha", "Pooja"];
+const allStudents = [...batch1, ...batch2, "Vijay"];
+console.log("All Students:", allStudents);</code></pre>
+      </div>
+    </div>
+
+    <!-- 5 PRACTICE ALGORITHMS -->
+    <div class="section-title"><span class="num">9</span>5 Real-World Practice Algorithms</div>
+    <div class="section-body">
+      <p>Mastering arrays through 5 essential coding interview problems:</p>
+
+      <!-- 1. Max and Min -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Program 1: Find Largest and Smallest in an Array</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+const data = [45, 12, 89, 3, 99, 24];
+
+const maxVal = Math.max(...data);
+const minVal = Math.min(...data);
+
+console.log("Array:", data);
+console.log("Max:", maxVal, "| Min:", minVal);</code></pre>
+        </div>
+      </div>
+
+      <!-- 2. Remove Duplicates -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Program 2: Remove Duplicates from an Array</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+const duplicateNums = [1, 2, 2, 3, 4, 4, 5, 1];
+
+// Clean 1-line solution using Set and Spread
+const uniqueNums = [...new Set(duplicateNums)];
+
+console.log("Original:", duplicateNums);
+console.log("Unique:", uniqueNums); // [1, 2, 3, 4, 5]</code></pre>
+        </div>
+      </div>
+
+      <!-- 3. Array Rotation -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Program 3: Rotate Array by K Positions</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+function rotateRight(arr, k) {
+    const n = arr.length;
+    const effectiveK = k % n;
+    // Slice last k items and put in front
+    return [...arr.slice(n - effectiveK), ...arr.slice(0, n - effectiveK)];
+}
+
+console.log("Rotated [1,2,3,4,5] right by 2:", rotateRight([1, 2, 3, 4, 5], 2));
+// Output: [4, 5, 1, 2, 3]</code></pre>
+        </div>
+      </div>
+
+      <!-- 4. Frequency Counter -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Program 4: Element Frequency Counter</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+const votes = ["Ravi", "Sneha", "Ravi", "Kiran", "Ravi", "Sneha"];
+const counts = {};
+
+for (const vote of votes) {
+    counts[vote] = (counts[vote] || 0) + 1;
+}
+
+console.log("Vote Counts:", counts);
+// { Ravi: 3, Sneha: 2, Kiran: 1 }</code></pre>
+        </div>
+      </div>
+
+      <!-- 5. 2D Matrix Sum -->
+      <div style="margin:18px 0;">
+        <h4 style="color:#10b981;">Program 5: Matrix Diagonal Sum</h4>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          </div>
+          <pre><code>"use strict";
+
+const grid = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+let primaryDiagonalSum = 0;
+for (let i = 0; i < grid.length; i++) {
+    primaryDiagonalSum += grid[i][i]; // 1 + 5 + 9
+}
+
+console.log("Primary Diagonal Sum (1+5+9):", primaryDiagonalSum); // 15</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this marks array and sorting comparator snippet in our live compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript Arrays & Sorting</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+// Part 1: Marks Array
+const marks = [85, 90, 78, 92];
+marks.push(88);
+
+console.log("Marks:", marks);
+console.log("First Element:", marks[0]);
+console.log("Length:", marks.length);
+
+// Part 2: Numeric Sorting with Comparator
+const numbers = [10, 2, 30];
+numbers.sort((a, b) => a - b);
+console.log("Sorted Numbers:", numbers);</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
     <div class="nav-footer">
-      <a href="/blog-javascript/functions.html" class="nav-btn">
+      
+      <a href="strings.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">Functions & Arrow Syntax</span>
+        <span class="title">9. Strings & Text Processing</span>
       </a>
-      <a href="/blog-javascript/objects.html" class="nav-btn" style="text-align:right;">
+
+      
+      <a href="objects.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">Objects & JSON</span>
+        <span class="title">Phase 8: Objects</span>
       </a>
     </div>
   </main>
 </div>
+
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>

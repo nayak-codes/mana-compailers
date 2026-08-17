@@ -3,16 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Types & Operators | Our Compiler</title>
-  <meta name="description" content="Learn JavaScript — Data Types & Operators with clear explanations, unique examples, common mistakes, and interactive code execution." />
+  <title>Data Types, typeof & Type Coercion — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Exhaustive guide to JavaScript Data Types: 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values." />
+  <meta name="keywords" content="javascript tutorial, data types, typeof & type coercion, learn javascript, javascript online compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/operators.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
   
-  <!-- Blog Theme Switcher -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +75,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -51,61 +95,61 @@
           topnav.appendChild(toggleBtn);
         }
 
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
         document.querySelectorAll('.code-block').forEach(block => {
           const header = block.querySelector('.code-block-header');
           const codeEl = block.querySelector('pre code');
           if (!header || !codeEl) return;
 
-          // Find or create actions container inside header
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
           let actionsContainer = header.querySelector('.code-actions');
           if (!actionsContainer) {
             actionsContainer = document.createElement('div');
             actionsContainer.className = 'code-actions';
             actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
             const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
             header.appendChild(actionsContainer);
           }
 
-          // Inject Copy Button
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
           copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            navigator.clipboard.writeText(rawCode).then(() => {
               copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
             });
           });
           actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
 
-          // Preload Code into Editor on Run Click
           const tryBtn = actionsContainer.querySelector('.try-btn');
           if (tryBtn) {
             tryBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'nodejs';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
             });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
           }
         });
       });
@@ -127,159 +171,402 @@
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">HTML</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CSS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">React</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Angular</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Vue.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Next.js</a>
-  <a href="/?lang=nodejs">Node.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">REST API</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">GraphQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Spring Boot</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Django</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Flask</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Express.js</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PostgreSQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MySQL</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">MongoDB</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">SQLite</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Redis</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Cassandra</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">AWS</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Azure</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Google Cloud</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Docker</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Kubernetes</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">CI/CD</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Data Science</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Machine Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Deep Learning</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">TensorFlow</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">PyTorch</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Big Data</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Git & GitHub</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Linux</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Shell Scripting</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Testing</a>
-  <a href="#" onclick="alert('Coming Soon! This tutorial is currently being drafted by Balaji Nayak.')">Agile & Scrum</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">JavaScript Tutorial</div>
-    <a href="/blog-javascript.html">JavaScript HOME</a>
-    <a href="/blog-javascript/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-javascript/variables.html">2. Variables (var, let & const)</a>
-    <a href="/blog-javascript/operators.html" class="active">3. Data Types & Operators</a>
-    <a href="/blog-javascript/strings.html">4. Strings & Template Literals</a>
-    <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
-    <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
-    <a href="/blog-javascript/functions.html">7. Functions & Arrow Syntax</a>
-    <a href="/blog-javascript/arrays.html">8. Arrays & Iteration Methods</a>
-    <a href="/blog-javascript/objects.html">9. Objects & JSON</a>
-    <a href="/blog-javascript/es6-features.html">10. ES6+ Destructuring & Spread</a>
-    <a href="/blog-javascript/oop.html">11. OOP: Classes & Prototypes</a>
-    <a href="/blog-javascript/closures.html">12. Closures & Callback Functions</a>
-    <a href="/blog-javascript/promises.html">13. Promises & Async/Await</a>
-    <a href="/blog-javascript/exceptions.html">14. Error Handling (try-catch)</a>
-    <a href="/blog-javascript/dom.html">15. DOM Basics & Event Listeners</a>
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=nodejs">▶ Try JavaScript Online</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
 
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html" class="active">4. Data Types, typeof & Coercion</a>
+      </div>
 
+      <!-- Phase 03: Operators & Control Flow -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
+        <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
+      </div>
+
+      <!-- Phase 04: Strings & Functions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Strings & Functions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">7. Strings & Template Literals</a>
+        <a href="/blog-javascript/functions.html">8. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 05: Arrays & Objects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Arrays & Objects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">9. Arrays & Iteration Methods</a>
+        <a href="/blog-javascript/objects.html">10. Objects & JSON</a>
+        <a href="/blog-javascript/es6-features.html">11. ES6+ Destructuring & Spread</a>
+      </div>
+
+      <!-- Phase 06: Advanced Functions & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Advanced Functions & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/closures.html">12. Closures & Higher-Order Functions</a>
+        <a href="/blog-javascript/oop.html">13. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 07: Asynchronous JavaScript -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Asynchronous JavaScript</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">14. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">15. Error Handling & Debugging</a>
+      </div>
+
+      <!-- Phase 08: DOM & Web Browser APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">DOM & Web Browser APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/dom.html">16. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-javascript.html">JavaScript</a><span>›</span>
-      <span>Lesson 3</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 4: Data Types, typeof & Type Coercion</span>
     </div>
-    
-    
-<h1 class="page-title">Data Types & Operators</h1>
-<div class="page-meta">
-  <span class="badge">🟨 JavaScript</span>
-  <span class="badge">Lesson 3</span>
-  <span class="badge">Beginner</span>
-</div>
 
-<div class="intro-box">
-  <p>JavaScript is a dynamically-typed language. Variables can hold any data type and can change dynamically at runtime. The language includes primitives, objects, and implicit coercions.</p>
-</div>
+    <h1 class="page-title">Data Types, typeof & Type Coercion</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">1</span> Primitives vs Reference Types</div>
-  <p>Variables store primitives directly in memory stacks, while referencing locations for objects on heap segments:</p>
-  <ul>
-    <li><strong>Primitives</strong>: `string`, `number` (both integers and decimals are double-precision floats), `boolean`, `undefined` (declared but not assigned), `null` (explicit emptiness), `symbol`, `bigint`.</li>
-    <li><strong>Reference Types</strong>: Objects, Arrays, and Functions.</li>
-  </ul>
-  <p><strong>Strict Comparison:</strong> Always use the strict equality operator (`===`) instead of loose equality (`==`). Loose equality performs implicit type coercion (casting), leading to unexpected results (e.g. `5 == "5"` is true, but `5 === "5"` is false).</p>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">2</span> Dynamic Casting & Operators</div>
-  <p>Let's run a program that demonstrates operators, typeof investigations, and strict comparison rules:</p>
-
-  <div class="code-block">
-    <div class="code-block-header">
-      <span class="lang-tag">JavaScript — Types and Comparisons</span>
-      <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 4</span>
+      <span class="badge">📂 Phase 02: Variables & Data Types</span>
+      <span class="badge">📅 2026 Edition</span>
     </div>
-    <pre><code>let value = 42;
-console.log("Type of 42: " + typeof value);
 
-value = "Hello";
-console.log("Type of 'Hello': " + typeof value);
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol) · Objects · typeof Operator · Historic typeof null Bug · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy Values</span>
+    </div>
 
-// Comparisons
-console.log("Loose matching (5 == '5'):", 5 == '5'); // true
-console.log("Strict matching (5 === '5'):", 5 === '5'); // false
 
-// Logical Operators
-let isMember = true;
-let score = 85;
-let discount = (isMember && score > 80) ? "20%" : "0%";
-console.log("Discount tier: " + discount);</code></pre>
-  </div>
-</div>
+    <div class="intro-box">
+      <p>JavaScript data types are divided into two main categories: <strong>7 Primitive Types</strong> (stored directly by value) and <strong>Reference Objects</strong> (stored by reference pointer). In this lesson, you will master all 7 primitives, object literals, the <code>typeof</code> operator and its historic <code>typeof null === "object"</code> quirk, dynamic typing, explicit type conversions vs implicit type coercions, and the 8 Falsy values in JavaScript.</p>
+    </div>
 
-<div class="section">
-  <div class="section-title"><span class="num">3</span> Code Challenge</div>
-  <div class="info-box">
-    <strong>Challenge:</strong> Write a comparison check testing loose and strict equality between `null` and `undefined` (e.g. `null == undefined` and `null === undefined`). Print both results and explain the difference.
-  </div>
-</div>
+    <!-- SECTION 1: 7 Primitives + Objects -->
+    <div class="section-title"><span class="num">1</span>The 7 Primitive Data Types + Objects</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Data Type</th><th>Category</th><th>Description / Range</th><th>Example</th></tr>
+        <tr><td><strong>String</strong></td><td>Primitive</td><td>Textual character data enclosed in <code>''</code>, <code>""</code>, or <code>`...`</code>.</td><td><code>"Ravi"</code></td></tr>
+        <tr><td><strong>Number</strong></td><td>Primitive</td><td>64-bit IEEE 754 floating point (Integers & Decimals up to $2^{53}-1$).</td><td><code>21</code>, <code>99.99</code></td></tr>
+        <tr><td><strong>BigInt</strong></td><td>Primitive</td><td>Arbitrary precision large integer ending with <code>n</code> suffix.</td><td><code>9007199254740991n</code></td></tr>
+        <tr><td><strong>Boolean</strong></td><td>Primitive</td><td>Logical truth value: strictly <code>true</code> or <code>false</code>.</td><td><code>true</code></td></tr>
+        <tr><td><strong>undefined</strong></td><td>Primitive</td><td>Automatically assigned to declared variables without a value.</td><td><code>let x; // undefined</code></td></tr>
+        <tr><td><strong>null</strong></td><td>Primitive</td><td>Intentional absence of any value / empty pointer.</td><td><code>const user = null;</code></td></tr>
+        <tr><td><strong>Symbol</strong></td><td>Primitive</td><td>Unique, immutable identifier created via <code>Symbol()</code>.</td><td><code>Symbol("id")</code></td></tr>
+        <tr><td><strong>Object</strong></td><td>Reference</td><td>Collection of key-value pairs (Arrays, Functions, Objects).</td><td><code>{ name: "Ravi" }</code></td></tr>
+      </table>
+    </div>
 
-    
+    <!-- SECTION 2: typeof Operator & The Historic null Bug -->
+    <div class="section-title"><span class="num">2</span>The typeof Operator & Historic "typeof null" Quirk</div>
+    <div class="section-body">
+      <p>Oka variable or expression yokka data type ni runtime lo check cheyyadaniki <code>typeof</code> operator vadathamu:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — typeof Demo</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+console.log(typeof "Ravi");        // "string"
+console.log(typeof 21);            // "number"
+console.log(typeof 90071992547n);   // "bigint"
+console.log(typeof true);          // "boolean"
+console.log(typeof undefined);     // "undefined"
+console.log(typeof Symbol("id"));  // "symbol"
+console.log(typeof { age: 21 });   // "object"
+console.log(typeof function(){});  // "function"
+
+// ⚠️ THE HISTORIC JAVASCRIPT BUG:
+console.log(typeof null);          // "object" (Bug since JS 1.0 in 1995!)</code></pre>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">💡 Why does 'typeof null' return "object"?</div>
+        <p>1995 lo original JavaScript implementation lo values memory lo 32-bit units ga store aveyi. Type tags lowest 3 bits lo unte — <code>000</code> was the tag for <strong>Object</strong>. Null memory address <code>0x00</code> (all zeros) gaa read avvanivvadam dwara engine tag check lo <code>000</code> (Object) gaa return aindhi. Backward compatibility karanam ga eppatiki dhenini fix cheyyanivvaledhu!</p>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Dynamic Typing -->
+    <div class="section-title"><span class="num">3</span>Dynamic Typing in JavaScript</div>
+    <div class="section-body">
+      <p>JavaScript is a <strong>dynamically-typed language</strong>. Variables variables data types ni bind cheskovavu; dynamically values change ayyetappudu type mari pothundi:</p>
+
+      <code style="display:block; padding:12px 16px; background:#0d1117; border-radius:8px; color:#7ee787; margin:10px 0; font-size:13px;">let data = 100; // Type: number<br>data = "Hello World"; // Type: string (Valid in JS!)<br>data = true; // Type: boolean (Valid in JS!)</code>
+    </div>
+
+    <!-- SECTION 4: Type Conversion vs Type Coercion -->
+    <div class="section-title"><span class="num">4</span>Type Conversion (Explicit) vs Type Coercion (Implicit)</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
+          <strong style="color:#3fb950;">1. Explicit Type Conversion</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Developer manually built-in functions (<code>Number()</code>, <code>String()</code>, <code>Boolean()</code>) dwara type change cheyyadam.</p>
+          <code style="display:block; margin-top:6px;">Number("123") // 123<br>String(456) // "456"</code>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <strong style="color:#10b981;">2. Implicit Type Coercion</strong>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Operators execution appudu JS engine automatically type convert cheyadam.</p>
+          <code style="display:block; margin-top:6px;">'5' + 2 // "52" (String concatenation)<br>'5' - 2 // 3 (Numeric subtraction)</code>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Coercion Examples</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+console.log("5" + 10);    // "510" (String + Operator converts 10 to string)
+console.log("5" - 2);     // 3     (Minus operator coerces "5" to number)
+console.log("5" * "2");   // 10    (Multiplication coerces strings to numbers)
+console.log(true + 1);    // 2     (true coerces to 1)
+console.log(false + 1);   // 1     (false coerces to 0)</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Truthy and Falsy Values -->
+    <div class="section-title"><span class="num">5</span>Truthy vs Falsy Values in JavaScript</div>
+    <div class="section-body">
+      <p>JavaScript lo Boolean context lo (like <code>if</code> conditions) evaluate ayye values ni Truthy or Falsy antaru. Exactly <strong>8 Falsy Values</strong> unnaayi — ivevi kaavu anukunte remaining PRAYETHNAM THOO UNNA VALUES ANNI <strong>TRUTHY</strong>:</p>
+
+      <div style="background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:18px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; color:#ff7b72; margin:16px 0;">
+🚫 THE EXACT 8 FALSY VALUES IN JAVASCRIPT:
+1. false
+2. 0 (Integer zero)
+3. -0 (Negative zero)
+4. 0n (BigInt zero)
+5. "" or '' or `` (Empty String)
+6. null
+7. undefined
+8. NaN (Not a Number)
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px; margin:16px 0;">
+        <strong style="color:#3fb950;">✅ Notable Truthy Values (Common Traps):</strong>
+        <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>"0"</code> (Non-empty string), <code>"false"</code> (Non-empty string), <code>[]</code> (Empty array object), <code>{}</code> (Empty object), <code>function(){}</code> are ALL <strong>TRUTHY</strong>!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Truthy & Falsy Test</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+console.log("Boolean(''):", Boolean(""));           // false (Falsy)
+console.log("Boolean(0):", Boolean(0));             // false (Falsy)
+console.log("Boolean(null):", Boolean(null));       // false (Falsy)
+
+console.log("Boolean('0'):", Boolean("0"));         // true (Truthy!)
+console.log("Boolean([]):", Boolean([]));           // true (Truthy!)
+console.log("Boolean({}):", Boolean({}));           // true (Truthy!)</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Curriculum Code Challenge</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this complete Phase 2 Variables and Data Types code snippet:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+const name = "Ravi";
+let age = 21;
+const isStudent = true;
+
+console.log("Name:", name);
+console.log("Age:", age);
+console.log("Is Student:", isStudent);
+console.log("Type of Age:", typeof age);
+
+// Coercion test
+let output = "Age in 5 years: " + (age + 5);
+console.log(output);</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
     <div class="nav-footer">
-      <a href="/blog-javascript/variables.html" class="nav-btn">
+      
+      <a href="variables.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">Variables (var, let & const)</span>
+        <span class="title">3. Variables (let, const & var)</span>
       </a>
-      <a href="/blog-javascript/strings.html" class="nav-btn" style="text-align:right;">
+
+      
+      <a href="conditionals.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">Strings & Template Literals</span>
+        <span class="title">Phase 3: Conditionals</span>
       </a>
     </div>
   </main>
 </div>
+
+  <script src="/site-nav.js" defer></script>
 </body>
 </html>

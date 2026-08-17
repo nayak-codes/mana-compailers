@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browser Input & Output (alert, prompt, confirm & Number Parsing) — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Master browser input and output: alert(), prompt(), confirm(), converting input to number with Number(), parseInt(), parseFloat(), handling invalid NaN input, HTML Form Input, and interactive code examples." />
+  <meta name="keywords" content="javascript tutorial, browser input & output (alert, prompt, confirm & number parsing), learn javascript, javascript online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/06-browser-input-and-number-parsing.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-javascript">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html" class="active">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
+        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
+      </div>
+
+      <!-- Phase 03: Operators & Input -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html" class="active">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 04: Control Flow & Loops -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Control Flow & Loops</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditionals (if-else & switch)</a>
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow</a>
+      </div>
+
+      <!-- Phase 05: Strings & Functions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Strings & Functions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Template Literals</a>
+        <a href="/blog-javascript/functions.html">10. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 06: Arrays & Objects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Arrays & Objects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">11. Arrays & Iteration Methods</a>
+        <a href="/blog-javascript/objects.html">12. Objects & JSON</a>
+        <a href="/blog-javascript/es6-features.html">13. ES6+ Destructuring & Spread</a>
+      </div>
+
+      <!-- Phase 07: Advanced Functions & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Advanced Functions & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/closures.html">14. Closures & Higher-Order Functions</a>
+        <a href="/blog-javascript/oop.html">15. OOP: Classes & Prototypes</a>
+      </div>
+
+      <!-- Phase 08: Asynchronous JavaScript & DOM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Asynchronous JavaScript & DOM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/promises.html">16. Promises & Async/Await</a>
+        <a href="/blog-javascript/exceptions.html">17. Error Handling & Debugging</a>
+        <a href="/blog-javascript/dom.html">18. DOM Basics & Event Listeners</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 6: Browser Input & Output (alert, prompt, confirm & Number Parsing)</span>
+    </div>
+
+    <h1 class="page-title">Browser Input & Output (alert, prompt, confirm & Number Parsing)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 6</span>
+      <span class="badge">📂 Phase 03: Operators & Input</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>alert() · prompt() · confirm() · Converting Input to Number · Number() · parseInt() · parseFloat() · Invalid Input Handling (isNaN) · HTML Form Input</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>Welcome to Lesson 6 of <strong>Phase 3: Operators & Input</strong>! Client-side JavaScript interacts with users through browser dialogs, DOM inputs, and dynamic forms. In this lesson, you will learn how to capture user input using <code>prompt()</code>, display dialogs with <code>alert()</code> and <code>confirm()</code>, safely convert string inputs into numbers using <code>Number()</code>, <code>parseInt()</code>, and <code>parseFloat()</code>, handle <code>NaN</code> invalid input, and process HTML form input.</p>
+    </div>
+
+    <!-- 1. alert(), prompt(), confirm() -->
+    <div class="section-title"><span class="num">1</span>Browser Dialog Methods (alert, prompt, confirm)</div>
+    <div class="section-body">
+      <p>Browser environments provide 3 modal pop-up methods in the <code>window</code> object:</p>
+
+      <table class="tbl">
+        <tr><th>Dialog Method</th><th>Return Type</th><th>Description</th><th>Example Syntax</th></tr>
+        <tr>
+          <td><strong><code>alert(message)</code></strong></td>
+          <td><code>undefined</code></td>
+          <td>Displays an informational alert box with an OK button. Blocks execution until dismissed.</td>
+          <td><code>alert("Welcome to Our Compiler!");</code></td>
+        </tr>
+        <tr>
+          <td><strong><code>prompt(text, default)</code></strong></td>
+          <td><code>String</code> or <code>null</code></td>
+          <td>Displays an input dialog box asking user for text input. Returns input string or <code>null</code> if Cancel clicked.</td>
+          <td><code>let name = prompt("Enter your name:");</code></td>
+        </tr>
+        <tr>
+          <td><strong><code>confirm(message)</code></strong></td>
+          <td><code>Boolean</code></td>
+          <td>Displays a confirmation box with OK and Cancel buttons. Returns <code>true</code> (OK) or <code>false</code> (Cancel).</td>
+          <td><code>let isSure = confirm("Are you sure?");</code></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 2. Converting Input to Number (Number vs parseInt vs parseFloat) -->
+    <div class="section-title"><span class="num">2</span>Converting Input to Number (Number vs parseInt vs parseFloat)</div>
+    <div class="section-body">
+      <p><strong>Crucial Rule:</strong> <code>prompt()</code> eppudu return chesina data <strong>String type</strong> lo untundhi! Meeru numeric addition cheyyalante string ni Number ga convert cheyyali. Otherwise <code>"10" + "20"</code> result <code>"1020"</code> ga string concatenation avthundi!</p>
+
+      <table class="tbl">
+        <tr><th>Conversion Function</th><th>Behavior</th><th>Example</th><th>Result</th></tr>
+        <tr>
+          <td><strong><code>Number(str)</code></strong></td>
+          <td>Converts entire string to number. If non-numeric characters exist, returns <code>NaN</code>.</td>
+          <td><code>Number("123.45")</code></td>
+          <td><code>123.45</code></td>
+        </tr>
+        <tr>
+          <td><strong><code>parseInt(str, radix)</code></strong></td>
+          <td>Parses leading integer digits up to first non-digit character. Ignores trailing text!</td>
+          <td><code>parseInt("100px")</code></td>
+          <td><code>100</code></td>
+        </tr>
+        <tr>
+          <td><strong><code>parseFloat(str)</code></strong></td>
+          <td>Parses leading floating-point decimal digits up to first invalid character.</td>
+          <td><code>parseFloat("99.99USD")</code></td>
+          <td><code>99.99</code></td>
+        </tr>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Number Parsing Comparison</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+// 1. Strict Conversion with Number()
+console.log(Number("42"));         // 42
+console.log(Number("42.85"));      // 42.85
+console.log(Number("42px"));       // NaN (Strict failure!)
+
+// 2. Loose Parsing with parseInt() & parseFloat()
+console.log(parseInt("42px"));     // 42 (Strips "px")
+console.log(parseInt("42.85"));    // 42 (Truncates decimals)
+console.log(parseFloat("42.85em"));// 42.85 (Parses decimal float)</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Handling Invalid Input (isNaN) -->
+    <div class="section-title"><span class="num">3</span>Handling Invalid Input (isNaN & Number.isNaN)</div>
+    <div class="section-body">
+      <p>User invalid string type chesinappudu conversion <code>NaN</code> (Not a Number) ga vasthundhi. Dheenini validate cheyyadaniki <code>isNaN()</code> or strict <code>Number.isNaN()</code> vadali:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Input Validation</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+let userInput = "abc";
+let parsedNum = Number(userInput);
+
+if (Number.isNaN(parsedNum)) {
+    console.log("❌ Invalid Number Input! Please enter numeric digits.");
+} else {
+    console.log("✅ Valid Number:", parsedNum);
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. HTML Form Input via DOM -->
+    <div class="section-title"><span class="num">4</span>Reading HTML Form Input via DOM</div>
+    <div class="section-body">
+      <p>Modern Web Development lo <code>prompt()</code> badhulu HTML <code>&lt;input&gt;</code> elements ni DOM dwara read chesthamu:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">HTML + JavaScript Form Input</span>
+        </div>
+        <pre><code>&lt;!-- HTML Layout --&gt;
+&lt;input type="number" id="ageInput" placeholder="Enter Age"&gt;
+&lt;button id="submitBtn"&gt;Submit&lt;/button&gt;
+
+&lt;script&gt;
+document.getElementById("submitBtn").addEventListener("click", function() {
+    // Read input string value from DOM element
+    let ageStr = document.getElementById("ageInput").value;
+    let age = Number(ageStr);
+
+    if (!age || age &lt; 0) {
+        alert("Please enter a valid age!");
+    } else {
+        alert("Your age next year will be: " + (age + 1));
+    }
+});
+&lt;/script&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge with prompt addition -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this number addition logic using input conversion:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript Prompt Addition</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>"use strict";
+
+// Simulated input values (Equivalent to prompt("Enter number"))
+const input1 = "25";
+const input2 = "75";
+
+const firstNumber = Number(input1);
+const secondNumber = Number(input2);
+
+console.log("First Number:", firstNumber);
+console.log("Second Number:", secondNumber);
+console.log("Sum Result:", firstNumber + secondNumber);</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="05-operators-expressions-and-precedence.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">5. Operators & Precedence</span>
+      </a>
+
+      
+      <a href="conditionals.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Phase 4: Conditionals</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

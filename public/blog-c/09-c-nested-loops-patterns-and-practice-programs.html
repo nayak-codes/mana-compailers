@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Nested Loops, Star Patterns & 9 Core Practice Algorithms — C Tutorial | Our Compiler</title>
+  <meta name="description" content="Master C Nested Loops & Classical Algorithms (Phase 5 Part 2): 2D Grid coordinate iteration, Star Patterns, Number Patterns, and 9 complete practical algorithms." />
+  <meta name="keywords" content="c tutorial, c nested loops, star patterns & 9 core practice algorithms, learn c programming, c functions, c prototypes, c recursion, pass by reference in c, c static variables" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/09-c-nested-loops-patterns-and-practice-programs.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 8px;
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .stack-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      line-height: 1.8;
+      margin: 22px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: C Basics & Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C Basics & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
+      </div>
+
+      <!-- Phase 02: Variables & Data Types -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
+        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html">3. Data Types, sizeof & Type Casting</a>
+      </div>
+
+      <!-- Phase 03: Input & Operators -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input & Operators</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html">4. User Input (scanf, fgets & Buffer Traps)</a>
+        <a href="/blog-c/05-c-operators-expressions-and-precedence.html">5. Operators, Precedence & 6 Programs</a>
+      </div>
+
+      <!-- Phase 04: Conditional Statements & Branching -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements & Branching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html">6. if-else Ladders, Nested if & Logical Logic</a>
+        <a href="/blog-c/07-c-switch-case-and-decision-practice-programs.html">7. switch-case, Fall-Through & 7 Programs</a>
+      </div>
+
+      <!-- Phase 05: Loops & Iterations -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Iterations</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/08-c-loops-for-while-do-while-and-control-flow.html">8. for, while, do-while, break & continue</a>
+        <a href="/blog-c/09-c-nested-loops-patterns-and-practice-programs.html" class="active">9. Nested Loops, Patterns & 9 Core Programs</a>
+      </div>
+
+      <!-- Phase 06: Functions & Modular Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Functions & Modular Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/10-c-functions-declaration-definition-and-prototypes.html">10. Function Architecture & Prototypes</a>
+        <a href="/blog-c/11-c-variable-scope-lifetime-and-static-storage.html">11. Scope, static Variables & Header Files</a>
+        <a href="/blog-c/12-c-parameter-passing-value-vs-reference.html">12. Pass-by-Value vs Pass-by-Address</a>
+        <a href="/blog-c/13-c-recursion-call-stack-and-modular-projects.html">13. Recursion, Call Stack & 5 Projects</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 9: C Nested Loops, Star Patterns & 9 Core Practice Algorithms</span>
+    </div>
+
+    <h1 class="page-title">C Nested Loops, Star Patterns & 9 Core Practice Algorithms</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 9</span>
+      <span class="badge">📂 Phase 05: Loops & Iterations</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Nested Loops Architecture · Star Patterns (Triangles, Pyramids) · Number Patterns · 9 Practice Programs (Prime, Armstrong, Fibonacci, Factorial, Reverse)</span>
+    </div>
+
+<div class="intro-box">
+      <p>Welcome to <strong>Phase 5 (Part 2): C Nested Loops, Pattern Printing & 9 Classical Algorithmic Programs Masterclass</strong>! Nested loops are loops placed inside other loops, forming the fundamental building blocks for working with 2D matrices, image pixel grids, game boards, and geometric patterns. In this comprehensive guide, you will master the 2D coordinate model $(i, j)$, step-by-step algorithms for printing star and number patterns, and construct <strong>9 core interview and real-world mathematical algorithms</strong> from scratch.</p>
+    </div>
+
+    <!-- 1. Nested Loops 2D Coordinate Mental Model -->
+    <div class="section-title"><span class="num">1</span>Nested Loops Mechanics &amp; The 2D Grid Coordinate Model</div>
+    <div class="section-body">
+      <p>In a nested loop, <strong>outer loop</strong> controls the rows ($i$), and <strong>inner loop</strong> controls the columns ($j$). For each single iteration of the outer loop, the inner loop executes its entire complete cycle:</p>
+
+      <div class="loop-diagram">
+        <strong>2D Matrix Coordinates (Outer Loop i = Rows, Inner Loop j = Columns):</strong><br>
+        Row 0:  (0,0)   (0,1)   (0,2)   (0,3)<br>
+        Row 1:  (1,0)   (1,1)   (1,2)   (1,3)<br>
+        Row 2:  (2,0)   (2,1)   (2,2)   (2,3)<br>
+        <br>
+        Time Complexity: O(Rows * Cols)
+      </div>
+    </div>
+
+    <!-- 2. Star & Number Patterns -->
+    <div class="section-title"><span class="num">2</span>Star Patterns &amp; Number Patterns Step-by-Step</div>
+    <div class="section-body">
+      <div class="concept-box">
+        <h4>⭐ The Universal Pattern Logic:</h4>
+        <p>1. <strong>Outer loop <code>i</code> (1 to N):</strong> Rows count ni track chesthundhi.<br>
+        2. <strong>Inner loop <code>j</code> (1 to i):</strong> Current row lo enni stars/numbers print cheyyalo decide chesthundhi.<br>
+        3. <strong><code>printf("\n")</code>:</strong> Inner loop complete ayyaka next row ki move avthundhi.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Star Triangle, Inverted Triangle & Number Pattern</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+void printPatterns(int n) {
+    // 1. Right-Angled Star Triangle
+    printf("1. Right-Angled Star Triangle:\n");
+    for (int i = 1; i &lt;= n; i++) {
+        for (int j = 1; j &lt;= i; j++) {
+            printf("* ");
+        }
+        printf("\n");
+    }
+
+    // 2. Inverted Star Triangle
+    printf("\n2. Inverted Star Triangle:\n");
+    for (int i = n; i &gt;= 1; i--) {
+        for (int j = 1; j &lt;= i; j++) {
+            printf("* ");
+        }
+        printf("\n");
+    }
+
+    // 3. Number Half-Pyramid
+    printf("\n3. Number Triangle:\n");
+    for (int i = 1; i &lt;= n; i++) {
+        for (int j = 1; j &lt;= i; j++) {
+            printf("%d ", j);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    printPatterns(4);
+    return 0;
+}</code></pre>
+        </div>
+    </div>
+
+    <!-- 3. The 9 Core Practice Algorithms -->
+    <div class="section-title"><span class="num">3</span>The 9 Classical Practice Programs (Formulas &amp; Implementation)</div>
+    <div class="section-body">
+      <p>Here is the complete implementation of the 9 foundational algorithmic problems requested in the curriculum:</p>
+
+      <div class="concept-box">
+        <h4>📌 Core Mathematical Formulas &amp; Logic:</h4>
+        <p>• <strong>Sum of N:</strong> $Sum = sum i$<br>
+        • <strong>Factorial:</strong> $N! = 1 	imes 2 	imes dots 	imes N$ (with $0! = 1$)<br>
+        • <strong>Reverse Number:</strong> $rev = rev 	imes 10 + (n pmod{10})$; $n /= 10$<br>
+        • <strong>Prime Number:</strong> Divisible only by 1 and itself ($sqrt{N}$ loop boundary)<br>
+        • <strong>Armstrong Number (3-digit):</strong> $153 = 1^3 + 5^3 + 3^3 = 153$<br>
+        • <strong>Fibonacci Series:</strong> $F_n = F_{n-1} + F_{n-2}$ (Starting with 0, 1, 1, 2, 3, 5, 8...)</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — The 9 Classical Algorithmic Suite</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Suite</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdbool.h&gt;
+
+int main(void) {
+    // 1. Print 1 to 10 Numbers
+    printf("1. Numbers (1-10): ");
+    for (int i = 1; i &lt;= 10; i++) printf("%d ", i);
+    printf("\n");
+
+    // 2. Multiplication Table (7 x i)
+    printf("\n2. Multiplication Table for 7:\n");
+    for (int i = 1; i &lt;= 5; i++) printf("   7 x %d = %d\n", i, 7 * i);
+
+    // 3. Sum of First 100 Numbers
+    int sum = 0;
+    for (int i = 1; i &lt;= 100; i++) sum += i;
+    printf("\n3. Sum of 1 to 100 = %d\n", sum);
+
+    // 4. Factorial of 5 (5! = 120)
+    long long fact = 1;
+    for (int i = 1; i &lt;= 5; i++) fact *= i;
+    printf("4. Factorial of 5 = %lld\n", fact);
+
+    // 5. Reverse Number & 6. Count Digits (Num = 9845)
+    int num = 9845, temp = num, rev = 0, digits = 0;
+    while (temp &gt; 0) {
+        rev = rev * 10 + (temp % 10);
+        temp /= 10;
+        digits++;
+    }
+    printf("5. Reverse of %d = %d\n", num, rev);
+    printf("6. Total digits in %d = %d\n", num, digits);
+
+    // 7. Prime Number Check (Num = 29)
+    int checkPrime = 29;
+    bool isPrime = (checkPrime &gt; 1);
+    for (int i = 2; i * i &lt;= checkPrime; i++) {
+        if (checkPrime % i == 0) { isPrime = false; break; }
+    }
+    printf("7. Is %d Prime? %s\n", checkPrime, isPrime ? "YES (Prime)" : "NO");
+
+    // 8. Armstrong Number Check (Num = 153 -> 1^3 + 5^3 + 3^3 = 153)
+    int armNum = 153, armTemp = armNum, armSum = 0;
+    while (armTemp &gt; 0) {
+        int d = armTemp % 10;
+        armSum += (d * d * d);
+        armTemp /= 10;
+    }
+    printf("8. Is %d an Armstrong Number? %s\n", armNum, (armSum == armNum) ? "YES" : "NO");
+
+    // 9. Fibonacci Series (First 8 Terms)
+    int t1 = 0, t2 = 1, nextTerm;
+    printf("9. Fibonacci (8 terms): ");
+    for (int i = 1; i &lt;= 8; i++) {
+        printf("%d ", t1);
+        nextTerm = t1 + t2;
+        t1 = t2;
+        t2 = nextTerm;
+    }
+    printf("\n");
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Practice Challenge -->
+    <div class="try-box">
+      <div class="try-title">💻 Try It Yourself — Test Prime & Fibonacci in Live C Compiler</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this Fibonacci generator and Armstrong number checker in our online GCC compiler:</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C (GCC Standard)</span>
+          <a class="try-btn" href="/?lang=c">▶ Open C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int n = 10, t1 = 0, t2 = 1;
+    printf("First %d Fibonacci numbers:\n", n);
+    for (int i = 1; i &lt;= n; ++i) {
+        printf("%d, ", t1);
+        int next = t1 + t2;
+        t1 = t2;
+        t2 = next;
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=c">Open in Online C Compiler →</a>
+    </div>
+
+    
+  
+
+    
+
+    
+
+    <div class="nav-footer">
+      
+      <a href="08-c-loops-for-while-do-while-and-control-flow.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">8. for, while, do-while, break & continue</span>
+      </a>
+
+      
+      <a href="10-c-functions-declaration-definition-and-prototypes.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">10. Function Architecture & Prototypes</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>
