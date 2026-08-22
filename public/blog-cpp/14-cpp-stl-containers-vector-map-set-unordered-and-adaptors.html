@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ STL Containers: vector, map, set, unordered_map & Adaptors Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Exhaustive C++ guide on STL Containers (Phase 14): sequence containers (vector, deque, list), associative (map, set), unordered (hash-based), adaptors (stack, queue, priority_queue), and utility types (optional, variant)." />
+  <meta name="keywords" content="c++ tutorial, c++ stl containers: vector, map, set, unordered_map & adaptors masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <style>
+    .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
+    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
+    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
+    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
+    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
+    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
+    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+  </style>
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains("open");
+      if (isOpen) {
+        content.classList.remove("open");
+        btn.classList.remove("active");
+      } else {
+        content.classList.add("open");
+        btn.classList.add("active");
+      }
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".code-block").forEach(block => {
+        const header = block.querySelector(".code-block-header");
+        const codeEl = block.querySelector("pre code");
+        if (!header || !codeEl) return;
+        let actionsContainer = header.querySelector(".code-actions");
+        if (!actionsContainer) {
+          actionsContainer = document.createElement("div");
+          actionsContainer.className = "code-actions";
+          actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+          const tryBtn = header.querySelector(".try-btn");
+          if (tryBtn) actionsContainer.appendChild(tryBtn);
+          header.appendChild(actionsContainer);
+        }
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.innerHTML = "📋 Copy";
+        copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; white-space: nowrap;";
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            copyBtn.innerHTML = "✅ Copied!";
+            setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
+          });
+        });
+        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+      });
+    });
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME</a>
+    <div class="sidebar-accordion">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C++ Basics & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-basics-history-compiler-and-hello-world.html">1. C++ Fundamentals, Compiler Pipeline & Hello World</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables, Data Types & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/02-cpp-variables-data-types-constexpr-auto-and-scope.html">2. Variables, Data Types, constexpr, auto & Scope</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input, Operators & Practice</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/03-cpp-input-cin-getline-and-operators-masterclass.html">3. cin, getline(), Operators & 6 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/04-cpp-conditional-branching-if-else-and-switch-case.html">4. if-else Ladders, Logical Logic & switch-case</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-loops-for-while-do-while-and-range-based-for.html">5. for, while, Range-for & 9 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Functions & Modular Code</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/06-cpp-functions-prototypes-overloading-and-lambdas.html">6. Functions, Overloading, References & Lambdas</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays, Strings & Vectors</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/07-cpp-arrays-std-string-string-view-and-std-vector.html">7. Arrays, std::string, string_view & std::vector</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Pointers & Memory Safety</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/08-cpp-pointers-references-nullptr-and-memory-safety.html">8. Pointers, References, nullptr & Memory Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Object-Oriented Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-object-oriented-programming-classes-objects-and-encapsulation.html">9. OOP, Classes, Objects, Access Specifiers & Pillars</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Constructors, Destructors & RAII</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html" class="active">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 14: C++ STL Containers: vector, map, set, unordered_map & Adaptors Masterclass</span>
+    </div>
+    <h1 class="page-title">C++ STL Containers: vector, map, set, unordered_map & Adaptors Masterclass</h1>
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
+      <span class="badge">🟢 Lesson 14</span>
+      <span class="badge">📂 Phase 14: STL Containers</span>
+      <span class="badge">📅 2026 Master Edition</span>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>vector & deque · list & forward_list · map & set · unordered_map & set · stack/queue/priority_queue · pair & tuple · optional & variant · Container Complexity</span>
+    </div>
+<div class="intro-box">
+  <p>Welcome to <strong>Phase 14: STL Containers</strong>! The C++ Standard Template Library provides production-grade, generic, battle-tested data structures. Each container makes different trade-offs between time complexity, memory layout, and ordering guarantees. Choosing the right container is a key skill.</p>
+</div>
+
+<div class="section-title"><span class="num">1</span>Container Comparison Master Table</div>
+<div class="section-body">
+  <table class="tbl spec-table">
+    <thead><tr><th>Container</th><th>Ordered?</th><th>Access</th><th>Insert/Erase (avg)</th><th>Memory</th></tr></thead>
+    <tbody>
+      <tr><td><code>std::vector&lt;T&gt;</code></td><td>No (insertion)</td><td>O(1) random</td><td>O(1) back / O(n) middle</td><td>Contiguous heap</td></tr>
+      <tr><td><code>std::deque&lt;T&gt;</code></td><td>No</td><td>O(1) random</td><td>O(1) front &amp; back</td><td>Chunked</td></tr>
+      <tr><td><code>std::list&lt;T&gt;</code></td><td>No</td><td>O(n)</td><td>O(1) any position</td><td>Node-based</td></tr>
+      <tr><td><code>std::set&lt;T&gt;</code></td><td>Sorted</td><td>O(log n)</td><td>O(log n)</td><td>Red-Black tree</td></tr>
+      <tr><td><code>std::map&lt;K,V&gt;</code></td><td>Sorted by key</td><td>O(log n)</td><td>O(log n)</td><td>Red-Black tree</td></tr>
+      <tr><td><code>std::unordered_set&lt;T&gt;</code></td><td>No</td><td>O(1) avg</td><td>O(1) avg</td><td>Hash table</td></tr>
+      <tr><td><code>std::unordered_map&lt;K,V&gt;</code></td><td>No</td><td>O(1) avg</td><td>O(1) avg</td><td>Hash table</td></tr>
+      <tr><td><code>std::stack&lt;T&gt;</code></td><td>LIFO</td><td>top only</td><td>O(1)</td><td>Adaptor over deque</td></tr>
+      <tr><td><code>std::queue&lt;T&gt;</code></td><td>FIFO</td><td>front only</td><td>O(1)</td><td>Adaptor over deque</td></tr>
+      <tr><td><code>std::priority_queue&lt;T&gt;</code></td><td>Max heap</td><td>top = max</td><td>O(log n)</td><td>Heap over vector</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-title"><span class="num">2</span>Sequence Containers in Depth</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — vector, deque, list</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;deque&gt;
+#include &lt;list&gt;
+#include &lt;algorithm&gt;
+
+int main() {
+    // ─── std::vector ─────────────────────────────────────
+    std::vector&lt;int&gt; vec{10, 20, 30};
+    vec.reserve(10);                  // pre-allocate capacity
+    vec.push_back(40);
+    vec.emplace_back(50);            // construct in-place
+    vec.erase(vec.begin() + 1);      // remove element at index 1
+    std::cout &lt;&lt; "vector: ";
+    for (int v : vec) std::cout &lt;&lt; v &lt;&lt; " ";
+    std::cout &lt;&lt; "| size=" &lt;&lt; vec.size() &lt;&lt; " cap=" &lt;&lt; vec.capacity() &lt;&lt; "
+";
+
+    // ─── std::deque ─────────────────────────────────────
+    std::deque&lt;int&gt; dq{20, 30};
+    dq.push_front(10);               // O(1) front insert
+    dq.push_back(40);                // O(1) back insert
+    std::cout &lt;&lt; "deque: ";
+    for (int d : dq) std::cout &lt;&lt; d &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // ─── std::list (doubly-linked) ───────────────────────
+    std::list&lt;int&gt; lst{10, 30, 20, 40};
+    lst.sort();                      // O(n log n) in-place
+    lst.unique();                    // remove consecutive duplicates
+    std::cout &lt;&lt; "list sorted: ";
+    for (int l : lst) std::cout &lt;&lt; l &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span>Associative &amp; Unordered Containers</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — map, set, unordered_map</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;unordered_map&gt;
+#include &lt;string&gt;
+
+int main() {
+    // ─── std::map (sorted by key, unique keys) ───────────
+    std::map&lt;std::string, int&gt; scores;
+    scores["Alice"] = 95;
+    scores["Bob"]   = 87;
+    scores.emplace("Charlie", 92);
+    scores["Bob"] = 90;           // update
+
+    std::cout &lt;&lt; "Sorted scores:
+";
+    for (const auto&amp; [name, score] : scores) {  // structured binding C++17
+        std::cout &lt;&lt; "  " &lt;&lt; name &lt;&lt; ": " &lt;&lt; score &lt;&lt; "
+";
+    }
+    auto it = scores.find("Alice");
+    if (it != scores.end()) std::cout &lt;&lt; "Found Alice: " &lt;&lt; it-&gt;second &lt;&lt; "
+";
+
+    // ─── std::set (sorted, unique elements) ─────────────
+    std::set&lt;int&gt; primes{2, 3, 5, 7, 11};
+    primes.insert(13);
+    primes.insert(3);  // duplicate ignored
+    std::cout &lt;&lt; "Primes: ";
+    for (int p : primes) std::cout &lt;&lt; p &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // ─── std::unordered_map (O(1) average) ──────────────
+    std::unordered_map&lt;std::string, int&gt; wordCount;
+    for (const std::string&amp; word : {"the", "cat", "sat", "the", "cat", "the"})
+        wordCount[word]++;
+    std::cout &lt;&lt; "Word counts:
+";
+    for (const auto&amp; [w, c] : wordCount)
+        std::cout &lt;&lt; "  " &lt;&lt; w &lt;&lt; ": " &lt;&lt; c &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span>Utility Types: pair, tuple, optional, variant</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — pair, tuple, optional, variant</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;tuple&gt;
+#include &lt;optional&gt;
+#include &lt;variant&gt;
+#include &lt;string&gt;
+
+// optional: a value that might not exist
+std::optional&lt;int&gt; findIndex(const std::vector&lt;int&gt;&amp; v, int target) {
+    for (int i = 0; i &lt; (int)v.size(); ++i)
+        if (v[i] == target) return i;
+    return std::nullopt;  // explicitly "no value"
+}
+
+int main() {
+    // pair
+    auto p = std::make_pair(42, std::string("hello"));
+    std::cout &lt;&lt; p.first &lt;&lt; ", " &lt;&lt; p.second &lt;&lt; "
+";
+
+    // tuple
+    auto t = std::make_tuple(1, 3.14, std::string("C++20"));
+    std::cout &lt;&lt; std::get&lt;0&gt;(t) &lt;&lt; " " &lt;&lt; std::get&lt;1&gt;(t) &lt;&lt; " " &lt;&lt; std::get&lt;2&gt;(t) &lt;&lt; "
+";
+
+    // optional
+    std::vector&lt;int&gt; nums{10, 20, 30, 40};
+    if (auto idx = findIndex(nums, 30))
+        std::cout &lt;&lt; "Found at index: " &lt;&lt; *idx &lt;&lt; "
+";
+    else
+        std::cout &lt;&lt; "Not found
+";
+
+    // variant: type-safe union
+    std::variant&lt;int, double, std::string&gt; v;
+    v = 42;
+    std::cout &lt;&lt; "variant int: " &lt;&lt; std::get&lt;int&gt;(v) &lt;&lt; "
+";
+    v = std::string("hello variant");
+    std::cout &lt;&lt; "variant str: " &lt;&lt; std::get&lt;std::string&gt;(v) &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span>Technical FAQs</div>
+<div class="section-body">
+  <div class="faq-grid">
+    <div class="faq-item"><h4>Q1: When to use vector vs list?</h4><p>Use <code>vector</code> by default — cache-friendly contiguous memory wins in practice. Use <code>list</code> only when you need O(1) insert/erase at arbitrary positions with stable iterators.</p></div>
+    <div class="faq-item"><h4>Q2: What is emplace_back vs push_back?</h4><p><code>emplace_back(args...)</code> constructs the element in-place — avoids a copy/move. <code>push_back(obj)</code> copies or moves an already-constructed object. Prefer <code>emplace_back</code>.</p></div>
+    <div class="faq-item"><h4>Q3: When does unordered_map degrade to O(n)?</h4><p>In worst-case hash collisions, all keys land in the same bucket — O(n) lookup. Prevent this with a good hash function or by using <code>reserve()</code> to avoid rehashing.</p></div>
+    <div class="faq-item"><h4>Q4: What is std::optional used for?</h4><p>Return <code>std::optional&lt;T&gt;</code> from functions that may fail to produce a value — instead of using sentinel values (-1, nullptr, or throwing exceptions for ordinary "not found" cases).</p></div>
+    <div class="faq-item"><h4>Q5: Difference between std::set and std::unordered_set?</h4><p><code>std::set</code> keeps elements sorted (O(log n) ops) using a Red-Black tree. <code>std::unordered_set</code> uses hashing for O(1) average ops but has no ordering guarantee.</p></div>
+  </div>
+</div>
+<div class="nav-footer">
+  <a href="13-cpp-templates-function-class-specialization-and-concepts.html" class="nav-btn">
+    <span class="label">← Previous Lesson</span>
+    <span class="title">13. Templates, Specialization, Variadic & Concepts</span>
+  </a>
+  <a href="15-cpp-iterators-algorithms-sort-find-transform-and-stl.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Next Lesson →</span>
+    <span class="title">15. Iterators, sort, find, transform & STL Algorithms</span>
+  </a>
+</div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

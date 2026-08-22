@@ -3,168 +3,993 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GraphQL Tutorial — Complete Beginner to Advanced Guide | Our Compiler</title>
-  <meta name="description" content="Learn GraphQL — GraphQL Tutorial — Complete Beginner to Advanced Guide with clear explanations, code examples, and practical challenges." />
+  <title>GraphQL Complete Roadmap — 46 Chapters, 13 Phases (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master GraphQL schema design, SDL types, Query, Mutation, Subscriptions, Apollo Server, DataLoader, Authentication, Directives, Apollo Client, Federation, Tooling, and Testing with our complete 46-chapter roadmap across 13 phases." />
+  <meta name="keywords" content="graphql tutorial, learn graphql, graphql masterclass, apollo server, schema sdl, dataloader, graphql query, graphql mutation, graphql subscription, apollo client, apollo federation" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-graphql.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-graphql/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
     (function() {
-      var t = localStorage.getItem("theme") || "dark";
-      if (t === "light") { document.documentElement.classList.add("light-theme"); document.addEventListener("DOMContentLoaded", function() { document.body.classList.add("light-theme"); }); }
-      window.addEventListener("DOMContentLoaded", function() {
-        var nav = document.querySelector(".topnav");
-        if (nav) {
-          var btn = document.createElement("button");
-          btn.style.cssText = "margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;";
-          var upd = function() { btn.innerHTML = document.body.classList.contains("light-theme") ? "&#127769; Dark" : "&#9728;&#65039; Light"; };
-          upd();
-          btn.onclick = function() { document.body.classList.toggle("light-theme"); document.documentElement.classList.toggle("light-theme"); localStorage.setItem("theme", document.body.classList.contains("light-theme") ? "light" : "dark"); upd(); };
-          nav.appendChild(btn);
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
         }
-        document.querySelectorAll(".code-block").forEach(function(block) {
-          var header = block.querySelector(".code-block-header");
-          var codeEl = block.querySelector("pre code");
-          if (!header || !codeEl) return;
-          var ac = header.querySelector(".code-actions");
-          if (!ac) { ac = document.createElement("div"); ac.className = "code-actions"; ac.style.cssText = "display:flex;gap:8px;align-items:center;margin-left:auto;"; header.appendChild(ac); }
-          var cb = document.createElement("button");
-          cb.innerHTML = "&#128203; Copy";
-          cb.style.cssText = "background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:Inter,sans-serif;white-space:nowrap;";
-          cb.onclick = function() { navigator.clipboard.writeText(codeEl.textContent).then(function() { cb.innerHTML = "&#9989; Copied!"; setTimeout(function() { cb.innerHTML = "&#128203; Copy"; }, 2000); }); };
-          ac.appendChild(cb);
-        });
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-graphql">
+
 <nav class="topnav">
-  <a href="/" class="brand">&#128187; Our Compiler</a>
+  <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
   <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-php.html">PHP</a>
   <a href="/blog-go.html">Go</a>
   <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
-  <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html">Angular</a>
-  <a href="/blog-vue.html">Vue.js</a>
-  <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
   <a href="/blog-rest-api.html">REST API</a>
   <a href="/blog-graphql.html" class="active">GraphQL</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
   <a href="/blog-django.html">Django</a>
   <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-postgresql.html">PostgreSQL</a>
   <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
-  <a href="/blog-sqlite.html">SQLite</a>
-  <a href="/blog-redis.html">Redis</a>
-  <a href="/blog-cassandra.html">Cassandra</a>
-  <a href="/blog-aws.html">AWS</a>
-  <a href="/blog-azure.html">Azure</a>
-  <a href="/blog-gcloud.html">Google Cloud</a>
-  <a href="/blog-docker.html">Docker</a>
-  <a href="/blog-kubernetes.html">Kubernetes</a>
-  <a href="/blog-cicd.html">CI/CD</a>
-  <a href="/blog-data-science.html">Data Science</a>
-  <a href="/blog-ml.html">Machine Learning</a>
-  <a href="/blog-deep-learning.html">Deep Learning</a>
-  <a href="/blog-tensorflow.html">TensorFlow</a>
-  <a href="/blog-pytorch.html">PyTorch</a>
-  <a href="/blog-big-data.html">Big Data</a>
-  <a href="/blog-git.html">Git &amp; GitHub</a>
-  <a href="/blog-linux.html">Linux</a>
-  <a href="/blog-shell.html">Shell Scripting</a>
-  <a href="/blog-testing.html">Testing</a>
-  <a href="/blog-agile.html">Agile &amp; Scrum</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
 </nav>
+
 <div class="layout">
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">GraphQL Tutorial</div>
-    <a href="/blog-graphql.html" class="active">GraphQL HOME</a>
-    <a href="/blog-graphql/intro.html">1. What is GraphQL?</a>
-    <a href="/blog-graphql/schema.html">2. Schema Definition Language (SDL)</a>
-    <a href="/blog-graphql/queries.html">3. Writing Queries & Fields</a>
-    <a href="/blog-graphql/mutations.html">4. Mutations — Creating & Updating Data</a>
-    <a href="/blog-graphql/subscriptions.html">5. Subscriptions & Real-Time Data</a>
-    <a href="/blog-graphql/resolvers.html">6. Resolvers & Execution Model</a>
-    <a href="/blog-graphql/variables.html">7. Variables, Arguments & Directives</a>
-    <a href="/blog-graphql/types.html">8. Types — Scalars, Enums & Interfaces</a>
-    <a href="/blog-graphql/apollo-server.html">9. Building with Apollo Server</a>
-    <a href="/blog-graphql/apollo-client.html">10. Apollo Client with React</a>
-    <a href="/blog-graphql/dataloader.html">11. DataLoader & N+1 Problem</a>
-    <a href="/blog-graphql/authentication.html">12. Authentication & Authorization</a>
-    <a href="/blog-graphql/pagination.html">13. Pagination with Relay Connections</a>
-    <a href="/blog-graphql/testing.html">14. Testing GraphQL APIs</a>
-    <a href="/blog-graphql/deployment.html">15. Production, Persisted Queries & Monitoring</a>
-
-    <div class="sidebar-heading">Related Topics</div>
-    <a href="/blog-rest-api.html">REST API</a>
-    <a href="/blog-nodejs.html">Node.js</a>
-    <a href="/blog-react.html">React</a>
-    <a href="/blog-mongodb.html">MongoDB</a>
-    <a href="/blog-postgresql.html">PostgreSQL</a>
-    <a href="/blog.html">All Tutorials</a>
-
+    <div class="sidebar-heading">GraphQL Roadmap</div>
+    <a href="/blog-graphql.html" class="sidebar-home-link active">🚀 GraphQL Course HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">GraphQL Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/01-what-is-graphql.html" class="">1. What is GraphQL?</a><a href="/blog-graphql/02-graphql-vs-rest.html" class="">2. GraphQL vs REST</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First GraphQL App</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/03-graphql-project-setup.html" class="">3. GraphQL Setup</a><a href="/blog-graphql/04-first-graphql-server.html" class="">4. Your First GraphQL Server</a><a href="/blog-graphql/05-project-structure.html" class="">5. Project Structure</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Schema and Type System</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">6 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/06-schema-basics.html" class="">6. Schema Basics</a><a href="/blog-graphql/07-scalar-types.html" class="">7. Scalar Types</a><a href="/blog-graphql/08-object-types.html" class="">8. Object Types</a><a href="/blog-graphql/09-enums.html" class="">9. Enums</a><a href="/blog-graphql/10-input-types.html" class="">10. Input Types</a><a href="/blog-graphql/11-interfaces-and-unions.html" class="">11. Interfaces & Unions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Queries</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/12-basic-queries.html" class="">12. Queries</a><a href="/blog-graphql/13-arguments.html" class="">13. Arguments</a><a href="/blog-graphql/14-variables.html" class="">14. Variables</a><a href="/blog-graphql/15-fragments.html" class="">15. Fragments</a><a href="/blog-graphql/16-directives.html" class="">16. Directives</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Resolvers and Execution</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/17-resolvers.html" class="">17. Resolvers</a><a href="/blog-graphql/18-resolver-arguments-and-context.html" class="">18. Resolver Context</a><a href="/blog-graphql/19-nested-resolvers.html" class="">19. Nested Resolvers</a><a href="/blog-graphql/20-execution-and-validation.html" class="">20. Validation & Execution</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✍️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Mutations</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/21-mutation-basics.html" class="">21. Mutations</a><a href="/blog-graphql/22-mutation-inputs-and-payloads.html" class="">22. Mutation Inputs & Payloads</a><a href="/blog-graphql/23-crud-mutations.html" class="">23. CRUD Mutations</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Subscriptions and Real-Time</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/24-subscriptions.html" class="">24. Subscriptions</a><a href="/blog-graphql/25-real-time-project.html" class="">25. Real-Time Project</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📑</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Pagination and Filtering</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/26-offset-pagination.html" class="">26. Offset Pagination</a><a href="/blog-graphql/27-cursor-pagination.html" class="">27. Cursor Pagination</a><a href="/blog-graphql/28-filtering-and-sorting.html" class="">28. Filtering & Sorting</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Authentication, Authorization & Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/29-graphql-authentication.html" class="">29. Authentication</a><a href="/blog-graphql/30-graphql-authorization.html" class="">30. Authorization</a><a href="/blog-graphql/31-graphql-security.html" class="">31. GraphQL Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Database Integration & Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/32-graphql-with-sql.html" class="">32. SQL Integration</a><a href="/blog-graphql/33-graphql-with-mongodb.html" class="">33. MongoDB Integration</a><a href="/blog-graphql/34-dataloader-and-n1.html" class="">34. DataLoader & N+1</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💻</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Client Development & State</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/35-graphql-clients.html" class="">35. GraphQL Clients</a><a href="/blog-graphql/36-apollo-client.html" class="">36. Apollo Client</a><a href="/blog-graphql/37-client-cache.html" class="">37. Client Cache</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Schema Design and Federation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/38-schema-design.html" class="">38. Schema Design</a><a href="/blog-graphql/39-introspection.html" class="">39. Introspection</a><a href="/blog-graphql/40-federation.html" class="">40. Federation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚢</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Testing, Documentation and Deployment</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">6 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/41-graphql-testing.html" class="">41. Testing</a><a href="/blog-graphql/42-graphql-documentation.html" class="">42. Documentation</a><a href="/blog-graphql/43-monitoring.html" class="">43. Monitoring</a><a href="/blog-graphql/44-deployment.html" class="">44. Deployment</a><a href="/blog-graphql/45-graphql-projects.html" class="">45. GraphQL Projects</a><a href="/blog-graphql/46-graphql-quiz.html" class="">46. GraphQL Practice Quiz</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#e10098;font-weight:700;">▶ Run Code in IDE</a>
+    <a href="/blog.html">📚 All Tutorials</a>
   </aside>
+
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>&#8250;</span>
-      <a href="/blog.html">Tutorials</a><span>&#8250;</span>
-      <a href="/blog-graphql.html">GraphQL</a><span>&#8250;</span>
-      <span>Lesson Index</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">GraphQL Complete Roadmap</span>
     </div>
-    <h1 class="page-title">GraphQL Tutorial &#8212; Complete Guide</h1>
-<div class="page-meta"><span class="badge">&#9685; GraphQL</span><span class="badge">&#128994; Beginner to Advanced</span><span class="badge">&#128197; July 2026</span></div>
-<div class="intro-box"><p>GraphQL is the modern alternative to REST for building flexible, efficient APIs. This 15-lesson course takes you from core concepts and schema design all the way to building real-time subscriptions, optimizing with DataLoader, and deploying to production.</p></div>
-<div class="section">
-  <div class="section-title"><span class="num">&#9658;</span> Course Curriculum</div>
-  <table class="tbl" style="margin-top:15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    <tr><td><strong>Lesson 1</strong></td><td><a href="/blog-graphql/intro.html"><strong>What is GraphQL?</strong></a></td></tr>
-    <tr><td><strong>Lesson 2</strong></td><td><a href="/blog-graphql/schema.html"><strong>Schema Definition Language (SDL)</strong></a></td></tr>
-    <tr><td><strong>Lesson 3</strong></td><td><a href="/blog-graphql/queries.html"><strong>Writing Queries & Fields</strong></a></td></tr>
-    <tr><td><strong>Lesson 4</strong></td><td><a href="/blog-graphql/mutations.html"><strong>Mutations — Creating & Updating Data</strong></a></td></tr>
-    <tr><td><strong>Lesson 5</strong></td><td><a href="/blog-graphql/subscriptions.html"><strong>Subscriptions & Real-Time Data</strong></a></td></tr>
-    <tr><td><strong>Lesson 6</strong></td><td><a href="/blog-graphql/resolvers.html"><strong>Resolvers & Execution Model</strong></a></td></tr>
-    <tr><td><strong>Lesson 7</strong></td><td><a href="/blog-graphql/variables.html"><strong>Variables, Arguments & Directives</strong></a></td></tr>
-    <tr><td><strong>Lesson 8</strong></td><td><a href="/blog-graphql/types.html"><strong>Types — Scalars, Enums & Interfaces</strong></a></td></tr>
-    <tr><td><strong>Lesson 9</strong></td><td><a href="/blog-graphql/apollo-server.html"><strong>Building with Apollo Server</strong></a></td></tr>
-    <tr><td><strong>Lesson 10</strong></td><td><a href="/blog-graphql/apollo-client.html"><strong>Apollo Client with React</strong></a></td></tr>
-    <tr><td><strong>Lesson 11</strong></td><td><a href="/blog-graphql/dataloader.html"><strong>DataLoader & N+1 Problem</strong></a></td></tr>
-    <tr><td><strong>Lesson 12</strong></td><td><a href="/blog-graphql/authentication.html"><strong>Authentication & Authorization</strong></a></td></tr>
-    <tr><td><strong>Lesson 13</strong></td><td><a href="/blog-graphql/pagination.html"><strong>Pagination with Relay Connections</strong></a></td></tr>
-    <tr><td><strong>Lesson 14</strong></td><td><a href="/blog-graphql/testing.html"><strong>Testing GraphQL APIs</strong></a></td></tr>
-    <tr><td><strong>Lesson 15</strong></td><td><a href="/blog-graphql/deployment.html"><strong>Production, Persisted Queries & Monitoring</strong></a></td></tr>
-  </table>
-</div>
+
+    <h1 class="page-title">GraphQL Complete Masterclass (46 Chapters, 13 Phases)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🚀 GraphQL Spec 2026</span>
+      <span class="badge">🟢 46 Complete Chapters</span>
+      <span class="badge">📂 13 Complete Phases</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">What is GraphQL? · GraphQL vs REST · Project Setup &amp; Folder Structure · Schema SDL &amp; Root Types · Scalars, Objects, Enums &amp; Input Types · Interfaces &amp; Unions · Queries, Arguments &amp; Variables · Fragments &amp; Directives · Resolver Signature &amp; Context · Nested Resolvers &amp; DataLoader · Mutation Basics &amp; Payloads · Subscriptions &amp; Real-Time · Offset &amp; Cursor Pagination · Auth &amp; Security · SQL &amp; MongoDB Integration · Apollo Client &amp; Federation · Testing, Codegen, Projects &amp; Quiz</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's GraphQL Complete Master Course</strong>. GraphQL is the modern query language and execution engine empowering client applications to request exact data requirements. This comprehensive 46-chapter bootcamp guides you through GraphQL schema design, SDL types, resolvers, DataLoader optimization, JWT authentication, Apollo Client, Federation subgraphs, and testing production GraphQL servers.</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(225,0,152,0.12),rgba(20,24,32,0.6));border:1px solid rgba(225,0,152,0.3);border-radius:12px;padding:24px;margin:28px 0;">
+      <h3 style="color:#e10098;margin-bottom:10px;font-size:18px;">🎯 Ready to Master GraphQL API Architecture?</h3>
+      <p style="color:var(--text2);margin-bottom:16px;font-size:14.5px;">Choose where to start: explore GraphQL introduction, basic queries, mutations, DataLoader, subscriptions, cursor pagination, or platform API project:</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/blog-graphql/01-what-is-graphql.html" style="background:linear-gradient(135deg,#e10098,#be185d);color:#fff;font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 1: GraphQL Intro →</a>
+        <a href="/blog-graphql/12-basic-queries.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 4: Queries →</a>
+        <a href="/blog-graphql/19-nested-resolvers.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 5: Nested Resolvers →</a>
+        <a href="/blog-graphql/21-mutation-basics.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 6: Mutations →</a>
+        <a href="/blog-graphql/27-cursor-pagination.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 8: Cursor Pagination →</a>
+        <a href="/blog-graphql/45-graphql-projects.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 13: GraphQL Projects →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 01</div>
+                <h3 class="phase-roadmap-title">GraphQL Introduction</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/01-what-is-graphql.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">01</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">1. What is GraphQL?</span>
+                    <span class="lesson-subtopics">GraphQL ante enti? · GraphQL enduku create chesaru? · GraphQL vs REST · GraphQL features · Query language ante enti? · Strongly typed API · Client-selected fields · Single endpoint concept · Over-fetching · Under-fetching · GraphQL use cases · GraphQL limitations</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/02-graphql-vs-rest.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">02</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">2. GraphQL vs REST</span>
+                    <span class="lesson-subtopics">REST endpoints vs GraphQL single endpoint · Over-fetching & Under-fetching · Multiple REST requests vs Nested GraphQL query · REST caching vs GraphQL caching · HTTP status behavior · File uploads · Best use cases · Choosing REST or GraphQL</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 02</div>
+                <h3 class="phase-roadmap-title">Setup and First GraphQL App</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/03-graphql-project-setup.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">03</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">3. GraphQL Setup</span>
+                    <span class="lesson-subtopics">Node.js setup · npm project · GraphQL package · GraphQL server options · Apollo Server overview · GraphQL Yoga overview · Express integration · TypeScript setup · Environment variables · Project scripts · Development server</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/04-first-graphql-server.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">04</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">4. Your First GraphQL Server</span>
+                    <span class="lesson-subtopics">Schema definition · Resolver definition · Query root · GraphQL endpoint · Starting server · GraphQL IDE · Sending first query · JSON response · Resolver flow · Error response</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/05-project-structure.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">05</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">5. Project Structure</span>
+                    <span class="lesson-subtopics">schema folder · resolvers folder · queries folder · mutations folder · types folder · services folder · repositories folder · middleware folder · context folder · tests folder · Code-first structure · Schema-first structure</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📐</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 03</div>
+                <h3 class="phase-roadmap-title">Schema and Type System</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">6 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/06-schema-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">06</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">6. Schema Basics</span>
+                    <span class="lesson-subtopics">Schema ante enti? · Type definitions · Root types · Query · Mutation · Subscription · Fields · Arguments · Return types · Non-null types · List types · Schema validation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/07-scalar-types.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">07</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">7. Scalar Types</span>
+                    <span class="lesson-subtopics">String · Int · Float · Boolean · ID · Non-null ! · List [Type] · Nested lists · Custom scalars · Date scalar · JSON scalar · Upload scalar overview</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/08-object-types.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">08</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">8. Object Types</span>
+                    <span class="lesson-subtopics">Object type · Fields · Nested object fields · Relationships · Nullable fields · Required fields · Type reuse · Type naming conventions · Schema documentation · Type evolution</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/09-enums.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">09</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">9. Enums</span>
+                    <span class="lesson-subtopics">Enum ante enti? · Defining enums · Enum arguments · Enum response values · Course level enum · Status enum · Role enum · Enum validation · Enum evolution · Enum client handling</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/10-input-types.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">10</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">10. Input Types</span>
+                    <span class="lesson-subtopics">Input type ante enti? · Input object · Create input · Update input · Nested input · Required input fields · Optional input fields · Input validation · Reusing input types · Input naming conventions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/11-interfaces-and-unions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">11</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">11. Interfaces & Unions</span>
+                    <span class="lesson-subtopics">Interface ante enti? · Implementing interfaces · Shared fields · Union types · Inline fragments · Type resolution · Search result union · Interface vs union · Schema design · Client handling</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔍</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 04</div>
+                <h3 class="phase-roadmap-title">Queries</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/12-basic-queries.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">12</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">12. Queries</span>
+                    <span class="lesson-subtopics">Query ante enti? · Selection sets · Fields · Nested fields · Aliases · Operation names · Multiple fields · Multiple operations · Query comments · Query formatting</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/13-arguments.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">13</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">13. Arguments</span>
+                    <span class="lesson-subtopics">Field arguments · ID arguments · Filter arguments · Search arguments · Pagination arguments · Optional arguments · Required arguments · Default arguments · Multiple arguments · Argument validation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/14-variables.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">14</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">14. Variables</span>
+                    <span class="lesson-subtopics">Why variables are needed · Variable declaration · Variable types · Required variables · Optional variables · Variable defaults · Variables in nested inputs · Variables in client apps · Variable validation · Avoiding string interpolation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/15-fragments.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">15</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">15. Fragments</span>
+                    <span class="lesson-subtopics">Fragment ante enti? · Reusing selections · Named fragments · Inline fragments · Fragment arguments overview · Nested fragments · Fragment organization · Fragment composition · Fragment performance · Fragment best practices</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/16-directives.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">16</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">16. Directives</span>
+                    <span class="lesson-subtopics">Directive ante enti? · @include · @skip · @deprecated · @specifiedBy · Custom directives · Schema directives · Query directives · Authorization directives · Directive validation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 05</div>
+                <h3 class="phase-roadmap-title">Resolvers and Execution</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/17-resolvers.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">17</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">17. Resolvers</span>
+                    <span class="lesson-subtopics">Resolver ante enti? · Root resolver · Field resolver · Resolver arguments · Parent object · Context · Info object · Resolver return values · Async resolvers · Resolver errors · Resolver organization · Resolver testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/18-resolver-arguments-and-context.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">18</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">18. Resolver Context</span>
+                    <span class="lesson-subtopics">Resolver signature · Parent value · Arguments · Context object · GraphQL info · Current user · Database connection · Service injection · Request headers · Request ID · Context security · Context testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/19-nested-resolvers.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">19</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">19. Nested Resolvers</span>
+                    <span class="lesson-subtopics">Nested object resolver · Course lessons · Lesson course · Resolver chaining · Parent object · Relationship resolution · Async nested data · N+1 problem · DataLoader · Resolver performance</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/20-execution-and-validation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">20</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">20. Validation & Execution</span>
+                    <span class="lesson-subtopics">Parsing query · Validation · Execution · Resolver execution order · Parallel fields · Serial mutations · Null propagation · Partial errors · Error paths · Query complexity · Query depth · Validation rules</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">✍️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 06</div>
+                <h3 class="phase-roadmap-title">Mutations</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/21-mutation-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">21</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">21. Mutations</span>
+                    <span class="lesson-subtopics">Mutation ante enti? · Create operation · Update operation · Delete operation · Mutation input · Mutation payload · Success response · Error response · Mutation naming · Mutation testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/22-mutation-inputs-and-payloads.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">22</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">22. Mutation Inputs & Payloads</span>
+                    <span class="lesson-subtopics">Input validation · Create payload · Update payload · Delete payload · Success flag · Error list · Client-friendly payload · Mutation id · Mutation idempotency · Mutation authorization</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/23-crud-mutations.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">23</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">23. CRUD Mutations</span>
+                    <span class="lesson-subtopics">createCourse · updateCourse · deleteCourse · createLesson · updateLesson · deleteLesson · publishLesson · completeLesson · submitQuiz · Mutation transactions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 07</div>
+                <h3 class="phase-roadmap-title">Subscriptions and Real-Time</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/24-subscriptions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">24</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">24. Subscriptions</span>
+                    <span class="lesson-subtopics">Subscription ante enti? · Long-lived requests · Real-time events · WebSockets · Subscription resolver · Subscribe operation · Publish events · Connection authentication · Reconnection · Subscription cleanup</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/25-real-time-project.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">25</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">25. Real-Time Project</span>
+                    <span class="lesson-subtopics">Chat messages · Online users · Typing status · Lesson progress · Compiler output · Notifications · Subscription filtering · Event authorization · Reconnection handling · Scaling subscriptions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📑</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 08</div>
+                <h3 class="phase-roadmap-title">Pagination and Filtering</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/26-offset-pagination.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">26</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">26. Offset Pagination</span>
+                    <span class="lesson-subtopics">Offset pagination · Page number · Limit · Total count · Page metadata · Sorting · Offset limitations · Large dataset problems · API implementation · Client pagination</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/27-cursor-pagination.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">27</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">27. Cursor Pagination</span>
+                    <span class="lesson-subtopics">Cursor ante enti? · Connection · Edge · Node · PageInfo · hasNextPage · hasPreviousPage · startCursor · endCursor · first · after · Cursor stability</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/28-filtering-and-sorting.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">28</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">28. Filtering & Sorting</span>
+                    <span class="lesson-subtopics">Filter input · Search input · Level filter · Published filter · Date filter · Sort input · Ascending sort · Descending sort · Combining filters · Query performance · Input validation · Filter schema design</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🛡️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 09</div>
+                <h3 class="phase-roadmap-title">Authentication, Authorization & Security</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/29-graphql-authentication.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">29</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">29. Authentication</span>
+                    <span class="lesson-subtopics">Authentication ante enti? · Context user · Cookies · Sessions · JWT · Bearer token · Login mutation · Logout mutation · Refresh token · Password hashing · Current user query · Authentication errors</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/30-graphql-authorization.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">30</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">30. Authorization</span>
+                    <span class="lesson-subtopics">Authorization ante enti? · Field-level authorization · Resolver authorization · Role-based access · Permission-based access · Admin fields · User-owned resources · Authorization directives · Context authorization · Authorization testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/31-graphql-security.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">31</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">31. GraphQL Security</span>
+                    <span class="lesson-subtopics">Query depth limiting · Query complexity limiting · Query cost analysis · Rate limiting · Introspection control · Disable playground in production · Input validation · Error masking · Resource authorization · Batch attack prevention · Alias abuse · Timeout handling · Upload security</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🗄️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 10</div>
+                <h3 class="phase-roadmap-title">Database Integration & Performance</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/32-graphql-with-sql.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">32</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">32. SQL Integration</span>
+                    <span class="lesson-subtopics">Database connection · Models · Repository · Query resolver · Mutation resolver · Transactions · Pagination · Filtering · Sorting · Database errors · Connection pooling · Query optimization</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/33-graphql-with-mongodb.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">33</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">33. MongoDB Integration</span>
+                    <span class="lesson-subtopics">MongoDB connection · Document resolver · Nested documents · Reference resolver · Aggregation · Pagination · Transactions · Change streams · Database errors · MongoDB project</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/34-dataloader-and-n1.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">34</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">34. DataLoader & N+1</span>
+                    <span class="lesson-subtopics">N+1 problem · Nested resolver issue · DataLoader ante enti? · Batching · Caching · DataLoader keys · Per-request loader · SQL batching · MongoDB batching · Performance testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">💻</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 11</div>
+                <h3 class="phase-roadmap-title">Client Development & State</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/35-graphql-clients.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">35</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">35. GraphQL Clients</span>
+                    <span class="lesson-subtopics">GraphQL client ante enti? · Manual fetch · Apollo Client · Relay overview · urql overview · Client setup · Query documents · Mutation documents · Variables · Error handling · Loading states · Empty states</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/36-apollo-client.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">36</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">36. Apollo Client</span>
+                    <span class="lesson-subtopics">Apollo Client setup · ApolloProvider · useQuery · useMutation · useSubscription · Query variables · Refetching · Polling · Cache updates · Optimistic UI · Error policies · Network status</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/37-client-cache.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">37</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">37. Client Cache</span>
+                    <span class="lesson-subtopics">Normalized cache · Cache keys · Cache reads · Cache writes · Cache invalidation · Refetch queries · Update mutation cache · Optimistic updates · Pagination cache · Cache debugging</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🌐</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 12</div>
+                <h3 class="phase-roadmap-title">Schema Design and Federation</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/38-schema-design.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">38</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">38. Schema Design</span>
+                    <span class="lesson-subtopics">Schema-first design · Code-first design · Domain modeling · Naming conventions · Nullable vs non-null fields · Input design · Payload design · Relationship design · Deprecation · Schema evolution · Backward compatibility · Documentation descriptions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/39-introspection.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">39</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">39. Introspection</span>
+                    <span class="lesson-subtopics">Introspection ante enti? · __schema · __type · __typename · Schema documentation tools · GraphQL IDEs · Client code generation · Production introspection policy · Introspection security · Schema discovery</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/40-federation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">40</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">40. Federation</span>
+                    <span class="lesson-subtopics">Federation ante enti? · Monolith schema · Subgraphs · Supergraph · Entities · Gateway · Shared types · Cross-service fields · Federation composition · Distributed authorization · Federation observability · When federation is needed</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚢</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 13</div>
+                <h3 class="phase-roadmap-title">Testing, Documentation and Deployment</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">6 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-graphql/41-graphql-testing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">41</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">41. Testing</span>
+                    <span class="lesson-subtopics">Schema tests · Resolver unit tests · Query tests · Mutation tests · Authentication tests · Authorization tests · Error tests · Integration tests · Database tests · Subscription tests · Contract tests · Test fixtures</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/42-graphql-documentation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">42</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">42. Documentation</span>
+                    <span class="lesson-subtopics">Schema descriptions · Field descriptions · Type descriptions · Query examples · Mutation examples · Deprecation reasons · GraphQL Playground · GraphiQL · API explorer · Client documentation · Changelog · Schema registry</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/43-monitoring.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">43</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">43. Monitoring</span>
+                    <span class="lesson-subtopics">Request logging · Resolver timing · Query complexity · Query depth · Error tracking · Tracing · Correlation IDs · Database timings · Cache metrics · Subscription metrics · Slow query reports · Alerts</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/44-deployment.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">44</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">44. Deployment</span>
+                    <span class="lesson-subtopics">Production build · Environment variables · Database deployment · GraphQL endpoint · HTTPS · CORS · Rate limiting · Introspection policy · Docker · CI/CD · Horizontal scaling · WebSocket scaling · Health checks · Rollback</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/45-graphql-projects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">45</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">45. GraphQL Projects</span>
+                    <span class="lesson-subtopics">Beginner Projects (Course API, Book library) · Intermediate Projects (E-commerce, Recipe search) · Advanced Projects (Our Compiler Platform, Real-time quiz, Federation) · Complete Schema & Operations Specification</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-graphql/46-graphql-quiz.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">46</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">46. GraphQL Practice Quiz</span>
+                    <span class="lesson-subtopics">Comprehensive GraphQL Knowledge Check · 30 Multiple Choice Certification Exam Questions · Schema, Resolvers, Auth, Subscriptions, DataLoader & Federation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>GraphQL Complete Masterclass · 46 Chapters · 13 Phases · 2026 Edition</span>
+      </div>
+    </div>
 
     <div class="nav-footer">
-      <a href="/blog-graphql.html" class="nav-btn">
-        <span class="label">&#8592; GraphQL Overview</span>
-        <span class="title">Course Index</span>
-      </a>
-      <a href="/blog-graphql/intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson &#8594;</span>
-        <span class="title">What is GraphQL?</span>
-      </a>
+      <a href="/blog.html" class="nav-btn"><span class="label">← All Tutorials</span><span class="title">Course Hub</span></a>
+      <a href="/blog-graphql/01-what-is-graphql.html" class="nav-btn" style="text-align:right;"><span class="label">Start Learning →</span><span class="title">1. What is GraphQL?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

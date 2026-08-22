@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Express.js — HTTP Server Creation & Response Methods | Our Compiler</title>
+  <meta name="description" content="Complete Express.js Chapter 4: HTTP Server Creation & Response Methods. Learn app.listen · Port Listener · Request (req) · Response (res) · res.send · res.json · res.sendStatus · res.end with practical Node.js Express code examples, middleware pipelines, routing patterns, and step-by-step walkthroughs." />
+  <meta name="keywords" content="express js tutorial, learn express js, http server creation & response methods, node js express, express middleware, express router" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-express/04-first-express-server.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-express/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-express">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-express.html" class="active">Express.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-springboot.html">Spring Boot</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-redis.html">Redis</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Express.js Tutorial</div>
+    <a href="/blog-express.html" class="sidebar-home-link">🚀 Express.js HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Introduction and Setup</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-express/01-express-introduction.html" class="">1. Express.js Architecture & Fundamentals</a><a href="/blog-express/02-express-prerequisites.html" class="">2. Prerequisites & JavaScript Runtime Foundations</a><a href="/blog-express/03-express-setup.html" class="">3. Express Setup & Environment Configuration</a><a href="/blog-express/04-first-express-server.html" class="active">4. HTTP Server Creation & Response Methods</a><a href="/blog-express/05-express-project-structure.html" class="">5. Express Enterprise Project Architecture & Directory Layout</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛣️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Core Routing & Parameters</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/06-basic-routes.html" class="">6. Basic Routes & HTTP Methods</a><a href="/blog-express/07-route-parameters.html" class="">7. Dynamic Route Parameters (req.params)</a><a href="/blog-express/08-query-parameters.html" class="">8. Query Parameters (req.query), Filtering & Pagination</a><a href="/blog-express/09-express-router.html" class="">9. Modular Application Routing with express.Router</a><a href="/blog-express/10-advanced-router-patterns.html" class="">10. Advanced Routing Patterns, router.param() & API Versioning</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📥</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Request Handling, Responses & Headers</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/11-request-body-parsing.html" class="">11. Request Body Parsing (express.json(), express.urlencoded())</a><a href="/blog-express/12-sending-responses-status-codes.html" class="">12. Response Handlers & HTTP Status Code Specification</a><a href="/blog-express/13-http-headers-and-cookies.html" class="">13. HTTP Headers Manipulation & Cookie Management</a><a href="/blog-express/14-file-uploads-multer.html" class="">14. File Upload Pipelines with Multer</a><a href="/blog-express/15-streaming-responses-downloads.html" class="">15. Streaming Responses & Memory-Efficient File Downloads</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Middleware Architecture & Pipeline</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/16-middleware-fundamentals.html" class="">16. Middleware Architecture & Pipeline Execution Flow</a><a href="/blog-express/17-builtin-middleware.html" class="">17. Built-in Express Middleware & Static File Serving</a><a href="/blog-express/18-custom-middleware.html" class="">18. Building Custom Application & Route Guard Middleware</a><a href="/blog-express/19-thirdparty-middleware.html" class="">19. Third-Party Utility & Security Middleware (CORS, Helmet, Morgan)</a><a href="/blog-express/20-rate-limiting-throttling.html" class="">20. Rate Limiting, Request Throttling & DDoS Protection</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Data Validation & Error Handling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/21-input-validation-express-validator.html" class="">21. Input Validation with express-validator & Zod</a><a href="/blog-express/22-sanitization-and-xss-prevention.html" class="">22. Payload Sanitization & Injection Prevention (XSS, NoSQL)</a><a href="/blog-express/23-error-handling-middleware.html" class="">23. Centralized Error Handling Middleware (4-Argument Signature)</a><a href="/blog-express/24-async-error-handling.html" class="">24. Asynchronous Error Handling & Express 5 Rejection Catching</a><a href="/blog-express/25-custom-error-classes.html" class="">25. Custom Application Exception Classes & RFC 7807 Problem Details</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Database Integration (MongoDB & PostgreSQL)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/26-connecting-mongodb-mongoose.html" class="">26. MongoDB Database Connection & Mongoose ODM Schemas</a><a href="/blog-express/27-express-mongoose-crud-api.html" class="">27. Building RESTful APIs with Mongoose ODM</a><a href="/blog-express/28-connecting-postgresql-prisma.html" class="">28. Connecting PostgreSQL with Prisma ORM & Connection Pools</a><a href="/blog-express/29-express-prisma-crud-api.html" class="">29. Building Type-Safe Relational REST APIs with Prisma Client</a><a href="/blog-express/30-database-transactions-express.html" class="">30. Database Transactions & Atomic Rollbacks in Controllers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔑</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Security, Authentication & JWT</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/31-authentication-password-hashing.html" class="">31. User Authentication & Secure Password Hashing with Bcrypt</a><a href="/blog-express/32-session-authentication-express-session.html" class="">32. Stateful Session Authentication & Redis Session Stores</a><a href="/blog-express/33-jwt-authentication-refresh-tokens.html" class="">33. Stateless Authentication with JWT & Refresh Tokens</a><a href="/blog-express/34-role-based-access-control-guards.html" class="">34. Granular Role-Based Access Control (RBAC) Guards</a><a href="/blog-express/35-oauth2-passport-social-auth.html" class="">35. OAuth2 Social Logins with Passport.js</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Real-Time WebSockets, Caching & SSR</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/36-socketio-realtime-express.html" class="">36. Real-Time Bidirectional WebSockets with Socket.IO</a><a href="/blog-express/37-server-sent-events-sse.html" class="">37. Server-Sent Events (SSE) for Real-Time Streaming Feeds</a><a href="/blog-express/38-caching-responses-redis-express.html" class="">38. High-Performance Response Caching with Redis</a><a href="/blog-express/39-background-jobs-bullmq-redis.html" class="">39. Asynchronous Background Job Queues with BullMQ & Redis</a><a href="/blog-express/40-template-engines-ssr-ejs.html" class="">40. Server-Side Rendering (SSR) with EJS Template Engines</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐳</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Production Optimization, Testing & Monitoring</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/41-swagger-openapi-documentation.html" class="">41. API Specification & Documentation with Swagger / OpenAPI 3</a><a href="/blog-express/42-unit-testing-jest-supertest.html" class="">42. Unit & Integration Testing with Jest & Supertest</a><a href="/blog-express/43-integration-testing-test-db.html" class="">43. End-to-End Integration Testing with Isolated Test Databases</a><a href="/blog-express/44-logging-metrics-health-checks.html" class="">44. Enterprise Logging with Winston & Prometheus Metrics</a><a href="/blog-express/45-clustering-process-management-pm2.html" class="">45. Process Clustering & PM2 Zero-Downtime Deployments</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Capstone Architecture, Docker & Top Interview Q&A</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-express/46-our-compiler-platform-express-architecture.html" class="">46. Our Compiler Backend System Architecture Case Study</a><a href="/blog-express/47-clean-hexagonal-architecture-express.html" class="">47. Clean & Hexagonal Architecture Patterns in Express</a><a href="/blog-express/48-dockerization-docker-compose-express.html" class="">48. Dockerization & Docker Compose Microservice Setup</a><a href="/blog-express/49-enterprise-design-patterns-express.html" class="">49. Enterprise Software Design Patterns in Express.js</a><a href="/blog-express/50-express-interview-preparation.html" class="">50. Top 50 Express.js Technical Interview Q&A Master List</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-express.html">Express.js</a><span class="sep">›</span>
+      <span class="current">Express.js — HTTP Server Creation & Response Methods</span>
+    </div>
+
+    <h1 class="page-title">Express.js — HTTP Server Creation & Response Methods</h1>
+
+    <div class="page-meta">
+      <span class="badge">🚀 Express 5.0+</span>
+      <span class="badge">🟢 Chapter 4 of 50</span>
+      <span class="badge">📂 Phase 01: Introduction and Setup</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">app.listen · Port Listener · Request (req) · Response (res) · res.send · res.json · res.sendStatus · res.end</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Express.js — HTTP Server Creation & Response Methods</strong> in our Express.js Complete Masterclass! Create your first Express server, handle HTTP GET requests, and send JSON responses.</p>
+    </div>
+
+    <!-- Section 1: Core Architectural Concepts -->
+    <div class="section-title"><span class="num">1</span>Core Architectural Concepts of HTTP Server Creation & Response Methods</div>
+    <div class="section-body">
+      <p>The `express()` function instantiates an Express application object (`app`). Calling `app.listen(port, callback)` binds the server to an HTTP port. Every incoming request delivers `req` (Request Object) and `res` (Response Object) to route handlers.</p>
+    </div>
+
+    <!-- Section 2: Key Technical Objectives -->
+    <div class="section-title"><span class="num">2</span>Key Technical Objectives &amp; Specs</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#f7df1e;display:block;margin-bottom:10px;">📚 Technical Learning Specs:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master the underlying Node.js event loop mechanics for <strong>HTTP Server Creation & Response Methods</strong>.</li>
+          <li>Implement non-blocking, asynchronous execution pipelines in compliance with production API standards.</li>
+          <li>Enforce strict OWASP Top 10 API security guidelines and performance optimizations.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 3: Technical Feature Matrix -->
+    <div class="section-title"><span class="num">3</span>Technical Specification Matrix</div>
+    <div class="section-body">
+      <table class="tbl spec-table">
+        
+          <thead><tr><th>Response Method</th><th>Output Content-Type</th><th>Primary Use Case</th></tr></thead>
+          <tbody>
+            <tr><td>`res.send(body)`</td><td>Auto-detected (text/html, buffer)</td><td>Sending strings, HTML content, or buffers</td></tr>
+            <tr><td>`res.json(obj)`</td><td>`application/json`</td><td>Serializing JavaScript objects into JSON API responses</td></tr>
+            <tr><td>`res.sendStatus(code)`</td><td>`text/plain`</td><td>Sending status text corresponding to HTTP status code</td></tr>
+            <tr><td>`res.end()`</td><td>None</td><td>Ending response cycle without body content (e.g. 204)</td></tr>
+          </tbody>
+      </table>
+    </div>
+
+    <!-- Section 4: Basic Code Implementation -->
+    <div class="section-title"><span class="num">4</span>Basic Code Implementation</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">JavaScript / Express.js — Basic HTTP Server Creation & Response Methods</span></div>
+        <pre><code>import express from 'express';
+
+const app = express();
+
+// Text response
+app.get('/text', (req, res) => {
+  res.send('Hello World from Express!');
+});
+
+// JSON API response
+app.get('/api/data', (req, res) => {
+  res.json({ success: true, count: 2, items: ['Node', 'Express'] });
+});
+
+// HTTP 204 No Content
+app.get('/empty', (req, res) => {
+  res.status(204).end();
+});
+
+app.listen(3000);</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 5: Production Controller Pattern -->
+    <div class="section-title"><span class="num">5</span>Production Implementation &amp; Architecture Pattern</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">JavaScript / Express.js — Production HTTP Server Creation & Response Methods</span></div>
+        <pre><code>// Standardized JSON Response Pattern
+import express from 'express';
+
+const app = express();
+
+const sendSuccess = (res, data, status = 200) => {
+  res.status(status).json({
+    success: true,
+    timestamp: new Date().toISOString(),
+    data
+  });
+};
+
+app.get('/api/v1/users', (req, res) => {
+  const users = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }];
+  sendSuccess(res, users);
+});
+
+app.listen(3000);</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 6: Execution Flow Diagram -->
+    <div class="section-title"><span class="num">6</span>Internal Execution Engine Pipeline</div>
+    <div class="section-body">
+      <div class="diagram-box">HTTP GET /api/data -> Express Router Match -> Handler Callback -> res.json() -> Set Content-Type -> Transmit TCP Stream</div>
+    </div>
+
+    <!-- Section 7: Anti-Patterns & Best Practices -->
+    <div class="section-title"><span class="num">7</span>Common Developer Anti-Patterns &amp; Security Pitfalls</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Calling `res.json()` or `res.send()` multiple times within a single request path causing "Cannot set headers after they are sent to the client" errors.</li><li>Forgetting to call `res.end()` or `res.json()` resulting in hanging HTTP requests until browser timeout.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 8: Frequently Asked Technical Interview Questions -->
+    <div class="section-title"><span class="num">8</span>Frequently Asked Technical Interview Questions (Q&amp;A)</div>
+    <div class="section-body">
+      
+        <div class="faq-card">
+          <h4>❓ Question: What happens if I don't call res.send() or res.json()?</h4>
+          <p><strong>Answer:</strong> The HTTP client will wait indefinitely until connection timeout occurs because Express does not close the HTTP socket automatically without a response invocation.</p>
+        </div>
+      
+        <div class="faq-card">
+          <h4>❓ Question: Difference between res.send() and res.json()?</h4>
+          <p><strong>Answer:</strong> `res.json()` explicitly sets `Content-Type: application/json` and formats JavaScript objects via `JSON.stringify()`. `res.send()` handles strings, HTML buffers, and objects dynamically.</p>
+        </div>
+      
+    </div>
+
+    <!-- Section 9: Hands-On Challenge -->
+    <div class="section-title"><span class="num">9</span>Hands-On Practical Engineering Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#f7df1e;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Build a server with routes `/html` (returns HTML `<h1>Header</h1>`), `/json` (returns an array of objects), and `/status` (returns HTTP 201).</p>
+      </div>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Express 5.0+ Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="nav-footer">
+      <a href="03-express-setup.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">3. Express Setup & Environment Configuration</span></a>
+      <a href="05-express-project-structure.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">5. Express Enterprise Project Architecture & Directory Layout</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

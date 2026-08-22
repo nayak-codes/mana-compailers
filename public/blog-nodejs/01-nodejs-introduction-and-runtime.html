@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is Node.js? Runtime, V8 &amp; Architecture — Node.js Tutorial | Our Compiler</title>
+  <meta name="description" content="Deep-dive introduction to Node.js: history by Ryan Dahl, the V8 engine and libuv, event-driven non-blocking I/O, Node.js vs browser JavaScript, real-world use cases, limitations, and how Node executes code under the hood." />
+  <meta name="keywords" content="node.js tutorial, what is node.js, node.js runtime, node.js vs javascript, node.js event loop, node.js online compiler, learn node.js 2026" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-nodejs/01-nodejs-introduction-and-runtime.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-nodejs/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "What is Node.js? Runtime, V8 & Architecture — Node.js Master Tutorial",
+  "description": "Deep-dive introduction to Node.js: history by Ryan Dahl, the V8 engine and libuv, event-driven non-blocking I/O, Node.js vs browser JavaScript, real-world use cases, limitations, and how Node executes code under the hood.",
+  "articleSection": "Phase 1: Node.js Introduction",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-08-20",
+  "dateModified": "2026-08-20"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Node.js a programming language?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Node.js is a JavaScript runtime environment, not a language. The language is JavaScript; Node.js is the engine (V8) plus system-level APIs (libuv) that let that JavaScript run outside a browser."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Node.js single-threaded or multi-threaded?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Node.js executes your JavaScript on a single main thread, but libuv maintains a background thread pool for certain operations, and you can spin up additional threads explicitly using worker_threads or the cluster module."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can Node.js be used for the frontend?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Node.js itself runs on the server or command line, not inside a browser page. However, build tools like Webpack, Vite, Babel, and npm all run on Node.js to build the JavaScript that eventually ships to the browser."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Accordion Toggle, Syntax Highlighter & Code Preload Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side JavaScript/Node.js Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments (line + block)
+      let code = rawCode.replace(/(\/\/.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/(\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+
+      // 2. Strings: `...`, "...", '...'
+      code = code.replace(/(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['import','from','as','export','default','const','let','var','function','async','await','return','class','extends','new','if','else','while','for','of','in','break','continue','try','catch','finally','throw','switch','case','typeof','instanceof','yield','static','get','set','this','super','null','undefined','true','false'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-ins / common Node & JS globals / functions
+      const fnList = ['require','module','exports','process','console','log','error','warn','Buffer','__dirname','__filename','setTimeout','setInterval','clearTimeout','clearInterval','JSON','stringify','parse','Promise','resolve','reject','all','allSettled','race','then','catch','finally','map','filter','reduce','forEach','readFile','writeFile','readFileSync','writeFileSync','createServer','createReadStream','createWriteStream','listen','get','post','put','patch','delete','use','json','send','status','next','Array','Object','String','Number','Boolean','isArray','keys','values','entries','fetch','cwd','version','argv','env'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d[\d_]*(?:\.\d+)?(?:e[+-]?\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        // Apply syntax highlighting & Copy/Run actions to all code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-nodejs">
+
+<!-- TOP LANGUAGE BAR (auto-replaced by site-nav.js) -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-nodejs.html" class="active">Node.js</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Node.js Master Course</div>
+    <a href="/blog-nodejs.html" class="sidebar-home-link">🟢 Node.js Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Node.js Introduction -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟢</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Node.js Introduction</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-nodejs/01-nodejs-introduction-and-runtime.html" class="active">1. What is Node.js?</a>
+        <a href="/blog-nodejs/02-nodejs-javascript-prerequisites.html">2. JS Prerequisites</a>
+      </div>
+
+      <!-- Phase 02: Setup & First Program -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Setup & First Program</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/03-nodejs-installation-and-setup.html">3. Installation & Setup</a>
+        <a href="/blog-nodejs/04-nodejs-first-program.html">4. Your First Program</a>
+        <a href="/blog-nodejs/05-nodejs-project-structure.html">5. Project Structure</a>
+      </div>
+
+      <!-- Phase 03: Modules & npm -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Modules & npm</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/06-nodejs-commonjs-modules.html">6. CommonJS Modules</a>
+        <a href="/blog-nodejs/07-nodejs-es-modules.html">7. ES Modules</a>
+        <a href="/blog-nodejs/08-nodejs-npm-and-package-json.html">8. npm & package.json</a>
+        <a href="/blog-nodejs/09-nodejs-built-in-modules.html">9. Built-in Modules</a>
+      </div>
+
+      <!-- Phase 04: Asynchronous Node.js -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Asynchronous Node.js</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/10-nodejs-event-loop.html">10. Event Loop</a>
+        <a href="/blog-nodejs/11-nodejs-callbacks.html">11. Callbacks</a>
+        <a href="/blog-nodejs/12-nodejs-promises-async-await.html">12. Promises & Async/Await</a>
+      </div>
+
+      <!-- Phase 05: File System & Streams -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗂️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">File System & Streams</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/13-nodejs-file-system.html">13. File System</a>
+        <a href="/blog-nodejs/14-nodejs-path-module.html">14. Path Module</a>
+        <a href="/blog-nodejs/15-nodejs-buffers.html">15. Buffers</a>
+        <a href="/blog-nodejs/16-nodejs-streams.html">16. Streams</a>
+      </div>
+
+      <!-- Phase 06: HTTP & Web Servers -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">HTTP & Web Servers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/17-nodejs-http-basics.html">17. HTTP Basics</a>
+        <a href="/blog-nodejs/18-nodejs-http-module.html">18. Node HTTP Module</a>
+        <a href="/blog-nodejs/19-nodejs-routing-without-framework.html">19. Routing (No Framework)</a>
+      </div>
+
+      <!-- Phase 07: Express.js -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Express.js</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/20-nodejs-express-introduction.html">20. Express Introduction</a>
+        <a href="/blog-nodejs/21-nodejs-express-routing.html">21. Express Routing</a>
+        <a href="/blog-nodejs/22-nodejs-middleware.html">22. Middleware</a>
+        <a href="/blog-nodejs/23-nodejs-rest-api.html">23. REST APIs</a>
+      </div>
+
+      <!-- Phase 08: Validation & Errors -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Validation & Errors</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/24-nodejs-validation.html">24. Validation</a>
+        <a href="/blog-nodejs/25-nodejs-error-handling.html">25. Error Handling</a>
+      </div>
+
+      <!-- Phase 09: Databases -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Databases</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/26-nodejs-database-basics.html">26. Database Basics</a>
+        <a href="/blog-nodejs/27-nodejs-postgresql-mysql.html">27. PostgreSQL / MySQL</a>
+        <a href="/blog-nodejs/28-nodejs-mongodb.html">28. MongoDB</a>
+        <a href="/blog-nodejs/29-nodejs-orm-odm.html">29. ORM & ODM</a>
+        <a href="/blog-nodejs/30-nodejs-database-api-project.html">30. Database API Project</a>
+      </div>
+
+      <!-- Phase 10: Auth & Security -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Auth & Security</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/31-nodejs-authentication.html">31. Authentication</a>
+        <a href="/blog-nodejs/32-nodejs-authorization.html">32. Authorization</a>
+        <a href="/blog-nodejs/33-nodejs-security.html">33. Node.js Security</a>
+      </div>
+
+      <!-- Phase 11: Real-Time & Advanced -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Real-Time & Advanced</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/34-nodejs-websockets.html">34. WebSockets</a>
+        <a href="/blog-nodejs/35-nodejs-socketio.html">35. Socket.IO</a>
+        <a href="/blog-nodejs/36-nodejs-worker-threads.html">36. Worker Threads</a>
+        <a href="/blog-nodejs/37-nodejs-child-processes.html">37. Child Processes</a>
+      </div>
+
+      <!-- Phase 12: Streams & Performance -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Streams & Performance</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/38-nodejs-advanced-streams.html">38. Advanced Streams</a>
+        <a href="/blog-nodejs/39-nodejs-performance-optimization.html">39. Performance Optimization</a>
+      </div>
+
+      <!-- Phase 13: Testing -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Testing</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/40-nodejs-test-runner.html">40. Node.js Test Runner</a>
+        <a href="/blog-nodejs/41-nodejs-api-testing.html">41. API Testing</a>
+        <a href="/blog-nodejs/42-nodejs-e2e-testing.html">42. End-to-End Testing</a>
+      </div>
+
+      <!-- Phase 14: TypeScript with Node.js -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔷</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">TypeScript with Node.js</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/43-nodejs-typescript-basics.html">43. TypeScript Basics</a>
+        <a href="/blog-nodejs/44-nodejs-typescript-backend.html">44. TypeScript Backend</a>
+      </div>
+
+      <!-- Phase 15: Project Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Project Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/45-nodejs-clean-architecture.html">45. Clean Architecture</a>
+        <a href="/blog-nodejs/46-nodejs-design-patterns.html">46. Design Patterns</a>
+      </div>
+
+      <!-- Phase 16: Deployment & DevOps -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☁️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Deployment & DevOps</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/47-nodejs-environment-configuration.html">47. Environment Config</a>
+        <a href="/blog-nodejs/48-nodejs-docker-deployment.html">48. Docker & Deployment</a>
+        <a href="/blog-nodejs/49-nodejs-production-checklist.html">49. Production Checklist</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try Node.js Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-javascript.html">JavaScript Course</a>
+    <a href="/blog-express.html">Express.js Course</a>
+    <a href="/blog-python.html">Python 3 Course</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-nodejs.html">Node.js</a><span class="sep">›</span>
+      <span class="current">Chapter 1: What is Node.js?</span>
+    </div>
+
+    <h1 class="page-title">What is Node.js? Runtime, V8 &amp; Architecture</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟢 Node.js LTS</span>
+      <span class="badge">📗 Chapter 1 of 49</span>
+      <span class="badge">📂 Phase 1: Node.js Introduction</span>
+      <span class="badge">🗓️ 2026 Edition</span>
+    </div>
+
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>What is Node.js? · Node.js vs Browser JS · Event Loop & Non-Blocking I/O · Features & Use Cases · Limitations · V8 & libuv Architecture</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Deep-dive introduction to Node.js: history by Ryan Dahl, the V8 engine and libuv, event-driven non-blocking I/O, Node.js vs browser JavaScript, real-world use cases, limitations, and exactly how Node.js executes your code under the hood.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>What is Node.js? Origins, V8 Engine & Why It Was Created</div>
+    <div class="section-body">
+
+      <p><strong>Node.js</strong> is a free, open-source, cross-platform <strong>JavaScript runtime environment</strong> that lets you execute JavaScript code outside of a web browser. It was created in <strong>2009 by Ryan Dahl</strong>, who wanted to build web servers capable of handling thousands of concurrent connections without the heavy memory overhead of one-thread-per-request models used by older servers like Apache.</p>
+      <p>Node.js is built on Google Chrome's open-source <strong>V8 JavaScript Engine</strong> — the same high-performance engine that powers the Chrome browser. V8 compiles JavaScript directly to native machine code before executing it, which makes Node.js extremely fast for I/O-heavy workloads. Around this V8 core, Node.js adds its own C++ bindings and a library called <strong>libuv</strong>, which provides the event loop, thread pool, and non-blocking I/O operations (file access, networking, DNS, timers).</p>
+      <h4 style="color:#10b981; margin:16px 0 8px;">Why Node.js Was a Big Deal:</h4>
+      <ul>
+        <li><strong>One language, both sides:</strong> The same JavaScript you already know from the browser can now run your backend server, CLI tools, and build scripts.</li>
+        <li><strong>Non-blocking by default:</strong> Node.js handles thousands of simultaneous connections on a single thread using asynchronous, event-driven I/O.</li>
+        <li><strong>npm ecosystem:</strong> Node.js ships with npm, the largest software package registry in the world, giving instant access to millions of reusable packages.</li>
+        <li><strong>Backed by the OpenJS Foundation:</strong> Node.js is maintained by a large open-source community and used in production by Netflix, LinkedIn, PayPal, Uber, and NASA.</li>
+      </ul>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Checking Your Node.js Version</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Terminal</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>// Run this in your terminal, not inside a .js file
+node --version
+// Example output: v22.11.0</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>node --version</code>: Asks the globally installed Node.js binary to print its own version number.</li>
+          <li>The <code>v22.11.0</code> output confirms Node.js is installed correctly and shows which major version you're running (important, since APIs change between major versions).</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Node.js vs Browser JavaScript — Key Differences</div>
+    <div class="section-body">
+
+      <p>JavaScript in the browser and JavaScript in Node.js share the exact same language (syntax, variables, functions, promises) because both are powered by the V8 engine. The difference is the <strong>environment</strong> around the language — the set of built-in objects and APIs each platform exposes.</p>
+      <p>In the browser, JavaScript has access to the <strong>DOM</strong> (<code>document</code>, <code>window</code>) to manipulate web pages. Node.js has no browser, no DOM, and no <code>window</code> object — instead, it exposes APIs for interacting with the operating system: the file system, network sockets, processes, and environment variables.</p>
+
+      <table class="tbl">
+        <thead>
+          <tr><th>Aspect</th><th>Browser JavaScript</th><th>Node.js</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Global object</td><td><code>window</code></td><td><code>global</code> / <code>globalThis</code></td></tr>
+          <tr><td>DOM access</td><td>Yes (document, elements)</td><td>No DOM at all</td></tr>
+          <tr><td>File system access</td><td>Not allowed (sandboxed)</td><td>Full access via <code>node:fs</code></td></tr>
+          <tr><td>Module system</td><td>ES Modules (<code>&lt;script type="module"&gt;</code>)</td><td>CommonJS + ES Modules</td></tr>
+          <tr><td>Networking</td><td><code>fetch()</code>, XHR (client only)</td><td><code>node:http</code> — can act as client and server</td></tr>
+          <tr><td>Typical use</td><td>UI interactivity, DOM updates</td><td>Servers, APIs, CLIs, build tools</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: A Line That Only Works in Node.js</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript (Node.js)</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>// node:process is a Node-only global — the browser has no equivalent
+console.log("Running on Node.js version:", process.version);
+console.log("Current working directory:", process.cwd());</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>process</code>: A global object available only in Node.js, giving information about — and control over — the current running program.</li>
+          <li><code>process.version</code>: Returns the exact Node.js version string powering this script.</li>
+          <li><code>process.cwd()</code>: Returns the absolute path of the directory the script was launched from.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Runtime Environment, Event-Driven Architecture & Non-Blocking I/O</div>
+    <div class="section-body">
+
+      <p>A <strong>runtime environment</strong> is the software that provides everything a program needs to execute: memory management, a way to run instructions, and access to system resources. Node.js is JavaScript's runtime outside the browser — it takes your <code>.js</code> file, hands it to V8 for execution, and wires up libuv underneath to talk to the operating system.</p>
+      <p>Node.js follows an <strong>event-driven, non-blocking I/O model</strong>. Instead of waiting (blocking) while a slow operation like reading a file or querying a database finishes, Node.js registers a callback function and immediately moves on to the next task. When the slow operation completes, Node's <strong>event loop</strong> picks up the result and runs your callback — all on a single main thread.</p>
+      <div class="info-box">
+        <strong>Why this matters:</strong> A traditional blocking server might spawn one OS thread per client connection, which becomes expensive at scale. Node.js instead uses one event loop thread to juggle thousands of pending I/O operations concurrently, making it extremely efficient for network-heavy applications like APIs, chat servers, and streaming services.
+      </div>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Blocking vs Non-Blocking Behavior</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript (Node.js)</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>console.log("1. Script starts");
+
+// setTimeout is non-blocking — Node registers it and moves on immediately
+setTimeout(() => {
+  console.log("3. This runs later, after the main script finishes");
+}, 0);
+
+console.log("2. Script continues without waiting");</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>console.log("1. ...")</code>: Executes immediately, synchronously.</li>
+          <li><code>setTimeout(callback, 0)</code>: Even with a 0ms delay, Node hands this callback to libuv's timer queue and does <em>not</em> wait for it.</li>
+          <li><code>console.log("2. ...")</code>: Runs right after, before the timeout callback, because the main script must finish first.</li>
+          <li>Only once the call stack is empty does the event loop run the queued timeout callback, printing line <code>3</code> last.</li>
+        </ul>
+        <div style="margin-top:10px; color:var(--text2);"><strong>Expected Output:</strong> <code>1. Script starts</code> → <code>2. Script continues without waiting</code> → <code>3. This runs later...</code></div>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">4</span>Features, Real-World Use Cases & the npm Ecosystem</div>
+    <div class="section-body">
+
+      <p>Node.js is a general-purpose runtime, but its architecture makes it especially strong at specific kinds of work. Here's what it's commonly used for in production:</p>
+      <ul>
+        <li><strong>REST & GraphQL APIs</strong> — backend services for web and mobile apps, typically built with Express.js or Fastify.</li>
+        <li><strong>Real-time applications</strong> — chat apps, live dashboards, and multiplayer features using WebSockets or Socket.IO.</li>
+        <li><strong>Microservices</strong> — small, independently deployable services that communicate over HTTP or message queues.</li>
+        <li><strong>Command-line tools</strong> — popular CLIs like npm itself, the Angular CLI, and Create React App are all built with Node.js.</li>
+        <li><strong>Build tooling</strong> — bundlers like Webpack, Vite, and esbuild run on Node.js under the hood.</li>
+        <li><strong>Streaming services</strong> — Node's stream APIs make it well suited for proxying and processing large amounts of data efficiently.</li>
+      </ul>
+      <p>Node.js ships with <strong>npm</strong> (Node Package Manager) by default — the world's largest software registry, with well over 2 million published packages covering everything from HTTP frameworks to date formatting utilities.</p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Checking npm and Installing a Package</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Terminal</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>npm --version
+npm init -y
+npm install express</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>npm --version</code>: Confirms npm ships alongside your Node.js installation.</li>
+          <li><code>npm init -y</code>: Generates a default <code>package.json</code> file that describes your project and its dependencies.</li>
+          <li><code>npm install express</code>: Downloads the Express.js framework into a local <code>node_modules</code> folder and records it as a dependency.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">5</span>Where NOT to Use Node.js — Limitations & CPU-Bound Work</div>
+    <div class="section-body">
+
+      <p>Node.js excels at I/O-bound work, but it is <strong>single-threaded for JavaScript execution</strong>. That means any long-running, CPU-intensive synchronous code (heavy image processing, complex calculations, large in-memory sorting) will block the single event loop thread — freezing every other request your server is handling until that computation finishes.</p>
+      <div class="info-box">
+        <strong>Rule of thumb:</strong> if a task is mostly "waiting" (for a database, a file, or a network response), Node.js handles it beautifully. If a task is mostly "computing" (video encoding, machine learning inference, cryptographic hashing at scale), consider offloading it to <code>node:worker_threads</code>, a child process, or a different language/service entirely.
+      </div>
+      <h4 style="color:#10b981; margin:16px 0 8px;">Common Limitations to Keep in Mind:</h4>
+      <ul>
+        <li><strong>CPU-bound tasks</strong> block the event loop and degrade performance for all connected clients.</li>
+        <li><strong>Callback complexity</strong> — deeply nested callbacks ("callback hell") can hurt readability if Promises/async-await aren't used consistently.</li>
+        <li><strong>Immature ORMs (historically)</strong> — improving fast, but some database tooling is younger than equivalents in Java or Python.</li>
+        <li><strong>Single-threaded by default</strong> — to use multiple CPU cores you must explicitly use the <code>cluster</code> module or worker threads.</li>
+      </ul>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: A Blocking Loop Freezing the Event Loop</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript (Node.js)</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>console.log("Server received request A");
+
+// A heavy synchronous loop — this blocks EVERYTHING until it finishes
+let total = 0;
+for (let i = 0; i < 5_000_000_000; i++) {
+  total += i;
+}
+
+console.log("Finished heavy computation:", total);
+console.log("Only now can Server receive request B");</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li>The synchronous <code>for</code> loop runs entirely on the main thread with no yielding.</li>
+          <li>While it runs, Node.js <em>cannot</em> process any other incoming requests, timers, or I/O callbacks — everything queues up behind it.</li>
+          <li>This is the single most common Node.js production mistake: putting heavy synchronous computation directly inside a request handler.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">6</span>How Node.js Executes Code Under the Hood (V8 + libuv Architecture)</div>
+    <div class="section-body">
+
+      <p>Understanding Node's internal architecture helps explain <em>why</em> it behaves the way it does. Node.js is composed of three main layers working together:</p>
+      <ul>
+        <li><strong>V8 Engine:</strong> Parses and compiles your JavaScript into optimized machine code, and manages the JavaScript heap and garbage collection.</li>
+        <li><strong>libuv:</strong> A C library that provides the <strong>event loop</strong>, a thread pool for expensive operations (like file system access and DNS lookups), and cross-platform abstractions over the OS's async I/O primitives (epoll on Linux, kqueue on macOS, IOCP on Windows).</li>
+        <li><strong>Node.js Bindings & Core Modules:</strong> C++ bindings connect V8's JavaScript world to libuv's system-level world, exposing it all through familiar JavaScript APIs like <code>fs</code>, <code>http</code>, and <code>net</code>.</li>
+      </ul>
+      <p>When your script calls an async function such as <code>fs.readFile()</code>, Node hands the actual file-reading work off to libuv's thread pool (or the OS kernel directly for networking), and immediately continues executing the rest of your script. The <strong>event loop</strong> continuously checks whether any pending operations have completed; once one finishes, its callback is pushed onto the call stack to run.</p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 6: Reading a File Asynchronously</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript (Node.js)</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>import { readFile } from "node:fs";
+
+console.log("Start reading file...");
+
+readFile("package.json", "utf8", (error, data) => {
+  if (error) {
+    console.error("Error:", error.message);
+    return;
+  }
+  console.log("File contents loaded:", data.length, "characters");
+});
+
+console.log("This line runs before the file finishes loading");</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>import { readFile }</code>: Imports the async, callback-based file reading function from Node's built-in <code>node:fs</code> module.</li>
+          <li><code>readFile(path, encoding, callback)</code>: Hands the actual disk read to libuv's thread pool and returns immediately — it does not block.</li>
+          <li>The final <code>console.log</code> runs <em>before</em> the file finishes loading, proving the call is non-blocking.</li>
+          <li>Once libuv finishes reading the file, the event loop schedules the callback, which then logs the file's length.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Is Node.js a programming language?</h4>
+      <p>No. Node.js is a JavaScript runtime environment, not a language. The language is JavaScript; Node.js is the engine (V8) plus system-level APIs (libuv) that let that JavaScript run outside a browser.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Is Node.js single-threaded or multi-threaded?</h4>
+      <p>Node.js executes your JavaScript on a single main thread, but libuv maintains a background thread pool for certain operations (like file I/O and DNS lookups), and you can spin up additional threads explicitly using the worker_threads module or the cluster module.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Can Node.js be used for the frontend?</h4>
+      <p>Node.js itself runs on the server or command line, not inside a browser page. However, it's essential to frontend development anyway — tools like Webpack, Vite, Babel, and npm all run on Node.js to build the JavaScript that eventually ships to the browser.</p>
+    </div>
+
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Node.js LTS · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="/blog-nodejs.html" class="nav-btn">
+        <span class="label">← Node.js Overview</span>
+        <span class="title">Course Index</span>
+      </a>
+      <a href="02-nodejs-javascript-prerequisites.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">2. JavaScript Prerequisites</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

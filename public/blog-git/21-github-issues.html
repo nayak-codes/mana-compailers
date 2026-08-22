@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Issues — Git &amp; GitHub Tutorial | Our Compiler</title>
+  <meta name="description" content="Track bugs, feature requests, and tasks using GitHub Issues — labels, assignees, milestones, and templates." />
+  <meta name="keywords" content="git github issues, github tutorial, github issues example, learn git 2026" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-git/21-github-issues.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-git/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "GitHub Issues",
+  "description": "Track bugs, feature requests, and tasks using GitHub Issues \u2014 labels, assignees, milestones, and templates.",
+  "articleSection": "Phase 7: GitHub Issues & Projects",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-08-20",
+  "dateModified": "2026-08-20"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What's the most important thing to understand about github issues?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Focus on: Bug Reports \u00b7 Feature Requests \u00b7 Labels \u00b7 Assignees \u00b7 Milestones \u00b7 Issue Templates. These are the core building blocks this chapter's examples are built around, and they show up repeatedly in later chapters of this course."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is github issues something I'll use often in real projects?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes \u2014 every concept in this chapter reflects a real, everyday part of professional Git and GitHub workflows, not just a theoretical exercise."
+      }
+    }
+  ]
+}
+  </script>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Simple shell/bash + git syntax highlighter (Monaco / VS Code Dark+ styling)
+    function highlightShellCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___SH_TOK_${id}___`;
+      };
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m => pushToken('st', m));
+      const kwList = ['git','commit','push','pull','fetch','merge','rebase','branch','switch','checkout','status','add','restore','reset','revert','log','diff','stash','tag','remote','clone','init','config','cherry-pick','reflog'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+      const flagRegex = /(--?[a-zA-Z][a-zA-Z-]*)/g;
+      code = code.replace(flagRegex, m => pushToken('fn', m));
+      code = code.replace(/___SH_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+          const rawCode = codeEl.textContent;
+          const langTag = header.querySelector('.lang-tag');
+          const isShell = langTag && /bash|terminal|shell/i.test(langTag.textContent);
+          if (isShell) {
+            codeEl.innerHTML = highlightShellCode(rawCode);
+          }
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-git">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-git.html" class="active">Git &amp; GitHub</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+    <aside class="sidebar">
+    <div class="sidebar-heading">Git Tutorial</div>
+    <a href="/blog-git.html" class="sidebar-home-link">🐙 Git HOME</a>
+    <div class="sidebar-accordion">
+
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐙</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Git Basics & Setup</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/01-git-introduction-and-version-control.html" class="">1. What is Git? Version Control, GitHub & Basic Workflow</a><a href="/blog-git/02-git-installation-and-configuration.html" class="">2. Git Installation & Configuration</a><a href="/blog-git/03-creating-a-git-repository.html" class="">3. Creating a Git Repository</a><a href="/blog-git/04-working-tree-and-staging-area.html" class="">4. Working Tree & Staging Area</a><a href="/blog-git/05-git-commits.html" class="">5. Git Commits</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Tracking, Undoing & Inspection</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/06-viewing-changes-git-diff.html" class="">6. Viewing Changes with git diff</a><a href="/blog-git/07-restoring-files.html" class="">7. Restoring Files (git restore)</a><a href="/blog-git/08-git-reset.html" class="">8. Git Reset (Soft, Mixed, Hard)</a><a href="/blog-git/09-git-revert-and-reflog.html" class="">9. Git Revert & Reflog</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌿</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Branching & Merging</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/10-git-branch-basics.html" class="">10. Git Branch Basics</a><a href="/blog-git/11-branch-workflow.html" class="">11. Branch Workflow</a><a href="/blog-git/12-git-merging.html" class="">12. Merging Branches</a><a href="/blog-git/13-merge-conflicts.html" class="">13. Merge Conflicts</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">GitHub & Remote Repositories</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/14-github-repository.html" class="">14. GitHub Repositories</a><a href="/blog-git/15-connecting-local-and-remote.html" class="">15. Connecting Local & Remote Repositories</a><a href="/blog-git/16-git-push-and-pull.html" class="">16. Push & Pull</a><a href="/blog-git/17-git-fetch-and-remote-tracking.html" class="">17. Fetch & Remote Tracking</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Pull Requests & Open-Source</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/18-pull-requests.html" class="">18. Pull Requests</a><a href="/blog-git/19-code-review.html" class="">19. Code Review on GitHub</a><a href="/blog-git/20-forks-and-contributions.html" class="">20. Forks & Open-Source Contributions</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📋</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">GitHub Management & Releases</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-git/21-github-issues.html" class="active">21. GitHub Issues</a><a href="/blog-git/22-github-projects.html" class="">22. GitHub Projects</a><a href="/blog-git/23-releases-and-tags.html" class="">23. Releases & Tags</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Advanced Git Commands</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/24-git-rebase.html" class="">24. Git Rebase</a><a href="/blog-git/25-git-cherry-pick.html" class="">25. Cherry-Pick</a><a href="/blog-git/26-git-stash.html" class="">26. Git Stash</a><a href="/blog-git/27-reflog-and-recovery.html" class="">27. Reflog & Recovery</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Best Practices & Automation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/28-commit-best-practices.html" class="">28. Commit Best Practices</a><a href="/blog-git/29-gitignore.html" class="">29. .gitignore</a><a href="/blog-git/30-git-hooks.html" class="">30. Git Hooks</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">CI/CD & GitHub Actions</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/31-github-actions-introduction.html" class="">31. GitHub Actions Introduction</a><a href="/blog-git/32-continuous-integration.html" class="">32. Continuous Integration with GitHub Actions</a><a href="/blog-git/33-deployment-with-actions.html" class="">33. Deployment with GitHub Actions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Security, Hosting & Workflows</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">7 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/34-repository-security.html" class="">34. Repository Security</a><a href="/blog-git/35-github-authentication.html" class="">35. GitHub Authentication (HTTPS & SSH)</a><a href="/blog-git/36-branch-protection.html" class="">36. Branch Protection Rules</a><a href="/blog-git/37-readme-documentation.html" class="">37. README & Documentation</a><a href="/blog-git/38-github-pages.html" class="">38. GitHub Pages</a><a href="/blog-git/39-team-collaboration.html" class="">39. Team Collaboration on GitHub</a><a href="/blog-git/40-professional-git-workflow.html" class="">40. Professional Git Workflow</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-git.html">Git &amp; GitHub</a><span class="sep">›</span>
+      <span class="current">Chapter 21: GitHub Issues</span>
+    </div>
+
+    <h1 class="page-title">GitHub Issues</h1>
+
+    <div class="page-meta">
+      <span class="badge">📘 Git &amp; GitHub</span>
+      <span class="badge">📗 Chapter 21 of 40</span>
+      <span class="badge">📂 Phase 7: GitHub Issues & Projects</span>
+      <span class="badge">🗓️ 2026 Edition</span>
+    </div>
+
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Bug Reports · Feature Requests · Labels · Assignees · Milestones · Issue Templates</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Track bugs, feature requests, and tasks using GitHub Issues — labels, assignees, milestones, and templates.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>GitHub Issues — What You'll Learn</div>
+    <div class="section-body">
+
+      <p>Track bugs, feature requests, and tasks using GitHub Issues — labels, assignees, milestones, and templates.</p>
+      <p>Here's everything this chapter covers, in the order you'll learn it:</p>
+      <ul>
+        <li>What a GitHub issue is</li>
+        <li>Filing a bug report</li>
+        <li>Filing a feature request</li>
+        <li>Creating a general task issue</li>
+        <li>Writing a clear issue title</li>
+        <li>Writing a useful issue description</li>
+        <li>Adding labels to categorize issues</li>
+        <li>Assigning issues to team members</li>
+        <li>Grouping issues into milestones</li>
+        <li>Using issue templates for consistency</li>
+        <li>Linking commits and PRs to an issue</li>
+        <li>Closing issues automatically via commit messages</li>
+      </ul>
+
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Best Practices & Common Pitfalls</div>
+    <div class="section-body">
+
+      <div class="info-box">
+        <strong>💡 Key things to remember:</strong>
+        <ul style="margin-top:8px; margin-bottom:0;">
+        <li>You can automatically close an issue when a pull request is merged by including 'Closes #12' (using the issue number) in the PR description or a commit message.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What's the most important thing to understand about github issues?</h4>
+      <p>Focus on: Bug Reports · Feature Requests · Labels · Assignees · Milestones · Issue Templates. These are the core building blocks this chapter's examples are built around, and they show up repeatedly in later chapters of this course.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Is github issues something I'll use often in real projects?</h4>
+      <p>Yes — every concept in this chapter reflects a real, everyday part of professional Git and GitHub workflows, not just a theoretical exercise.</p>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="20-forks-and-contributions.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">20. Forks & Open-Source Contributions</span></a>
+      <a href="22-github-projects.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">22. GitHub Projects</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

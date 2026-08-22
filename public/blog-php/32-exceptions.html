@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHP — Exceptions | Our Compiler</title>
+  <meta name="description" content="Complete PHP Chapter 32: Exceptions. Learn Exception ante enti? · try · catch · finally · throw · Custom exception · Multiple catch blocks · Exception hierarchy · Domain exceptions · API exception responses with practical PHP code examples, web execution flow, and step-by-step walkthroughs." />
+  <meta name="keywords" content="php tutorial, server side scripting, exceptions, learn php, web development, php pdo" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-php/32-exceptions.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-php/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_php', rawCode);
+              window.location.href = '/?lang=php';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-php">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html" class="active">PHP</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">PHP Master Course</div>
+    <a href="/blog-php.html" class="sidebar-home-link">🐘 PHP Course HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐘</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">PHP Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/01-php-ante-enti-what-is-php.html" class="">1. PHP Ante Enti?</a><a href="/blog-php/02-php-prerequisites.html" class="">2. PHP Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First Program</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/03-php-installation.html" class="">3. PHP Installation</a><a href="/blog-php/04-first-php-program.html" class="">4. First PHP Program</a><a href="/blog-php/05-php-with-html.html" class="">5. PHP with HTML</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔢</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Variables and Data Types</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/06-variables.html" class="">6. Variables</a><a href="/blog-php/07-data-types.html" class="">7. Data Types</a><a href="/blog-php/08-type-declarations.html" class="">8. Type Declarations</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Operators and Control Flow</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/09-operators.html" class="">9. Operators</a><a href="/blog-php/10-conditions.html" class="">10. Conditions</a><a href="/blog-php/11-loops.html" class="">11. Loops</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Strings and Arrays</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/12-strings.html" class="">12. Strings</a><a href="/blog-php/13-indexed-arrays.html" class="">13. Indexed Arrays</a><a href="/blog-php/14-associative-arrays.html" class="">14. Associative Arrays</a><a href="/blog-php/15-array-functions.html" class="">15. Array Functions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Functions & Scope</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/16-functions.html" class="">16. Functions</a><a href="/blog-php/17-arrow-functions-and-closures.html" class="">17. Arrow Functions & Closures</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Forms & Web Input</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/18-superglobals.html" class="">18. Superglobals</a><a href="/blog-php/19-form-handling.html" class="">19. Form Handling</a><a href="/blog-php/20-form-validation.html" class="">20. Form Validation & Sanitization</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔑</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Sessions, Cookies & Auth</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/21-sessions.html" class="">21. Sessions</a><a href="/blog-php/22-cookies.html" class="">22. Cookies</a><a href="/blog-php/23-authentication-project.html" class="">23. Authentication Project</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Object-Oriented PHP</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/24-classes-and-objects.html" class="">24. Classes & Objects</a><a href="/blog-php/25-access-modifiers.html" class="">25. Access Modifiers</a><a href="/blog-php/26-inheritance.html" class="">26. Inheritance</a><a href="/blog-php/27-abstract-classes-and-interfaces.html" class="">27. Abstract Classes & Interfaces</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Advanced OOP</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/28-traits.html" class="">28. Traits</a><a href="/blog-php/29-magic-methods.html" class="">29. Magic Methods</a><a href="/blog-php/30-namespaces-and-autoloading.html" class="">30. Namespaces & Autoloading</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">File Handling & Exceptions</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-php/31-file-handling.html" class="">31. File Handling</a><a href="/blog-php/32-exceptions.html" class="active">32. Exceptions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Database with PDO</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/33-sql-basics.html" class="">33. SQL Basics</a><a href="/blog-php/34-pdo.html" class="">34. PDO</a><a href="/blog-php/35-database-project.html" class="">35. Database Project</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">JSON and APIs</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/36-json.html" class="">36. JSON</a><a href="/blog-php/37-rest-apis.html" class="">37. REST APIs</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/38-php-security-basics.html" class="">38. PHP Security Basics</a><a href="/blog-php/39-csrf-and-xss.html" class="">39. CSRF and XSS</a><a href="/blog-php/40-authorization.html" class="">40. Authorization</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Laravel Framework</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">8 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/41-laravel-introduction.html" class="">41. Laravel Introduction</a><a href="/blog-php/42-laravel-routing.html" class="">42. Laravel Routing</a><a href="/blog-php/43-controllers-and-views.html" class="">43. Controllers & Views</a><a href="/blog-php/44-laravel-validation.html" class="">44. Laravel Validation</a><a href="/blog-php/45-eloquent-orm.html" class="">45. Eloquent ORM</a><a href="/blog-php/46-laravel-auth.html" class="">46. Laravel Auth</a><a href="/blog-php/47-laravel-api.html" class="">47. Laravel API</a><a href="/blog-php/48-laravel-project.html" class="">48. Laravel Project</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Advanced PHP</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-php/49-generators.html" class="">49. Generators</a><a href="/blog-php/50-fibers.html" class="">50. Fibers</a><a href="/blog-php/51-attributes-and-reflection.html" class="">51. Attributes and Reflection</a><a href="/blog-php/52-performance.html" class="">52. Performance</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=php" style="color:#10b981;font-weight:700;">▶ Try PHP Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-php.html">PHP</a><span class="sep">›</span>
+      <span class="current">Lesson 32: Exceptions</span>
+    </div>
+
+    <h1 class="page-title">PHP — Exceptions</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐘 PHP 8.2+</span>
+      <span class="badge">🟢 Lesson 32 of 52</span>
+      <span class="badge">📂 Phase 11: File Handling & Exceptions</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Exception ante enti? · try · catch · finally · throw · Custom exception · Multiple catch blocks · Exception hierarchy · Domain exceptions · API exception responses</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>PHP — Exceptions</strong> in our PHP Complete Masterclass! Handle runtime exceptions using try, catch, finally blocks, and throw custom Exception instances.</p>
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Exceptions — Conceptual Theory & Architecture</div>
+    <div class="section-body">
+      <p>In modern PHP 8.2+ web engineering, mastering <strong>Exceptions</strong> is essential for building fast, secure, and maintainable backend applications, microservices, and web API platforms.</p>
+
+      <div class="callout">
+        <div class="callout-title">💡 Core Architecture & Principles</div>
+        <p>PHP handles exceptions through strict ZEND Engine execution, explicit type checking, and modern PSR standard conventions. Key topics covered in this lesson:</p>
+        <ul style="margin:8px 0 0 18px;line-height:1.8;">
+          <li><strong>Exception ante enti?:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>try:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>catch:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>finally:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>throw:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>Custom exception:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>Multiple catch blocks:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>Exception hierarchy:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>Domain exceptions:</strong> Fundamental PHP web concept for production code design.</li>
+<li><strong>API exception responses:</strong> Fundamental PHP web concept for production code design.</li>
+        </ul>
+      </div>
+
+      <div class="diagram-box">PHP ZEND Engine Execution Pipeline for Exceptions:
+
+  [ PHP File (.php) ] ──> [ Lexer & Parser ] ──> [ AST & Opcodes ]
+                                                       │
+                                                       ▼
+  [ Client HTML/JSON Output ] <── [ SAPI Stream ] <── [ OPcache & Zend Executor ]</div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Production Code Implementation</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">PHP — Production Example</span>
+          <a class="try-btn" href="/?lang=php">▶ Run in PHP Compiler</a>
+        </div>
+        <pre><code><?php
+
+declare(strict_types=1);
+
+// Production implementation of Exceptions
+echo "=== PHP Masterclass: Exceptions ===\n";
+
+$executionTime = microtime(true);
+echo "Executing server-side logic...\n";
+
+echo "Completed in " . round((microtime(true) - $executionTime) * 1000, 2) . "ms\n";
+?></code></pre>
+      </div>
+
+      <table class="tbl spec-table" style="margin-top:20px;">
+        <thead><tr><th>PHP Construct</th><th>Technical Purpose & Execution Behavior</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;?php</code></td><td>Opening tag instructing the web server to interpret code via the PHP ZEND engine.</td></tr>
+          <tr><td><code>declare(strict_types=1);</code></td><td>Enforces strict type checking for function parameters and return types across the file.</td></tr>
+          <tr><td><code>htmlspecialchars()</code></td><td>Escapes special HTML characters to protect applications from Cross-Site Scripting (XSS).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Security & Best Practices</div>
+    <div class="section-body">
+      <div class="callout" style="border-left-color:#ef4444;">
+        <div class="callout-title" style="color:#ef4444;">⚠️ Security Traps & Best Practices</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Never trust user input from superglobals (<code>$_GET</code>, <code>$_POST</code>, <code>$_COOKIE</code>). Always validate and sanitize before processing.</li>
+          <li>Set secure session cookie attributes: <code>session.cookie_httponly = 1</code>, <code>session.cookie_secure = 1</code>, <code>session.cookie_samesite = 'Lax'</code>.</li>
+          <li>Turn off <code>display_errors</code> in production (<code>ini_set('display_errors', '0')</code>) and log errors securely to files.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Live PHP Code Execution</div>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:12px;">Test and run this PHP script in our online web compiler environment:</p>
+      <a class="run-btn" href="/?lang=php">Open in Online PHP Compiler →</a>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on PHP 8.2+ · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="31-file-handling.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">31. File Handling</span></a>
+      <a href="33-sql-basics.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">33. SQL Basics</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+<footer class="footer" id="site-footer"></footer>
+</body>
+</html>

@@ -18,7 +18,7 @@ export default function CompilerHeader({ theme, setTheme, goHome }) {
         className="compiler-header-theme"
         aria-label="Toggle theme"
       >
-        {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+        {theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}
       </button>
     </header>
   )

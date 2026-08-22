@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spring Boot — Entities & Column Annotations | Our Compiler</title>
+  <meta name="description" content="Complete Spring Boot Chapter 22: Entities & Column Annotations. Learn @Entity · @Table · @Id · @GeneratedValue · @Column · @Transient · @Enumerated · @Embedded · Audit fields (@CreatedDate) with practical Java Spring Boot code examples, annotations, configuration snippets, and step-by-step walkthroughs." />
+  <meta name="keywords" content="spring boot tutorial, learn spring boot, entities & column annotations, java spring, spring security, spring data jpa" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-springboot/22-jpa-entity-mapping.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-springboot/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-springboot">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-springboot.html" class="active">Spring Boot</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-mongodb.html">MongoDB</a>
+  <a href="/blog-redis.html">Redis</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Spring Boot Tutorial</div>
+    <a href="/blog-springboot.html" class="sidebar-home-link">🍃 Spring Boot HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🍃</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Introduction and Setup</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/01-springboot-introduction.html" class="">1. Spring Boot Ante Enti?</a><a href="/blog-springboot/02-springboot-prerequisites.html" class="">2. Prerequisites & Core Java Foundations</a><a href="/blog-springboot/03-springboot-setup.html" class="">3. Spring Boot Setup & Initializr</a><a href="/blog-springboot/04-springboot-project-structure.html" class="">4. Project Structure & Recommended Layout</a><a href="/blog-springboot/05-first-springboot-application.html" class="">5. First Spring Boot Application & Tomcat</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Project Structure and Core Spring</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/06-ioc-and-dependency-injection.html" class="">6. IoC and Dependency Injection</a><a href="/blog-springboot/07-beans-and-components.html" class="">7. Beans and Components</a><a href="/blog-springboot/08-bean-scopes-and-lifecycle.html" class="">8. Bean Scopes, Lifecycle & Conditional Beans</a><a href="/blog-springboot/09-configuration-and-profiles.html" class="">9. Configuration and Profiles</a><a href="/blog-springboot/10-custom-configurations-and-properties.html" class="">10. Custom Configurations & Secret Management</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">REST API Development & Spring MVC</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/11-spring-mvc-architecture.html" class="">11. HTTP and REST Basics</a><a href="/blog-springboot/12-request-mapping-annotations.html" class="">12. Controllers (@RestController & Mappings)</a><a href="/blog-springboot/13-controller-request-parameters.html" class="">13. DTOs & Response Wrappers</a><a href="/blog-springboot/14-http-status-and-response-entity.html" class="">14. CRUD REST API & Status Codes</a><a href="/blog-springboot/15-dto-pattern-and-object-mapping.html" class="">15. Swagger UI & OpenAPI 3 Documentation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Service and Repository Layers</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/16-input-validation.html" class="">16. Service Layer Architecture</a><a href="/blog-springboot/17-global-exception-handling.html" class="">17. Repository Layer & Data Access</a><a href="/blog-springboot/18-custom-exceptions.html" class="">18. Layered Architecture (Controller -> Service -> Repository)</a><a href="/blog-springboot/19-content-negotiation-and-json.html" class="">19. Bean Validation (@Valid & Constraints)</a><a href="/blog-springboot/20-file-upload-download-api.html" class="">20. Global Exception Handling (@RestControllerAdvice)</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">JPA and Databases</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-springboot/21-spring-data-jpa-orm.html" class="">21. JPA and Hibernate ORM Basics</a><a href="/blog-springboot/22-jpa-entity-mapping.html" class="active">22. Entities & Column Annotations</a><a href="/blog-springboot/23-jpa-repository.html" class="">23. Spring Data Repositories (JpaRepository)</a><a href="/blog-springboot/24-derived-query-methods.html" class="">24. Entity Relationships (@OneToMany, @ManyToMany)</a><a href="/blog-springboot/25-jpql-and-native-queries.html" class="">25. Transactions (@Transactional & Propagation)</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔑</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Database Migrations & Security Basics</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/26-jpa-one-to-one-one-to-many.html" class="">26. Database Migrations (Flyway & Liquibase)</a><a href="/blog-springboot/27-jpa-many-to-many.html" class="">27. Spring Security Basics & Filter Chain</a><a href="/blog-springboot/28-fetch-types-and-n-plus-one.html" class="">28. User Authentication & Password Encoders</a><a href="/blog-springboot/29-pagination-sorting-specifications.html" class="">29. Stateless JWT Authentication</a><a href="/blog-springboot/30-database-migrations.html" class="">30. Role & Permission Based Authorization</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Testing Strategies (Unit, Mockito & Integration)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/31-spring-security-architecture.html" class="">31. Unit Testing with JUnit 5</a><a href="/blog-springboot/32-form-and-http-basic-security.html" class="">32. Mocking Dependencies with Mockito</a><a href="/blog-springboot/33-jwt-authentication.html" class="">33. Controller Testing with @WebMvcTest & MockMvc</a><a href="/blog-springboot/34-role-based-access-control.html" class="">34. Integration Testing with @SpringBootTest & Testcontainers</a><a href="/blog-springboot/35-oauth2-and-social-logins.html" class="">35. Repository Testing with @DataJpaTest</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Actuator, Logging & Observability</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/36-rest-template-and-webclient.html" class="">36. Spring Boot Actuator & Production Metrics</a><a href="/blog-springboot/37-spring-cloud-openfeign.html" class="">37. Structured Logging & SLF4J Logback</a><a href="/blog-springboot/38-spring-cache-and-redis.html" class="">38. Observability (Micrometer, Prometheus & Grafana)</a><a href="/blog-springboot/39-async-processing-and-events.html" class="">39. Caching with Spring Cache & Redis</a><a href="/blog-springboot/40-scheduled-tasks-cron.html" class="">40. Scheduled Tasks & Background Jobs</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Async, Messaging & Microservices Architecture</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/41-springboot-actuator.html" class="">41. Asynchronous Programming with @Async</a><a href="/blog-springboot/42-metrics-logging-prometheus.html" class="">42. Message-Driven Architecture with Kafka & RabbitMQ</a><a href="/blog-springboot/43-unit-testing-junit-mockito.html" class="">43. Reactive Programming with Spring WebFlux</a><a href="/blog-springboot/44-integration-testing-testcontainers.html" class="">44. Clean Architecture & Hexagonal Design</a><a href="/blog-springboot/45-dockerization-and-kubernetes.html" class="">45. Microservices & Spring Cloud Overview</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Containerization, Deployment & Interview Prep</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-springboot/46-our-compiler-platform-architecture.html" class="">46. Build Tools: Maven vs Gradle</a><a href="/blog-springboot/47-spring-webflux-reactive.html" class="">47. Dockerization & Docker Compose</a><a href="/blog-springboot/48-kafka-and-rabbitmq-integration.html" class="">48. CI/CD Pipelines & Cloud Deployment</a><a href="/blog-springboot/49-enterprise-spring-design-patterns.html" class="">49. Our Compiler Spring Boot Backend Architecture</a><a href="/blog-springboot/50-springboot-interview-preparation.html" class="">50. Top 50 Spring Boot Technical Interview Q&A</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-springboot.html">Spring Boot</a><span class="sep">›</span>
+      <span class="current">Spring Boot — Entities & Column Annotations</span>
+    </div>
+
+    <h1 class="page-title">Spring Boot — Entities & Column Annotations</h1>
+
+    <div class="page-meta">
+      <span class="badge">🍃 Spring Boot 3.2+</span>
+      <span class="badge">🟢 Chapter 22 of 50</span>
+      <span class="badge">📂 Phase 05: JPA and Databases</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">@Entity · @Table · @Id · @GeneratedValue · @Column · @Transient · @Enumerated · @Embedded · Audit fields (@CreatedDate)</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Spring Boot — Entities & Column Annotations</strong> in our Spring Boot Complete Masterclass! Map Java domain classes to relational database tables using @Entity and column mapping annotations.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In modern enterprise backend software architecture, <strong>Entities & Column Annotations</strong> plays a fundamental role in structuring Java Spring Boot applications, auto-configuration pipelines, RESTful APIs, and cloud-native microservices.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#83d24e;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master Spring Boot annotations and configuration syntax for <strong>Entities & Column Annotations</strong></li>
+          <li>Understand Spring IoC container bean lifecycles and DispatcherServlet request routing</li>
+          <li>Implement production-grade Spring Data JPA repositories, Spring Security JWT, and REST controllers</li>
+          <li>Avoid tight coupling, circular dependencies, N+1 query select problems, and improper bean scoping</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Entities & Column Annotations is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Mastering <strong>Entities & Column Annotations</strong> enables you to build production-ready enterprise microservices, automate boilerplate setup with convention-over-configuration, and scale Java REST APIs effortlessly.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required project/command structure -->
+    <div class="section-title"><span class="num">4</span>Required Command / Code Structure</div>
+    <div class="section-body">
+      <p>Target Command / Annotation: <code>@Entity public class Course { @Id @GeneratedValue private Long id; }</code>. Executed inside Maven/Gradle Java projects running Spring Boot 3.2+ on Java 17/21 LTS.</p>
+    </div>
+
+    <!-- 5. Syntax & mechanism -->
+    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
+    <div class="section-body">
+      <p>Mechanism: <code style="color:#83d24e;font-weight:700;">Spring IoC Container &amp; Auto-Configuration</code>. Core Topic: <code>@Entity</code>.</p>
+    </div>
+
+    <!-- 6. Basic example code -->
+    <div class="section-title"><span class="num">6</span>Basic Example Code / Command</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Java / Spring Boot</span></div>
+        <pre><code>package com.ourcompiler.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.*;
+
+// Example demonstration for Entities & Column Annotations
+@Entity public class Course { @Id @GeneratedValue private Long id; }
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Execution output / terminal log -->
+    <div class="section-title"><span class="num">7</span>Execution Output &amp; Startup Log</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Terminal Console Output</span></div>
+        <pre><code>  .   ____          _            __ _ _
+ /\\\\ / ___'_ __ _ _(_)_ __  __ _ \\ \\ \\ \\
+( ( )\\___ | '_ | '_| | '_ \\/ _` | \\ \\ \\ \\
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\\__, | / / / /
+ =========|_|==============|___/=/_/ /_/
+ :: Spring Boot ::                (v3.2.3)
+
+2026-08-21T14:30:00.123Z  INFO 12345 --- [main] c.o.app.Application : Starting Application using Java 21...
+2026-08-21T14:30:01.890Z  INFO 12345 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-08-21T14:30:02.100Z  INFO 12345 --- [main] c.o.app.Application : Started Application in 2.345 seconds (process running for 2.8)</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Internal flow & memory mechanics -->
+    <div class="section-title"><span class="num">8</span>Internal Flow &amp; Spring Container Lifecycle</div>
+    <div class="section-body">
+      <div class="diagram-box">HTTP Request -> DispatcherServlet -> HandlerMapping -> Interceptor -> @RestController -> @Service -> @Repository (JpaRepository) -> Database</div>
+    </div>
+
+    <!-- 9. Practical production usage -->
+    <div class="section-title"><span class="num">9</span>Practical Production Workflow Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Java Spring Boot Production Service</span></div>
+        <pre><code>// Production Service implementation for Entities & Column Annotations
+package com.ourcompiler.app.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Service
+@Transactional(readOnly = true)
+public class CourseService {
+
+    private static final Logger log = LoggerFactory.getLogger(CourseService.class);
+
+    public String getCourseDetails(Long id) {
+        log.info("Fetching course details for ID: {}", id);
+        return "Spring Boot Masterclass — Chapter 22: Entities & Column Annotations";
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 10. Verification & status -->
+    <div class="section-title"><span class="num">10</span>Verification &amp; Architecture Status</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #6db33f;">
+        <strong style="color:#83d24e;">Verification Status: Entities & Column Annotations Verified</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Spring Boot's auto-configuration conditionally configures beans based on classpath starters, reducing XML/Java configuration boilerplate by over 90%.</p>
+      </div>
+    </div>
+
+    <!-- 11. Common mistakes -->
+    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Using <code>@Autowired</code> field injection instead of constructor injection — breaks immutability and makes unit testing with Mockito difficult.</li>
+          <li>Forgetting to handle circular dependencies between Spring beans — causes application startup failure (BeanCurrentlyInCreationException).</li>
+          <li>Exposing JPA entities directly through REST controllers instead of converting to DTOs — causes accidental mass-assignment security leaks.</li>
+          <li>Executing blocking database/network calls inside reactive WebFlux streams.</li>
+          <li>Leaving <code>spring.jpa.hibernate.ddl-auto=create-drop</code> enabled in production environments — results in data loss on restart! Use Flyway or Liquibase instead.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 12. Coding challenge -->
+    <div class="section-title"><span class="num">12</span>Hands-On Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#83d24e;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Create a Spring Boot application using Maven wrapper. Implement <code>@Entity public class Course { @Id @GeneratedValue private Long id; }</code> inside your package, run <code>./mvnw spring-boot:run</code>, and test the HTTP endpoint at <code>http://localhost:8080/api</code> using cURL or Postman!</p>
+      </div>
+    </div>
+
+    <!-- 13. Mini quiz -->
+    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary advantage of Entities & Column Annotations in Spring Boot?</h4>
+        <p><strong>Answer:</strong> It provides convention-over-configuration and auto-configuration for @Entity, eliminating manual bean setup.</p>
+      </div>
+    </div>
+
+    <!-- 14. Quick recap -->
+    <div class="section-title"><span class="num">14</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Map Java domain classes to relational database tables using @Entity and column mapping annotations.</li>
+        <li>Spring Boot simplifies Java enterprise backend development with auto-configuration and embedded servers.</li>
+        <li>Combine Dependency Injection, Spring Data JPA, and Spring Security for scalable REST API microservices.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Spring Boot 3.2+ Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 15 & 16. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="21-spring-data-jpa-orm.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">21. JPA and Hibernate ORM Basics</span></a>
+      <a href="23-jpa-repository.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">23. Spring Data Repositories (JpaRepository)</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

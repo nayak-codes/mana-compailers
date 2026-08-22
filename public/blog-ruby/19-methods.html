@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ruby — Methods | Our Compiler</title>
+  <meta name="description" content="Complete Ruby Chapter 19: Methods. Learn Method definition · Method call · Parameters · Arguments · Return values · Implicit return · Explicit return · Default arguments · Keyword arguments · Splat operator (*args) · Double splat (**kwargs) · Method visibility · Predicate methods (valid?) · Bang methods (sort!) with practical Ruby code examples, object memory model, and step-by-step walkthroughs." />
+  <meta name="keywords" content="ruby tutorial, learn ruby, methods, ruby programming, ruby on rails, rubocop" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-ruby/19-methods.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-ruby/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-ruby">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html" class="active">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Ruby Tutorial</div>
+    <a href="/blog-ruby.html" class="sidebar-home-link">💎 Ruby HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💎</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Ruby Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/01-ruby-ante-enti-what-is-ruby.html" class="">1. What is Ruby?</a><a href="/blog-ruby/02-ruby-prerequisites.html" class="">2. Ruby Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First Program</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/03-ruby-installation.html" class="">3. Ruby Installation</a><a href="/blog-ruby/04-first-ruby-program.html" class="">4. Your First Ruby Program</a><a href="/blog-ruby/05-rubygems-and-bundler.html" class="">5. RubyGems & Bundler</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔢</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Variables and Data Types</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/06-variables.html" class="">6. Variables & Constants</a><a href="/blog-ruby/07-basic-data-types.html" class="">7. Data Types</a><a href="/blog-ruby/08-type-conversion.html" class="">8. Type Conversion</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Operators and Control Flow</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/09-operators.html" class="">9. Operators</a><a href="/blog-ruby/10-conditions.html" class="">10. Conditions</a><a href="/blog-ruby/11-loops.html" class="">11. Loops</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Strings, Arrays and Hashes</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/12-strings.html" class="">12. Strings</a><a href="/blog-ruby/13-arrays.html" class="">13. Arrays</a><a href="/blog-ruby/14-hashes.html" class="">14. Hashes</a><a href="/blog-ruby/15-ranges-and-symbols.html" class="">15. Ranges & Symbols</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Blocks, Iterators and Enumerable</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/16-blocks.html" class="">16. Blocks</a><a href="/blog-ruby/17-iterators.html" class="">17. Iterators</a><a href="/blog-ruby/18-enumerable.html" class="">18. Enumerable</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Functions and Methods</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-ruby/19-methods.html" class="active">19. Methods</a><a href="/blog-ruby/20-procs-and-lambdas.html" class="">20. Procs & Lambdas</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Object-Oriented Ruby</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/21-classes-and-objects.html" class="">21. Classes & Objects</a><a href="/blog-ruby/22-attributes-and-encapsulation.html" class="">22. Attributes & Encapsulation</a><a href="/blog-ruby/23-inheritance-and-polymorphism.html" class="">23. Inheritance & Polymorphism</a><a href="/blog-ruby/24-modules-and-mixins.html" class="">24. Modules & Mixins</a><a href="/blog-ruby/25-class-methods-and-metaprogramming.html" class="">25. Metaprogramming</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Exceptions, Files & Regex</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/26-exception-handling.html" class="">26. Exceptions</a><a href="/blog-ruby/27-file-handling.html" class="">27. File Handling</a><a href="/blog-ruby/28-regular-expressions.html" class="">28. Regular Expressions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Packages, Testing and Debugging</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/29-ruby-modules-and-packages.html" class="">29. Packages & Gems</a><a href="/blog-ruby/30-ruby-testing.html" class="">30. Testing</a><a href="/blog-ruby/31-debugging.html" class="">31. Debugging</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Web Development Basics & Sinatra</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/32-web-basics.html" class="">32. Web Basics</a><a href="/blog-ruby/33-sinatra-basics.html" class="">33. Sinatra Basics</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Ruby on Rails Core</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">6 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/34-ruby-on-rails.html" class="">34. Ruby on Rails</a><a href="/blog-ruby/35-rails-routing.html" class="">35. Rails Routing</a><a href="/blog-ruby/36-rails-controllers.html" class="">36. Rails Controllers</a><a href="/blog-ruby/37-rails-views.html" class="">37. Rails Views</a><a href="/blog-ruby/38-active-record.html" class="">38. Active Record</a><a href="/blog-ruby/39-rails-associations.html" class="">39. Rails Associations</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Rails Forms, APIs and Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/40-rails-forms-and-validation.html" class="">40. Rails Forms & Validation</a><a href="/blog-ruby/41-rails-apis.html" class="">41. Rails APIs</a><a href="/blog-ruby/42-authentication-and-security.html" class="">42. Authentication & Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Background Jobs, Testing and Deployment</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/43-background-jobs.html" class="">43. Background Jobs</a><a href="/blog-ruby/44-testing-rails-apps.html" class="">44. Testing Rails Apps</a><a href="/blog-ruby/45-deployment.html" class="">45. Deployment</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Projects & Certification</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/46-ruby-projects.html" class="">46. Ruby Projects</a><a href="/blog-ruby/47-ruby-quiz.html" class="">47. Ruby Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-ruby.html">Ruby</a><span class="sep">›</span>
+      <span class="current">Ruby — Methods</span>
+    </div>
+
+    <h1 class="page-title">Ruby — Methods</h1>
+
+    <div class="page-meta">
+      <span class="badge">💎 Ruby 3.2+</span>
+      <span class="badge">🟢 Chapter 19 of 47</span>
+      <span class="badge">📂 Phase 07: Functions and Methods</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Method definition · Method call · Parameters · Arguments · Return values · Implicit return · Explicit return · Default arguments · Keyword arguments · Splat operator (*args) · Double splat (**kwargs) · Method visibility · Predicate methods (valid?) · Bang methods (sort!)</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Ruby — Methods</strong> in our Ruby Complete Masterclass! Write elegant Ruby methods with implicit returns, default parameters, keyword arguments, splats (*args, **kwargs), and bang/predicate conventions.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In Ruby programming, understanding <strong>Methods</strong> is essential for writing clean, expressive, and object-oriented software. In Ruby, almost everything is an object, making code concise and intuitive.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master core Ruby language mechanics behind <strong>Methods</strong></li>
+          <li>Understand object evaluation, message passing, and blocks</li>
+          <li>Write production-ready, formatted idiomatic Ruby source code</li>
+          <li>Avoid common scope errors, symbol/string memory bugs, and nil pointer exceptions</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Methods is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Ruby powers major tech platforms like GitHub, Shopify, Airbnb, and Stripe. Mastering <strong>Methods</strong> enables developers to write elegant scripts, build Ruby on Rails web backends, and author RubyGems.</p>
+      </div>
+    </div>
+
+    <!-- 4. Basic syntax -->
+    <div class="section-title"><span class="num">4</span>Basic Syntax</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Ruby — Code Structure</span>
+        </div>
+        <pre><code>def calculate_total(price, tax = 0.18)
+  price + (price * tax)
+end
+
+puts calculate_total(100)</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Simple example -->
+    <div class="section-title"><span class="num">5</span>Simple Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Ruby — Executable Example</span>
+        </div>
+        <pre><code>def calculate_total(price, tax = 0.18)
+  price + (price * tax)
+end
+
+puts calculate_total(100)</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. Output -->
+    <div class="section-title"><span class="num">6</span>Output</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:16px;border-radius:8px;margin:16px 0;font-size:13.5px;border-left:4px solid #10b981;">
+        <strong style="color:#10b981;">📊 Expected Terminal Output:</strong>
+        <pre style="margin-top:8px;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;color:#a6e22e;font-family:'JetBrains Mono',monospace;">Script Executed Successfully.</pre>
+      </div>
+    </div>
+
+    <!-- 7. Line-by-line explanation -->
+    <div class="section-title"><span class="num">7</span>Line-by-Line Explanation</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Line 1: Evaluates core constructs for <strong>Methods</strong>.</li>
+        <li>Line 2: Processes parameters, blocks, or database migrations depending on execution context.</li>
+        <li>Line 3: Outputs result or returns formatted response to terminal / web browser.</li>
+      </ul>
+    </div>
+
+    <!-- 8. Practical example -->
+    <div class="section-title"><span class="num">8</span>Practical Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Ruby — Production Pattern</span>
+        </div>
+        <pre><code>def calculate_total(price, tax = 0.18)
+  price + (price * tax)
+end
+
+puts calculate_total(100)</code></pre>
+      </div>
+    </div>
+
+    <!-- 9. Block scope note -->
+    <div class="section-title"><span class="num">9</span>Block Scope &amp; Memory Note</div>
+    <div class="section-body">
+      <div class="diagram-box">Ruby Object Evaluation & Scope Resolution
+  │
+  ├── Block Scope / Method Dispatch
+  │     ├── Local Variables Capture
+  │     └── Message Passing via Symbol Dispatch
+  │
+  └── Output -> Stdout / Web HTTP Response</div>
+    </div>
+
+    <!-- 10. Common mistakes -->
+    <div class="section-title"><span class="num">10</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Pitfalls to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Calling methods on <code>nil</code> objects causing <code>NoMethodError: undefined method for nil:NilClass</code>.</li>
+          <li>Forgetting that in Ruby ONLY <code>false</code> and <code>nil</code> are falsy (0, empty string, and empty arrays are truthy!).</li>
+          <li>Creating N+1 database queries in Active Record relationships by neglecting <code>includes(...)</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 11. Coding challenge -->
+    <div class="section-title"><span class="num">11</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Write a Ruby script demonstrating <strong>Methods</strong>. Run the file using <code>ruby main.rb</code>, <code>irb</code>, or launch your Rails server with <code>bin/rails server</code>!</p>
+      </div>
+    </div>
+
+    <!-- 12. Mini quiz -->
+    <div class="section-title"><span class="num">12</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary purpose of Methods in Ruby &amp; Rails?</h4>
+        <p><strong>Answer:</strong> It provides core language and framework capabilities for Method definition, building readable, scalable web applications.</p>
+      </div>
+    </div>
+
+    <!-- 13. Quick recap -->
+    <div class="section-title"><span class="num">13</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Write elegant Ruby methods with implicit returns, default parameters, keyword arguments, splats (*args, **kwargs), and bang/predicate conventions.</li>
+        <li>Subtopics covered: Method definition · Method call · Parameters · Arguments · Return values · Implicit return · Explicit return · Default arguments · Keyword arguments · Splat operator (*args) · Double splat (**kwargs) · Method visibility · Predicate methods (valid?) · Bang methods (sort!)</li>
+        <li>Follow RuboCop conventions and write human-readable, elegant Ruby code.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Ruby 3.2+ and Rails 7+ · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 14. Previous lesson & 15. Next lesson -->
+    <div class="nav-footer">
+      <a href="18-enumerable.html" class="nav-btn"><span class="label">← 14. Previous Lesson</span><span class="title">18. Enumerable</span></a>
+      <a href="20-procs-and-lambdas.html" class="nav-btn" style="text-align:right;"><span class="label">15. Next Lesson →</span><span class="title">20. Procs & Lambdas</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

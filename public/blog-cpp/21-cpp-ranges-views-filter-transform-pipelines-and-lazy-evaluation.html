@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Ranges & Views: filter, transform, Pipelines & Lazy Evaluation (C++20) Complete Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Exhaustive textbook-grade C++ Ranges & Views (Phase 21): std::ranges algorithms with projections, views::filter/transform/take/drop/iota/reverse/keys/values, composable pipelines with |, lazy evaluation, materializing views, ranges::to (C++23), all 15+ view adaptors, and C++20 vs C++23 features." />
+  <meta name="keywords" content="c++ tutorial, c++ ranges & views: filter, transform, pipelines & lazy evaluation (c++20) complete masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <style>
+    .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
+    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
+    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
+    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
+    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
+    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
+    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+  </style>
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains("open");
+      if (isOpen) {
+        content.classList.remove("open");
+        btn.classList.remove("active");
+      } else {
+        content.classList.add("open");
+        btn.classList.add("active");
+      }
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".code-block").forEach(block => {
+        const header = block.querySelector(".code-block-header");
+        const codeEl = block.querySelector("pre code");
+        if (!header || !codeEl) return;
+        let actionsContainer = header.querySelector(".code-actions");
+        if (!actionsContainer) {
+          actionsContainer = document.createElement("div");
+          actionsContainer.className = "code-actions";
+          actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+          const tryBtn = header.querySelector(".try-btn");
+          if (tryBtn) actionsContainer.appendChild(tryBtn);
+          header.appendChild(actionsContainer);
+        }
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.innerHTML = "📋 Copy";
+        copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; white-space: nowrap;";
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            copyBtn.innerHTML = "✅ Copied!";
+            setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
+          });
+        });
+        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+      });
+    });
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME</a>
+    <div class="sidebar-accordion">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C++ Basics & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-basics-history-compiler-and-hello-world.html">1. C++ Fundamentals, Compiler Pipeline & Hello World</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables, Data Types & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/02-cpp-variables-data-types-constexpr-auto-and-scope.html">2. Variables, Data Types, constexpr, auto & Scope</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input, Operators & Practice</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/03-cpp-input-cin-getline-and-operators-masterclass.html">3. cin, getline(), Operators & 6 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/04-cpp-conditional-branching-if-else-and-switch-case.html">4. if-else Ladders, Logical Logic & switch-case</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-loops-for-while-do-while-and-range-based-for.html">5. for, while, Range-for & 9 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Functions & Modular Code</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/06-cpp-functions-prototypes-overloading-and-lambdas.html">6. Functions, Overloading, References & Lambdas</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays, Strings & Vectors</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/07-cpp-arrays-std-string-string-view-and-std-vector.html">7. Arrays, std::string, string_view & std::vector</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Pointers & Memory Safety</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/08-cpp-pointers-references-nullptr-and-memory-safety.html">8. Pointers, References, nullptr & Memory Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Object-Oriented Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-object-oriented-programming-classes-objects-and-encapsulation.html">9. OOP, Classes, Objects, Access Specifiers & Pillars</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Constructors, Destructors & RAII</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html" class="active">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 21: C++ Ranges & Views: filter, transform, Pipelines & Lazy Evaluation (C++20) Complete Masterclass</span>
+    </div>
+    <h1 class="page-title">C++ Ranges & Views: filter, transform, Pipelines & Lazy Evaluation (C++20) Complete Masterclass</h1>
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
+      <span class="badge">🟢 Lesson 21</span>
+      <span class="badge">📂 Phase 21: Ranges & Views (C++20)</span>
+      <span class="badge">📅 2026 Master Edition</span>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Ranges vs Iterator Pairs · Projections · std::ranges algorithms · views::filter & transform · views::take & drop · take_while & drop_while · views::iota (finite & infinite) · Pipeline Composition | · views::keys & values · Lazy Evaluation · Materializing Views · C++23 zip & enumerate</span>
+    </div>
+
+<div class="intro-box">
+  <p>Welcome to <strong>Phase 21 (Chapter 21): C++ Ranges &amp; Views (C++20) Masterclass</strong>! The Ranges library is the biggest quality-of-life improvement in C++ since C++11. Ranges eliminate iterator pairs from algorithm calls, views enable lazy composable pipelines with the <code>|</code> operator, and the whole system is zero-cost due to lazy evaluation and compile-time composition.</p>
+</div>
+
+<div class="section-title"><span class="num">1</span>What are Ranges? The Big Picture</div>
+<div class="section-body">
+  <p class="text-prose">A <strong>range</strong> is any type with <code>begin()</code> and <code>end()</code>. The <code>std::ranges</code> namespace provides range-based versions of all STL algorithms that accept a single range instead of a begin/end pair — eliminating a whole class of bugs.</p>
+  <div class="concept-box">
+    <h4>Old STL vs Ranges:</h4>
+    <p>Old: <code>std::sort(v.begin(), v.end());</code> — requires begin/end pair, can be mismatched</p>
+    <p>New: <code>std::ranges::sort(v);</code> — accepts the range directly, impossible to mismatch</p>
+    <p>Old: <code>std::sort(v.begin(), v.end(), pred);</code></p>
+    <p>New: <code>std::ranges::sort(v, pred);</code> — cleaner, composable with projections</p>
+  </div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — std::ranges algorithms (C++20)</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;ranges&gt;
+#include &lt;string&gt;
+
+struct Person {
+    std::string name;
+    int age;
+    double salary;
+};
+
+int main() {
+    std::vector&lt;int&gt; nums{5, 2, 8, 1, 9, 3, 7, 4, 6};
+
+    // Ranges algorithms — no begin/end, range-based projections!
+    std::ranges::sort(nums);
+    std::cout &lt;&lt; "sorted: ";
+    for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    std::ranges::reverse(nums);
+    std::cout &lt;&lt; "reversed: ";
+    for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // find with predicate
+    auto it = std::ranges::find(nums, 7);
+    if (it != nums.end())
+        std::cout &lt;&lt; "7 at index: " &lt;&lt; std::distance(nums.begin(), it) &lt;&lt; "
+";
+
+    // count_if
+    int evens = std::ranges::count_if(nums, [](int n){ return n%2==0; });
+    std::cout &lt;&lt; "evens: " &lt;&lt; evens &lt;&lt; "
+";
+
+    // ─── Projections — apply transform before comparison ──────────────────
+    std::vector&lt;Person&gt; people{
+        {"Charlie", 35, 90000}, {"Alice", 28, 75000},
+        {"Bob", 42, 120000}, {"Diana", 31, 95000}
+    };
+
+    // Sort by age using projection (much cleaner than lambda comparator!)
+    std::ranges::sort(people, {}, &amp;Person::age);
+    std::cout &lt;&lt; "
+Sorted by age:
+";
+    for (const auto&amp; p : people)
+        std::cout &lt;&lt; "  " &lt;&lt; p.name &lt;&lt; " (" &lt;&lt; p.age &lt;&lt; ")
+";
+
+    // Sort by name length using projection
+    std::ranges::sort(people, std::ranges::less{}, [](const Person&amp; p){ return p.name.size(); });
+    std::cout &lt;&lt; "
+Sorted by name length:
+";
+    for (const auto&amp; p : people) std::cout &lt;&lt; "  " &lt;&lt; p.name &lt;&lt; "
+";
+
+    // Find max salary using projection
+    auto richest = std::ranges::max_element(people, {}, &amp;Person::salary);
+    std::cout &lt;&lt; "
+Highest salary: " &lt;&lt; richest-&gt;name &lt;&lt; " ($" &lt;&lt; richest-&gt;salary &lt;&lt; ")
+";
+
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span>Views — Lazy Composable Pipelines</div>
+<div class="section-body">
+  <p class="text-prose"><strong>Views</strong> are lazy, non-owning range adapters. They compute elements on-demand — no intermediate containers, no copies. Multiple views are chained with the pipe <code>|</code> operator into composable pipelines.</p>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Views: filter, transform, take, drop, iota, reverse</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;ranges&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;algorithm&gt;
+
+int main() {
+    std::vector&lt;int&gt; numbers{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    // ─── Basic views ──────────────────────────────────────────────────────
+    // filter — keep only matching elements
+    auto evens = numbers | std::views::filter([](int n){ return n%2==0; });
+    std::cout &lt;&lt; "evens: ";
+    for (int n : evens) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // transform — map each element
+    auto squares = numbers | std::views::transform([](int n){ return n*n; });
+    std::cout &lt;&lt; "squares: ";
+    for (int n : squares) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // take — first N elements
+    auto first5 = numbers | std::views::take(5);
+    std::cout &lt;&lt; "take(5): ";
+    for (int n : first5) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // drop — skip first N elements
+    auto after3 = numbers | std::views::drop(3);
+    std::cout &lt;&lt; "drop(3): ";
+    for (int n : after3) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // take_while / drop_while
+    auto lessThan6 = numbers | std::views::take_while([](int n){ return n&lt;6; });
+    std::cout &lt;&lt; "take_while(&lt;6): ";
+    for (int n : lessThan6) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // reverse
+    auto reversed = numbers | std::views::reverse;
+    std::cout &lt;&lt; "reversed: ";
+    for (int n : reversed) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // ─── Composed pipeline — chaining multiple views ───────────────────────
+    auto pipeline = numbers
+        | std::views::filter([](int n){ return n%2==0; })      // keep evens
+        | std::views::transform([](int n){ return n*n; })       // square them
+        | std::views::take(4);                                   // take first 4
+    std::cout &lt;&lt; "even squares (first 4): ";
+    for (int n : pipeline) std::cout &lt;&lt; n &lt;&lt; " ";              // 4 16 36 64
+    std::cout &lt;&lt; "
+";
+
+    // ─── iota — generate integer sequence ─────────────────────────────────
+    // Finite: [0, 10)
+    std::cout &lt;&lt; "iota(0,10): ";
+    for (int n : std::views::iota(0, 10)) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // Infinite iota + take (lazy — only computes what's needed!)
+    auto firstNFibs = std::views::iota(1)
+        | std::views::take(8)
+        | std::views::transform([](int n){ return n*n; });
+    std::cout &lt;&lt; "1^2 to 8^2: ";
+    for (int n : firstNFibs) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // ─── keys and values views on map ─────────────────────────────────────
+    #include &lt;map&gt;
+    std::map&lt;std::string, int&gt; scores{{"Alice",95},{"Bob",87},{"Charlie",92}};
+
+    std::cout &lt;&lt; "keys: ";
+    for (const auto&amp; k : scores | std::views::keys) std::cout &lt;&lt; k &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    std::cout &lt;&lt; "values: ";
+    for (auto v : scores | std::views::values) std::cout &lt;&lt; v &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // ─── String views ──────────────────────────────────────────────────────
+    std::vector&lt;std::string&gt; words{"hello","ranges","are","amazing","cpp20","is","great"};
+    auto longUpperWords = words
+        | std::views::filter([](const std::string&amp; s){ return s.length() &gt; 3; })
+        | std::views::transform([](const std::string&amp; s){
+              std::string upper = s;
+              std::ranges::transform(upper, upper.begin(), ::toupper);
+              return upper;
+          });
+    std::cout &lt;&lt; "Long words uppercase: ";
+    for (const auto&amp; w : longUpperWords) std::cout &lt;&lt; w &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span>Materializing Views &amp; Collecting Results</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Collecting view results into containers</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;ranges&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;algorithm&gt;
+
+int main() {
+    std::vector&lt;int&gt; numbers{1,2,3,4,5,6,7,8,9,10};
+
+    // Materialize into vector using ranges::to (C++23)
+    // In C++20: use ranges::copy + back_inserter
+    auto evens = numbers | std::views::filter([](int n){ return n%2==0; });
+
+    std::vector&lt;int&gt; evenVec;
+    std::ranges::copy(evens, std::back_inserter(evenVec));
+    std::cout &lt;&lt; "Materialized evens: ";
+    for (int n : evenVec) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // Collect with transform into string
+    std::string result;
+    for (int n : numbers | std::views::filter([](int n){ return n&gt;5; }))
+        result += std::to_string(n) + " ";
+    std::cout &lt;&lt; "Greater than 5: " &lt;&lt; result &lt;&lt; "
+";
+
+    // ranges::for_each with projection
+    std::vector&lt;std::string&gt; names{"charlie","alice","bob","diana"};
+    std::ranges::for_each(names, [](const std::string&amp; n){
+        std::cout &lt;&lt; n &lt;&lt; " ";
+    });
+    std::cout &lt;&lt; "
+";
+
+    // ranges::transform with back_inserter
+    std::vector&lt;std::string&gt; upperNames;
+    std::ranges::transform(names, std::back_inserter(upperNames),
+                           [](std::string s) {
+                               std::ranges::transform(s, s.begin(), ::toupper);
+                               return s;
+                           });
+    std::cout &lt;&lt; "Uppercase: ";
+    for (const auto&amp; n : upperNames) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // Check with ranges predicates
+    bool allPositive = std::ranges::all_of(numbers, [](int n){ return n&gt;0; });
+    bool anyOver8    = std::ranges::any_of(numbers, [](int n){ return n&gt;8; });
+    bool noneNeg     = std::ranges::none_of(numbers, [](int n){ return n&lt;0; });
+    std::cout &lt;&lt; std::boolalpha
+              &lt;&lt; "all positive: " &lt;&lt; allPositive
+              &lt;&lt; " any>8: " &lt;&lt; anyOver8
+              &lt;&lt; " none negative: " &lt;&lt; noneNeg &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span>View Adaptors Reference Table</div>
+<div class="section-body">
+  <table class="tbl spec-table">
+    <thead><tr><th>View Adaptor</th><th>Description</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>views::filter(pred)</code></td><td>Keep elements matching predicate</td><td><code>v | views::filter(isEven)</code></td></tr>
+      <tr><td><code>views::transform(fn)</code></td><td>Map each element</td><td><code>v | views::transform(square)</code></td></tr>
+      <tr><td><code>views::take(n)</code></td><td>First n elements</td><td><code>v | views::take(5)</code></td></tr>
+      <tr><td><code>views::drop(n)</code></td><td>Skip first n elements</td><td><code>v | views::drop(3)</code></td></tr>
+      <tr><td><code>views::take_while(pred)</code></td><td>Take while predicate holds</td><td><code>v | views::take_while(lt10)</code></td></tr>
+      <tr><td><code>views::drop_while(pred)</code></td><td>Skip while predicate holds</td><td><code>v | views::drop_while(lt5)</code></td></tr>
+      <tr><td><code>views::reverse</code></td><td>Reverse iteration order</td><td><code>v | views::reverse</code></td></tr>
+      <tr><td><code>views::iota(a, b)</code></td><td>Sequence [a, b)</td><td><code>views::iota(1, 100)</code></td></tr>
+      <tr><td><code>views::iota(a)</code></td><td>Infinite sequence from a</td><td><code>views::iota(0) | views::take(10)</code></td></tr>
+      <tr><td><code>views::keys</code></td><td>Keys of pair/map range</td><td><code>myMap | views::keys</code></td></tr>
+      <tr><td><code>views::values</code></td><td>Values of pair/map range</td><td><code>myMap | views::values</code></td></tr>
+      <tr><td><code>views::elements&lt;N&gt;</code></td><td>Nth element of tuple range</td><td><code>v | views::elements&lt;2&gt;</code></td></tr>
+      <tr><td><code>views::zip(r1, r2)</code></td><td>Zip two ranges (C++23)</td><td><code>views::zip(names, scores)</code></td></tr>
+      <tr><td><code>views::enumerate</code></td><td>Index + element pairs (C++23)</td><td><code>v | views::enumerate</code></td></tr>
+      <tr><td><code>views::join</code></td><td>Flatten nested ranges</td><td><code>vv | views::join</code></td></tr>
+      <tr><td><code>views::split(delim)</code></td><td>Split by delimiter</td><td><code>str | views::split('/')</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-title"><span class="num">5</span>Technical FAQs</div>
+<div class="section-body">
+  <div class="faq-grid">
+    <div class="faq-item"><h4>Q1: Are views lazy or eager?</h4><p>Views are completely <strong>lazy</strong>. No computation happens when you create a view pipeline. Elements are computed one-by-one on demand as you iterate. This means <code>views::iota(0) | views::filter(pred) | views::take(5)</code> only evaluates until 5 elements are found — even from an infinite range.</p></div>
+    <div class="faq-item"><h4>Q2: Do views own their data?</h4><p>No — views are <strong>non-owning</strong>. They hold references/iterators into the original range. The original container must outlive the view. Never store a view to a local container that goes out of scope — dangling reference!</p></div>
+    <div class="faq-item"><h4>Q3: What is a projection in ranges algorithms?</h4><p>Projections let you specify a transformation to apply to elements before comparison: <code>ranges::sort(people, {}, &amp;Person::age)</code> sorts by age without writing a comparator lambda. Works with member pointers and lambdas.</p></div>
+    <div class="faq-item"><h4>Q4: Can I collect a view into a container?</h4><p>In C++20: <code>std::ranges::copy(view, std::back_inserter(vec));</code>. In C++23: <code>auto vec = view | std::ranges::to&lt;std::vector&gt;();</code> — much more concise. The <code>to&lt;&gt;</code> function materializes the lazy view into the target container.</p></div>
+    <div class="faq-item"><h4>Q5: What is the difference between std::ranges::sort and std::sort?</h4><p><code>std::ranges::sort(v)</code> accepts a single range — impossible to pass mismatched iterators. <code>std::sort(v.begin(), v.end())</code> requires an iterator pair. Both are O(n log n). Ranges version supports projections. Both have the same underlying algorithm.</p></div>
+  </div>
+</div>
+<div class="nav-footer">
+  <a href="20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html" class="nav-btn">
+    <span class="label">← Previous Lesson</span>
+    <span class="title">20. constexpr, Structured Bindings, optional, variant & format</span>
+  </a>
+  <a href="/blog-cpp.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Course Index →</span>
+    <span class="title">C++ Master Index</span>
+  </a>
+</div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

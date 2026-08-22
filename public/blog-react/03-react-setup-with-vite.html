@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React Setup with Vite — React Tutorial | Our Compiler</title>
+  <meta name="description" content="Before writing a single component, you need a working local environment. This chapter walks through installing Node.js, understanding what Vite does, and creating your very first React project from the command line." />
+  <meta name="keywords" content="react tutorial, learn react, react setup with vite, react hooks, react components, react js" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-react/03-react-setup-with-vite.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "React Setup with Vite \u2014 React Complete Course",
+  "description": "Before writing a single component, you need a working local environment. This chapter walks through installing Node.js, understanding what Vite does, and creating your very first React project from the command line.",
+  "articleSection": "Phase 02: Setup and First App",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-19"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I have to use Vite for React?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No \u2014 Create React App was the older standard tool, but it's no longer actively recommended. Vite is now the standard for new projects due to its much faster startup and build times."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What port does the Vite dev server use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "By default, Vite runs on http://localhost:5173, though it will automatically pick the next available port if 5173 is already in use."
+      }
+    }
+  ]
+}
+  </script>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side JavaScript/JSX Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\/.*$)|(\/\*[\s\S]*?\*\/)/gm, m => pushToken('cm', m));
+
+      // 2. Strings: template literals, "...", '...'
+      code = code.replace(/(`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g, m => pushToken('st', m));
+
+      // 3. JSX tag names (<Component, </Component, <div, </div, <>, </>)
+      code = code.replace(/(&lt;\/?[A-Za-z][A-Za-z0-9.]*)/g, m => pushToken('tp', m));
+
+      // 4. Keywords
+      const kwList = ['import','from','export','default','const','let','var','function','return','if','else','for','while','class','extends','new','this','super','try','catch','finally','throw','async','await','of','in','typeof','instanceof','null','undefined','true','false','switch','case','break','continue','static'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 5. React Hooks & common functions
+      const fnList = ['useState','useEffect','useRef','useReducer','useContext','useMemo','useCallback','createContext','createRoot','useNavigate','useParams','useLocation','map','filter','reduce','forEach','fetch','then','console','log','JSON','parse','stringify','localStorage','getItem','setItem','addEventListener','removeEventListener','preventDefault','createSlice','configureStore','create','clearInterval','setInterval','clearTimeout','setTimeout'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              window.location.href = '/online-javascript-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                window.location.href = '/online-javascript-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-react">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-react.html" class="active">React</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+<div class="sidebar-heading">React Complete Course</div>
+<a href="/blog-react.html" class="sidebar-home-link">⚛️ React Course HOME</a>
+<div class="sidebar-accordion">
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🚀</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 01</span>
+      <span class="phase-title">React Introduction</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/01-react-ante-enti-introduction-to-react.html">1. React Ante Enti? Introduction to React</a>
+  <a href="/blog-react/02-react-prerequisites-javascript-essentials.html">2. React Prerequisites: JavaScript Essentials</a>
+</div>
+<button class="accordion-header active" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">⚡</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 02</span>
+      <span class="phase-title">Setup and First App</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content open">
+  <a href="/blog-react/03-react-setup-with-vite.html" class="active">3. React Setup with Vite</a>
+  <a href="/blog-react/04-your-first-react-component.html">4. Your First React Component</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🎨</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 03</span>
+      <span class="phase-title">JSX and UI</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">3 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/05-jsx-basics.html">5. JSX Basics</a>
+  <a href="/blog-react/06-jsx-styling.html">6. JSX Styling</a>
+  <a href="/blog-react/07-components.html">7. Components</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">📦</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 04</span>
+      <span class="phase-title">Props and Rendering</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">3 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/08-props.html">8. Props</a>
+  <a href="/blog-react/09-conditional-rendering.html">9. Conditional Rendering</a>
+  <a href="/blog-react/10-lists-and-keys.html">10. Lists and Keys</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🔄</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 05</span>
+      <span class="phase-title">Events and State</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">3 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/11-react-events.html">11. React Events</a>
+  <a href="/blog-react/12-state-with-usestate.html">12. State with useState</a>
+  <a href="/blog-react/13-updating-objects-and-arrays-in-state.html">13. Updating Objects and Arrays in State</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">📝</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 06</span>
+      <span class="phase-title">Forms</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/14-controlled-components-forms.html">14. Controlled Components (Forms)</a>
+  <a href="/blog-react/15-form-validation.html">15. Form Validation</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🔗</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 07</span>
+      <span class="phase-title">Component Communication</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">3 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/16-parent-to-child-data-flow.html">16. Parent-to-Child Data Flow</a>
+  <a href="/blog-react/17-child-to-parent-communication.html">17. Child-to-Parent Communication</a>
+  <a href="/blog-react/18-lifting-state-up.html">18. Lifting State Up</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">⏱️</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 08</span>
+      <span class="phase-title">Lifecycle and Effects</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/19-useeffect.html">19. useEffect</a>
+  <a href="/blog-react/20-useref.html">20. useRef</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🌐</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 09</span>
+      <span class="phase-title">Data Fetching and APIs</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/21-fetching-api-data.html">21. Fetching API Data</a>
+  <a href="/blog-react/22-api-projects.html">22. API Projects</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🧠</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 10</span>
+      <span class="phase-title">Advanced State Management</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">3 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/23-usereducer.html">23. useReducer</a>
+  <a href="/blog-react/24-context-api.html">24. Context API</a>
+  <a href="/blog-react/25-external-state-management.html">25. External State Management</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🧭</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 11</span>
+      <span class="phase-title">Routing</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/26-react-router.html">26. React Router</a>
+  <a href="/blog-react/27-routing-project.html">27. Routing Project</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🏗️</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 12</span>
+      <span class="phase-title">Reusable Architecture</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/28-component-design.html">28. Component Design</a>
+  <a href="/blog-react/29-custom-hooks.html">29. Custom Hooks</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">⚙️</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 13</span>
+      <span class="phase-title">Performance</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/30-react-rendering-and-reconciliation.html">30. React Rendering and Reconciliation</a>
+  <a href="/blog-react/31-performance-optimization.html">31. Performance Optimization</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">♿</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 14</span>
+      <span class="phase-title">Accessibility and UI Quality</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/32-accessibility-in-react.html">32. Accessibility in React</a>
+  <a href="/blog-react/33-responsive-ui-design.html">33. Responsive UI Design</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🧪</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 15</span>
+      <span class="phase-title">Testing</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/34-testing-react-components.html">34. Testing React Components</a>
+  <a href="/blog-react/35-testing-project.html">35. Testing Project</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🔷</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 16</span>
+      <span class="phase-title">TypeScript with React</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/36-typescript-basics.html">36. TypeScript Basics</a>
+  <a href="/blog-react/37-typescript-with-react.html">37. TypeScript with React</a>
+</div>
+<button class="accordion-header" onclick="toggleAccordion(this)">
+  <div class="accordion-header-main">
+    <span class="phase-icon-box">🚢</span>
+    <div class="phase-info">
+      <span class="phase-tag">Phase 17</span>
+      <span class="phase-title">Production and Deployment</span>
+    </div>
+  </div>
+  <div class="accordion-header-meta">
+    <span class="phase-count-badge">2 Ch</span>
+    <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </div>
+</button>
+<div class="accordion-content">
+  <a href="/blog-react/38-build-and-environment.html">38. Build and Environment</a>
+  <a href="/blog-react/39-deployment.html">39. Deployment</a>
+</div>
+</div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog-react.html">Tutorials</a><span>›</span>
+      <a href="/blog-react.html">React</a><span>›</span>
+      <span>Chapter 3: React Setup with Vite</span>
+    </div>
+
+    <div class="page-title">React Setup with Vite</div>
+
+    <div class="page-meta">
+      <span class="badge">⚛️ React 18+</span>
+      <span class="badge">🟢 Chapter 3 of 39</span>
+      <span class="badge">📂 Phase 02: Setup and First App</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Installing Node.js · npm · Vite · Creating a Project · Folder Structure · Dependencies · Dev Server · Production Build</span>
+    </div>
+
+    <div class="intro-box">Before writing a single component, you need a working local environment. This chapter walks through installing Node.js, understanding what Vite does, and creating your very first React project from the command line.</div>
+
+    <div class="section-title"><span class="num">1</span>Installing Node.js and Understanding npm</div>
+<div class="section-body">
+<p>React itself is just a JavaScript library, but building and running a modern React project requires <strong>Node.js</strong> — a JavaScript runtime that lets tools run outside the browser. Installing Node.js also installs <strong>npm</strong> (Node Package Manager), which downloads and manages the libraries ("packages") your project depends on. Verify your installation:</p><pre><code>node -v
+npm -v</code></pre>
+</div>
+
+<div class="section-title"><span class="num">2</span>Creating a Project with Vite</div>
+<div class="section-body">
+<p><strong>Vite</strong> (pronounced "veet") is the current standard tool for scaffolding and running React projects — it starts a development server almost instantly and bundles your code efficiently for production.</p><div style='margin-top:16px; margin-bottom:12px;'><div style='font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;'>💻 Example 1: Creating and Running a Vite Project</div><div class='code-block'><div class='code-block-header'><span class='lang-tag'>Terminal</span></div><pre><code>npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev</code></pre></div></div><div class='card' style='background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;'><strong style='color:#10b981;'>🔍 Command Breakdown:</strong><ul style='margin:8px 0 0 18px; line-height:1.7;'><li><code>npm create vite@latest</code>: downloads and runs Vite's project generator</li><li><code>-- --template react</code>: tells Vite to scaffold a React (not Vue/Svelte) project</li><li><code>npm install</code>: downloads all required dependencies into a <code>node_modules</code> folder</li><li><code>npm run dev</code>: starts a local development server, usually at <code>http://localhost:5173</code></li></ul></div>
+</div>
+
+<div class="section-title"><span class="num">3</span>Project Folder Structure</div>
+<div class="section-body">
+<div class='diagram-box'>my-react-app/
+├── node_modules/     (downloaded dependencies)
+├── public/           (static files, favicon etc.)
+├── src/
+│   ├── App.jsx       (root component)
+│   ├── main.jsx       (entry point)
+│   └── index.css
+├── index.html
+├── package.json      (project config & dependency list)
+└── vite.config.js</div><p>For production, <code>npm run build</code> bundles and optimizes everything in <code>src/</code> into a small, fast <code>dist/</code> folder ready to deploy to a real web server.</p>
+</div>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Forgetting to Run npm install Before npm run dev</div>
+      <p>A freshly cloned or created project's <code>node_modules</code> folder is either missing or empty until you run <code>npm install</code>. Trying <code>npm run dev</code> first produces confusing "module not found" errors — always install dependencies first.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Create a new Vite + React project named practice-app, install its dependencies, and start the dev server to confirm the default welcome page loads.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">React Practice Challenge</span>
+          <a class="try-btn" href="/online-javascript-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>npm create vite@latest practice-app -- --template react
+cd practice-app
+npm install
+npm run dev</code></pre>
+      </div>
+      <a class="run-btn" href="/online-javascript-compiler.html">Run This Challenge in Online JS IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+  <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Do I have to use Vite for React?</h4>
+  <p>No — Create React App was the older standard tool, but it's no longer actively recommended. Vite is now the standard for new projects due to its much faster startup and build times.</p>
+</div>
+
+<div class="faq-card">
+  <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What port does the Vite dev server use?</h4>
+  <p>By default, Vite runs on http://localhost:5173, though it will automatically pick the next available port if 5173 is already in use.</p>
+</div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on React 18+ · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="02-react-prerequisites-javascript-essentials.html" class="nav-btn"><span class="label">← Previous</span><span class="title">2. React Prerequisites: JavaScript Essentials</span></a>
+      <a href="04-your-first-react-component.html" class="nav-btn" style="text-align:right;"><span class="label">Next Chapter →</span><span class="title">4. Your First React Component</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Exception Handling: try, catch, throw, Custom Exceptions & Safety Complete Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Exhaustive textbook-grade C++ Exception Handling (Phase 18): try/catch/throw, re-throw, multiple catch blocks, full std::exception hierarchy, custom exception hierarchies, exception safety guarantees, noexcept, RAII + exceptions, copy-and-swap, exception_ptr, and std::terminate." />
+  <meta name="keywords" content="c++ tutorial, c++ exception handling: try, catch, throw, custom exceptions & safety complete masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <style>
+    .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
+    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
+    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
+    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
+    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
+    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
+    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+  </style>
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains("open");
+      if (isOpen) {
+        content.classList.remove("open");
+        btn.classList.remove("active");
+      } else {
+        content.classList.add("open");
+        btn.classList.add("active");
+      }
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".code-block").forEach(block => {
+        const header = block.querySelector(".code-block-header");
+        const codeEl = block.querySelector("pre code");
+        if (!header || !codeEl) return;
+        let actionsContainer = header.querySelector(".code-actions");
+        if (!actionsContainer) {
+          actionsContainer = document.createElement("div");
+          actionsContainer.className = "code-actions";
+          actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+          const tryBtn = header.querySelector(".try-btn");
+          if (tryBtn) actionsContainer.appendChild(tryBtn);
+          header.appendChild(actionsContainer);
+        }
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.innerHTML = "📋 Copy";
+        copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; white-space: nowrap;";
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            copyBtn.innerHTML = "✅ Copied!";
+            setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
+          });
+        });
+        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+      });
+    });
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME</a>
+    <div class="sidebar-accordion">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C++ Basics & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-basics-history-compiler-and-hello-world.html">1. C++ Fundamentals, Compiler Pipeline & Hello World</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables, Data Types & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/02-cpp-variables-data-types-constexpr-auto-and-scope.html">2. Variables, Data Types, constexpr, auto & Scope</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input, Operators & Practice</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/03-cpp-input-cin-getline-and-operators-masterclass.html">3. cin, getline(), Operators & 6 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/04-cpp-conditional-branching-if-else-and-switch-case.html">4. if-else Ladders, Logical Logic & switch-case</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-loops-for-while-do-while-and-range-based-for.html">5. for, while, Range-for & 9 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Functions & Modular Code</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/06-cpp-functions-prototypes-overloading-and-lambdas.html">6. Functions, Overloading, References & Lambdas</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays, Strings & Vectors</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/07-cpp-arrays-std-string-string-view-and-std-vector.html">7. Arrays, std::string, string_view & std::vector</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Pointers & Memory Safety</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/08-cpp-pointers-references-nullptr-and-memory-safety.html">8. Pointers, References, nullptr & Memory Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Object-Oriented Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-object-oriented-programming-classes-objects-and-encapsulation.html">9. OOP, Classes, Objects, Access Specifiers & Pillars</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Constructors, Destructors & RAII</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html" class="active">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 18: C++ Exception Handling: try, catch, throw, Custom Exceptions & Safety Complete Masterclass</span>
+    </div>
+    <h1 class="page-title">C++ Exception Handling: try, catch, throw, Custom Exceptions & Safety Complete Masterclass</h1>
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
+      <span class="badge">🟢 Lesson 18</span>
+      <span class="badge">📂 Phase 18: Exception Handling</span>
+      <span class="badge">📅 2026 Master Edition</span>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>try/catch/throw · Re-throw · Multiple Catch Blocks · std::exception Hierarchy · bad_alloc/bad_cast · Custom Exception Hierarchy · No-throw/Strong/Basic Guarantees · noexcept · RAII Safety · copy-and-swap · exception_ptr</span>
+    </div>
+
+<div class="intro-box">
+  <p>Welcome to <strong>Phase 18 (Chapter 18): C++ Exception Handling Masterclass</strong>! Exceptions provide a structured, type-safe mechanism for error propagation. Unlike C-style error codes that can be silently ignored, exceptions are impossible to ignore — the program terminates if an exception isn't caught. Combined with RAII, exceptions enable leak-free, robust error handling across entire call stacks.</p>
+</div>
+
+<div class="section-title"><span class="num">1</span>try, catch, throw — Complete Syntax</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — try, catch, throw, re-throw</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+#include &lt;string&gt;
+
+// Function that throws
+double safeDivide(double a, double b) {
+    if (b == 0.0)
+        throw std::invalid_argument("Division by zero is undefined!");
+    if (a &lt; 0 || b &lt; 0)
+        throw std::domain_error("Negative operands not allowed here");
+    return a / b;
+}
+
+// Re-throwing example
+void processValue(double x) {
+    try {
+        auto result = safeDivide(100.0, x);
+        std::cout &lt;&lt; "100 / " &lt;&lt; x &lt;&lt; " = " &lt;&lt; result &lt;&lt; "
+";
+    } catch (const std::invalid_argument&amp; e) {
+        std::cout &lt;&lt; "[processValue] caught invalid_argument, re-throwing...
+";
+        throw;  // re-throw same exception (preserves original exception)
+    }
+}
+
+int main() {
+    // Basic try-catch
+    try {
+        std::cout &lt;&lt; safeDivide(10.0, 2.0) &lt;&lt; "
+";   // OK
+        std::cout &lt;&lt; safeDivide(10.0, 0.0) &lt;&lt; "
+";   // throws!
+    } catch (const std::invalid_argument&amp; e) {
+        std::cout &lt;&lt; "Caught invalid_argument: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+
+    // Multiple catch blocks (most specific first!)
+    try {
+        throw std::out_of_range("index 99 is out of range [0,10]");
+    } catch (const std::out_of_range&amp; e) {     // most specific
+        std::cout &lt;&lt; "out_of_range: " &lt;&lt; e.what() &lt;&lt; "
+";
+    } catch (const std::logic_error&amp; e) {       // base of out_of_range
+        std::cout &lt;&lt; "logic_error: " &lt;&lt; e.what() &lt;&lt; "
+";
+    } catch (const std::exception&amp; e) {         // base of all std exceptions
+        std::cout &lt;&lt; "exception: " &lt;&lt; e.what() &lt;&lt; "
+";
+    } catch (...) {                              // catch ANYTHING
+        std::cout &lt;&lt; "Unknown exception!
+";
+    }
+
+    // Re-throw chain
+    try {
+        processValue(0.0);
+    } catch (const std::exception&amp; e) {
+        std::cout &lt;&lt; "Top-level caught: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+
+    // Throw any type (int, string, custom struct)
+    try {
+        throw 42;           // throw an int
+    } catch (int code) {
+        std::cout &lt;&lt; "Caught int code: " &lt;&lt; code &lt;&lt; "
+";
+    }
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span>Standard Exception Hierarchy</div>
+<div class="section-body">
+  <div class="memory-diagram">std::exception hierarchy:
+
+  std::exception (base — has .what())
+  ├── std::logic_error       (programming errors — detectable before runtime)
+  │   ├── std::invalid_argument  (bad argument value)
+  │   ├── std::domain_error      (mathematical domain violation)
+  │   ├── std::length_error      (exceeds max size)
+  │   └── std::out_of_range      (index/value out of range)
+  └── std::runtime_error     (errors only detectable at runtime)
+      ├── std::range_error       (computed value out of range)
+      ├── std::overflow_error    (arithmetic overflow)
+      ├── std::underflow_error   (arithmetic underflow)
+      └── std::system_error (C++11) (OS/IO errors with error_code)
+          └── std::ios_base::failure (I/O stream failure)
+  
+  std::bad_alloc            (new fails — out of memory)
+  std::bad_cast             (dynamic_cast to reference fails)
+  std::bad_typeid           (typeid on null pointer)
+  std::bad_exception        (unexpected exception in specification)
+  std::bad_variant_access   (wrong std::get on variant)</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Standard exceptions in practice</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;new&gt;
+
+void demonstrateStdExceptions() {
+    // std::out_of_range (from vector::at)
+    try {
+        std::vector&lt;int&gt; v{1, 2, 3};
+        v.at(10);  // throws out_of_range
+    } catch (const std::out_of_range&amp; e) {
+        std::cout &lt;&lt; "out_of_range: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+
+    // std::bad_alloc (out of memory)
+    try {
+        auto p = new int[1'000'000'000'000LL];  // try to allocate 1TB
+        delete[] p;
+    } catch (const std::bad_alloc&amp; e) {
+        std::cout &lt;&lt; "bad_alloc: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+
+    // std::stoi — std::invalid_argument
+    try {
+        int n = std::stoi("not_a_number");
+    } catch (const std::invalid_argument&amp; e) {
+        std::cout &lt;&lt; "stoi invalid: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+
+    // std::stoi — std::out_of_range
+    try {
+        int n = std::stoi("99999999999999999");  // overflow
+    } catch (const std::out_of_range&amp; e) {
+        std::cout &lt;&lt; "stoi overflow: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+
+    // std::bad_cast
+    try {
+        class A { public: virtual ~A() {} };
+        class B : public A {};
+        A a;
+        B&amp; b = dynamic_cast&lt;B&amp;&gt;(a);  // throws bad_cast (reference cast)
+    } catch (const std::bad_cast&amp; e) {
+        std::cout &lt;&lt; "bad_cast: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+}
+
+int main() {
+    demonstrateStdExceptions();
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span>Custom Exception Hierarchy</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Custom exception hierarchy for an app</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+#include &lt;string&gt;
+
+// ─── Application Exception Hierarchy ─────────────────────────────────────────
+class AppException : public std::runtime_error {
+    int errorCode_;
+public:
+    AppException(const std::string&amp; msg, int code)
+        : std::runtime_error(msg), errorCode_{code} {}
+    int errorCode() const noexcept { return errorCode_; }
+};
+
+class NetworkException : public AppException {
+    std::string endpoint_;
+public:
+    NetworkException(const std::string&amp; msg, const std::string&amp; endpoint, int code)
+        : AppException(msg + " [" + endpoint + "]", code), endpoint_{endpoint} {}
+    const std::string&amp; endpoint() const noexcept { return endpoint_; }
+};
+
+class ConnectionRefused : public NetworkException {
+public:
+    explicit ConnectionRefused(const std::string&amp; host, int port)
+        : NetworkException("Connection refused",
+                           host + ":" + std::to_string(port), 1001) {}
+};
+
+class Timeout : public NetworkException {
+    int timeoutMs_;
+public:
+    Timeout(const std::string&amp; endpoint, int ms)
+        : NetworkException("Request timed out after " + std::to_string(ms) + "ms",
+                           endpoint, 1002),
+          timeoutMs_{ms} {}
+    int timeoutMs() const noexcept { return timeoutMs_; }
+};
+
+class DatabaseException : public AppException {
+    std::string query_;
+public:
+    DatabaseException(const std::string&amp; msg, const std::string&amp; query)
+        : AppException(msg, 2001), query_{query} {}
+    const std::string&amp; query() const noexcept { return query_; }
+};
+
+// ─── Functions that throw ─────────────────────────────────────────────────────
+void connectToServer(const std::string&amp; host, int port) {
+    if (host == "badhost") throw ConnectionRefused(host, port);
+    if (host == "slowhost") throw Timeout(host + ":" + std::to_string(port), 5000);
+    std::cout &lt;&lt; "Connected to " &lt;&lt; host &lt;&lt; ":" &lt;&lt; port &lt;&lt; "
+";
+}
+
+void executeQuery(const std::string&amp; sql) {
+    if (sql.find("DROP TABLE") != std::string::npos)
+        throw DatabaseException("Dangerous operation blocked", sql);
+    std::cout &lt;&lt; "Query OK: " &lt;&lt; sql &lt;&lt; "
+";
+}
+
+void runApplication(const std::string&amp; host) {
+    try {
+        connectToServer(host, 5432);
+        executeQuery("SELECT * FROM users");
+        executeQuery("DROP TABLE users");   // blocked!
+    } catch (const ConnectionRefused&amp; e) {
+        std::cout &lt;&lt; "[ERR " &lt;&lt; e.errorCode() &lt;&lt; "] Connection refused: " &lt;&lt; e.what() &lt;&lt; "
+";
+    } catch (const Timeout&amp; e) {
+        std::cout &lt;&lt; "[ERR " &lt;&lt; e.errorCode() &lt;&lt; "] Timeout (" &lt;&lt; e.timeoutMs() &lt;&lt; "ms): " &lt;&lt; e.what() &lt;&lt; "
+";
+    } catch (const DatabaseException&amp; e) {
+        std::cout &lt;&lt; "[ERR " &lt;&lt; e.errorCode() &lt;&lt; "] DB: " &lt;&lt; e.what() &lt;&lt; "
+";
+        std::cout &lt;&lt; "  Query was: " &lt;&lt; e.query() &lt;&lt; "
+";
+    } catch (const AppException&amp; e) {
+        std::cout &lt;&lt; "[ERR " &lt;&lt; e.errorCode() &lt;&lt; "] App: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+}
+
+int main() {
+    std::cout &lt;&lt; "=== Connecting to badhost ===
+";
+    runApplication("badhost");
+    std::cout &lt;&lt; "
+=== Connecting to slowhost ===
+";
+    runApplication("slowhost");
+    std::cout &lt;&lt; "
+=== Connecting to localhost ===
+";
+    runApplication("localhost");
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span>Exception Safety &amp; RAII</div>
+<div class="section-body">
+  <div class="concept-box">
+    <h4>Exception Safety Guarantees (from weakest to strongest):</h4>
+    <p>• <strong>No guarantee:</strong> Anything can happen on exception — leaks, corruption. Never write this.</p>
+    <p>• <strong>Basic guarantee:</strong> No resource leaks (invariants preserved), but object may be in a valid but changed state.</p>
+    <p>• <strong>Strong guarantee (commit-or-rollback):</strong> Operation either completes fully or has zero effect on state. Use copy-and-swap idiom.</p>
+    <p>• <strong>No-throw guarantee (<code>noexcept</code>):</strong> Function never throws — guaranteed. Required for move constructors, destructors, and <code>swap()</code>.</p>
+  </div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Exception safety, noexcept, copy-and-swap</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;vector&gt;
+#include &lt;stdexcept&gt;
+
+class SafeBuffer {
+    std::unique_ptr&lt;int[]&gt; data_;
+    std::size_t size_;
+public:
+    explicit SafeBuffer(std::size_t n)
+        : data_{std::make_unique&lt;int[]&gt;(n)}, size_{n} {}
+
+    // Strong guarantee: copy-and-swap assignment
+    SafeBuffer&amp; operator=(SafeBuffer other) noexcept {  // copy made, then swapped
+        std::swap(data_, other.data_);
+        std::swap(size_, other.size_);
+        return *this;                        // if copy throws, this is unchanged!
+    }
+
+    // noexcept move (enables std::vector optimizations!)
+    SafeBuffer(SafeBuffer&amp;&amp;) noexcept = default;
+    SafeBuffer&amp; operator=(SafeBuffer&amp;&amp;) noexcept = default;
+    SafeBuffer(const SafeBuffer&amp; other) : data_{std::make_unique&lt;int[]&gt;(other.size_)}, size_{other.size_} {
+        std::copy(other.data_.get(), other.data_.get() + size_, data_.get());
+    }
+
+    int&amp;       operator[](std::size_t i)       { return data_[i]; }
+    const int&amp; operator[](std::size_t i) const { return data_[i]; }
+    std::size_t size() const noexcept { return size_; }
+
+    // RAII — automatically freed by unique_ptr destructor
+};
+
+// RAII lock guard example
+class MutexLock {
+    bool locked_{false};
+public:
+    MutexLock() noexcept { locked_ = true; std::cout &lt;&lt; "Lock acquired
+"; }
+    ~MutexLock() noexcept { if (locked_) std::cout &lt;&lt; "Lock released
+"; }
+    MutexLock(const MutexLock&amp;) = delete;
+    MutexLock&amp; operator=(const MutexLock&amp;) = delete;
+};
+
+void criticalSection() {
+    MutexLock lock;          // RAII: released even if exception thrown!
+    std::cout &lt;&lt; "In critical section
+";
+    throw std::runtime_error("something went wrong");
+    // lock destructor runs here even on exception ✅
+}
+
+int main() {
+    // SafeBuffer demo
+    SafeBuffer buf(5);
+    for (std::size_t i = 0; i &lt; buf.size(); ++i) buf[i] = (int)(i * 10);
+
+    // RAII exception safety
+    try {
+        criticalSection();
+    } catch (const std::exception&amp; e) {
+        std::cout &lt;&lt; "Caught: " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+    std::cout &lt;&lt; "Lock was properly released despite exception!
+";
+
+    // noexcept check
+    std::cout &lt;&lt; "SafeBuffer move noexcept: " &lt;&lt; std::boolalpha
+              &lt;&lt; std::is_nothrow_move_constructible_v&lt;SafeBuffer&gt; &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span>Technical FAQs</div>
+<div class="section-body">
+  <div class="faq-grid">
+    <div class="faq-item"><h4>Q1: Why catch by const reference?</h4><p>Catching by value slices derived exceptions — if a <code>ConnectionRefused</code> is thrown and caught as <code>AppException</code> by value, only the base class parts are copied. const reference preserves the full dynamic type and avoids copying the exception object.</p></div>
+    <div class="faq-item"><h4>Q2: Why shouldn't destructors throw?</h4><p>If an exception is propagating and a destructor throws another exception during stack unwinding, <code>std::terminate()</code> is called immediately. C++11+ destructors are implicitly <code>noexcept</code>. Never let exceptions escape from destructors.</p></div>
+    <div class="faq-item"><h4>Q3: What is the performance cost of exceptions?</h4><p>Zero-cost exception handling (ZEH): when no exception occurs, exception handling has zero runtime overhead. When an exception is thrown, there IS overhead (stack unwinding, RTTI lookup). Use exceptions for exceptional cases, not regular control flow.</p></div>
+    <div class="faq-item"><h4>Q4: What is std::exception_ptr?</h4><p><code>std::exception_ptr</code> stores a reference-counted copy of an exception. Captured with <code>std::current_exception()</code>, re-thrown with <code>std::rethrow_exception()</code>. Used to propagate exceptions across threads.</p></div>
+    <div class="faq-item"><h4>Q5: What does std::terminate call by default?</h4><p><code>std::abort()</code> — terminates the program immediately without stack unwinding. You can replace it with <code>std::set_terminate(handler)</code> to log a final message before aborting, which is useful in production crash reporting.</p></div>
+  </div>
+</div>
+<div class="nav-footer">
+  <a href="17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html" class="nav-btn">
+    <span class="label">← Previous Lesson</span>
+    <span class="title">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</span>
+  </a>
+  <a href="19-cpp-file-handling-fstream-filesystem-and-serialization.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Next Lesson →</span>
+    <span class="title">19. fstream, std::filesystem, Paths & Serialization</span>
+  </a>
+</div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

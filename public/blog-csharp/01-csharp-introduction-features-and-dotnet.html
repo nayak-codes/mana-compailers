@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# Overview, History, Features & .NET Architecture Masterclass — C# Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Exhaustive textbook-grade C# Introduction (Chapter 1): C# definition, history timeline (C# 1.0 to C# 12), features, application domains, C# vs Java, C# vs C++, .NET platform architecture, CIL, CLR, JIT compiler, managed code concept, and prerequisites." />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Accordion Toggle, Syntax Highlighter & Theme Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains("open");
+      if (isOpen) {
+        content.classList.remove("open");
+        btn.classList.remove("active");
+      } else {
+        content.classList.add("open");
+        btn.classList.add("active");
+      }
+    }
+
+    // Client-side C# Syntax Highlighter (Monaco / VS Code styling)
+    function highlightCSharpCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CSHARP_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, m => pushToken("cm", m));
+
+      // 2. Strings & Interpolations: @"...", $"...", "..."
+      code = code.replace(/(@"[^"]*"|\$?"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken("st", m));
+
+      // 3. Keywords
+      const kwList = ["using","namespace","class","struct","interface","enum","public","private","protected","internal","static","readonly","const","void","int","long","float","double","decimal","bool","char","string","object","var","dynamic","new","return","if","else","switch","case","break","default","for","foreach","while","do","try","catch","finally","throw","null","true","false","abstract","virtual","override","sealed","async","await","get","set","init","record","out","ref","in","sizeof","typeof","default","is","as","where","select","from","group","by","order","by","ascending","descending","join","on","equals","into","yield"];
+      const kwRegex = new RegExp(`\\b(${kwList.join("|")})\\b`, "g");
+      code = code.replace(kwRegex, m => pushToken("kw", m));
+
+      // 4. Built-in Classes & Functions
+      const fnList = ["Console","WriteLine","Write","ReadLine","Parse","TryParse","Convert","Math","DateTime","Guid","System","String","Int32","Int64","Boolean","Double","Decimal","List","Dictionary","HashSet","Queue","Stack","SortedList","SortedSet","LinkedList","Enumerable","Task","Thread","File","Path","Directory","Array","JsonSerializer","Action","Func","Predicate","Parallel","WebApplication","ControllerBase","IActionResult","ActionResult"];
+      const fnRegex = new RegExp(`\\b(${fnList.join("|")})\\b`, "g");
+      code = code.replace(fnRegex, m => pushToken("fn", m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:[fFdDmMlLuU])?)\b/g, m => pushToken("nu", m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___CSHARP_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem("theme") || "dark";
+      if (currentTheme === "light") {
+        document.documentElement.classList.add("light-theme");
+        document.addEventListener("DOMContentLoaded", () => {
+          document.body.classList.add("light-theme");
+        });
+      }
+      window.addEventListener("DOMContentLoaded", () => {
+        const topnav = document.querySelector(".topnav");
+        if (topnav) {
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className = "blog-theme-toggle";
+          toggleBtn.style.cssText = "margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;";
+          const updateText = () => {
+            const isLight = document.body.classList.contains("light-theme");
+            toggleBtn.innerHTML = isLight ? "🌙 Dark" : "☀️ Light";
+          };
+          updateText();
+          toggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("light-theme");
+            document.documentElement.classList.toggle("light-theme");
+            const isLight = document.body.classList.contains("light-theme");
+            localStorage.setItem("theme", isLight ? "light" : "dark");
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Code blocks syntax highlighting & actions
+        document.querySelectorAll(".code-block").forEach(block => {
+          const header = block.querySelector(".code-block-header");
+          const codeEl = block.querySelector("pre code");
+          if (!header || !codeEl) return;
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightCSharpCode(rawCode);
+
+          let actionsContainer = header.querySelector(".code-actions");
+          if (!actionsContainer) {
+            actionsContainer = document.createElement("div");
+            actionsContainer.className = "code-actions";
+            actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+            const tryBtn = header.querySelector(".try-btn");
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "copy-btn";
+          copyBtn.innerHTML = "📋 Copy";
+          copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; white-space: nowrap;";
+          copyBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = "✅ Copied!";
+              setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector(".try-btn");
+          if (tryBtn) {
+            tryBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              localStorage.setItem("code_csharp", rawCode);
+              window.location.href = "/online-csharp-compiler.html";
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-csharp">
+  <script src="/site-nav.js"></script>
+
+  <div class="layout">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-heading">C# Master Course</div>
+      <a href="/blog-csharp.html" class="sidebar-home-link">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>C# Course HOME</span>
+      </a>
+      <div style="padding: 6px 12px 2px 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3);">Curriculum</div>
+    <div class="sidebar-accordion">
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C# Introduction & Setup</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html" class="active">1. Introduction, Features & .NET Architecture</a>
+        <a href="/blog-csharp/02-csharp-setup-vs-code-dotnet-sdk-cli.html">2. .NET SDK Setup, VS Code, CLI & Structure</a>
+        <a href="/blog-csharp/03-csharp-first-program-program-cs-main-console.html">3. First C# Program, Main() & Console I/O</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/04-csharp-variables-constants-scope-and-var.html">4. Variables, Constants (const/readonly), var & Scope</a>
+        <a href="/blog-csharp/05-csharp-data-types-value-vs-reference.html">5. Value vs Reference Types, Nullables & Structs</a>
+        <a href="/blog-csharp/06-csharp-type-conversion-casting-parse-tryparse.html">6. Type Conversion, Parse(), TryParse() & Boxing</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & User Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/07-csharp-operators-complete-guide.html">7. All Operators (Bitwise, Nullable, is/as, Precedence)</a>
+        <a href="/blog-csharp/08-csharp-user-input-readline-parsing-validation.html">8. User Input, Console.ReadLine() & Validation</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditions & Loops</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/09-csharp-conditional-statements-switch-patterns.html">9. Conditionals, Pattern Matching & Switch Expressions</a>
+        <a href="/blog-csharp/10-csharp-loops-for-while-foreach-practice.html">10. Loops, foreach, Controls & 9 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Strings, Arrays & Collections</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/11-csharp-strings-verbatim-raw-literals-stringbuilder.html">11. Strings, Interpolation, Raw Literals & StringBuilder</a>
+        <a href="/blog-csharp/12-csharp-arrays-multidimensional-jagged-methods.html">12. Arrays (1D, 2D Multidimensional & Jagged)</a>
+        <a href="/blog-csharp/13-csharp-collections-generics-list-dictionary-hashset.html">13. Generic Collections (List, Dictionary, HashSet, Stack/Queue)</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Methods & Object-Oriented OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/14-csharp-methods-parameters-ref-out-in-local-functions.html">14. Methods, Parameters (ref/out/in) & Overloading</a>
+        <a href="/blog-csharp/15-csharp-classes-objects-constructors-properties.html">15. Classes, Objects, Properties & Constructors</a>
+        <a href="/blog-csharp/16-csharp-encapsulation-access-modifiers-records.html">16. Encapsulation, Access Modifiers & Records</a>
+        <a href="/blog-csharp/17-csharp-inheritance-polymorphism-virtual-override.html">17. Inheritance, Polymorphism, virtual & override</a>
+        <a href="/blog-csharp/18-csharp-interfaces-multiple-implementation-decoupling.html">18. Interfaces, Default Members & Dependency Inversion</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Advanced C# Language</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/19-csharp-structs-enums-and-records-masterclass.html">19. Structs, Enums & Record Structs</a>
+        <a href="/blog-csharp/20-csharp-generics-type-parameters-constraints-variance.html">20. Generics, Constraints, Covariance & Contravariance</a>
+        <a href="/blog-csharp/21-csharp-delegates-events-func-action-predicate.html">21. Delegates, Action, Func, Predicate & Events</a>
+        <a href="/blog-csharp/22-csharp-lambda-expressions-closures-anonymous-functions.html">22. Lambda Syntax, Closures & Anonymous Functions</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">LINQ & Query Pipelines</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/23-csharp-linq-basics-query-vs-method-syntax-operators.html">23. LINQ Basics (Where, Select, OrderBy, FirstOrDefault)</a>
+        <a href="/blog-csharp/24-csharp-advanced-linq-groupby-join-deferred-execution.html">24. Advanced LINQ (GroupBy, Join, Deferred Execution)</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Exceptions, Files & JSON</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/25-csharp-exception-handling-try-catch-custom-filters.html">25. Exception Handling, Custom Errors & Filters</a>
+        <a href="/blog-csharp/26-csharp-file-handling-streamreader-streamwriter-async-io.html">26. File I/O, File, Directory, Path & Streams</a>
+        <a href="/blog-csharp/27-csharp-json-serialization-deserialization-system-text-json.html">27. JSON Serialization & System.Text.Json</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Asynchronous Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/28-csharp-async-await-task-cancellation-tokens.html">28. async, await, Task<T> & CancellationToken</a>
+        <a href="/blog-csharp/29-csharp-parallel-programming-parallel-for-thread-safety-locks.html">29. Parallel.For, Thread Safety, Locks & Concurrent Collections</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">.NET Platform & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/30-csharp-dotnet-platform-clr-assemblies-nuget-configuration.html">30. .NET Platform, CLR, Assemblies & NuGet</a>
+        <a href="/blog-csharp/31-csharp-dependency-injection-lifetimes-singleton-scoped-transient.html">31. Dependency Injection (Singleton, Scoped, Transient)</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">ASP.NET Core Web APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/32-csharp-aspnet-core-introduction-architecture-middleware.html">32. ASP.NET Core Intro, Middleware & Pipeline</a>
+        <a href="/blog-csharp/33-csharp-minimal-apis-endpoints-routing-swagger.html">33. Minimal APIs, Endpoints & Swagger</a>
+        <a href="/blog-csharp/34-csharp-controller-based-apis-routing-dtos-validation.html">34. Controller APIs, DTOs & Validation</a>
+        <a href="/blog-csharp/35-csharp-rest-api-capstone-project-product-service-crud.html">35. Complete REST API Capstone CRUD Project</a>
+      </div>
+
+    </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <div class="breadcrumb">
+        <a href="/">Home</a><span class="sep">›</span>
+        <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+        <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
+        <span class="current">Chapter 1: C# Overview, History, Features & .NET Architecture Masterclass</span>
+      </div>
+
+      <h1 class="page-title">C# Overview, History, Features & .NET Architecture Masterclass</h1>
+
+      <div class="page-meta">
+        <span class="badge">⚡ C# 12 &amp; .NET 8</span>
+        <span class="badge">🟢 Chapter 1 of 35</span>
+        <span class="badge">📂 Phase 1: C# Introduction</span>
+        <span class="badge">📅 2026 Edition</span>
+      </div>
+
+      <!-- Subtopics Pill Bar -->
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+        <span style="color:#a78bfa; font-weight:700;">📌 Covered in this chapter:</span>
+        <span>C# Overview · History & Version Timeline · Application Types · C# vs Java · C# vs C++ · .NET Platform · CLR · CIL / MSIL · JIT Compiler · Managed Code · Prerequisites</span>
+      </div>
+
+      
+<div class="intro-box">
+  <p>Welcome to <strong>Phase 1 (Chapter 1): C# Overview, History, Features &amp; .NET Architecture Masterclass</strong>! C# (pronounced <em>C-Sharp</em>) is a modern, general-purpose, object-oriented, type-safe, and high-performance programming language developed by Microsoft under the leadership of Anders Hejlsberg. Built on top of the <strong>.NET platform</strong>, C# enables developers to build cloud microservices, enterprise web applications, REST APIs, desktop UI software, cross-platform mobile apps, and immersive 3D games in Unity.</p>
+</div>
+
+<div class="section-title"><span class="num">1</span>C# Ante Enti? (What is C#?)</div>
+<div class="section-body">
+  <p class="text-prose">C# is a modern, object-oriented, and type-safe programming language used with the .NET platform. C# తో console applications, desktop applications, web APIs, web applications, cloud services, and 3D games build చేయవచ్చు. .NET అనేది C#, F#, and Visual Basic applications కోసం unified platform and runtime environment ని అందిస్తుంది.</p>
+  
+  <p class="text-prose">C# combines the high-level syntax elegance and developer productivity of languages like Python or Java with the raw execution speed, type safety, and memory control of low-level languages like C++. By running inside a managed virtual machine environment called the <strong>Common Language Runtime (CLR)</strong>, C# protects developers from common software bugs like memory leaks, buffer overflows, wild pointers, and uninitialized memory access.</p>
+
+  <div class="concept-box">
+    <h4>Key Features &amp; Architectural Pillars of C#:</h4>
+    <p>• <strong>Object-Oriented Programming (OOP):</strong> Full native support for Classes, Objects, Inheritance, Encapsulation, Abstraction, and Polymorphism.</p>
+    <p>• <strong>Type Safety &amp; Memory Safety:</strong> The Roslyn compiler and CLR verify type safety at compile time and runtime, ensuring zero invalid memory casts or arbitrary pointer arithmetic in managed code.</p>
+    <p>• <strong>Garbage Collection (GC):</strong> Automatic memory management automatically tracks, reclaims, and deallocates unused heap memory objects without requiring manual <code>free()</code> or <code>delete</code>.</p>
+    <p>• <strong>Cross-Platform (.NET Core / .NET 8):</strong> Develop once and run anywhere — Windows, Linux, macOS, iOS, Android, Docker containers, and WebAssembly (via Blazor).</p>
+    <p>• <strong>Language Integrated Query (LINQ):</strong> Write SQL-like declarative queries directly inside C# code to filter, sort, transform, and join data across Arrays, Lists, XML, and SQL Databases.</p>
+    <p>• <strong>Asynchronous Programming (async/await):</strong> Non-blocking I/O operations scale enterprise servers to handle tens of thousands of concurrent network requests efficiently.</p>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span>C# History &amp; Version Evolution</div>
+<div class="section-body">
+  <p class="text-prose">C# was unveiled in June 2000 as part of Microsoft's .NET strategy, led by chief language architect Anders Hejlsberg (creator of Turbo Pascal and Delphi). Over the last two decades, C# has evolved rapidly through 12 major releases, transforming from a managed desktop language into a open-source, high-performance, cloud-native titan.</p>
+
+  <table class="tbl spec-table">
+    <thead><tr><th>Version</th><th>Year</th><th>.NET Version</th><th>Major Innovations &amp; Language Features</th></tr></thead>
+    <tbody>
+      <tr><td>C# 1.0</td><td>2002</td><td>.NET Framework 1.0</td><td>Initial release: Classes, Structs, Interfaces, Delegates, Events, Properties, Statements.</td></tr>
+      <tr><td>C# 2.0</td><td>2005</td><td>.NET Framework 2.0</td><td>Generics (type-safe collections), Anonymous Methods, Nullable Value Types, Iterators (yield return).</td></tr>
+      <tr><td>C# 3.0</td><td>2007</td><td>.NET Framework 3.5</td><td>LINQ, Lambda Expressions, Auto-Implemented Properties, Anonymous Types, Extension Methods, Implicit typing (var).</td></tr>
+      <tr><td>C# 4.0</td><td>2010</td><td>.NET Framework 4.0</td><td>Dynamic binding (dynamic keyword), Named arguments, Optional parameters, Generic covariance &amp; contravariance.</td></tr>
+      <tr><td>C# 5.0</td><td>2012</td><td>.NET Framework 4.5</td><td>Asynchronous programming with <code>async</code> and <code>await</code> keywords, Caller Info attributes.</td></tr>
+      <tr><td>C# 6.0</td><td>2015</td><td>.NET Framework 4.6</td><td>Expression-bodied members, String interpolation (<code>$"..."</code>), Null-conditional operator (<code>?.</code>), Exception filters.</td></tr>
+      <tr><td>C# 7.0</td><td>2017</td><td>.NET Core 2.0</td><td>Tuples, Deconstruction, Pattern matching (is/switch), Local functions, Ref returns, Out variables.</td></tr>
+      <tr><td>C# 8.0</td><td>2019</td><td>.NET Core 3.0</td><td>Nullable Reference Types, Async Streams, Switch Expressions, Default Interface Methods, Indices &amp; Ranges (<code>^</code>, <code>..</code>).</td></tr>
+      <tr><td>C# 9.0</td><td>2020</td><td>.NET 5</td><td>Top-level statements, Record types (immutable data containers), Init-only setters, Target-typed new expressions.</td></tr>
+      <tr><td>C# 10.0</td><td>2021</td><td>.NET 6</td><td>Global using directives, File-scoped namespaces, Record structs, Constant string interpolation.</td></tr>
+      <tr><td>C# 11.0</td><td>2022</td><td>.NET 7</td><td>Raw string literals (<code>"""..."""</code>), Generic math support, Required members, List patterns.</td></tr>
+      <tr><td>C# 12.0</td><td>2023</td><td>.NET 8</td><td>Primary constructors for classes &amp; structs, Collection expressions (<code>[...]</code>), Ref readonly parameters, Alias any type.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-title"><span class="num">3</span>C# Application Domains — Ekkada Use Chestaru?</div>
+<div class="section-body">
+  <p class="text-prose">C# is utilized across diverse software engineering domains. Whether you are building microservices in the cloud or 3D games for consoles, C# provides specialized frameworks:</p>
+
+  <div class="memory-diagram">C# Application Ecosystem:
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │                           C# / .NET PLATFORM                             │
+  ├──────────────┬──────────────┬──────────────┬──────────────┬──────────────┤
+  │   WEB &amp; API  │   DESKTOP    │ MOBILE &amp; UI  │    GAMES     │ CLOUD &amp; AI   │
+  ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
+  │ ASP.NET Core │ WPF          │ .NET MAUI    │ Unity 3D/2D  │ Azure Cloud  │
+  │ Blazor (Wasm)│ WinForms     │ Xamarin      │ Godot Engine │ ML.NET (AI)  │
+  │ REST APIs    │ Avalonia UI  │ iOS / Android│ Stride Engine│ Microservices│
+  └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘</div>
+
+  <ul class="text-prose" style="margin-left: 20px;">
+    <li><strong>Web &amp; Microservices (ASP.NET Core):</strong> High-performance Web APIs capable of handling millions of requests per second with low latency.</li>
+    <li><strong>Full-Stack Web (Blazor):</strong> Build single-page web applications using C# running directly in the browser via WebAssembly (C# replacing JavaScript!).</li>
+    <li><strong>Mobile Applications (.NET MAUI):</strong> Single codebase targeting iOS, Android, macOS, and Windows.</li>
+    <li><strong>Game Development (Unity 3D):</strong> C# is the primary scripting language for Unity, used to build games like <em>Hollow Knight</em>, <em>Cuphead</em>, and <em>Genshin Impact</em>.</li>
+    <li><strong>Cloud &amp; Serverless (Microsoft Azure / AWS):</strong> Native integration with cloud providers, Azure Functions, and microservice containers.</li>
+  </ul>
+</div>
+
+<div class="section-title"><span class="num">4</span>C# vs Java &amp; C# vs C++ Detailed Comparison</div>
+<div class="section-body">
+  <p class="text-prose">To understand C#'s position in the programming landscape, let's compare it directly against Java and C++:</p>
+
+  <table class="tbl spec-table">
+    <thead><tr><th>Feature / Property</th><th>C#</th><th>Java</th><th>C++</th></tr></thead>
+    <tbody>
+      <tr><td>Execution Model</td><td>JIT compiled via CLR</td><td>JIT compiled via JVM</td><td>Compiled directly to Native Machine Code</td></tr>
+      <tr><td>Memory Management</td><td>Automatic Garbage Collection (GC)</td><td>Automatic Garbage Collection (GC)</td><td>Manual (new/delete) + RAII &amp; Smart Pointers</td></tr>
+      <tr><td>Properties</td><td>Native <code>{ get; set; }</code> properties</td><td>Requires manual getters/setters</td><td>Manual getter/setter methods</td></tr>
+      <tr><td>Value Types</td><td>First-class <code>struct</code> value types on Stack</td><td>Only primitive types (int, double)</td><td>Native stack structs and classes</td></tr>
+      <tr><td>Query Language</td><td>LINQ integrated directly into syntax</td><td>Stream API (method calls)</td><td>Range-based algorithms (C++20 Ranges)</td></tr>
+      <tr><td>Async Programming</td><td>Native <code>async</code> / <code>await</code> keywords</td><td>CompletableFuture / Virtual Threads</td><td>std::future / C++20 Coroutines</td></tr>
+      <tr><td>Pointers</td><td>Supported in <code>unsafe</code> blocks</td><td>No pointers supported</td><td>Native raw &amp; smart pointers</td></tr>
+      <tr><td>Multiple Inheritance</td><td>Single class inheritance + Multiple Interfaces</td><td>Single class inheritance + Multiple Interfaces</td><td>Multiple Class Inheritance supported</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-title"><span class="num">5</span>C# and .NET Relationship — Managed Code Concept</div>
+<div class="section-body">
+  <p class="text-prose">A fundamental concept to master is the distinction between <strong>C# (the language)</strong> and <strong>.NET (the execution platform and class library)</strong>. When you write C# code, it undergoes a two-stage compilation process:</p>
+
+  <div class="memory-diagram">C# Compilation Pipeline &amp; Execution Model:
+
+  C# Source Code (Program.cs)
+            │
+            ▼  [Stage 1: Roslyn Compiler (csc)]
+  Common Intermediate Language (CIL / MSIL Bytecode) packaged into Assembly (.dll / .exe)
+            │
+            ▼  [Stage 2: Common Language Runtime (CLR)]
+  CLR Virtual Machine Engine
+    ├── JIT Compiler (Just-In-Time) → Native Machine Instructions (010101...)
+    ├── Automatic Garbage Collector (GC)
+    ├── Type Safety &amp; Security Verification
+    └── Exception Handling &amp; Thread Management</div>
+
+  <div class="concept-box">
+    <h4>What is Managed Code?</h4>
+    <p>Code written in C# is called <strong>Managed Code</strong> because its execution is governed by the CLR. The CLR automatically handles memory allocation, garbage collection, type safety, exception handling, and security boundaries. In contrast, <strong>Unmanaged Code</strong> (like standard C/C++) compiles directly to CPU machine instructions and requires manual memory allocation.</p>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span>Learning Prerequisites</div>
+<div class="section-body">
+  <p class="text-prose">No prior programming experience is required to start this C# Masterclass! If you understand basic computer operation and logical thinking, you are ready. For developers coming from C, C++, Java, JavaScript, or Python, you will pick up C# syntax rapidly due to its clean C-family syntax structure.</p>
+</div>
+
+<div class="section-title"><span class="num">7</span>Technical FAQs</div>
+<div class="section-body">
+  <div class="faq-card">
+    <h4>Q1: What is the difference between .NET Framework, .NET Core, and .NET 8?</h4>
+    <p>.NET Framework (1.0–4.8) was the legacy Windows-only platform. .NET Core (1.0–3.1) was rebuilt from scratch as open-source and cross-platform. Starting with .NET 5 (and now .NET 8), Microsoft unified everything into a single platform named <strong>.NET</strong>.</p>
+  </div>
+  <div class="faq-card">
+    <h4>Q2: What is CIL / MSIL?</h4>
+    <p>Common Intermediate Language (CIL), formerly Microsoft Intermediate Language (MSIL), is the CPU-independent CPU-neutral bytecode generated by the C# compiler. The CLR's Just-In-Time (JIT) compiler translates CIL into native machine code at runtime.</p>
+  </div>
+  <div class="faq-card">
+    <h4>Q3: Is C# fast enough for high-performance systems and 3D gaming?</h4>
+    <p>Yes! Modern .NET includes high-performance primitives like <code>Span&lt;T&gt;</code>, <code>Memory&lt;T&gt;</code>, hardware intrinsics, and Native AOT (Ahead-of-Time compilation) that deliver speed comparable to C++ while preserving type and memory safety.</p>
+  </div>
+  <div class="faq-card">
+    <h4>Q4: What is Roslyn?</h4>
+    <p>Roslyn is the open-source C# compiler platform that provides rich code analysis APIs used by Visual Studio and VS Code for real-time autocomplete, refactoring, and static code analysis.</p>
+  </div>
+  <div class="faq-card">
+    <h4>Q5: Can I build web apps with C# without writing JavaScript?</h4>
+    <p>Yes! With <strong>ASP.NET Core Blazor</strong>, you write full-stack interactive web applications using C# running directly in the browser via WebAssembly (Wasm).</p>
+  </div>
+</div>
+
+      <div class="nav-footer">
+  <a href="/blog-csharp.html" class="nav-btn">
+    <span class="label">← C# Course Overview</span>
+    <span class="title">Course Home & Index</span>
+  </a>
+  <a href="/blog-csharp/02-csharp-setup-vs-code-dotnet-sdk-cli.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Next Lesson →</span>
+    <span class="title">2. .NET SDK Setup, VS Code, CLI & Structure</span>
+  </a>
+</div>
+    </main>
+  </div>
+
+  <script src="/site-footer.js"></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

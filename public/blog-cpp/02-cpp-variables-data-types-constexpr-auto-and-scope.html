@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Variables, Data Types, constexpr, auto & Scope Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Exhaustive textbook-grade C++ Variables (Phase 2): all fundamental types with sizes/ranges, fixed-width types, initialization styles (copy/direct/uniform), scope and shadowing, const vs constexpr, pointer const-ness, type conversion, static_cast, auto/decltype type deduction." />
+  <meta name="keywords" content="c++ tutorial, c++ variables, data types, constexpr, auto & scope masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/02-cpp-variables-data-types-constexpr-auto-and-scope.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <style>
+    .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
+    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
+    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
+    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
+    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
+    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
+    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+  </style>
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains("open");
+      if (isOpen) {
+        content.classList.remove("open");
+        btn.classList.remove("active");
+      } else {
+        content.classList.add("open");
+        btn.classList.add("active");
+      }
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".code-block").forEach(block => {
+        const header = block.querySelector(".code-block-header");
+        const codeEl = block.querySelector("pre code");
+        if (!header || !codeEl) return;
+        let actionsContainer = header.querySelector(".code-actions");
+        if (!actionsContainer) {
+          actionsContainer = document.createElement("div");
+          actionsContainer.className = "code-actions";
+          actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+          const tryBtn = header.querySelector(".try-btn");
+          if (tryBtn) actionsContainer.appendChild(tryBtn);
+          header.appendChild(actionsContainer);
+        }
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.innerHTML = "📋 Copy";
+        copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; white-space: nowrap;";
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            copyBtn.innerHTML = "✅ Copied!";
+            setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
+          });
+        });
+        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+      });
+    });
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME</a>
+    <div class="sidebar-accordion">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C++ Basics & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-basics-history-compiler-and-hello-world.html">1. C++ Fundamentals, Compiler Pipeline & Hello World</a>
+      </div>
+
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables, Data Types & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/02-cpp-variables-data-types-constexpr-auto-and-scope.html" class="active">2. Variables, Data Types, constexpr, auto & Scope</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input, Operators & Practice</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/03-cpp-input-cin-getline-and-operators-masterclass.html">3. cin, getline(), Operators & 6 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/04-cpp-conditional-branching-if-else-and-switch-case.html">4. if-else Ladders, Logical Logic & switch-case</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-loops-for-while-do-while-and-range-based-for.html">5. for, while, Range-for & 9 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Functions & Modular Code</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/06-cpp-functions-prototypes-overloading-and-lambdas.html">6. Functions, Overloading, References & Lambdas</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays, Strings & Vectors</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/07-cpp-arrays-std-string-string-view-and-std-vector.html">7. Arrays, std::string, string_view & std::vector</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Pointers & Memory Safety</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/08-cpp-pointers-references-nullptr-and-memory-safety.html">8. Pointers, References, nullptr & Memory Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Object-Oriented Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-object-oriented-programming-classes-objects-and-encapsulation.html">9. OOP, Classes, Objects, Access Specifiers & Pillars</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Constructors, Destructors & RAII</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 2: C++ Variables, Data Types, constexpr, auto & Scope Masterclass</span>
+    </div>
+    <h1 class="page-title">C++ Variables, Data Types, constexpr, auto & Scope Masterclass</h1>
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
+      <span class="badge">🟢 Lesson 2</span>
+      <span class="badge">📂 Phase 2: Variables & Data Types</span>
+      <span class="badge">📅 2026 Master Edition</span>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>All Fundamental Types · sizeof · numeric_limits · fixed-width types · Initialization Styles · Value-Init · Scope & Shadowing · Static Local · const · constexpr · Pointer Const-ness · Type Conversion · static_cast · auto · decltype</span>
+    </div>
+
+<div class="intro-box">
+  <p>Welcome to <strong>Phase 2 (Chapter 2): C++ Variables &amp; Data Types Masterclass</strong>! Every piece of data in C++ has a type that determines its size in memory, the operations it supports, and the range of values it can hold. C++ is statically typed — all variable types are known at compile time, enabling maximum optimization. Modern C++ adds <code>auto</code> for type deduction and <code>constexpr</code> for compile-time constants.</p>
+</div>
+
+<div class="section-title"><span class="num">1</span>Fundamental Types — Complete Reference</div>
+<div class="section-body">
+  <table class="tbl spec-table">
+    <thead><tr><th>Type</th><th>Size</th><th>Range</th><th>Example Literal</th></tr></thead>
+    <tbody>
+      <tr><td><code>bool</code></td><td>1 byte</td><td>true / false</td><td><code>true, false</code></td></tr>
+      <tr><td><code>char</code></td><td>1 byte</td><td>-128 to 127 (or 0-255)</td><td><code>'A', '
+', ' '</code></td></tr>
+      <tr><td><code>signed char</code></td><td>1 byte</td><td>-128 to 127</td><td><code>-100</code></td></tr>
+      <tr><td><code>unsigned char</code></td><td>1 byte</td><td>0 to 255</td><td><code>255u</code></td></tr>
+      <tr><td><code>short</code></td><td>2 bytes</td><td>-32,768 to 32,767</td><td><code>32000</code></td></tr>
+      <tr><td><code>unsigned short</code></td><td>2 bytes</td><td>0 to 65,535</td><td><code>65000u</code></td></tr>
+      <tr><td><code>int</code></td><td>4 bytes</td><td>-2,147,483,648 to 2,147,483,647</td><td><code>42, -100</code></td></tr>
+      <tr><td><code>unsigned int</code></td><td>4 bytes</td><td>0 to 4,294,967,295</td><td><code>4000000000u</code></td></tr>
+      <tr><td><code>long</code></td><td>4/8 bytes</td><td>platform-dependent</td><td><code>100L</code></td></tr>
+      <tr><td><code>long long</code></td><td>8 bytes</td><td>-9.2×10¹⁸ to 9.2×10¹⁸</td><td><code>1000000000LL</code></td></tr>
+      <tr><td><code>unsigned long long</code></td><td>8 bytes</td><td>0 to 1.8×10¹⁹</td><td><code>18000000000000000000ULL</code></td></tr>
+      <tr><td><code>float</code></td><td>4 bytes</td><td>±3.4×10³⁸ (7 sig digits)</td><td><code>3.14f</code></td></tr>
+      <tr><td><code>double</code></td><td>8 bytes</td><td>±1.7×10³⁰⁸ (15 sig digits)</td><td><code>3.14, 3.14e2</code></td></tr>
+      <tr><td><code>long double</code></td><td>8-16 bytes</td><td>platform-dependent (≥double)</td><td><code>3.14L</code></td></tr>
+    </tbody>
+  </table>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Types, sizeof, numeric_limits</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;limits&gt;
+#include &lt;cstdint&gt;   // fixed-width types
+
+int main() {
+    // Fundamental types
+    bool       b   = true;
+    char       c   = 'A';
+    int        i   = 2'147'483'647;    // digit separator (C++14)
+    long long  ll  = 9'223'372'036'854'775'807LL;
+    float      f   = 3.14f;
+    double     d   = 3.14159265358979;
+    long double ld  = 3.14159265358979323846L;
+
+    std::cout &lt;&lt; "sizeof bool   = " &lt;&lt; sizeof(bool)        &lt;&lt; " bytes
+";
+    std::cout &lt;&lt; "sizeof char   = " &lt;&lt; sizeof(char)        &lt;&lt; " bytes
+";
+    std::cout &lt;&lt; "sizeof int    = " &lt;&lt; sizeof(int)         &lt;&lt; " bytes
+";
+    std::cout &lt;&lt; "sizeof long   = " &lt;&lt; sizeof(long)        &lt;&lt; " bytes
+";
+    std::cout &lt;&lt; "sizeof ll     = " &lt;&lt; sizeof(long long)   &lt;&lt; " bytes
+";
+    std::cout &lt;&lt; "sizeof float  = " &lt;&lt; sizeof(float)       &lt;&lt; " bytes
+";
+    std::cout &lt;&lt; "sizeof double = " &lt;&lt; sizeof(double)      &lt;&lt; " bytes
+";
+
+    // numeric_limits — portable way to get type bounds
+    std::cout &lt;&lt; "
+int min: " &lt;&lt; std::numeric_limits&lt;int&gt;::min() &lt;&lt; "
+";
+    std::cout &lt;&lt; "int max: " &lt;&lt; std::numeric_limits&lt;int&gt;::max() &lt;&lt; "
+";
+    std::cout &lt;&lt; "double max: " &lt;&lt; std::numeric_limits&lt;double&gt;::max() &lt;&lt; "
+";
+    std::cout &lt;&lt; "double eps: " &lt;&lt; std::numeric_limits&lt;double&gt;::epsilon() &lt;&lt; "
+";
+    std::cout &lt;&lt; "float digits: " &lt;&lt; std::numeric_limits&lt;float&gt;::digits10 &lt;&lt; "
+";
+
+    // Fixed-width types (portable — use in embedded/systems code)
+    int8_t   s8  = -127;
+    uint8_t  u8  = 255;
+    int16_t  s16 = -32768;
+    int32_t  s32 = 2147483647;
+    int64_t  s64 = 9223372036854775807LL;
+    uint64_t u64 = 18446744073709551615ULL;
+    std::cout &lt;&lt; "
+Fixed-width: int8=" &lt;&lt; (int)s8 &lt;&lt; " uint8=" &lt;&lt; (int)u8
+              &lt;&lt; " int64=" &lt;&lt; s64 &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span>Variable Declaration, Initialization &amp; Scope</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — All initialization styles, scope, shadowing</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int globalVar = 100;   // global scope — accessible everywhere
+
+int main() {
+    // ─── Initialization styles ────────────────────────────────────────────
+    int a = 5;              // copy initialization (C-style)
+    int b(10);              // direct initialization
+    int c{15};              // uniform brace initialization (C++11, prevents narrowing)
+    int d = {20};           // copy-list initialization
+    auto e = 25;            // type deduction — e is int
+    auto f = 3.14;          // f is double
+    auto g = 'X';           // g is char
+    auto h = std::string{"hi"};  // h is std::string
+
+    // int bad{3.14};       // COMPILE ERROR! Narrowing: 3.14 (double) → int
+    int notBad = 3.14;      // WARNING at best — silently truncates to 3 (use {} instead!)
+
+    // Default initialization
+    int uninit;             // UNDEFINED VALUE — do NOT read before writing!
+    int zero{};             // value-initialized = 0 (guaranteed!)
+    int* nullPtr{};         // value-initialized = nullptr
+    std::cout &lt;&lt; "zero-init int: " &lt;&lt; zero &lt;&lt; "
+";
+
+    // ─── Scope ───────────────────────────────────────────────────────────
+    std::cout &lt;&lt; "global: " &lt;&lt; globalVar &lt;&lt; "
+";
+
+    int x = 10;             // function scope
+    {
+        int x = 20;         // block scope — SHADOWS outer x
+        std::cout &lt;&lt; "inner x = " &lt;&lt; x &lt;&lt; "
+";  // 20
+    }
+    std::cout &lt;&lt; "outer x = " &lt;&lt; x &lt;&lt; "
+";      // 10 — inner x destroyed
+
+    // Loop variable scope
+    for (int i = 0; i &lt; 3; ++i) {
+        // i is scoped to the for loop
+    }
+    // std::cout &lt;&lt; i;  // ERROR: i not in scope!
+
+    // Capture global from block
+    {
+        int globalVar = 999;  // local shadows global
+        std::cout &lt;&lt; "local shadows global: " &lt;&lt; globalVar &lt;&lt; "
+";
+        std::cout &lt;&lt; "access global with ::globalVar: " &lt;&lt; ::globalVar &lt;&lt; "
+";
+    }
+    return 0;
+}
+
+void demoStaticLocal() {
+    static int callCount = 0;  // static local: initialized once, persists between calls
+    ++callCount;
+    std::cout &lt;&lt; "Called " &lt;&lt; callCount &lt;&lt; " times
+";
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span>const, constexpr &amp; constinit</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — const, constexpr, constinit, const pointers</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;cmath&gt;
+
+// const — runtime constant (value known at runtime OR compile time)
+const double TAX_RATE = 0.18;
+
+// constexpr — compile-time constant (MUST be known at compile time)
+constexpr double PI     = 3.14159265358979;
+constexpr int    MAX_N  = 1000;
+constexpr double E      = 2.71828182845904;
+
+// constexpr function — computed at compile time if args are constexpr
+constexpr int power(int base, int exp) {
+    int result = 1;
+    for (int i = 0; i &lt; exp; ++i) result *= base;
+    return result;
+}
+
+constinit double gRate = TAX_RATE;  // guaranteed compile-time init of global
+
+int main() {
+    // const — cannot be changed after initialization
+    const int x = 10;
+    // x = 20;  // COMPILE ERROR!
+
+    const int y = [](){ return 42; }();  // can be runtime value
+    constexpr int z = power(2, 8);        // MUST be compile time = 256
+
+    std::cout &lt;&lt; "PI = " &lt;&lt; PI &lt;&lt; "
+";
+    std::cout &lt;&lt; "2^8 = " &lt;&lt; z &lt;&lt; "
+";   // 256, computed at compile time
+
+    // Use in array size (constexpr REQUIRED, const not always OK)
+    constexpr int SIZE = 10;
+    int arr[SIZE]{};                        // OK: constexpr as array size
+    // const int n = 10; int arr2[n]{};    // may work but non-standard (VLA)
+
+    // Pointer const-ness — four combinations
+    int value = 42;
+    int other = 99;
+
+    int* p1 = &amp;value;              // pointer to int (both mutable)
+    *p1 = 50;  p1 = &amp;other;       // both OK
+
+    const int* p2 = &amp;value;       // pointer to const int (data immutable)
+    // *p2 = 50;                  // COMPILE ERROR — can't change data
+    p2 = &amp;other;                  // OK — pointer itself can change
+
+    int* const p3 = &amp;value;       // const pointer to int (pointer immutable)
+    *p3 = 50;                     // OK — can change data
+    // p3 = &amp;other;               // COMPILE ERROR — can't rebind pointer
+
+    const int* const p4 = &amp;value; // const pointer to const int (both immutable)
+    // *p4 = 50;                  // COMPILE ERROR
+    // p4 = &amp;other;               // COMPILE ERROR
+
+    std::cout &lt;&lt; "value = " &lt;&lt; value &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span>Type Conversion &amp; Casting</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Implicit/explicit conversion, static_cast</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    // Implicit conversion (widening — safe)
+    int i = 42;
+    double d = i;         // int → double (no data loss) ✅
+    long long ll = i;     // int → long long ✅
+
+    // Implicit conversion (narrowing — DANGEROUS)
+    double pi = 3.14159;
+    int truncated = pi;   // double → int: silently truncates to 3 ⚠️
+    std::cout &lt;&lt; "truncated: " &lt;&lt; truncated &lt;&lt; "
+";  // 3
+
+    // Explicit cast — static_cast (compile-time checked, preferred in C++)
+    double result = static_cast&lt;double&gt;(5) / 2;  // 2.5 (not 2!)
+    int rounded = static_cast&lt;int&gt;(3.9);          // 3 (truncates)
+    char ch = static_cast&lt;char&gt;(65);              // 'A'
+    std::cout &lt;&lt; "5/2 = " &lt;&lt; result &lt;&lt; " rounded: " &lt;&lt; rounded &lt;&lt; " char: " &lt;&lt; ch &lt;&lt; "
+";
+
+    // C-style cast (avoid — no compile-time check, no RTTI)
+    double x = (double)5 / 2;   // same as static_cast, but unchecked
+
+    // Integer arithmetic gotcha
+    int a = 5, b = 2;
+    std::cout &lt;&lt; "5/2 = " &lt;&lt; a/b &lt;&lt; "
+";                           // 2 (integer division!)
+    std::cout &lt;&lt; "5.0/2 = " &lt;&lt; 5.0/2 &lt;&lt; "
+";                       // 2.5
+    std::cout &lt;&lt; "static_cast: " &lt;&lt; static_cast&lt;double&gt;(a)/b &lt;&lt; "
+";// 2.5
+
+    // bool conversions
+    std::cout &lt;&lt; std::boolalpha;
+    bool b1 = 0;       // false
+    bool b2 = 1;       // true
+    bool b3 = -42;     // true (any non-zero)
+    bool b4 = 0.0;     // false
+    std::cout &lt;&lt; b1 &lt;&lt; " " &lt;&lt; b2 &lt;&lt; " " &lt;&lt; b3 &lt;&lt; " " &lt;&lt; b4 &lt;&lt; "
+";
+
+    // char and int relationship
+    char letter = 'Z';
+    int code = letter;   // 'Z' = 90 in ASCII
+    std::cout &lt;&lt; "Char 'Z' = " &lt;&lt; code &lt;&lt; " in ASCII
+";
+    std::cout &lt;&lt; "ASCII 65 = '" &lt;&lt; static_cast&lt;char&gt;(65) &lt;&lt; "'
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span>auto, decltype &amp; Type Deduction</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — auto, decltype, type deduction rules</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;string&gt;
+#include &lt;typeinfo&gt;
+
+int main() {
+    // auto — deduced from initializer
+    auto a = 42;            // int
+    auto b = 3.14;          // double
+    auto c = 'X';           // char
+    auto d = true;          // bool
+    auto e = 42LL;          // long long
+    auto f = 3.14f;         // float
+
+    std::cout &lt;&lt; "types: " &lt;&lt; typeid(a).name() &lt;&lt; " "
+              &lt;&lt; typeid(b).name() &lt;&lt; " " &lt;&lt; typeid(c).name() &lt;&lt; "
+";
+
+    // auto with references — important!
+    int x = 10;
+    auto  copy = x;    // int (copy)
+    auto&amp; ref  = x;    // int&amp; (reference)
+    auto&amp;&amp; rref = 42;  // int&amp;&amp; (rvalue reference)
+    const auto&amp; cref = x;  // const int&amp;
+
+    ref = 99;
+    std::cout &lt;&lt; "x after ref=99: " &lt;&lt; x &lt;&lt; "
+";   // 99
+
+    // auto in range-based for — critical!
+    std::vector&lt;int&gt; v{1, 2, 3, 4, 5};
+
+    for (auto val : v) val *= 2;              // val is a COPY — v unchanged
+    for (auto&amp; val : v) val *= 2;            // val is a REFERENCE — v MODIFIED!
+    for (const auto&amp; val : v) {}             // read-only reference (efficient)
+
+    std::cout &lt;&lt; "v after doubling: ";
+    for (auto n : v) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "
+";
+
+    // auto with complex types (where it really shines)
+    std::map&lt;std::string, std::vector&lt;int&gt;&gt; bigMap{{"a", {1,2,3}}};
+    auto it = bigMap.find("a");   // beats: std::map&lt;std::string, std::vector&lt;int&gt;&gt;::iterator
+    if (it != bigMap.end()) std::cout &lt;&lt; it-&gt;first &lt;&lt; "
+";
+
+    // decltype — type of expression (doesn't evaluate the expression)
+    int y = 5;
+    double z = 3.14;
+    decltype(y + z) result = y + z;  // double (result type of int+double)
+    decltype(y)     copy2  = y;      // int (type of y itself)
+    std::cout &lt;&lt; "decltype(int+double) result: " &lt;&lt; result &lt;&lt; "
+";
+
+    // AAA (Almost Always Auto) style
+    auto pi     = 3.14159;
+    auto name   = std::string{"C++"};
+    auto nums   = std::vector&lt;int&gt;{1,2,3};
+    auto lambda = [](int n){ return n*n; };
+    std::cout &lt;&lt; lambda(7) &lt;&lt; "
+";
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span>Technical FAQs</div>
+<div class="section-body">
+  <div class="faq-grid">
+    <div class="faq-item"><h4>Q1: What is the difference between const and constexpr?</h4><p><code>const</code> means a variable cannot be modified after initialization; its value may be known at runtime. <code>constexpr</code> guarantees the value is known at compile time and can be used in compile-time contexts like array sizes, template parameters, and switch cases.</p></div>
+    <div class="faq-item"><h4>Q2: What are fixed-width integer types?</h4><p><code>int8_t</code>, <code>int16_t</code>, <code>int32_t</code>, <code>int64_t</code> (from &lt;cstdint&gt;) have guaranteed sizes regardless of platform. Use them for network protocols, file formats, and embedded systems where exact byte sizes matter.</p></div>
+    <div class="faq-item"><h4>Q3: Why is int not always 4 bytes?</h4><p>The C++ standard only guarantees <code>int</code> is at least 16 bits. On most 32/64-bit platforms it's 4 bytes, but embedded systems may have 2-byte int. Use <code>sizeof(int)</code> or fixed-width types when you need exact sizes.</p></div>
+    <div class="faq-item"><h4>Q4: What happens when you overflow an integer?</h4><p>Signed integer overflow is <strong>undefined behaviour</strong> in C++ — the compiler can assume it never happens. Unsigned integer overflow is well-defined: it wraps modulo 2^n. Always check bounds or use <code>std::numeric_limits</code> before arithmetic that might overflow.</p></div>
+    <div class="faq-item"><h4>Q5: When should I use auto?</h4><p>Use <code>auto</code> when the type is obvious from the initializer (<code>auto p = std::make_unique&lt;Foo&gt;()</code>), for complex iterator types, and for lambda captures. Avoid <code>auto</code> when the type is not obvious from context or when you need to document your intent explicitly.</p></div>
+  </div>
+</div>
+<div class="nav-footer">
+  <a href="01-cpp-basics-history-compiler-and-hello-world.html" class="nav-btn">
+    <span class="label">← Previous Lesson</span>
+    <span class="title">1. C++ Basics, History & Hello World</span>
+  </a>
+  <a href="03-cpp-input-cin-getline-and-operators-masterclass.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Next Lesson →</span>
+    <span class="title">3. Input, cin, getline & Operators</span>
+  </a>
+</div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

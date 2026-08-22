@@ -1,0 +1,455 @@
+const fs = require('fs');
+const path = require('path');
+
+const publicDir = path.join(__dirname, '..', 'public');
+const oldDir = path.join(publicDir, 'blog-node.js');
+const newDir = path.join(publicDir, 'blog-nodejs');
+
+// 1. Rename directory if needed
+if (fs.existsSync(oldDir)) {
+  if (fs.existsSync(newDir)) {
+    console.log('⚠️ Both blog-node.js and blog-nodejs directories exist. Merging files...');
+    const files = fs.readdirSync(oldDir);
+    files.forEach(f => {
+      fs.renameSync(path.join(oldDir, f), path.join(newDir, f));
+    });
+    fs.rmdirSync(oldDir);
+  } else {
+    console.log('🔄 Renaming public/blog-node.js to public/blog-nodejs...');
+    fs.renameSync(oldDir, newDir);
+  }
+  console.log('✅ Directory public/blog-nodejs is ready!');
+} else {
+  console.log('ℹ️ public/blog-nodejs directory already in place.');
+}
+
+// 2. Build full blog-nodejs.html master index
+const nodejsIndexFile = path.join(publicDir, 'blog-nodejs.html');
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Node.js Masterclass Roadmap — Complete Beginner to Advanced Guide | Our Compiler</title>
+  <meta name="description" content="Master Node.js with our complete roadmap covering 49 chapters across 16 phases: V8 engine runtime, CommonJS & ES modules, npm, event loop, promises, fs module, streams, HTTP servers, Express.js, REST APIs, validation, error handling, PostgreSQL, MySQL, MongoDB, ORMs, JWT auth, WebSockets, worker threads, performance tuning, test runner, TypeScript backend, clean architecture, Docker deployment, and production checklist." />
+  <meta name="keywords" content="nodejs tutorial, learn nodejs, node.js masterclass, nodejs runtime, v8 engine, event loop, expressjs, rest api, mongodb nodejs, typescript nodejs, docker nodejs" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-nodejs.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-node.js/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+      });
+    })();
+  </script>
+</head>
+<body class="lang-nodejs">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-nodejs.html" class="active">Node.js</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-go.html">Go</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Node.js Master Course</div>
+    <a href="/blog-nodejs.html" class="sidebar-home-link active">🟢 Node.js Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🟢</span><div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Node.js Introduction</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-nodejs/01-nodejs-introduction-and-runtime.html">1. What is Node.js?</a>
+        <a href="/blog-nodejs/02-nodejs-javascript-prerequisites.html">2. JS Prerequisites</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">⚙️</span><div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup &amp; First Program</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/03-nodejs-installation-and-setup.html">3. Installation &amp; Setup</a>
+        <a href="/blog-nodejs/04-nodejs-first-program.html">4. First Program</a>
+        <a href="/blog-nodejs/05-nodejs-project-structure.html">5. Project Structure</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">📦</span><div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Modules &amp; npm</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/06-nodejs-commonjs-modules.html">6. CommonJS Modules</a>
+        <a href="/blog-nodejs/07-nodejs-es-modules.html">7. ES Modules</a>
+        <a href="/blog-nodejs/08-nodejs-npm-and-package-json.html">8. npm &amp; package.json</a>
+        <a href="/blog-nodejs/09-nodejs-built-in-modules.html">9. Built-in Modules</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">⚡</span><div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Asynchronous Node.js</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/10-nodejs-event-loop.html">10. Event Loop</a>
+        <a href="/blog-nodejs/11-nodejs-callbacks.html">11. Callbacks</a>
+        <a href="/blog-nodejs/12-nodejs-promises-async-await.html">12. Promises &amp; Async/Await</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🗂️</span><div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">File System &amp; Streams</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/13-nodejs-file-system.html">13. File System</a>
+        <a href="/blog-nodejs/14-nodejs-path-module.html">14. Path Module</a>
+        <a href="/blog-nodejs/15-nodejs-buffers.html">15. Buffers</a>
+        <a href="/blog-nodejs/16-nodejs-streams.html">16. Streams</a>
+      </div>
+
+      <!-- Phase 06 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🌐</span><div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">HTTP &amp; Web Servers</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/17-nodejs-http-basics.html">17. HTTP Basics</a>
+        <a href="/blog-nodejs/18-nodejs-http-module.html">18. HTTP Module</a>
+        <a href="/blog-nodejs/19-nodejs-routing-without-framework.html">19. Routing (No Framework)</a>
+      </div>
+
+      <!-- Phase 07 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🚂</span><div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Express.js</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/20-nodejs-express-introduction.html">20. Express Introduction</a>
+        <a href="/blog-nodejs/21-nodejs-express-routing.html">21. Express Routing</a>
+        <a href="/blog-nodejs/22-nodejs-middleware.html">22. Middleware</a>
+        <a href="/blog-nodejs/23-nodejs-rest-api.html">23. REST API</a>
+      </div>
+
+      <!-- Phase 08 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🛡️</span><div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Validation &amp; Errors</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/24-nodejs-validation.html">24. Validation</a>
+        <a href="/blog-nodejs/25-nodejs-error-handling.html">25. Error Handling</a>
+      </div>
+
+      <!-- Phase 09 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">💾</span><div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Databases</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/26-nodejs-database-basics.html">26. Database Basics</a>
+        <a href="/blog-nodejs/27-nodejs-postgresql-mysql.html">27. PostgreSQL / MySQL</a>
+        <a href="/blog-nodejs/28-nodejs-mongodb.html">28. MongoDB</a>
+        <a href="/blog-nodejs/29-nodejs-orm-odm.html">29. ORM &amp; ODM</a>
+        <a href="/blog-nodejs/30-nodejs-database-api-project.html">30. Database API Project</a>
+      </div>
+
+      <!-- Phase 10 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🔐</span><div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Auth &amp; Security</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/31-nodejs-authentication.html">31. Authentication</a>
+        <a href="/blog-nodejs/32-nodejs-authorization.html">32. Authorization</a>
+        <a href="/blog-nodejs/33-nodejs-security.html">33. Node.js Security</a>
+      </div>
+
+      <!-- Phase 11 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🔌</span><div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Real-Time &amp; Advanced</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/34-nodejs-websockets.html">34. WebSockets</a>
+        <a href="/blog-nodejs/35-nodejs-socketio.html">35. Socket.IO</a>
+        <a href="/blog-nodejs/36-nodejs-worker-threads.html">36. Worker Threads</a>
+        <a href="/blog-nodejs/37-nodejs-child-processes.html">37. Child Processes</a>
+      </div>
+
+      <!-- Phase 12 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🚀</span><div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Streams &amp; Performance</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/38-nodejs-advanced-streams.html">38. Advanced Streams</a>
+        <a href="/blog-nodejs/39-nodejs-performance-optimization.html">39. Performance Tuning</a>
+      </div>
+
+      <!-- Phase 13 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🧪</span><div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Testing</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/40-nodejs-test-runner.html">40. Test Runner</a>
+        <a href="/blog-nodejs/41-nodejs-api-testing.html">41. API Testing</a>
+        <a href="/blog-nodejs/42-nodejs-e2e-testing.html">42. E2E Testing</a>
+      </div>
+
+      <!-- Phase 14 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🔷</span><div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">TypeScript with Node</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/43-nodejs-typescript-basics.html">43. TypeScript Basics</a>
+        <a href="/blog-nodejs/44-nodejs-typescript-backend.html">44. TypeScript Backend</a>
+      </div>
+
+      <!-- Phase 15 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🏗️</span><div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Project Architecture</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/45-nodejs-clean-architecture.html">45. Clean Architecture</a>
+        <a href="/blog-nodejs/46-nodejs-design-patterns.html">46. Design Patterns</a>
+      </div>
+
+      <!-- Phase 16 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">☁️</span><div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Deployment &amp; DevOps</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/47-nodejs-environment-configuration.html">47. Environment Config</a>
+        <a href="/blog-nodejs/48-nodejs-docker-deployment.html">48. Docker &amp; Deployment</a>
+        <a href="/blog-nodejs/49-nodejs-production-checklist.html">49. Production Checklist</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-nodejs.html">Node.js</a><span class="sep">›</span>
+      <span class="current">Master Index: Node.js Roadmap</span>
+    </div>
+
+    <h1 class="page-title">Node.js Complete Roadmap (2026 Edition)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟢 Node.js LTS</span>
+      <span class="badge">🟢 49 Chapters Complete</span>
+      <span class="badge">📂 Phases 1 to 16 Complete</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">What is Node.js? · V8 Engine &amp; libuv · CommonJS &amp; ES Modules · npm &amp; package.json · Event Loop &amp; Non-Blocking I/O · Callbacks, Promises &amp; Async/Await · File System (fs) &amp; Streams · HTTP Server Architecture · Express.js Routing &amp; Middleware · REST API Development · Input Validation &amp; Error Handling · PostgreSQL, MySQL &amp; MongoDB Integration · Prisma &amp; Mongoose ORM/ODM · JWT Authentication &amp; Security · WebSockets &amp; Socket.IO · Worker Threads &amp; Child Processes · Node Test Runner &amp; API Testing · TypeScript Backend Architecture · Clean Architecture &amp; Design Patterns · Docker Containerization &amp; Production Checklist</span>
+    </div>
+
+    <div style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,24,32,0.6)); border: 1px solid rgba(16,185,129,0.3); border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+      <h3 style="color:#10b981; margin-bottom: 10px; font-size:18px;">🎯 Complete Node.js Masterclass Roadmap (49 Chapters)</h3>
+      <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Master server-side JavaScript: explore V8 engine runtime mechanics, asynchronous non-blocking event loop execution, module loading, building high-throughput Express.js REST APIs, connecting PostgreSQL &amp; MongoDB databases, securing apps with JWT, real-time WebSockets, worker thread scaling, TypeScript backends, and containerizing Node.js applications with Docker:</p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/blog-nodejs/01-nodejs-introduction-and-runtime.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: What is Node.js? →</a>
+        <a href="/blog-nodejs/10-nodejs-event-loop.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 4: Event Loop →</a>
+        <a href="/blog-nodejs/20-nodejs-express-introduction.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 7: Express.js →</a>
+        <a href="/blog-nodejs/28-nodejs-mongodb.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 9: MongoDB →</a>
+        <a href="/blog-nodejs/31-nodejs-authentication.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 10: Auth &amp; JWT →</a>
+        <a href="/blog-nodejs/43-nodejs-typescript-basics.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 14: TypeScript →</a>
+        <a href="/blog-nodejs/48-nodejs-docker-deployment.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 16: Docker →</a>
+        <a href="/?lang=nodejs" style="background:var(--bg3); border:1px solid var(--border); color:#10b981; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">▶ Run Node.js Online →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+
+      <!-- Phase 1 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">🟢</span><div><div class="phase-roadmap-tag">Phase 01</div><h3 class="phase-roadmap-title">Node.js Introduction</h3></div></div>
+          <span class="phase-roadmap-badge">2 Lessons</span>
+        </div>
+        <div class="phase-lessons-list">
+          <a href="/blog-nodejs/01-nodejs-introduction-and-runtime.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">01</span><div class="lesson-info"><span class="lesson-title">1. What is Node.js? Runtime, V8 &amp; Architecture</span><span class="lesson-subtopics">V8 Engine · libuv · Non-blocking I/O · Node.js vs Browser JS · Real-world Use Cases</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/02-nodejs-javascript-prerequisites.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">02</span><div class="lesson-info"><span class="lesson-title">2. JavaScript Prerequisites for Node.js</span><span class="lesson-subtopics">ES6+ Features · Arrow Functions · Destructuring · Spread Operator · First-Class Functions</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">⚙️</span><div><div class="phase-roadmap-tag">Phase 02</div><h3 class="phase-roadmap-title">Setup &amp; First Program</h3></div></div>
+          <span class="phase-roadmap-badge">3 Lessons</span>
+        </div>
+        <div class="phase-lessons-list">
+          <a href="/blog-nodejs/03-nodejs-installation-and-setup.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">03</span><div class="lesson-info"><span class="lesson-title">3. Installation &amp; Environment Setup</span><span class="lesson-subtopics">nvm Node Version Manager · LTS vs Current · VS Code Setup · Running node CLI</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/04-nodejs-first-program.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">04</span><div class="lesson-info"><span class="lesson-title">4. Writing Your First Node.js Script</span><span class="lesson-subtopics">Executing .js files · process global object · Environment Variables (process.env) · CLI flags</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/05-nodejs-project-structure.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">05</span><div class="lesson-info"><span class="lesson-title">5. Project Structure &amp; Organization</span><span class="lesson-subtopics">Professional Folder Layout · src/ directory · Config handling · Entry point scripts</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">📦</span><div><div class="phase-roadmap-tag">Phase 03</div><h3 class="phase-roadmap-title">Modules &amp; npm</h3></div></div>
+          <span class="phase-roadmap-badge">4 Lessons</span>
+        </div>
+        <div class="phase-lessons-list">
+          <a href="/blog-nodejs/06-nodejs-commonjs-modules.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">06</span><div class="lesson-info"><span class="lesson-title">6. CommonJS Modules (require &amp; module.exports)</span><span class="lesson-subtopics">require() syntax · module.exports vs exports · Module Caching · Circular Dependencies</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/07-nodejs-es-modules.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">07</span><div class="lesson-info"><span class="lesson-title">7. ES Modules (import &amp; export)</span><span class="lesson-subtopics">import/export syntax · package.json "type": "module" · .mjs extension · Top-level await</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/08-nodejs-npm-and-package-json.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">08</span><div class="lesson-info"><span class="lesson-title">8. npm &amp; package.json Management</span><span class="lesson-subtopics">npm init · package.json manifest · dependencies vs devDependencies · Semantic versioning</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/09-nodejs-built-in-modules.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">09</span><div class="lesson-info"><span class="lesson-title">9. Core Built-in Modules Overview</span><span class="lesson-subtopics">node:path · node:os · node:fs · node:events · node:util · Core Prefix Import Convention</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">⚡</span><div><div class="phase-roadmap-tag">Phase 04</div><h3 class="phase-roadmap-title">Asynchronous Node.js</h3></div></div>
+          <span class="phase-roadmap-badge">3 Lessons</span>
+        </div>
+        <div class="phase-lessons-list">
+          <a href="/blog-nodejs/10-nodejs-event-loop.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">10</span><div class="lesson-info"><span class="lesson-title">10. The Node.js Event Loop Architecture</span><span class="lesson-subtopics">Phases (Timers, Poll, Check) · Microtasks vs Macrotasks · process.nextTick() · setImmediate()</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/11-nodejs-callbacks.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">11</span><div class="lesson-info"><span class="lesson-title">11. Callbacks &amp; Error-First Pattern</span><span class="lesson-subtopics">Error-First Callback Pattern (err, result) · Callback Hell · Asynchronous Flow Control</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/12-nodejs-promises-async-await.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">12</span><div class="lesson-info"><span class="lesson-title">12. Promises &amp; Async/Await Control Flow</span><span class="lesson-subtopics">Promise API · Promise.all / allSettled · async/await · Async Error Handling with try/catch</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+        </div>
+      </div>
+
+      <!-- Phase 7 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">🚂</span><div><div class="phase-roadmap-tag">Phase 07</div><h3 class="phase-roadmap-title">Express.js Framework</h3></div></div>
+          <span class="phase-roadmap-badge">4 Lessons</span>
+        </div>
+        <div class="phase-lessons-list">
+          <a href="/blog-nodejs/20-nodejs-express-introduction.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">20</span><div class="lesson-info"><span class="lesson-title">20. Introduction to Express.js Framework</span><span class="lesson-subtopics">Express App Setup · Request &amp; Response Objects · Sending JSON Responses · Server Port Binding</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/21-nodejs-express-routing.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">21</span><div class="lesson-info"><span class="lesson-title">21. Express Routing &amp; Route Parameters</span><span class="lesson-subtopics">HTTP Verbs (GET/POST/PUT/DELETE) · Route Params (:id) · Query Strings · express.Router()</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/22-nodejs-middleware.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">22</span><div class="lesson-info"><span class="lesson-title">22. Express Middleware Architecture</span><span class="lesson-subtopics">app.use() · next() function · Built-in Middleware (express.json) · Custom Logging Middleware</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/23-nodejs-rest-api.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">23</span><div class="lesson-info"><span class="lesson-title">23. Building a Complete REST API</span><span class="lesson-subtopics">CRUD Resource Architecture · JSON Response Formatting · Status Codes (200, 201, 400, 404, 500)</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+        </div>
+      </div>
+
+      <!-- Phase 10 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">🔐</span><div><div class="phase-roadmap-tag">Phase 10</div><h3 class="phase-roadmap-title">Authentication &amp; Security</h3></div></div>
+          <span class="phase-roadmap-badge">3 Lessons</span>
+        </div>
+        <div class="phase-lessons-list">
+          <a href="/blog-nodejs/31-nodejs-authentication.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">31</span><div class="lesson-info"><span class="lesson-title">31. Authentication with JWT &amp; bcrypt</span><span class="lesson-subtopics">Password Hashing (bcrypt) · JSON Web Tokens (jsonwebtoken) · Auth Middleware · Login Routes</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/32-nodejs-authorization.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">32</span><div class="lesson-info"><span class="lesson-title">32. Role-Based Access Control (RBAC)</span><span class="lesson-subtopics">Role Authorization Middleware · Admin vs User permissions · Resource Ownership Guards</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/33-nodejs-security.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">33</span><div class="lesson-info"><span class="lesson-title">33. Node.js Production Security Hardening</span><span class="lesson-subtopics">Helmet.js Headers · Rate Limiting (express-rate-limit) · CORS Config · Sanitization</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+        </div>
+      </div>
+
+      <!-- Phase 16 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">☁️</span><div><div class="phase-roadmap-tag">Phase 16</div><h3 class="phase-roadmap-title">Deployment &amp; DevOps</h3></div></div>
+          <span class="phase-roadmap-badge">3 Lessons</span>
+        </div>
+        <div class="phase-lessons-list">
+          <a href="/blog-nodejs/47-nodejs-environment-configuration.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">47</span><div class="lesson-info"><span class="lesson-title">47. Environment Configuration &amp; dotenv</span><span class="lesson-subtopics">dotenv package · process.env · Environment Validation (zod/joi) · Secret Management</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/48-nodejs-docker-deployment.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">48</span><div class="lesson-info"><span class="lesson-title">48. Docker Containerization &amp; Cloud Deployment</span><span class="lesson-subtopics">Dockerfile Creation · Multi-stage Builds · docker-compose · Deploying to Render/AWS</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+          <a href="/blog-nodejs/49-nodejs-production-checklist.html" class="curriculum-lesson-row"><div class="lesson-row-left"><span class="lesson-idx">49</span><div class="lesson-info"><span class="lesson-title">49. Node.js Production Readiness Checklist</span><span class="lesson-subtopics">PM2 Process Manager · Health Checks · Graceful Shutdown · Logging (pino/winston)</span></div></div><div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Is Node.js a programming language or a framework?</h4>
+      <p>Node.js is neither a language nor a framework — it is an open-source, cross-platform JavaScript runtime environment built on Chrome's V8 engine that executes JavaScript code outside a browser.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How does Node.js handle thousands of concurrent requests single-threaded?</h4>
+      <p>Node.js uses an event-driven, non-blocking I/O model powered by the libuv C++ library. Instead of allocating one OS thread per user request, Node queues asynchronous I/O callbacks onto its event loop, handling thousands of connections concurrently on a single main thread.</p>
+    </div>
+
+    <div class="nav-footer">
+      <a href="/blog-nodejs.html" class="nav-btn"><span class="label">← Node.js Overview</span><span class="title">Course Index</span></a>
+      <a href="/blog-nodejs/01-nodejs-introduction-and-runtime.html" class="nav-btn" style="text-align:right;"><span class="label">Start Course →</span><span class="title">1. What is Node.js?</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+</body>
+</html>`;
+
+fs.writeFileSync(nodejsIndexFile, htmlContent, 'utf8');
+console.log('✅ Generated public/blog-nodejs.html master index page successfully for all 49 chapters!');

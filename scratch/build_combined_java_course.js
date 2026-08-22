@@ -78,11 +78,13 @@ function generateJavaAccordionSidebar(currentSlug = null) {
 
   PHASES_MAP.forEach(ph => {
     const chaptersInPhase = ALL_CHAPTERS.filter(c => c.phaseId === ph.id);
+    if (chaptersInPhase.length === 0) return; // Skip phases with no published chapters
+
     const hasActive = chaptersInPhase.some(c => c.slug === currentSlug);
     const isOpen = hasActive || (currentSlug === null && ph.id === 'phase1');
     const activeHeaderClass = isOpen ? ' active' : '';
     const openContentClass = isOpen ? ' open' : '';
-    const chapterCount = chaptersInPhase.length > 0 ? `${chaptersInPhase.length} Ch` : 'Upcoming';
+    const chapterCount = `${chaptersInPhase.length} Ch`;
 
     html += `      <!-- Phase ${ph.num}: ${ph.title} -->\n`;
     html += `      <button class="accordion-header${activeHeaderClass}" onclick="toggleAccordion(this)">\n`;
@@ -102,14 +104,10 @@ function generateJavaAccordionSidebar(currentSlug = null) {
     html += `      </button>\n`;
     html += `      <div class="accordion-content${openContentClass}">\n`;
 
-    if (chaptersInPhase.length > 0) {
-      chaptersInPhase.forEach(ch => {
-        const isActive = ch.slug === currentSlug ? ' class="active"' : '';
-        html += `        <a href="/blog-java/${ch.slug}.html"${isActive}>${ch.badge}</a>\n`;
-      });
-    } else {
-      html += `        <span style="display:block; padding:6px 12px; font-size:11.5px; color:var(--text3); font-style:italic;">Coming Soon in Next Phase</span>\n`;
-    }
+    chaptersInPhase.forEach(ch => {
+      const isActive = ch.slug === currentSlug ? ' class="active"' : '';
+      html += `        <a href="/blog-java/${ch.slug}.html"${isActive}>${ch.badge}</a>\n`;
+    });
 
     html += `      </div>\n\n`;
   });
@@ -315,7 +313,10 @@ ALL_CHAPTERS.forEach((ch, idx) => {
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/pages.css" />
   <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-nav.js" defer></script>
+  <script src="/site-footer.js" defer></script>
 
   <style>
     .code-action-btn {
@@ -338,7 +339,7 @@ ALL_CHAPTERS.forEach((ch, idx) => {
     .code-output-card {
       background: #141414;
       border: 1px solid #282828;
-      border-left: 3.5px solid #f0a500;
+      border-left: 3.5px solid #10b981;
       border-radius: 8px;
       padding: 14px 16px;
       margin: -10px 0 24px 0;
@@ -346,7 +347,7 @@ ALL_CHAPTERS.forEach((ch, idx) => {
       font-size: 13px;
     }
     .output-header {
-      color: #f0a500;
+      color: #34d399;
       font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.8px;
@@ -366,7 +367,7 @@ ALL_CHAPTERS.forEach((ch, idx) => {
       margin: 20px 0 28px 0;
     }
     .explain-card h3 {
-      color: #f0a500;
+      color: #34d399;
       font-size: 15px;
       margin-bottom: 12px;
       font-weight: 700;
@@ -385,14 +386,14 @@ ALL_CHAPTERS.forEach((ch, idx) => {
       padding-bottom: 0;
     }
     .code-token {
-      background: rgba(240, 165, 0, 0.15) !important;
-      color: #f0a500 !important;
+      background: rgba(16, 185, 129, 0.15) !important;
+      color: #34d399 !important;
       padding: 2px 8px !important;
       border-radius: 4px !important;
       font-size: 12px !important;
       font-weight: 700 !important;
       width: fit-content;
-      border: 1px solid rgba(240, 165, 0, 0.3) !important;
+      border: 1px solid rgba(16, 185, 129, 0.3) !important;
     }
     .explain-item p {
       color: #c9d1d9;
@@ -408,12 +409,12 @@ ALL_CHAPTERS.forEach((ch, idx) => {
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
     body.light-theme .explain-card h3 {
-      color: #d97706;
+      color: #059669;
     }
     body.light-theme .code-token {
-      background: #fef3c7 !important;
-      color: #b45309 !important;
-      border-color: #fde68a !important;
+      background: #d1fae5 !important;
+      color: #059669 !important;
+      border-color: #a7f3d0 !important;
     }
     body.light-theme .explain-item p {
       color: #334155;
@@ -421,10 +422,10 @@ ALL_CHAPTERS.forEach((ch, idx) => {
     body.light-theme .code-output-card {
       background: #f8fafc;
       border-color: #e2e8f0;
-      border-left-color: #d97706;
+      border-left-color: #059669;
     }
     body.light-theme .output-header {
-      color: #b45309;
+      color: #059669;
     }
     body.light-theme .output-content {
       color: #1e293b;
@@ -490,7 +491,7 @@ ALL_CHAPTERS.forEach((ch, idx) => {
 ${sidebarHtml}
 
     <div class="sidebar-heading">Interactive IDE</div>
-    <a href="/online-java-compiler.html" style="color:#f0a500; font-weight:700;">▶ Try Java Online</a>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
     <a href="/blog.html">📚 All Tutorials</a>
 
     <div class="sidebar-heading">Other Courses</div>
@@ -518,7 +519,7 @@ ${sidebarHtml}
     </div>
 
     <div class="intro-box">
-      <div style="font-size:13px; font-weight:700; color:#f0a500; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">📌 Covered in this chapter:</div>
+      <div style="font-size:13px; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">📌 Covered in this chapter:</div>
       <p style="margin:0; font-size:13.5px; color:var(--text2);">${ch.subtopics}</p>
     </div>
 
@@ -599,13 +600,13 @@ ${sidebarHtml}
 
     <!-- Mini Quiz / FAQ Section -->
     <section class="faq-section" style="margin-top: 36px;">
-      <h2 style="color: #f0a500; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
+      <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       ${faqHtml}
     </section>
 
     <!-- Quick Recap Box -->
-    <div style="background: rgba(240, 165, 0, 0.08); border: 1px solid rgba(240, 165, 0, 0.25); border-radius: 10px; padding: 20px 22px; margin: 36px 0;">
-      <h3 style="color: #f0a500; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
+    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 20px 22px; margin: 36px 0;">
+      <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         ${recapHtml}
       </ul>
@@ -614,7 +615,7 @@ ${sidebarHtml}
     <!-- Navigation Buttons -->
     <div style="display:flex; justify-content:space-between; gap:16px; margin-top:40px; padding-top:24px; border-top:1px solid var(--border); flex-wrap:wrap;">
       ${prevChapter ? `<a href="/blog-java/${prevChapter.slug}.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); padding:10px 18px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13.5px;">← Prev: ${prevChapter.badge}</a>` : `<div></div>`}
-      ${nextChapter ? `<a href="/blog-java/${nextChapter.slug}.html" style="background:linear-gradient(135deg, #f0a500, #d97706); color:#121212; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13.5px;">Next: ${nextChapter.badge} →</a>` : `<a href="/blog-java.html" style="background:linear-gradient(135deg, #f0a500, #d97706); color:#121212; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13.5px;">Back to Java Course Home →</a>`}
+      ${nextChapter ? `<a href="/blog-java/${nextChapter.slug}.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13.5px;">Next: ${nextChapter.badge} →</a>` : `<a href="/blog-java.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13.5px;">Back to Java Course Home →</a>`}
     </div>
 
     <div class="author" style="margin-top:40px;">
@@ -627,7 +628,8 @@ ${sidebarHtml}
   </main>
 </div>
 
-<script src="/site-nav.js" defer></script>
+<footer class="footer" id="site-footer"></footer>
+
 <script>
   // Highlight all code blocks on load
   document.addEventListener('DOMContentLoaded', () => {
@@ -646,7 +648,7 @@ ${sidebarHtml}
 // Build Master Hub public/blog-java.html
 const hubSidebar = generateJavaAccordionSidebar(null);
 
-const hubRoadmapCards = PHASES_MAP.map(ph => {
+const hubRoadmapCards = PHASES_MAP.filter(ph => ALL_CHAPTERS.some(c => c.phaseId === ph.id)).map(ph => {
   const chaptersInPhase = ALL_CHAPTERS.filter(c => c.phaseId === ph.id);
   return `
     <div class="phase-roadmap-card">
@@ -658,11 +660,11 @@ const hubRoadmapCards = PHASES_MAP.map(ph => {
             <h3 class="phase-roadmap-title">${ph.title}</h3>
           </div>
         </div>
-        <span class="phase-roadmap-badge">${chaptersInPhase.length > 0 ? `${chaptersInPhase.length} In-Depth Lessons` : 'Upcoming Phase'}</span>
+        <span class="phase-roadmap-badge">${chaptersInPhase.length} In-Depth Lessons</span>
       </div>
       <p class="phase-roadmap-desc">${ph.desc}</p>
       <div class="phase-lessons-list">
-        ${chaptersInPhase.length > 0 ? chaptersInPhase.map(c => `
+        ${chaptersInPhase.map(c => `
           <a href="/blog-java/${c.slug}.html" class="curriculum-lesson-row">
             <div class="lesson-row-left">
               <span class="lesson-idx">${c.num < 10 ? '0' + c.num : c.num}</span>
@@ -675,7 +677,7 @@ const hubRoadmapCards = PHASES_MAP.map(ph => {
               <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
             </div>
           </a>
-        `).join('') : `<div style="padding:10px 14px; color:var(--text3); font-size:13px; font-style:italic;">Curriculum modules under active publication. Check back soon!</div>`}
+        `).join('')}
       </div>
     </div>
   `;
@@ -819,13 +821,13 @@ ${hubSidebar}
     </div>
 
     <!-- Quick Start Card -->
-    <div style="background: linear-gradient(135deg, rgba(240, 165, 0, 0.12), rgba(20, 24, 32, 0.6)); border: 1px solid rgba(240, 165, 0, 0.3); border-radius: 12px; padding: 24px; margin: 28px 0;">
-      <h3 style="color:#f0a500; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning Java?</h3>
+    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(20, 24, 32, 0.6)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 24px; margin: 28px 0;">
+      <h3 style="color:#10b981; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning Java?</h3>
       <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Choose where to start: explore foundations, variables & types, control flow, object-oriented programming (OOP), collections, streams, concurrency, or enterprise Spring Boot & interview skills:</p>
       <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html" style="background:linear-gradient(135deg, #f0a500, #d97706); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: Basics →</a>
-        <a href="/blog-java/06-java-variables-declaration-and-memory-model.html" style="background:linear-gradient(135deg, #f0a500, #d97706); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 2: Variables & Types →</a>
-        <a href="/blog-java/10-java-operators-arithmetic-assignment-relational.html" style="background:linear-gradient(135deg, #f0a500, #d97706); color:#121212; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 3: Operators & Input →</a>
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: Basics →</a>
+        <a href="/blog-java/06-java-variables-declaration-and-memory-model.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 2: Variables & Types →</a>
+        <a href="/blog-java/10-java-operators-arithmetic-assignment-relational.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 3: Operators & Input →</a>
         <a href="/blog-java/14-java-basics-and-input-capstone-projects.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 3: Capstone Projects →</a>
       </div>
     </div>
@@ -846,7 +848,10 @@ ${hubRoadmapCards}
   </main>
 </div>
 
+<footer class="footer" id="site-footer"></footer>
+
 <script src="/site-nav.js" defer></script>
+<script src="/site-footer.js" defer></script>
 </body>
 </html>`;
 

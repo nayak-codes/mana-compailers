@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REST API — Sorting and Ordering | Our Compiler</title>
+  <meta name="description" content="Complete REST API Chapter 10: Sorting and Ordering. Learn Sort query parameters (?sort=-created_at,title) · Multi-column sorting · Ascending (+) vs Descending (-) order · Database indexing impact with practical HTTP payloads, status code semantics, and step-by-step walkthroughs." />
+  <meta name="keywords" content="rest api tutorial, learn rest api, sorting and ordering, http request, http response, status codes, openapi, swagger" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-rest-api/10-sorting-and-ordering.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-rest-api/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-rest-api">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html" class="active">REST API</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">REST API Tutorial</div>
+    <a href="/blog-rest-api.html" class="sidebar-home-link">🌐 REST API HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">REST API Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/01-rest-api-ante-enti-what-is-rest-api.html" class="">1. REST API Ante Enti?</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">HTTP Fundamentals</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/02-http-request.html" class="">2. HTTP Request</a><a href="/blog-rest-api/03-http-response.html" class="">3. HTTP Response</a><a href="/blog-rest-api/04-http-methods.html" class="">4. HTTP Methods</a><a href="/blog-rest-api/05-http-status-codes.html" class="">5. HTTP Status Codes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">API Resource Design & Naming</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/06-resource-naming-and-uri-design.html" class="">6. Resource Naming & URI Design</a><a href="/blog-rest-api/07-api-versioning.html" class="">7. API Versioning Strategies</a><a href="/blog-rest-api/08-request-and-response-formats.html" class="">8. Request & Response Formats</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Querying, Filtering & Pagination</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-rest-api/09-filtering-and-searching.html" class="">9. Filtering and Searching</a><a href="/blog-rest-api/10-sorting-and-ordering.html" class="active">10. Sorting and Ordering</a><a href="/blog-rest-api/11-pagination-strategies.html" class="">11. Pagination Strategies</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Security and Authentication</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/12-api-authentication.html" class="">12. API Authentication</a><a href="/blog-rest-api/13-jwt-authentication.html" class="">13. JWT (JSON Web Tokens)</a><a href="/blog-rest-api/14-api-security-and-owasp.html" class="">14. API Security & OWASP Top 10</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Caching and Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/15-http-caching.html" class="">15. HTTP Caching</a><a href="/blog-rest-api/16-rate-limiting-and-throttling.html" class="">16. Rate Limiting & Throttling</a><a href="/blog-rest-api/17-compression-and-payload-optimization.html" class="">17. Compression & Optimization</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Error Handling and Resilience</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/18-standardized-error-responses.html" class="">18. Standardized Error Responses</a><a href="/blog-rest-api/19-api-resilience-and-circuit-breakers.html" class="">19. API Resilience & Circuit Breakers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📖</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">API Documentation & Testing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/20-openapi-spec-and-swagger.html" class="">20. OpenAPI Spec & Swagger</a><a href="/blog-rest-api/21-api-testing-with-postman.html" class="">21. API Testing with Postman & Bruno</a><a href="/blog-rest-api/22-contract-testing-and-mocking.html" class="">22. Contract Testing & Mocking</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌁</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">API Gateways & Microservices</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/23-api-gateways-and-proxies.html" class="">23. API Gateways and Proxies</a><a href="/blog-rest-api/24-microservices-and-rest-communication.html" class="">24. Microservices Communication</a><a href="/blog-rest-api/25-webhooks-and-event-driven-apis.html" class="">25. Webhooks & Event-Driven APIs</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Real-World Implementations & Certification</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/26-building-a-restful-ecommerce-api.html" class="">26. E-Commerce REST API Design</a><a href="/blog-rest-api/27-nodejs-express-rest-api-implementation.html" class="">27. Node.js Express REST API</a><a href="/blog-rest-api/28-python-fastapi-rest-api-implementation.html" class="">28. Python FastAPI REST API</a><a href="/blog-rest-api/29-rest-api-deployment-and-monitoring.html" class="">29. REST API Deployment & Monitoring</a><a href="/blog-rest-api/30-rest-api-quiz.html" class="">30. REST API Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-rest-api.html">REST API</a><span class="sep">›</span>
+      <span class="current">REST API — Sorting and Ordering</span>
+    </div>
+
+    <h1 class="page-title">REST API — Sorting and Ordering</h1>
+
+    <div class="page-meta">
+      <span class="badge">🌐 HTTP / RFC 9110</span>
+      <span class="badge">🟢 Chapter 10 of 30</span>
+      <span class="badge">📂 Phase 04: Querying, Filtering & Pagination</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Sort query parameters (?sort=-created_at,title) · Multi-column sorting · Ascending (+) vs Descending (-) order · Database indexing impact</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>REST API — Sorting and Ordering</strong> in our REST API Complete Masterclass! Provide sorting capabilities for REST collection endpoints using intuitive sort key parameter conventions.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In web application engineering, understanding <strong>Sorting and Ordering</strong> is essential for building scalable, secure, and developer-friendly REST APIs. REST APIs communicate using HTTP protocol standards and JSON representations.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master HTTP protocol mechanics behind <strong>Sorting and Ordering</strong></li>
+          <li>Understand request/response semantics, headers, and status code specifications</li>
+          <li>Design standardized, production-ready RESTful endpoints and JSON payloads</li>
+          <li>Avoid common architectural pitfalls, security flaws, and breaking API changes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Sorting and Ordering is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>REST APIs connect web frontends, mobile applications, microservices, and third-party integrations. Mastering <strong>Sorting and Ordering</strong> equips developers to build robust API backends in Node.js, Python, Java, Go, Ruby, and PHP.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required HTTP headers & setup -->
+    <div class="section-title"><span class="num">4</span>Required HTTP Headers &amp; Specification</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">HTTP — Specification Headers</span>
+        </div>
+        <pre><code>Content-Type: application/json; charset=utf-8
+Accept: application/json</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Basic syntax / HTTP spec format -->
+    <div class="section-title"><span class="num">5</span>Basic HTTP Format</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">REST API — Endpoint Contract</span>
+        </div>
+        <pre><code>GET /api/v1/products?sort=-price,name</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">REST API — Executable HTTP Payload</span>
+        </div>
+        <pre><code>GET /api/v1/products?sort=-price,name</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Command & execution -->
+    <div class="section-title"><span class="num">7</span>Command &amp; Execution (cURL / Postman)</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Terminal — cURL Command</span>
+        </div>
+        <pre><code># Execute request via cURL
+curl -i -X GET "https://api.example.com/api/v1/courses" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer your_token_here"</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Program output -->
+    <div class="section-title"><span class="num">8</span>Expected HTTP Response</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:16px;border-radius:8px;margin:16px 0;font-size:13.5px;border-left:4px solid #10b981;">
+        <strong style="color:#10b981;">📊 Expected HTTP Server Response:</strong>
+        <pre style="margin-top:8px;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;color:#a6e22e;font-family:'JetBrains Mono',monospace;">HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  "status": "success",
+  "data": {
+    "message": "REST API response executed cleanly."
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- 9. Code explanation & breakdown -->
+    <div class="section-title"><span class="num">9</span>Code Explanation &amp; Breakdown</div>
+    <div class="section-body">
+      <table class="tbl spec-table">
+        <thead><tr><th>REST / HTTP Component</th><th>Function &amp; Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>HTTP Method</code></td><td>Defines target action (GET, POST, PUT, PATCH, DELETE).</td></tr>
+          <tr><td><code>Sorting</code></td><td>Core REST architectural or HTTP header feature in this lesson.</td></tr>
+          <tr><td><code>JSON Payload</code></td><td>Standardized, lightweight data interchange representation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 10. Line-by-line breakdown -->
+    <div class="section-title"><span class="num">10</span>Line-by-Line Breakdown</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Line 1: Specifies HTTP Request Line or Status Line.</li>
+        <li>Line 2: Transmits headers such as <code>Content-Type</code> or <code>Authorization</code>.</li>
+        <li>Line 4+: Contains formatted JSON response body payload.</li>
+      </ul>
+    </div>
+
+    <!-- 11. Execution flow diagram -->
+    <div class="section-title"><span class="num">11</span>Execution Flow Diagram</div>
+    <div class="section-body">
+      <div class="diagram-box">HTTP Client Request (cURL / Browser / Mobile App)
+  │
+  ├── Request Headers & Body Validation
+  │     ├── Authentication & Rate Limiting Check
+  │     └── Route Handler Execution
+  │
+  └── HTTP Response (Status Code + JSON Body) -> Client</div>
+    </div>
+
+    <!-- 12. Common mistakes -->
+    <div class="section-title"><span class="num">12</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Using verbs in URIs (e.g. <code>/getUsers</code> or <code>/createCourse</code>) instead of standard HTTP methods.</li>
+          <li>Returning <code>200 OK</code> for error responses containing <code>{"error": true}</code> inside the JSON body.</li>
+          <li>Failing to validate incoming payload schemas, risking SQL injection or broken server exceptions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 13. Coding challenge -->
+    <div class="section-title"><span class="num">13</span>Hands-On API Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Design a RESTful API payload or execute cURL request demonstrating <strong>Sorting and Ordering</strong>. Inspect headers and status codes in Postman or Bruno!</p>
+      </div>
+    </div>
+
+    <!-- 14. Mini quiz -->
+    <div class="section-title"><span class="num">14</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary role of Sorting and Ordering in REST API design?</h4>
+        <p><strong>Answer:</strong> It provides standardized HTTP mechanisms for Sort query parameters (?sort=-created_at,title), building predictable and scalable APIs.</p>
+      </div>
+    </div>
+
+    <!-- 15. Quick recap & Prev/Next buttons -->
+    <div class="section-title"><span class="num">15</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Provide sorting capabilities for REST collection endpoints using intuitive sort key parameter conventions.</li>
+        <li>Subtopics covered: Sort query parameters (?sort=-created_at,title) · Multi-column sorting · Ascending (+) vs Descending (-) order · Database indexing impact</li>
+        <li>Follow RFC 9110 HTTP semantics and REST design best practices.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on RFC 9110 HTTP Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="09-filtering-and-searching.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">9. Filtering and Searching</span></a>
+      <a href="11-pagination-strategies.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">11. Pagination Strategies</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Smart Pointers: unique_ptr, shared_ptr, weak_ptr & RAII Memory Complete Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Exhaustive textbook-grade C++ Smart Pointers (Phase 17): memory model (stack vs heap), raw pointer problems, unique_ptr with factory/sink/borrow patterns, shared_ptr with control block, weak_ptr cycle fix, observer pattern, custom deleters, Rule of Zero, and enable_shared_from_this." />
+  <meta name="keywords" content="c++ tutorial, c++ smart pointers: unique_ptr, shared_ptr, weak_ptr & raii memory complete masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <style>
+    .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
+    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
+    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
+    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
+    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
+    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
+    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+  </style>
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains("open");
+      if (isOpen) {
+        content.classList.remove("open");
+        btn.classList.remove("active");
+      } else {
+        content.classList.add("open");
+        btn.classList.add("active");
+      }
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".code-block").forEach(block => {
+        const header = block.querySelector(".code-block-header");
+        const codeEl = block.querySelector("pre code");
+        if (!header || !codeEl) return;
+        let actionsContainer = header.querySelector(".code-actions");
+        if (!actionsContainer) {
+          actionsContainer = document.createElement("div");
+          actionsContainer.className = "code-actions";
+          actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+          const tryBtn = header.querySelector(".try-btn");
+          if (tryBtn) actionsContainer.appendChild(tryBtn);
+          header.appendChild(actionsContainer);
+        }
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.innerHTML = "📋 Copy";
+        copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; white-space: nowrap;";
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            copyBtn.innerHTML = "✅ Copied!";
+            setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
+          });
+        });
+        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+      });
+    });
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME</a>
+    <div class="sidebar-accordion">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C++ Basics & Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-basics-history-compiler-and-hello-world.html">1. C++ Fundamentals, Compiler Pipeline & Hello World</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables, Data Types & Scope</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/02-cpp-variables-data-types-constexpr-auto-and-scope.html">2. Variables, Data Types, constexpr, auto & Scope</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Input, Operators & Practice</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/03-cpp-input-cin-getline-and-operators-masterclass.html">3. cin, getline(), Operators & 6 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditional Statements</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/04-cpp-conditional-branching-if-else-and-switch-case.html">4. if-else Ladders, Logical Logic & switch-case</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Loops & Control Flow</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-loops-for-while-do-while-and-range-based-for.html">5. for, while, Range-for & 9 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Functions & Modular Code</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/06-cpp-functions-prototypes-overloading-and-lambdas.html">6. Functions, Overloading, References & Lambdas</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Arrays, Strings & Vectors</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/07-cpp-arrays-std-string-string-view-and-std-vector.html">7. Arrays, std::string, string_view & std::vector</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Pointers & Memory Safety</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/08-cpp-pointers-references-nullptr-and-memory-safety.html">8. Pointers, References, nullptr & Memory Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Object-Oriented Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-object-oriented-programming-classes-objects-and-encapsulation.html">9. OOP, Classes, Objects, Access Specifiers & Pillars</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Constructors, Destructors & RAII</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html" class="active">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+  </aside>
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 17: C++ Smart Pointers: unique_ptr, shared_ptr, weak_ptr & RAII Memory Complete Masterclass</span>
+    </div>
+    <h1 class="page-title">C++ Smart Pointers: unique_ptr, shared_ptr, weak_ptr & RAII Memory Complete Masterclass</h1>
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
+      <span class="badge">🟢 Lesson 17</span>
+      <span class="badge">📂 Phase 17: Smart Pointers & Memory</span>
+      <span class="badge">📅 2026 Master Edition</span>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Stack vs Heap Layout · Raw Pointer Problems · unique_ptr & make_unique · Ownership Transfer & Move · Sink/Borrow Patterns · shared_ptr & use_count · Control Block · Aliasing Constructor · weak_ptr & Cycles · Observer Pattern · Custom Deleters · Rule of Zero · enable_shared_from_this</span>
+    </div>
+
+<div class="intro-box">
+  <p>Welcome to <strong>Phase 17 (Chapter 17): C++ Smart Pointers &amp; Memory Management Masterclass</strong>! Modern C++ eliminates manual <code>new/delete</code> through RAII-based smart pointers. <code>std::unique_ptr</code> for exclusive ownership, <code>std::shared_ptr</code> for shared reference-counted ownership, and <code>std::weak_ptr</code> for non-owning observation. Together they make memory-safe, leak-free C++ achievable without a garbage collector.</p>
+</div>
+
+<div class="section-title"><span class="num">1</span>Stack vs Heap — Memory Model</div>
+<div class="section-body">
+  <div class="memory-diagram">C++ Memory Layout:
+
+  ┌──────────────────────────────────────────────────┐
+  │  TEXT  (code / executable instructions)          │
+  ├──────────────────────────────────────────────────┤
+  │  DATA  (global/static initialized variables)     │
+  ├──────────────────────────────────────────────────┤
+  │  BSS   (global/static uninitialized variables)   │
+  ├──────────────────────────────────────────────────┤
+  │  HEAP  (dynamic allocation via new/malloc)       │
+  │        grows upward  ↑                           │
+  │  ...                                             │
+  │        grows downward ↓                          │
+  │  STACK (local variables, function frames)        │
+  └──────────────────────────────────────────────────┘
+
+  STACK:                     HEAP:
+  ✅ Automatic lifetime      ❌ Manual lifetime (new/delete)
+  ✅ Very fast allocation    ✅ Large, flexible allocations
+  ✅ No fragmentation        ⚠️ Fragmentation possible
+  ⚠️ Limited size (~8MB)    ❌ Memory leaks if forgot delete</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Raw pointer problems</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+
+// ─── Memory leak example ────────────────────────────────────────────────────
+void memoryLeakExample() {
+    int* p = new int(42);
+    // If we throw or return early — leak! delete never called
+    if (true) return;   // <-- LEAK: p is lost!
+    delete p;
+}
+
+// ─── Dangling pointer example ───────────────────────────────────────────────
+int* danglingPointer() {
+    int local = 42;
+    return &amp;local;   // DANGER: local is destroyed when function returns!
+}
+
+// ─── Double deletion example ─────────────────────────────────────────────────
+void doubleDeletion() {
+    int* p = new int(99);
+    delete p;
+    // delete p;    // CRASH: undefined behaviour!
+    p = nullptr;    // Good practice: null after delete
+}
+
+// ─── Exception-unsafe raw new ────────────────────────────────────────────────
+void processData() {
+    int* data = new int[1000];
+    // ... some code that might throw ...
+    // throw std::runtime_error("error!"); // <-- LEAK: data never deleted!
+    delete[] data;   // not reached if exception thrown
+}
+
+// ─── The RAII solution: smart pointers ──────────────────────────────────────
+// (covered in sections below)
+</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span>std::unique_ptr — Exclusive Single Ownership</div>
+<div class="section-body">
+  <div class="concept-box">
+    <h4>unique_ptr Contract:</h4>
+    <p>• Exactly ONE <code>unique_ptr</code> owns the resource at any time. Cannot be copied — only <strong>moved</strong>.</p>
+    <p>• Resource is automatically destroyed when the <code>unique_ptr</code> goes out of scope (RAII).</p>
+    <p>• <strong>Always</strong> create with <code>std::make_unique&lt;T&gt;(args)</code> — exception-safe and avoids raw <code>new</code>.</p>
+    <p>• <strong>Zero overhead</strong> — same size and cost as a raw pointer at runtime.</p>
+  </div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — unique_ptr: creation, ownership, arrays</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+class File {
+    std::string path_;
+    bool open_;
+public:
+    explicit File(std::string path) : path_{std::move(path)}, open_{true} {
+        std::cout &lt;&lt; "Opened: " &lt;&lt; path_ &lt;&lt; "
+";
+    }
+    ~File() {
+        if (open_) std::cout &lt;&lt; "Closed: " &lt;&lt; path_ &lt;&lt; "
+";
+    }
+    void write(const std::string&amp; data) {
+        if (!open_) throw std::runtime_error("File not open!");
+        std::cout &lt;&lt; path_ &lt;&lt; " &lt;&lt; " &lt;&lt; data &lt;&lt; "
+";
+    }
+    void close() { open_ = false; std::cout &lt;&lt; "Manually closed: " &lt;&lt; path_ &lt;&lt; "
+"; }
+};
+
+// Factory function returning unique_ptr
+std::unique_ptr&lt;File&gt; openFile(const std::string&amp; path) {
+    return std::make_unique&lt;File&gt;(path);  // RAII from the start
+}
+
+// Function that takes ownership (sink)
+void processFile(std::unique_ptr&lt;File&gt; file) {
+    file-&gt;write("Processing data...");
+}  // file destroyed here automatically
+
+// Function that borrows (non-owning reference)
+void readFromFile(const File&amp; file) {
+    std::cout &lt;&lt; "Reading from file
+";
+}
+
+// Function that uses (non-owning raw pointer)
+void updateFile(File* file) {
+    if (file) file-&gt;write("Updated!");
+}
+
+int main() {
+    // Create with make_unique (ALWAYS prefer this!)
+    auto f1 = std::make_unique&lt;File&gt;("data.txt");
+    f1-&gt;write("Hello World");
+
+    // Borrow without transferring ownership
+    readFromFile(*f1);        // pass by reference
+    updateFile(f1.get());     // get() returns raw pointer — non-owning!
+
+    // Transfer ownership (move semantics)
+    auto f2 = std::move(f1);  // f2 now owns the File
+    if (!f1) std::cout &lt;&lt; "f1 is now null after move
+";
+    f2-&gt;write("Written via f2");
+
+    // Sink function — takes ownership, destroys at end of function
+    processFile(std::move(f2));
+    if (!f2) std::cout &lt;&lt; "f2 is null after move-to-sink
+";
+
+    // Factory function
+    auto logFile = openFile("server.log");
+    logFile-&gt;write("Server started");
+
+    // unique_ptr to array
+    auto buffer = std::make_unique&lt;char[]&gt;(1024);
+    buffer[0] = 'H'; buffer[1] = 'i'; buffer[2] = ' ';
+    std::cout &lt;&lt; "buffer: " &lt;&lt; buffer.get() &lt;&lt; "
+";
+
+    // Vector of unique_ptrs (polymorphic collection)
+    std::vector&lt;std::unique_ptr&lt;File&gt;&gt; filePool;
+    for (const std::string&amp; name : {"a.txt", "b.txt", "c.txt"}) {
+        filePool.push_back(std::make_unique&lt;File&gt;(name));
+    }
+    for (auto&amp; f : filePool) f-&gt;write("batch write");
+
+    return 0;
+}  // All files automatically closed! ✅</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span>std::shared_ptr — Shared Reference-Counted Ownership</div>
+<div class="section-body">
+  <div class="memory-diagram">shared_ptr Internal Layout:
+
+  ┌─────────────────────┐      ┌──────────────────────────────┐
+  │  shared_ptr&lt;T&gt; p1  │──┬──►│  Control Block (heap)        │
+  └─────────────────────┘  │   │  use_count  = 2              │
+                           │   │  weak_count = 1              │
+  ┌─────────────────────┐  │   │  deleter                     │
+  │  shared_ptr&lt;T&gt; p2  │──┘   └──────────────┬───────────────┘
+  └─────────────────────┘                     │
+                                              ▼
+                                     ┌────────────────┐
+                                     │ T object (heap)│
+                                     └────────────────┘
+  
+  When use_count reaches 0 → object destroyed
+  When weak_count also 0  → control block destroyed</div>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — shared_ptr: reference counting, use_count</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+
+class Database {
+    std::string name_;
+    int queryCount_{0};
+public:
+    explicit Database(std::string name) : name_{std::move(name)} {
+        std::cout &lt;&lt; "DB '" &lt;&lt; name_ &lt;&lt; "' connected
+";
+    }
+    ~Database() { std::cout &lt;&lt; "DB '" &lt;&lt; name_ &lt;&lt; "' disconnected
+"; }
+
+    void query(const std::string&amp; sql) {
+        ++queryCount_;
+        std::cout &lt;&lt; name_ &lt;&lt; " query #" &lt;&lt; queryCount_ &lt;&lt; ": " &lt;&lt; sql &lt;&lt; "
+";
+    }
+    int queryCount() const { return queryCount_; }
+};
+
+class UserService {
+    std::shared_ptr&lt;Database&gt; db_;  // shared ownership
+public:
+    explicit UserService(std::shared_ptr&lt;Database&gt; db) : db_{std::move(db)} {}
+    void getUser(int id) { db_-&gt;query("SELECT * FROM users WHERE id=" + std::to_string(id)); }
+};
+
+class OrderService {
+    std::shared_ptr&lt;Database&gt; db_;
+public:
+    explicit OrderService(std::shared_ptr&lt;Database&gt; db) : db_{std::move(db)} {}
+    void getOrders(int userId) { db_-&gt;query("SELECT * FROM orders WHERE user_id=" + std::to_string(userId)); }
+};
+
+int main() {
+    // Shared database connection
+    auto db = std::make_shared&lt;Database&gt;("PostgreSQL");
+    std::cout &lt;&lt; "use_count after creation: " &lt;&lt; db.use_count() &lt;&lt; "
+";  // 1
+
+    {
+        UserService  userSvc{db};   // db shared with UserService
+        OrderService orderSvc{db};  // db shared with OrderService
+        std::cout &lt;&lt; "use_count with 2 services: " &lt;&lt; db.use_count() &lt;&lt; "
+";  // 3
+
+        userSvc.getUser(42);
+        orderSvc.getOrders(42);
+
+        // Copy shared_ptr — increases ref count
+        auto db2 = db;
+        auto db3 = db;
+        std::cout &lt;&lt; "use_count with copies: " &lt;&lt; db.use_count() &lt;&lt; "
+";  // 5
+
+        db2.reset();  // release one owner
+        std::cout &lt;&lt; "after db2.reset: " &lt;&lt; db.use_count() &lt;&lt; "
+";  // 4
+    }  // userSvc, orderSvc, db3 destroyed — ref count decreases
+    std::cout &lt;&lt; "use_count after scope: " &lt;&lt; db.use_count() &lt;&lt; "
+";   // 1
+
+    // Aliasing constructor — shared_ptr to a member of an object
+    struct Config { int timeout = 30; std::string host = "localhost"; };
+    auto config = std::make_shared&lt;Config&gt;();
+    // shared_ptr to the host member — shares ownership of the whole Config!
+    std::shared_ptr&lt;std::string&gt; hostPtr(config, &amp;config-&gt;host);
+    std::cout &lt;&lt; "host: " &lt;&lt; *hostPtr &lt;&lt; " config use_count: " &lt;&lt; config.use_count() &lt;&lt; "
+";
+    config.reset();  // Config survives because hostPtr still holds it!
+    std::cout &lt;&lt; "host after config.reset: " &lt;&lt; *hostPtr &lt;&lt; "
+";
+
+    return 0;
+}  // DB disconnected here (use_count hits 0) ✅</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span>std::weak_ptr — Breaking Cyclic References</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — weak_ptr: observe without owning, cycle fix</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+// ─── Cycle with shared_ptr (MEMORY LEAK!) ────────────────────────────────────
+struct BadNode {
+    int val;
+    std::shared_ptr&lt;BadNode&gt; next;  // strong reference
+    std::shared_ptr&lt;BadNode&gt; prev;  // strong reference ← CYCLE!
+    explicit BadNode(int v) : val{v} { std::cout &lt;&lt; "BadNode " &lt;&lt; v &lt;&lt; " created
+"; }
+    ~BadNode() { std::cout &lt;&lt; "BadNode " &lt;&lt; val &lt;&lt; " destroyed
+"; }
+};
+
+// ─── Fix with weak_ptr (NO LEAK!) ────────────────────────────────────────────
+struct GoodNode {
+    int val;
+    std::shared_ptr&lt;GoodNode&gt; next;   // strong — keeps next alive
+    std::weak_ptr&lt;GoodNode&gt;   prev;   // weak — doesn't prevent destruction!
+    explicit GoodNode(int v) : val{v} { std::cout &lt;&lt; "GoodNode " &lt;&lt; v &lt;&lt; " created
+"; }
+    ~GoodNode() { std::cout &lt;&lt; "GoodNode " &lt;&lt; val &lt;&lt; " destroyed
+"; }
+};
+
+// ─── Observer pattern with weak_ptr ──────────────────────────────────────────
+class EventEmitter;
+
+class EventListener {
+    std::string name_;
+public:
+    explicit EventListener(std::string name) : name_{std::move(name)} {}
+    void onEvent(const std::string&amp; event) {
+        std::cout &lt;&lt; name_ &lt;&lt; " received: " &lt;&lt; event &lt;&lt; "
+";
+    }
+    ~EventListener() { std::cout &lt;&lt; name_ &lt;&lt; " destroyed
+"; }
+};
+
+class EventEmitter {
+    std::vector&lt;std::weak_ptr&lt;EventListener&gt;&gt; listeners_;
+public:
+    void subscribe(std::weak_ptr&lt;EventListener&gt; listener) {
+        listeners_.push_back(std::move(listener));
+    }
+    void emit(const std::string&amp; event) {
+        // Use lock() to safely access the listener
+        auto it = listeners_.begin();
+        while (it != listeners_.end()) {
+            if (auto listener = it-&gt;lock()) {   // still alive?
+                listener-&gt;onEvent(event);
+                ++it;
+            } else {
+                std::cout &lt;&lt; "(removing dead listener)
+";
+                it = listeners_.erase(it);      // auto-remove dead listeners!
+            }
+        }
+    }
+};
+
+int main() {
+    // CYCLE DEMO — leak
+    std::cout &lt;&lt; "=== Cycle with shared_ptr (LEAK) ===
+";
+    {
+        auto n1 = std::make_shared&lt;BadNode&gt;(1);
+        auto n2 = std::make_shared&lt;BadNode&gt;(2);
+        n1-&gt;next = n2;  // n1 holds n2
+        n2-&gt;prev = n1;  // n2 holds n1 ← CYCLE
+        // n1 and n2 use_count = 2 each — never reaches 0!
+    }  // LEAK — destructors never called!
+    std::cout &lt;&lt; "(should have seen 'destroyed' — but didn't!)
+
+";
+
+    // FIX — no leak
+    std::cout &lt;&lt; "=== Fix with weak_ptr (NO LEAK) ===
+";
+    {
+        auto n1 = std::make_shared&lt;GoodNode&gt;(1);
+        auto n2 = std::make_shared&lt;GoodNode&gt;(2);
+        n1-&gt;next = n2;     // strong: n1→n2
+        n2-&gt;prev = n1;     // weak: n2 observes n1 (doesn't prevent destruction)
+    }  // n1 destroyed (use_count 1→0), then n2 ✅
+
+    // Observer pattern
+    std::cout &lt;&lt; "
+=== Observer Pattern ===
+";
+    EventEmitter emitter;
+    auto l1 = std::make_shared&lt;EventListener&gt;("Logger");
+    auto l2 = std::make_shared&lt;EventListener&gt;("Analytics");
+    emitter.subscribe(l1);
+    emitter.subscribe(l2);
+    emitter.emit("user_login");
+
+    l2.reset();  // unsubscribe by destroying listener
+    std::cout &lt;&lt; "After l2 reset:
+";
+    emitter.emit("user_logout");  // Analytics auto-removed!
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span>Custom Deleters &amp; Smart Pointer Passing Guidelines</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Custom deleters, file/socket management</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;cstdio&gt;
+#include &lt;functional&gt;
+
+// ─── RAII file handle with custom deleter ────────────────────────────────────
+struct FileDeleter {
+    void operator()(FILE* f) const {
+        if (f) { std::fclose(f); std::cout &lt;&lt; "FILE closed by custom deleter
+"; }
+    }
+};
+
+using FileHandle = std::unique_ptr&lt;FILE, FileDeleter&gt;;
+
+FileHandle openRawFile(const char* path, const char* mode) {
+    FILE* f = std::fopen(path, mode);
+    if (!f) throw std::runtime_error(std::string("Cannot open: ") + path);
+    return FileHandle{f};
+}
+
+// ─── Lambda deleter ───────────────────────────────────────────────────────────
+auto makeBuffer(std::size_t size) {
+    return std::unique_ptr&lt;char[], std::function&lt;void(char*)&gt;&gt;(
+        new char[size],
+        [size](char* p) {
+            std::cout &lt;&lt; "Freeing buffer of " &lt;&lt; size &lt;&lt; " bytes
+";
+            delete[] p;
+        }
+    );
+}
+
+// ─── Passing smart pointers — guideline table ─────────────────────────────────
+void borrowObject(const std::string&amp; s) {           // just borrows — raw ref
+    std::cout &lt;&lt; "borrowing: " &lt;&lt; s &lt;&lt; "
+";
+}
+void sinkObject(std::unique_ptr&lt;std::string&gt; s) {  // takes ownership
+    std::cout &lt;&lt; "sinking: " &lt;&lt; *s &lt;&lt; "
+";
+}  // destroyed here
+void sharedAccess(std::shared_ptr&lt;std::string&gt; s) { // shares ownership
+    std::cout &lt;&lt; "shared: " &lt;&lt; *s &lt;&lt; " refcount=" &lt;&lt; s.use_count() &lt;&lt; "
+";
+}
+void weakAccess(std::weak_ptr&lt;std::string&gt; w) {    // optional access
+    if (auto p = w.lock()) std::cout &lt;&lt; "weak: " &lt;&lt; *p &lt;&lt; "
+";
+    else std::cout &lt;&lt; "object expired!
+";
+}
+
+int main() {
+    // Custom deleter for FILE
+    try {
+        auto f = openRawFile("test_output.txt", "w");
+        std::fputs("Hello from smart FILE!
+", f.get());
+        // f automatically closed when scope ends
+    } catch (const std::exception&amp; e) {
+        std::cout &lt;&lt; "File error (OK if no permission): " &lt;&lt; e.what() &lt;&lt; "
+";
+    }
+
+    // Lambda deleter
+    auto buf = makeBuffer(256);
+    buf[0] = 'A'; buf[1] = ' ';
+    std::cout &lt;&lt; "buf[0] = " &lt;&lt; buf[0] &lt;&lt; "
+";
+
+    // Passing patterns
+    auto up = std::make_unique&lt;std::string&gt;("Hello");
+    borrowObject(*up);                   // borrow by reference
+    sinkObject(std::move(up));           // transfer ownership (up becomes null)
+    if (!up) std::cout &lt;&lt; "up is null after sink
+";
+
+    auto sp = std::make_shared&lt;std::string&gt;("World");
+    sharedAccess(sp);                    // share (ref count increases temporarily)
+    weakAccess(sp);                      // weak access while alive
+    sp.reset();
+    weakAccess(std::weak_ptr&lt;std::string&gt;{}); // expired!
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span>Rule of Zero &amp; enable_shared_from_this</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">C++ — Rule of Zero, enable_shared_from_this</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+
+// Rule of Zero: if you use smart pointers and STL containers to manage
+// all resources, you don't need to write ANY of the 5 special members!
+class SmartEmployee {
+    std::string name_;
+    std::vector&lt;std::string&gt; skills_;
+    std::unique_ptr&lt;std::string&gt; biography_;  // unique resource
+public:
+    SmartEmployee(std::string name, std::string bio)
+        : name_{std::move(name)}, biography_{std::make_unique&lt;std::string&gt;(std::move(bio))} {}
+
+    void addSkill(std::string skill) { skills_.push_back(std::move(skill)); }
+    void print() const {
+        std::cout &lt;&lt; "Employee: " &lt;&lt; name_ &lt;&lt; "
+";
+        std::cout &lt;&lt; "Bio: " &lt;&lt; *biography_ &lt;&lt; "
+";
+        std::cout &lt;&lt; "Skills: ";
+        for (const auto&amp; s : skills_) std::cout &lt;&lt; s &lt;&lt; " ";
+        std::cout &lt;&lt; "
+";
+    }
+    // No need to write: destructor, copy/move constructors, copy/move assignment!
+    // unique_ptr automatically makes this class move-only (non-copyable)
+};
+
+// enable_shared_from_this — safe shared_ptr from within the object
+class Worker : public std::enable_shared_from_this&lt;Worker&gt; {
+    std::string task_;
+public:
+    explicit Worker(std::string task) : task_{std::move(task)} {}
+    std::shared_ptr&lt;Worker&gt; getSelf() {
+        return shared_from_this();  // safe — returns shared_ptr to this
+        // return std::shared_ptr&lt;Worker&gt;(this); // WRONG — creates separate ownership!
+    }
+    void run() { std::cout &lt;&lt; "Running task: " &lt;&lt; task_ &lt;&lt; "
+"; }
+    ~Worker() { std::cout &lt;&lt; "Worker '" &lt;&lt; task_ &lt;&lt; "' done
+"; }
+};
+
+int main() {
+    // Rule of Zero demo
+    SmartEmployee emp{"Alice", "Senior developer with 10 years experience"};
+    emp.addSkill("C++20");
+    emp.addSkill("RAII");
+    emp.addSkill("Templates");
+    emp.print();
+
+    // enable_shared_from_this
+    auto w1 = std::make_shared&lt;Worker&gt;("compile");
+    auto w2 = w1-&gt;getSelf();  // both point to same Worker
+    w1-&gt;run();
+    std::cout &lt;&lt; "Same object: " &lt;&lt; (w1.get() == w2.get()) &lt;&lt; "
+";  // true
+    std::cout &lt;&lt; "use_count: " &lt;&lt; w1.use_count() &lt;&lt; "
+";             // 2
+    return 0;
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">7</span>Technical FAQs</div>
+<div class="section-body">
+  <div class="faq-grid">
+    <div class="faq-item"><h4>Q1: Why make_unique/make_shared instead of new?</h4><p>Exception safety: <code>f(unique_ptr&lt;T&gt;(new T), g())</code> could leak if <code>g()</code> throws between the <code>new</code> and smart pointer construction (pre-C++17). <code>make_unique&lt;T&gt;()</code> is atomic — no such risk. Also cleaner and avoids repeating the type.</p></div>
+    <div class="faq-item"><h4>Q2: What is the overhead of shared_ptr vs unique_ptr?</h4><p><code>unique_ptr</code> has zero overhead — same as raw pointer. <code>shared_ptr</code> carries a second pointer (control block with ref counts) and uses atomic increments/decrements for thread safety — meaningful overhead in tight loops.</p></div>
+    <div class="faq-item"><h4>Q3: What is a cyclic reference and how does weak_ptr fix it?</h4><p>When A holds <code>shared_ptr&lt;B&gt;</code> and B holds <code>shared_ptr&lt;A&gt;</code>, both ref-counts never reach 0 — memory leaked forever. Break one direction with <code>weak_ptr</code> — it observes without owning, allowing proper destruction.</p></div>
+    <div class="faq-item"><h4>Q4: Is shared_ptr thread-safe?</h4><p>The ref-count management (copy/destruction of shared_ptr) is thread-safe. However, the <em>pointed-to object</em> is NOT protected — concurrent access to the object still requires a mutex.</p></div>
+    <div class="faq-item"><h4>Q5: What is enable_shared_from_this?</h4><p>When a member function needs to return a <code>shared_ptr</code> to itself (<code>this</code>), it can't call <code>shared_ptr&lt;T&gt;(this)</code> — that creates a second independent ownership chain. Inheriting from <code>enable_shared_from_this&lt;T&gt;</code> and calling <code>shared_from_this()</code> safely returns a sharing copy of the existing shared_ptr.</p></div>
+  </div>
+</div>
+<div class="nav-footer">
+  <a href="16-cpp-lambda-expressions-captures-std-function-and-closures.html" class="nav-btn">
+    <span class="label">← Previous Lesson</span>
+    <span class="title">16. Lambdas, Captures, std::function & Closures</span>
+  </a>
+  <a href="18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Next Lesson →</span>
+    <span class="title">18. try, catch, throw, Custom Exceptions & Safety</span>
+  </a>
+</div>
+  </main>
+</div>
+  <script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

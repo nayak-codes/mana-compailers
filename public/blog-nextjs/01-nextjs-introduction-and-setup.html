@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next.js Introduction & Setup — Next.js Tutorial | Our Compiler</title>
+  <meta name="description" content="Deep-dive introduction to Next.js: what it is, why Vercel built it, React vs Next.js differences, core rendering models (SSR/SSG/ISR/CSR/RSC), full-stack framework features, and how to create your first Next.js page." />
+  <meta name="keywords" content="nextjs tutorial, learn nextjs, next.js introduction & setup, next.js app router, react framework, server components, ssr ssg" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-nextjs/01-nextjs-introduction-and-setup.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Next.js Introduction & Setup — Next.js Complete Roadmap",
+  "description": "Deep-dive introduction to Next.js: what it is, why Vercel built it, React vs Next.js differences, core rendering models (SSR/SSG/ISR/CSR/RSC), full-stack framework features, and how to create your first Next.js page.",
+  "articleSection": "Phase 1: Next.js Introduction",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-20"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Next.js use chesthe React marchipovala?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ledu. Next.js React meeda build chesina framework — anni React concepts (components, JSX, props, state, hooks) same ga work chestayi. Next.js kevalam routing, rendering, data fetching, and backend features add chestundi."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Next.js free ah, paid ah?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Next.js framework itself completely free and open-source (MIT License), Vercel maintain chestundi. Deployment kosam Vercel platform lo free tier tho paatu paid tiers kuda unnayi; mee project ni Netlify, AWS, Docker vంటివి ఇతర platforms meedha kuda deploy cheyachu."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "React nerchukokunda direct ga Next.js nerchukovacha?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Technically start cheyochu, kani recommended kadhu. Components, JSX, props, state, hooks lanti React fundamentals ముందు nerchukunte, Next.js concepts (Server Components, App Router, Server Actions) chala easy ga అర్థం avthayi."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- Accordion Toggle, Syntax Highlighter & Code Preload Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side JS/TSX Syntax Highlighter (Monaco / VS Code Dark+ styling)
+    function highlightTsxCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___TSX_TOK_${id}___`;
+      };
+
+      // 1. Comments (// and /* */)
+      let code = rawCode.replace(/(\/\/.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/(\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+
+      // 2. Strings & template literals: "...", '...', `...`
+      code = code.replace(/(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['import','from','as','export','default','function','return','const','let','var','if','else','for','while','async','await','class','extends','new','this','super','try','catch','finally','throw','typeof','instanceof','in','of','null','undefined','true','false','interface','type','implements','public','private','readonly','void','case','switch','break','continue','yield','static'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. React/Next.js Types, Hooks & Built-in Functions
+      const fnList = ['useState','useEffect','useRouter','usePathname','useSearchParams','useContext','useMemo','useCallback','useRef','fetch','console','log','Response','NextResponse','NextRequest','Link','Image','Metadata','generateMetadata','generateStaticParams','revalidatePath','revalidateTag','redirect','notFound','cookies','headers','FormData','get','post','put','patch','delete','json','React','ReactNode','Promise','Array','Object','map','filter','reduce','find'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      // 5. JSX Tags (<Component>, </div>, <br/>)
+      code = code.replace(/(&lt;\/?[A-Za-z][A-Za-z0-9.]*)/g, m => pushToken('tp', m));
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___TSX_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        // Apply syntax highlighting & Copy/Run actions to all code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightTsxCode(codeEl.innerHTML);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightTsxCode(codeEl.innerHTML);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-nextjs">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT ACCORDION SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Next.js Complete Roadmap</div>
+    <a href="/blog-nextjs.html" class="sidebar-home-link">▲ Next.js Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Next.js Introduction -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Next.js Introduction</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-nextjs/01-nextjs-introduction-and-setup.html" class="active">1. What is Next.js?</a>
+        <a href="/blog-nextjs/02-nextjs-prerequisites-react-typescript.html">2. Prerequisites</a>
+      </div>
+
+      <!-- Phase 02: Setup and Project Structure -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Setup & Project Structure</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/03-nextjs-installation-and-project-setup.html">3. Next.js Setup</a>
+        <a href="/blog-nextjs/04-nextjs-project-structure.html">4. Project Structure</a>
+      </div>
+
+      <!-- Phase 03: App Router and Pages -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">App Router & Pages</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/05-nextjs-app-router.html">5. App Router</a>
+        <a href="/blog-nextjs/06-nextjs-static-routes.html">6. Static Routes</a>
+        <a href="/blog-nextjs/07-nextjs-dynamic-routes.html">7. Dynamic Routes</a>
+      </div>
+
+      <!-- Phase 04: Layouts and Navigation -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Layouts & Navigation</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/08-nextjs-layouts.html">8. Layouts</a>
+        <a href="/blog-nextjs/09-nextjs-navigation.html">9. Navigation</a>
+      </div>
+
+      <!-- Phase 05: Server and Client Components -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖥️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Server & Client Components</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/10-nextjs-server-components.html">10. Server Components</a>
+        <a href="/blog-nextjs/11-nextjs-client-components.html">11. Client Components</a>
+        <a href="/blog-nextjs/12-nextjs-server-vs-client-decision.html">12. Server vs Client Decision</a>
+      </div>
+
+      <!-- Phase 06: Styling and UI -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Styling & UI</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/13-nextjs-styling-options.html">13. Styling Options</a>
+        <a href="/blog-nextjs/14-nextjs-ui-components.html">14. UI Components</a>
+      </div>
+
+      <!-- Phase 07: Data Fetching -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Data Fetching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/15-nextjs-server-side-data-fetching.html">15. Server-Side Data Fetching</a>
+        <a href="/blog-nextjs/16-nextjs-caching-and-revalidation.html">16. Caching & Revalidation</a>
+        <a href="/blog-nextjs/17-nextjs-client-side-data-fetching.html">17. Client-Side Data Fetching</a>
+      </div>
+
+      <!-- Phase 08: Loading, Errors and Streaming -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Loading, Errors & Streaming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/18-nextjs-loading-ui.html">18. Loading UI</a>
+        <a href="/blog-nextjs/19-nextjs-error-handling.html">19. Error Handling</a>
+      </div>
+
+      <!-- Phase 09: Forms and Server Actions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Forms & Server Actions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/20-nextjs-forms.html">20. Forms</a>
+        <a href="/blog-nextjs/21-nextjs-server-actions.html">21. Server Actions</a>
+      </div>
+
+      <!-- Phase 10: Route Handlers and Backend -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Route Handlers & Backend</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/22-nextjs-route-handlers.html">22. Route Handlers</a>
+        <a href="/blog-nextjs/23-nextjs-api-project.html">23. API Project</a>
+      </div>
+
+      <!-- Phase 11: Databases and ORM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Databases & ORM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/24-nextjs-database-basics.html">24. Database Basics</a>
+        <a href="/blog-nextjs/25-nextjs-prisma-orm.html">25. Prisma ORM</a>
+        <a href="/blog-nextjs/26-nextjs-database-project.html">26. Database Project</a>
+      </div>
+
+      <!-- Phase 12: Authentication and Authorization -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Auth & Authorization</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/27-nextjs-authentication-basics.html">27. Authentication Basics</a>
+        <a href="/blog-nextjs/28-nextjs-authentication.html">28. Next.js Authentication</a>
+        <a href="/blog-nextjs/29-nextjs-security.html">29. Security</a>
+      </div>
+
+      <!-- Phase 13: SEO and Metadata -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔎</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">SEO & Metadata</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/30-nextjs-metadata.html">30. Metadata</a>
+        <a href="/blog-nextjs/31-nextjs-seo-project.html">31. SEO Project</a>
+      </div>
+
+      <!-- Phase 14: Images, Fonts and Assets -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">Images, Fonts & Assets</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/32-nextjs-image-optimization.html">32. Image Optimization</a>
+        <a href="/blog-nextjs/33-nextjs-fonts-and-assets.html">33. Fonts & Assets</a>
+      </div>
+
+      <!-- Phase 15: TypeScript and Code Quality -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔷</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">TypeScript & Code Quality</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/34-nextjs-typescript.html">34. TypeScript with Next.js</a>
+        <a href="/blog-nextjs/35-nextjs-code-quality.html">35. Code Quality</a>
+      </div>
+
+      <!-- Phase 16: Advanced Rendering -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Advanced Rendering</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/36-nextjs-rendering-models.html">36. Rendering Models</a>
+        <a href="/blog-nextjs/37-nextjs-advanced-routing.html">37. Advanced Routing</a>
+      </div>
+
+      <!-- Phase 17: Performance -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Performance</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/38-nextjs-performance-optimization.html">38. Performance Optimization</a>
+        <a href="/blog-nextjs/39-nextjs-caching-revalidation-advanced.html">39. Caching & Revalidation (Advanced)</a>
+      </div>
+
+      <!-- Phase 18: Testing -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Testing</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/40-nextjs-unit-and-component-testing.html">40. Unit & Component Testing</a>
+        <a href="/blog-nextjs/41-nextjs-end-to-end-testing.html">41. End-to-End Testing</a>
+      </div>
+
+      <!-- Phase 19: Deployment -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☁️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Deployment</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/42-nextjs-production-build.html">42. Production Build</a>
+        <a href="/blog-nextjs/43-nextjs-hosting-and-deployment.html">43. Hosting & Deployment</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try Node.js Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-react.html">React Course</a>
+    <a href="/blog-javascript.html">JavaScript Course</a>
+    <a href="/blog-node.html">Node.js Course</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-nextjs.html">Next.js</a><span class="sep">›</span>
+      <span class="current">Chapter 1: 1. What is Next.js?</span>
+    </div>
+
+    <h1 class="page-title">Next.js Introduction & Setup</h1>
+
+    <div class="page-meta">
+      <span class="badge">▲ Next.js 15+ (App Router)</span>
+      <span class="badge">🟢 Chapter 1 of 43</span>
+      <span class="badge">📂 Phase 1: Next.js Introduction</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Next.js ante enti? · React vs Next.js · Main Features · Full-Stack Framework · Rendering Models (SSR/SSG/ISR/CSR/RSC) · Use Cases & Limitations</span>
+    </div>
+
+    <div class="intro-box">
+      Next.js ante enti, Vercel enduku create chesindi, React tho compare chesthe em extra istundi ane deep-dive introduction. Ee chapter lo core rendering models (SSR, SSG, ISR, CSR, React Server Components), full-stack framework capabilities, and mee first Next.js page create cheyadam nerchukuntaru.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Next.js Ante Enti? Origins, Purpose & Why It Exists</div>
+    <div class="section-body">
+      <p><strong>Next.js</strong> is an open-source React framework, built and maintained by <strong>Vercel</strong> (formerly Zeit), first released in 2016 by Guillermo Rauch's team. React itself kevalam oka <em>UI library</em> — components, JSX, state ela manage cheyalo cheputundi, kani routing ela cheyalo, server meedha rendering ela cheyalo, files ela organize cheyalo React cheppadu. Deenini "batteries not included" problem antaru.</p>
+        <p>Next.js exact ga aa gap ni fill chesthundi — routing, rendering strategies (SSR/SSG/ISR), data fetching, backend API routes, image/font optimization, and production deployment — anni ఒకే framework లో combine chesi istundi, so developers "React + 10 other libraries" wire cheyakunda, direct ga production-ready apps build cheyachu.</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Key Characteristics of Next.js:</h4>
+        <ul>
+          <li><strong>React Meeda Built:</strong> Next.js React component model, JSX, hooks anni same ga use chestundi — kotha language nerchukovalsina pani ledu.</li>
+          <li><strong>Full-Stack Framework:</strong> Frontend UI + backend Route Handlers + database queries anni oke codebase lo, oke project lo rayochu.</li>
+          <li><strong>File-System Based Routing:</strong> <code>app/</code> folder lopala files/folders create chesthe, avi automatic ga URL routes ga map avthayi — separate router library avasaram ledu.</li>
+          <li><strong>Flexible Rendering:</strong> Prathi page ki independent ga decide cheyachu — Server-side render cheyala, static ga build time lo generate cheyala, leda client meedha render cheyala ani.</li>
+        </ul>
+        <p>Next.js create cheyadaniki official CLI tool <code>create-next-app</code> use chesthe, ready-made project structure, TypeScript, ESLint, Tailwind CSS anni pre-configured ga vasthayi:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Creating a New Next.js Project</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Terminal</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>npx create-next-app@latest my-next-app
+cd my-next-app
+npm run dev</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Command-by-Command Breakdown:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>npx create-next-app@latest</code>: Latest Next.js version ni download chesi, interactive prompts (TypeScript? ESLint? App Router? Tailwind?) adigi, complete boilerplate project generate chestundi.</li>
+            <li><code>cd my-next-app</code>: Newly created project folder loki navigate chestundi.</li>
+            <li><code>npm run dev</code>: Local development server ni <code>http://localhost:3000</code> meedha start chestundi, with hot-reload enabled.</li>
+          </ul>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">2</span>React vs Next.js — Key Differences</div>
+    <div class="section-body">
+      <p>Chala mandi beginners "React vs Next.js" ani confuse avutaru — kani ivi competing technologies kaadu. <strong>Next.js is built on top of React</strong>; Next.js ni use cheyalante mundu React ardham avvali. Kింద table lo main differences chudandi:</p>
+      
+      <table class="tbl">
+        <tr><th>Feature</th><th>Plain React (Vite/CRA)</th><th>Next.js</th></tr>
+        <tr><td>Routing</td><td>Manual — react-router-dom lanti library install cheyali</td><td>Built-in file-system routing (<code>app/</code> folder)</td></tr>
+        <tr><td>Rendering</td><td>Client-side rendering (CSR) only</td><td>SSR, SSG, ISR, CSR — anni support chestundi</td></tr>
+        <tr><td>Backend/API</td><td>Separate backend server avasaram (Express, Django, etc.)</td><td>Built-in Route Handlers — same project lo API endpoints</td></tr>
+        <tr><td>SEO</td><td>Weak by default (empty HTML shell + JS)</td><td>Strong — server meedha pre-rendered HTML</td></tr>
+        <tr><td>Image/Font Optimization</td><td>Manual configuration avasaram</td><td>Built-in <code>next/image</code>, <code>next/font</code></td></tr>
+        <tr><td>Deployment</td><td>Static hosting (Netlify, S3, etc.)</td><td>Vercel, Docker, or any Node.js server</td></tr>
+      </table>
+      <p>Short lo cheppalante: plain React <strong>chala flexible, kani manual setup ekkuva</strong>; Next.js <strong>opinionated structure isthundi, kani production features anni ready-made ga vastayi</strong>.</p>
+    </div>
+  
+
+    <div class="section-title"><span class="num">3</span>Your First Next.js Page (app/page.tsx)</div>
+    <div class="section-body">
+      <p>Next.js <strong>App Router</strong> lo, <code>app/</code> folder lopala unna prathi <code>page.tsx</code> file, automatic ga oka public URL route avthundi. Root level <code>app/page.tsx</code> exact ga <code>/</code> (home page) ni represent chestundi:</p>
+      
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: A Minimal Home Page Component</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">app/page.tsx</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>export default function Home() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;Welcome to My Next.js App 🚀&lt;/h1&gt;
+      &lt;p&gt;This page is server-rendered by default.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>export default function Home()</code>: Every route ki oka default-exported React component undali — deeni peru edaina kavachu, kani file location <code>URL</code> decide chestundi, function name kadhu.</li>
+            <li><code>return (...)</code>: JSX markup return chestundi — idi ordinary React component laane pani chestundi.</li>
+            <li>Extra imports, wrapper HTML, <code>&lt;html&gt;</code>/<code>&lt;body&gt;</code> tags avasaram ledu — avi <code>layout.tsx</code> lo already define chesi untaru.</li>
+          </ul>
+          <div style="margin-top:10px; color:var(--text2);"><strong>Browser URL:</strong> <code>http://localhost:3000/</code></div>
+        </div>
+    </div>
+  
+
+    <div class="section-title"><span class="num">4</span>Core Rendering Models: SSR, SSG, ISR, CSR & RSC</div>
+    <div class="section-body">
+      <p>Next.js main superpower — <strong>prathi page ki independent ga rendering strategy choose cheyagalగడం</strong>. Ee 5 models ardham cheskovadam chala important:</p>
+        <ul>
+          <li><strong>SSR (Server-Side Rendering):</strong> Prathi request ki fresh ga server meedha HTML generate avuthundi — real-time data (dashboards, user-specific pages) ki best.</li>
+          <li><strong>SSG (Static Site Generation):</strong> Build time lo ఒక్కసారి HTML generate chesi, CDN meedha cache chesthundi — blogs, marketing pages ki super fast.</li>
+          <li><strong>ISR (Incremental Static Regeneration):</strong> SSG లాగానే, kani specific time interval tarvatha background lo automatic ga re-generate avuthundi — e-commerce product pages ki ideal.</li>
+          <li><strong>CSR (Client-Side Rendering):</strong> Browser లోనే JavaScript run chesi content render chestundi — interactive dashboards, authenticated apps ki common.</li>
+          <li><strong>RSC (React Server Components):</strong> Next.js App Router default — components server meedha render అయ్యి, zero extra JavaScript browser ki పంపిస్తాయి (unless "use client" pెడితే).</li>
+        </ul>
+      <div class="diagram-box">┌──────────────────────────┐
+│  Browser Request (/blog) │
+└─────────────┬────────────┘
+              │
+              ▼  [Next.js Server decides rendering strategy]
+┌──────────────────────────┐
+│   Server Component Tree  │  (Default: rendered on server, zero client JS)
+│   + Data Fetching (DB)   │
+└─────────────┬────────────┘
+              │
+              ▼  [Client Components hydrate only where needed]
+┌──────────────────────────┐
+│  "use client" Components │  (Interactive: buttons, forms, state)
+└─────────────┬────────────┘
+              │
+              ▼
+┌──────────────────────────┐
+│   Final HTML + minimal   │
+│   JS sent to Browser     │
+└──────────────────────────┘</div>
+        <p><strong>Key takeaway:</strong> Next.js App Router lo, default ga anni components <strong>Server Components</strong> — interactivity (onClick, useState) kavali ante matrame top lo <code>"use client"</code> add chestaru.</p>
+    </div>
+  
+
+    <div class="section-title"><span class="num">5</span>Full-Stack Capabilities, Use Cases & Limitations</div>
+    <div class="section-body">
+      <p>Next.js kevalam frontend framework kaadu — <strong>Route Handlers</strong> use chesi, same project lo backend API endpoints kuda create cheyachu, database (Prisma, PostgreSQL, MongoDB) tho direct ga connect cheyachu. Deeni valla separate backend server (Express/Django) avasaram ledu, chinna-madhyathara projects ki.</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Common Use Cases:</h4>
+        <ul>
+          <li>Marketing websites & landing pages (fast SSG loading)</li>
+          <li>E-commerce storefronts (ISR + dynamic product pages)</li>
+          <li>SaaS dashboards & admin panels (SSR + auth)</li>
+          <li>Full-stack applications with database-backed APIs</li>
+          <li>Blogs & documentation sites (Markdown + SSG)</li>
+        </ul>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Limitations to Keep in Mind:</h4>
+        <ul>
+          <li>Learning curve ekkuva — App Router, Server/Client component boundary ardham cheskovadam beginners ki confusing avvachu.</li>
+          <li>Hosting flexibility — full features (Image Optimization, ISR) కోసం Vercel-style platform best; plain static hosting meedha konni features limited avthayi.</li>
+          <li>Simple static sites కోసం (avoiding SSR complexity), plain React or plain HTML/CSS sometimes overkill-free alternative avvachu.</li>
+        </ul>
+    </div>
+  
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfall: useState in a Server Component</div>
+      <p>App Router default ga anni components Server Components. Server Component lo direct ga <code>useState</code> or <code>onClick</code> vాడితే, "You're importing a component that needs useState — this React hook only works in a Client Component" ane error వస్తుంది. Interactivity avasaram unna component top lo <code>"use client";</code> directive add cheyali.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Create a new page at <code>app/about/page.tsx</code> that returns a simple "About Us" heading and a short paragraph, then link to it from the home page using the <code>Link</code> component.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">app/about/page.tsx</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+        </div>
+        <pre><code>export default function About() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;About Us&lt;/h1&gt;
+      &lt;p&gt;We build fast, full-stack apps with Next.js.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run This Challenge in Online Node.js IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Next.js use chesthe React marchipovala?</h4>
+      <p>Ledu. Next.js React meeda build chesina framework — anni React concepts (components, JSX, props, state, hooks) same ga work chestayi. Next.js kevalam routing, rendering, data fetching, and backend features add chestundi.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Next.js free ah, paid ah?</h4>
+      <p>Next.js framework itself completely free and open-source (MIT License), Vercel maintain chestundi. Deployment kosam Vercel platform lo free tier tho paatu paid tiers kuda unnayi; mee project ni Netlify, AWS, Docker vంటివి ఇతర platforms meedha kuda deploy cheyachu.</p>
+    </div>
+  
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> React nerchukokunda direct ga Next.js nerchukovacha?</h4>
+      <p>Technically start cheyochu, kani recommended kadhu. Components, JSX, props, state, hooks lanti React fundamentals ముందు nerchukunte, Next.js concepts (Server Components, App Router, Server Actions) chala easy ga అర్థం avthayi.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Next.js 15+ (App Router) · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="/blog-nextjs.html" class="nav-btn">
+        <span class="label">← Next.js Overview</span>
+        <span class="title">Course Index</span>
+      </a>
+
+      
+      <a href="02-nextjs-prerequisites-react-typescript.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">2. Prerequisites</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

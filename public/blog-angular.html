@@ -3,305 +3,1142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Angular Programming Tutorial & Reference Guide | Our Compiler</title>
-  <meta name="description" content="Learn Angular — Angular Programming Tutorial & Reference Guide with clear explanations, structured elements, interactive code snippets, and custom component challenges." />
+  <title>Angular Complete Roadmap — 50 Chapters, 17 Phases (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master Angular 18+ component architecture, Signals, Templates, Data Binding, Control Flow @if/@for, RxJS, Services, Router, Reactive Forms, HttpClient, Testing, SSR & Projects with our complete 50-chapter roadmap across 17 phases." />
+  <meta name="keywords" content="angular tutorial, learn angular, angular roadmap, angular signals, standalone components, angular router, reactive forms, rxjs, angular cli, angular projects" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-angular.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-angular/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('light-theme');
-        });
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          const updateText = () => {
-            const isLight = document.body.classList.contains('light-theme');
-            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-          };
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
           updateText();
           toggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
             updateText();
           });
           topnav.appendChild(toggleBtn);
         }
-
-        // Decorate Code Blocks (Copy Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.appendChild(copyBtn);
-        });
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-angular">
 
-<!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-angular.html" class="active">Angular</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
   <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-php.html">PHP</a>
   <a href="/blog-go.html">Go</a>
   <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
-  <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html" class="active">Angular</a>
-  <a href="/blog-vue.html">Vue.js</a>
-  <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
   <a href="/blog-rest-api.html">REST API</a>
   <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
   <a href="/blog-django.html">Django</a>
   <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-postgresql.html">PostgreSQL</a>
   <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
-  <a href="/blog-sqlite.html">SQLite</a>
-  <a href="/blog-redis.html">Redis</a>
-  <a href="/blog-cassandra.html">Cassandra</a>
-  <a href="/blog-aws.html">AWS</a>
-  <a href="/blog-azure.html">Azure</a>
-  <a href="/blog-gcloud.html">Google Cloud</a>
-  <a href="/blog-docker.html">Docker</a>
-  <a href="/blog-kubernetes.html">Kubernetes</a>
-  <a href="/blog-cicd.html">CI/CD</a>
-  <a href="/blog-data-science.html">Data Science</a>
-  <a href="/blog-ml.html">Machine Learning</a>
-  <a href="/blog-deep-learning.html">Deep Learning</a>
-  <a href="/blog-tensorflow.html">TensorFlow</a>
-  <a href="/blog-pytorch.html">PyTorch</a>
-  <a href="/blog-big-data.html">Big Data</a>
-  <a href="/blog-git.html">Git &amp; GitHub</a>
-  <a href="/blog-linux.html">Linux</a>
-  <a href="/blog-shell.html">Shell Scripting</a>
-  <a href="/blog-testing.html">Testing</a>
-  <a href="/blog-agile.html">Agile &amp; Scrum</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">Angular Tutorial</div>
-    <a href="/blog-angular.html" class="active">Angular HOME</a>
-    <a href="/blog-angular/intro.html">1. Introduction to Angular & CLI</a>
-    <a href="/blog-angular/components.html">2. Components & Metadata (@Component)</a>
-    <a href="/blog-angular/data-binding.html">3. Data Binding & Interpolation</a>
-    <a href="/blog-angular/directives.html">4. Directives (*ngIf & *ngFor)</a>
-    <a href="/blog-angular/communication.html">5. Component Communication (@Input & @Output)</a>
-    <a href="/blog-angular/lifecycle.html">6. Component Lifecycle Hooks</a>
-    <a href="/blog-angular/services-di.html">7. Services & Dependency Injection</a>
-    <a href="/blog-angular/rxjs-observables.html">8. RxJS Basics & Observables</a>
-    <a href="/blog-angular/template-forms.html">9. Template-Driven Forms</a>
-    <a href="/blog-angular/reactive-forms.html">10. Reactive Forms & FormBuilder</a>
-    <a href="/blog-angular/routing.html">11. Routing & Navigation</a>
-    <a href="/blog-angular/route-guards.html">12. Route Guards & Resolvers</a>
-    <a href="/blog-angular/http-client.html">13. HTTP Client & API Calls</a>
-    <a href="/blog-angular/content-projection.html">14. Content Projection & Templates</a>
-    <a href="/blog-angular/best-practices.html">15. Angular Best Practices & Standalone Components</a>
-
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-
-    <div class="sidebar-heading">Other Frontend</div>
-    <a href="/blog-react.html">React</a>
-    <a href="/blog-vue.html">Vue.js</a>
-    <a href="/blog-nextjs.html">Next.js</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-html.html">HTML</a>
-    <a href="/blog-css.html">CSS</a>
-
+    <div class="sidebar-heading">Angular Roadmap</div>
+    <a href="/blog-angular.html" class="sidebar-home-link active">🅰️ Angular Course HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🅰️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Angular Basics</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/01-what-is-angular.html" class="">1. What is Angular?</a><a href="/blog-angular/02-angular-prerequisites.html" class="">2. Angular Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and Project Structure</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/03-angular-installation.html" class="">3. Angular Setup & CLI</a><a href="/blog-angular/04-angular-project-structure.html" class="">4. Angular Project Structure</a><a href="/blog-angular/05-first-angular-component.html" class="">5. Your First Component</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Templates and Data Binding</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/06-angular-templates.html" class="">6. Templates & Interpolation</a><a href="/blog-angular/07-data-binding.html" class="">7. Data Binding</a><a href="/blog-angular/08-conditions-and-loops.html" class="">8. Conditions & Loops</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Components Communication</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/09-inputs.html" class="">9. Component Inputs</a><a href="/blog-angular/10-outputs.html" class="">10. Component Outputs</a><a href="/blog-angular/11-content-projection.html" class="">11. Content Projection</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Directives and Pipes</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/12-directives.html" class="">12. Directives</a><a href="/blog-angular/13-pipes.html" class="">13. Pipes</a><a href="/blog-angular/14-custom-pipes.html" class="">14. Custom Pipes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Signals and Reactivity</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/15-signals.html" class="">15. Signals</a><a href="/blog-angular/16-computed-and-effects.html" class="">16. Computed & Effects</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💉</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Services and Dependency Injection</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/17-services.html" class="">17. Services</a><a href="/blog-angular/18-dependency-injection.html" class="">18. Dependency Injection</a><a href="/blog-angular/19-configuration.html" class="">19. Angular Configuration</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧭</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Routing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/20-router-basics.html" class="">20. Router Basics</a><a href="/blog-angular/21-dynamic-routes.html" class="">21. Dynamic Routes</a><a href="/blog-angular/22-route-guards.html" class="">22. Route Guards</a><a href="/blog-angular/23-lazy-loading.html" class="">23. Lazy Loading</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Forms</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/24-template-driven-forms.html" class="">24. Template-Driven Forms</a><a href="/blog-angular/25-reactive-forms.html" class="">25. Reactive Forms</a><a href="/blog-angular/26-dynamic-forms.html" class="">26. Dynamic Forms</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">HttpClient and APIs</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/27-httpclient.html" class="">27. HttpClient</a><a href="/blog-angular/28-api-state-handling.html" class="">28. API State Handling</a><a href="/blog-angular/29-http-interceptors.html" class="">29. HTTP Interceptors</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">RxJS & Signals Interop</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/30-rxjs-basics.html" class="">30. RxJS Basics</a><a href="/blog-angular/31-rxjs-operators.html" class="">31. RxJS Operators</a><a href="/blog-angular/32-signals-and-rxjs.html" class="">32. Signals & RxJS Interop</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">State Management</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/33-local-state.html" class="">33. Local State</a><a href="/blog-angular/34-shared-state.html" class="">34. Shared State</a><a href="/blog-angular/35-ngrx.html" class="">35. NgRx</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Architecture and UI</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/36-component-architecture.html" class="">36. Component Architecture</a><a href="/blog-angular/37-angular-material.html" class="">37. Angular Material</a><a href="/blog-angular/38-responsive-ui.html" class="">38. Responsive UI</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Accessibility and Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/39-accessibility.html" class="">39. Accessibility</a><a href="/blog-angular/40-security.html" class="">40. Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Lifecycle and Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/41-lifecycle-hooks.html" class="">41. Lifecycle Hooks</a><a href="/blog-angular/42-change-detection.html" class="">42. Change Detection</a><a href="/blog-angular/43-performance.html" class="">43. Performance</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Testing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/44-component-testing.html" class="">44. Component Testing</a><a href="/blog-angular/45-service-and-http-testing.html" class="">45. Service & HTTP Testing</a><a href="/blog-angular/46-end-to-end-testing.html" class="">46. End-to-End Testing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 17</span><span class="phase-title">SSR, Deployment & Projects</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/47-ssr-and-hydration.html" class="">47. SSR & Hydration</a><a href="/blog-angular/48-deployment.html" class="">48. Deployment</a><a href="/blog-angular/49-angular-projects.html" class="">49. Angular Projects</a><a href="/blog-angular/50-angular-quiz.html" class="">50. Angular Practice Quiz</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#dd0031;font-weight:700;">▶ Run Code in IDE</a>
+    <a href="/blog.html">📚 All Tutorials</a>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-angular.html">Angular</a><span>›</span>
-      <span>Lesson Index</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">Angular Complete Roadmap</span>
     </div>
-    
-    
-<h1 class="page-title">Angular Programming Tutorial</h1>
-<div class="page-meta">
-  <span class="badge">🅰️ Angular</span>
-  <span class="badge">🟢 Intermediate Friendly</span>
-  <span class="badge">📅 July 2026</span>
-</div>
 
-<div class="intro-box">
-  <p>Angular is a comprehensive web development framework designed to build robust single-page applications. In this comprehensive, 15-lesson course, you will learn component-based structures, TypeScript programming advantage, properties & events bindings, loops list rendering, child emitters triggers, component lifecycle hooks ordering, services injection singleton, RxJS observables stream mapping, reactive dynamic validation forms, route parameter navigation, route guards auth checks, HttpClient module requests, transclusion projection slots, change detection strategy OnPush, and modern standalone modules models.</p>
-</div>
+    <h1 class="page-title">Angular Complete Masterclass (50 Chapters, 17 Phases)</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-  <p>Choose a topic from the left sidebar or click a lesson below to start learning Angular:</p>
-  <table class="tbl" style="margin-top: 15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    
-      <tr>
-        <td><strong>Lesson 1</strong></td>
-        <td><strong><a href="/blog-angular/intro.html">Introduction to Angular & CLI</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 2</strong></td>
-        <td><strong><a href="/blog-angular/components.html">Components & Metadata (@Component)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 3</strong></td>
-        <td><strong><a href="/blog-angular/data-binding.html">Data Binding & Interpolation</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 4</strong></td>
-        <td><strong><a href="/blog-angular/directives.html">Directives (*ngIf & *ngFor)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 5</strong></td>
-        <td><strong><a href="/blog-angular/communication.html">Component Communication (@Input & @Output)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 6</strong></td>
-        <td><strong><a href="/blog-angular/lifecycle.html">Component Lifecycle Hooks</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 7</strong></td>
-        <td><strong><a href="/blog-angular/services-di.html">Services & Dependency Injection</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 8</strong></td>
-        <td><strong><a href="/blog-angular/rxjs-observables.html">RxJS Basics & Observables</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 9</strong></td>
-        <td><strong><a href="/blog-angular/template-forms.html">Template-Driven Forms</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 10</strong></td>
-        <td><strong><a href="/blog-angular/reactive-forms.html">Reactive Forms & FormBuilder</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 11</strong></td>
-        <td><strong><a href="/blog-angular/routing.html">Routing & Navigation</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 12</strong></td>
-        <td><strong><a href="/blog-angular/route-guards.html">Route Guards & Resolvers</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 13</strong></td>
-        <td><strong><a href="/blog-angular/http-client.html">HTTP Client & API Calls</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 14</strong></td>
-        <td><strong><a href="/blog-angular/content-projection.html">Content Projection & Templates</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 15</strong></td>
-        <td><strong><a href="/blog-angular/best-practices.html">Angular Best Practices & Standalone Components</a></strong></td>
-      </tr>
-    
-  </table>
-</div>
+    <div class="page-meta">
+      <span class="badge">🅰️ Angular 18+</span>
+      <span class="badge">🟢 50 Complete Chapters</span>
+      <span class="badge">📂 17 Complete Phases</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
 
-    
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">What is Angular? · Prerequisites · Setup &amp; CLI · Project Structure · Your First Component · Templates &amp; Interpolation · Data Binding · Conditions &amp; Loops · Component Inputs &amp; Outputs · Content Projection · Directives · Pipes &amp; Custom Pipes · Signals &amp; Computed · Services &amp; DI · Router &amp; Guards · Forms &amp; Reactive Forms · HttpClient &amp; Interceptors · RxJS &amp; toSignal · State Management &amp; NgRx · Material &amp; Security · Testing, SSR, Projects &amp; Quiz</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's Angular Complete Master Course</strong>. Angular is the enterprise TypeScript-based web framework used to build structured, scalable single-page applications. This comprehensive 50-chapter bootcamp guides you through standalone components, Angular Signals, modern control flow, reactive forms, router navigation, dependency injection, RxJS HTTP requests, testing, and production deployment.</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(221,0,49,0.12),rgba(20,24,32,0.6));border:1px solid rgba(221,0,49,0.3);border-radius:12px;padding:24px;margin:28px 0;">
+      <h3 style="color:#dd0031;margin-bottom:10px;font-size:18px;">🎯 Ready to Master Angular Web Engineering?</h3>
+      <p style="color:var(--text2);margin-bottom:16px;font-size:14.5px;">Choose where to start: explore Angular introduction, inputs/outputs, Signals, services, router, reactive forms, or platform API project:</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/blog-angular/01-what-is-angular.html" style="background:linear-gradient(135deg,#dd0031,#be123c);color:#fff;font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 1: Angular Intro →</a>
+        <a href="/blog-angular/09-inputs.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 4: Inputs &amp; Outputs →</a>
+        <a href="/blog-angular/15-signals.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 6: Signals →</a>
+        <a href="/blog-angular/17-services.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 7: Services &amp; DI →</a>
+        <a href="/blog-angular/27-httpclient.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 10: HttpClient →</a>
+        <a href="/blog-angular/49-angular-projects.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 17: Platform Project →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🅰️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 01</div>
+                <h3 class="phase-roadmap-title">Angular Basics</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/01-what-is-angular.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">01</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">1. What is Angular?</span>
+                    <span class="lesson-subtopics">Angular ante enti? · Angular enduku use chestaru? · Angular vs JavaScript · Angular vs React · Angular vs Vue · Angular features · SPA ante enti? · Component-based architecture · TypeScript role · Angular ecosystem</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/02-angular-prerequisites.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">02</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">2. Angular Prerequisites</span>
+                    <span class="lesson-subtopics">HTML basics · CSS basics · JavaScript variables · Functions · Arrays and objects · Destructuring · Spread operator · Promises · async/await · TypeScript basics · Classes and interfaces · Modules</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 02</div>
+                <h3 class="phase-roadmap-title">Setup and Project Structure</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/03-angular-installation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">03</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">3. Angular Setup & CLI</span>
+                    <span class="lesson-subtopics">Node.js installation · npm ante enti? · Angular CLI · Angular CLI installation · Creating a project · Standalone components option · Routing option · Stylesheet option · Running the app · Building the app · Production preview · Setup errors</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/04-angular-project-structure.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">04</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">4. Angular Project Structure</span>
+                    <span class="lesson-subtopics">src folder · main.ts · app folder · app.ts · app.html · app.css · app.config.ts · app.routes.ts · public folder · angular.json · package.json · tsconfig.json</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/05-first-angular-component.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">05</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">5. Your First Component</span>
+                    <span class="lesson-subtopics">Component ante enti? · @Component · Selector · Template · Styles · Standalone component · Component imports · Creating component with CLI · Rendering component · Component file structure</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🎨</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 03</div>
+                <h3 class="phase-roadmap-title">Templates and Data Binding</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/06-angular-templates.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">06</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">6. Templates & Interpolation</span>
+                    <span class="lesson-subtopics">Template ante enti? · HTML inside Angular · Interpolation · Template expressions · Template statements · Template variables · Comments · Safe navigation · Dynamic content · Template organization</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/07-data-binding.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">07</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">7. Data Binding</span>
+                    <span class="lesson-subtopics">Interpolation {{ }} · Property binding [property] · Event binding (event) · Two-way binding [(ngModel)] · Attribute binding · Class binding · Style binding · Dynamic images · Disabled buttons · Binding mistakes</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/08-conditions-and-loops.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">08</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">8. Conditions & Loops</span>
+                    <span class="lesson-subtopics">@if · @else if · @else · @for · track · @switch · Loading UI · Empty state · Error state · Rendering lists · Legacy *ngIf overview · Legacy *ngFor overview</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔄</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 04</div>
+                <h3 class="phase-roadmap-title">Components Communication</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/09-inputs.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">09</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">9. Component Inputs</span>
+                    <span class="lesson-subtopics">Parent and child components · Passing data to child · @Input · Signal inputs · Required inputs · Input aliases · Input transforms · Object inputs · Array inputs · Typed inputs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/10-outputs.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">10</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">10. Component Outputs</span>
+                    <span class="lesson-subtopics">Child-to-parent communication · @Output · EventEmitter · Signal outputs · Custom events · Event payload · Handling child events · Typed events · Reusable components · Event naming</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/11-content-projection.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">11</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">11. Content Projection</span>
+                    <span class="lesson-subtopics">Content projection ante enti? · <ng-content> · Default slot · Named slots · Fallback content · Card component · Modal component · Reusable layout · Projected styles · Component composition</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🛠️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 05</div>
+                <h3 class="phase-roadmap-title">Directives and Pipes</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/12-directives.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">12</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">12. Directives</span>
+                    <span class="lesson-subtopics">Directive ante enti? · Attribute directives · Structural directives · Built-in directives · Custom directives · @Directive · Host binding · Host listener · v-focus-like focus directive · Tooltip directive · Highlight directive · Directive testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/13-pipes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">13</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">13. Pipes</span>
+                    <span class="lesson-subtopics">Pipe ante enti? · date · currency · uppercase · lowercase · number · percent · json · Pipe parameters · Pipe chaining · Custom pipes · Pure and impure pipes · Pipe performance</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/14-custom-pipes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">14</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">14. Custom Pipes</span>
+                    <span class="lesson-subtopics">Creating a custom pipe · @Pipe · transform() · Pipe arguments · Search pipe · Truncate pipe · Initials pipe · Date pipe · Pure pipe · Testing custom pipe</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 06</div>
+                <h3 class="phase-roadmap-title">Signals and Reactivity</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/15-signals.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">15</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">15. Signals</span>
+                    <span class="lesson-subtopics">Signals ante enti? · signal() · Reading signals · .set() · .update() · Writable signals · Signals in templates · Signal state · Signal vs normal variable · Signal vs Observable · Signal best practices</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/16-computed-and-effects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">16</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">16. Computed & Effects</span>
+                    <span class="lesson-subtopics">Derived state · computed() · Read-only signals · Calculating totals · Filtering lists · Computed dependencies · Effect ante enti? · Side effects · LocalStorage synchronization · Cleanup</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">💉</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 07</div>
+                <h3 class="phase-roadmap-title">Services and Dependency Injection</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/17-services.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">17</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">17. Services</span>
+                    <span class="lesson-subtopics">Service ante enti? · Why services are needed · Creating a service · Business logic · API service · Auth service · Shared data service · Utility service · Service scope · Service testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/18-dependency-injection.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">18</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">18. Dependency Injection</span>
+                    <span class="lesson-subtopics">DI ante enti? · Constructor injection · inject() · @Injectable · Root providers · Component providers · Service lifetime · Injection tokens · Optional dependencies · Provider hierarchy · Testing dependencies · DI best practices</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/19-configuration.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">19</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">19. Angular Configuration</span>
+                    <span class="lesson-subtopics">app.config.ts · Application providers · provideRouter · provideHttpClient · Environment configuration · Development config · Production config · Injection tokens · Feature providers · Global configuration</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🧭</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 08</div>
+                <h3 class="phase-roadmap-title">Routing</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/20-router-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">20</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">20. Router Basics</span>
+                    <span class="lesson-subtopics">Routing ante enti? · Client-side routing · Routes · RouterOutlet · RouterLink · Active links · Home route · About route · Not-found route · Redirects · Route titles · Navigation events</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/21-dynamic-routes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">21</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">21. Dynamic Routes</span>
+                    <span class="lesson-subtopics">Route parameters · :id · Reading parameters · Course details · Lesson details · Query parameters · URL fragments · Nested routes · Child routes · Lazy routes · Route data · Route title</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/22-route-guards.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">22</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">22. Route Guards</span>
+                    <span class="lesson-subtopics">Guard ante enti? · Authentication guard · CanActivateFn · CanDeactivateFn · Admin guard · Unsaved changes guard · Redirecting users · Route metadata · Guard testing · Guard security limitations</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/23-lazy-loading.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">23</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">23. Lazy Loading</span>
+                    <span class="lesson-subtopics">Lazy loading ante enti? · loadComponent · loadChildren · Feature routes · Route-level code splitting · Loading performance · Preloading · Selective preloading · Lazy-loaded dashboard · Lazy-loaded tutorial pages</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📝</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 09</div>
+                <h3 class="phase-roadmap-title">Forms</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/24-template-driven-forms.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">24</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">24. Template-Driven Forms</span>
+                    <span class="lesson-subtopics">Forms in Angular · FormsModule · ngModel · Form state · Input validation · Required fields · Email validation · Error messages · Submit event · Reset form · Form status · Use cases</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/25-reactive-forms.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">25</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">25. Reactive Forms</span>
+                    <span class="lesson-subtopics">Reactive forms ante enti? · ReactiveFormsModule · FormControl · FormGroup · FormBuilder · Form values · Form status · Validators · Custom validators · Nested form groups · Form arrays · Async validators · Form reset · Patch values</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/26-dynamic-forms.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">26</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">26. Dynamic Forms</span>
+                    <span class="lesson-subtopics">Dynamic fields · FormArray · Add field · Remove field · Dynamic validation · Multi-step form · File upload form · Reusable form control · Form error component · Form submission states</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🌐</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 10</div>
+                <h3 class="phase-roadmap-title">HttpClient and APIs</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/27-httpclient.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">27</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">27. HttpClient</span>
+                    <span class="lesson-subtopics">HTTP ante enti? · HttpClient · provideHttpClient · GET request · POST request · PUT request · PATCH request · DELETE request · Request headers · Query parameters · Request body · Response types · Status codes</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/28-api-state-handling.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">28</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">28. API State Handling</span>
+                    <span class="lesson-subtopics">Loading state · Success state · Empty state · Error state · Retry request · Search · Filtering · Sorting · Pagination · Infinite scrolling · Optimistic update · Request cancellation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/29-http-interceptors.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">29</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">29. HTTP Interceptors</span>
+                    <span class="lesson-subtopics">Interceptor ante enti? · Functional interceptor · Request logging · Auth token · Global error handling · Loading indicator · Retry logic · Cache interceptor · Request headers · Interceptor testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔁</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 11</div>
+                <h3 class="phase-roadmap-title">RxJS & Signals Interop</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/30-rxjs-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">30</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">30. RxJS Basics</span>
+                    <span class="lesson-subtopics">RxJS ante enti? · Observable · Observer · Subscription · subscribe() · of() · from() · map() · filter() · tap() · catchError() · finalize() · Async pipe · Subscription cleanup</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/31-rxjs-operators.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">31</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">31. RxJS Operators</span>
+                    <span class="lesson-subtopics">switchMap · mergeMap · concatMap · exhaustMap · combineLatest · forkJoin · debounceTime · distinctUntilChanged · takeUntil · shareReplay · startWith · scan · Choosing operators</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/32-signals-and-rxjs.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">32</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">32. Signals & RxJS Interop</span>
+                    <span class="lesson-subtopics">Signals vs Observables · toSignal · toObservable · Observable to signal · Signal to observable · HTTP with signals · RxJS interop · Cleanup · State architecture · Best practices</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📦</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 12</div>
+                <h3 class="phase-roadmap-title">State Management</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/33-local-state.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">33</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">33. Local State</span>
+                    <span class="lesson-subtopics">Component state · Signals · Computed state · Effect · Form state · Loading state · Error state · State ownership · Derived state · Avoiding duplicate state</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/34-shared-state.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">34</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">34. Shared State</span>
+                    <span class="lesson-subtopics">Shared service state · Signal-based store · Observable store · Feature state · Global state · Server state · Client state · State persistence · State reset · State debugging</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/35-ngrx.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">35</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">35. NgRx</span>
+                    <span class="lesson-subtopics">NgRx ante enti? · Store · Actions · Reducers · Selectors · Effects · Entity adapter · DevTools · Signal Store overview · When to use NgRx · When not to use global state · NgRx testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏛️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 13</div>
+                <h3 class="phase-roadmap-title">Architecture and UI</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/36-component-architecture.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">36</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">36. Component Architecture</span>
+                    <span class="lesson-subtopics">Reusable components · Smart components · Presentational components · Feature components · Shared components · Core services · Feature folders · UI components · Container components · Component APIs · Avoiding huge components · Naming conventions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/37-angular-material.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">37</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">37. Angular Material</span>
+                    <span class="lesson-subtopics">Angular Material ante enti? · Installation · Buttons · Cards · Tables · Dialogs · Menus · Toolbars · Tabs · Paginator · Form controls · Themes · Responsive Material UI</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/38-responsive-ui.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">38</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">38. Responsive UI</span>
+                    <span class="lesson-subtopics">Mobile-first design · Flexbox · CSS Grid · Media queries · Responsive navbar · Responsive sidebar · Responsive cards · Responsive tables · Dark mode · Loading skeletons · Empty states · Error states</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔒</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 14</div>
+                <h3 class="phase-roadmap-title">Accessibility and Security</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/39-accessibility.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">39</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">39. Accessibility</span>
+                    <span class="lesson-subtopics">Accessibility ante enti? · Semantic HTML · Labels · Keyboard navigation · Focus management · ARIA basics · Accessible forms · Accessible dialogs · Screen readers · Color contrast · Accessibility testing · Focus traps</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/40-security.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">40</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">40. Security</span>
+                    <span class="lesson-subtopics">XSS prevention · Safe templates · DomSanitizer · v-html-like risks · Authentication · Authorization · Route guards · Token storage · HTTPS · CSRF basics · CORS · Input validation · Security headers · Dependency security</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 15</div>
+                <h3 class="phase-roadmap-title">Lifecycle and Performance</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/41-lifecycle-hooks.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">41</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">41. Lifecycle Hooks</span>
+                    <span class="lesson-subtopics">Component lifecycle · ngOnInit · ngOnChanges · ngDoCheck · ngAfterViewInit · ngAfterViewChecked · ngOnDestroy · Cleanup · Lifecycle debugging · Lifecycle with signals</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/42-change-detection.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">42</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">42. Change Detection</span>
+                    <span class="lesson-subtopics">Change detection ante enti? · Default strategy · OnPush · Immutable data · Signals and change detection · Async pipe · Manual detection · Zone concepts · Change detection debugging · Avoiding unnecessary work</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/43-performance.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">43</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">43. Performance</span>
+                    <span class="lesson-subtopics">Lazy loading · Deferrable views · Code splitting · Image optimization · Virtual scrolling · Large lists · Signal performance · RxJS performance · Bundle analysis · Browser profiling · Core Web Vitals · Performance checklist</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🧪</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 16</div>
+                <h3 class="phase-roadmap-title">Testing</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/44-component-testing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">44</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">44. Component Testing</span>
+                    <span class="lesson-subtopics">Why testing is needed · Unit testing · Component testing · TestBed · Component fixture · Template output · Button click · Inputs · Outputs · Signals · Forms · Lifecycle</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/45-service-and-http-testing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">45</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">45. Service & HTTP Testing</span>
+                    <span class="lesson-subtopics">Service tests · Mock services · HTTP testing · Mock HTTP requests · Success response · Error response · Interceptor testing · Guard testing · Pipe testing · Directive testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/46-end-to-end-testing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">46</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">46. End-to-End Testing</span>
+                    <span class="lesson-subtopics">E2E testing · Playwright · Login flow · Form flow · Navigation flow · API mocking · Browser testing · Test reports · CI tests · Flaky test prevention</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 17</div>
+                <h3 class="phase-roadmap-title">SSR, Deployment & Projects</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-angular/47-ssr-and-hydration.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">47</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">47. SSR & Hydration</span>
+                    <span class="lesson-subtopics">SSR ante enti? · CSR vs SSR · Angular SSR · Hydration · SEO benefits · Server rendering · Browser-only APIs · Transfer state · SSR caching · Static rendering · SSR deployment</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/48-deployment.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">48</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">48. Deployment</span>
+                    <span class="lesson-subtopics">Development build · Production build · Environment files · API URLs · Static hosting · Docker · CI/CD · GitHub Actions · Cloud deployment · Custom domain · HTTPS · Logs and monitoring · Error tracking · Production checklist</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/49-angular-projects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">49</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">49. Angular Projects</span>
+                    <span class="lesson-subtopics">Beginner Projects (Todo App, Weather Dashboard) · Intermediate Projects (E-commerce, Task Manager) · Advanced Projects (Our Compiler Platform App, Micro Frontends) · Complete Architecture & Component Specs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-angular/50-angular-quiz.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">50</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">50. Angular Practice Quiz</span>
+                    <span class="lesson-subtopics">Comprehensive Angular Knowledge Check · 30 Multiple Choice Certification Exam Questions · Signals, Standalone Components, Router, Forms, DI, RxJS & SSR</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Angular Complete Masterclass · 50 Chapters · 17 Phases · 2026 Edition</span>
+      </div>
+    </div>
+
     <div class="nav-footer">
-      <a href="/blog-angular.html" class="nav-btn">
-        <span class="label">← Angular Overview</span>
-        <span class="title">Course Index</span>
-      </a>
-      <a href="/blog-angular/intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">Introduction to Angular & CLI</span>
-      </a>
+      <a href="/blog.html" class="nav-btn"><span class="label">← All Tutorials</span><span class="title">Course Hub</span></a>
+      <a href="/blog-angular/01-what-is-angular.html" class="nav-btn" style="text-align:right;"><span class="label">Start Learning →</span><span class="title">1. What is Angular?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

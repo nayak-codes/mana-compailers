@@ -3,291 +3,1155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C# Programming Tutorial & Reference Guide | Our Compiler</title>
-  <meta name="description" content="Learn C# — C# Programming Tutorial & Reference Guide with clear explanations, unique examples, common mistakes, and interactive compiler runs." />
-  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <title>C# Programming Master Tutorial (2026 Edition) — C# Master Tutorial | Our Compiler</title>
+  <meta name="description" content="Comprehensive C# 12 & .NET 8 course covering syntax, variables, data types, type conversion, OOP, LINQ, async/await, and modern software design." />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Accordion Toggle, Syntax Highlighter & Theme Script -->
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains("open");
+      if (isOpen) {
+        content.classList.remove("open");
+        btn.classList.remove("active");
+      } else {
+        content.classList.add("open");
+        btn.classList.add("active");
+      }
+    }
+
+    // Client-side C# Syntax Highlighter (Monaco / VS Code styling)
+    function highlightCSharpCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CSHARP_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, m => pushToken("cm", m));
+
+      // 2. Strings & Interpolations: @"...", $"...", "..."
+      code = code.replace(/(@"[^"]*"|\$?"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken("st", m));
+
+      // 3. Keywords
+      const kwList = ["using","namespace","class","struct","interface","enum","public","private","protected","internal","static","readonly","const","void","int","long","float","double","decimal","bool","char","string","object","var","dynamic","new","return","if","else","switch","case","break","default","for","foreach","while","do","try","catch","finally","throw","null","true","false","abstract","virtual","override","sealed","async","await","get","set","init","record","out","ref","in","sizeof","typeof","default","is","as"];
+      const kwRegex = new RegExp(`\\b(${kwList.join("|")})\\b`, "g");
+      code = code.replace(kwRegex, m => pushToken("kw", m));
+
+      // 4. Built-in Classes & Functions
+      const fnList = ["Console","WriteLine","Write","ReadLine","Parse","TryParse","Convert","Math","DateTime","Guid","System","String","Int32","Int64","Boolean","Double","Decimal","List","Dictionary","HashSet","Queue","Stack","SortedList","SortedSet","LinkedList","Enumerable","Task","Thread","File","Path","Directory","Array"];
+      const fnRegex = new RegExp(`\\b(${fnList.join("|")})\\b`, "g");
+      code = code.replace(fnRegex, m => pushToken("fn", m));
+
+      // 5. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:[fFdDmMlLuU])?)\b/g, m => pushToken("nu", m));
+
+      // 6. Restore Tokens
+      code = code.replace(/___CSHARP_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
-      if (currentTheme === 'light') {
-        document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('light-theme');
+      const currentTheme = localStorage.getItem("theme") || "dark";
+      if (currentTheme === "light") {
+        document.documentElement.classList.add("light-theme");
+        document.addEventListener("DOMContentLoaded", () => {
+          document.body.classList.add("light-theme");
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
-        const topnav = document.querySelector('.topnav');
+      window.addEventListener("DOMContentLoaded", () => {
+        const topnav = document.querySelector(".topnav");
         if (topnav) {
-          const toggleBtn = document.createElement('button');
-          toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className = "blog-theme-toggle";
+          toggleBtn.style.cssText = "margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;";
           const updateText = () => {
-            const isLight = document.body.classList.contains('light-theme');
-            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+            const isLight = document.body.classList.contains("light-theme");
+            toggleBtn.innerHTML = isLight ? "🌙 Dark" : "☀️ Light";
           };
           updateText();
-          toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          toggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("light-theme");
+            document.documentElement.classList.toggle("light-theme");
+            const isLight = document.body.classList.contains("light-theme");
+            localStorage.setItem("theme", isLight ? "light" : "dark");
             updateText();
           });
           topnav.appendChild(toggleBtn);
         }
 
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
+        // Code blocks syntax highlighting & actions
+        document.querySelectorAll(".code-block").forEach(block => {
+          const header = block.querySelector(".code-block-header");
+          const codeEl = block.querySelector("pre code");
           if (!header || !codeEl) return;
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightCSharpCode(rawCode);
 
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
+          let actionsContainer = header.querySelector(".code-actions");
           if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
+            actionsContainer = document.createElement("div");
+            actionsContainer.className = "code-actions";
+            actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+            const tryBtn = header.querySelector(".try-btn");
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
             header.appendChild(actionsContainer);
           }
 
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "copy-btn";
+          copyBtn.innerHTML = "📋 Copy";
+          copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; white-space: nowrap;";
+          copyBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = "✅ Copied!";
+              setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
             });
           });
           actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
 
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
+          const tryBtn = actionsContainer.querySelector(".try-btn");
           if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
+            tryBtn.addEventListener("click", (e) => {
               e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'csharp';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
+              localStorage.setItem("code_csharp", rawCode);
+              window.location.href = "/online-csharp-compiler.html";
             });
           }
         });
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-csharp">
+  <script src="/site-nav.js"></script>
 
-<!-- TOP LANGUAGE BAR -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html" class="active">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/?lang=nodejs">Node.js</a>
-</nav>
-
-<div class="layout">
-  <!-- LEFT SIDEBAR -->
-  <aside class="sidebar">
-    
-    <div class="sidebar-heading">C# Tutorial</div>
-    <a href="/blog-csharp.html" class="active">C# HOME</a>
-    <a href="/blog-csharp/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-csharp/variables.html">2. Variables & Constants</a>
-    <a href="/blog-csharp/operators.html">3. Operators & Expressions</a>
-    <a href="/blog-csharp/conditionals.html">4. Conditionals (if-else & switch)</a>
-    <a href="/blog-csharp/loops.html">5. Loops & Control Flow</a>
-    <a href="/blog-csharp/arrays.html">6. Arrays (Single & Multi)</a>
-    <a href="/blog-csharp/methods.html">7. Methods & Parameters</a>
-    <a href="/blog-csharp/oop-basics.html">8. OOP: Classes & Objects</a>
-    <a href="/blog-csharp/oop-encapsulation.html">9. OOP: Encapsulation & Access</a>
-    <a href="/blog-csharp/oop-inheritance.html">10. OOP: Inheritance & Overriding</a>
-    <a href="/blog-csharp/oop-polymorphism.html">11. OOP: Polymorphism & Interfaces</a>
-    <a href="/blog-csharp/collections.html">12. Collections & Generics</a>
-    <a href="/blog-csharp/linq.html">13. LINQ (Language Integrated Query)</a>
-    <a href="/blog-csharp/exceptions.html">14. Exception Handling</a>
-    <a href="/blog-csharp/files.html">15. File I/O & disposable streams</a>
-
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=csharp">▶ Try C# Online</a>
-
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
-
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="content">
-    <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-csharp.html">C#</a><span>›</span>
-      <span>Lesson Index</span>
-    </div>
-    
-    
-<h1 class="page-title">C# Programming Tutorial</h1>
-<div class="page-meta">
-  <span class="badge">🔷 C# Programming</span>
-  <span class="badge">🟢 Beginner Friendly</span>
-  <span class="badge">📅 July 2026</span>
-</div>
-
-<div class="intro-box">
-  <p>C# (C-Sharp) is an exceptionally powerful, modern, type-safe, object-oriented programming language designed by Microsoft. Running on the .NET compiler framework, C# utilizes the Common Language Runtime (CLR) with JIT optimization to deliver maximum performance. In this comprehensive guide, you will master C# variable types, operators, modern switch expressions, multidimensional arrays, parameter modifiers, class properties, polymorphic interface structures, generic collections, SQL-like LINQ database queries, and disposable file I/O operations.</p>
-</div>
-
-<div class="section">
-  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-  <p>Choose a topic from the left sidebar or click a lesson below to start learning C#:</p>
-  <table class="tbl" style="margin-top: 15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    
-      <tr>
-        <td><strong>Lesson 1</strong></td>
-        <td><strong><a href="/blog-csharp/intro.html">Welcome & Hello World</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 2</strong></td>
-        <td><strong><a href="/blog-csharp/variables.html">Variables & Constants</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 3</strong></td>
-        <td><strong><a href="/blog-csharp/operators.html">Operators & Expressions</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 4</strong></td>
-        <td><strong><a href="/blog-csharp/conditionals.html">Conditionals (if-else & switch)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 5</strong></td>
-        <td><strong><a href="/blog-csharp/loops.html">Loops & Control Flow</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 6</strong></td>
-        <td><strong><a href="/blog-csharp/arrays.html">Arrays (Single & Multi)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 7</strong></td>
-        <td><strong><a href="/blog-csharp/methods.html">Methods & Parameters</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 8</strong></td>
-        <td><strong><a href="/blog-csharp/oop-basics.html">OOP: Classes & Objects</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 9</strong></td>
-        <td><strong><a href="/blog-csharp/oop-encapsulation.html">OOP: Encapsulation & Access</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 10</strong></td>
-        <td><strong><a href="/blog-csharp/oop-inheritance.html">OOP: Inheritance & Overriding</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 11</strong></td>
-        <td><strong><a href="/blog-csharp/oop-polymorphism.html">OOP: Polymorphism & Interfaces</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 12</strong></td>
-        <td><strong><a href="/blog-csharp/collections.html">Collections & Generics</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 13</strong></td>
-        <td><strong><a href="/blog-csharp/linq.html">LINQ (Language Integrated Query)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 14</strong></td>
-        <td><strong><a href="/blog-csharp/exceptions.html">Exception Handling</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 15</strong></td>
-        <td><strong><a href="/blog-csharp/files.html">File I/O & disposable streams</a></strong></td>
-      </tr>
-    
-  </table>
-</div>
-
-    
-    <div class="nav-footer">
-      <a href="/blog-csharp.html" class="nav-btn">
-        <span class="label">← C# Overview</span>
-        <span class="title">Course Index</span>
+  <div class="layout">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-heading">C# Master Course</div>
+      <a href="/blog-csharp.html" class="sidebar-home-link">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>C# Course HOME</span>
       </a>
-      <a href="/blog-csharp/intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">Welcome & Hello World</span>
+      <div style="padding: 6px 12px 2px 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3);">Curriculum</div>
+    <div class="sidebar-accordion">
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C# Introduction & Setup</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html">1. Introduction, Features & .NET Architecture</a>
+        <a href="/blog-csharp/02-csharp-setup-vs-code-dotnet-sdk-cli.html">2. .NET SDK Setup, VS Code, CLI & Structure</a>
+        <a href="/blog-csharp/03-csharp-first-program-program-cs-main-console.html">3. First C# Program, Main() & Console I/O</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Variables & Data Types</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/04-csharp-variables-constants-scope-and-var.html">4. Variables, Constants (const/readonly), var & Scope</a>
+        <a href="/blog-csharp/05-csharp-data-types-value-vs-reference.html">5. Value vs Reference Types, Nullables & Structs</a>
+        <a href="/blog-csharp/06-csharp-type-conversion-casting-parse-tryparse.html">6. Type Conversion, Parse(), TryParse() & Boxing</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Operators & User Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/07-csharp-operators-complete-guide.html">7. All Operators (Bitwise, Nullable, is/as, Precedence)</a>
+        <a href="/blog-csharp/08-csharp-user-input-readline-parsing-validation.html">8. User Input, Console.ReadLine() & Validation</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Conditions & Loops</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/09-csharp-conditional-statements-switch-patterns.html">9. Conditionals, Pattern Matching & Switch Expressions</a>
+        <a href="/blog-csharp/10-csharp-loops-for-while-foreach-practice.html">10. Loops, foreach, Controls & 9 Practice Programs</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Strings, Arrays & Collections</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/11-csharp-strings-verbatim-raw-literals-stringbuilder.html">11. Strings, Interpolation, Raw Literals & StringBuilder</a>
+        <a href="/blog-csharp/12-csharp-arrays-multidimensional-jagged-methods.html">12. Arrays (1D, 2D Multidimensional & Jagged)</a>
+        <a href="/blog-csharp/13-csharp-collections-generics-list-dictionary-hashset.html">13. Generic Collections (List, Dictionary, HashSet, Stack/Queue)</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Methods & Object-Oriented OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/14-csharp-methods-parameters-ref-out-in-local-functions.html">14. Methods, Parameters (ref/out/in) & Overloading</a>
+        <a href="/blog-csharp/15-csharp-classes-objects-constructors-properties.html">15. Classes, Objects, Properties & Constructors</a>
+        <a href="/blog-csharp/16-csharp-encapsulation-access-modifiers-records.html">16. Encapsulation, Access Modifiers & Records</a>
+        <a href="/blog-csharp/17-csharp-inheritance-polymorphism-virtual-override.html">17. Inheritance, Polymorphism, virtual & override</a>
+        <a href="/blog-csharp/18-csharp-interfaces-multiple-implementation-decoupling.html">18. Interfaces, Default Members & Dependency Inversion</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Advanced C# Language</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/19-csharp-structs-enums-and-records-masterclass.html">19. Structs, Enums &amp; Records</a>
+        <a href="/blog-csharp/20-csharp-generics-type-parameters-constraints-variance.html">20. Generics, Constraints &amp; Variance</a>
+        <a href="/blog-csharp/21-csharp-delegates-events-func-action-predicate.html">21. Delegates, Action, Func &amp; Events</a>
+        <a href="/blog-csharp/22-csharp-lambda-expressions-closures-anonymous-functions.html">22. Lambda Expressions &amp; Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">LINQ &amp; Query Pipelines</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/23-csharp-linq-basics-query-vs-method-syntax-operators.html">23. LINQ Basics (Where, Select, OrderBy)</a>
+        <a href="/blog-csharp/24-csharp-advanced-linq-groupby-join-deferred-execution.html">24. Advanced LINQ (GroupBy, Join, Deferred)</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Exceptions, Files &amp; JSON</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/25-csharp-exception-handling-try-catch-custom-filters.html">25. Exception Handling &amp; Custom Errors</a>
+        <a href="/blog-csharp/26-csharp-file-handling-streamreader-streamwriter-async-io.html">26. File I/O, StreamReader &amp; Streams</a>
+        <a href="/blog-csharp/27-csharp-json-serialization-deserialization-system-text-json.html">27. JSON Serialization &amp; System.Text.Json</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Asynchronous Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/28-csharp-async-await-task-cancellation-tokens.html">28. async, await, Task &amp; CancellationToken</a>
+        <a href="/blog-csharp/29-csharp-parallel-programming-parallel-for-thread-safety-locks.html">29. Parallel.For, Thread Safety &amp; Locks</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">.NET Platform &amp; Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/30-csharp-dotnet-platform-clr-assemblies-nuget-configuration.html">30. .NET Platform, CLR &amp; NuGet</a>
+        <a href="/blog-csharp/31-csharp-dependency-injection-lifetimes-singleton-scoped-transient.html">31. Dependency Injection (Singleton, Scoped)</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">ASP.NET Core Web APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/32-csharp-aspnet-core-introduction-architecture-middleware.html">32. ASP.NET Core, Middleware &amp; Pipeline</a>
+        <a href="/blog-csharp/33-csharp-minimal-apis-endpoints-routing-swagger.html">33. Minimal APIs &amp; Swagger</a>
+        <a href="/blog-csharp/34-csharp-controller-based-apis-routing-dtos-validation.html">34. Controller APIs, DTOs &amp; Validation</a>
+        <a href="/blog-csharp/35-csharp-rest-api-capstone-project-product-service-crud.html">35. 🏆 Capstone: Complete REST API Project</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Databases &amp; EF Core</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/36-csharp-sql-basics-tables-joins-transactions.html">36. SQL Basics, Tables, JOINs &amp; Transactions</a>
+        <a href="/blog-csharp/37-csharp-entity-framework-core-dbcontext-migrations-linq.html">37. Entity Framework Core (EF Core)</a>
+        <a href="/blog-csharp/38-csharp-database-crud-api-ef-core-pagination-search.html">38. Database CRUD API Project</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">Authentication &amp; Security</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/39-csharp-authentication-jwt-tokens-password-hashing-claims.html">39. Authentication &amp; JWT Tokens</a>
+        <a href="/blog-csharp/40-csharp-aspnet-core-security-authorize-cors-xss-rate-limiting.html">40. ASP.NET Core Security</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✅</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Testing &amp; Clean Code</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/41-csharp-unit-testing-xunit-moq-integration-tests.html">41. Unit Testing, xUnit &amp; Moq</a>
+        <a href="/blog-csharp/42-csharp-clean-code-solid-principles-patterns-refactoring.html">42. Clean Code &amp; SOLID Principles</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Advanced .NET</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/43-csharp-performance-span-memory-caching-gc-optimization.html">43. Performance, Span&lt;T&gt; &amp; Caching</a>
+        <a href="/blog-csharp/44-csharp-background-services-ihostedservice-worker-queues.html">44. Background Services &amp; Worker Queues</a>
+        <a href="/blog-csharp/45-csharp-signalr-real-time-hubs-chat-notifications.html">45. SignalR Real-Time &amp; Chat</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☁️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Deployment &amp; Cloud</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/46-csharp-docker-deployment-github-actions-ci-cd.html">46. Docker, GitHub Actions &amp; CI/CD</a>
+        <a href="/blog-csharp/47-csharp-azure-cloud-app-service-sql-key-vault-insights.html">47. Azure Cloud &amp; App Service</a>
+      </div>
+
+    </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <div class="breadcrumb">
+        <a href="/">Home</a><span class="sep">›</span>
+        <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+        <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
+        <span class="current">Chapter Index: C# Programming Master Tutorial (2026 Edition)</span>
+      </div>
+
+      <h1 class="page-title">C# Programming Master Tutorial (2026 Edition)</h1>
+
+      <div class="page-meta">
+        <span class="badge">⚡ C# 12 &amp; .NET 8</span>
+        <span class="badge">🟢 47 In-Depth Chapters</span>
+        <span class="badge">📂 Master Index: C# 12 &amp; .NET 8 Masterclass</span>
+        <span class="badge">📅 2026 Edition</span>
+      </div>
+
+      <!-- Subtopics Pill Bar -->
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+        <span style="color:#a78bfa; font-weight:700;">📌 Covered in this chapter:</span>
+        <span>C# Overview · .NET SDK & CLI · First Program · Variables & Constants · Value vs Reference Types · Type Conversion & TryParse()</span>
+      </div>
+
+      
+<!-- Quick Start Card -->
+<div style="background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(20,24,32,0.6)); border: 1px solid rgba(139,92,246,0.3); border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+  <h3 style="color:#a78bfa; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning C# &amp; .NET 8?</h3>
+  <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Choose where to start: explore C# basics &amp; architecture, CLI tooling &amp; setup, variables &amp; constants, or data types &amp; type conversions:</p>
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: Basics &amp; Setup →</a>
+    <a href="/blog-csharp/04-csharp-variables-constants-scope-and-var.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 2: Variables &amp; Types →</a>
+    <a href="/online-csharp-compiler.html" style="background:var(--bg3); border:1px solid var(--border); color:#a78bfa; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">▶ Try C# Online Compiler →</a>
+  </div>
+</div>
+
+<!-- Full Curriculum Roadmap Cards -->
+<div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+<div class="curriculum-roadmap-container">
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">📂</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 01</div>
+          <h3 class="phase-roadmap-title">C# Introduction & Setup</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
+    <div class="phase-lessons-list">
+  
+        <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">01</span>
+            <div class="lesson-info">
+              <span class="lesson-title">1. Introduction, Features & .NET Architecture</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/02-csharp-setup-vs-code-dotnet-sdk-cli.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">02</span>
+            <div class="lesson-info">
+              <span class="lesson-title">2. .NET SDK Setup, VS Code, CLI & Structure</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/03-csharp-first-program-program-cs-main-console.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">03</span>
+            <div class="lesson-info">
+              <span class="lesson-title">3. First C# Program, Main() & Console I/O</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+    </div>
+  </div>
+  
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">📦</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 02</div>
+          <h3 class="phase-roadmap-title">Variables & Data Types</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
+    <div class="phase-lessons-list">
+  
+        <a href="/blog-csharp/04-csharp-variables-constants-scope-and-var.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">04</span>
+            <div class="lesson-info">
+              <span class="lesson-title">4. Variables, Constants (const/readonly), var & Scope</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/05-csharp-data-types-value-vs-reference.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">05</span>
+            <div class="lesson-info">
+              <span class="lesson-title">5. Value vs Reference Types, Nullables & Structs</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/06-csharp-type-conversion-casting-parse-tryparse.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">06</span>
+            <div class="lesson-info">
+              <span class="lesson-title">6. Type Conversion, Parse(), TryParse() & Boxing</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+    </div>
+  </div>
+  
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">⚡</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 03</div>
+          <h3 class="phase-roadmap-title">Operators & User Input</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
+    <div class="phase-lessons-list">
+  
+        <a href="/blog-csharp/07-csharp-operators-complete-guide.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">07</span>
+            <div class="lesson-info">
+              <span class="lesson-title">7. All Operators (Bitwise, Nullable, is/as, Precedence)</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/08-csharp-user-input-readline-parsing-validation.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">08</span>
+            <div class="lesson-info">
+              <span class="lesson-title">8. User Input, Console.ReadLine() & Validation</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+    </div>
+  </div>
+  
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🔀</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 04</div>
+          <h3 class="phase-roadmap-title">Conditions & Loops</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
+    <div class="phase-lessons-list">
+  
+        <a href="/blog-csharp/09-csharp-conditional-statements-switch-patterns.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">09</span>
+            <div class="lesson-info">
+              <span class="lesson-title">9. Conditionals, Pattern Matching & Switch Expressions</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/10-csharp-loops-for-while-foreach-practice.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">10</span>
+            <div class="lesson-info">
+              <span class="lesson-title">10. Loops, foreach, Controls & 9 Practice Programs</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+    </div>
+  </div>
+  
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">📊</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 05</div>
+          <h3 class="phase-roadmap-title">Strings, Arrays & Collections</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
+    <div class="phase-lessons-list">
+  
+        <a href="/blog-csharp/11-csharp-strings-verbatim-raw-literals-stringbuilder.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">11</span>
+            <div class="lesson-info">
+              <span class="lesson-title">11. Strings, Interpolation, Raw Literals & StringBuilder</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/12-csharp-arrays-multidimensional-jagged-methods.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">12</span>
+            <div class="lesson-info">
+              <span class="lesson-title">12. Arrays (1D, 2D Multidimensional & Jagged)</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/13-csharp-collections-generics-list-dictionary-hashset.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">13</span>
+            <div class="lesson-info">
+              <span class="lesson-title">13. Generic Collections (List, Dictionary, HashSet, Stack/Queue)</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+    </div>
+  </div>
+  
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🏗️</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 06</div>
+          <h3 class="phase-roadmap-title">Methods & Object-Oriented OOP</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
+    <div class="phase-lessons-list">
+  
+        <a href="/blog-csharp/14-csharp-methods-parameters-ref-out-in-local-functions.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">14</span>
+            <div class="lesson-info">
+              <span class="lesson-title">14. Methods, Parameters (ref/out/in) & Overloading</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/15-csharp-classes-objects-constructors-properties.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">15</span>
+            <div class="lesson-info">
+              <span class="lesson-title">15. Classes, Objects, Properties & Constructors</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/16-csharp-encapsulation-access-modifiers-records.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">16</span>
+            <div class="lesson-info">
+              <span class="lesson-title">16. Encapsulation, Access Modifiers & Records</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/17-csharp-inheritance-polymorphism-virtual-override.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">17</span>
+            <div class="lesson-info">
+              <span class="lesson-title">17. Inheritance, Polymorphism, virtual & override</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+        <a href="/blog-csharp/18-csharp-interfaces-multiple-implementation-decoupling.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">18</span>
+            <div class="lesson-info">
+              <span class="lesson-title">18. Interfaces, Default Members & Dependency Inversion</span>
+              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+    
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🧩</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 07</div>
+          <h3 class="phase-roadmap-title">Advanced C# Language</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Structs &amp; value types, enums, record classes, generics with constraints, Func/Action/Predicate delegates, event publisher-subscriber, and lambda expressions with closures.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/19-csharp-structs-enums-and-records-masterclass.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">19</span><div class="lesson-info"><span class="lesson-title">19. Structs, Enums &amp; Records</span><span class="lesson-subtopics">struct · value-type copying · enum switch · record class · record struct · value equality</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/20-csharp-generics-type-parameters-constraints-variance.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">20</span><div class="lesson-info"><span class="lesson-title">20. Generics, Constraints, Covariance &amp; Contravariance</span><span class="lesson-subtopics">Generic classes · Generic methods · where constraints · covariance · contravariance</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/21-csharp-delegates-events-func-action-predicate.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">21</span><div class="lesson-info"><span class="lesson-title">21. Delegates, Action, Func, Predicate &amp; Events</span><span class="lesson-subtopics">Delegates · Func · Action · Predicate · Events · Publisher-Subscriber pattern</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/22-csharp-lambda-expressions-closures-anonymous-functions.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">22</span><div class="lesson-info"><span class="lesson-title">22. Lambda Syntax, Closures &amp; Anonymous Functions</span><span class="lesson-subtopics">Lambda => · Expression lambdas · Statement lambdas · Closures · Captured variables</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
       </a>
     </div>
-  </main>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🔍</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 08</div>
+          <h3 class="phase-roadmap-title">LINQ &amp; Query Pipelines</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Language Integrated Query — filtering, projection, sorting, aggregation, deferred execution, GroupBy, Join, and LINQ performance patterns.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/23-csharp-linq-basics-query-vs-method-syntax-operators.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">23</span><div class="lesson-info"><span class="lesson-title">23. LINQ Basics (Where, Select, OrderBy, FirstOrDefault)</span><span class="lesson-subtopics">Query vs Method syntax · Where · Select · OrderBy · Aggregates (Sum, Avg, Min, Max)</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/24-csharp-advanced-linq-groupby-join-deferred-execution.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">24</span><div class="lesson-info"><span class="lesson-title">24. Advanced LINQ (GroupBy, Join, Deferred Execution)</span><span class="lesson-subtopics">GroupBy · Join · SelectMany · Set operations · Deferred vs Immediate execution · ToList</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🛡️</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 09</div>
+          <h3 class="phase-roadmap-title">Exceptions, Files &amp; JSON</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Robust error handling with try/catch/finally, custom exceptions, exception filters, file I/O with System.IO, StreamReader/Writer, and JSON serialization with System.Text.Json.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/25-csharp-exception-handling-try-catch-custom-filters.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">25</span><div class="lesson-info"><span class="lesson-title">25. Exception Handling, Custom Errors &amp; Filters</span><span class="lesson-subtopics">try/catch/finally · throw · Custom exceptions · Exception filters (when) · Best practices</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/26-csharp-file-handling-streamreader-streamwriter-async-io.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">26</span><div class="lesson-info"><span class="lesson-title">26. File I/O, File, Directory, Path &amp; Streams</span><span class="lesson-subtopics">File.ReadAllText · File.WriteAllText · StreamReader · StreamWriter · Path · Async I/O</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/27-csharp-json-serialization-deserialization-system-text-json.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">27</span><div class="lesson-info"><span class="lesson-title">27. JSON Serialization &amp; System.Text.Json</span><span class="lesson-subtopics">JsonSerializer · Serialize · Deserialize · JsonSerializerOptions · CamelCase · JSON arrays</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">⚡</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 10</div>
+          <h3 class="phase-roadmap-title">Asynchronous Programming</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Non-blocking programming with async/await, Task&lt;T&gt;, CancellationToken, Task.WhenAll, parallel computing with Parallel.For, thread safety and concurrent collections.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/28-csharp-async-await-task-cancellation-tokens.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">28</span><div class="lesson-info"><span class="lesson-title">28. async, await, Task&lt;T&gt; &amp; CancellationToken</span><span class="lesson-subtopics">Synchronous vs Asynchronous · Task · async methods · CancellationToken · Task.WhenAll/WhenAny</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/29-csharp-parallel-programming-parallel-for-thread-safety-locks.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">29</span><div class="lesson-info"><span class="lesson-title">29. Parallel.For, Thread Safety, Locks &amp; Concurrent Collections</span><span class="lesson-subtopics">Parallel.For · Parallel.ForEach · Race conditions · lock · Interlocked · ConcurrentDictionary</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🏛️</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 11</div>
+          <h3 class="phase-roadmap-title">.NET Platform &amp; Architecture</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">.NET SDK, CLR, JIT compilation, assemblies, NuGet package management, appsettings.json configuration, and Dependency Injection with Singleton/Scoped/Transient lifetimes.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/30-csharp-dotnet-platform-clr-assemblies-nuget-configuration.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">30</span><div class="lesson-info"><span class="lesson-title">30. .NET Platform, CLR, Assemblies &amp; NuGet</span><span class="lesson-subtopics">.NET SDK · CLR · JIT Compiler · Assemblies · NuGet · dotnet add package · appsettings.json</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/31-csharp-dependency-injection-lifetimes-singleton-scoped-transient.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">31</span><div class="lesson-info"><span class="lesson-title">31. Dependency Injection (Singleton, Scoped, Transient)</span><span class="lesson-subtopics">DI concept · Tight vs Loose coupling · IServiceCollection · Service Lifetimes · Constructor injection</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card" style="border-color: rgba(139,92,246,0.4); background: linear-gradient(135deg, rgba(139,92,246,0.06), var(--bg2));">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🌐</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 12</div>
+          <h3 class="phase-roadmap-title">ASP.NET Core Web APIs</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge" style="background: linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">4 In-Depth Lessons 🏆</span>
+    </div>
+    <p class="phase-roadmap-desc">Build production-ready REST APIs with ASP.NET Core 8 — Minimal APIs, Controller-based APIs with DTOs, model validation, Swagger documentation, and a complete CRUD Capstone project.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/32-csharp-aspnet-core-introduction-architecture-middleware.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">32</span><div class="lesson-info"><span class="lesson-title">32. ASP.NET Core Intro, Middleware &amp; Pipeline</span><span class="lesson-subtopics">Program.cs · WebApplication Builder · Middleware pipeline · Kestrel · Swagger/OpenAPI</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/33-csharp-minimal-apis-endpoints-routing-swagger.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">33</span><div class="lesson-info"><span class="lesson-title">33. Minimal APIs, Endpoints &amp; Swagger</span><span class="lesson-subtopics">MapGet/Post/Put/Delete · Route parameters · Results helper · Status codes · Swagger UI</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/34-csharp-controller-based-apis-routing-dtos-validation.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">34</span><div class="lesson-info"><span class="lesson-title">34. Controller APIs, DTOs &amp; Validation</span><span class="lesson-subtopics">[ApiController] · Routing · IActionResult · DTOs · Data Annotations · CRUD operations</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/35-csharp-rest-api-capstone-project-product-service-crud.html" class="curriculum-lesson-row" style="border-left: 3px solid #8b5cf6;">
+        <div class="lesson-row-left"><span class="lesson-idx" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">35</span><div class="lesson-info"><span class="lesson-title">🏆 35. Complete REST API Capstone — Product CRUD Project</span><span class="lesson-subtopics">Product model · IProductService · Dependency Injection · Full CRUD · Swagger testing · API docs</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🗄️</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 13</div>
+          <h3 class="phase-roadmap-title">Databases &amp; Entity Framework Core</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Relational databases with SQL, Entity Framework Core ORM, DbContext, Migrations, LINQ data access, Eager Loading, Repository pattern, and a complete Database-connected CRUD API with pagination and search.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/36-csharp-sql-basics-tables-joins-transactions.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">36</span><div class="lesson-info"><span class="lesson-title">36. SQL Basics, Tables, JOINs &amp; Transactions</span><span class="lesson-subtopics">Tables · PRIMARY KEY · FOREIGN KEY · SELECT · INSERT · UPDATE · DELETE · INNER JOIN · ACID Transactions</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/37-csharp-entity-framework-core-dbcontext-migrations-linq.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">37</span><div class="lesson-info"><span class="lesson-title">37. Entity Framework Core (EF Core)</span><span class="lesson-subtopics">ORM · DbContext · DbSet · Migrations · CRUD with LINQ · Eager Loading Include() · Repository Pattern</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/38-csharp-database-crud-api-ef-core-pagination-search.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">38</span><div class="lesson-info"><span class="lesson-title">38. Database CRUD API Project with EF Core</span><span class="lesson-subtopics">SQLite Setup · Auto Migrations · Repository · Service Layer · Pagination · Search · Sorting</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🔐</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 14</div>
+          <h3 class="phase-roadmap-title">Authentication &amp; Security</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">User registration, BCrypt password hashing, JWT token generation with Claims, Bearer authentication middleware, Role/Policy-based authorization, CORS, Rate Limiting, and SQL injection prevention.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/39-csharp-authentication-jwt-tokens-password-hashing-claims.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">39</span><div class="lesson-info"><span class="lesson-title">39. Authentication, JWT Tokens &amp; Password Hashing</span><span class="lesson-subtopics">BCrypt · JWT · Claims · JwtSecurityToken · Bearer Auth Middleware · Refresh Tokens</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/40-csharp-aspnet-core-security-authorize-cors-xss-rate-limiting.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">40</span><div class="lesson-info"><span class="lesson-title">40. ASP.NET Core Security ([Authorize], CORS &amp; Rate Limiting)</span><span class="lesson-subtopics">[Authorize] · Role Auth · Policy Auth · CORS · HTTPS · Secret Management · Rate Limiting</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">✅</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 15</div>
+          <h3 class="phase-roadmap-title">Testing &amp; Professional Development</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">Unit testing with xUnit and Moq, integration tests with WebApplicationFactory, SOLID principles, Clean Architecture, DRY, meaningful naming, Repository/Service/Factory patterns, and refactoring techniques.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/41-csharp-unit-testing-xunit-moq-integration-tests.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">41</span><div class="lesson-info"><span class="lesson-title">41. Unit Testing, xUnit, Moq &amp; Integration Tests</span><span class="lesson-subtopics">xUnit · [Fact] · [Theory] · Moq · FluentAssertions · WebApplicationFactory · Coverage</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/42-csharp-clean-code-solid-principles-patterns-refactoring.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">42</span><div class="lesson-info"><span class="lesson-title">42. Clean Code, SOLID Principles &amp; Architecture</span><span class="lesson-subtopics">SRP · OCP · LSP · ISP · DIP · DRY · Clean Architecture · Refactoring</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">🚀</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 16</div>
+          <h3 class="phase-roadmap-title">Advanced .NET</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+    </div>
+    <p class="phase-roadmap-desc">High-performance .NET with Span&lt;T&gt;, Memory&lt;T&gt;, GC optimization, IMemoryCache, Background Services with Channel&lt;T&gt; queues, IHostedService, and SignalR real-time hubs for chat and live notifications.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/43-csharp-performance-span-memory-caching-gc-optimization.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">43</span><div class="lesson-info"><span class="lesson-title">43. Performance, Span&lt;T&gt;, Memory&lt;T&gt;, GC &amp; Caching</span><span class="lesson-subtopics">GC Generations · Span&lt;T&gt; · Memory&lt;T&gt; · IMemoryCache · BenchmarkDotNet · Profiling</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/44-csharp-background-services-ihostedservice-worker-queues.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">44</span><div class="lesson-info"><span class="lesson-title">44. Background Services, Hosted Services &amp; Worker Queues</span><span class="lesson-subtopics">IHostedService · BackgroundService · Channel&lt;T&gt; Queue · Scheduled Jobs · Graceful Shutdown</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/45-csharp-signalr-real-time-hubs-chat-notifications.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">45</span><div class="lesson-info"><span class="lesson-title">45. SignalR Real-Time Communication, Hubs &amp; Chat</span><span class="lesson-subtopics">SignalR Hub · Clients.All · Groups · Broadcasting · JavaScript Client · Chat App · Notifications</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="phase-roadmap-card" style="border-color: rgba(139,92,246,0.4); background: linear-gradient(135deg, rgba(139,92,246,0.06), var(--bg2));">
+    <div class="phase-roadmap-header">
+      <div class="phase-roadmap-title-wrap">
+        <span class="phase-roadmap-icon">☁️</span>
+        <div>
+          <div class="phase-roadmap-tag">Phase 17</div>
+          <h3 class="phase-roadmap-title">Deployment &amp; Cloud</h3>
+        </div>
+      </div>
+      <span class="phase-roadmap-badge" style="background: linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">2 In-Depth Lessons 🏁</span>
+    </div>
+    <p class="phase-roadmap-desc">Containerize ASP.NET Core APIs with Docker multi-stage builds, orchestrate with docker-compose, automate CI/CD with GitHub Actions, and deploy to Azure App Service with Key Vault, Application Insights, and Managed Identity.</p>
+    <div class="phase-lessons-list">
+      <a href="/blog-csharp/46-csharp-docker-deployment-github-actions-ci-cd.html" class="curriculum-lesson-row">
+        <div class="lesson-row-left"><span class="lesson-idx">46</span><div class="lesson-info"><span class="lesson-title">46. Docker, Deployment, GitHub Actions &amp; CI/CD</span><span class="lesson-subtopics">Docker · Dockerfile · docker-compose · GitHub Actions · CI/CD Pipeline · Health Checks</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+      <a href="/blog-csharp/47-csharp-azure-cloud-app-service-sql-key-vault-insights.html" class="curriculum-lesson-row" style="border-left: 3px solid #8b5cf6;">
+        <div class="lesson-row-left"><span class="lesson-idx" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">47</span><div class="lesson-info"><span class="lesson-title">🏁 47. Azure Cloud, App Service &amp; Application Insights</span><span class="lesson-subtopics">Azure App Service · Azure SQL · Blob Storage · Key Vault · App Insights · Managed Identity</span></div></div>
+        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+      </a>
+    </div>
+  </div>
+
 </div>
-  <script src="/site-nav.js" defer></script>
+
+
+      <div class="nav-footer">
+  <a href="/blog-csharp.html" class="nav-btn">
+    <span class="label">← C# Course Overview</span>
+    <span class="title">Course Home & Index</span>
+  </a>
+  <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Next Lesson →</span>
+    <span class="title">1. Introduction, Features & .NET Architecture</span>
+  </a>
+</div>
+    </main>
+  </div>
+
+  <script src="/site-footer.js"></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

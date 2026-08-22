@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Navigation Menus — HTML5 Masterclass | Our Compiler</title>
+  <meta name="description" content="Complete HTML5 Chapter 8: Deep guide to semantic &lt;nav&gt; tag, list navigation structure, active link indicators (aria-current), breadcrumbs, skip navigation links, and dropdown menu markup." />
+  <meta name="keywords" content="html tutorial, learn html5, html tags, html elements, html web development" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-html/08-navigation-menus.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.location.href = '/online-html-editor.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_html', rawCode);
+                window.location.href = '/online-html-editor.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-html">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-html.html" class="active">HTML</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">HTML5 Complete Course</div>
+    <a href="/blog-html.html" class="sidebar-home-link">🌐 HTML Course HOME</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Introduction -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">HTML Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/01-what-is-html5.html" class="">1. What is HTML5?</a>
+        <a href="/blog-html/02-your-first-html-page.html" class="">2. Your First HTML Page</a>
+      </div>
+
+      <!-- Phase 02: Syntax & Text -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Syntax &amp; Text</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/03-elements-tags-attributes.html" class="">3. Elements, Tags &amp; Attributes</a>
+        <a href="/blog-html/04-headings-paragraphs.html" class="">4. Headings &amp; Paragraphs</a>
+        <a href="/blog-html/05-text-formatting.html" class="">5. Text Formatting</a>
+        <a href="/blog-html/06-code-technical-text.html" class="">6. Code &amp; Technical Text</a>
+      </div>
+
+      <!-- Phase 03: Links & Navigation -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔗</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Links &amp; Navigation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-html/07-links.html" class="">7. Links</a>
+        <a href="/blog-html/08-navigation-menus.html" class="active">8. Navigation Menus</a>
+      </div>
+
+      <!-- Phase 04: Lists & Tables -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Lists &amp; Tables</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/09-lists.html" class="">9. Lists</a>
+        <a href="/blog-html/10-tables.html" class="">10. Tables</a>
+      </div>
+
+      <!-- Phase 05: Images & Graphics -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Images &amp; Graphics</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/11-images.html" class="">11. Images</a>
+        <a href="/blog-html/12-responsive-images.html" class="">12. Responsive Images</a>
+        <a href="/blog-html/13-svg-canvas.html" class="">13. SVG &amp; Canvas</a>
+      </div>
+
+      <!-- Phase 06: Semantic HTML5 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Semantic HTML5</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/14-semantic-html5.html" class="">14. Semantic HTML5</a>
+        <a href="/blog-html/15-page-layout-structure.html" class="">15. Page Layout Structure</a>
+      </div>
+
+      <!-- Phase 07: Forms -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📋</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Forms &amp; Input Controls</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/16-forms-basics.html" class="">16. Forms Basics</a>
+        <a href="/blog-html/17-input-types.html" class="">17. Input Types</a>
+        <a href="/blog-html/18-form-attributes.html" class="">18. Form Attributes</a>
+        <a href="/blog-html/19-form-validation.html" class="">19. Form Validation</a>
+      </div>
+
+      <!-- Phase 08: Audio, Video & Embeds -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎬</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Audio, Video &amp; Embeds</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/20-audio.html" class="">20. Audio</a>
+        <a href="/blog-html/21-video.html" class="">21. Video</a>
+        <a href="/blog-html/22-embedded-content.html" class="">22. Embedded Content</a>
+      </div>
+
+      <!-- Phase 09: Metadata & SEO -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Metadata &amp; SEO</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/23-head-metadata.html" class="">23. Head Metadata</a>
+        <a href="/blog-html/24-seo-friendly-html.html" class="">24. SEO-Friendly HTML</a>
+      </div>
+
+      <!-- Phase 10: Accessibility -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">♿</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Accessibility &amp; ARIA</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/25-accessibility-basics.html" class="">25. Accessibility Basics</a>
+        <a href="/blog-html/26-aria.html" class="">26. ARIA</a>
+        <a href="/blog-html/27-accessibility-testing.html" class="">27. Accessibility Testing</a>
+      </div>
+
+      <!-- Phase 11: HTML APIs & Features -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">HTML APIs &amp; Features</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/28-web-storage.html" class="">28. Web Storage</a>
+        <a href="/blog-html/29-data-attributes.html" class="">29. Data Attributes</a>
+        <a href="/blog-html/30-dialogs-interactive-elements.html" class="">30. Dialogs &amp; Interactive Elements</a>
+        <a href="/blog-html/31-web-workers.html" class="">31. Web Workers</a>
+      </div>
+
+      <!-- Phase 12: Advanced HTML5 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Advanced HTML5</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/32-templates.html" class="">32. Templates</a>
+        <a href="/blog-html/33-custom-elements.html" class="">33. Custom Elements &amp; Web Components</a>
+        <a href="/blog-html/34-internationalization.html" class="">34. Internationalization</a>
+      </div>
+
+      <!-- Phase 13: Responsive & Production -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Responsive &amp; Production</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/35-responsive-html.html" class="">35. Responsive HTML</a>
+        <a href="/blog-html/36-html-performance.html" class="">36. HTML Performance</a>
+        <a href="/blog-html/37-validation-debugging.html" class="">37. Validation &amp; Debugging</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-html.html">HTML</a><span class="sep">›</span>
+      <span class="current">Chapter 8: Navigation Menus</span>
+    </div>
+
+    <h1 class="page-title">Navigation Menus</h1>
+
+    <div class="page-meta">
+      <span class="badge">🌐 HTML5</span>
+      <span class="badge">🟢 Chapter 8 of 37</span>
+      <span class="badge">📂 Phase 03: Links &amp; Navigation</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Semantic &lt;nav&gt; Tag · List Navigation Structure · Active Link State (aria-current) · Breadcrumbs · Skip Navigation Links · Accessible Dropdown Markup</span>
+    </div>
+
+    <div class="intro-box">
+  Welcome to <strong>Phase 3 (Chapter 8): Navigation Menus</strong>! Professional web applications require structured navigation systems. In this chapter, we master the semantic <code>&lt;nav&gt;</code> wrapper, list-based navigation, active link state marking (<code>aria-current="page"</code>), breadcrumbs, skip navigation links, and accessible dropdown menu markup.
+</div>
+
+<div class="section-title"><span class="num">1</span>Semantic Navigation &amp; Active Link Marking</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">HTML — Accessible Navigation Bar</span>
+      <a class="try-btn" href="/online-html-editor.html">▶ Run in HTML Editor</a>
+    </div>
+    <pre><code>&lt;nav aria-label="Main Navigation"&gt;
+  &lt;ul style="display:flex; gap:15px; list-style:none; padding:0;"&gt;
+    &lt;li&gt;&lt;a href="/" aria-current="page" style="color:#f97316; font-weight:bold;"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/tutorials"&gt;Tutorials&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span>Breadcrumb Navigation &amp; Skip Links</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">HTML — Breadcrumbs &amp; Skip Link</span>
+      <a class="try-btn" href="/online-html-editor.html">▶ Run in HTML Editor</a>
+    </div>
+    <pre><code>&lt;!-- Skip to Main Content Link --&gt;
+&lt;a href="#main-content" class="skip-link"&gt;Skip to Main Content&lt;/a&gt;
+
+&lt;!-- Breadcrumb Navigation --&gt;
+&lt;nav aria-label="Breadcrumb" class="breadcrumb"&gt;
+  &lt;a href="/"&gt;Home&lt;/a&gt; &amp;rsaquo;
+  &lt;a href="/blog-html.html"&gt;HTML&lt;/a&gt; &amp;rsaquo;
+  &lt;span aria-current="location"&gt;Navigation Menus&lt;/span&gt;
+&lt;/nav&gt;</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+<div class="section-body">
+  <div class="faq-card">
+    <h4>Q1: Why should navigation links always be placed inside an unordered list (&lt;ul&gt;)?</h4>
+    <p>Enclosing links inside a <code>&lt;ul&gt;</code> allows screen readers to announce the total number of navigation items (e.g. "List of 4 items") to visually impaired users before reading.</p>
+  </div>
+</div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on HTML5 Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="07-links.html" class="nav-btn"><span class="label">← Previous Chapter</span><span class="title">7. Links</span></a>
+      <a href="09-lists.html" class="nav-btn" style="text-align:right;"><span class="label">Next Chapter →</span><span class="title">9. Lists</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

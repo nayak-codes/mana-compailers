@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Composition API &amp; &lt;script setup&gt; — Vue.js 3 Masterclass | Our Compiler</title>
+  <meta name="description" content="Complete Vue.js Chapter 05: Composition API setup() function, &lt;script setup&gt; compiler macro, and modular code organization." />
+  <meta name="keywords" content="vue.js tutorial, vue 3, composition api, pinia, vue router, vite, single file components, ref, reactive" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-vue/05-vuejs-composition-api.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-vue/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/online-html-editor.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-vue">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html" class="active">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">Vue.js 3 Roadmap</div>
+    <a href="/blog-vue.html" class="sidebar-home-link">💚 Vue.js Course HOME</a>
+    <div class="sidebar-accordion">
+
+      <!-- Phase 01 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🟢</span><div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Introduction &amp; Fundamentals</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/01-vuejs-introduction-and-setup.html" class="">1. What is Vue.js 3?</a>
+        <a href="/blog-vue/02-vuejs-instance-and-app.html" class="">2. Vue Application &amp; Instance</a>
+        <a href="/blog-vue/03-vuejs-template-syntax.html" class="">3. Template Syntax</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">⚙️</span><div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Options API vs Composition API</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-vue/04-vuejs-options-api.html" class="">4. Options API</a>
+        <a href="/blog-vue/05-vuejs-composition-api.html" class="active">5. Composition API &amp; &lt;script setup&gt;</a>
+        <a href="/blog-vue/06-vuejs-reactivity-ref-reactive.html" class="">6. Reactivity: ref vs reactive</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🎯</span><div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Directives &amp; Event Handling</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/07-vuejs-conditional-rendering.html" class="">7. Conditional Rendering</a>
+        <a href="/blog-vue/08-vuejs-list-rendering.html" class="">8. List Rendering &amp; v-for</a>
+        <a href="/blog-vue/09-vuejs-event-handling.html" class="">9. Event Handling</a>
+        <a href="/blog-vue/10-vuejs-class-and-style-bindings.html" class="">10. Class &amp; Style Bindings</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">📝</span><div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Forms &amp; Computed Properties</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/11-vuejs-form-input-bindings.html" class="">11. Form Bindings &amp; v-model</a>
+        <a href="/blog-vue/12-vuejs-computed-properties.html" class="">12. Computed Properties</a>
+        <a href="/blog-vue/13-vuejs-watchers.html" class="">13. Watchers &amp; watchEffect</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🧩</span><div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Components Architecture</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/14-vuejs-components-basics.html" class="">14. Component Architecture</a>
+        <a href="/blog-vue/15-vuejs-props.html" class="">15. Component Props</a>
+        <a href="/blog-vue/16-vuejs-custom-events-emit.html" class="">16. Custom Events &amp; emit</a>
+        <a href="/blog-vue/17-vuejs-slots.html" class="">17. Slots &amp; Content Projection</a>
+        <a href="/blog-vue/18-vuejs-provide-inject.html" class="">18. Provide &amp; Inject</a>
+      </div>
+
+      <!-- Phase 06 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🔄</span><div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Lifecycle &amp; Composables</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/19-vuejs-lifecycle-hooks.html" class="">19. Lifecycle Hooks</a>
+        <a href="/blog-vue/20-vuejs-composables.html" class="">20. Custom Composables</a>
+        <a href="/blog-vue/21-vuejs-template-refs.html" class="">21. Template Refs</a>
+      </div>
+
+      <!-- Phase 07 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🗺️</span><div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Routing with Vue Router</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/22-vuejs-router-setup.html" class="">22. Vue Router 4 Setup</a>
+        <a href="/blog-vue/23-vuejs-dynamic-routing.html" class="">23. Dynamic Routing</a>
+        <a href="/blog-vue/24-vuejs-navigation-guards.html" class="">24. Navigation Guards</a>
+      </div>
+
+      <!-- Phase 08 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🍍</span><div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">State Management Pinia</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/25-vuejs-pinia-setup.html" class="">25. Pinia Setup &amp; Stores</a>
+        <a href="/blog-vue/26-vuejs-pinia-state-getters-actions.html" class="">26. Pinia State, Getters &amp; Actions</a>
+      </div>
+
+      <!-- Phase 09 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🚀</span><div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Built-in Components</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/27-vuejs-keep-alive-teleport-suspense.html" class="">27. KeepAlive &amp; Teleport</a>
+        <a href="/blog-vue/28-vuejs-transitions-and-animations.html" class="">28. Transitions &amp; Animations</a>
+      </div>
+
+      <!-- Phase 10 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🧪</span><div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Testing &amp; Deployment</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/29-vuejs-testing-vitest.html" class="">29. Testing with Vitest</a>
+        <a href="/blog-vue/30-vuejs-build-and-deployment.html" class="">30. Build &amp; Deployment</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-vue.html">Vue.js</a><span class="sep">›</span>
+      <span class="current">Chapter 5: Composition API &amp; &lt;script setup&gt;</span>
+    </div>
+
+    <h1 class="page-title">Composition API &amp; &lt;script setup&gt;</h1>
+
+    <div class="page-meta">
+      <span class="badge">💚 Vue.js 3</span>
+      <span class="badge">🟢 Chapter 5 of 30</span>
+      <span class="badge">📂 Phase 02: Options API vs Composition API</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Composition API Concept · setup() Method · &lt;script setup&gt; Macro · Code Organization by Feature · Top-level Imports</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Chapter 5: Composition API &amp; &lt;script setup&gt;</strong> in our Vue.js 3 Masterclass Roadmap! Vue.js is a progressive, approachable, and performant framework for building modern single-page applications (SPAs) and interactive web user interfaces.</p>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section-title"><span class="num">1</span>Core Architectural Concepts of Composition API &amp; &lt;script setup&gt;</div>
+    <div class="section-body">
+      <p>In Vue.js 3, understanding <strong>Composition API &amp; &lt;script setup&gt;</strong> is vital for building reactive, declarative, and scalable front-end components. Vue combines an intuitive template-based syntax with an optimized Virtual DOM engine and proxy-based reactivity system.</p>
+      <div class="info-box">
+        <strong>Key Architectural Takeaway:</strong> Vue 3 uses ES6 Proxies to track reactive state dependencies automatically. When state changes, Vue computes minimal virtual DOM diffs and batches real DOM updates efficiently.
+      </div>
+      <ul>
+        <li><strong>Declarative Rendering:</strong> Vue extends standard HTML with directive attributes to declaratively bind reactive JavaScript state to the DOM.</li>
+        <li><strong>Component Driven:</strong> Applications are composed of self-contained Single File Components (<code>.vue</code> SFCs) encapsulating template, logic, and scoped styles.</li>
+        <li><strong>Reactivity Engine:</strong> Primitive reactive references (<code>ref()</code>) and reactive proxy objects (<code>reactive()</code>) allow automatic view recalculations without manual DOM manipulation.</li>
+      </ul>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-title"><span class="num">2</span>Annotated Code Walkthrough &amp; Implementation</div>
+    <div class="section-body">
+      <p>Let us examine a complete single-file component implementation demonstrating Composition API &amp; &lt;script setup&gt; using Vue 3 Composition API and <code>&lt;script setup&gt;</code> syntax:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Vue 3 Single File Component (.vue)</span>
+          <a class="try-btn" href="/online-html-editor.html">▶ Run in Web Playground</a>
+        </div>
+        <pre><code>&lt;script setup&gt;
+import { ref, computed } from 'vue';
+
+// Define reactive state for Composition API &amp; &lt;script setup&gt;
+const title = ref('Composition API &amp; &lt;script setup&gt; Demonstration');
+const count = ref(0);
+const items = ref(['Vue 3 Composition API', 'Vite Bundler', 'Pinia State']);
+
+const doubleCount = computed(() => count.value * 2);
+
+function increment() {
+  count.value++;
+}
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div class="vue-card"&gt;
+    &lt;h2&gt;{{ title }}&lt;/h2&gt;
+    &lt;p&gt;Current Counter: &lt;strong&gt;{{ count }}&lt;/strong&gt; (Double: {{ doubleCount }})&lt;/p&gt;
+    &lt;button @click="increment" class="btn"&gt;➕ Increment Counter&lt;/button&gt;
+
+    &lt;ul style="margin-top: 12px;"&gt;
+      &lt;li v-for="(item, idx) in items" :key="idx"&gt;{{ item }}&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.vue-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--text);
+}
+.btn {
+  background: #42b883;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+&lt;/style&gt;</code></pre>
+      </div>
+      <p>In the Composition API snippet above, notice how <code>ref()</code> tracks reactive primitive state while template event listeners (<code>@click</code>) automatically trigger interface re-renders.</p>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-title"><span class="num">3</span>Technical Feature Matrix &amp; Specification Table</div>
+    <div class="section-body">
+      <p>Review the comparative specification table below to understand how Vue 3 features operate across development scenarios:</p>
+      <table class="tbl spec-table">
+        <thead><tr><th>Vue Concept</th><th>Reactivity Mechanism</th><th>Compilation Behavior</th><th>Best Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ref()</strong></td><td>Proxy wrapper (.value)</td><td>Unwrapped automatically in templates</td><td>Primitives (strings, numbers, booleans)</td></tr>
+          <tr><td><strong>reactive()</strong></td><td>Deep ES6 Proxy object</td><td>Direct property access</td><td>Complex nested state objects / collections</td></tr>
+          <tr><td><strong>computed()</strong></td><td>Cached getter proxy</td><td>Recalculates only when dependencies change</td><td>Derived data &amp; filtered arrays</td></tr>
+          <tr><td><strong>watch()</strong></td><td>Explicit source listener</td><td>Runs side effects on state mutation</td><td>Async API calls, local storage syncing</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section-title"><span class="num">4</span>Production Architecture &amp; Enterprise Patterns</div>
+    <div class="section-body">
+      <p>When engineering scalable frontend applications with Vue 3, adhere to production architecture best practices:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Vue 3 — Production Composable Pattern</span>
+          <a class="try-btn" href="/online-html-editor.html">▶ Run in Web Playground</a>
+        </div>
+        <pre><code>// composables/useFetchData.js
+import { ref } from 'vue';
+
+export function useFetchData(url) {
+  const data = ref(null);
+  const error = ref(null);
+  const loading = ref(true);
+
+  async function fetchData() {
+    loading.value = true;
+    try {
+      const res = await fetch(url);
+      data.value = await res.json();
+    } catch (err) {
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  fetchData();
+
+  return { data, error, loading, refetch: fetchData };
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section-title"><span class="num">5</span>Common Developer Pitfalls &amp; Solutions</div>
+    <div class="section-body">
+      <p>Avoid these common beginner and intermediate Vue developer mistakes:</p>
+      <ul>
+        <li><strong>Pitfall 1: Forgetting .value in Script.</strong> Accessing a <code>ref()</code> inside <code>&lt;script&gt;</code> without <code>.value</code> returns the Ref object rather than its inner primitive. <em>Solution: Always access <code>myRef.value</code> inside JavaScript code.</em></li>
+        <li><strong>Pitfall 2: Destructuring reactive() Objects.</strong> Destructuring properties directly from a <code>reactive()</code> object breaks reactivity tracking. <em>Solution: Use <code>toRefs(myReactiveObj)</code> before destructuring.</em></li>
+        <li><strong>Pitfall 3: Mutating Props Directly.</strong> Mutating a prop in a child component violates one-way data flow. <em>Solution: Emit a custom event (<code>emit('update:propName')</code>) or use <code>defineModel()</code>.</em></li>
+      </ul>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section-title"><span class="num">6</span>Frequently Asked Questions (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4><span style="background:rgba(66,184,131,0.15); color:#42b883; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q1</span> Why choose Vue 3 over React or Angular?</h4>
+        <p>Vue 3 strikes an optimal balance: it offers an approachable learning curve with optional template syntax, progressive adoption, official state management (Pinia) and routing (Vue Router), and top-tier Composition API performance.</p>
+      </div>
+      <div class="faq-card">
+        <h4><span style="background:rgba(66,184,131,0.15); color:#42b883; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q2</span> What is the difference between ref() and reactive()?</h4>
+        <p><code>ref()</code> holds single primitive values (or objects) accessed via <code>.value</code>, while <code>reactive()</code> creates deep proxy objects for structured state objects.</p>
+      </div>
+      <div class="faq-card">
+        <h4><span style="background:rgba(66,184,131,0.15); color:#42b883; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q3</span> What is &lt;script setup&gt; in Vue 3?</h4>
+        <p><code>&lt;script setup&gt;</code> is a compile-time syntactic sugar macro that drastically reduces boilerplate code when writing Composition API single-file components.</p>
+      </div>
+      <div class="faq-card">
+        <h4><span style="background:rgba(66,184,131,0.15); color:#42b883; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q4</span> Is Vue 2 still supported?</h4>
+        <p>Vue 2 reached official End-of-Life (EOL) in December 2023. All modern production projects should be built on Vue 3.</p>
+      </div>
+      <div class="faq-card">
+        <h4><span style="background:rgba(66,184,131,0.15); color:#42b883; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q5</span> Where can I test Vue code snippets?</h4>
+        <p>Click the <code>▶ Run in Web Playground</code> button on any code block in this tutorial to open our interactive HTML/CSS/JS online editor!</p>
+      </div>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Vue 3.4+ (Vite 5) · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="04-vuejs-options-api.html" class="nav-btn"><span class="label">← Previous Chapter</span><span class="title">4. The Options API</span></a>
+      <a href="06-vuejs-reactivity-ref-reactive.html" class="nav-btn" style="text-align:right;"><span class="label">Next Chapter →</span><span class="title">6. Reactivity: ref() vs reactive()</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

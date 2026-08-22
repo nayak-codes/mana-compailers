@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JavaScript Prerequisites for Node.js — Node.js Tutorial | Our Compiler</title>
+  <meta name="description" content="The modern JavaScript (ES6+) you need before learning Node.js: const/let, arrow functions, destructuring, spread operator, callbacks, Promises, async/await, and JSON basics — with runnable examples." />
+  <meta name="keywords" content="javascript prerequisites for node.js, es6 javascript, async await javascript, promises tutorial, destructuring spread operator" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-nodejs/02-nodejs-javascript-prerequisites.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-nodejs/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "JavaScript Prerequisites for Node.js",
+  "description": "The modern JavaScript (ES6+) you need before learning Node.js: const/let, arrow functions, destructuring, spread operator, callbacks, Promises, async/await, and JSON basics \u2014 with runnable examples.",
+  "articleSection": "Phase 1: Node.js Introduction",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-08-20",
+  "dateModified": "2026-08-20"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need to master JavaScript fully before starting Node.js?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not fully, but you should be comfortable with variables, functions, arrays/objects, and basic async patterns (Promises and async/await) \u2014 this course reinforces them as they come up, but strong JS fundamentals make Node.js much easier to pick up."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between var, let, and const?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "var is function-scoped and can be redeclared, which causes subtle bugs; let and const are block-scoped. Use const by default and let only when a variable's value needs to change; avoid var in modern code."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does Node.js prefer async/await over plain callbacks?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "async/await, built on Promises, avoids deeply nested 'callback hell', supports try/catch for error handling, and makes asynchronous logic read top-to-bottom like synchronous code \u2014 dramatically improving readability in real Node.js applications."
+      }
+    }
+  ]
+}
+  </script>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+      let code = rawCode.replace(/(\/\/.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/(\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m => pushToken('st', m));
+      const kwList = ['import','from','as','export','default','const','let','var','function','async','await','return','class','extends','new','if','else','while','for','of','in','break','continue','try','catch','finally','throw','switch','case','typeof','instanceof','yield','static','get','set','this','super','null','undefined','true','false'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+      const fnList = ['require','module','exports','process','console','log','error','warn','Buffer','__dirname','__filename','setTimeout','setInterval','clearTimeout','clearInterval','JSON','stringify','parse','Promise','resolve','reject','all','allSettled','race','then','catch','finally','map','filter','reduce','forEach','readFile','writeFile','readFileSync','writeFileSync','createServer','createReadStream','createWriteStream','listen','get','post','put','patch','delete','use','json','send','status','next','Array','Object','String','Number','Boolean','isArray','keys','values','entries','fetch','cwd','version','argv','env'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+      code = code.replace(/\b(\d[\d_]*(?:\.\d+)?(?:e[+-]?\d+)?)\b/g, m => pushToken('nu', m));
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+          updateText();
+        });
+        nav.appendChild(toggleBtn);
+      });
+    })();
+  </script>
+</head>
+<body class="lang-nodejs">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-nodejs.html" class="active">Node.js</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Node.js Master Course</div>
+    <a href="/blog-nodejs.html" class="sidebar-home-link">🟢 Node.js Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: Node.js Introduction -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟢</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Node.js Introduction</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-nodejs/01-nodejs-introduction-and-runtime.html">1. What is Node.js?</a>
+        <a href="/blog-nodejs/02-nodejs-javascript-prerequisites.html" class="active">2. JS Prerequisites</a>
+      </div>
+
+      <!-- Phase 02: Setup & First Program -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Setup & First Program</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/03-nodejs-installation-and-setup.html">3. Installation & Setup</a>
+        <a href="/blog-nodejs/04-nodejs-first-program.html">4. Your First Program</a>
+        <a href="/blog-nodejs/05-nodejs-project-structure.html">5. Project Structure</a>
+      </div>
+
+      <!-- Phase 03: Modules & npm -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Modules & npm</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/06-nodejs-commonjs-modules.html">6. CommonJS Modules</a>
+        <a href="/blog-nodejs/07-nodejs-es-modules.html">7. ES Modules</a>
+        <a href="/blog-nodejs/08-nodejs-npm-and-package-json.html">8. npm & package.json</a>
+        <a href="/blog-nodejs/09-nodejs-built-in-modules.html">9. Built-in Modules</a>
+      </div>
+
+      <!-- Phase 04: Asynchronous Node.js -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Asynchronous Node.js</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/10-nodejs-event-loop.html">10. Event Loop</a>
+        <a href="/blog-nodejs/11-nodejs-callbacks.html">11. Callbacks</a>
+        <a href="/blog-nodejs/12-nodejs-promises-async-await.html">12. Promises & Async/Await</a>
+      </div>
+
+      <!-- Phase 05: File System & Streams -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗂️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">File System & Streams</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/13-nodejs-file-system.html">13. File System</a>
+        <a href="/blog-nodejs/14-nodejs-path-module.html">14. Path Module</a>
+        <a href="/blog-nodejs/15-nodejs-buffers.html">15. Buffers</a>
+        <a href="/blog-nodejs/16-nodejs-streams.html">16. Streams</a>
+      </div>
+
+      <!-- Phase 06: HTTP & Web Servers -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">HTTP & Web Servers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/17-nodejs-http-basics.html">17. HTTP Basics</a>
+        <a href="/blog-nodejs/18-nodejs-http-module.html">18. Node HTTP Module</a>
+        <a href="/blog-nodejs/19-nodejs-routing-without-framework.html">19. Routing (No Framework)</a>
+      </div>
+
+      <!-- Phase 07: Express.js -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Express.js</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/20-nodejs-express-introduction.html">20. Express Introduction</a>
+        <a href="/blog-nodejs/21-nodejs-express-routing.html">21. Express Routing</a>
+        <a href="/blog-nodejs/22-nodejs-middleware.html">22. Middleware</a>
+        <a href="/blog-nodejs/23-nodejs-rest-api.html">23. REST APIs</a>
+      </div>
+
+      <!-- Phase 08: Validation & Errors -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Validation & Errors</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/24-nodejs-validation.html">24. Validation</a>
+        <a href="/blog-nodejs/25-nodejs-error-handling.html">25. Error Handling</a>
+      </div>
+
+      <!-- Phase 09: Databases -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Databases</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/26-nodejs-database-basics.html">26. Database Basics</a>
+        <a href="/blog-nodejs/27-nodejs-postgresql-mysql.html">27. PostgreSQL / MySQL</a>
+        <a href="/blog-nodejs/28-nodejs-mongodb.html">28. MongoDB</a>
+        <a href="/blog-nodejs/29-nodejs-orm-odm.html">29. ORM & ODM</a>
+        <a href="/blog-nodejs/30-nodejs-database-api-project.html">30. Database API Project</a>
+      </div>
+
+      <!-- Phase 10: Auth & Security -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Auth & Security</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/31-nodejs-authentication.html">31. Authentication</a>
+        <a href="/blog-nodejs/32-nodejs-authorization.html">32. Authorization</a>
+        <a href="/blog-nodejs/33-nodejs-security.html">33. Node.js Security</a>
+      </div>
+
+      <!-- Phase 11: Real-Time & Advanced -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Real-Time & Advanced</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/34-nodejs-websockets.html">34. WebSockets</a>
+        <a href="/blog-nodejs/35-nodejs-socketio.html">35. Socket.IO</a>
+        <a href="/blog-nodejs/36-nodejs-worker-threads.html">36. Worker Threads</a>
+        <a href="/blog-nodejs/37-nodejs-child-processes.html">37. Child Processes</a>
+      </div>
+
+      <!-- Phase 12: Streams & Performance -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Streams & Performance</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/38-nodejs-advanced-streams.html">38. Advanced Streams</a>
+        <a href="/blog-nodejs/39-nodejs-performance-optimization.html">39. Performance Optimization</a>
+      </div>
+
+      <!-- Phase 13: Testing -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Testing</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/40-nodejs-test-runner.html">40. Node.js Test Runner</a>
+        <a href="/blog-nodejs/41-nodejs-api-testing.html">41. API Testing</a>
+        <a href="/blog-nodejs/42-nodejs-e2e-testing.html">42. End-to-End Testing</a>
+      </div>
+
+      <!-- Phase 14: TypeScript with Node.js -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔷</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">TypeScript with Node.js</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/43-nodejs-typescript-basics.html">43. TypeScript Basics</a>
+        <a href="/blog-nodejs/44-nodejs-typescript-backend.html">44. TypeScript Backend</a>
+      </div>
+
+      <!-- Phase 15: Project Architecture -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Project Architecture</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/45-nodejs-clean-architecture.html">45. Clean Architecture</a>
+        <a href="/blog-nodejs/46-nodejs-design-patterns.html">46. Design Patterns</a>
+      </div>
+
+      <!-- Phase 16: Deployment & DevOps -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☁️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Deployment & DevOps</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nodejs/47-nodejs-environment-configuration.html">47. Environment Config</a>
+        <a href="/blog-nodejs/48-nodejs-docker-deployment.html">48. Docker & Deployment</a>
+        <a href="/blog-nodejs/49-nodejs-production-checklist.html">49. Production Checklist</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try Node.js Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-javascript.html">JavaScript Course</a>
+    <a href="/blog-express.html">Express.js Course</a>
+    <a href="/blog-python.html">Python 3 Course</a>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-nodejs.html">Node.js</a><span class="sep">›</span>
+      <span class="current">Chapter 2: JS Prerequisites</span>
+    </div>
+
+    <h1 class="page-title">JavaScript Prerequisites for Node.js</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟢 Node.js LTS</span>
+      <span class="badge">📗 Chapter 2 of 49</span>
+      <span class="badge">📂 Phase 1: Node.js Introduction</span>
+      <span class="badge">🗓️ 2026 Edition</span>
+    </div>
+
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>const/let · Arrow Functions · Destructuring & Spread · Callbacks · Promises · async/await · JSON</span>
+    </div>
+
+    <div class="intro-box">
+      <p>A focused refresher on the modern JavaScript (ES6+) features that every Node.js program leans on: variable declarations, arrow functions, destructuring, the spread operator, and the three async patterns — callbacks, Promises, and async/await — plus JSON serialization basics.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>Variables, Data Types & Template Literals</div>
+    <div class="section-body">
+
+      <p>Before writing Node.js programs, you need to be comfortable with modern JavaScript (ES6+) syntax, since almost all Node.js code — and every example in this course — is written using it. Modern JavaScript prefers <code>const</code> and <code>let</code> over the older <code>var</code> keyword.</p>
+      <ul>
+        <li><strong><code>const</code></strong> — declares a variable that cannot be reassigned. Use this by default.</li>
+        <li><strong><code>let</code></strong> — declares a variable that can be reassigned later. Use this only when the value needs to change.</li>
+        <li><strong><code>var</code></strong> — the old, function-scoped way of declaring variables. Avoid it in new Node.js code.</li>
+      </ul>
+      <p>JavaScript's core data types are: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>null</code>, <code>undefined</code>, <code>object</code>, and <code>symbol</code>. Template literals (backtick strings) let you embed expressions directly inside text using <code>${'{'}...{'}'}</code>.</p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: const, let & Template Literals</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>const courseName = "Node.js Master Course";
+let studentsEnrolled = 120;
+
+studentsEnrolled = studentsEnrolled + 1;
+
+console.log(`${courseName} now has ${studentsEnrolled} students.`);</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>const courseName</code>: Locked — trying to reassign it later would throw a <code>TypeError</code>.</li>
+          <li><code>let studentsEnrolled</code>: Mutable, so incrementing it on the next line is valid.</li>
+          <li>The template literal <code>`${courseName}...`</code> interpolates both variables directly into the string without manual concatenation.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Functions, Arrow Functions & Default Parameters</div>
+    <div class="section-body">
+
+      <p>Functions are the core building block of any Node.js application — every route handler, callback, and middleware is a function. Modern JavaScript offers a concise <strong>arrow function</strong> syntax alongside the traditional <code>function</code> keyword.</p>
+      <p>Arrow functions do not bind their own <code>this</code> — they inherit it from the surrounding scope, which is why they're preferred inside callbacks and class methods where losing the outer <code>this</code> is a common bug.</p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Regular Function vs Arrow Function</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>// Traditional function declaration
+function add(a, b) {
+  return a + b;
+}
+
+// Arrow function with a default parameter
+const greet = (name = "Developer") => {
+  return `Hello, ${name}! Welcome to Node.js.`;
+};
+
+console.log(add(5, 7));
+console.log(greet());
+console.log(greet("Balaji"));</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>function add(a, b)</code>: A traditional named function that returns the sum of its two arguments.</li>
+          <li><code>(name = "Developer") =&gt;</code>: An arrow function with a <strong>default parameter</strong> — if no argument is passed, <code>name</code> falls back to <code>"Developer"</code>.</li>
+          <li><code>greet()</code> vs <code>greet("Balaji")</code>: Shows the default parameter kicking in only when the argument is omitted.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Arrays, Objects, Destructuring & the Spread Operator</div>
+    <div class="section-body">
+
+      <p>Node.js APIs constantly hand you back arrays and objects — HTTP headers, query parameters, database rows, JSON responses. Being fluent with array/object syntax and destructuring is essential.</p>
+      <ul>
+        <li><strong>Destructuring</strong> extracts values from arrays or objects into individual variables in one line.</li>
+        <li><strong>Spread (<code>...</code>)</strong> expands an array or object's contents — useful for copying, merging, and passing multiple arguments.</li>
+      </ul>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Destructuring & Spread in Action</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>const course = {
+  title: "Node.js Master Course",
+  level: "Beginner to Advanced",
+  chapters: 49,
+};
+
+// Object destructuring
+const { title, chapters } = course;
+console.log(title, "-", chapters, "chapters");
+
+// Spread to create a new object with an extra field
+const updatedCourse = { ...course, edition: 2026 };
+console.log(updatedCourse);
+
+// Array destructuring
+const [first, second] = ["Node.js", "Express.js"];
+console.log(first, second);</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>const { title, chapters } = course</code>: Pulls just those two properties out of the object into standalone variables.</li>
+          <li><code>{ ...course, edition: 2026 }</code>: Spreads all of <code>course</code>'s existing keys into a brand-new object, then adds (or overrides) <code>edition</code>.</li>
+          <li><code>const [first, second] = [...]</code>: Array destructuring assigns items by position.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">4</span>Callbacks, Promises & async/await</div>
+    <div class="section-body">
+
+      <p>Because Node.js is asynchronous by nature, you'll write asynchronous JavaScript constantly. There are three patterns for handling async code, and Node.js code today typically uses all three depending on the API:</p>
+      <ul>
+        <li><strong>Callbacks:</strong> a function passed as an argument, invoked later once an operation finishes.</li>
+        <li><strong>Promises:</strong> objects representing a value that will be available <em>eventually</em> — either resolved (success) or rejected (failure).</li>
+        <li><strong>async/await:</strong> syntax sugar built on top of Promises that lets asynchronous code read like synchronous code.</li>
+      </ul>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: The Same Task, Three Ways</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>// 1. Promise-based helper that "simulates" an async task
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// 2. async/await — the modern, preferred style
+async function loadCourse() {
+  console.log("Loading course data...");
+  await delay(1000);
+  console.log("Course data loaded!");
+}
+
+loadCourse();</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>new Promise((resolve) =&gt; ...)</code>: Creates a Promise that resolves after <code>setTimeout</code> fires.</li>
+          <li><code>async function loadCourse()</code>: Marking a function <code>async</code> lets you use <code>await</code> inside it.</li>
+          <li><code>await delay(1000)</code>: Pauses <em>this function only</em> (not the whole program) until the Promise resolves, then continues.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">5</span>Modules, JSON & HTTP Basics You'll Reuse Everywhere</div>
+    <div class="section-body">
+
+      <p>Two more building blocks you'll use constantly in Node.js: <strong>modules</strong> (splitting code across files) and <strong>JSON</strong> (the data format almost every API speaks).</p>
+      <p>JavaScript's built-in <code>JSON.stringify()</code> converts a JavaScript object into a JSON string (for sending over the network or writing to a file), and <code>JSON.parse()</code> converts a JSON string back into a usable JavaScript object.</p>
+      <p>You'll also frequently deal with basic <strong>HTTP concepts</strong> — requests, responses, status codes (like <code>200 OK</code>, <code>404 Not Found</code>), and headers — since Node.js is most often used to build HTTP servers and API clients (covered fully in Phase 6).</p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: JSON.stringify() and JSON.parse()</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>const course = { title: "Node.js Master Course", chapters: 49 };
+
+// Convert JS object -> JSON string (e.g. to send over the network)
+const jsonString = JSON.stringify(course);
+console.log(typeof jsonString, jsonString);
+
+// Convert JSON string -> JS object (e.g. after receiving an API response)
+const parsedBack = JSON.parse(jsonString);
+console.log(typeof parsedBack, parsedBack.title);</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 Line-by-Line Code Breakdown:</strong>
+        <ul style="margin:8px 0 0 18px; line-height:1.7;">
+          <li><code>JSON.stringify(course)</code>: Serializes the object into a plain <code>string</code> — this is exactly what an Express route does before sending a JSON API response.</li>
+          <li><code>JSON.parse(jsonString)</code>: Deserializes the string back into a real JavaScript object with usable properties.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Do I need to master JavaScript fully before starting Node.js?</h4>
+      <p>Not fully, but you should be comfortable with variables, functions, arrays/objects, and basic async patterns (Promises and async/await) — this course reinforces them as they come up, but strong JS fundamentals make Node.js much easier to pick up.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What's the difference between var, let, and const?</h4>
+      <p>var is function-scoped and can be redeclared, which causes subtle bugs; let and const are block-scoped. Use const by default and let only when a variable's value needs to change; avoid var in modern code.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Why does Node.js prefer async/await over plain callbacks?</h4>
+      <p>async/await, built on Promises, avoids deeply nested 'callback hell', supports try/catch for error handling, and makes asynchronous logic read top-to-bottom like synchronous code — dramatically improving readability in real Node.js applications.</p>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Node.js LTS · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="01-nodejs-introduction-and-runtime.html" class="nav-btn">
+        <span class="label">← Previous Chapter</span>
+        <span class="title">1. What is Node.js?</span>
+      </a>
+      <a href="03-nodejs-installation-and-setup.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">3. Installation & Setup</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

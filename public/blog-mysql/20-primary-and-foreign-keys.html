@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MySQL — Primary & Foreign Keys | Our Compiler</title>
+  <meta name="description" content="Complete MySQL Chapter 20: Primary & Foreign Keys. Learn Foreign key ante enti? · Creating foreign keys · REFERENCES · ON DELETE CASCADE · ON DELETE SET NULL · ON UPDATE CASCADE with practical SQL queries, table schemas, and step-by-step database walkthroughs." />
+  <meta name="keywords" content="mysql tutorial, sql queries, primary & foreign keys, database management, relational database, mysql workbench" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-mysql/20-primary-and-foreign-keys.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-mysql/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-mysql">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html" class="active">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">MySQL Tutorial</div>
+    <a href="/blog-mysql.html" class="sidebar-home-link">🐬 MySQL HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐬</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">MySQL Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/01-what-is-mysql.html" class="">1. What is MySQL?</a><a href="/blog-mysql/02-database-and-sql-prerequisites.html" class="">2. Database & SQL Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup & Installation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/03-mysql-installation.html" class="">3. MySQL Installation</a><a href="/blog-mysql/04-connecting-to-mysql.html" class="">4. Connecting to MySQL</a><a href="/blog-mysql/05-workbench-and-mysql-shell.html" class="">5. Workbench & MySQL Shell</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">DDL & Table Operations</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/06-creating-databases.html" class="">6. Creating Databases</a><a href="/blog-mysql/07-creating-tables.html" class="">7. Creating Tables</a><a href="/blog-mysql/08-altering-tables.html" class="">8. Altering Tables</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔢</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Data Types & Schema</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/09-numeric-data-types.html" class="">9. Numeric Data Types</a><a href="/blog-mysql/10-string-data-types.html" class="">10. String Data Types</a><a href="/blog-mysql/11-date-and-time-types.html" class="">11. Date & Time Types</a><a href="/blog-mysql/12-json-data-type.html" class="">12. JSON Data Type</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Data Manipulation (DML)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/13-insert-statements.html" class="">13. INSERT Statements</a><a href="/blog-mysql/14-select-basics.html" class="">14. SELECT Basics</a><a href="/blog-mysql/15-where-conditions.html" class="">15. WHERE Conditions</a><a href="/blog-mysql/16-sorting-and-aggregation.html" class="">16. Sorting & Aggregation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✏️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Update and Delete</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/17-update-statements.html" class="">17. UPDATE Statements</a><a href="/blog-mysql/18-delete-and-truncate.html" class="">18. DELETE & TRUNCATE</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔗</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Relationships and Joins</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-mysql/19-database-relationships.html" class="">19. Database Relationships</a><a href="/blog-mysql/20-primary-and-foreign-keys.html" class="active">20. Primary & Foreign Keys</a><a href="/blog-mysql/21-inner-join.html" class="">21. INNER JOIN</a><a href="/blog-mysql/22-left-and-right-join.html" class="">22. LEFT & RIGHT JOIN</a><a href="/blog-mysql/23-subqueries-and-ctes.html" class="">23. Subqueries & CTEs</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Advanced Querying & Stored Programs</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/24-views.html" class="">24. Views</a><a href="/blog-mysql/25-window-functions.html" class="">25. Window Functions</a><a href="/blog-mysql/26-stored-procedures.html" class="">26. Stored Procedures</a><a href="/blog-mysql/27-functions-and-triggers.html" class="">27. Functions & Triggers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Indexes & Performance Tuning</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/28-indexes.html" class="">28. Indexes</a><a href="/blog-mysql/29-query-optimization.html" class="">29. Query Optimization</a><a href="/blog-mysql/30-transactions.html" class="">30. Transactions</a><a href="/blog-mysql/31-locks-and-isolation.html" class="">31. Locks & Isolation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Security and User Management</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/32-users-and-privileges.html" class="">32. Users & Privileges</a><a href="/blog-mysql/33-sql-security.html" class="">33. SQL Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Backup and Administration</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/34-backup-and-restore.html" class="">34. Backup & Restore</a><a href="/blog-mysql/35-monitoring.html" class="">35. Monitoring</a><a href="/blog-mysql/36-replication.html" class="">36. Replication</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Application Integration</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/37-mysql-with-python.html" class="">37. MySQL with Python</a><a href="/blog-mysql/38-mysql-with-java.html" class="">38. MySQL with Java</a><a href="/blog-mysql/39-mysql-with-node-js.html" class="">39. MySQL with Node.js</a><a href="/blog-mysql/40-mysql-with-php.html" class="">40. MySQL with PHP</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Advanced Data Modeling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/41-normalization.html" class="">41. Normalization</a><a href="/blog-mysql/42-schema-design.html" class="">42. Schema Design</a><a href="/blog-mysql/43-our-compiler-database.html" class="">43. Our Compiler Database</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Projects & Quiz</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/44-mysql-projects.html" class="">44. MySQL Projects</a><a href="/blog-mysql/45-mysql-quiz.html" class="">45. MySQL Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-mysql.html">MySQL</a><span class="sep">›</span>
+      <span class="current">MySQL — Primary & Foreign Keys</span>
+    </div>
+
+    <h1 class="page-title">MySQL — Primary & Foreign Keys</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐬 MySQL 8.0+</span>
+      <span class="badge">🟢 Chapter 20 of 45</span>
+      <span class="badge">📂 Phase 07: Relationships and Joins</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Foreign key ante enti? · Creating foreign keys · REFERENCES · ON DELETE CASCADE · ON DELETE SET NULL · ON UPDATE CASCADE</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>MySQL — Primary & Foreign Keys</strong> in our MySQL Complete Masterclass! Establish relational links with foreign keys, configuring ON DELETE CASCADE and ON DELETE SET NULL rules.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In MySQL relational database management, understanding <strong>Primary & Foreign Keys</strong> is essential for building structured, consistent, and performant data storage systems. MySQL routes queries, enforces referential integrity, and optimizes execution patterns.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master key database concepts behind <strong>Primary & Foreign Keys</strong></li>
+          <li>Understand SQL syntax and query execution in MySQL Server</li>
+          <li>Implement production-ready table structures and SQL queries</li>
+          <li>Avoid common database performance bottlenecks and normalization pitfalls</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Primary & Foreign Keys is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Relational databases ensure ACID compliance (Atomicity, Consistency, Isolation, Durability). Mastering <strong>Primary & Foreign Keys</strong> equips developers to store user accounts, orders, products, and analytics safely.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required table structure -->
+    <div class="section-title"><span class="num">4</span>Required Table Structure</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">SQL — Table Schema (DDL)</span>
+        </div>
+        <pre><code>CREATE TABLE IF NOT EXISTS courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    fee DECIMAL(10, 2) NOT NULL,
+    level ENUM('Beginner', 'Intermediate', 'Advanced') DEFAULT 'Beginner',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. SQL syntax -->
+    <div class="section-title"><span class="num">5</span>SQL Syntax</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">SQL — Keyword Syntax</span>
+        </div>
+        <pre><code>CREATE TABLE lessons (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    FOREIGN KEY (course_id)
+        REFERENCES courses(id)
+        ON DELETE CASCADE
+);</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">SQL — Basic Query Example</span>
+        </div>
+        <pre><code>-- Basic Primary & Foreign Keys query execution
+CREATE TABLE lessons (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    FOREIGN KEY (course_id)
+        REFERENCES courses(id)
+        ON DELETE CASCADE
+);</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Query output -->
+    <div class="section-title"><span class="num">7</span>Query Output</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:16px;border-radius:8px;margin:16px 0;font-size:13.5px;border-left:4px solid #10b981;">
+        <strong style="color:#10b981;">📊 Expected MySQL Output:</strong>
+        <pre style="margin-top:8px;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;color:#a6e22e;font-family:'JetBrains Mono',monospace;">Query OK, Affected Rows / Dataset Returned Successfully (0.00 sec)</pre>
+      </div>
+    </div>
+
+    <!-- 8. Clause-by-clause explanation -->
+    <div class="section-title"><span class="num">8</span>Clause-by-Clause Explanation</div>
+    <div class="section-body">
+      <table class="tbl spec-table">
+        <thead><tr><th>SQL Clause / Keyword</th><th>Function &amp; Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>PRIMARY</code></td><td>Defines core SQL operation and target database entity.</td></tr>
+          <tr><td><code>WHERE / ON</code></td><td>Filters target rows or matches join keys across relational tables.</td></tr>
+          <tr><td><code>ENGINE=InnoDB</code></td><td>Provides ACID transactions, row-level locking, and crash recovery.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 9. Practical example -->
+    <div class="section-title"><span class="num">9</span>Practical Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">SQL — Real-World Scenario</span>
+        </div>
+        <pre><code>-- Production scenario for Primary & Foreign Keys
+START TRANSACTION;
+
+CREATE TABLE lessons (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    FOREIGN KEY (course_id)
+        REFERENCES courses(id)
+        ON DELETE CASCADE
+);
+
+COMMIT;</code></pre>
+      </div>
+    </div>
+
+    <!-- 10. Performance note -->
+    <div class="section-title"><span class="num">10</span>Performance Note</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚡ Database Performance Optimization</div>
+        <p>Always evaluate query execution plans using <code>EXPLAIN ANALYZE</code>. Ensure foreign keys and filter columns are indexed with B-Tree indexes to prevent full table scans on multi-million row datasets.</p>
+      </div>
+    </div>
+
+    <!-- 11. Common mistakes -->
+    <div class="section-title"><span class="num">11</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Pitfalls to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Forgetting the WHERE clause in UPDATE or DELETE statements — affects all table rows!</li>
+          <li>Executing unindexed wildcard searches (LIKE '%term%') causing full table scans.</li>
+          <li>Modifying schema structures without explicit transactions or backup copies.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 12. Coding challenge -->
+    <div class="section-title"><span class="num">12</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Write a MySQL query demonstrating <strong>Primary & Foreign Keys</strong> on a sample <code>courses</code> table. Verify that the query runs error-free and respects constraints!</p>
+      </div>
+    </div>
+
+    <!-- 13. Mini quiz -->
+    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary purpose of Primary & Foreign Keys in MySQL?</h4>
+        <p><strong>Answer:</strong> It provides structured database handling for Foreign key ante enti?, ensuring data integrity and query efficiency in relational database management systems.</p>
+      </div>
+    </div>
+
+    <!-- 14. Quick recap -->
+    <div class="section-title"><span class="num">14</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Establish relational links with foreign keys, configuring ON DELETE CASCADE and ON DELETE SET NULL rules.</li>
+        <li>Subtopics covered: Foreign key ante enti? · Creating foreign keys · REFERENCES · ON DELETE CASCADE · ON DELETE SET NULL · ON UPDATE CASCADE</li>
+        <li>Always test SQL queries in local or staging environments before applying to production datasets.</li>
+      </ul>
+    </div>
+
+    <!-- 15. Previous & Next lesson -->
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on MySQL 8.0+ · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="19-database-relationships.html" class="nav-btn"><span class="label">← 15. Previous Lesson</span><span class="title">19. Database Relationships</span></a>
+      <a href="21-inner-join.html" class="nav-btn" style="text-align:right;"><span class="label">16. Next Lesson →</span><span class="title">21. INNER JOIN</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

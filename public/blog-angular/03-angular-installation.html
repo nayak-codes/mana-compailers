@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Angular — Angular Setup & CLI | Our Compiler</title>
+  <meta name="description" content="Complete Angular Chapter 3: Angular Setup & CLI. Learn Node.js installation · npm ante enti? · Angular CLI · Angular CLI installation · Creating a project · Standalone components option · Routing option · Stylesheet option · Running the app · Building the app · Production preview · Setup errors with practical TypeScript code examples, Angular templates, signals, services, and step-by-step walkthroughs." />
+  <meta name="keywords" content="angular tutorial, learn angular, angular setup & cli, angular signals, standalone components" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-angular/03-angular-installation.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-angular/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-angular">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-angular.html" class="active">Angular</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Angular Tutorial</div>
+    <a href="/blog-angular.html" class="sidebar-home-link">🅰️ Angular HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🅰️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Angular Basics</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/01-what-is-angular.html" class="">1. What is Angular?</a><a href="/blog-angular/02-angular-prerequisites.html" class="">2. Angular Prerequisites</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and Project Structure</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-angular/03-angular-installation.html" class="active">3. Angular Setup & CLI</a><a href="/blog-angular/04-angular-project-structure.html" class="">4. Angular Project Structure</a><a href="/blog-angular/05-first-angular-component.html" class="">5. Your First Component</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Templates and Data Binding</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/06-angular-templates.html" class="">6. Templates & Interpolation</a><a href="/blog-angular/07-data-binding.html" class="">7. Data Binding</a><a href="/blog-angular/08-conditions-and-loops.html" class="">8. Conditions & Loops</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Components Communication</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/09-inputs.html" class="">9. Component Inputs</a><a href="/blog-angular/10-outputs.html" class="">10. Component Outputs</a><a href="/blog-angular/11-content-projection.html" class="">11. Content Projection</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Directives and Pipes</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/12-directives.html" class="">12. Directives</a><a href="/blog-angular/13-pipes.html" class="">13. Pipes</a><a href="/blog-angular/14-custom-pipes.html" class="">14. Custom Pipes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Signals and Reactivity</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/15-signals.html" class="">15. Signals</a><a href="/blog-angular/16-computed-and-effects.html" class="">16. Computed & Effects</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💉</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Services and Dependency Injection</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/17-services.html" class="">17. Services</a><a href="/blog-angular/18-dependency-injection.html" class="">18. Dependency Injection</a><a href="/blog-angular/19-configuration.html" class="">19. Angular Configuration</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧭</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Routing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/20-router-basics.html" class="">20. Router Basics</a><a href="/blog-angular/21-dynamic-routes.html" class="">21. Dynamic Routes</a><a href="/blog-angular/22-route-guards.html" class="">22. Route Guards</a><a href="/blog-angular/23-lazy-loading.html" class="">23. Lazy Loading</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Forms</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/24-template-driven-forms.html" class="">24. Template-Driven Forms</a><a href="/blog-angular/25-reactive-forms.html" class="">25. Reactive Forms</a><a href="/blog-angular/26-dynamic-forms.html" class="">26. Dynamic Forms</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">HttpClient and APIs</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/27-httpclient.html" class="">27. HttpClient</a><a href="/blog-angular/28-api-state-handling.html" class="">28. API State Handling</a><a href="/blog-angular/29-http-interceptors.html" class="">29. HTTP Interceptors</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔁</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">RxJS & Signals Interop</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/30-rxjs-basics.html" class="">30. RxJS Basics</a><a href="/blog-angular/31-rxjs-operators.html" class="">31. RxJS Operators</a><a href="/blog-angular/32-signals-and-rxjs.html" class="">32. Signals & RxJS Interop</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">State Management</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/33-local-state.html" class="">33. Local State</a><a href="/blog-angular/34-shared-state.html" class="">34. Shared State</a><a href="/blog-angular/35-ngrx.html" class="">35. NgRx</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Architecture and UI</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/36-component-architecture.html" class="">36. Component Architecture</a><a href="/blog-angular/37-angular-material.html" class="">37. Angular Material</a><a href="/blog-angular/38-responsive-ui.html" class="">38. Responsive UI</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Accessibility and Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/39-accessibility.html" class="">39. Accessibility</a><a href="/blog-angular/40-security.html" class="">40. Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Lifecycle and Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/41-lifecycle-hooks.html" class="">41. Lifecycle Hooks</a><a href="/blog-angular/42-change-detection.html" class="">42. Change Detection</a><a href="/blog-angular/43-performance.html" class="">43. Performance</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Testing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/44-component-testing.html" class="">44. Component Testing</a><a href="/blog-angular/45-service-and-http-testing.html" class="">45. Service & HTTP Testing</a><a href="/blog-angular/46-end-to-end-testing.html" class="">46. End-to-End Testing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 17</span><span class="phase-title">SSR, Deployment & Projects</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/47-ssr-and-hydration.html" class="">47. SSR & Hydration</a><a href="/blog-angular/48-deployment.html" class="">48. Deployment</a><a href="/blog-angular/49-angular-projects.html" class="">49. Angular Projects</a><a href="/blog-angular/50-angular-quiz.html" class="">50. Angular Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-angular.html">Angular</a><span class="sep">›</span>
+      <span class="current">Angular — Angular Setup & CLI</span>
+    </div>
+
+    <h1 class="page-title">Angular — Angular Setup & CLI</h1>
+
+    <div class="page-meta">
+      <span class="badge">🅰️ Angular 18+</span>
+      <span class="badge">🟢 Chapter 3 of 50</span>
+      <span class="badge">📂 Phase 02: Setup and Project Structure</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Node.js installation · npm ante enti? · Angular CLI · Angular CLI installation · Creating a project · Standalone components option · Routing option · Stylesheet option · Running the app · Building the app · Production preview · Setup errors</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Angular — Angular Setup & CLI</strong> in our Angular Complete Masterclass! Install Angular CLI globally and generate modern standalone Angular applications using `ng new`.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In Angular web development, understanding <strong>Angular Setup & CLI</strong> is essential for building structured, scalable frontend applications. Angular components and directives participate in Angular's reactive system and dependency injection system seamlessly.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#dd0031;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master TypeScript mechanics and Angular decorators for <strong>Angular Setup & CLI</strong></li>
+          <li>Understand templates, data binding, Signals, and dependency injection</li>
+          <li>Implement clean, production-ready Angular components and services</li>
+          <li>Avoid common binding mistakes, subscription memory leaks, and change detection pitfalls</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Angular Setup & CLI is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Angular components and directives dependency injection system lo automatically participate chestayi; dependencies ni inject chesi use cheyyachu. Mastering <strong>Angular Setup & CLI</strong> gives you full control over dynamic user interfaces in enterprise web apps.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required Component / Service design -->
+    <div class="section-title"><span class="num">4</span>Required Component / Service Design</div>
+    <div class="section-body">
+      <p>Target Class / Artifact: <code>CLICommands</code>. Configured using Angular metadata decorators (e.g. <code>@Component</code>, <code>@Injectable</code>, <code>@Directive</code>, <code>@Pipe</code>).</p>
+    </div>
+
+    <!-- 5. Angular syntax / mechanism -->
+    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
+    <div class="section-body">
+      <p>Mechanism: <code style="color:#dd0031;font-weight:700;">Terminal</code>. Target File: <code>package.json</code>.</p>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example Code</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Angular Component / Service Code</span></div>
+        <pre><code>npm install -g @angular/cli
+ng new our-angular-app --standalone --routing --style=css
+cd our-angular-app
+ng serve</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Browser output -->
+    <div class="section-title"><span class="num">7</span>Browser Output</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">UI Render / Execution Output</span></div>
+        <pre><code>Angular Live Development Server listening on localhost:4200</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Line-by-line explanation -->
+    <div class="section-title"><span class="num">8</span>Line-by-Line Explanation</div>
+    <div class="section-body">
+      <div class="diagram-box">Angular Bootstrapping -> Component Instantiation -> Dependency Injection -> Data Binding / Signal Update -> Template Render -> Zone.js / Signal Change Detection -> DOM Tree Sync</div>
+    </div>
+
+    <!-- 9. Practical example -->
+    <div class="section-title"><span class="num">9</span>Practical Example Usage</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Template / CLI Invocation</span></div>
+        <pre><code>npm install -g @angular/cli
+ng new our-angular-app
+cd our-angular-app
+ng serve</code></pre>
+      </div>
+    </div>
+
+    <!-- 10. Signal vs normal variable -->
+    <div class="section-title"><span class="num">10</span>Concept Comparison / Signal vs Normal Variable</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #dd0031;">
+        <strong style="color:#dd0031;">Verification Status: HTTP 200 OK</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Angular Signals reactive state store cheyyadaniki use avutayi; signal value read cheyyadaniki signal ni function laga call chestaru. Normal variables require manual ChangeDetectorRef triggering.</p>
+      </div>
+    </div>
+
+    <!-- 11. Common mistakes -->
+    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Forgetting to unsubscribe from manual RxJS Observables, leading to memory leaks.</li>
+          <li>Omitting <code>track</code> in <code>@for</code> loops causing full list DOM re-renders on array updates.</li>
+          <li>Mutating objects directly instead of updating Signals via <code>.set()</code> or <code>.update()</code>.</li>
+          <li>Putting heavy computation directly inside HTML template expression interpolation.</li>
+          <li>Injecting services in non-injection contexts instead of constructors or <code>inject()</code> functions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 12. Coding challenge -->
+    <div class="section-title"><span class="num">12</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#dd0031;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Build an Angular component for <strong>Angular Setup & CLI</strong> using standalone component syntax. Bind properties dynamically to your template and test user interactions in your browser at <code>http://localhost:4200</code>!</p>
+      </div>
+    </div>
+
+    <!-- 13. Mini quiz -->
+    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary advantage of Angular Setup & CLI in Angular?</h4>
+        <p><strong>Answer:</strong> It provides structured TypeScript type safety and Node.js installation, streamlining single-page app development.</p>
+      </div>
+    </div>
+
+    <!-- 14. Quick recap -->
+    <div class="section-title"><span class="num">14</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Install Angular CLI globally and generate modern standalone Angular applications using `ng new`.</li>
+        <li>Angular components participate automatically in the Dependency Injection system.</li>
+        <li>Utilize standalone components, Angular Signals, and modern control flow syntax (@if, @for).</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Angular 18+ Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 15 & 16. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="02-angular-prerequisites.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">2. Angular Prerequisites</span></a>
+      <a href="04-angular-project-structure.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">4. Angular Project Structure</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Django — Creating a Django Project | Our Compiler</title>
+  <meta name="description" content="Complete Django Chapter 4: Creating a Django Project. Learn django-admin · startproject · manage.py · Project package · settings.py · urls.py · asgi.py · wsgi.py · Running development server · Changing port · Stopping server · Project errors with practical Python code examples, Django templates, ORM models, views, and step-by-step walkthroughs." />
+  <meta name="keywords" content="django tutorial, learn django, creating a django project, django orm, django views" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-django/04-creating-a-django-project.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-django/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-django">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-django.html" class="active">Django</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Django Tutorial</div>
+    <a href="/blog-django.html" class="sidebar-home-link">🎸 Django HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎸</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Django Basics & Setup</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">6 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-django/01-what-is-django.html" class="">1. What is Django?</a><a href="/blog-django/02-django-prerequisites.html" class="">2. Python & Web Prerequisites</a><a href="/blog-django/03-django-installation.html" class="">3. Django Installation</a><a href="/blog-django/04-creating-a-django-project.html" class="active">4. Creating a Django Project</a><a href="/blog-django/05-django-project-structure.html" class="">5. Project Structure</a><a href="/blog-django/06-creating-django-apps.html" class="">6. Creating Django Apps</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛣️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Routing & Views</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/07-url-routing.html" class="">7. URL Routing</a><a href="/blog-django/08-function-based-views.html" class="">8. Function-Based Views</a><a href="/blog-django/09-request-and-response.html" class="">9. Request & Response</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Templates & Static Files</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/10-django-templates.html" class="">10. Django Templates</a><a href="/blog-django/11-template-inheritance.html" class="">11. Template Inheritance</a><a href="/blog-django/12-static-and-media-files.html" class="">12. Static & Media Files</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Models, Database & ORM</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">6 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/13-models.html" class="">13. Models</a><a href="/blog-django/14-migrations.html" class="">14. Migrations</a><a href="/blog-django/15-querysets.html" class="">15. QuerySets</a><a href="/blog-django/16-orm-crud.html" class="">16. ORM CRUD</a><a href="/blog-django/17-relationships.html" class="">17. Relationships</a><a href="/blog-django/18-query-optimization.html" class="">18. Query Optimization</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Admin & Forms</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/19-django-admin.html" class="">19. Django Admin</a><a href="/blog-django/20-django-forms.html" class="">20. Django Forms</a><a href="/blog-django/21-model-forms.html" class="">21. Model Forms</a><a href="/blog-django/22-form-validation.html" class="">22. Form Validation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Class-Based Views</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/23-class-based-views.html" class="">23. Class-Based Views</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔑</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Authentication & Authorization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/24-authentication.html" class="">24. Authentication</a><a href="/blog-django/25-custom-user-model.html" class="">25. Custom User Model</a><a href="/blog-django/26-authorization.html" class="">26. Authorization</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/27-django-security.html" class="">27. Django Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Django REST Framework (DRF)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">7 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/28-django-rest-framework.html" class="">28. Django REST Framework</a><a href="/blog-django/29-serializers.html" class="">29. Serializers</a><a href="/blog-django/30-api-views.html" class="">30. API Views</a><a href="/blog-django/31-viewsets-and-routers.html" class="">31. ViewSets & Routers</a><a href="/blog-django/32-api-authentication.html" class="">32. API Authentication</a><a href="/blog-django/33-api-permissions.html" class="">33. API Permissions</a><a href="/blog-django/34-pagination-and-filtering.html" class="">34. Pagination & Filtering</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Testing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/35-testing.html" class="">35. Testing</a><a href="/blog-django/36-api-testing.html" class="">36. API Testing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Background Tasks & Async</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/37-background-tasks.html" class="">37. Background Tasks</a><a href="/blog-django/38-async-django.html" class="">38. Async Django</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Caching & Signals</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/39-caching.html" class="">39. Caching</a><a href="/blog-django/40-signals.html" class="">40. Signals</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💻</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Advanced Management</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/41-management-commands.html" class="">41. Management Commands</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐳</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Containerization & Deployment</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/42-docker-and-ci-cd.html" class="">42. Docker & CI/CD</a><a href="/blog-django/43-deployment.html" class="">43. Deployment</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Projects & Certification</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/44-django-projects.html" class="">44. Django Projects</a><a href="/blog-django/45-django-quiz.html" class="">45. Django Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-django.html">Django</a><span class="sep">›</span>
+      <span class="current">Django — Creating a Django Project</span>
+    </div>
+
+    <h1 class="page-title">Django — Creating a Django Project</h1>
+
+    <div class="page-meta">
+      <span class="badge">🎸 Django 5.0+</span>
+      <span class="badge">🟢 Chapter 4 of 45</span>
+      <span class="badge">📂 Phase 01: Django Basics & Setup</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">django-admin · startproject · manage.py · Project package · settings.py · urls.py · asgi.py · wsgi.py · Running development server · Changing port · Stopping server · Project errors</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Django — Creating a Django Project</strong> in our Django Complete Masterclass! Bootstrap your first Django web application using `django-admin startproject` and launch the local dev server.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In Django web development, understanding <strong>Creating a Django Project</strong> is essential for building robust, secure, database-driven Python web applications. Django follows MTV (Model-Template-View) architecture to cleanly decouple data models, business logic, and UI templates.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#44b78b;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master core Django mechanisms and Python patterns for <strong>Creating a Django Project</strong></li>
+          <li>Understand request-response lifecycles, MTV flow, ORM models, and templates</li>
+          <li>Implement clean, production-ready Django views, forms, models, and serializers</li>
+          <li>Avoid common SQL N+1 pitfalls, security flaws, and configuration mistakes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Creating a Django Project is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Django model Python class form lo database table structure define chestundi. Migration model changes ni database schema changes ga convert chesi apply chestundi. Mastering <strong>Creating a Django Project</strong> accelerates backend development.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required project structure -->
+    <div class="section-title"><span class="num">4</span>Required Project Structure</div>
+    <div class="section-body">
+      <p>Target Class / Module: <code>StartProject</code>. Configured inside Django app modules (e.g. <code>models.py</code>, <code>views.py</code>, <code>urls.py</code>, <code>forms.py</code>, <code>serializers.py</code>).</p>
+    </div>
+
+    <!-- 5. Model / View syntax & mechanism -->
+    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
+    <div class="section-body">
+      <p>Mechanism: <code style="color:#44b78b;font-weight:700;">CLI</code>. File Path: <code>manage.py</code>.</p>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example Code</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Django Code (Python)</span></div>
+        <pre><code>django-admin startproject ourcompiler
+cd ourcompiler
+python manage.py runserver</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Migration commands / Browser output -->
+    <div class="section-title"><span class="num">7</span>Migration Commands / Output</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">CLI / Execution Output</span></div>
+        <pre><code>django-admin startproject ourcompiler
+cd ourcompiler
+python manage.py runserver</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Database table explanation / Request flow -->
+    <div class="section-title"><span class="num">8</span>Database Table Explanation / Request Flow</div>
+    <div class="section-body">
+      <div class="diagram-box">Browser Request -> WSGI/ASGI Server -> URL Dispatcher (urls.py) -> View Handler (views.py) -> Model Query (models.py) -> Template Engine / Serializer -> HTTP Response</div>
+    </div>
+
+    <!-- 9. Query example / Practical usage -->
+    <div class="section-title"><span class="num">9</span>Query Example / Practical Usage</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">ORM Query / View Invocation</span></div>
+        <pre><code>Starting development server at http://127.0.0.1:8000/</code></pre>
+      </div>
+    </div>
+
+    <!-- 10. Admin integration / MTV concept comparison -->
+    <div class="section-title"><span class="num">10</span>Admin Integration / Concept Comparison</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #44b78b;">
+        <strong style="color:#44b78b;">Verification Status: HTTP 200 OK</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Django's MTV architecture maps Model to database table, Template to HTML presentation layer, and View to business logic handler. Registered models appear automatically in the Django Admin panel.</p>
+      </div>
+    </div>
+
+    <!-- 11. Common mistakes -->
+    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Performing N+1 database queries inside template loops instead of using <code>select_related()</code> or <code>prefetch_related()</code>.</li>
+          <li>Forgetting to run <code>makemigrations</code> and <code>migrate</code> after modifying <code>models.py</code>.</li>
+          <li>Leaving <code>DEBUG = True</code> and <code>SECRET_KEY</code> exposed in production settings.</li>
+          <li>Putting heavy database or business logic inside Django template tags instead of view functions or model methods.</li>
+          <li>Failing to validate user input forms with <code>form.is_valid()</code> before persisting records to database.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 12. Coding challenge -->
+    <div class="section-title"><span class="num">12</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#44b78b;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Build a Django view and template for <strong>Creating a Django Project</strong> inside your local <code>ourcompiler</code> app. Run <code>python manage.py runserver</code> and test in your browser at <code>http://127.0.0.1:8000/</code>!</p>
+      </div>
+    </div>
+
+    <!-- 13. Mini quiz -->
+    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary role of Creating a Django Project in Django?</h4>
+        <p><strong>Answer:</strong> It provides structured Python mechanisms for django-admin, streamlining secure web development.</p>
+      </div>
+    </div>
+
+    <!-- 14. Quick recap -->
+    <div class="section-title"><span class="num">14</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Bootstrap your first Django web application using `django-admin startproject` and launch the local dev server.</li>
+        <li>Django follows the Model-Template-View (MTV) architectural pattern.</li>
+        <li>Utilize Django built-in ORM, admin panel, forms, and template tags.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Django 5.0+ Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 15 & 16. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="03-django-installation.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">3. Django Installation</span></a>
+      <a href="05-django-project-structure.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">5. Project Structure</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

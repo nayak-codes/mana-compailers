@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next.js Route Handlers — Building API Endpoints with route.ts — Next.js Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn Next.js Route Handlers: creating GET, POST, PUT, DELETE endpoints, reading request bodies, query parameters, headers, cookies, and returning JSON responses." />
+  <meta name="keywords" content="nextjs route handlers, route.ts, nextjs api endpoints, nextresponse" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-nextjs/22-nextjs-route-handlers.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Next.js Route Handlers — Building API Endpoints with route.ts — Next.js Complete Roadmap",
+  "description": "Learn Next.js Route Handlers: creating GET, POST, PUT, DELETE endpoints, reading request bodies, query parameters, headers, cookies, and returning JSON responses.",
+  "articleSection": "Phase: Route Handlers & Backend",
+  "author": {
+    "@type": "Organization",
+    "name": "Our Compiler Technical Editorial Team",
+    "url": "https://www.ourcompiler.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Our Compiler",
+    "url": "https://www.ourcompiler.com"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-08-20"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Route Handlers, Server Actions కంటే ఎప్పుడు better?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "External clients (mobile app, third-party webhook, public API) కి access కావాలంటే Route Handlers అవసరం. Internal forms/mutations కోసం matrame అయితే Server Actions simpler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "route.ts, page.tsx ఒకే folder లో ఉండొచ్చా?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ledు — same route segment లో రెండూ ఉండలేవు. ఒక folder ki page.tsx (UI) leda route.ts (API) matrame ఉండాలి, రెండూ కాదు."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Route Handler లో database directly access చేయవచ్చా?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Avunు, Server Component లాగానే, Route Handlers ఎప్పుడూ server meedha run అవుతాయి కాబట్టి, database, secret keys safe గా వాడొచ్చు."
+      }
+    }
+  ]
+}
+  </script>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightTsxCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___TSX_TOK_${id}___`;
+      };
+      let code = rawCode.replace(/(\/\/.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/(\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m => pushToken('st', m));
+      const kwList = ['import','from','as','export','default','function','return','const','let','var','if','else','for','while','async','await','class','extends','new','this','super','try','catch','finally','throw','typeof','instanceof','in','of','null','undefined','true','false','interface','type','implements','public','private','readonly','void','case','switch','break','continue','yield','static'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+      const fnList = ['useState','useEffect','useRouter','usePathname','useSearchParams','useContext','useMemo','useCallback','useRef','fetch','console','log','Response','NextResponse','NextRequest','Link','Image','Metadata','generateMetadata','generateStaticParams','revalidatePath','revalidateTag','redirect','notFound','cookies','headers','FormData','get','post','put','patch','delete','json','React','ReactNode','Promise','Array','Object','map','filter','reduce','find'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+      code = code.replace(/(&lt;\/?[A-Za-z][A-Za-z0-9.]*)/g, m => pushToken('tp', m));
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+      code = code.replace(/___TSX_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightTsxCode(codeEl.innerHTML);
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightTsxCode(codeEl.innerHTML);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-nextjs">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Next.js Complete Roadmap</div>
+    <a href="/blog-nextjs.html" class="sidebar-home-link">▲ Next.js Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📂</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">Next.js Introduction</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/01-nextjs-introduction-and-setup.html">1. What is Next.js?</a>
+        <a href="/blog-nextjs/02-nextjs-prerequisites-react-typescript.html">2. Prerequisites</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Setup & Project Structure</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/03-nextjs-installation-and-project-setup.html">3. Next.js Setup</a>
+        <a href="/blog-nextjs/04-nextjs-project-structure.html">4. Project Structure</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">App Router & Pages</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/05-nextjs-app-router.html">5. App Router</a>
+        <a href="/blog-nextjs/06-nextjs-static-routes.html">6. Static Routes</a>
+        <a href="/blog-nextjs/07-nextjs-dynamic-routes.html">7. Dynamic Routes</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Layouts & Navigation</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/08-nextjs-layouts.html">8. Layouts</a>
+        <a href="/blog-nextjs/09-nextjs-navigation.html">9. Navigation</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖥️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Server & Client Components</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/10-nextjs-server-components.html">10. Server Components</a>
+        <a href="/blog-nextjs/11-nextjs-client-components.html">11. Client Components</a>
+        <a href="/blog-nextjs/12-nextjs-server-vs-client-decision.html">12. Server vs Client Decision</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Styling & UI</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/13-nextjs-styling-options.html">13. Styling Options</a>
+        <a href="/blog-nextjs/14-nextjs-ui-components.html">14. UI Components</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Data Fetching</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/15-nextjs-server-side-data-fetching.html">15. Server-Side Data Fetching</a>
+        <a href="/blog-nextjs/16-nextjs-caching-and-revalidation.html">16. Caching & Revalidation</a>
+        <a href="/blog-nextjs/17-nextjs-client-side-data-fetching.html">17. Client-Side Data Fetching</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Loading, Errors & Streaming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/18-nextjs-loading-ui.html">18. Loading UI</a>
+        <a href="/blog-nextjs/19-nextjs-error-handling.html">19. Error Handling</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">Forms & Server Actions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/20-nextjs-forms.html">20. Forms</a>
+        <a href="/blog-nextjs/21-nextjs-server-actions.html">21. Server Actions</a>
+      </div>
+
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Route Handlers & Backend</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-nextjs/22-nextjs-route-handlers.html" class="active">22. Route Handlers</a>
+        <a href="/blog-nextjs/23-nextjs-api-project.html">23. API Project</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Databases & ORM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/24-nextjs-database-basics.html">24. Database Basics</a>
+        <a href="/blog-nextjs/25-nextjs-prisma-orm.html">25. Prisma ORM</a>
+        <a href="/blog-nextjs/26-nextjs-database-project.html">26. Database Project</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Auth & Authorization</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/27-nextjs-authentication-basics.html">27. Authentication Basics</a>
+        <a href="/blog-nextjs/28-nextjs-authentication.html">28. Next.js Authentication</a>
+        <a href="/blog-nextjs/29-nextjs-security.html">29. Security</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔎</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">SEO & Metadata</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/30-nextjs-metadata.html">30. Metadata</a>
+        <a href="/blog-nextjs/31-nextjs-seo-project.html">31. SEO Project</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">Images, Fonts & Assets</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/32-nextjs-image-optimization.html">32. Image Optimization</a>
+        <a href="/blog-nextjs/33-nextjs-fonts-and-assets.html">33. Fonts & Assets</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔷</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">TypeScript & Code Quality</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/34-nextjs-typescript.html">34. TypeScript with Next.js</a>
+        <a href="/blog-nextjs/35-nextjs-code-quality.html">35. Code Quality</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Advanced Rendering</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/36-nextjs-rendering-models.html">36. Rendering Models</a>
+        <a href="/blog-nextjs/37-nextjs-advanced-routing.html">37. Advanced Routing</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Performance</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/38-nextjs-performance-optimization.html">38. Performance Optimization</a>
+        <a href="/blog-nextjs/39-nextjs-caching-revalidation-advanced.html">39. Caching & Revalidation (Advanced)</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Testing</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/40-nextjs-unit-and-component-testing.html">40. Unit & Component Testing</a>
+        <a href="/blog-nextjs/41-nextjs-end-to-end-testing.html">41. End-to-End Testing</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☁️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Deployment</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-nextjs/42-nextjs-production-build.html">42. Production Build</a>
+        <a href="/blog-nextjs/43-nextjs-hosting-and-deployment.html">43. Hosting & Deployment</a>
+      </div>
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try Node.js Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-react.html">React Course</a>
+    <a href="/blog-javascript.html">JavaScript Course</a>
+    <a href="/blog-node.html">Node.js Course</a>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-nextjs.html">Next.js</a><span class="sep">›</span>
+      <span class="current">Chapter 22: 22. Route Handlers</span>
+    </div>
+
+    <h1 class="page-title">Next.js Route Handlers — Building API Endpoints with route.ts</h1>
+
+    <div class="page-meta">
+      <span class="badge">▲ Next.js 15+ (App Router)</span>
+      <span class="badge">🟢 Chapter 22 of 43</span>
+      <span class="badge">📂 Phase 10: Route Handlers & Backend</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>route.ts Basics · GET/POST/PUT/DELETE · Request & Response Objects · Query Parameters · Headers & Cookies · Status Codes</span>
+    </div>
+
+    <div class="intro-box">
+      Server Actions forms కోసం best, kani external clients (mobile apps, third-party integrations) కి public REST API కావాలంటే <strong>Route Handlers</strong> అవసరం. Ee chapter lో API endpoints ela build cheయాలో nerchukుందాం.
+    </div>
+
+
+    <div class="section-title"><span class="num">1</span>Creating Your First Route Handler</div>
+    <div class="section-body">
+      <p><code>app/api/</code> folder లోపల, <code>route.ts</code> ఫైల్ create చేస్తే, ఆ path ఒక API endpoint అవుతుంది — <code>page.tsx</code> లాగానే, kani UI బదులు JSON return చేస్తుంది:</p>
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: A Simple GET Endpoint</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">app/api/courses/route.ts</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>import { NextResponse } from "next/server";
+
+export async function GET() {
+  return NextResponse.json({
+    courses: ["JavaScript", "React", "Next.js"],
+  });
+}</code></pre>
+        </div>
+      </div>
+      <p>Ee endpoint <code>/api/courses</code> కి request వస్తే, JSON response return అవుతుంది.</p>
+    </div>
+  
+    <div class="section-title"><span class="num">2</span>Handling POST Requests with a Body</div>
+    <div class="section-body">
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Creating a Resource via POST</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">app/api/courses/route.ts</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
+  if (!body.name) {
+    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+  }
+
+  // ... save to database here
+  return NextResponse.json({ message: "Course created", course: body }, { status: 201 });
+}</code></pre>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+          <strong style="color:#10b981;">🔍 Breakdown:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>await request.json()</code>: Incoming request body ni parse చేస్తుంది.</li>
+            <li><code>{"{"}status: 400{"}"}</code>: HTTP status code — 400 (Bad Request), 201 (Created) లాంటివి explicitly set చేయవచ్చు.</li>
+          </ul>
+        </div>
+    </div>
+  
+    <div class="section-title"><span class="num">3</span>Reading Query Parameters</div>
+    <div class="section-body">
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Filtering with ?category=</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">app/api/courses/route.ts</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const category = request.nextUrl.searchParams.get("category");
+  return NextResponse.json({ filteredBy: category });
+}</code></pre>
+        </div>
+      </div>
+      <p>URL <code>/api/courses?category=web</code> అయితే, <code>category</code> variable value <code>"web"</code> అవుతుంది.</p>
+    </div>
+  
+    <div class="section-title"><span class="num">4</span>Supported HTTP Methods</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>Function Name</th><th>HTTP Method</th><th>Typical Use</th></tr>
+        <tr><td><code>GET</code></td><td>GET</td><td>Reading/fetching data</td></tr>
+        <tr><td><code>POST</code></td><td>POST</td><td>Creating a new resource</td></tr>
+        <tr><td><code>PUT</code></td><td>PUT</td><td>Full update of a resource</td></tr>
+        <tr><td><code>PATCH</code></td><td>PATCH</td><td>Partial update of a resource</td></tr>
+        <tr><td><code>DELETE</code></td><td>DELETE</td><td>Deleting a resource</td></tr>
+      </table>
+      <p>Same <code>route.ts</code> file లో, prathi HTTP method కోసం, ఆ method పేరుతో ఒక export function rాస్తే chాలు — Next.js automatic గా correct one call చేస్తుంది.</p>
+    </div>
+  
+
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Mistake: Forgetting Status Codes</div>
+      <p>NextResponse.json() ki status code specify చేయకపోతే, default గా 200 (success) వస్తుంది — even for errors. Client-side code కి error ని correctly identify చేయడానికి, ఎప్పుడూ appropriate status code (400, 401, 404, 500) set చేయాలి.</p>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p>Create a DELETE route handler for /api/courses/[id] that returns a success message with the deleted id.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">app/api/courses/[id]/route.ts</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+        </div>
+        <pre><code>import { NextRequest, NextResponse } from "next/server";
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  // ... delete from database here
+  return NextResponse.json({ message: `Course ${id} deleted` });
+}</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">Run This Challenge in Online Node.js IDE →</a>
+    </div>
+
+    <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Route Handlers, Server Actions కంటే ఎప్పుడు better?</h4>
+      <p>External clients (mobile app, third-party webhook, public API) కి access కావాలంటే Route Handlers అవసరం. Internal forms/mutations కోసం matrame అయితే Server Actions simpler.</p>
+    </div>
+  
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> route.ts, page.tsx ఒకే folder లో ఉండొచ్చా?</h4>
+      <p>Ledు — same route segment లో రెండూ ఉండలేవు. ఒక folder ki page.tsx (UI) leda route.ts (API) matrame ఉండాలి, రెండూ కాదు.</p>
+    </div>
+  
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Route Handler లో database directly access చేయవచ్చా?</h4>
+      <p>Avunు, Server Component లాగానే, Route Handlers ఎప్పుడూ server meedha run అవుతాయి కాబట్టి, database, secret keys safe గా వాడొచ్చు.</p>
+    </div>
+  
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on Next.js 15+ (App Router) · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      
+      <a href="21-nextjs-server-actions.html" class="nav-btn">
+        <span class="label">← Previous</span>
+        <span class="title">21. Server Actions</span>
+      </a>
+
+      
+      <a href="23-nextjs-api-project.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Chapter →</span>
+        <span class="title">23. API Project</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

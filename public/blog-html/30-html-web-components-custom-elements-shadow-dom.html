@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Components: Custom Elements &amp; Shadow DOM (customElements.define, attachShadow) — HTML5 Masterclass | Our Compiler</title>
+  <meta name="description" content="Complete HTML5 Chapter 30: Learn Web Components, Autonomous Custom Elements, customElements.define(), lifecycle hooks connectedCallback, Shadow DOM encapsulation, and scoped CSS." />
+  <meta name="keywords" content="html tutorial, learn html5, html tags, html elements, html web development" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-html/30-html-web-components-custom-elements-shadow-dom.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.location.href = '/online-html-editor.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_html', rawCode);
+                window.location.href = '/online-html-editor.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-html">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-html.html" class="active">HTML</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">HTML5 Complete Course</div>
+    <a href="/blog-html.html" class="sidebar-home-link">🌐 HTML Course HOME</a>
+    <div class="sidebar-accordion">
+      <!-- Phase 01: HTML Introduction -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">HTML Introduction</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/01-what-is-html-introduction-to-html.html" class="">1. What is HTML? Introduction</a>
+        <a href="/blog-html/02-your-first-html-page.html" class="">2. Your First HTML Page</a>
+      </div>
+
+      <!-- Phase 02: HTML Syntax and Text -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">HTML Syntax &amp; Text</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/03-html-elements-and-tags-attributes.html" class="">3. Elements, Tags &amp; Attributes</a>
+        <a href="/blog-html/04-html-headings-paragraphs-and-formatting.html" class="">4. Headings, Paragraphs &amp; Formatting</a>
+        <a href="/blog-html/05-html-code-and-technical-text-formatting.html" class="">5. Code &amp; Technical Text</a>
+      </div>
+
+      <!-- Phase 03: Links and Navigation -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔗</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Links &amp; Navigation</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/06-html-links-and-anchor-elements.html" class="">6. Links &amp; Anchor Elements</a>
+        <a href="/blog-html/07-html-navigation-menus-and-nav-tag.html" class="">7. Navigation Menus &amp; &lt;nav&gt;</a>
+      </div>
+
+      <!-- Phase 04: Lists and Tables -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Lists &amp; Tables</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/08-html-lists-unordered-ordered-description.html" class="">8. Unordered, Ordered &amp; Description Lists</a>
+        <a href="/blog-html/09-html-tables-structured-data-accessibility.html" class="">9. Tables &amp; Structured Data</a>
+      </div>
+
+      <!-- Phase 05: Images and Graphics -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Images &amp; Graphics</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/10-html-images-tag-attributes-figures.html" class="">10. Images, Alt Text &amp; Figures</a>
+        <a href="/blog-html/11-html-responsive-images-picture-srcset.html" class="">11. Responsive Images &amp; &lt;picture&gt;</a>
+        <a href="/blog-html/12-html-svg-and-canvas-graphics.html" class="">12. SVG &amp; Canvas Graphics</a>
+      </div>
+
+      <!-- Phase 06: Semantic HTML5 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">Semantic HTML5</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/13-html-semantic-elements-layout.html" class="">13. Semantic Elements &amp; Layout</a>
+        <a href="/blog-html/14-html-page-layout-structure-landmarks.html" class="">14. Page Layout Structure &amp; Landmarks</a>
+      </div>
+
+      <!-- Phase 07: Forms -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📋</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Forms &amp; Input Controls</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/15-html-forms-basics-form-element-action-method.html" class="">15. Forms Basics (action, method)</a>
+        <a href="/blog-html/16-html-form-input-types-reference.html" class="">16. Input Types Reference</a>
+        <a href="/blog-html/17-html-form-attributes-reference.html" class="">17. Form Attributes Reference</a>
+        <a href="/blog-html/18-html-form-native-validation-validity-api.html" class="">18. Native Validation &amp; Validity API</a>
+      </div>
+
+      <!-- Phase 08: Audio and Video -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Audio, Video &amp; Embeds</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/19-html-audio-element-audio-api.html" class="">19. Audio Element &amp; Audio API</a>
+        <a href="/blog-html/20-html-video-element-track-subtitles.html" class="">20. Video Element &amp; Subtitles</a>
+        <a href="/blog-html/21-html-embedded-content-iframes-security.html" class="">21. Embedded Content &amp; IFrames</a>
+      </div>
+
+      <!-- Phase 09: Advanced Web APIs -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 09</span>
+            <span class="phase-title">HTML5 Advanced APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/22-html-web-storage-localstorage-sessionstorage.html" class="">22. Web Storage (localStorage, sessionStorage)</a>
+        <a href="/blog-html/23-html-geolocation-api-user-location.html" class="">23. Geolocation API &amp; Location</a>
+        <a href="/blog-html/24-html-drag-and-drop-api-native-dnd.html" class="">24. Drag &amp; Drop API</a>
+        <a href="/blog-html/25-html-web-workers-service-workers-pwa-basics.html" class="">25. Web Workers &amp; Service Workers</a>
+      </div>
+
+      <!-- Phase 10: Accessibility (a11y) -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">♿</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 10</span>
+            <span class="phase-title">Accessibility &amp; WAI-ARIA</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/26-html-accessibility-a11y-wcag-guidelines.html" class="">26. Accessibility &amp; WCAG Principles</a>
+        <a href="/blog-html/27-html-wai-aria-roles-states-properties.html" class="">27. WAI-ARIA Roles, States &amp; Props</a>
+      </div>
+
+      <!-- Phase 11: SEO & Metadata -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">SEO &amp; Metadata</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/28-html-seo-metadata-head-tags.html" class="">28. SEO Metadata &amp; Head Tags</a>
+        <a href="/blog-html/29-html-open-graph-social-meta-schema-org.html" class="">29. Open Graph &amp; Schema.org JSON-LD</a>
+      </div>
+
+      <!-- Phase 12: Web Components -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Web Components</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-html/30-html-web-components-custom-elements-shadow-dom.html" class="active">30. Custom Elements &amp; Shadow DOM</a>
+        <a href="/blog-html/31-html-templates-slots-shadow-dom.html" class="">31. HTML Templates &amp; Slots</a>
+      </div>
+
+      <!-- Phase 13: Performance -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">HTML Performance</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-html/32-html-performance-resource-hints-lazy-loading.html" class="">32. Resource Hints &amp; Performance</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-html.html">HTML</a><span class="sep">›</span>
+      <span class="current">Chapter 30: Web Components: Custom Elements &amp; Shadow DOM (customElements.define, attachShadow)</span>
+    </div>
+
+    <h1 class="page-title">Web Components: Custom Elements &amp; Shadow DOM (customElements.define, attachShadow)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🌐 HTML5</span>
+      <span class="badge">🟢 Chapter 30 of 32</span>
+      <span class="badge">📂 Phase 12: Web Components</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Autonomous Custom Elements · customElements.define() · Lifecycle Hooks (connectedCallback) · Shadow DOM (attachShadow) · Encapsulated Scoped CSS</span>
+    </div>
+
+    
+<div class="intro-box">
+  Welcome to <strong>Phase 12 (Chapter 30): Custom Elements &amp; Shadow DOM</strong>! Web Components allow developers to create reusable, encapsulated custom HTML tags natively in browsers. In this chapter, we master Autonomous Custom Elements (<code>customElements.define()</code>), Custom Element Lifecycle Hooks (<code>connectedCallback</code>, <code>disconnectedCallback</code>), Shadow DOM encapsulation (<code>attachShadow({ mode: 'open' })</code>), and scoped CSS styles.
+</div>
+
+<div class="section-title"><span class="num">1</span>Creating a Custom Element with Shadow DOM</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="lang-tag">HTML + JS — Custom Web Component</span>
+      <a class="try-btn" href="/online-html-editor.html">▶ Run in HTML Editor</a>
+    </div>
+    <pre><code>&lt;!-- Usage of Custom Tag --&gt;
+&lt;user-card name="Balaji" role="Lead Developer"&gt;&lt;/user-card&gt;
+
+&lt;script&gt;
+  class UserCard extends HTMLElement {
+    constructor() {
+      super();
+      // Attach Shadow DOM for style encapsulation
+      const shadow = this.attachShadow({ mode: 'open' });
+      shadow.innerHTML = `
+        &lt;style&gt;
+          .card { padding: 16px; background: #141922; border: 1px solid #f97316; border-radius: 8px; color: #fff; }
+          h3 { color: #f97316; margin: 0 0 6px 0; }
+        &lt;/style&gt;
+        &lt;div class="card"&gt;
+          &lt;h3&gt;${this.getAttribute('name')}&lt;/h3&gt;
+          &lt;p&gt;${this.getAttribute('role')}&lt;/p&gt;
+        &lt;/div&gt;
+      `;
+    }
+  }
+
+  // Register Web Component with Hyphenated Tag Name
+  customElements.define('user-card', UserCard);
+&lt;/script&gt;</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+<div class="section-body">
+  <div class="faq-card">
+    <h4>Q1: Why must custom element tag names contain a hyphen (-)?</h4>
+    <p>HTML specs require custom tag names to contain at least one hyphen (e.g., <code>&lt;user-card&gt;</code>) to prevent naming conflicts with future standard HTML tags.</p>
+  </div>
+</div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on HTML5 Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="29-html-open-graph-social-meta-schema-org.html" class="nav-btn"><span class="label">← Previous Chapter</span><span class="title">29. Open Graph &amp; Schema.org JSON-LD</span></a>
+      <a href="31-html-templates-slots-shadow-dom.html" class="nav-btn" style="text-align:right;"><span class="label">Next Chapter →</span><span class="title">31. HTML Templates &amp; Slots</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

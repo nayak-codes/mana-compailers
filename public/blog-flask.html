@@ -3,137 +3,987 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flask Tutorial — Complete Beginner to Advanced Guide | Our Compiler</title>
-  <meta name="description" content="Learn Flask — Flask Tutorial — Complete Beginner to Advanced Guide with clear Python examples, code challenges, and step-by-step setup guides." />
+  <title>Flask Complete Roadmap — 41 Chapters, 15 Phases (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master Flask web development from zero to production ready with our complete 41-chapter roadmap across 15 phases: routes, request data, Jinja2 templates, WTForms, REST APIs, SQLite, Flask-SQLAlchemy, Flask-Migrate, Application Factory, Blueprints, Sessions, Flask-Login, JWT, Error Handling, Celery, Async Flask, OpenAPI, Gunicorn, Docker, and Projects." />
+  <meta name="keywords" content="flask tutorial, learn flask, python flask, flask rest api, flask sqlalchemy, flask blueprints, flask login, jinja2, pytest, celery, docker" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-flask.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-flask/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
-    (function(){
-      var t=localStorage.getItem("theme")||"dark";
-      if(t==="light"){document.documentElement.classList.add("light-theme");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("light-theme");});}
-      window.addEventListener("DOMContentLoaded",function(){
-        var nav=document.querySelector(".topnav");
-        if(nav){var btn=document.createElement("button");btn.style.cssText="margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;";var upd=function(){btn.innerHTML=document.body.classList.contains("light-theme")?"&#127769; Dark":"&#9728;&#65039; Light";};upd();btn.onclick=function(){document.body.classList.toggle("light-theme");document.documentElement.classList.toggle("light-theme");localStorage.setItem("theme",document.body.classList.contains("light-theme")?"light":"dark");upd();};nav.appendChild(btn);}
-        document.querySelectorAll(".code-block").forEach(function(block){var header=block.querySelector(".code-block-header");var codeEl=block.querySelector("pre code");if(!header||!codeEl)return;var ac=header.querySelector(".code-actions");if(!ac){ac=document.createElement("div");ac.className="code-actions";ac.style.cssText="display:flex;gap:8px;align-items:center;margin-left:auto;";header.appendChild(ac);}var cb=document.createElement("button");cb.innerHTML="&#128203; Copy";cb.style.cssText="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:Inter,sans-serif;white-space:nowrap;";cb.onclick=function(){navigator.clipboard.writeText(codeEl.textContent).then(function(){cb.innerHTML="&#9989; Copied!";setTimeout(function(){cb.innerHTML="&#128203; Copy";},2000);});};ac.appendChild(cb);});
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-flask">
+
 <nav class="topnav">
-  <a href="/" class="brand">&#128187; Our Compiler</a>
+  <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
   <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-nodejs.html">Node.js</a>
   <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html">Angular</a>
   <a href="/blog-vue.html">Vue.js</a>
   <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
-  <a href="/blog-rest-api.html">REST API</a>
-  <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
   <a href="/blog-django.html">Django</a>
   <a href="/blog-flask.html" class="active">Flask</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-postgresql.html">PostgreSQL</a>
-  <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
-  <a href="/blog-sqlite.html">SQLite</a>
-  <a href="/blog-redis.html">Redis</a>
-  <a href="/blog-cassandra.html">Cassandra</a>
-  <a href="/blog-aws.html">AWS</a>
-  <a href="/blog-azure.html">Azure</a>
-  <a href="/blog-gcloud.html">Google Cloud</a>
-  <a href="/blog-docker.html">Docker</a>
-  <a href="/blog-kubernetes.html">Kubernetes</a>
-  <a href="/blog-cicd.html">CI/CD</a>
-  <a href="/blog-data-science.html">Data Science</a>
-  <a href="/blog-ml.html">Machine Learning</a>
-  <a href="/blog-deep-learning.html">Deep Learning</a>
-  <a href="/blog-tensorflow.html">TensorFlow</a>
-  <a href="/blog-pytorch.html">PyTorch</a>
-  <a href="/blog-big-data.html">Big Data</a>
-  <a href="/blog-git.html">Git &amp; GitHub</a>
-  <a href="/blog-linux.html">Linux</a>
-  <a href="/blog-shell.html">Shell Scripting</a>
-  <a href="/blog-testing.html">Testing</a>
-  <a href="/blog-agile.html">Agile &amp; Scrum</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-rust.html">Rust</a>
 </nav>
+
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-heading">Flask Tutorial</div>
-    <a href="/blog-flask.html" class="active">Flask HOME</a>
-    <a href="/blog-flask/intro.html">1. Introduction to Flask</a>
-    <a href="/blog-flask/hello-world.html">2. First Flask App & Debug Mode</a>
-    <a href="/blog-flask/routing-dynamic-urls.html">3. Routing & Dynamic URL Parameters</a>
-    <a href="/blog-flask/templates-jinja.html">4. Templates with Jinja2 & Static Files</a>
-    <a href="/blog-flask/request-response.html">5. Request Handling & Custom Responses</a>
-    <a href="/blog-flask/sessions-cookies.html">6. Cookies, Sessions & Flash Messages</a>
-    <a href="/blog-flask/sqlalchemy-models.html">7. Flask-SQLAlchemy: Setup & Models</a>
-    <a href="/blog-flask/database-crud.html">8. Database CRUD & Flask-Migrate</a>
-    <a href="/blog-flask/user-authentication.html">9. User Authentication with Flask-Login</a>
-    <a href="/blog-flask/blueprints.html">10. Structuring Large Apps with Blueprints</a>
-    <a href="/blog-flask/rest-apis.html">11. Building REST APIs with Flask-RESTful</a>
-    <a href="/blog-flask/forms-validation.html">12. Forms & Validation with Flask-WTF</a>
-    <a href="/blog-flask/error-handling-logging.html">13. Error Handlers & Application Logging</a>
-    <a href="/blog-flask/testing.html">14. Unit Testing with Pytest & Flask Client</a>
-    <a href="/blog-flask/production-deployment.html">15. Production Servers (Gunicorn & Nginx)</a>
-
-    <div class="sidebar-heading">Related Topics</div>
-    <a href="/blog-python.html">Python</a>
-    <a href="/blog-django.html">Django</a>
-    <a href="/blog-rest-api.html">REST API</a>
-    <a href="/blog-postgresql.html">PostgreSQL</a>
-    <a href="/blog-docker.html">Docker</a>
-    <a href="/blog.html">All Tutorials</a>
+    <div class="sidebar-heading">Flask Roadmap</div>
+    <a href="/blog-flask.html" class="sidebar-home-link active">🌶️ Flask Course HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌶️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Flask Introduction & Prerequisites</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/01-flask-ante-enti-what-is-flask.html" class="">1. What is Flask?</a><a href="/blog-flask/02-flask-prerequisites.html" class="">2. Python & Web Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup & First App</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/03-flask-installation.html" class="">3. Flask Installation</a><a href="/blog-flask/04-first-flask-app.html" class="">4. Your First Flask App</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Routing & Requests</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/05-flask-routes.html" class="">5. Routes</a><a href="/blog-flask/06-flask-http-methods.html" class="">6. HTTP Methods</a><a href="/blog-flask/07-flask-request-data.html" class="">7. Request Data</a><a href="/blog-flask/08-flask-responses.html" class="">8. Responses & JSON</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Templates & Static Files</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/09-flask-jinja-templates.html" class="">9. Jinja Templates</a><a href="/blog-flask/10-flask-template-inheritance.html" class="">10. Template Inheritance</a><a href="/blog-flask/11-flask-static-files.html" class="">11. Static Files</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Forms & Validation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/12-flask-html-forms.html" class="">12. Forms Basics</a><a href="/blog-flask/13-flask-wtf-and-validation.html" class="">13. Flask-WTF & Validation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">REST APIs</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/14-flask-rest-api-basics.html" class="">14. REST API Basics</a><a href="/blog-flask/15-flask-crud-api.html" class="">15. CRUD REST API</a><a href="/blog-flask/16-flask-api-validation-and-errors.html" class="">16. API Validation & Errors</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛢️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Databases</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/17-flask-database-basics.html" class="">17. SQL & Database Basics</a><a href="/blog-flask/18-flask-sqlite.html" class="">18. SQLite with Flask</a><a href="/blog-flask/19-flask-sqlalchemy-orm.html" class="">19. SQLAlchemy ORM</a><a href="/blog-flask/20-flask-migrate.html" class="">20. Flask-Migrate</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Architecture & Blueprints</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/21-flask-application-factory.html" class="">21. Application Factory</a><a href="/blog-flask/22-flask-blueprints.html" class="">22. Blueprints</a><a href="/blog-flask/23-flask-project-architecture.html" class="">23. Project Architecture</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Authentication & Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/24-flask-sessions.html" class="">24. Sessions</a><a href="/blog-flask/25-flask-authentication.html" class="">25. Authentication</a><a href="/blog-flask/26-flask-jwt-authentication.html" class="">26. JWT Authentication</a><a href="/blog-flask/27-flask-security.html" class="">27. Flask Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Testing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/28-flask-testing-basics.html" class="">28. Testing Basics</a><a href="/blog-flask/29-flask-testing-apis-and-database.html" class="">29. API & Database Testing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Errors, Logging and CLI</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/30-flask-error-handling.html" class="">30. Error Handling</a><a href="/blog-flask/31-flask-logging.html" class="">31. Logging</a><a href="/blog-flask/32-flask-cli.html" class="">32. Flask CLI</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Background Tasks and Async</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/33-flask-background-tasks.html" class="">33. Background Tasks</a><a href="/blog-flask/34-flask-async.html" class="">34. Async Flask</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">API Documentation & Quality</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/35-flask-swagger-openapi.html" class="">35. Swagger & OpenAPI</a><a href="/blog-flask/36-flask-api-quality.html" class="">36. API Quality</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Production Deployment</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/37-flask-production-server.html" class="">37. Production Server</a><a href="/blog-flask/38-flask-docker.html" class="">38. Docker</a><a href="/blog-flask/39-flask-cloud-deployment.html" class="">39. Cloud Deployment</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Projects & Quiz</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/40-flask-projects.html" class="">40. Flask Projects</a><a href="/blog-flask/41-flask-quiz.html" class="">41. Flask Quiz</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#306998;font-weight:700;">▶ Try Python in IDE</a>
+    <a href="/blog.html">📚 All Tutorials</a>
   </aside>
+
   <main class="content">
-    <div class="breadcrumb"><a href="/">Home</a><span>&#8250;</span><a href="/blog.html">Tutorials</a><span>&#8250;</span><a href="/blog-flask.html">Flask</a><span>&#8250;</span><span>Lesson Index</span></div>
-    <h1 class="page-title">Flask Tutorial &#8212; Complete Guide</h1>
-<div class="page-meta"><span class="badge">&#128013; Flask</span><span class="badge">&#128994; Beginner to Advanced</span><span class="badge">&#128197; July 2026</span></div>
-<div class="intro-box"><p>Flask is a lightweight Python web framework perfect for creating fast REST APIs, rapid prototypes, and robust web applications. This 15-lesson bootcamp takes you from initial setups, route configurations, database modeling, validation systems, and final server deployments.</p></div>
-<div class="section">
-  <div class="section-title"><span class="num">&#9658;</span> Course Curriculum</div>
-  <table class="tbl" style="margin-top:15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    <tr><td><strong>Lesson 1</strong></td><td><a href="/blog-flask/intro.html"><strong>Introduction to Flask</strong></a></td></tr>
-    <tr><td><strong>Lesson 2</strong></td><td><a href="/blog-flask/hello-world.html"><strong>First Flask App & Debug Mode</strong></a></td></tr>
-    <tr><td><strong>Lesson 3</strong></td><td><a href="/blog-flask/routing-dynamic-urls.html"><strong>Routing & Dynamic URL Parameters</strong></a></td></tr>
-    <tr><td><strong>Lesson 4</strong></td><td><a href="/blog-flask/templates-jinja.html"><strong>Templates with Jinja2 & Static Files</strong></a></td></tr>
-    <tr><td><strong>Lesson 5</strong></td><td><a href="/blog-flask/request-response.html"><strong>Request Handling & Custom Responses</strong></a></td></tr>
-    <tr><td><strong>Lesson 6</strong></td><td><a href="/blog-flask/sessions-cookies.html"><strong>Cookies, Sessions & Flash Messages</strong></a></td></tr>
-    <tr><td><strong>Lesson 7</strong></td><td><a href="/blog-flask/sqlalchemy-models.html"><strong>Flask-SQLAlchemy: Setup & Models</strong></a></td></tr>
-    <tr><td><strong>Lesson 8</strong></td><td><a href="/blog-flask/database-crud.html"><strong>Database CRUD & Flask-Migrate</strong></a></td></tr>
-    <tr><td><strong>Lesson 9</strong></td><td><a href="/blog-flask/user-authentication.html"><strong>User Authentication with Flask-Login</strong></a></td></tr>
-    <tr><td><strong>Lesson 10</strong></td><td><a href="/blog-flask/blueprints.html"><strong>Structuring Large Apps with Blueprints</strong></a></td></tr>
-    <tr><td><strong>Lesson 11</strong></td><td><a href="/blog-flask/rest-apis.html"><strong>Building REST APIs with Flask-RESTful</strong></a></td></tr>
-    <tr><td><strong>Lesson 12</strong></td><td><a href="/blog-flask/forms-validation.html"><strong>Forms & Validation with Flask-WTF</strong></a></td></tr>
-    <tr><td><strong>Lesson 13</strong></td><td><a href="/blog-flask/error-handling-logging.html"><strong>Error Handlers & Application Logging</strong></a></td></tr>
-    <tr><td><strong>Lesson 14</strong></td><td><a href="/blog-flask/testing.html"><strong>Unit Testing with Pytest & Flask Client</strong></a></td></tr>
-    <tr><td><strong>Lesson 15</strong></td><td><a href="/blog-flask/production-deployment.html"><strong>Production Servers (Gunicorn & Nginx)</strong></a></td></tr>
-  </table>
-</div>
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">Flask Complete Roadmap</span>
+    </div>
+
+    <h1 class="page-title">Flask Complete Masterclass (41 Chapters, 15 Phases)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🌶️ Flask 3.0+</span>
+      <span class="badge">🟢 41 Complete Chapters</span>
+      <span class="badge">📂 15 Complete Phases</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">What is Flask? · Installation &amp; Virtualenv · Your First Flask App · Routes &amp; HTTP Methods · Request Data &amp; Responses · Jinja Templates &amp; Inheritance · Static Files · Forms &amp; Flask-WTF · REST API Basics &amp; CRUD APIs · API Validation &amp; Errors · Database Basics &amp; SQLite · SQLAlchemy ORM &amp; Flask-Migrate · Application Factory &amp; Blueprints · Monorepo Architecture · Sessions &amp; Password Hashing · Flask-Login &amp; JWT Auth · Flask Security · Testing Basics &amp; API Testing · Error Handling &amp; Logging · Flask CLI · Background Tasks (Celery/Redis) · Async Flask · Swagger &amp; OpenAPI · Production Servers (Gunicorn) · Docker &amp; Cloud Deployment · Flask Projects &amp; Quiz</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's Flask Complete Master Course</strong>. Flask is Python's most flexible and lightweight WSGI web framework, powering microservices, REST APIs, and full-stack web applications at leading tech companies. This comprehensive 41-chapter bootcamp takes you from initial setups, route configurations, Jinja templates, database ORM modeling, WTForms validation, Application Factory patterns, Blueprints, authentication systems, REST API design, Celery background queues, OpenAPI documentation, to production Gunicorn/Nginx Docker deployments.</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(20,24,32,0.6));border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:24px;margin:28px 0;">
+      <h3 style="color:#10b981;margin-bottom:10px;font-size:18px;">🎯 Ready to Start Learning Flask?</h3>
+      <p style="color:var(--text2);margin-bottom:16px;font-size:14.5px;">Choose where to start: explore foundations, routing, forms, REST APIs, ORM databases, blueprints, auth, celery queues, or deployment:</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/blog-flask/01-flask-ante-enti-what-is-flask.html" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 1: Flask Intro →</a>
+        <a href="/blog-flask/05-flask-routes.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 3: Routes &amp; Requests →</a>
+        <a href="/blog-flask/14-flask-rest-api-basics.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 6: REST APIs →</a>
+        <a href="/blog-flask/19-flask-sqlalchemy-orm.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 7: Databases &amp; ORM →</a>
+        <a href="/blog-flask/21-flask-application-factory.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 8: App Factory &amp; Blueprints →</a>
+        <a href="/blog-flask/25-flask-authentication.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 9: Auth &amp; Security →</a>
+        <a href="/blog-flask/33-flask-background-tasks.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 12: Celery &amp; Async →</a>
+        <a href="/blog-flask/37-flask-production-server.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 14: Deployment &amp; Docker →</a>
+        <a href="/blog-flask/40-flask-projects.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 15: Projects &amp; Quiz →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🌶️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 01</div>
+                <h3 class="phase-roadmap-title">Flask Introduction & Prerequisites</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/01-flask-ante-enti-what-is-flask.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">01</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">1. What is Flask?</span>
+                    <span class="lesson-subtopics">Flask ante enti? · Flask enduku use chestaru? · Flask vs Django · Flask vs FastAPI · WSGI ante enti? · Microframework meaning</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/02-flask-prerequisites.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">02</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">2. Python & Web Prerequisites</span>
+                    <span class="lesson-subtopics">Python basics · Variables & Data Types · Functions · Classes & OOP · Virtual environments · Exceptions · JSON · HTTP & REST API basics</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 02</div>
+                <h3 class="phase-roadmap-title">Setup & First App</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/03-flask-installation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">03</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">3. Flask Installation</span>
+                    <span class="lesson-subtopics">Python installation · Checking Python version · pip · Virtual environment (venv) · Installing Flask · requirements.txt</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/04-first-flask-app.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">04</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">4. Your First Flask App</span>
+                    <span class="lesson-subtopics">app.py · Flask(__name__) · @app.route("/") · View function · Development server · Debug mode · Default port 5000</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🎯</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 03</div>
+                <h3 class="phase-roadmap-title">Routing & Requests</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/05-flask-routes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">05</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">5. Routes</span>
+                    <span class="lesson-subtopics">Route ante enti? · @app.route · Static & Dynamic routes · String/int/float URL converters · url_for() · Trailing slash</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/06-flask-http-methods.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">06</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">6. HTTP Methods</span>
+                    <span class="lesson-subtopics">GET · POST · PUT · PATCH · DELETE · methods=["GET", "POST"] · Status codes · REST endpoint methods · Method errors</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/07-flask-request-data.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">07</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">7. Request Data</span>
+                    <span class="lesson-subtopics">Request object · Query parameters (request.args) · Form data (request.form) · JSON data (request.get_json()) · Headers & Cookies</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/08-flask-responses.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">08</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">8. Responses & JSON</span>
+                    <span class="lesson-subtopics">Text response · JSON response (jsonify) · Status codes · Response headers · Redirects (redirect, url_for) · Download responses</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🖼️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 04</div>
+                <h3 class="phase-roadmap-title">Templates & Static Files</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/09-flask-jinja-templates.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">09</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">9. Jinja Templates</span>
+                    <span class="lesson-subtopics">Template ante enti? · templates folder · render_template · Jinja expressions {{ }} · Conditionals {% if %} · Loops {% for %}</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/10-flask-template-inheritance.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">10</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">10. Template Inheritance</span>
+                    <span class="lesson-subtopics">base.html · {% extends %} · {% block %} · {{ super() }} · Header & Content blocks · Reusable layouts · Active nav states</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/11-flask-static-files.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">11</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">11. Static Files</span>
+                    <span class="lesson-subtopics">static folder · CSS & JS files · Images · url_for("static", filename="...") · Favicons · Asset caching · Production assets</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📝</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 05</div>
+                <h3 class="phase-roadmap-title">Forms & Validation</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/12-flask-html-forms.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">12</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">12. Forms Basics</span>
+                    <span class="lesson-subtopics">Form route · GET & POST form · request.form · Reading inputs · Post-Redirect-Get (PRG) pattern · Form errors · Security</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/13-flask-wtf-and-validation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">13</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">13. Flask-WTF & Validation</span>
+                    <span class="lesson-subtopics">Flask-WTF · WTForms · Form class · StringField · PasswordField · EmailField · Validators (DataRequired, Email) · CSRF protection</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔌</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 06</div>
+                <h3 class="phase-roadmap-title">REST APIs</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/14-flask-rest-api-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">14</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">14. REST API Basics</span>
+                    <span class="lesson-subtopics">REST API ante enti? · Resource naming · JSON responses · HTTP methods · Status codes · CRUD · API testing with Postman/cURL</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/15-flask-crud-api.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">15</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">15. CRUD REST API</span>
+                    <span class="lesson-subtopics">GET all · GET one · POST resource · PUT resource · PATCH resource · DELETE resource · In-memory data · ID generation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/16-flask-api-validation-and-errors.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">16</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">16. API Validation & Errors</span>
+                    <span class="lesson-subtopics">Validating JSON · Required fields · Marshmallow schemas · Error response format (400, 404, 409, 422) · API versioning · Pagination</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🛢️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 07</div>
+                <h3 class="phase-roadmap-title">Databases</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/17-flask-database-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">17</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">17. SQL & Database Basics</span>
+                    <span class="lesson-subtopics">Database ante enti? · SQL basics · Tables, Rows & Columns · Primary Key · Foreign Key · Relationships · Relational vs NoSQL</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/18-flask-sqlite.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">18</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">18. SQLite with Flask</span>
+                    <span class="lesson-subtopics">SQLite ante enti? · Connecting database · g object context · Creating tables · Executing parameterized SQL queries · Closing connection</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/19-flask-sqlalchemy-orm.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">19</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">19. SQLAlchemy ORM</span>
+                    <span class="lesson-subtopics">ORM ante enti? · Flask-SQLAlchemy · db.Model · Columns · Primary keys · Relationships · db.session CRUD · Queries · Pagination</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/20-flask-migrate.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">20</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">20. Flask-Migrate</span>
+                    <span class="lesson-subtopics">Database migration ante enti? · Flask-Migrate · Alembic overview · Initializing (flask db init) · Migrating (flask db migrate/upgrade)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏗️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 08</div>
+                <h3 class="phase-roadmap-title">Architecture & Blueprints</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/21-flask-application-factory.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">21</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">21. Application Factory</span>
+                    <span class="lesson-subtopics">Application factory ante enti? · create_app() · Avoiding global app object · Testing configs · Initializing extensions · Circular imports</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/22-flask-blueprints.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">22</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">22. Blueprints</span>
+                    <span class="lesson-subtopics">Blueprint ante enti? · Why blueprints are used · Creating blueprint · Route prefix (url_prefix) · Registering blueprints · Modular structure</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/23-flask-project-architecture.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">23</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">23. Project Architecture</span>
+                    <span class="lesson-subtopics">Package structure · app/__init__.py · extensions.py · config.py · models/ · routes/ · services/ · schemas/ · Recommended layout</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔒</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 09</div>
+                <h3 class="phase-roadmap-title">Authentication & Security</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/24-flask-sessions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">24</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">24. Sessions</span>
+                    <span class="lesson-subtopics">Session ante enti? · Secret key · Setting & Reading session values (session["user_id"]) · Logout · Session expiry · Secure cookies</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/25-flask-authentication.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">25</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">25. Authentication</span>
+                    <span class="lesson-subtopics">User registration · Login & Logout · Password hashing (werkzeug.security) · Flask-Login · User loader · @login_required decorator</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/26-flask-jwt-authentication.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">26</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">26. JWT Authentication</span>
+                    <span class="lesson-subtopics">JWT ante enti? · Access token & Refresh token · Token creation & validation · Protected API routes · Flask-JWT-Extended</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/27-flask-security.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">27</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">27. Flask Security</span>
+                    <span class="lesson-subtopics">Secret key management · Environment variables (.env) · CSRF protection · XSS & SQL injection prevention · HTTPS · CORS · Security headers</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🧪</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 10</div>
+                <h3 class="phase-roadmap-title">Testing</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/28-flask-testing-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">28</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">28. Testing Basics</span>
+                    <span class="lesson-subtopics">Testing ante enti? · pytest · Test folder · Test client (client.get) · Application context · Fixtures · Assertions · Route testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/29-flask-testing-apis-and-database.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">29</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">29. API & Database Testing</span>
+                    <span class="lesson-subtopics">API endpoint tests · POST request tests · Validation tests · Database transaction rollback · Mocking external APIs · CI testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚨</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 11</div>
+                <h3 class="phase-roadmap-title">Errors, Logging and CLI</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/30-flask-error-handling.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">30</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">30. Error Handling</span>
+                    <span class="lesson-subtopics">Error types · 404 handler · 500 handler · @app.errorhandler · Exception handlers · JSON error responses · Friendly error pages</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/31-flask-logging.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">31</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">31. Logging</span>
+                    <span class="lesson-subtopics">Logging ante enti? · Log levels (DEBUG, INFO, WARNING, ERROR) · Log format · File logs · Request logs · Sensitive data masking</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/32-flask-cli.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">32</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">32. Flask CLI</span>
+                    <span class="lesson-subtopics">Flask command · flask run · flask shell · Custom commands · Click overview · Database init command · Seed command · Admin command</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 12</div>
+                <h3 class="phase-roadmap-title">Background Tasks and Async</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/33-flask-background-tasks.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">33</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">33. Background Tasks</span>
+                    <span class="lesson-subtopics">Background task ante enti? · Long-running tasks · Email sending · Job queues · Celery overview · Redis overview · Worker processes</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/34-flask-async.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">34</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">34. Async Flask</span>
+                    <span class="lesson-subtopics">Async views · async def routes · Awaiting async API calls · Flask async vs ASGI · Concurrent requests · Async database drivers</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📄</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 13</div>
+                <h3 class="phase-roadmap-title">API Documentation & Quality</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/35-flask-swagger-openapi.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">35</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">35. Swagger & OpenAPI</span>
+                    <span class="lesson-subtopics">API documentation ante enti? · OpenAPI spec · Swagger UI · Flask-Smorest · Flask-RESTX · Request & Response schemas · Interactive docs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/36-flask-api-quality.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">36</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">36. API Quality</span>
+                    <span class="lesson-subtopics">Resource naming · Status code selection · Consistent JSON responses · Pagination · Filtering & Searching · Rate limiting · Idempotency</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 14</div>
+                <h3 class="phase-roadmap-title">Production Deployment</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/37-flask-production-server.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">37</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">37. Production Server</span>
+                    <span class="lesson-subtopics">Why dev server is not for production · WSGI servers · Gunicorn · Waitress · uWSGI · Worker processes · Binding & Timeouts</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/38-flask-docker.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">38</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">38. Docker</span>
+                    <span class="lesson-subtopics">Docker ante enti? · Dockerfile · Python base image · Virtualenv in container · Installing dependencies · Gunicorn CMD · Docker Compose</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/39-flask-cloud-deployment.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">39</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">39. Cloud Deployment</span>
+                    <span class="lesson-subtopics">Deploying Flask · Environment variables · Managed databases · Static file handling · HTTPS & Custom domains · Reverse proxy Nginx · CI/CD</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏆</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 15</div>
+                <h3 class="phase-roadmap-title">Projects & Quiz</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-flask/40-flask-projects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">40</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">40. Flask Projects</span>
+                    <span class="lesson-subtopics">RESTful Blog API · User Auth System · Task Management App · E-commerce API · Microservice Architecture · Capstone Showcase</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-flask/41-flask-quiz.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">41</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">41. Flask Quiz</span>
+                    <span class="lesson-subtopics">Comprehensive Flask Knowledge Check · 30 Multiple Choice Questions · Routes, Templates, Database, Auth, API & Deployment Exam</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Flask Complete Masterclass · 41 Chapters · 15 Phases · 2026 Edition</span>
+      </div>
+    </div>
 
     <div class="nav-footer">
-      <a href="/blog-flask.html" class="nav-btn"><span class="label">&#8592; Flask Overview</span><span class="title">Course Index</span></a>
-      <a href="/blog-flask/intro.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson &#8594;</span><span class="title">Introduction to Flask</span></a>
+      <a href="/blog.html" class="nav-btn"><span class="label">← All Tutorials</span><span class="title">Course Hub</span></a>
+      <a href="/blog-flask/01-flask-ante-enti-what-is-flask.html" class="nav-btn" style="text-align:right;"><span class="label">Start Learning →</span><span class="title">1. What is Flask?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

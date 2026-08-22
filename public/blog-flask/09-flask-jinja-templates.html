@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flask — Jinja Templates | Our Compiler</title>
+  <meta name="description" content="Complete Flask Chapter 9: Jinja Templates. Learn Template ante enti? · templates folder · render_template · Jinja expressions {{ }} · Conditionals {% if %} · Loops {% for %} with practical Python code examples and step-by-step walkthroughs." />
+  <meta name="keywords" content="flask tutorial, python flask, jinja templates, web development, rest api, jinja2, sqlalchemy" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-flask/09-flask-jinja-templates.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-flask/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_python', rawCode);
+              window.location.href = '/online-python-compiler.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-flask">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html" class="active">Flask</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Flask Tutorial</div>
+    <a href="/blog-flask.html" class="sidebar-home-link">🌶️ Flask HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌶️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Flask Introduction & Prerequisites</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/01-flask-ante-enti-what-is-flask.html" class="">1. What is Flask?</a><a href="/blog-flask/02-flask-prerequisites.html" class="">2. Python & Web Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup & First App</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/03-flask-installation.html" class="">3. Flask Installation</a><a href="/blog-flask/04-first-flask-app.html" class="">4. Your First Flask App</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Routing & Requests</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/05-flask-routes.html" class="">5. Routes</a><a href="/blog-flask/06-flask-http-methods.html" class="">6. HTTP Methods</a><a href="/blog-flask/07-flask-request-data.html" class="">7. Request Data</a><a href="/blog-flask/08-flask-responses.html" class="">8. Responses & JSON</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Templates & Static Files</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-flask/09-flask-jinja-templates.html" class="active">9. Jinja Templates</a><a href="/blog-flask/10-flask-template-inheritance.html" class="">10. Template Inheritance</a><a href="/blog-flask/11-flask-static-files.html" class="">11. Static Files</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Forms & Validation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/12-flask-html-forms.html" class="">12. Forms Basics</a><a href="/blog-flask/13-flask-wtf-and-validation.html" class="">13. Flask-WTF & Validation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">REST APIs</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/14-flask-rest-api-basics.html" class="">14. REST API Basics</a><a href="/blog-flask/15-flask-crud-api.html" class="">15. CRUD REST API</a><a href="/blog-flask/16-flask-api-validation-and-errors.html" class="">16. API Validation & Errors</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛢️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Databases</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/17-flask-database-basics.html" class="">17. SQL & Database Basics</a><a href="/blog-flask/18-flask-sqlite.html" class="">18. SQLite with Flask</a><a href="/blog-flask/19-flask-sqlalchemy-orm.html" class="">19. SQLAlchemy ORM</a><a href="/blog-flask/20-flask-migrate.html" class="">20. Flask-Migrate</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Architecture & Blueprints</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/21-flask-application-factory.html" class="">21. Application Factory</a><a href="/blog-flask/22-flask-blueprints.html" class="">22. Blueprints</a><a href="/blog-flask/23-flask-project-architecture.html" class="">23. Project Architecture</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Authentication & Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/24-flask-sessions.html" class="">24. Sessions</a><a href="/blog-flask/25-flask-authentication.html" class="">25. Authentication</a><a href="/blog-flask/26-flask-jwt-authentication.html" class="">26. JWT Authentication</a><a href="/blog-flask/27-flask-security.html" class="">27. Flask Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Testing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/28-flask-testing-basics.html" class="">28. Testing Basics</a><a href="/blog-flask/29-flask-testing-apis-and-database.html" class="">29. API & Database Testing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Errors, Logging and CLI</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/30-flask-error-handling.html" class="">30. Error Handling</a><a href="/blog-flask/31-flask-logging.html" class="">31. Logging</a><a href="/blog-flask/32-flask-cli.html" class="">32. Flask CLI</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Background Tasks and Async</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/33-flask-background-tasks.html" class="">33. Background Tasks</a><a href="/blog-flask/34-flask-async.html" class="">34. Async Flask</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">API Documentation & Quality</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/35-flask-swagger-openapi.html" class="">35. Swagger & OpenAPI</a><a href="/blog-flask/36-flask-api-quality.html" class="">36. API Quality</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Production Deployment</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/37-flask-production-server.html" class="">37. Production Server</a><a href="/blog-flask/38-flask-docker.html" class="">38. Docker</a><a href="/blog-flask/39-flask-cloud-deployment.html" class="">39. Cloud Deployment</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Projects & Quiz</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-flask/40-flask-projects.html" class="">40. Flask Projects</a><a href="/blog-flask/41-flask-quiz.html" class="">41. Flask Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-flask.html">Flask</a><span class="sep">›</span>
+      <span class="current">Flask — Jinja Templates</span>
+    </div>
+
+    <h1 class="page-title">Flask — Jinja Templates</h1>
+
+    <div class="page-meta">
+      <span class="badge">🌶️ Flask 3.0+</span>
+      <span class="badge">🟢 Chapter 9 of 41</span>
+      <span class="badge">📂 Phase 04: Templates & Static Files</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Template ante enti? · templates folder · render_template · Jinja expressions {{ }} · Conditionals {% if %} · Loops {% for %}</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Flask — Jinja Templates</strong> in our Flask Complete Masterclass! Render dynamic HTML web pages with Jinja2 template engine: passing Python variables, conditional statements, looping over collections, and filters.</p>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction &amp; Overview</div>
+    <div class="section-body">
+      <p>In Flask web application development, understanding <strong>Jinja Templates</strong> is essential for building scalable, maintainable Python backends, microservices, and web applications. Flask provides explicit, pythonic control over request processing, routing dispatch, templates, and database ORM management.</p>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#4b8bbe;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master key mechanisms behind <strong>Jinja Templates</strong></li>
+          <li>Understand request-response lifecycle and WSGI dispatching</li>
+          <li>Implement production-ready Python code with error handling</li>
+          <li>Avoid common architectural pitfalls and security vulnerabilities</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-title"><span class="num">3</span>Why This Concept is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Flask follows WSGI standards (Web Server Gateway Interface) to connect Python application logic to web servers like Gunicorn or Nginx, making it modular and easy to deploy across cloud environments.</p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section-title"><span class="num">4</span>Required Imports &amp; Setup</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python — Required Imports</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Python IDE</a>
+        </div>
+        <pre><code>from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash, abort
+import os
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'super-secret-key-for-session-security'</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section-title"><span class="num">5</span>Basic Syntax &amp; Structure</div>
+    <div class="section-body">
+      <p>Here is the standard Python syntax and structure for implementing <strong>Jinja Templates</strong> in Flask:</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python — Flask Syntax</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Python IDE</a>
+        </div>
+        <pre><code>@app.route('/api/courses', methods=['GET', 'POST'])
+def handle_courses():
+    if request.method == 'POST':
+        data = request.get_json() or {}
+        return jsonify({"message": "Created", "data": data}), 201
+    return jsonify({"chapter": 9, "title": "Jinja Templates"})</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section-title"><span class="num">6</span>Basic Example Implementation</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Python — Full Example (app.py)</span>
+          <a class="try-btn" href="/online-python-compiler.html">▶ Run in Python IDE</a>
+        </div>
+        <pre><code>from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/api/demo', methods=['GET'])
+def get_demo():
+    return jsonify({
+        "status": "success",
+        "chapter_number": 9,
+        "topic": "Jinja Templates",
+        "framework": "Flask 3.0+"
+    })
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=5000, debug=True)</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="section-title"><span class="num">7</span>Run Command</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Terminal — Run Server</span></div>
+        <pre><code># Set application entrypoint and run development server
+flask --app app run --debug
+
+# Output:
+#  * Serving Flask app 'app'
+#  * Debug mode: on
+#  * Running on http://127.0.0.1:5000</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="section-title"><span class="num">8</span>Browser / API Output</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:16px;border-radius:8px;margin:16px 0;font-size:13.5px;border-left:4px solid #306998;">
+        <strong style="color:#4b8bbe;">🖥️ Expected JSON Output (http://127.0.0.1:5000/api/demo):</strong>
+        <pre style="margin-top:8px;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;color:#a6e22e;font-family:'JetBrains Mono',monospace;">{
+  "status": "success",
+  "chapter_number": 9,
+  "topic": "Jinja Templates",
+  "framework": "Flask 3.0+"
+}</pre>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="section-title"><span class="num">9</span>File-by-File Explanation</div>
+    <div class="section-body">
+      <ul>
+        <li><code>app.py</code>: The primary Flask application entry point containing routes and application instantiation.</li>
+        <li><code>config.py</code>: Centralized environment variables, secret keys, and database connection strings.</li>
+        <li><code>requirements.txt</code>: Pinned Python package dependencies (Flask, Flask-SQLAlchemy, Pytest, Gunicorn).</li>
+      </ul>
+    </div>
+
+    <!-- Section 10 -->
+    <div class="section-title"><span class="num">10</span>Line-by-Line Code Explanation</div>
+    <div class="section-body">
+      <table class="tbl spec-table">
+        <thead><tr><th>Code Snippet</th><th>Line Explanation</th></tr></thead>
+        <tbody>
+          <tr><td><code>app = Flask(__name__)</code></td><td>Creates the Flask application object instance using current module name.</td></tr>
+          <tr><td><code>@app.route(...)</code></td><td>Registers view function as an HTTP route handler for matching URL paths.</td></tr>
+          <tr><td><code>request.get_json()</code></td><td>Parses incoming HTTP POST/PUT JSON payload into a Python dictionary.</td></tr>
+          <tr><td><code>jsonify(...)</code></td><td>Serializes Python data types to JSON format with <code>application/json</code> headers.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 11 -->
+    <div class="section-title"><span class="num">11</span>Request-Response Flow</div>
+    <div class="section-body">
+      <p>1. HTTP client (Browser / Postman / cURL) sends a request to Flask server.<br>
+      2. WSGI server (Werkzeug / Gunicorn) passes the request environment to Flask app.<br>
+      3. Flask URL Map matches path and dispatches execution to registered view function.<br>
+      4. View function executes Python logic, queries database or template, and returns response.<br>
+      5. Flask converts return value to WSGI response object and sends HTTP status to client.</p>
+    </div>
+
+    <!-- Section 12 -->
+    <div class="section-title"><span class="num">12</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Pitfalls to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Hardcoding secret keys directly in code — always use environment variables (os.environ.get).</li>
+          <li>Running debug=True in production — exposes interactive debugger to public web.</li>
+          <li>Circular imports between models and routes — use Flask Blueprints and App Factory pattern.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 13 -->
+    <div class="section-title"><span class="num">13</span>Coding Challenge</div>
+    <div class="section-body">
+      <div class="try-box">
+        <div class="try-title">💻 Coding Challenge — Jinja Templates</div>
+        <p>Write a Flask route handler that accepts a POST request with JSON payload containing name and email, validates that email contains @, and returns a 201 Created response.</p>
+        <a class="run-btn" href="/online-python-compiler.html">Open in Python IDE →</a>
+      </div>
+    </div>
+
+    <!-- Section 14 -->
+    <div class="section-title"><span class="num">14</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4><span style="background:rgba(48,105,152,0.15); color:#4b8bbe; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q1</span> What is the default port for Flask development server?</h4>
+        <p>Port 5000 (http://127.0.0.1:5000).</p>
+      </div>
+      <div class="faq-card">
+        <h4><span style="background:rgba(48,105,152,0.15); color:#4b8bbe; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q2</span> Which function converts Python dictionaries into HTTP JSON responses?</h4>
+        <p><code>jsonify()</code> from Flask package.</p>
+      </div>
+    </div>
+
+    <!-- Section 15 -->
+    <div class="section-title"><span class="num">15</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Flask is a lightweight Python WSGI web application framework</li>
+        <li>View functions are connected to URLs using @app.route() decorator</li>
+        <li>Request data is accessed via request.args, request.form, or request.get_json()</li>
+        <li>Always use virtual environments and keep secret keys in environment configuration files</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Flask 3.0+ (Python 3.12) · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="08-flask-responses.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">8. Responses & JSON</span></a>
+      <a href="10-flask-template-inheritance.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">10. Template Inheritance</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

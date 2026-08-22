@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Form Styling — Inputs, Focus, Valid/Invalid & Error Messages | CSS Tutorial | Our Compiler</title>
+  <meta name="description" content="Complete guide to styling HTML forms with CSS: inputs, labels, textareas, select, checkbox, radio, range, file inputs, focus, valid/invalid, disabled, placeholder, layout and error messages." />
+  <meta name="keywords" content="css tutorial, css selectors, learn css, css3, web design" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-css/38-css-styling-forms.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+          const rawCode = codeEl.textContent;
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display:flex;gap:8px;align-items:center;margin-left:auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.location.href = '/online-html-editor.html';
+            });
+          }
+        });
+      });
+    })();</script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-css">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html" class="active">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">CSS Complete Master Course</div>
+    <a href="/blog-css.html" class="sidebar-home-link">🎨 CSS Course HOME</a>
+    <div class="sidebar-accordion">
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">CSS Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/01-css-ante-enti-what-is-css.html" class="">1. What is CSS?</a><a href="/blog-css/02-css-adding-css-to-html.html" class="">2. Adding CSS to HTML</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Selectors</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/03-css-basic-selectors.html" class="">3. Basic Selectors</a><a href="/blog-css/04-css-combinators.html" class="">4. Combinators</a><a href="/blog-css/05-css-pseudo-classes.html" class="">5. Pseudo-Classes</a><a href="/blog-css/06-css-pseudo-elements.html" class="">6. Pseudo-Elements</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚖️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Cascade & Specificity</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/07-css-cascade.html" class="">7. Cascade</a><a href="/blog-css/08-css-specificity.html" class="">8. Specificity</a><a href="/blog-css/09-css-cascade-layers.html" class="">9. Cascade Layers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Values, Units & Colors</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/10-css-values-and-units.html" class="">10. Values & Units</a><a href="/blog-css/11-css-colors.html" class="">11. Colors</a><a href="/blog-css/12-css-functions.html" class="">12. CSS Functions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Box Model</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/13-css-box-model-basics.html" class="">13. Box Model Basics</a><a href="/blog-css/14-css-width-height-overflow.html" class="">14. Width, Height & Overflow</a><a href="/blog-css/15-css-borders-and-shadows.html" class="">15. Borders & Shadows</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✍️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Typography</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/16-css-fonts.html" class="">16. Fonts</a><a href="/blog-css/17-css-text-styling.html" class="">17. Text Styling</a><a href="/blog-css/18-css-web-fonts-and-icons.html" class="">18. Web Fonts & Icons</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Display & Positioning</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/19-css-display.html" class="">19. Display</a><a href="/blog-css/20-css-positioning.html" class="">20. Positioning</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">↔️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Flexbox</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/21-css-flexbox-basics.html" class="">21. Flexbox Basics</a><a href="/blog-css/22-css-flex-items.html" class="">22. Flex Items</a><a href="/blog-css/23-css-flexbox-projects.html" class="">23. Flexbox Projects</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⊞</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">CSS Grid</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/24-css-grid-basics.html" class="">24. Grid Basics</a><a href="/blog-css/25-css-grid-placement.html" class="">25. Grid Placement</a><a href="/blog-css/26-css-grid-projects.html" class="">26. Grid Projects</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📱</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Responsive Design</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/27-css-responsive-design.html" class="">27. Responsive CSS</a><a href="/blog-css/28-css-media-queries.html" class="">28. Media Queries</a><a href="/blog-css/29-css-container-queries.html" class="">29. Container Queries</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Backgrounds & Effects</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/30-css-backgrounds.html" class="">30. Backgrounds</a><a href="/blog-css/31-css-gradients.html" class="">31. Gradients</a><a href="/blog-css/32-css-filters-and-blend-modes.html" class="">32. Filters & Blend Modes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Transforms & Animations</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/33-css-transforms.html" class="">33. Transforms</a><a href="/blog-css/34-css-transitions.html" class="">34. Transitions</a><a href="/blog-css/35-css-animations.html" class="">35. Animations</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌓</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Custom Properties & Themes</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/36-css-variables.html" class="">36. CSS Variables</a><a href="/blog-css/37-css-themes.html" class="">37. Themes</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📋</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Forms and UI Components</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-css/38-css-styling-forms.html" class="active">38. Styling Forms</a><a href="/blog-css/39-css-ui-components.html" class="">39. UI Components</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">CSS Architecture</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/40-css-naming-and-organization.html" class="">40. Naming & Organization</a><a href="/blog-css/41-css-methodologies.html" class="">41. CSS Methodologies</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Modern CSS</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/42-css-modern-selectors.html" class="">42. Modern Selectors</a><a href="/blog-css/43-css-modern-layout.html" class="">43. Modern Layout</a><a href="/blog-css/44-css-nesting-and-scope.html" class="">44. Nesting & Scope</a><a href="/blog-css/45-css-feature-queries.html" class="">45. Feature Queries</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">♿</span>
+          <div class="phase-info"><span class="phase-tag">Phase 17</span><span class="phase-title">Accessibility and Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/46-css-accessibility.html" class="">46. CSS Accessibility</a><a href="/blog-css/47-css-performance.html" class="">47. CSS Performance</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔧</span>
+          <div class="phase-info"><span class="phase-tag">Phase 18</span><span class="phase-title">Debugging and Projects</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/48-css-debugging.html" class="">48. CSS Debugging</a><a href="/blog-css/49-css-projects.html" class="">49. CSS Projects</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-html-editor.html" style="color:#3b82f6;font-weight:700;">▶ Try CSS in HTML Editor</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+    <div class="sidebar-heading">Related Courses</div>
+    <a href="/blog-html.html">HTML5 Course</a>
+    <a href="/blog-javascript.html">JavaScript Course</a></aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-css.html">CSS</a><span class="sep">›</span>
+      <span class="current">Chapter 38: Styling Forms</span>
+    </div>
+
+    <h1 class="page-title">Styling Forms</h1>
+
+    <div class="page-meta">
+      <span class="badge">🎨 CSS3+</span>
+      <span class="badge">🟢 Chapter 38 of 49</span>
+      <span class="badge">📂 Phase 14: Forms & UI Components</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Input Styling · Labels · Textareas · Select · Checkbox · Radio · Range · File · Focus · Valid/Invalid · Disabled · Placeholder · Form Layout · Error Messages</span>
+    </div>
+
+    <div class="intro-box">
+      Welcome to <strong>Chapter 38: Styling Forms</strong> — part of the CSS Complete Roadmap. This lesson covers all subtopics with clear explanations, code examples, and best practices used in professional web development.
+    </div>
+
+    
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+    <strong style="color:#3b82f6;display:block;margin-bottom:10px;">📚 What You Will Learn</strong>
+    <ul style="margin:0 0 0 20px;line-height:1.8;"><li>All major HTML form controls ni professional ga style cheyadam</li><li>:focus-visible, :valid, :invalid, :disabled pseudo-classes use cheyadam</li><li>Accessible labels, error messages, and touch-friendly input sizing</li><li>Checkbox/radio custom styling and form layout patterns</li><li>Placeholder styling and form validation visual feedback</li></ul>
+  </div>
+<div class="callout" style="margin-bottom:24px;">
+    <div class="callout-title">💡 Why This Matters</div>
+    <p>Forms are the primary user interaction point for login, signup, checkout, and contact pages. Poor form styling leads to confusion, accessibility failures, and lost conversions. Professional CSS form styling — clear focus rings, validation colors, consistent spacing — builds user trust and meets WCAG guidelines.</p>
+  </div>
+
+<div class="section-title"><span class="num">1</span>Introduction — Forms Need Intentional CSS</div>
+<div class="section-body">
+  <p>Browser default form styles vary across Chrome, Firefox, Safari. Production apps lo consistent branding, accessible focus states, and validation feedback mandatory. CSS forms ni fully control chestundi — borders, padding, fonts, states, layout.</p>
+</div>
+
+<div class="section-title"><span class="num">2</span>Required HTML Structure</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">HTML — Semantic Form</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code><form class="signup-form" novalidate>
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+    <span class="error-msg">Please enter a valid email.</span>
+  </div>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" minlength="8" required>
+  </div>
+
+  <div class="form-group">
+    <label for="bio">Bio</label>
+    <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="country">Country</label>
+    <select id="country" name="country">
+      <option value="">Select country</option>
+      <option value="in">India</option>
+      <option value="us">United States</option>
+    </select>
+  </div>
+
+  <div class="form-group form-group--inline">
+    <label class="checkbox-label">
+      <input type="checkbox" name="terms" required>
+      <span>I agree to the terms</span>
+    </label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Create Account</button>
+</form></code></pre>
+  </div>
+  <p><strong>Key HTML rules:</strong> Every input needs a <code>&lt;label&gt;</code> with matching <code>for</code>/<code>id</code>. Use semantic <code>type</code> attributes for built-in validation.</p>
+</div>
+
+<div class="section-title"><span class="num">3</span>Base Input Styling &amp; CSS Syntax</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">CSS — Form Base Styles</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code>.signup-form {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #111827;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.form-group input:focus-visible,
+.form-group textarea:focus-visible,
+.form-group select:focus-visible {
+  border-color: #2563eb;
+  outline: 3px solid #bfdbfe;
+  outline-offset: 0;
+}
+
+.form-group input:invalid:not(:placeholder-shown) {
+  border-color: #dc2626;
+}
+
+.form-group input:valid:not(:placeholder-shown) {
+  border-color: #16a34a;
+}
+
+.form-group input:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}</code></pre>
+  </div>
+  <table class="tbl spec-table"><thead><tr><th>Property / Selector</th><th>Explanation</th></tr></thead><tbody><tr><td><code>padding: 10px 14px</code></td><td>Touch-friendly minimum 44px height achieve cheyadaniki</td></tr>
+<tr><td><code>:focus-visible</code></td><td>Keyboard focus matrame ring show — mouse click ki ring ledu (better UX)</td></tr>
+<tr><td><code>:invalid:not(:placeholder-shown)</code></td><td>User type chesaka matrame red border — empty field submit attempt ki</td></tr>
+<tr><td><code>::placeholder</code></td><td>Hint text color — opacity: 1 Firefox consistency ki</td></tr>
+<tr><td><code>:disabled</code></td><td>Gray background + not-allowed cursor — clear visual feedback</td></tr></tbody></table>
+</div>
+
+<div class="section-title"><span class="num">4</span>Checkbox, Radio, Range &amp; File Inputs</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">CSS — Custom Checkbox & Radio</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code>.checkbox-label,
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"],
+.radio-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+input[type="file"] {
+  padding: 8px;
+  font-size: 0.875rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  padding: 8px 16px;
+  margin-right: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}</code></pre>
+  </div>
+  <p><strong>Modern approach:</strong> <code>accent-color</code> quickly brand checkboxes/radios. Full custom design ki hidden input + styled <code>::before</code> pseudo-element pattern use cheyochu.</p>
+</div>
+
+<div class="section-title"><span class="num">5</span>Error Messages &amp; Form Layout</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">CSS — Error States</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code>.error-msg {
+  display: none;
+  font-size: 0.8125rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.form-group input:invalid:not(:placeholder-shown) ~ .error-msg {
+  display: block;
+}
+
+/* Two-column form on desktop */
+@media (min-width: 640px) {
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}</code></pre>
+  </div>
+  <div class="card" style="background:var(--bg2);padding:16px;border-radius:8px;margin:16px 0;font-size:13.5px;border-left:4px solid #3b82f6;">
+    <strong style="color:#3b82f6;">🖥️ Expected Browser Output:</strong>
+    <p style="margin-top:8px;color:var(--text2);">Valid email type chesaka green border kanipistundi. Invalid email ki red border + error message below input. Tab key tho navigate cheste blue focus ring clear ga kanipistundi.</p>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span>Responsive Form Example</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">CSS — Mobile-First Form</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code>@media (max-width: 480px) {
+  .signup-form {
+    padding: 16px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    min-height: 48px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    min-height: 48px;
+  }
+}</code></pre>
+  </div>
+  <p><strong>iOS tip:</strong> Inputs below <code>16px</code> font-size focus ayina auto-zoom trigger avuthundi — always use 16px+ on mobile.</p>
+</div>
+
+<div class="callout">
+    <div class="callout-title">⚠️ Common Mistakes</div>
+    <ul style="margin:8px 0 0 18px;line-height:1.7;"><li><code>outline: none</code> without replacement — keyboard users focus kanipinchadu</li><li>Color-only validation (red/green border without text) — colorblind users ki fail</li><li>Placeholder as label substitute — accessibility violation</li><li><code>:invalid</code> on empty required fields immediately — use <code>:not(:placeholder-shown)</code></li><li>Tiny checkboxes/radios below 24px — hard to tap on mobile</li></ul>
+  </div>
+
+<div class="try-box">
+    <div class="try-title">💻 Coding Challenge — Styled Contact Form</div>
+    <p>Add :invalid styling and a disabled submit button state using CSS only.</p>
+    <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">HTML</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code><form class="contact-form">
+  <label for="name">Name</label>
+  <input type="text" id="name" required placeholder="Your name">
+  <label for="msg">Message</label>
+  <textarea id="msg" rows="4" required></textarea>
+  <button type="submit">Send</button>
+</form></code></pre>
+  </div>
+    <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">CSS</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code>.contact-form { max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+.contact-form input, .contact-form textarea {
+  padding: 12px; border: 1px solid #ccc; border-radius: 8px;
+}
+.contact-form input:focus-visible, .contact-form textarea:focus-visible {
+  outline: 3px solid #bfdbfe; border-color: #2563eb;
+}
+.contact-form button {
+  padding: 12px; background: #2563eb; color: #fff; border: none; border-radius: 8px;
+}</code></pre>
+  </div>
+    <a class="run-btn" href="/online-html-editor.html">Open in HTML/CSS Editor →</a>
+  </div>
+
+<div class="section-title"><span class="num">❓</span> Mini Quiz</div>
+    <div class="section-body">
+    <div class="faq-card">
+      <h4><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:6px;">Q1</span> :focus vs :focus-visible — difference enti?</h4>
+      <p>:focus triggers on any focus including mouse click. :focus-visible triggers mainly keyboard navigation ki — better UX without click rings.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:6px;">Q2</span> Placeholder ni label ga use cheyadam enduku bad?</h4>
+      <p>Placeholder disappears when user types. Screen readers and cognitive accessibility ki permanent visible label mandatory.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:6px;">Q3</span> input:invalid eppudu apply avuthundi?</h4>
+      <p>HTML5 constraint validation fail ayina — required empty, wrong email format, minlength not met, etc.</p>
+    </div></div>
+
+<div class="section-title"><span class="num">✅</span> Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;"><li>Semantic HTML + labels first — CSS styling second</li><li>:focus-visible for accessible focus rings — never remove outline without replacement</li><li>:valid/:invalid for visual validation feedback</li><li>accent-color for quick checkbox/radio branding</li><li>16px+ font-size on mobile inputs to prevent iOS zoom</li><li>Error messages text tho communicate — color alone sufficient kaadu</li></ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy · CSS Complete Roadmap · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer"><a href="37-css-themes.html" class="nav-btn"><span class="label">← Previous</span><span class="title">37. Themes</span></a><a href="39-css-ui-components.html" class="nav-btn" style="text-align:right;"><span class="label">Next Chapter →</span><span class="title">39. UI Components</span></a></div>
+  </main>
+</div>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Performance — Critical CSS, Unused CSS & Animation Optimization | CSS Tutorial | Our Compiler</title>
+  <meta name="description" content="CSS performance optimization: file size, unused CSS, critical CSS, loading efficiently, expensive selectors, reflow, repaint, compositing, transform vs position, animation performance, caching." />
+  <meta name="keywords" content="css tutorial, css selectors, learn css, css3, web design" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-css/47-css-performance.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+          const rawCode = codeEl.textContent;
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display:flex;gap:8px;align-items:center;margin-left:auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.location.href = '/online-html-editor.html';
+            });
+          }
+        });
+      });
+    })();</script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-css">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html" class="active">CSS</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">CSS Complete Master Course</div>
+    <a href="/blog-css.html" class="sidebar-home-link">🎨 CSS Course HOME</a>
+    <div class="sidebar-accordion">
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">CSS Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/01-css-ante-enti-what-is-css.html" class="">1. What is CSS?</a><a href="/blog-css/02-css-adding-css-to-html.html" class="">2. Adding CSS to HTML</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Selectors</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/03-css-basic-selectors.html" class="">3. Basic Selectors</a><a href="/blog-css/04-css-combinators.html" class="">4. Combinators</a><a href="/blog-css/05-css-pseudo-classes.html" class="">5. Pseudo-Classes</a><a href="/blog-css/06-css-pseudo-elements.html" class="">6. Pseudo-Elements</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚖️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Cascade & Specificity</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/07-css-cascade.html" class="">7. Cascade</a><a href="/blog-css/08-css-specificity.html" class="">8. Specificity</a><a href="/blog-css/09-css-cascade-layers.html" class="">9. Cascade Layers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Values, Units & Colors</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/10-css-values-and-units.html" class="">10. Values & Units</a><a href="/blog-css/11-css-colors.html" class="">11. Colors</a><a href="/blog-css/12-css-functions.html" class="">12. CSS Functions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Box Model</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/13-css-box-model-basics.html" class="">13. Box Model Basics</a><a href="/blog-css/14-css-width-height-overflow.html" class="">14. Width, Height & Overflow</a><a href="/blog-css/15-css-borders-and-shadows.html" class="">15. Borders & Shadows</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✍️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Typography</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/16-css-fonts.html" class="">16. Fonts</a><a href="/blog-css/17-css-text-styling.html" class="">17. Text Styling</a><a href="/blog-css/18-css-web-fonts-and-icons.html" class="">18. Web Fonts & Icons</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Display & Positioning</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/19-css-display.html" class="">19. Display</a><a href="/blog-css/20-css-positioning.html" class="">20. Positioning</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">↔️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Flexbox</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/21-css-flexbox-basics.html" class="">21. Flexbox Basics</a><a href="/blog-css/22-css-flex-items.html" class="">22. Flex Items</a><a href="/blog-css/23-css-flexbox-projects.html" class="">23. Flexbox Projects</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⊞</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">CSS Grid</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/24-css-grid-basics.html" class="">24. Grid Basics</a><a href="/blog-css/25-css-grid-placement.html" class="">25. Grid Placement</a><a href="/blog-css/26-css-grid-projects.html" class="">26. Grid Projects</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📱</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Responsive Design</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/27-css-responsive-design.html" class="">27. Responsive CSS</a><a href="/blog-css/28-css-media-queries.html" class="">28. Media Queries</a><a href="/blog-css/29-css-container-queries.html" class="">29. Container Queries</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🖼️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Backgrounds & Effects</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/30-css-backgrounds.html" class="">30. Backgrounds</a><a href="/blog-css/31-css-gradients.html" class="">31. Gradients</a><a href="/blog-css/32-css-filters-and-blend-modes.html" class="">32. Filters & Blend Modes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Transforms & Animations</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/33-css-transforms.html" class="">33. Transforms</a><a href="/blog-css/34-css-transitions.html" class="">34. Transitions</a><a href="/blog-css/35-css-animations.html" class="">35. Animations</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌓</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Custom Properties & Themes</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/36-css-variables.html" class="">36. CSS Variables</a><a href="/blog-css/37-css-themes.html" class="">37. Themes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📋</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Forms and UI Components</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/38-css-styling-forms.html" class="">38. Styling Forms</a><a href="/blog-css/39-css-ui-components.html" class="">39. UI Components</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">CSS Architecture</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/40-css-naming-and-organization.html" class="">40. Naming & Organization</a><a href="/blog-css/41-css-methodologies.html" class="">41. CSS Methodologies</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Modern CSS</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/42-css-modern-selectors.html" class="">42. Modern Selectors</a><a href="/blog-css/43-css-modern-layout.html" class="">43. Modern Layout</a><a href="/blog-css/44-css-nesting-and-scope.html" class="">44. Nesting & Scope</a><a href="/blog-css/45-css-feature-queries.html" class="">45. Feature Queries</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">♿</span>
+          <div class="phase-info"><span class="phase-tag">Phase 17</span><span class="phase-title">Accessibility and Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-css/46-css-accessibility.html" class="">46. CSS Accessibility</a><a href="/blog-css/47-css-performance.html" class="active">47. CSS Performance</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔧</span>
+          <div class="phase-info"><span class="phase-tag">Phase 18</span><span class="phase-title">Debugging and Projects</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-css/48-css-debugging.html" class="">48. CSS Debugging</a><a href="/blog-css/49-css-projects.html" class="">49. CSS Projects</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-html-editor.html" style="color:#3b82f6;font-weight:700;">▶ Try CSS in HTML Editor</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+    <div class="sidebar-heading">Related Courses</div>
+    <a href="/blog-html.html">HTML5 Course</a>
+    <a href="/blog-javascript.html">JavaScript Course</a></aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-css.html">CSS</a><span class="sep">›</span>
+      <span class="current">Chapter 47: CSS Performance</span>
+    </div>
+
+    <h1 class="page-title">CSS Performance</h1>
+
+    <div class="page-meta">
+      <span class="badge">🎨 CSS3+</span>
+      <span class="badge">🟢 Chapter 47 of 49</span>
+      <span class="badge">📂 Phase 17: Accessibility & Performance</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">File Size · Unused CSS · Critical CSS · Loading · Expensive Selectors · Reflow · Repaint · Compositing · Transform vs Position · Animation Performance · Image Optimization · Auditing · Caching</span>
+    </div>
+
+    <div class="intro-box">
+      Welcome to <strong>Chapter 47: CSS Performance</strong> — part of the CSS Complete Roadmap. This lesson covers all subtopics with clear explanations, code examples, and best practices used in professional web development.
+    </div>
+
+    
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+    <strong style="color:#3b82f6;display:block;margin-bottom:10px;">📚 What You Will Learn</strong>
+    <ul style="margin:0 0 0 20px;line-height:1.8;"><li>CSS file size optimization and unused CSS removal</li><li>Critical CSS inlining for faster First Contentful Paint</li><li>Reflow vs repaint vs compositing — browser rendering pipeline</li><li>Animation performance — transform/opacity vs width/height</li><li>Performance auditing with Lighthouse and DevTools</li></ul>
+  </div>
+<div class="callout" style="margin-bottom:24px;">
+    <div class="callout-title">💡 Why This Matters</div>
+    <p>CSS directly impacts Core Web Vitals. Large CSS files block rendering. Animating width/height causes layout thrashing. Understanding the browser rendering pipeline helps you write CSS that runs at 60fps and loads in milliseconds.</p>
+  </div>
+
+<div class="section-title"><span class="num">1</span>CSS Loading &amp; File Size</div>
+<div class="section-body">
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">HTML — Efficient CSS Loading</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code><!-- Critical CSS inline in head -->
+<style>/* above-fold styles */</style>
+
+<!-- Non-critical CSS deferred -->
+<link rel="preload" href="/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/css/main.css"></noscript></code></pre>
+  </div>
+  <ul>
+    <li><strong>PurgeCSS / Tailwind JIT:</strong> Remove unused classes from production build</li>
+    <li><strong>Split CSS:</strong> critical.css (inline) + main.css (deferred)</li>
+    <li><strong>Minify:</strong> cssnano, clean-css — remove whitespace and comments</li>
+    <li><strong>Cache:</strong> <code>Cache-Control: max-age=31536000</code> with hashed filenames</li>
+    <li><strong>Avoid @import in CSS:</strong> blocks parallel downloads — use HTML link tags</li>
+  </ul>
+</div>
+
+<div class="section-title"><span class="num">2</span>Rendering Pipeline — Reflow, Repaint, Compositing</div>
+<div class="section-body">
+  <pre class="diagram-box">JavaScript → Style → Layout → Paint → Composite
+                ↑         ↑       ↑        ↑
+              cheap    expensive expensive  cheap
+
+Layout (Reflow):  width, height, margin, padding, display
+Paint:            color, background, box-shadow, border-radius
+Composite only:   transform, opacity (GPU accelerated ✅)</pre>
+  <div class="code-block">
+    <div class="code-block-header"><span class="lang-tag">CSS — Performance Comparison</span><a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a></div>
+    <pre><code>/* ❌ SLOW — triggers Layout every frame */
+.bad-animation {
+  animation: move 1s infinite;
+}
+@keyframes move {
+  from { left: 0; }
+  to   { left: 200px; }
+}
+
+/* ✅ FAST — compositor only, GPU accelerated */
+.good-animation {
+  animation: move 1s infinite;
+}
+@keyframes move {
+  from { transform: translateX(0); }
+  to   { transform: translateX(200px); }
+}
+
+/* ✅ Also fast */
+.fade { transition: opacity 200ms; }
+.card:hover { opacity: 0.9; }</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span>Selector Performance &amp; Auditing</div>
+<div class="section-body">
+  <ul>
+    <li><strong>Right-most selector matters most</strong> — browser matches right to left</li>
+    <li><strong>Avoid:</strong> <code>*</code>, deep nesting, <code>[attr*=""]</code> universal attribute</li>
+    <li><strong>Prefer:</strong> Single class selectors <code>.nav-link</code></li>
+    <li><strong>will-change:</strong> <code>will-change: transform;</code> hint browser to optimize (use sparingly)</li>
+    <li><strong>contain:</strong> <code>contain: layout style;</code> isolates rendering scope</li>
+  </ul>
+  <p><strong>Audit tools:</strong> Lighthouse (Chrome DevTools), WebPageTest, CSS Stats, Coverage tab in DevTools (shows unused CSS %).</p>
+</div>
+
+<div class="callout">
+    <div class="callout-title">⚠️ Common Mistakes</div>
+    <ul style="margin:8px 0 0 18px;line-height:1.7;"><li>Animating width, height, top, left — causes layout reflow every frame</li><li>will-change on everything — wastes GPU memory</li><li>@import chains in CSS — serial loading</li><li>500KB CSS file with 80% unused styles</li><li>Not using font-display: swap — invisible text during font load</li></ul>
+  </div>
+
+<div class="section-title"><span class="num">❓</span> Mini Quiz</div>
+    <div class="section-body">
+    <div class="faq-card">
+      <h4><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:6px;">Q1</span> transform vs left animation — eppudu transform fast?</h4>
+      <p>transform and opacity composite layer lo run avuthayi — GPU accelerated, no layout reflow. left/top trigger layout every frame.</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:6px;">Q2</span> Critical CSS enti?</h4>
+      <p>Above-the-fold content ki required minimum CSS — inline in head for faster First Contentful Paint. Rest deferred.</p>
+    </div></div>
+
+<div class="section-title"><span class="num">✅</span> Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;"><li>Minify, purge unused CSS, cache with hashed filenames</li><li>Animate transform and opacity only — avoid width/height/top/left</li><li>Critical CSS inline, defer non-critical stylesheets</li><li>Lighthouse and Coverage tab for auditing</li><li>contain and will-change for targeted optimization</li></ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy · CSS Complete Roadmap · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer"><a href="46-css-accessibility.html" class="nav-btn"><span class="label">← Previous</span><span class="title">46. CSS Accessibility</span></a><a href="48-css-debugging.html" class="nav-btn" style="text-align:right;"><span class="label">Next Chapter →</span><span class="title">48. CSS Debugging</span></a></div>
+  </main>
+</div>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

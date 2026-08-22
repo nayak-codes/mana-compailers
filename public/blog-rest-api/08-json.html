@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REST API — JSON | Our Compiler</title>
+  <meta name="description" content="Complete REST API Chapter 8: JSON. Learn JSON ante enti? · JSON object · JSON array · Strings · Numbers · Boolean · Null · Nested objects · Nested arrays · JSON encoding · JSON decoding · Invalid JSON · JSON size · JSON naming conventions with practical HTTP payloads, status code semantics, and step-by-step walkthroughs." />
+  <meta name="keywords" content="rest api tutorial, learn rest api, json, http request, http response, status codes, openapi, swagger" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-rest-api/08-json.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-rest-api/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-rest-api">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html" class="active">REST API</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">REST API Tutorial</div>
+    <a href="/blog-rest-api.html" class="sidebar-home-link">🌐 REST API HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">REST API Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/01-what-is-rest-api.html" class="">1. What is REST API?</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">HTTP Fundamentals</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/02-http-request-and-response.html" class="">2. HTTP Request & Response</a><a href="/blog-rest-api/03-http-methods.html" class="">3. HTTP Methods</a><a href="/blog-rest-api/04-http-status-codes.html" class="">4. HTTP Status Codes</a><a href="/blog-rest-api/05-headers.html" class="">5. Headers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Resource & URL Design</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/06-resources-and-urls.html" class="">6. Resources & URLs</a><a href="/blog-rest-api/07-api-versioning.html" class="">7. API Versioning</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">JSON & Data Formats</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-rest-api/08-json.html" class="active">8. JSON</a><a href="/blog-rest-api/09-request-and-response-schemas.html" class="">9. Request & Response Schemas</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">CRUD API Operations</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/10-crud-apis.html" class="">10. CRUD APIs</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Querying, Filtering & Pagination</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/11-query-parameters.html" class="">11. Query Parameters</a><a href="/blog-rest-api/12-filtering-and-searching.html" class="">12. Filtering & Searching</a><a href="/blog-rest-api/13-sorting.html" class="">13. Sorting</a><a href="/blog-rest-api/14-pagination.html" class="">14. Pagination</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Validation & Error Handling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/15-validation.html" class="">15. Validation</a><a href="/blog-rest-api/16-error-handling.html" class="">16. Error Handling</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔑</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Authentication & Authorization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/17-authentication.html" class="">17. Authentication</a><a href="/blog-rest-api/18-jwt.html" class="">18. JWT</a><a href="/blog-rest-api/19-authorization.html" class="">19. Authorization</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Security & Rate Limiting</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/20-cors.html" class="">20. CORS</a><a href="/blog-rest-api/21-rate-limiting.html" class="">21. Rate Limiting</a><a href="/blog-rest-api/22-api-security.html" class="">22. API Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📖</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">OpenAPI & Documentation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/23-openapi.html" class="">23. OpenAPI</a><a href="/blog-rest-api/24-swagger-ui.html" class="">24. Swagger UI</a><a href="/blog-rest-api/25-postman-and-curl.html" class="">25. Postman & curl</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Testing & Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/26-api-testing.html" class="">26. API Testing</a><a href="/blog-rest-api/27-contract-testing.html" class="">27. Contract Testing</a><a href="/blog-rest-api/28-load-testing.html" class="">28. Load Testing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Caching & Reliability</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/29-http-caching.html" class="">29. HTTP Caching</a><a href="/blog-rest-api/30-reliability-and-retries.html" class="">30. Reliability & Retries</a><a href="/blog-rest-api/31-idempotency.html" class="">31. Idempotency</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Real-Time APIs & Events</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/32-websockets.html" class="">32. WebSockets</a><a href="/blog-rest-api/33-server-sent-events.html" class="">33. Server-Sent Events</a><a href="/blog-rest-api/34-webhooks.html" class="">34. Webhooks</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Advanced API Architecture</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/35-api-gateway.html" class="">35. API Gateway</a><a href="/blog-rest-api/36-microservices-apis.html" class="">36. Microservices APIs</a><a href="/blog-rest-api/37-graphql-and-grpc.html" class="">37. GraphQL & gRPC Overview</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Projects & Certification</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-rest-api/38-rest-api-projects.html" class="">38. REST API Projects</a><a href="/blog-rest-api/39-rest-api-quiz.html" class="">39. REST API Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-rest-api.html">REST API</a><span class="sep">›</span>
+      <span class="current">REST API — JSON</span>
+    </div>
+
+    <h1 class="page-title">REST API — JSON</h1>
+
+    <div class="page-meta">
+      <span class="badge">🌐 HTTP / RFC 9110</span>
+      <span class="badge">🟢 Chapter 8 of 39</span>
+      <span class="badge">📂 Phase 04: JSON & Data Formats</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">JSON ante enti? · JSON object · JSON array · Strings · Numbers · Boolean · Null · Nested objects · Nested arrays · JSON encoding · JSON decoding · Invalid JSON · JSON size · JSON naming conventions</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>REST API — JSON</strong> in our REST API Complete Masterclass! Format structured REST API data representations using standard JSON objects, primitive types, arrays, and camelCase/snake_case keys.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In web application engineering, understanding <strong>JSON</strong> is essential for building scalable, secure, and developer-friendly REST APIs. REST APIs communicate using HTTP protocol standards and JSON representations.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master HTTP protocol mechanics behind <strong>JSON</strong></li>
+          <li>Understand request/response semantics, headers, and status code specifications</li>
+          <li>Design standardized, production-ready RESTful endpoints and JSON payloads</li>
+          <li>Avoid common architectural pitfalls, security flaws, and breaking API changes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why JSON is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>REST APIs connect web frontends, mobile applications, microservices, and third-party integrations. Mastering <strong>JSON</strong> equips developers to build robust API backends in Node.js, Python, Java, Go, Ruby, and PHP.</p>
+      </div>
+    </div>
+
+    <!-- 4. Resource design -->
+    <div class="section-title"><span class="num">4</span>Resource Design</div>
+    <div class="section-body">
+      <p>Target Resource Entity: <code>courses</code>. RESTful resource design focuses on nouns representing business domain objects rather than action verbs.</p>
+    </div>
+
+    <!-- 5. HTTP method -->
+    <div class="section-title"><span class="num">5</span>HTTP Method</div>
+    <div class="section-body">
+      <p>HTTP Method: <code style="color:#10b981;font-weight:700;">GET</code>. Defines the operation performed on the target resource contract.</p>
+    </div>
+
+    <!-- 6. Endpoint URL -->
+    <div class="section-title"><span class="num">6</span>Endpoint URL</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Target Endpoint URL</span></div>
+        <pre><code>GET /api/v1/courses/1</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Request example -->
+    <div class="section-title"><span class="num">7</span>Request Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">HTTP Request Example</span></div>
+        <pre><code>GET /api/v1/courses/1 HTTP/1.1</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Response example -->
+    <div class="section-title"><span class="num">8</span>Response Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">HTTP Response Example</span></div>
+        <pre><code>200 OK
+{
+  "id": 1,
+  "title": "Python",
+  "level": "Beginner",
+  "published": true,
+  "tags": ["programming", "backend"]
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 9. Status code -->
+    <div class="section-title"><span class="num">9</span>Status Code</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #10b981;">
+        <strong style="color:#10b981;">HTTP Status Code: 200 OK</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Indicates successful execution or specific client/server error condition per RFC 9110 semantics.</p>
+      </div>
+    </div>
+
+    <!-- 10. Server-side flow -->
+    <div class="section-title"><span class="num">10</span>Server-Side Flow</div>
+    <div class="section-body">
+      <div class="diagram-box">HTTP Request Received -> Router Matching -> Authentication & CORS -> Validation -> Service Logic -> Database Operation -> JSON Serialization -> HTTP Response</div>
+    </div>
+
+    <!-- 11. Validation -->
+    <div class="section-title"><span class="num">11</span>Validation</div>
+    <div class="section-body">
+      <p>Server-side request validation ensures required fields, data types, email formats, and parameter ranges are satisfied before executing database queries. If validation fails, the API responds with <code>422 Unprocessable Content</code>.</p>
+    </div>
+
+    <!-- 12. Database operation -->
+    <div class="section-title"><span class="num">12</span>Database Operation</div>
+    <div class="section-body">
+      <p>Queries are executed using parameterized SQL or ORM abstractions (e.g. <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>), preventing SQL injection vulnerabilities.</p>
+    </div>
+
+    <!-- 13. Common mistakes -->
+    <div class="section-title"><span class="num">13</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Using verbs in URLs (e.g. <code>/getCourses</code> or <code>/createCourse</code>).</li>
+          <li>Returning <code>200 OK</code> for all error responses containing <code>{"error": true}</code> inside JSON.</li>
+          <li>Failing to validate input or concatenating unescaped SQL/NoSQL query strings.</li>
+          <li>Confusing Authentication (who you are) with Authorization (what you can do).</li>
+          <li>Returning huge dataset lists without pagination.</li>
+          <li>Hardcoding API secrets or credentials in public client code.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 14. Coding challenge -->
+    <div class="section-title"><span class="num">14</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Create a REST API for lessons featuring: <code>GET /api/v1/lessons</code>, <code>GET /api/v1/lessons/{id}</code>, <code>POST /api/v1/lessons</code>, <code>PATCH /api/v1/lessons/{id}</code>, <code>DELETE /api/v1/lessons/{id}</code> with request validation, pagination, search, authentication, error response envelopes, and OpenAPI documentation!</p>
+      </div>
+    </div>
+
+    <!-- 15. Mini quiz -->
+    <div class="section-title"><span class="num">15</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary role of JSON in REST API design?</h4>
+        <p><strong>Answer:</strong> It provides standardized HTTP mechanisms for JSON ante enti?, building predictable and scalable APIs.</p>
+      </div>
+    </div>
+
+    <!-- 16. Quick recap -->
+    <div class="section-title"><span class="num">16</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Format structured REST API data representations using standard JSON objects, primitive types, arrays, and camelCase/snake_case keys.</li>
+        <li>POST creates resources (201 Created), GET reads data (200 OK), PATCH partially updates (200 OK), DELETE removes resources (204 No Content).</li>
+        <li>Follow RFC 9110 HTTP semantics, status code standards, and REST design best practices.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on RFC 9110 HTTP Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 17 & 18. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="07-api-versioning.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">7. API Versioning</span></a>
+      <a href="09-request-and-response-schemas.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">9. Request & Response Schemas</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

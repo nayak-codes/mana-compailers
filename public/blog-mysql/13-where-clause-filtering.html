@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MySQL — WHERE Clause & Filtering | Our Compiler</title>
+  <meta name="description" content="Complete MySQL Chapter 13: WHERE Clause & Filtering. Learn Comparison operators (=, !=, <, >) · Logical operators (AND, OR, NOT) · IN & NOT IN · BETWEEN · IS NULL · LIKE & Wildcards (%, _) with practical SQL queries, table schemas, and step-by-step database walkthroughs." />
+  <meta name="keywords" content="mysql tutorial, sql queries, where clause & filtering, database management, relational database, mysql workbench" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-mysql/13-where-clause-filtering.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-mysql/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-mysql">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html" class="active">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-rust.html">Rust</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">MySQL Tutorial</div>
+    <a href="/blog-mysql.html" class="sidebar-home-link">🐬 MySQL HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐬</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">MySQL Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/01-mysql-ante-enti-what-is-mysql.html" class="">1. MySQL Ante Enti?</a><a href="/blog-mysql/02-mysql-architecture.html" class="">2. MySQL Architecture</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Installation and Tools</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/03-mysql-installation.html" class="">3. MySQL Installation</a><a href="/blog-mysql/04-connecting-to-mysql.html" class="">4. Connecting to MySQL</a><a href="/blog-mysql/05-mysql-workbench-and-shell.html" class="">5. MySQL Workbench and Shell</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Database & Table Operations (DDL)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/06-creating-managing-databases.html" class="">6. Creating & Managing Databases</a><a href="/blog-mysql/07-mysql-data-types.html" class="">7. MySQL Data Types</a><a href="/blog-mysql/08-creating-managing-tables.html" class="">8. Creating & Managing Tables</a><a href="/blog-mysql/09-alter-drop-truncate-tables.html" class="">9. ALTER, DROP & TRUNCATE</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Data Manipulation (DML)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-mysql/10-inserting-data.html" class="">10. Inserting Data (INSERT INTO)</a><a href="/blog-mysql/11-selecting-data.html" class="">11. Selecting Data (SELECT)</a><a href="/blog-mysql/12-updating-deleting-data.html" class="">12. Updating & Deleting Data</a><a href="/blog-mysql/13-where-clause-filtering.html" class="active">13. WHERE Clause & Filtering</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Constraints & Data Integrity</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/14-primary-key-auto-increment.html" class="">14. Primary Key & Auto Increment</a><a href="/blog-mysql/15-foreign-keys-relationships.html" class="">15. Foreign Keys & Relationships</a><a href="/blog-mysql/16-unique-notnull-check-constraints.html" class="">16. UNIQUE, NOT NULL, CHECK & DEFAULT</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Functions & Aggregation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/17-mysql-string-functions.html" class="">17. String Functions</a><a href="/blog-mysql/18-numeric-date-functions.html" class="">18. Numeric & Date Functions</a><a href="/blog-mysql/19-aggregate-functions-groupby.html" class="">19. Aggregate Functions & GROUP BY</a><a href="/blog-mysql/20-having-clause.html" class="">20. HAVING Clause</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔗</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Joins & Subqueries</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/21-mysql-inner-join.html" class="">21. INNER JOIN</a><a href="/blog-mysql/22-left-and-right-join.html" class="">22. LEFT & RIGHT JOIN</a><a href="/blog-mysql/23-full-outer-cross-join.html" class="">23. CROSS JOIN & UNION</a><a href="/blog-mysql/24-mysql-subqueries.html" class="">24. Subqueries & Nested Queries</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Advanced SQL Concepts</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/25-mysql-views.html" class="">25. Views</a><a href="/blog-mysql/26-indexes-and-performance.html" class="">26. Indexes & Performance Optimization</a><a href="/blog-mysql/27-stored-procedures.html" class="">27. Stored Procedures</a><a href="/blog-mysql/28-stored-functions.html" class="">28. Stored Functions</a><a href="/blog-mysql/29-mysql-triggers.html" class="">29. Triggers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Transactions & Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/30-transactions-acid-properties.html" class="">30. Transactions & ACID Properties</a><a href="/blog-mysql/31-user-accounts-and-security.html" class="">31. User Accounts & Security</a><a href="/blog-mysql/32-backup-and-restore.html" class="">32. Backup & Restore (mysqldump)</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Projects & Quiz</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mysql/33-mysql-database-design-project.html" class="">33. MySQL Database Design Project</a><a href="/blog-mysql/34-mysql-quiz.html" class="">34. MySQL Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-mysql.html">MySQL</a><span class="sep">›</span>
+      <span class="current">MySQL — WHERE Clause & Filtering</span>
+    </div>
+
+    <h1 class="page-title">MySQL — WHERE Clause & Filtering</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐬 MySQL 8.0+</span>
+      <span class="badge">🟢 Chapter 13 of 34</span>
+      <span class="badge">📂 Phase 04: Data Manipulation (DML)</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Comparison operators (=, !=, <, >) · Logical operators (AND, OR, NOT) · IN & NOT IN · BETWEEN · IS NULL · LIKE & Wildcards (%, _)</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>MySQL — WHERE Clause & Filtering</strong> in our MySQL Complete Masterclass! Filter database records using complex conditions: combining AND/OR/NOT logic, range filtering with BETWEEN, pattern matching with LIKE, and NULL checks.</p>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction &amp; Overview</div>
+    <div class="section-body">
+      <p>In MySQL relational database management, understanding <strong>WHERE Clause & Filtering</strong> is essential for building structured, consistent, and performant data storage systems. MySQL uses Structured Query Language (SQL) to manipulate and query relational datasets.</p>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#00758f;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master key database concepts behind <strong>WHERE Clause & Filtering</strong></li>
+          <li>Understand SQL syntax and query execution in MySQL Server</li>
+          <li>Implement production-ready table structures and SQL queries</li>
+          <li>Avoid common database performance bottlenecks and normalization pitfalls</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-title"><span class="num">3</span>Why This Concept is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Relational databases ensure ACID compliance (Atomicity, Consistency, Isolation, Durability). Mastering MySQL equips web developers to store user accounts, orders, products, and analytics safely.</p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section-title"><span class="num">4</span>Basic Syntax &amp; Structure</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">SQL — MySQL Syntax</span>
+        </div>
+        <pre><code>-- Creating database schema and table structure
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+
+CREATE TABLE IF NOT EXISTS employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    salary DECIMAL(10, 2) DEFAULT 50000.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section-title"><span class="num">5</span>Basic Example Implementation</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">SQL — Full Query Example</span>
+        </div>
+        <pre><code>-- Inserting sample records into employees table
+INSERT INTO employees (first_name, last_name, email, salary)
+VALUES 
+    ('Ravi', 'Kumar', 'ravi.kumar@example.com', 75000.00),
+    ('Priya', 'Sharma', 'priya.sharma@example.com', 82000.00),
+    ('Anil', 'Verma', 'anil.verma@example.com', 65000.00);
+
+-- Querying high-earning employees
+SELECT id, CONCAT(first_name, ' ', last_name) AS full_name, salary
+FROM employees
+WHERE salary > 70000.00
+ORDER BY salary DESC;</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section-title"><span class="num">6</span>Execution &amp; Result Output</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:16px;border-radius:8px;margin:16px 0;font-size:13.5px;border-left:4px solid #00758f;">
+        <strong style="color:#00758f;">📊 Expected Query Result Grid:</strong>
+        <pre style="margin-top:8px;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;color:#a6e22e;font-family:'JetBrains Mono',monospace;">+----+--------------+----------+
+| id | full_name    | salary   |
++----+--------------+----------+
+|  2 | Priya Sharma | 82000.00 |
+|  1 | Ravi Kumar   | 75000.00 |
++----+--------------+----------+</pre>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="section-title"><span class="num">7</span>Line-by-Line SQL Explanation</div>
+    <div class="section-body">
+      <table class="tbl spec-table">
+        <thead><tr><th>SQL Keyword / Clause</th><th>Function &amp; Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>CREATE TABLE</code></td><td>Defines a new relational table schema with specified column types.</td></tr>
+          <tr><td><code>AUTO_INCREMENT</code></td><td>Automatically generates sequential integer identifiers for new rows.</td></tr>
+          <tr><td><code>CONCAT()</code></td><td>Combines first_name and last_name columns into a formatted full_name string.</td></tr>
+          <tr><td><code>ORDER BY ... DESC</code></td><td>Sorts the resulting dataset in descending order based on salary values.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="section-title"><span class="num">8</span>Common Database Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Pitfalls to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Forgetting the WHERE clause in UPDATE or DELETE statements — affects all table rows!</li>
+          <li>Storing plain-text passwords in database columns — always use hashed strings (bcrypt/Argon2).</li>
+          <li>Unindexed foreign key or search columns — causes full table scans on large datasets.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="section-title"><span class="num">9</span>Quick Recap &amp; Summary</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>MySQL stores structured data in tables composed of rows and columns</li>
+        <li>Primary Keys guarantee unique row identifiers, and Foreign Keys enforce relationships</li>
+        <li>SELECT statements retrieve filtered data using WHERE, GROUP BY, and ORDER BY clauses</li>
+        <li>Use Workbench or MySQL CLI client to manage databases and execute SQL scripts</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on MySQL 8.0+ · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="12-updating-deleting-data.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">12. Updating & Deleting Data</span></a>
+      <a href="14-primary-key-auto-increment.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">14. Primary Key & Auto Increment</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

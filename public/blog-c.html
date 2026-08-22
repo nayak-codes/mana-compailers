@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>C Programming Master Tutorial & Complete Roadmap (2026 Edition) | Our Compiler</title>
-  <meta name="description" content="Master C Programming from fundamental architecture, GCC compilation pipeline, variables, data types, scanf user input, operators, loops, modular functions, arrays, strings, pointers, and function callbacks with live runnable code." />
-  <meta name="keywords" content="c tutorial, c course, learn c online, c basics, gcc compiler, c scanf, c operators, c conditions, c loops, c functions, c arrays, c strings, c pointers, c callbacks" />
+  <meta name="description" content="Master C Programming from fundamental architecture, GCC compilation pipeline, variables, data types, scanf user input, operators, loops, modular functions, arrays, strings, pointers, structures, unions, enums, dynamic memory allocation, file I/O, preprocessor, CLI args, standard library, data structures, algorithms, debugging, build tools, POSIX system programming, and embedded C with live runnable code." />
+  <meta name="keywords" content="c tutorial, c course, learn c online, c basics, gcc compiler, c scanf, c operators, c conditions, c loops, c functions, c arrays, c strings, c pointers, c structures, c malloc, c file handling, c data structures, c algorithms, c posix" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-c.html" />
@@ -14,21 +14,23 @@
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="/blog-c/style.css" />
   <link rel="stylesheet" href="/site-nav.css" />
-
-  <!-- Accordion Toggle & Theme Script -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
-      const isOpen = content.classList.contains('open');
+      const isOpen = content.classList.contains("open");
       if (isOpen) {
-        content.classList.remove('open');
-        btn.classList.remove('active');
+        content.classList.remove("open");
+        btn.classList.remove("active");
       } else {
-        content.classList.add('open');
-        btn.classList.add('active');
+        content.classList.add("open");
+        btn.classList.add("active");
       }
     }
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 
+  <script>
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -38,32 +40,29 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        const topnav = document.querySelector('.topnav');
-        if (topnav) {
-          const toggleBtn = document.createElement('button');
-          toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          const updateText = () => {
-            const isLight = document.body.classList.contains('light-theme');
-            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-          };
+        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
+        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'blog-theme-toggle';
+        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+        const updateText = () => {
+          const isLight = document.body.classList.contains('light-theme');
+          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+        };
+        updateText();
+        toggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          document.documentElement.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
           updateText();
-          toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateText();
-          });
-          topnav.appendChild(toggleBtn);
-        }
+        });
+        nav.appendChild(toggleBtn);
       });
     })();
   </script>
 </head>
 <body class="lang-c">
-
-<!-- TOP NAVIGATION -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
@@ -78,13 +77,10 @@
   <a href="/blog-php.html">PHP</a>
   <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
-
 <div class="layout">
-  <!-- LEFT SIDEBAR WITH ACCORDION -->
   <aside class="sidebar">
     <div class="sidebar-heading">C Master Course</div>
     <a href="/blog-c.html" class="sidebar-home-link active">⚡ C Course HOME</a>
-
     <div class="sidebar-accordion">
       <!-- Phase 01: C Basics & Architecture -->
       <button class="accordion-header active" onclick="toggleAccordion(this)">
@@ -302,62 +298,300 @@
         <a href="/blog-c/26-c-function-pointers-callbacks-and-event-systems.html">26. Function Pointers, Callbacks & Event Systems</a>
       </div>
 
+      <!-- Phase 11: Structures & Data Packing -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Structures & Data Packing</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/27-c-structures-declaration-memory-model-and-padding.html">27. Structures, RAM Memory Model & Padding Holes</a>
+        <a href="/blog-c/28-c-structure-arrays-pointers-and-arrow-operator.html">28. Structure Arrays, Pointers & Arrow Operator (->)</a>
+        <a href="/blog-c/29-c-self-referential-structures-file-io-and-5-projects.html">29. Self-Referential Structs, Binary I/O & 5 Projects</a>
+      </div>
+
+      <!-- Phase 12: Unions, Enums & Typedef -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Unions, Enums & Typedef</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/30-c-unions-shared-memory-and-variant-types.html">30. Unions, Shared Memory & Variant Data Types</a>
+        <a href="/blog-c/31-c-enumerations-custom-values-and-switch-dispatch.html">31. Enumerations (enum), Custom Values & Switch</a>
+        <a href="/blog-c/32-c-typedef-type-aliases-and-readable-architecture.html">32. typedef, Type Aliases & Expressive Architecture</a>
+      </div>
+
+      <!-- Phase 13: Dynamic Memory Management -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💾</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Dynamic Memory Management</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/33-c-stack-vs-heap-malloc-and-calloc.html">33. Stack vs Heap, malloc(), calloc() & NULL Guards</a>
+        <a href="/blog-c/34-c-realloc-free-and-the-4-deadly-heap-bugs.html">34. realloc(), free() & The 4 Deadly Heap Bugs</a>
+        <a href="/blog-c/35-c-dynamic-arrays-strings-structures-and-memory-debugging.html">35. Dynamic Collections, Ownership & Valgrind Debugging</a>
+      </div>
+
+      <!-- Phase 14: File Handling & I/O Streams -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">File Handling & I/O Streams</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/36-c-file-handling-fopen-fclose-and-text-io.html">36. File Streams, fopen(), fclose() & Text I/O</a>
+        <a href="/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html">37. Binary File I/O, Struct Serialization & fseek()</a>
+        <a href="/blog-c/38-c-file-error-handling-feof-ferror-and-errno.html">38. File Error Handling, EOF, ferror() & errno</a>
+      </div>
+
+      <!-- Phase 15: Preprocessor & Header Files -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Preprocessor & Header Files</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/39-c-preprocessor-directives-and-macro-pitfalls.html">39. Preprocessor Directives & Macro Pitfalls</a>
+        <a href="/blog-c/40-c-conditional-compilation-and-include-guards.html">40. Conditional Compilation & Include Guards</a>
+        <a href="/blog-c/41-c-modular-architecture-headers-linkage-and-compilation-units.html">41. Modular Architecture, Headers & Linkage</a>
+      </div>
+
+      <!-- Phase 16: Command-Line Arguments -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💻</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Command-Line Arguments</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/42-c-command-line-arguments-argc-argv-and-parsing.html">42. Command-Line Arguments (argc, argv & Parsing)</a>
+        <a href="/blog-c/43-c-cli-tool-building-exit-codes-and-environment-variables.html">43. Building CLI Tools, Exit Codes & Environment</a>
+      </div>
+
+      <!-- Phase 17: Standard Library Deep-Dive -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📚</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Standard Library Deep-Dive</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/44-c-standard-library-io-utility-math-and-strings.html">44. Standard Library: I/O, Utilities, Math & Strings</a>
+        <a href="/blog-c/45-c-standard-library-time-booleans-and-fixed-width-integers.html">45. Standard Library: Time, Booleans & Integers</a>
+        <a href="/blog-c/46-c-standard-library-assertions-error-handling-and-stddef.html">46. Standard Library: Assertions & Error Handling</a>
+      </div>
+
+      <!-- Phase 18: Data Structures in C -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures in C</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/47-c-data-structures-singly-doubly-and-circular-linked-lists.html">47. Linked Lists: Singly, Doubly & Circular</a>
+        <a href="/blog-c/48-c-data-structures-stacks-and-queues-arrays-vs-linked-lists.html">48. Stacks & Queues: Arrays vs Linked Lists</a>
+        <a href="/blog-c/49-c-data-structures-binary-trees-and-binary-search-trees.html">49. Binary Trees & Binary Search Trees (BST)</a>
+        <a href="/blog-c/50-c-data-structures-graph-representations-and-traversals.html">50. Graph Representations & BFS/DFS Traversals</a>
+        <a href="/blog-c/51-c-data-structures-hash-tables-and-collision-resolution.html">51. Hash Tables & Collision Resolution</a>
+      </div>
+
+      <!-- Phase 19: Algorithms & Big-O Complexity -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Algorithms & Big-O Complexity</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/52-c-algorithms-big-o-complexity-searching-and-sorting.html">52. Big-O Complexity, Searching & Sorting</a>
+        <a href="/blog-c/53-c-algorithms-recursion-divide-and-conquer-and-greedy-strategies.html">53. Divide-and-Conquer & Greedy Strategies</a>
+        <a href="/blog-c/54-c-algorithms-dynamic-programming-backtracking-and-graph-search.html">54. Dynamic Programming, Backtracking & Search</a>
+      </div>
+
+      <!-- Phase 20: Debugging & Safe C Programming -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Debugging & Safe C Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/55-c-debugging-compiler-warnings-and-gdb-debugger.html">55. Compiler Warning Flags (-Wall) & GDB Debugger</a>
+        <a href="/blog-c/56-c-security-vulnerabilities-buffer-overflows-and-undefined-behavior.html">56. Security Vulnerabilities & Undefined Behavior</a>
+        <a href="/blog-c/57-c-defensive-c-programming-sanitizers-and-static-analysis.html">57. Defensive Programming, Sanitizers & Static Analysis</a>
+      </div>
+
+      <!-- Phase 21: Build Systems, Makefiles & CMake -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Build Systems, Makefiles & CMake</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/58-c-multi-file-projects-compilation-pipeline-and-linking.html">58. Multi-File Projects & Compilation Pipeline</a>
+        <a href="/blog-c/59-c-libraries-static-lib-vs-shared-so-dll-libraries.html">59. Static (.a) vs Dynamic Shared (.so / .dll) Libraries</a>
+        <a href="/blog-c/60-c-build-tools-makefiles-cmake-and-git-ci-cd.html">60. Build Automation: Makefiles, CMake & Git CI/CD</a>
+      </div>
+
+      <!-- Phase 22: System Programming & Embedded C -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 22</span>
+            <span class="phase-title">System Programming & Embedded C</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/61-c-system-programming-posix-system-calls-processes-and-ipc.html">61. POSIX System Calls, Processes & IPC</a>
+        <a href="/blog-c/62-c-concurrency-pthreads-mutexes-and-race-conditions.html">62. POSIX Threads (pthreads), Mutexes & Concurrency</a>
+        <a href="/blog-c/63-c-network-programming-bsd-sockets-and-tcp-udp-client-server.html">63. Network Programming: BSD Sockets & TCP/UDP</a>
+        <a href="/blog-c/64-c-embedded-c-hardware-registers-bit manipulation-and-microcontrollers.html">64. Embedded C, Hardware Registers & Microcontrollers</a>
+        <a href="/blog-c/65-c-master-project-roadmap-and-systems-portfolio.html">65. C Master Project Roadmap & Systems Portfolio</a>
+      </div>
+
     </div>
-
-
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
     <a href="/blog.html">📚 All Tutorials</a>
-
-    <div class="sidebar-heading">Other Courses</div>
-    <a href="/blog-python.html">Python Course (65 Lessons)</a>
-    <a href="/blog-java.html">Java Course (51 Lessons)</a>
-    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
   </aside>
-
-  <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <span class="current">C Programming Masterclass</span>
     </div>
-
     <h1 class="page-title">C Programming Master Tutorial</h1>
-
     <div class="page-meta">
       <span class="badge">⚡ C (C17 / C23 Standard)</span>
-      <span class="badge">🟢 26 Comprehensive Master Chapters Across 10 Phases</span>
+      <span class="badge">🟢 65 Comprehensive Master Chapters Across 22 Phases</span>
       <span class="badge">📂 Unified Emerald Green Theme</span>
       <span class="badge">📅 2026 Comprehensive Edition</span>
     </div>
-
     <div class="intro-box">
       <p>Welcome to <strong>Our Compiler's C Programming Master Course</strong>. Designed by Dennis Ritchie at Bell Labs, C is the mother of modern computing powering operating system kernels (Linux, Windows, macOS), database engines (MySQL, PostgreSQL, Redis), embedded microcontrollers, and language runtimes. Each phase provides in-depth, hands-on architectural breakdowns with live runnable code.</p>
     </div>
-
-    <!-- Quick Start Card -->
     <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(20, 24, 32, 0.6)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 24px; margin: 28px 0;">
-      <h3 style="color:#10b981; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning C?</h3>
-      <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Choose where to start: explore C architecture, variables, scanf input, conditions, loops, functions, arrays, strings, pointers, or function callbacks:</p>
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a href="/blog-c/01-c-basics-and-program-structure.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 1: Basics →</a>
-        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 2: Variables →</a>
-        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 3: Input →</a>
-        <a href="/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 4: Conditions →</a>
-        <a href="/blog-c/08-c-loops-for-while-do-while-and-control-flow.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 5: Loops →</a>
-        <a href="/blog-c/10-c-functions-declaration-definition-and-prototypes.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 6: Functions →</a>
-        <a href="/blog-c/14-c-arrays-fundamentals-memory-model-and-indexing.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 7: Arrays →</a>
-        <a href="/blog-c/18-c-strings-null-terminator-and-safe-io.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 8: Strings →</a>
-        <a href="/blog-c/21-c-pointers-memory-addresses-and-dereferencing.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 9: Pointers →</a>
-        <a href="/blog-c/24-c-pointers-and-functions-call-by-reference.html" style="background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none;">Phase 10: Pointers & Functions →</a>
-      </div>
+      <h3 style="color:#10b981; margin-bottom: 10px; font-size:18px;">🎯 Complete 22-Phase C Masterclass Roadmap</h3>
+      <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Explore any phase below to master low-level systems programming, data structures, algorithms, POSIX system calls, multi-threading, and embedded C:</p>
     </div>
-
-    <!-- Full Curriculum Roadmap Cards -->
     <div class="section-title"><span class="num">📚</span> Master Course Curriculum Roadmap</div>
     <div class="curriculum-roadmap-container">
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -385,7 +619,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -425,7 +658,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -465,7 +697,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -505,7 +736,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -545,7 +775,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -609,7 +838,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -673,7 +901,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -725,7 +952,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -777,7 +1003,6 @@
         </a>
       </div>
     </div>
-
     <div class="phase-roadmap-card">
       <div class="phase-roadmap-header">
         <div class="phase-roadmap-title-wrap">
@@ -829,11 +1054,658 @@
         </a>
       </div>
     </div>
-
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🏗️</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 11</div>
+            <h3 class="phase-roadmap-title">Structures & Data Packing</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on C Structures: User-defined heterogeneous types, member access (.), memory layout & Structure Padding / Data Alignment, #pragma pack, structure comparison, structure arrays, nested structures, pointer to struct & arrow operator (->), typedef struct, self-referential structures (linked lists), structure binary file I/O (fwrite/fread), and 5 production software projects.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/27-c-structures-declaration-memory-model-and-padding.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">27</span>
+            <div class="lesson-info">
+              <span class="lesson-title">27. Structures, RAM Memory Model & Padding Holes</span>
+              <span class="lesson-subtopics">struct ante enti? · Declaration & Initialization · Dot Operator (.) · RAM Memory Alignment & Padding Holes · #pragma pack(1) · Structure Comparison</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/28-c-structure-arrays-pointers-and-arrow-operator.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">28</span>
+            <div class="lesson-info">
+              <span class="lesson-title">28. Structure Arrays, Pointers & Arrow Operator (->)</span>
+              <span class="lesson-subtopics">Structure Arrays · Nested Structures · Passing Structs to Functions · Pointer to Struct & Arrow Operator (->) · typedef struct · Anonymous Structs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/29-c-self-referential-structures-file-io-and-5-projects.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">29</span>
+            <div class="lesson-info">
+              <span class="lesson-title">29. Self-Referential Structs, Binary I/O & 5 Projects</span>
+              <span class="lesson-subtopics">Self-Referential Structs (Node*) · Binary File Serialization (fwrite/fread) · 5 Projects (Student, Employee, Inventory, Library, Contacts)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🔀</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 12</div>
+            <h3 class="phase-roadmap-title">Unions, Enums & Typedef</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on Unions, Enums, and Typedef: Shared memory overlapping architecture (Unions vs Structs), practical variant types & hardware register bitfields, Enumerations (enum) for type-safe state machines, custom enum values, switch-case dispatchers, and expressive type aliasing with typedef.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/30-c-unions-shared-memory-and-variant-types.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">30</span>
+            <div class="lesson-info">
+              <span class="lesson-title">30. Unions, Shared Memory & Variant Data Types</span>
+              <span class="lesson-subtopics">union ante enti? · Shared Overlapping RAM Layout · Struct vs Union Memory Matrix · Tagged Unions · Hardware Register Bitfields · Pointers to Unions</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/31-c-enumerations-custom-values-and-switch-dispatch.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">31</span>
+            <div class="lesson-info">
+              <span class="lesson-title">31. Enumerations (enum), Custom Values & Switch</span>
+              <span class="lesson-subtopics">enum ante enti? · Auto-Increment Constants · Custom Enum Values (HTTP Statuses) · Enum State Machines with switch · Naming Conventions</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/32-c-typedef-type-aliases-and-readable-architecture.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">32</span>
+            <div class="lesson-info">
+              <span class="lesson-title">32. typedef, Type Aliases & Expressive Architecture</span>
+              <span class="lesson-subtopics">typedef ante enti? · Expressive Type Aliases · typedef struct & union · typedef with Function Pointers · Clean API Design · Technical FAQs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">💾</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 13</div>
+            <h3 class="phase-roadmap-title">Dynamic Memory Management</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on Dynamic Memory Management in C: Stack vs Heap architecture, malloc() raw uninitialized heap allocation, calloc() zero-initialization, realloc() buffer resizing and safe temp pointers, free() deallocation mechanics, NULL guards, memory leaks, dangling pointers, double free, use-after-free (UAF), dynamic arrays/strings/structs, memory ownership, and Valgrind debugging.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/33-c-stack-vs-heap-malloc-and-calloc.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">33</span>
+            <div class="lesson-info">
+              <span class="lesson-title">33. Stack vs Heap, malloc(), calloc() & NULL Guards</span>
+              <span class="lesson-subtopics">Stack vs Heap RAM Architecture · Dynamic Memory ante enti? · malloc() Mechanics · calloc() Zero-Initialization · sizeof(*ptr) Idiom · Defensive NULL Guards</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/34-c-realloc-free-and-the-4-deadly-heap-bugs.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">34</span>
+            <div class="lesson-info">
+              <span class="lesson-title">34. realloc(), free() & The 4 Deadly Heap Bugs</span>
+              <span class="lesson-subtopics">realloc() Buffer Expansion · Safe Temp Pointer Pattern · free() Deallocation · Memory Leaks · Dangling Pointers · Double Free · Use-After-Free (UAF)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/35-c-dynamic-arrays-strings-structures-and-memory-debugging.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">35</span>
+            <div class="lesson-info">
+              <span class="lesson-title">35. Dynamic Collections, Ownership & Valgrind Debugging</span>
+              <span class="lesson-subtopics">Dynamic 1D/2D Arrays · Dynamic Strings (+1 Rule) · Dynamic Structs · Memory Ownership Architecture · Valgrind Memcheck · AddressSanitizer</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📁</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 14</div>
+            <h3 class="phase-roadmap-title">File Handling & I/O Streams</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on File Streams in C: FILE* handles, fopen() modes ("r", "w", "a", "r+", "w+"), fclose(), text I/O (fprintf, fscanf, fgets, fputs), binary I/O (fwrite, fread), random file positioning (fseek, ftell, rewind), and robust error handling (feof, ferror, errno, perror).</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/36-c-file-handling-fopen-fclose-and-text-io.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">36</span>
+            <div class="lesson-info">
+              <span class="lesson-title">36. File Streams, fopen(), fclose() & Text I/O</span>
+              <span class="lesson-subtopics">FILE* Handles · fopen() Modes (r, w, a, r+, w+) · fclose() · fgetc / fputc · fgets / fputs · fprintf / fscanf · Text File Pipelines</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">37</span>
+            <div class="lesson-info">
+              <span class="lesson-title">37. Binary File I/O, Struct Serialization & fseek()</span>
+              <span class="lesson-subtopics">Binary File Modes (rb, wb) · fwrite() & fread() · Struct Serialization · Random Access Positioning (fseek, ftell, rewind) · SEEK_SET / SEEK_CUR / SEEK_END</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/38-c-file-error-handling-feof-ferror-and-errno.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">38</span>
+            <div class="lesson-info">
+              <span class="lesson-title">38. File Error Handling, EOF, ferror() & errno</span>
+              <span class="lesson-subtopics">feof() EOF Detection · ferror() Error Checking · <errno.h> System Errors · perror() & strerror() · File Copy & Log File Utility Programs</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⚙️</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 15</div>
+            <h3 class="phase-roadmap-title">Preprocessor & Header Files</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on C Preprocessor: #include mechanics, #define object-like & function-like macros, double evaluation pitfalls, conditional compilation (#if, #ifdef, #ifndef, #pragma once), include guards, multi-file modular architecture, and static/extern linkage.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/39-c-preprocessor-directives-and-macro-pitfalls.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">39</span>
+            <div class="lesson-info">
+              <span class="lesson-title">39. Preprocessor Directives & Macro Pitfalls</span>
+              <span class="lesson-subtopics">Preprocessor Pipeline · #include Mechanics · Object & Function Macros · Parenthesization Rule · Double Evaluation Traps · Stringizing (#) & Token Pasting (##)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/40-c-conditional-compilation-and-include-guards.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">40</span>
+            <div class="lesson-info">
+              <span class="lesson-title">40. Conditional Compilation & Include Guards</span>
+              <span class="lesson-subtopics">#if, #ifdef, #ifndef, #else, #elif, #endif · Include Guards (#ifndef MATH_H) · #pragma once · Platform Conditional Compilation</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/41-c-modular-architecture-headers-linkage-and-compilation-units.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">41</span>
+            <div class="lesson-info">
+              <span class="lesson-title">41. Modular Architecture, Headers & Linkage</span>
+              <span class="lesson-subtopics">Header (.h) vs Source (.c) Separation · Prototype Declarations · static Internal Linkage vs extern External Linkage · Compilation Units & Object Files</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">💻</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 16</div>
+            <h3 class="phase-roadmap-title">Command-Line Arguments</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">2 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 2-chapter masterclass on CLI Architecture: argc & argv[] parameter indexing, string-to-number conversions (atoi, strtol, strtod), argument validation, building production CLI utility tools, exit status codes (EXIT_SUCCESS / EXIT_FAILURE), and environment variables (getenv).</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/42-c-command-line-arguments-argc-argv-and-parsing.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">42</span>
+            <div class="lesson-info">
+              <span class="lesson-title">42. Command-Line Arguments (argc, argv & Parsing)</span>
+              <span class="lesson-subtopics">main(argc, argv) Parameters · Executable Path (argv[0]) · Argument Indexing · String Conversions (strtol, strtod) · Argument Validation & Usage Help</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/43-c-cli-tool-building-exit-codes-and-environment-variables.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">43</span>
+            <div class="lesson-info">
+              <span class="lesson-title">43. Building CLI Tools, Exit Codes & Environment</span>
+              <span class="lesson-subtopics">Building Production CLI Tools · Exit Status Codes (EXIT_SUCCESS / EXIT_FAILURE) · Environment Variables (getenv) · Option Flag Processing</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">📚</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 17</div>
+            <h3 class="phase-roadmap-title">Standard Library Deep-Dive</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on the C Standard Library Header Matrix: <stdio.h>, <stdlib.h>, <string.h>, <math.h>, <ctype.h>, <time.h>, <stdbool.h>, <stdint.h>, <limits.h>, <float.h>, <assert.h>, <errno.h>, and <stddef.h>.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/44-c-standard-library-io-utility-math-and-strings.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">44</span>
+            <div class="lesson-info">
+              <span class="lesson-title">44. Standard Library: I/O, Utilities, Math & Strings</span>
+              <span class="lesson-subtopics"><stdio.h> · <stdlib.h> (rand, srand, qsort, bsearch) · <string.h> · <math.h> (pow, sqrt, ceil, floor) · <ctype.h> (isalpha, isdigit, toupper)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/45-c-standard-library-time-booleans-and-fixed-width-integers.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">45</span>
+            <div class="lesson-info">
+              <span class="lesson-title">45. Standard Library: Time, Booleans & Integers</span>
+              <span class="lesson-subtopics"><time.h> (time, clock, struct tm, strftime) · <stdbool.h> · <stdint.h> (int32_t, uint64_t) · <limits.h> (INT_MAX) · <float.h> (DBL_MAX)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/46-c-standard-library-assertions-error-handling-and-stddef.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">46</span>
+            <div class="lesson-info">
+              <span class="lesson-title">46. Standard Library: Assertions & Error Handling</span>
+              <span class="lesson-subtopics"><assert.h> (assert, static_assert) · <errno.h> (errno, strerror) · <stddef.h> (NULL, size_t, offsetof) · Portable C Library Architecture</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🌳</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 18</div>
+            <h3 class="phase-roadmap-title">Data Structures in C</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 5-chapter masterclass on Data Structures in C: Singly, Doubly & Circular Linked Lists, Stacks & Queues (Arrays vs Linked Lists), Binary Trees & Binary Search Trees (BST), Graph representations & Traversals (BFS/DFS), and Hash Tables with collision resolution.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/47-c-data-structures-singly-doubly-and-circular-linked-lists.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">47</span>
+            <div class="lesson-info">
+              <span class="lesson-title">47. Linked Lists: Singly, Doubly & Circular</span>
+              <span class="lesson-subtopics">Abstract Data Types ADTs · Singly Linked Lists (Node, Insert, Delete, Search, Traverse) · Doubly Linked Lists · Circular Linked Lists</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/48-c-data-structures-stacks-and-queues-arrays-vs-linked-lists.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">48</span>
+            <div class="lesson-info">
+              <span class="lesson-title">48. Stacks & Queues: Arrays vs Linked Lists</span>
+              <span class="lesson-subtopics">Stack ADT (LIFO, Push, Pop, Peek) · Queue ADT (FIFO, Enqueue, Dequeue) · Circular Queue · Array vs Linked List Implementations</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/49-c-data-structures-binary-trees-and-binary-search-trees.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">49</span>
+            <div class="lesson-info">
+              <span class="lesson-title">49. Binary Trees & Binary Search Trees (BST)</span>
+              <span class="lesson-subtopics">Tree Architecture · Binary Search Tree BST (Insert, Search, Delete) · Tree Traversals (In-order, Pre-order, Post-order, Level-order)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/50-c-data-structures-graph-representations-and-traversals.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">50</span>
+            <div class="lesson-info">
+              <span class="lesson-title">50. Graph Representations & BFS/DFS Traversals</span>
+              <span class="lesson-subtopics">Graph Theory · Adjacency Matrix vs Adjacency List · Breadth-First Search (BFS) · Depth-First Search (DFS) · Graph Algorithms</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/51-c-data-structures-hash-tables-and-collision-resolution.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">51</span>
+            <div class="lesson-info">
+              <span class="lesson-title">51. Hash Tables & Collision Resolution</span>
+              <span class="lesson-subtopics">Hash Table Architecture · Hash Functions · Chaining via Linked Lists · Open Addressing (Linear Probing) · O(1) Search</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">⚡</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 19</div>
+            <h3 class="phase-roadmap-title">Algorithms & Big-O Complexity</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on Algorithms: Big-O time and space complexity, Linear/Binary Search, Bubble, Selection, Insertion, Merge, Quick Sort, Divide-and-Conquer, Greedy strategies, Dynamic Programming (Memoization vs Tabulation), and Backtracking.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/52-c-algorithms-big-o-complexity-searching-and-sorting.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">52</span>
+            <div class="lesson-info">
+              <span class="lesson-title">52. Big-O Complexity, Searching & Sorting</span>
+              <span class="lesson-subtopics">Big-O Notation (O(1), O(log N), O(N), O(N log N), O(N^2)) · Linear vs Binary Search · Bubble, Selection, Insertion, Merge & Quick Sort</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/53-c-algorithms-recursion-divide-and-conquer-and-greedy-strategies.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">53</span>
+            <div class="lesson-info">
+              <span class="lesson-title">53. Divide-and-Conquer & Greedy Strategies</span>
+              <span class="lesson-subtopics">Recursion Mechanics · Divide-and-Conquer Paradigm · Greedy Choice Property · Fractional Knapsack · Coin Change Algorithm</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/54-c-algorithms-dynamic-programming-backtracking-and-graph-search.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">54</span>
+            <div class="lesson-info">
+              <span class="lesson-title">54. Dynamic Programming, Backtracking & Search</span>
+              <span class="lesson-subtopics">Dynamic Programming (Memoization, Tabulation, 0/1 Knapsack) · Backtracking (N-Queens, Maze) · BFS & DFS Algorithmic Pipelines</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🛡️</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 20</div>
+            <h3 class="phase-roadmap-title">Debugging & Safe C Programming</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on C Debugging & Security: Compiler warning flags (-Wall, -Wextra), GDB debugger commands, analyzing crashes (Segfaults, Buffer Overflows, UAF), defensive input validation, safe string handling, GCC AddressSanitizer, and static analysis.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/55-c-debugging-compiler-warnings-and-gdb-debugger.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">55</span>
+            <div class="lesson-info">
+              <span class="lesson-title">55. Compiler Warning Flags (-Wall) & GDB Debugger</span>
+              <span class="lesson-subtopics">Compiler Flags (-Wall, -Wextra, -Wpedantic, -Werror) · Debug vs Release Builds (-g) · GDB Commands (Breakpoints, Stepping, Backtrace)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/56-c-security-vulnerabilities-buffer-overflows-and-undefined-behavior.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">56</span>
+            <div class="lesson-info">
+              <span class="lesson-title">56. Security Vulnerabilities & Undefined Behavior</span>
+              <span class="lesson-subtopics">Segmentation Fault Diagnosis · Buffer Overflows · Out-of-Bounds Access · Uninitialized Variables · Undefined Behavior · Integer Overflow</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/57-c-defensive-c-programming-sanitizers-and-static-analysis.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">57</span>
+            <div class="lesson-info">
+              <span class="lesson-title">57. Defensive Programming, Sanitizers & Static Analysis</span>
+              <span class="lesson-subtopics">Defensive Input Validation · Safe Strings (snprintf, strncpy) · GCC AddressSanitizer (-fsanitize=address) · Static Analysis (cppcheck)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🛠️</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 21</div>
+            <h3 class="phase-roadmap-title">Build Systems, Makefiles & CMake</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 3-chapter masterclass on C Build Systems: Multi-file project compilation pipelines, static libraries (.a/.lib) vs dynamic shared libraries (.so/.dll), GNU Make (Makefiles), CMake (CMakeLists.txt), Git version control, and CI/CD automated build pipelines.</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/58-c-multi-file-projects-compilation-pipeline-and-linking.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">58</span>
+            <div class="lesson-info">
+              <span class="lesson-title">58. Multi-File Projects & Compilation Pipeline</span>
+              <span class="lesson-subtopics">Multi-File Architecture · Header/Source Separation · Object File Generation (.o) · Symbol Resolution & Linker Mechanics</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/59-c-libraries-static-lib-vs-shared-so-dll-libraries.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">59</span>
+            <div class="lesson-info">
+              <span class="lesson-title">59. Static (.a) vs Dynamic Shared (.so / .dll) Libraries</span>
+              <span class="lesson-subtopics">Static Libraries (.a / .lib) · Shared Dynamic Libraries (.so / .dll) · Compiler Shared Flags (-shared -fPIC) · Dynamic Loading (dlopen)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/60-c-build-tools-makefiles-cmake-and-git-ci-cd.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">60</span>
+            <div class="lesson-info">
+              <span class="lesson-title">60. Build Automation: Makefiles, CMake & Git CI/CD</span>
+              <span class="lesson-subtopics">GNU Make (Makefile syntax, targets, rules) · CMake (CMakeLists.txt) · Debug/Release Targets · Git Version Control & CI/CD Pipelines</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="phase-roadmap-card">
+      <div class="phase-roadmap-header">
+        <div class="phase-roadmap-title-wrap">
+          <span class="phase-roadmap-icon">🚀</span>
+          <div>
+            <div class="phase-roadmap-tag">Phase 22</div>
+            <h3 class="phase-roadmap-title">System Programming & Embedded C</h3>
+          </div>
+        </div>
+        <span class="phase-roadmap-badge">5 In-Depth Chapters</span>
+      </div>
+      <p class="phase-roadmap-desc">Exhaustive 5-chapter masterclass on System-Level & Embedded C: POSIX system calls, processes (fork, exec), IPC (Pipes, Signals), POSIX Multi-threading (pthreads, mutexes), BSD Sockets network programming, Memory-Mapped Files (mmap), Embedded C hardware register bit manipulation, microcontrollers, and the Master Project Roadmap (24 Projects).</p>
+      <div class="phase-lessons-list">
+        <a href="/blog-c/61-c-system-programming-posix-system-calls-processes-and-ipc.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">61</span>
+            <div class="lesson-info">
+              <span class="lesson-title">61. POSIX System Calls, Processes & IPC</span>
+              <span class="lesson-subtopics">POSIX System Calls (open, read, write) · Process Management (fork, exec, wait) · Inter-Process Communication IPC (Pipes, Signals)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/62-c-concurrency-pthreads-mutexes-and-race-conditions.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">62</span>
+            <div class="lesson-info">
+              <span class="lesson-title">62. POSIX Threads (pthreads), Mutexes & Concurrency</span>
+              <span class="lesson-subtopics">Multi-Threading (pthread_create, pthread_join) · Race Conditions · Mutex Lock Protection (pthread_mutex_t) · Deadlock Prevention</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/63-c-network-programming-bsd-sockets-and-tcp-udp-client-server.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">63</span>
+            <div class="lesson-info">
+              <span class="lesson-title">63. Network Programming: BSD Sockets & TCP/UDP</span>
+              <span class="lesson-subtopics">BSD Socket API (socket, bind, listen, accept, connect) · TCP/UDP Client-Server Architecture · HTTP Parsing Engine</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/64-c-embedded-c-hardware-registers-bit manipulation-and-microcontrollers.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">64</span>
+            <div class="lesson-info">
+              <span class="lesson-title">64. Embedded C, Hardware Registers & Microcontrollers</span>
+              <span class="lesson-subtopics">Embedded C Architecture · volatile Qualifier · Memory-Mapped Registers · Bitwise Register Manipulation (REG |= (1<<3)) · Portability</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+        <a href="/blog-c/65-c-master-project-roadmap-and-systems-portfolio.html" class="curriculum-lesson-row">
+          <div class="lesson-row-left">
+            <span class="lesson-idx">65</span>
+            <div class="lesson-info">
+              <span class="lesson-title">65. C Master Project Roadmap & Systems Portfolio</span>
+              <span class="lesson-subtopics">8 Beginner Projects · 7 Intermediate Systems · 9 Advanced Systems (Linked List Lib, Shell, HTTP Client, TCP Chat Server, Custom Allocator)</span>
+            </div>
+          </div>
+          <div class="lesson-row-right">
+            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
     </div>
   </main>
 </div>
-
   <script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

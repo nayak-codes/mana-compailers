@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git — Inspecting Changes with git diff | Our Compiler</title>
+  <meta name="description" content="Complete Git Chapter 6: Inspecting Changes with git diff. Learn git diff · Staged diff (--staged) · Working tree diff · Comparing commits & branches · Patch format with practical terminal command examples, repository workflow diagrams, and step-by-step walkthroughs." />
+  <meta name="keywords" content="git tutorial, learn git, inspecting changes with git diff, github tutorial, version control" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-git/06-viewing-changes-git-diff.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-git/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-git">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-git.html" class="active">Git &amp; GitHub</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Git Tutorial</div>
+    <a href="/blog-git.html" class="sidebar-home-link">🐙 Git HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐙</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Git Fundamentals & Setup</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/01-git-introduction-and-version-control.html" class="">1. What is Git & Version Control?</a><a href="/blog-git/02-git-installation-and-configuration.html" class="">2. Git Installation & Global Config</a><a href="/blog-git/03-creating-a-git-repository.html" class="">3. Creating & Initializing Repositories</a><a href="/blog-git/04-working-tree-and-staging-area.html" class="">4. Working Tree & Staging Area</a><a href="/blog-git/05-git-commits.html" class="">5. Commits & Commit Messages</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Tracking, Differences & Inspection</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-git/06-viewing-changes-git-diff.html" class="active">6. Inspecting Changes with git diff</a><a href="/blog-git/07-restoring-files.html" class="">7. Restoring Files (git restore)</a><a href="/blog-git/08-git-reset.html" class="">8. Git Reset (Soft, Mixed, Hard)</a><a href="/blog-git/09-git-revert-and-reflog.html" class="">9. Git Revert & Reflog Recovery</a><a href="/blog-git/10-git-log-and-history-formatting.html" class="">10. Git Log & History Formatting</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌿</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Branching & Merging</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/11-git-branch-basics.html" class="">11. Git Branch Basics</a><a href="/blog-git/12-branch-workflow.html" class="">12. Branch Workflows & Naming Conventions</a><a href="/blog-git/13-git-merging.html" class="">13. Merging Branches</a><a href="/blog-git/14-merge-conflicts.html" class="">14. Merge Conflicts Resolution</a><a href="/blog-git/15-fast-forward-vs-3way-merges.html" class="">15. Fast-Forward vs 3-Way Merges</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">GitHub & Remote Repositories</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/16-github-repository.html" class="">16. GitHub Repositories Setup</a><a href="/blog-git/17-connecting-local-and-remote.html" class="">17. Connecting Local & Remote Repositories</a><a href="/blog-git/18-git-push-and-pull.html" class="">18. Push & Pull Mechanics</a><a href="/blog-git/19-git-fetch-and-remote-tracking.html" class="">19. Fetch & Remote Tracking Branches</a><a href="/blog-git/20-upstream-remotes-and-syncing.html" class="">20. Upstream Remotes & Fork Syncing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Pull Requests & Collaboration</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/21-pull-requests.html" class="">21. Pull Requests & Code Reviews</a><a href="/blog-git/22-code-review.html" class="">22. Code Review Best Practices</a><a href="/blog-git/23-forks-and-contributions.html" class="">23. Forks & Open-Source Contributions</a><a href="/blog-git/24-github-issues.html" class="">24. GitHub Issues & Bug Tracking</a><a href="/blog-git/25-github-projects.html" class="">25. GitHub Projects & Kanban Boards</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Advanced Git Operations</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/26-releases-and-tags.html" class="">26. Releases & Git Tags</a><a href="/blog-git/27-git-rebase.html" class="">27. Git Rebase & Interactive Rebasing</a><a href="/blog-git/28-git-cherry-pick.html" class="">28. Git Cherry-Pick</a><a href="/blog-git/29-git-stash.html" class="">29. Git Stash & Stash Stack</a><a href="/blog-git/30-reflog-and-recovery.html" class="">30. Reflog & Commit Recovery</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Repository Management & Customization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/31-commit-best-practices.html" class="">31. Commit Best Practices & Conventions</a><a href="/blog-git/32-gitignore.html" class="">32. .gitignore & Pattern Matching</a><a href="/blog-git/33-git-hooks.html" class="">33. Git Hooks & Husky Automation</a><a href="/blog-git/34-git-submodules-and-subtrees.html" class="">34. Git Submodules & Subtrees</a><a href="/blog-git/35-git-attributes-and-lfs.html" class="">35. Git Attributes & LFS (Large File Storage)</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">GitHub Actions & CI/CD</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/36-github-actions-introduction.html" class="">36. GitHub Actions Workflows</a><a href="/blog-git/37-continuous-integration.html" class="">37. Continuous Integration with GitHub Actions</a><a href="/blog-git/38-deployment-with-actions.html" class="">38. Deployment Pipelines with Actions</a><a href="/blog-git/39-custom-github-actions.html" class="">39. Custom GitHub Actions</a><a href="/blog-git/40-matrix-builds-and-caching.html" class="">40. Matrix Builds & Dependency Caching</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Security & Authentication</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/41-repository-security.html" class="">41. Repository Security & Dependabot</a><a href="/blog-git/42-github-authentication.html" class="">42. GitHub Authentication (HTTPS, PAT & SSH)</a><a href="/blog-git/43-branch-protection.html" class="">43. Branch Protection Rules</a><a href="/blog-git/44-signed-commits-gpg-ssh.html" class="">44. Signed Commits with GPG & SSH</a><a href="/blog-git/45-codeowners-and-team-permissions.html" class="">45. CODEOWNERS & Team Permissions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Hosting, Workflows & Interview Prep</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/46-readme-documentation.html" class="">46. README & Technical Documentation</a><a href="/blog-git/47-github-pages.html" class="">47. Free Web Hosting with GitHub Pages</a><a href="/blog-git/48-team-collaboration.html" class="">48. Enterprise Team Collaboration</a><a href="/blog-git/49-professional-git-workflow.html" class="">49. Professional Git Workflows (Trunk-Based vs Git-Flow)</a><a href="/blog-git/50-git-interview-preparation.html" class="">50. Top 50 Git & GitHub Technical Interview Q&A</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-git.html">Git &amp; GitHub</a><span class="sep">›</span>
+      <span class="current">Git — Inspecting Changes with git diff</span>
+    </div>
+
+    <h1 class="page-title">Git — Inspecting Changes with git diff</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐙 Git 2.40+</span>
+      <span class="badge">🟢 Chapter 6 of 50</span>
+      <span class="badge">📂 Phase 02: Tracking, Differences & Inspection</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">git diff · Staged diff (--staged) · Working tree diff · Comparing commits & branches · Patch format</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Git — Inspecting Changes with git diff</strong> in our Git &amp; GitHub Complete Masterclass! Compare code differences between working tree, staging area, commit SHAs, and branch refs.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In modern software engineering, mastering <strong>Inspecting Changes with git diff</strong> is essential for managing version control history, collaborating on team repositories, and deploying code reliably. Git operates as a distributed system where every developer holds a full copy of the project database.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#f14e32;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master terminal CLI usage and configuration options for <strong>Inspecting Changes with git diff</strong></li>
+          <li>Understand internal Git repository mechanics (working tree, index staging, commit graph, refs)</li>
+          <li>Implement production-grade branching, pull requests, CI/CD actions, and security controls</li>
+          <li>Avoid merge conflict traps, accidental hard resets, secret leaks, and history rewriting mistakes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Inspecting Changes with git diff is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Understanding <strong>Inspecting Changes with git diff</strong> allows you to track code modifications safely, collaborate with open-source contributors globally, and automate testing and deployment pipelines without risking production code stability.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required project/command structure -->
+    <div class="section-title"><span class="num">4</span>Required Command Structure</div>
+    <div class="section-body">
+      <p>Target Command / Protocol: <code>git diff --staged</code>. Executed from terminal inside a Git-initialized workspace containing a hidden <code>.git</code> repository directory.</p>
+    </div>
+
+    <!-- 5. Syntax & mechanism -->
+    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
+    <div class="section-body">
+      <p>Mechanism: <code style="color:#f14e32;font-weight:700;">Git SHA-1 Object Database &amp; Ref Log</code>. Core Topic: <code>git diff</code>.</p>
+    </div>
+
+    <!-- 6. Basic example code -->
+    <div class="section-title"><span class="num">6</span>Basic Terminal Command Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Shell / Terminal</span></div>
+        <pre><code># Basic invocation for Inspecting Changes with git diff
+git diff --staged</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Execution output / terminal log -->
+    <div class="section-title"><span class="num">7</span>Execution Output &amp; Terminal Log</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Terminal Output</span></div>
+        <pre><code>$ git diff --staged
+[main d5e8f12] Inspecting Changes with git diff verified successfully.
+ 1 file changed, 12 insertions(+)
+ create mode 100644 06-viewing-changes-git-diff.html</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Internal flow & repository object model -->
+    <div class="section-title"><span class="num">8</span>Internal Repository Workflow &amp; Mechanics</div>
+    <div class="section-body">
+      <div class="diagram-box">Working Directory (files on disk) -> Staging Area (git add index) -> Local Repository (git commit .git/objects) -> Remote Repository (git push GitHub)</div>
+    </div>
+
+    <!-- 9. Practical production usage -->
+    <div class="section-title"><span class="num">9</span>Practical Production Workflow Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Production Workflow Command</span></div>
+        <pre><code># Step 1: Create feature branch
+git switch -c feature/update-6
+
+# Step 2: Stage modified files
+git add .
+
+# Step 3: Commit with Conventional Commit message
+git commit -m "feat(git): implement inspecting changes with git diff"
+
+# Step 4: Push to remote origin and track upstream
+git push -u origin feature/update-6</code></pre>
+      </div>
+    </div>
+
+    <!-- 10. Verification & status -->
+    <div class="section-title"><span class="num">10</span>Verification &amp; Status Check</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #f14e32;">
+        <strong style="color:#f14e32;">Verification Status: Inspecting Changes with git diff Validated</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Git stores data as DAG (Directed Acyclic Graph) commit objects linked to tree blobs. Your repository history is cryptographic and immutable.</p>
+      </div>
+    </div>
+
+    <!-- 11. Common mistakes -->
+    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Running <code>git reset --hard</code> without committing or stashing local work — wipes uncommitted edits permanently.</li>
+          <li>Force pushing (<code>git push --force</code>) onto shared public branches (<code>main</code>) — breaks team history. Use <code>--force-with-lease</code> instead.</li>
+          <li>Committing secrets, API keys, or heavy binary assets into version control instead of using <code>.gitignore</code> or <code>Git LFS</code>.</li>
+          <li>Writing vague commit messages like "updates" or "fixed stuff" instead of Conventional Commits format.</li>
+          <li>Forgetting to fetch remote changes before merging or rebasing feature branches.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 12. Coding challenge -->
+    <div class="section-title"><span class="num">12</span>Hands-On CLI Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#f14e32;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Open your local terminal inside a test folder. Execute <code>git diff --staged</code>, inspect the repository status with <code>git status</code>, and verify the commit log with <code>git log --oneline</code>!</p>
+      </div>
+    </div>
+
+    <!-- 13. Mini quiz -->
+    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary role of Inspecting Changes with git diff in Git?</h4>
+        <p><strong>Answer:</strong> It provides structured terminal commands for git diff, maintaining team repository integrity.</p>
+      </div>
+    </div>
+
+    <!-- 14. Quick recap -->
+    <div class="section-title"><span class="num">14</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Compare code differences between working tree, staging area, commit SHAs, and branch refs.</li>
+        <li>Git tracks repository snapshots across working tree, index staging area, and local .git commits.</li>
+        <li>Utilize conventional commits, feature branches, pull requests, and automated GitHub Actions workflows.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Git 2.40+ Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 15 & 16. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="05-git-commits.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">5. Commits & Commit Messages</span></a>
+      <a href="07-restoring-files.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">7. Restoring Files (git restore)</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

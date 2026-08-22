@@ -3,291 +3,1054 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ruby Programming Tutorial & Reference Guide | Our Compiler</title>
-  <meta name="description" content="Learn Ruby — Ruby Programming Tutorial & Reference Guide with clear explanations, custom blocks, object attributes, and interactive compiler executions." />
+  <title>Ruby Complete Roadmap — 47 Chapters, 15 Phases (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master Ruby programming from zero to production ready with our complete 47-chapter roadmap across 15 phases: Setup, Variables, Data Types, Operators, Conditions, Loops, Strings, Arrays, Hashes, Ranges, Symbols, Blocks, Iterators, Enumerable, Methods, Procs, OOP, Encapsulation, Inheritance, Modules, Exception Handling, File I/O, Regex, Gems, Testing, Debugging, Web Basics, Sinatra, Ruby on Rails (Routing, Controllers, Views, Active Record, Associations, Forms, APIs, Auth, Security, Active Job, Deployment), Projects, and Quiz." />
+  <meta name="keywords" content="ruby tutorial, learn ruby, ruby masterclass, ruby programming, ruby on rails, sinatra, active record, rspec, rubocop, gems, bundler, ruby oop, enumerable, procs lambdas" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-ruby.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-ruby/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('light-theme');
-        });
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
-          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          const updateText = () => {
-            const isLight = document.body.classList.contains('light-theme');
-            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-          };
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
           updateText();
           toggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             document.documentElement.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
             updateText();
           });
           topnav.appendChild(toggleBtn);
         }
-
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'ruby';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
-            });
-          }
-        });
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-ruby">
 
-<!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
   <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-php.html">PHP</a>
   <a href="/blog-go.html">Go</a>
   <a href="/blog-ruby.html" class="active">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/?lang=nodejs">Node.js</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">Ruby Tutorial</div>
-    <a href="/blog-ruby.html" class="active">Ruby HOME</a>
-    <a href="/blog-ruby/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-ruby/variables.html">2. Variables & Scope</a>
-    <a href="/blog-ruby/types-interpolation.html">3. Data Types & Interpolation</a>
-    <a href="/blog-ruby/conditionals.html">4. Conditionals (if, unless & case)</a>
-    <a href="/blog-ruby/loops.html">5. Loops & Iterators</a>
-    <a href="/blog-ruby/arrays.html">6. Arrays & Array Methods</a>
-    <a href="/blog-ruby/hashes.html">7. Hashes (Key-Value Mappings)</a>
-    <a href="/blog-ruby/methods.html">8. Methods & Implicit Returns</a>
-    <a href="/blog-ruby/blocks-lambdas.html">9. Blocks, Procs & Lambdas</a>
-    <a href="/blog-ruby/oop-basics.html">10. OOP: Classes & Objects</a>
-    <a href="/blog-ruby/oop-attributes.html">11. OOP: Attributes (attr_accessor)</a>
-    <a href="/blog-ruby/oop-inheritance.html">12. OOP: Inheritance & Super</a>
-    <a href="/blog-ruby/modules-mixins.html">13. Modules & Mixins</a>
-    <a href="/blog-ruby/exceptions.html">14. Exception Handling (begin-rescue)</a>
-    <a href="/blog-ruby/files.html">15. File I/O & Block Closures</a>
-
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=ruby">▶ Try Ruby Online</a>
-
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-csharp.html">C#</a>
-    <a href="/blog-go.html">Go</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-
+    <div class="sidebar-heading">Ruby Roadmap</div>
+    <a href="/blog-ruby.html" class="sidebar-home-link active">💎 Ruby Course HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💎</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Ruby Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/01-ruby-ante-enti-what-is-ruby.html" class="">1. What is Ruby?</a><a href="/blog-ruby/02-ruby-prerequisites.html" class="">2. Ruby Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First Program</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/03-ruby-installation.html" class="">3. Ruby Installation</a><a href="/blog-ruby/04-first-ruby-program.html" class="">4. Your First Ruby Program</a><a href="/blog-ruby/05-rubygems-and-bundler.html" class="">5. RubyGems & Bundler</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔢</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Variables and Data Types</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/06-variables.html" class="">6. Variables & Constants</a><a href="/blog-ruby/07-basic-data-types.html" class="">7. Data Types</a><a href="/blog-ruby/08-type-conversion.html" class="">8. Type Conversion</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Operators and Control Flow</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/09-operators.html" class="">9. Operators</a><a href="/blog-ruby/10-conditions.html" class="">10. Conditions</a><a href="/blog-ruby/11-loops.html" class="">11. Loops</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Strings, Arrays and Hashes</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/12-strings.html" class="">12. Strings</a><a href="/blog-ruby/13-arrays.html" class="">13. Arrays</a><a href="/blog-ruby/14-hashes.html" class="">14. Hashes</a><a href="/blog-ruby/15-ranges-and-symbols.html" class="">15. Ranges & Symbols</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Blocks, Iterators and Enumerable</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/16-blocks.html" class="">16. Blocks</a><a href="/blog-ruby/17-iterators.html" class="">17. Iterators</a><a href="/blog-ruby/18-enumerable.html" class="">18. Enumerable</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Functions and Methods</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/19-methods.html" class="">19. Methods</a><a href="/blog-ruby/20-procs-and-lambdas.html" class="">20. Procs & Lambdas</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Object-Oriented Ruby</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/21-classes-and-objects.html" class="">21. Classes & Objects</a><a href="/blog-ruby/22-attributes-and-encapsulation.html" class="">22. Attributes & Encapsulation</a><a href="/blog-ruby/23-inheritance-and-polymorphism.html" class="">23. Inheritance & Polymorphism</a><a href="/blog-ruby/24-modules-and-mixins.html" class="">24. Modules & Mixins</a><a href="/blog-ruby/25-class-methods-and-metaprogramming.html" class="">25. Metaprogramming</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Exceptions, Files & Regex</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/26-exception-handling.html" class="">26. Exceptions</a><a href="/blog-ruby/27-file-handling.html" class="">27. File Handling</a><a href="/blog-ruby/28-regular-expressions.html" class="">28. Regular Expressions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Packages, Testing and Debugging</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/29-ruby-modules-and-packages.html" class="">29. Packages & Gems</a><a href="/blog-ruby/30-ruby-testing.html" class="">30. Testing</a><a href="/blog-ruby/31-debugging.html" class="">31. Debugging</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Web Development Basics & Sinatra</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/32-web-basics.html" class="">32. Web Basics</a><a href="/blog-ruby/33-sinatra-basics.html" class="">33. Sinatra Basics</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Ruby on Rails Core</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">6 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/34-ruby-on-rails.html" class="">34. Ruby on Rails</a><a href="/blog-ruby/35-rails-routing.html" class="">35. Rails Routing</a><a href="/blog-ruby/36-rails-controllers.html" class="">36. Rails Controllers</a><a href="/blog-ruby/37-rails-views.html" class="">37. Rails Views</a><a href="/blog-ruby/38-active-record.html" class="">38. Active Record</a><a href="/blog-ruby/39-rails-associations.html" class="">39. Rails Associations</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Rails Forms, APIs and Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/40-rails-forms-and-validation.html" class="">40. Rails Forms & Validation</a><a href="/blog-ruby/41-rails-apis.html" class="">41. Rails APIs</a><a href="/blog-ruby/42-authentication-and-security.html" class="">42. Authentication & Security</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Background Jobs, Testing and Deployment</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/43-background-jobs.html" class="">43. Background Jobs</a><a href="/blog-ruby/44-testing-rails-apps.html" class="">44. Testing Rails Apps</a><a href="/blog-ruby/45-deployment.html" class="">45. Deployment</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Projects & Certification</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-ruby/46-ruby-projects.html" class="">46. Ruby Projects</a><a href="/blog-ruby/47-ruby-quiz.html" class="">47. Ruby Quiz</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/online-python-compiler.html" style="color:#10b981;font-weight:700;">▶ Run Code in IDE</a>
+    <a href="/blog.html">📚 All Tutorials</a>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-ruby.html">Ruby</a><span>›</span>
-      <span>Lesson Index</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">Ruby Complete Roadmap</span>
     </div>
-    
-    
-<h1 class="page-title">Ruby Programming Tutorial</h1>
-<div class="page-meta">
-  <span class="badge">💎 Ruby</span>
-  <span class="badge">🟢 Beginner Friendly</span>
-  <span class="badge">📅 July 2026</span>
-</div>
 
-<div class="intro-box">
-  <p>Ruby is a purely object-oriented, dynamically-typed interpreted scripting language created by Yukihiro "Matz" Matsumoto. Focused on user-friendly execution and developer happiness, Ruby combines extreme readability with powerful constructs. In this comprehensive guide, you will master Ruby variable scope levels, string interpolation, symbol structures, unless checks,times loop iterators, dynamic arrays, hash symbols shortcuts, implicit return methods, yield block closures, object attribute accessors, mixin multiple inheritance modules, begin-rescue exception handlers, and auto-disposable file structures.</p>
-</div>
+    <h1 class="page-title">Ruby Complete Masterclass (47 Chapters, 15 Phases)</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-  <p>Choose a topic from the left sidebar or click a lesson below to start learning Ruby:</p>
-  <table class="tbl" style="margin-top: 15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    
-      <tr>
-        <td><strong>Lesson 1</strong></td>
-        <td><strong><a href="/blog-ruby/intro.html">Welcome & Hello World</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 2</strong></td>
-        <td><strong><a href="/blog-ruby/variables.html">Variables & Scope</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 3</strong></td>
-        <td><strong><a href="/blog-ruby/types-interpolation.html">Data Types & Interpolation</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 4</strong></td>
-        <td><strong><a href="/blog-ruby/conditionals.html">Conditionals (if, unless & case)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 5</strong></td>
-        <td><strong><a href="/blog-ruby/loops.html">Loops & Iterators</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 6</strong></td>
-        <td><strong><a href="/blog-ruby/arrays.html">Arrays & Array Methods</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 7</strong></td>
-        <td><strong><a href="/blog-ruby/hashes.html">Hashes (Key-Value Mappings)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 8</strong></td>
-        <td><strong><a href="/blog-ruby/methods.html">Methods & Implicit Returns</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 9</strong></td>
-        <td><strong><a href="/blog-ruby/blocks-lambdas.html">Blocks, Procs & Lambdas</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 10</strong></td>
-        <td><strong><a href="/blog-ruby/oop-basics.html">OOP: Classes & Objects</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 11</strong></td>
-        <td><strong><a href="/blog-ruby/oop-attributes.html">OOP: Attributes (attr_accessor)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 12</strong></td>
-        <td><strong><a href="/blog-ruby/oop-inheritance.html">OOP: Inheritance & Super</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 13</strong></td>
-        <td><strong><a href="/blog-ruby/modules-mixins.html">Modules & Mixins</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 14</strong></td>
-        <td><strong><a href="/blog-ruby/exceptions.html">Exception Handling (begin-rescue)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 15</strong></td>
-        <td><strong><a href="/blog-ruby/files.html">File I/O & Block Closures</a></strong></td>
-      </tr>
-    
-  </table>
-</div>
+    <div class="page-meta">
+      <span class="badge">💎 Ruby 3.2+</span>
+      <span class="badge">🟢 47 Complete Chapters</span>
+      <span class="badge">📂 15 Complete Phases</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
 
-    
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">What is Ruby? · Prerequisites · Installation &amp; Bundler · First Program · Variables &amp; Types · Operators &amp; Conditions · Loops · Strings, Arrays &amp; Hashes · Ranges &amp; Symbols · Blocks, Iterators &amp; Enumerable · Methods, Procs &amp; Lambdas · Classes, Attributes, Inheritance &amp; Modules · Metaprogramming · Exceptions, File I/O &amp; Regex · Packages &amp; Testing · Debugging · Web Basics &amp; Sinatra · Ruby on Rails (Routes, Controllers, Views, Active Record, Associations, Forms, APIs, Security, Active Job, Deployment) · Projects &amp; Quiz</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's Ruby Complete Master Course</strong>. Ruby is a dynamic, elegant, object-oriented language created by Yukihiro "Matz" Matsumoto, famous for human-readable code and developer happiness. This comprehensive 47-chapter bootcamp guides you from zero programming experience to building object-oriented CLI tools, metaprogramming scripts, Sinatra services, and full-stack Ruby on Rails web applications.</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(20,24,32,0.6));border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:24px;margin:28px 0;">
+      <h3 style="color:#10b981;margin-bottom:10px;font-size:18px;">🎯 Ready to Start Learning Ruby?</h3>
+      <p style="color:var(--text2);margin-bottom:16px;font-size:14.5px;">Choose where to start: explore Ruby introduction, methods &amp; Procs, OOP classes, Sinatra, Active Record, or Ruby on Rails deployment:</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/blog-ruby/01-ruby-ante-enti-what-is-ruby.html" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 1: Ruby Intro →</a>
+        <a href="/blog-ruby/19-methods.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 7: Methods &amp; Procs →</a>
+        <a href="/blog-ruby/21-classes-and-objects.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 8: OOP Ruby →</a>
+        <a href="/blog-ruby/33-sinatra-basics.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 11: Sinatra Basics →</a>
+        <a href="/blog-ruby/34-ruby-on-rails.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 12: Ruby on Rails →</a>
+        <a href="/blog-ruby/47-ruby-quiz.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 15: Projects &amp; Quiz →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">💎</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 01</div>
+                <h3 class="phase-roadmap-title">Ruby Introduction</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/01-ruby-ante-enti-what-is-ruby.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">01</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">1. What is Ruby?</span>
+                    <span class="lesson-subtopics">Ruby ante enti? · Ruby enduku create chesaru? · Ruby features · Ruby vs Python · Ruby vs PHP · Ruby vs JavaScript · Ruby use cases (Web, Scripting, Automation, CLI) · Ruby on Rails overview · Strengths & Limitations</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/02-ruby-prerequisites.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">02</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">2. Ruby Prerequisites</span>
+                    <span class="lesson-subtopics">Programming basics · Variables · Functions · Conditions · Loops · Arrays · Hashes · OOP basics · HTTP basics · SQL basics · HTML & CSS · Git basics · Command-line basics</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 02</div>
+                <h3 class="phase-roadmap-title">Setup and First Program</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/03-ruby-installation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">03</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">3. Ruby Installation</span>
+                    <span class="lesson-subtopics">Ruby installation on Windows, macOS, Linux · Checking Ruby version (ruby --version) · gem --version · RubyInstaller · rbenv · RVM · Ruby version managers · IRB · VS Code setup & extensions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/04-first-ruby-program.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">04</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">4. Your First Ruby Program</span>
+                    <span class="lesson-subtopics">.rb files · puts vs print vs p · Comments (#) · Running Ruby file (ruby script.rb) · Ruby IRB console · Expressions · Statements · Code formatting · Syntax errors</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/05-rubygems-and-bundler.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">05</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">5. RubyGems & Bundler</span>
+                    <span class="lesson-subtopics">Gem ante enti? · RubyGems · gem install · Gemfile · Bundler · bundle install · Gemfile.lock · Dependency versioning · Gem security</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔢</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 03</div>
+                <h3 class="phase-roadmap-title">Variables and Data Types</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/06-variables.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">06</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">6. Variables & Constants</span>
+                    <span class="lesson-subtopics">Local variables (name) · Instance variables (@name) · Class variables (@@name) · Global variables ($name) · Constants (NAME) · Variable naming rules · Parallel assignment · Destructuring</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/07-basic-data-types.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">07</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">7. Data Types</span>
+                    <span class="lesson-subtopics">Integer · Float · Rational · Complex · String · Symbol (:symbol) · TrueClass · FalseClass · NilClass · Array · Hash · Range · Object · .class · nil? · is_a?</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/08-type-conversion.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">08</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">8. Type Conversion</span>
+                    <span class="lesson-subtopics">to_i · to_f · to_s · to_sym · String to integer · String to float · Symbol to string · Safe conversion · Parsing user input (gets.chomp) · Conversion errors</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 04</div>
+                <h3 class="phase-roadmap-title">Operators and Control Flow</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/09-operators.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">09</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">9. Operators</span>
+                    <span class="lesson-subtopics">Arithmetic operators · Assignment operators · Comparison (==, ===, <=>) · Logical (&&, ||, !) · Range operators (.., ...) · Ternary operator (?:) · Safe navigation (&.) · Nil coalescing (||=) · Spaceship operator (<=>) · Operator precedence · Custom operator methods</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/10-conditions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">10</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">10. Conditions</span>
+                    <span class="lesson-subtopics">if · unless · else · elsif · Nested conditions · Modifier if · Modifier unless · Ternary expression · case · when · then · Pattern matching · Truthy and falsy values (only false & nil are falsy!) · Guard clauses</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/11-loops.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">11</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">11. Loops</span>
+                    <span class="lesson-subtopics">while · until · for · loop · break · next · redo · retry · Nested loops · Loop modifiers · Ranges with loops · Prefer iterators overview · Practice: Even/Odd, Factorial, Prime, Fibonacci, Number guessing game, Multiplication table, Star patterns</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📦</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 05</div>
+                <h3 class="phase-roadmap-title">Strings, Arrays and Hashes</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/12-strings.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">12</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">12. Strings</span>
+                    <span class="lesson-subtopics">Single-quoted strings · Double-quoted strings · String interpolation · String concatenation · String length (length) · upcase · downcase · strip · include? · start_with? · end_with? · gsub · sub · split · join · slice · capitalize · Multiline strings · Heredoc · Encoding</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/13-arrays.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">13</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">13. Arrays</span>
+                    <span class="lesson-subtopics">Creating arrays · Array indexes · Reading values · Updating values · Adding values · push · << · pop · shift · unshift · slice · first · last · length · Nested arrays · Array destructuring · Array comparison · Array sorting</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/14-hashes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">14</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">14. Hashes</span>
+                    <span class="lesson-subtopics">Hash ante enti? · Key-value pairs · Symbol keys · String keys · Reading values · Updating values · Deleting values · keys · values · fetch · dig · Nested hashes · Hash iteration · Hash defaults · Hash transformation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/15-ranges-and-symbols.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">15</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">15. Ranges & Symbols</span>
+                    <span class="lesson-subtopics">Inclusive ranges (1..5) · Exclusive ranges (1...5) · Range iteration · Range to array (to_a) · Symbol ante enti? · Symbols vs strings · Symbol keys · Symbol memory behavior · Symbols in APIs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 06</div>
+                <h3 class="phase-roadmap-title">Blocks, Iterators and Enumerable</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/16-blocks.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">16</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">16. Blocks</span>
+                    <span class="lesson-subtopics">Block ante enti? · do...end · Curly brace blocks ({ ... }) · Block parameters · Yield · block_given? · Passing blocks · Block scope · Blocks with arrays · Blocks with methods</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/17-iterators.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">17</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">17. Iterators</span>
+                    <span class="lesson-subtopics">each · each_with_index · times · upto · downto · step · while_each patterns · Nested iteration · Iteration best practices · Enumerator overview</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/18-enumerable.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">18</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">18. Enumerable</span>
+                    <span class="lesson-subtopics">map · select · reject · find · find_all · any? · all? · none? · count · sum · reduce · inject · sort_by · group_by · partition · flat_map · Lazy enumerators</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 07</div>
+                <h3 class="phase-roadmap-title">Functions and Methods</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/19-methods.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">19</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">19. Methods</span>
+                    <span class="lesson-subtopics">Method definition · Method call · Parameters · Arguments · Return values · Implicit return · Explicit return · Default arguments · Keyword arguments · Splat operator (*args) · Double splat (**kwargs) · Method visibility · Predicate methods (valid?) · Bang methods (sort!)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/20-procs-and-lambdas.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">20</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">20. Procs & Lambdas</span>
+                    <span class="lesson-subtopics">Proc ante enti? · Lambda ante enti? · Creating a Proc · Creating a lambda · Calling Proc (.call) · Calling lambda · Proc vs lambda · Passing callable objects · Closures · Method references (&:method) · &block</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏛️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 08</div>
+                <h3 class="phase-roadmap-title">Object-Oriented Ruby</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/21-classes-and-objects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">21</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">21. Classes & Objects</span>
+                    <span class="lesson-subtopics">Class ante enti? · Object ante enti? · class · new · initialize · Instance variables (@var) · Instance methods · Object state · Object identity · inspect · to_s · Object lifecycle</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/22-attributes-and-encapsulation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">22</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">22. Attributes & Encapsulation</span>
+                    <span class="lesson-subtopics">attr_reader · attr_writer · attr_accessor · Private methods · Protected methods · Public methods · Getters · Setters · Read-only properties · Validation inside setters · Immutable objects</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/23-inheritance-and-polymorphism.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">23</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">23. Inheritance & Polymorphism</span>
+                    <span class="lesson-subtopics">Inheritance · < syntax · Parent class · Child class · super · Method overriding · is_a? · kind_of? · Duck typing · Composition vs inheritance · Abstract behavior · Polymorphism</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/24-modules-and-mixins.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">24</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">24. Modules & Mixins</span>
+                    <span class="lesson-subtopics">Module ante enti? · module · include · extend · prepend · Instance methods in modules · Class methods in modules · Mixins · Namespaces · Module constants · Reusable behavior</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/25-class-methods-and-metaprogramming.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">25</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">25. Metaprogramming</span>
+                    <span class="lesson-subtopics">Class methods (self.method) · Singleton methods · self · Class variables (@@var) · Class instance variables · define_method · send · respond_to? · method_missing · Metaprogramming risks</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🛡️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 09</div>
+                <h3 class="phase-roadmap-title">Exceptions, Files & Regex</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/26-exception-handling.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">26</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">26. Exceptions</span>
+                    <span class="lesson-subtopics">Exception ante enti? · begin · rescue · else · ensure · raise · Standard exceptions · Custom exceptions · Multiple rescue blocks · Exception messages · Exception logging · Retry patterns</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/27-file-handling.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">27</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">27. File Handling</span>
+                    <span class="lesson-subtopics">Opening files · Reading files · Writing files · Appending files · File.read · File.write · File.open · File.foreach · File modes · Directories · File paths · Pathname · Resource cleanup</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/28-regular-expressions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">28</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">28. Regular Expressions</span>
+                    <span class="lesson-subtopics">Regex ante enti? · Regex literals (/.../) · match · =~ · scan · gsub · Character classes · Quantifiers · Groups · Anchors · Validation (Email, Phone, Password)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🧪</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 10</div>
+                <h3 class="phase-roadmap-title">Packages, Testing and Debugging</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/29-ruby-modules-and-packages.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">29</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">29. Packages & Gems</span>
+                    <span class="lesson-subtopics">Project modules · require · require_relative · Load paths · Finding & installing gems · Gemfile · Bundler · Lock files · Creating & publishing gems</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/30-ruby-testing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">30</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">30. Testing</span>
+                    <span class="lesson-subtopics">Testing ante enti? · Minitest · RSpec · Test files · Assertions · Test setup · Test teardown · Unit tests · Integration tests · Mocking · Stubbing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/31-debugging.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">31</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">31. Debugging</span>
+                    <span class="lesson-subtopics">puts debugging · p · debug gem · Breakpoints · Stack traces · Ruby warnings · Logging · Performance profiling · Memory profiling</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🌐</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 11</div>
+                <h3 class="phase-roadmap-title">Web Development Basics & Sinatra</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/32-web-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">32</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">32. Web Basics</span>
+                    <span class="lesson-subtopics">HTTP request · HTTP response · Routing · Controllers · Views · Templates · Forms · Sessions · Cookies · JSON APIs · Middleware · Web security</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/33-sinatra-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">33</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">33. Sinatra Basics</span>
+                    <span class="lesson-subtopics">Sinatra ante enti? · Creating a Sinatra app · Routes · Parameters · Views · JSON responses · Forms · Sessions · Middleware · Database integration · Sinatra project · Deploying Sinatra</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 12</div>
+                <h3 class="phase-roadmap-title">Ruby on Rails Core</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">6 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/34-ruby-on-rails.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">34</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">34. Ruby on Rails</span>
+                    <span class="lesson-subtopics">Rails ante enti? · Ruby vs Rails · MVC architecture · Rails conventions · Rails project creation · Rails folder structure · Rails server · Rails console · Rails routes · Request lifecycle</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/35-rails-routing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">35</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">35. Rails Routing</span>
+                    <span class="lesson-subtopics">Routes file (config/routes.rb) · get · post · put · patch · delete · Named routes · Route parameters · Resource routes · Nested resources · rails routes</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/36-rails-controllers.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">36</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">36. Rails Controllers</span>
+                    <span class="lesson-subtopics">Controllers · Actions · Parameters · Strong parameters · Rendering views · Redirecting · Flash messages · Before actions · After actions · JSON responses</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/37-rails-views.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">37</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">37. Rails Views</span>
+                    <span class="lesson-subtopics">ERB templates · Output tags (<%= %>) · Escaped output · Layouts · Partials · Helpers · Form helpers · Conditional rendering · Loops · Asset integration</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/38-active-record.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">38</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">38. Active Record</span>
+                    <span class="lesson-subtopics">Active Record ante enti? · Models · Migrations · Schema · Create/Read/Update/Delete · Validations · Callbacks · Scopes · Query methods · Transactions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/39-rails-associations.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">39</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">39. Rails Associations</span>
+                    <span class="lesson-subtopics">belongs_to · has_one · has_many · has_many :through · has_one :through · Polymorphic associations · Dependent destroy · Eager loading · N+1 queries</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔒</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 13</div>
+                <h3 class="phase-roadmap-title">Rails Forms, APIs and Security</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/40-rails-forms-and-validation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">40</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">40. Rails Forms & Validation</span>
+                    <span class="lesson-subtopics">Form builders · form_with · Input fields · Select fields · Model validations (Presence, Format, Length, Uniqueness) · Custom validators · Validation messages</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/41-rails-apis.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">41</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">41. Rails APIs</span>
+                    <span class="lesson-subtopics">API-only Rails app · JSON controllers · Serializers · Request parsing · Response formatting · API versioning · Pagination · Filtering · Authentication · CORS</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/42-authentication-and-security.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">42</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">42. Authentication & Security</span>
+                    <span class="lesson-subtopics">User registration · Login · Logout · Password hashing · Sessions · Cookies · CSRF protection · Role-based authorization · Policy objects · XSS · SQL injection · HTTPS</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🛠️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 14</div>
+                <h3 class="phase-roadmap-title">Background Jobs, Testing and Deployment</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/43-background-jobs.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">43</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">43. Background Jobs</span>
+                    <span class="lesson-subtopics">Background job ante enti? · Active Job · Queue adapters · Sidekiq overview · Redis · Email jobs · Report generation · Scheduled jobs · Idempotent jobs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/44-testing-rails-apps.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">44</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">44. Testing Rails Apps</span>
+                    <span class="lesson-subtopics">Model tests · Controller tests · Request tests · System tests · Fixtures · Factories · RSpec Rails · Integration tests · Database tests · Mailer tests</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/45-deployment.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">45</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">45. Deployment</span>
+                    <span class="lesson-subtopics">Production configuration · Environment variables · Asset building · Database migrations · Puma server · Reverse proxy · Docker · Background workers · Scaling</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏆</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 15</div>
+                <h3 class="phase-roadmap-title">Projects & Certification</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-ruby/46-ruby-projects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">46</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">46. Ruby Projects</span>
+                    <span class="lesson-subtopics">Building a complete Command-Line / Web CRUD application in Ruby with SQLite database, gems, and OOP architecture</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-ruby/47-ruby-quiz.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">47</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">47. Ruby Quiz</span>
+                    <span class="lesson-subtopics">Comprehensive Ruby Knowledge Check · 30 Multiple Choice Certification Exam Questions · Syntax, OOP, Blocks, Enumerable, Rails & Gems</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Ruby Complete Masterclass · 47 Chapters · 15 Phases · 2026 Edition</span>
+      </div>
+    </div>
+
     <div class="nav-footer">
-      <a href="/blog-ruby.html" class="nav-btn">
-        <span class="label">← Ruby Overview</span>
-        <span class="title">Course Index</span>
-      </a>
-      <a href="/blog-ruby/intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">Welcome & Hello World</span>
-      </a>
+      <a href="/blog.html" class="nav-btn"><span class="label">← All Tutorials</span><span class="title">Course Hub</span></a>
+      <a href="/blog-ruby/01-ruby-ante-enti-what-is-ruby.html" class="nav-btn" style="text-align:right;"><span class="label">Start Learning →</span><span class="title">1. What is Ruby?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

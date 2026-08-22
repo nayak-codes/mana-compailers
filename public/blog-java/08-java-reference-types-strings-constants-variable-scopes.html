@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java — Reference Types, Strings, Constants & Variable Scopes | Our Compiler</title>
+  <meta name="description" content="Complete Java Chapter 8: Reference Types, Strings, Constants & Variable Scopes. Learn Primitive vs Reference Types · String Immutability & Pool · final Constants · Variable Scopes: Local, Instance & Static with practical Java code examples, JVM architecture, Object-Oriented patterns, and step-by-step walkthroughs." />
+  <meta name="keywords" content="java tutorial, learn java, reference types, strings, constants & variable scopes, java oop, java programming" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/08-java-reference-types-strings-constants-variable-scopes.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_java', rawCode);
+              window.location.href = '/online-java-compiler.html';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-java">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-java.html" class="active">Java</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Java Tutorial</div>
+    <a href="/blog-java.html" class="sidebar-home-link">☕ Java HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Java Basics & JVM</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/01-java-java-introduction-features-jvm-architecture.html" class="">1. Introduction, Features & JVM Architecture</a><a href="/blog-java/02-java-java-installation-ides-first-hello-world-program.html" class="">2. Installation, IDEs & First Hello World Program</a><a href="/blog-java/03-java-how-java-compiles-runs-source-file-structure.html" class="">3. How Java Compiles & Runs & Source File Structure</a><a href="/blog-java/04-java-java-comments-industry-naming-conventions.html" class="">4. Comments & Industry Naming Conventions</a><a href="/blog-java/05-java-java-error-types-stack-traces-debugging.html" class="">5. Error Types, Stack Traces & Debugging</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Variables & Data Types</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/06-java-java-variables-declaration-memory-allocation.html" class="">6. Variables, Declaration & Memory Allocation</a><a href="/blog-java/07-java-java-8-primitive-data-types-literals.html" class="">7. 8 Primitive Data Types & Literals</a><a href="/blog-java/08-java-reference-types-strings-constants-variable-scopes.html" class="active">8. Reference Types, Strings, Constants & Variable Scopes</a><a href="/blog-java/09-java-java-type-casting-widening-narrowing-var-keyword.html" class="">9. Type Casting (Widening/Narrowing) & var Keyword</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⌨️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Operators & User Input</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/10-java-java-arithmetic-assignment-relational-operators.html" class="">10. Arithmetic, Assignment & Relational Operators</a><a href="/blog-java/11-java-logical-bitwise-unary-ternary-operators.html" class="">11. Logical, Bitwise, Unary & Ternary Operators</a><a href="/blog-java/12-java-java-user-input-with-scanner-newline-trap.html" class="">12. User Input with Scanner & Newline Trap</a><a href="/blog-java/13-java-formatted-output-with-printf-math-utilities.html" class="">13. Formatted Output with printf() & Math Utilities</a><a href="/blog-java/14-java-java-basics-user-input-capstone-projects.html" class="">14. Basics & User Input Capstone Projects</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Conditions & Branching</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/15-java-java-conditional-statements-if-if-else-else-if-nested-if.html" class="">15. Conditional Statements: if, if-else, else-if & Nested if</a><a href="/blog-java/16-java-ternary-expressions-string-comparisons-equals-vs.html" class="">16. Ternary Expressions & String Comparisons (.equals vs ==)</a><a href="/blog-java/17-java-java-traditional-switch-statement-string-switching.html" class="">17. Traditional switch Statement & String Switching</a><a href="/blog-java/18-java-modern-java-switch-expressions-java-14-condition-pitfalls.html" class="">18. Modern Java Switch Expressions (Java 14+) & Condition Pitfalls</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Loops & Control Flow</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/19-java-java-for-loop-core-loop-mechanics.html" class="">19. for Loop & Core Loop Mechanics</a><a href="/blog-java/20-java-java-while-do-while-loops-number-digit-algorithms.html" class="">20. while & do-while Loops: Number & Digit Algorithms</a><a href="/blog-java/21-java-jump-statements-break-continue-enhanced-for-loop.html" class="">21. Jump Statements (break & continue) & Enhanced for Loop</a><a href="/blog-java/22-java-java-nested-loops-star-number-pattern-masterclass.html" class="">22. Nested Loops & Star/Number Pattern Masterclass</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔤</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Strings & StringBuilder</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/23-java-java-string-fundamentals-string-constant-pool-scp.html" class="">23. String Fundamentals & String Constant Pool (SCP)</a><a href="/blog-java/24-java-java-string-methods-search-extraction-transformation.html" class="">24. String Methods: Search, Extraction & Transformation</a><a href="/blog-java/25-java-java-string-comparison-vs-equals-compareto-hashing.html" class="">25. String Comparison: == vs equals(), compareTo() & Hashing</a><a href="/blog-java/26-java-java-stringbuilder-stringbuffer-string-formatting-masterclass.html" class="">26. StringBuilder, StringBuffer & String Formatting Masterclass</a><a href="/blog-java/27-java-java-strings-capstone-projects-5-production-grade-systems.html" class="">27. Strings Capstone Projects: 5 Production-Grade Systems</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Arrays & Matrices</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/28-java-java-array-fundamentals-memory-architecture-traversal.html" class="">28. Array Fundamentals, Memory Architecture & Traversal</a><a href="/blog-java/29-java-java-array-algorithms-sum-average-min-max-searching.html" class="">29. Array Algorithms: Sum, Average, Min/Max & Searching</a><a href="/blog-java/30-java-java-array-sorting-copying-java-util-arrays-masterclass.html" class="">30. Array Sorting, Copying & java.util.Arrays Masterclass</a><a href="/blog-java/31-java-java-multidimensional-jagged-arrays-masterclass.html" class="">31. Multidimensional & Jagged Arrays Masterclass</a><a href="/blog-java/32-java-java-arrays-capstone-projects-7-production-grade-systems-limitations.html" class="">32. Arrays Capstone Projects: 7 Production-Grade Systems & Limitations</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Methods & Recursion</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/33-java-java-method-fundamentals-anatomy-call-stack-execution.html" class="">33. Method Fundamentals, Anatomy & Call Stack Execution</a><a href="/blog-java/34-java-java-pass-by-value-mechanics-variable-scope-deep-dive.html" class="">34. Pass-by-Value Mechanics & Variable Scope Deep Dive</a><a href="/blog-java/35-java-java-method-overloading-type-promotion-static-vs-instance-methods.html" class="">35. Method Overloading, Type Promotion & Static vs Instance Methods</a><a href="/blog-java/36-java-java-recursion-call-stack-lifecycle-masterclass.html" class="">36. Recursion & Call Stack Lifecycle Masterclass</a><a href="/blog-java/37-java-java-methods-capstone-projects-4-production-grade-modular-systems.html" class="">37. Methods Capstone Projects: 4 Production-Grade Modular Systems</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Classes & Objects (OOP)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/38-java-java-class-object-fundamentals-blueprint-vs-instance.html" class="">38. Class & Object Fundamentals: Blueprint vs Instance</a><a href="/blog-java/39-java-java-constructors-this-keyword-constructor-overloading.html" class="">39. Constructors, this Keyword & Constructor Overloading</a><a href="/blog-java/40-java-java-static-members-nested-classes-enums-masterclass.html" class="">40. Static Members, Nested Classes & Enums Masterclass</a><a href="/blog-java/41-java-java-tostring-encapsulation-getters-setters-object-best-practices.html" class="">41. toString(), Encapsulation, Getters/Setters & Object Best Practices</a><a href="/blog-java/42-java-java-oop-capstone-projects-4-production-grade-class-systems.html" class="">42. OOP Capstone Projects: 4 Production-Grade Class Systems</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Encapsulation & Access</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/43-java-java-access-modifiers-public-private-protected-default-explained.html" class="">43. Access Modifiers: public, private, protected & Default Explained</a><a href="/blog-java/44-java-java-getters-setters-data-validation-controlled-access.html" class="">44. Getters, Setters, Data Validation & Controlled Access</a><a href="/blog-java/45-java-java-immutable-objects-final-keyword-thread-safety.html" class="">45. Immutable Objects, final Keyword & Thread Safety</a><a href="/blog-java/46-java-java-good-class-design-packages-access-control-solid-principles.html" class="">46. Good Class Design: Packages, Access Control & SOLID Principles</a><a href="/blog-java/47-java-java-encapsulation-capstone-4-production-grade-secure-systems.html" class="">47. Encapsulation Capstone: 4 Production-Grade Secure Systems</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Inheritance & Polymorphism</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/48-java-inheritance-and-super-keyword.html" class="">48. Inheritance & super Keyword</a><a href="/blog-java/49-java-polymorphism-and-type-casting.html" class="">49. Polymorphism & Type Casting</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Abstraction & Interfaces</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/50-java-abstract-classes-and-methods.html" class="">50. Abstract Classes & Methods</a><a href="/blog-java/51-java-interfaces-and-multiple-inheritance.html" class="">51. Interfaces & Multiple Inheritance</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Packages & Enums</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/52-java-packages-and-import-statements.html" class="">52. Packages & Import Statements</a><a href="/blog-java/53-java-enums-and-custom-enum-fields.html" class="">53. Enums & Custom Enum Fields</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Exception Handling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/54-java-exception-handling-fundamentals.html" class="">54. Exception Handling Fundamentals</a><a href="/blog-java/55-java-custom-exceptions-and-throws.html" class="">55. Custom Exceptions & throws Clause</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Collections Framework</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/56-java-collections-list-arraylist-linkedlist.html" class="">56. List Interface: ArrayList & LinkedList</a><a href="/blog-java/57-java-collections-set-hashset-treeset.html" class="">57. Set Interface: HashSet & TreeSet</a><a href="/blog-java/58-java-collections-map-hashmap-treemap.html" class="">58. Map Interface: HashMap & TreeMap</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏷️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Generics & Type Safety</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/59-java-generics-classes-and-methods.html" class="">59. Generics: Classes & Methods</a><a href="/blog-java/60-java-generics-wildcards-and-type-erasure.html" class="">60. Wildcards & Type Erasure Mechanics</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎁</span>
+          <div class="phase-info"><span class="phase-tag">Phase 17</span><span class="phase-title">Wrapper Classes & Autoboxing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/61-java-wrapper-classes-and-autoboxing.html" class="">61. Wrapper Classes & Autoboxing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 18</span><span class="phase-title">Lambda Expressions & Functional Interfaces</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/62-java-lambda-expressions-and-functional-interfaces.html" class="">62. Lambda Expressions & Functional Interfaces</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 19</span><span class="phase-title">Stream API & Pipelines</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/63-java-stream-api-and-functional-pipelines.html" class="">63. Stream API & Functional Pipelines</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 20</span><span class="phase-title">Enterprise Java, Concurrency & Spring Boot</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">7 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-java/64-java-date-and-time-api-javatime.html" class="">64. Modern Java Date & Time API (java.time)</a><a href="/blog-java/65-java-file-handling-and-nio2.html" class="">65. File Handling & NIO.2</a><a href="/blog-java/66-java-multithreading-and-concurrency.html" class="">66. Multithreading & Concurrency</a><a href="/blog-java/67-java-jdbc-database-connectivity.html" class="">67. JDBC Database Connectivity</a><a href="/blog-java/68-java-maven-and-junit5-testing.html" class="">68. Maven Build Tool & JUnit 5 Testing</a><a href="/blog-java/69-java-spring-boot-and-rest-controllers.html" class="">69. Spring Boot & REST Controllers</a><a href="/blog-java/70-java-capstone-projects-and-interview-qa.html" class="">70. Projects & Top Interview Q&A</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Java — Reference Types, Strings, Constants & Variable Scopes</span>
+    </div>
+
+    <h1 class="page-title">Java — Reference Types, Strings, Constants & Variable Scopes</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java 21+ LTS</span>
+      <span class="badge">🟢 Chapter 8 of 70</span>
+      <span class="badge">📂 Phase 02: Variables & Data Types</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Primitive vs Reference Types · String Immutability & Pool · final Constants · Variable Scopes: Local, Instance & Static</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Java — Reference Types, Strings, Constants & Variable Scopes</strong> in our Java Complete Masterclass! Primitive vs Reference Types · String Immutability & Pool · final Constants · Variable Scopes: Local, Instance & Static</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In Java software engineering, mastering <strong>Reference Types, Strings, Constants & Variable Scopes</strong> is fundamental to writing robust, object-oriented, memory-safe, and high-performance applications. Java's strongly typed system and JVM architecture ensure maximum safety and reliability across platforms.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#f0a500;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master core Java syntax, keywords, and class design for <strong>Reference Types, Strings, Constants & Variable Scopes</strong></li>
+          <li>Understand JVM heap/stack memory mechanics and type safety guarantees</li>
+          <li>Implement clean production-grade Java classes, interfaces, and methods</li>
+          <li>Avoid common memory leaks, NullPointerExceptions, and concurrency bugs</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Reference Types, Strings, Constants & Variable Scopes is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Understanding <strong>Reference Types, Strings, Constants & Variable Scopes</strong> equips you to architect scalable enterprise applications, leverage Java standard libraries, and write clean, maintainable code accepted by top tech engineering teams.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required project structure -->
+    <div class="section-title"><span class="num">4</span>Required Code Structure</div>
+    <div class="section-body">
+      <p>Java source files follow strict naming rules: <code>public class Main</code> must live in a file named <code>Main.java</code> inside standard package structures (e.g., <code>com.ourcompiler.demo</code>).</p>
+    </div>
+
+    <!-- 5. Syntax & mechanism -->
+    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
+    <div class="section-body">
+      <p>Mechanism: <code style="color:#f0a500;font-weight:700;">Java Bytecode &amp; JVM Execution</code>. Topic: <code>Primitive vs Reference Types</code>.</p>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example Code</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Java Code</span><a href="/online-java-compiler.html" class="try-btn">▶ Run in IDE</a></div>
+        <pre><code>public class Main {
+    
+    // 1. Static Variable (Class-level scope, shared by everyone)
+    public static final String UNIVERSITY_NAME = "Osmania University";
+    public static int totalEnrolledStudents    = 0;
+
+    // 2. Instance Variables (Object-level scope in Heap)
+    private String studentName;
+    private double gpa;
+
+    // Constructor to initialize instance variables
+    public Main(String name, double gpa) {
+        this.studentName = name;
+        this.gpa = gpa;
+        totalEnrolledStudents++; // Increment shared class counter
+    }
+
+    public void displayStudent() {
+        // 3. Local Variable (Method-level scope in Stack)
+        String status = (this.gpa >= 3.5) ? "Distinction" : "Standard Pass";
+
+        System.out.println("University : " + UNIVERSITY_NAME);
+        System.out.println("Student    : " + this.studentName);
+        System.out.println("GPA        : " + this.gpa + " (" + status + ")");
+        System.out.println("----------------------------------------");
+    }
+
+    public static void main(String[] args) {
+        // Creating student object instances
+        Main s1 = new Main("Balaji Nayak", 3.9);
+        Main s2 = new Main("Ravi Teja", 3.2);
+
+        s1.displayStudent();
+        s2.displayStudent();
+
+        System.out.println("Total Students Enrolled: " + Main.totalEnrolledStudents);
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Console / Execution output -->
+    <div class="section-title"><span class="num">7</span>Console Execution Output</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Console Output</span></div>
+        <pre><code>University : Osmania University
+Student    : Balaji Nayak
+GPA        : 3.9 (Distinction)
+----------------------------------------
+University : Osmania University
+Student    : Ravi Teja
+GPA        : 3.2 (Standard Pass)
+----------------------------------------
+Total Students Enrolled: 2</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Execution flow -->
+    <div class="section-title"><span class="num">8</span>Execution Flow &amp; Memory Mechanics</div>
+    <div class="section-body">
+      <div class="diagram-box">Java Source (.java) -> javac Compiler -> Bytecode (.class) -> ClassLoader -> JVM Memory (Heap / Stack) -> JIT Compiler -> Native Machine Code</div>
+    </div>
+
+    <!-- 9. Practical example usage -->
+    <div class="section-title"><span class="num">9</span>Practical Example Usage</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Production Pattern Code</span><a href="/online-java-compiler.html" class="try-btn">▶ Run in IDE</a></div>
+        <pre><code>public class StringPoolInspection {
+    public static void main(String[] args) {
+        // String Literals (Stored in String Constant Pool)
+        String str1 = "Java2026";
+        String str2 = "Java2026";
+
+        // String Object using 'new' (Forces separate Heap allocation)
+        String str3 = new String("Java2026");
+
+        System.out.println("=== String Pool Memory Comparison ===");
+        // == compares memory reference pointers
+        System.out.println("str1 == str2 (Pool Memory Reference): " + (str1 == str2)); // true!
+        System.out.println("str1 == str3 (Heap Object Reference): " + (str1 == str3)); // false!
+
+        // .equals() compares actual character content
+        System.out.println("str1.equals(str3) (Content Check)   : " + str1.equals(str3)); // true!
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 10. Status verification -->
+    <div class="section-title"><span class="num">10</span>Verification &amp; Architecture Check</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #f0a500;">
+        <strong style="color:#f0a500;">Verified Status: Reference Types, Strings, Constants & Variable Scopes Executed cleanly on JDK 21+</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Java's strong type system and automatic Garbage Collection ensure zero dangling memory pointers and rock-solid platform stability.</p>
+      </div>
+    </div>
+
+    <!-- 11. Common mistakes -->
+    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Comparing Objects using <code>==</code> instead of <code>.equals()</code>.</li>
+          <li>Ignoring NullPointerException checks when calling methods on reference variables.</li>
+          <li>Catching raw <code>Throwable</code> or swallowing exceptions without logging.</li>
+          <li>Failing to close I/O resources or database connections (use <code>try-with-resources</code>).</li>
+          <li>Modifying a Collection while iterating over it without using an <code>Iterator</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 12. Coding challenge -->
+    <div class="section-title"><span class="num">12</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#f0a500;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Write a Java program that demonstrates <strong>Reference Types, Strings, Constants & Variable Scopes</strong> inside our online Java compiler. Test your implementation by clicking the "Run in IDE" button above!</p>
+      </div>
+    </div>
+
+    <!-- 13. Mini quiz -->
+    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary role of Reference Types, Strings, Constants & Variable Scopes in Java?</h4>
+        <p><strong>Answer:</strong> It provides structured Java object-oriented mechanisms for Primitive vs Reference Types, streamlining enterprise software development.</p>
+      </div>
+    </div>
+
+    <!-- 14. Quick recap -->
+    <div class="section-title"><span class="num">14</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Primitive vs Reference Types · String Immutability & Pool · final Constants · Variable Scopes: Local, Instance & Static</li>
+        <li>Java follows the "Write Once, Run Anywhere" (WORA) paradigm powered by the JVM.</li>
+        <li>Utilize type-safe classes, interfaces, generic collections, and functional streams.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on OpenJDK 21+ LTS Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 15 & 16. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="07-java-java-8-primitive-data-types-literals.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">7. Java 8 Primitive Data Types & Literals</span></a>
+      <a href="09-java-java-type-casting-widening-narrowing-var-keyword.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">9. Java Type Casting (Widening/Narrowing) & var Keyword</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

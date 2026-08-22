@@ -3,16 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vue.js Programming Tutorial & Reference Guide | Our Compiler</title>
-  <meta name="description" content="Learn Vue.js — Vue.js Programming Tutorial & Reference Guide with clear explanations, structured templates, interactive code snippets, and custom component challenges." />
+  <title>Vue.js 3 Masterclass Roadmap — Complete Beginner to Advanced Guide | Our Compiler</title>
+  <meta name="description" content="Master Vue.js 3 with our complete 30-chapter roadmap across 10 phases: Vite scaffolding, Options vs Composition API, ref and reactive, templates, directives, v-model, component props, emits, slots, provide/inject, custom composables, Vue Router 4, Pinia state management, KeepAlive, Vitest testing, and production deployment." />
+  <meta name="keywords" content="vue.js tutorial, vue 3 masterclass, composition api, ref, reactive, vue router 4, pinia, vite, sfc, single file components" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-vue.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-vue/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -22,20 +37,11 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -50,258 +56,690 @@
           });
           topnav.appendChild(toggleBtn);
         }
-
-        // Decorate Code Blocks (Copy Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.appendChild(copyBtn);
-        });
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-vue">
 
-<!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
   <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-nodejs.html">Node.js</a>
   <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html">Angular</a>
   <a href="/blog-vue.html" class="active">Vue.js</a>
   <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
-  <a href="/blog-rest-api.html">REST API</a>
-  <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
-  <a href="/blog-django.html">Django</a>
-  <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-postgresql.html">PostgreSQL</a>
-  <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
-  <a href="/blog-sqlite.html">SQLite</a>
-  <a href="/blog-redis.html">Redis</a>
-  <a href="/blog-cassandra.html">Cassandra</a>
-  <a href="/blog-aws.html">AWS</a>
-  <a href="/blog-azure.html">Azure</a>
-  <a href="/blog-gcloud.html">Google Cloud</a>
-  <a href="/blog-docker.html">Docker</a>
-  <a href="/blog-kubernetes.html">Kubernetes</a>
-  <a href="/blog-cicd.html">CI/CD</a>
-  <a href="/blog-data-science.html">Data Science</a>
-  <a href="/blog-ml.html">Machine Learning</a>
-  <a href="/blog-deep-learning.html">Deep Learning</a>
-  <a href="/blog-tensorflow.html">TensorFlow</a>
-  <a href="/blog-pytorch.html">PyTorch</a>
-  <a href="/blog-big-data.html">Big Data</a>
-  <a href="/blog-git.html">Git &amp; GitHub</a>
-  <a href="/blog-linux.html">Linux</a>
-  <a href="/blog-shell.html">Shell Scripting</a>
-  <a href="/blog-testing.html">Testing</a>
-  <a href="/blog-agile.html">Agile &amp; Scrum</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-rust.html">Rust</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
     
-    <div class="sidebar-heading">Vue.js Tutorial</div>
-    <a href="/blog-vue.html" class="active">Vue.js HOME</a>
-    <a href="/blog-vue/intro.html">1. Introduction to Vue.js & Vite</a>
-    <a href="/blog-vue/instance-options.html">2. The Vue Instance & Options API</a>
-    <a href="/blog-vue/template-syntax.html">3. Template Syntax & Interpolation</a>
-    <a href="/blog-vue/reactivity-composition.html">4. Reactivity Basics & Composition API (ref & reactive)</a>
-    <a href="/blog-vue/conditional.html">5. Conditional Rendering (v-if vs v-show)</a>
-    <a href="/blog-vue/list-rendering.html">6. List Rendering (v-for & Key Tracking)</a>
-    <a href="/blog-vue/event-handling.html">7. Event Handling (v-on & Modifiers)</a>
-    <a href="/blog-vue/class-style-bindings.html">8. Class & Style Bindings</a>
-    <a href="/blog-vue/form-bindings.html">9. Form Input Bindings (v-model & Modifiers)</a>
-    <a href="/blog-vue/computed-watch.html">10. Computed Properties vs Watchers</a>
-    <a href="/blog-vue/components-props.html">11. Components & Props</a>
-    <a href="/blog-vue/custom-events.html">12. Custom Events & Communication ($emit)</a>
-    <a href="/blog-vue/slots.html">13. Slots & Content Distribution</a>
-    <a href="/blog-vue/routing.html">14. Vue Router & Navigation</a>
-    <a href="/blog-vue/pinia-state.html">15. State Management (Pinia Basics)</a>
+    <div class="sidebar-heading">Vue.js 3 Roadmap</div>
+    <a href="/blog-vue.html" class="sidebar-home-link">💚 Vue.js Course HOME</a>
+    <div class="sidebar-accordion">
 
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
+      <!-- Phase 01 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🟢</span><div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Introduction &amp; Fundamentals</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-vue/01-vuejs-introduction-and-setup.html" class="">1. What is Vue.js 3?</a>
+        <a href="/blog-vue/02-vuejs-instance-and-app.html" class="">2. Vue Application &amp; Instance</a>
+        <a href="/blog-vue/03-vuejs-template-syntax.html" class="">3. Template Syntax</a>
+      </div>
 
-    <div class="sidebar-heading">Other Frontend</div>
-    <a href="/blog-react.html">React</a>
-    <a href="/blog-angular.html">Angular</a>
-    <a href="/blog-nextjs.html">Next.js</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-html.html">HTML</a>
-    <a href="/blog-css.html">CSS</a>
+      <!-- Phase 02 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">⚙️</span><div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Options API vs Composition API</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/04-vuejs-options-api.html" class="">4. Options API</a>
+        <a href="/blog-vue/05-vuejs-composition-api.html" class="">5. Composition API &amp; &lt;script setup&gt;</a>
+        <a href="/blog-vue/06-vuejs-reactivity-ref-reactive.html" class="">6. Reactivity: ref vs reactive</a>
+      </div>
 
+      <!-- Phase 03 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🎯</span><div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Directives &amp; Event Handling</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/07-vuejs-conditional-rendering.html" class="">7. Conditional Rendering</a>
+        <a href="/blog-vue/08-vuejs-list-rendering.html" class="">8. List Rendering &amp; v-for</a>
+        <a href="/blog-vue/09-vuejs-event-handling.html" class="">9. Event Handling</a>
+        <a href="/blog-vue/10-vuejs-class-and-style-bindings.html" class="">10. Class &amp; Style Bindings</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">📝</span><div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Forms &amp; Computed Properties</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/11-vuejs-form-input-bindings.html" class="">11. Form Bindings &amp; v-model</a>
+        <a href="/blog-vue/12-vuejs-computed-properties.html" class="">12. Computed Properties</a>
+        <a href="/blog-vue/13-vuejs-watchers.html" class="">13. Watchers &amp; watchEffect</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🧩</span><div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Components Architecture</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/14-vuejs-components-basics.html" class="">14. Component Architecture</a>
+        <a href="/blog-vue/15-vuejs-props.html" class="">15. Component Props</a>
+        <a href="/blog-vue/16-vuejs-custom-events-emit.html" class="">16. Custom Events &amp; emit</a>
+        <a href="/blog-vue/17-vuejs-slots.html" class="">17. Slots &amp; Content Projection</a>
+        <a href="/blog-vue/18-vuejs-provide-inject.html" class="">18. Provide &amp; Inject</a>
+      </div>
+
+      <!-- Phase 06 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🔄</span><div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Lifecycle &amp; Composables</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/19-vuejs-lifecycle-hooks.html" class="">19. Lifecycle Hooks</a>
+        <a href="/blog-vue/20-vuejs-composables.html" class="">20. Custom Composables</a>
+        <a href="/blog-vue/21-vuejs-template-refs.html" class="">21. Template Refs</a>
+      </div>
+
+      <!-- Phase 07 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🗺️</span><div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Routing with Vue Router</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/22-vuejs-router-setup.html" class="">22. Vue Router 4 Setup</a>
+        <a href="/blog-vue/23-vuejs-dynamic-routing.html" class="">23. Dynamic Routing</a>
+        <a href="/blog-vue/24-vuejs-navigation-guards.html" class="">24. Navigation Guards</a>
+      </div>
+
+      <!-- Phase 08 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🍍</span><div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">State Management Pinia</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/25-vuejs-pinia-setup.html" class="">25. Pinia Setup &amp; Stores</a>
+        <a href="/blog-vue/26-vuejs-pinia-state-getters-actions.html" class="">26. Pinia State, Getters &amp; Actions</a>
+      </div>
+
+      <!-- Phase 09 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🚀</span><div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Built-in Components</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/27-vuejs-keep-alive-teleport-suspense.html" class="">27. KeepAlive &amp; Teleport</a>
+        <a href="/blog-vue/28-vuejs-transitions-and-animations.html" class="">28. Transitions &amp; Animations</a>
+      </div>
+
+      <!-- Phase 10 -->
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main"><span class="phase-icon-box">🧪</span><div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Testing &amp; Deployment</span></div></div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-vue/29-vuejs-testing-vitest.html" class="">29. Testing with Vitest</a>
+        <a href="/blog-vue/30-vuejs-build-and-deployment.html" class="">30. Build &amp; Deployment</a>
+      </div>
+    </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-vue.html">Vue.js</a><span>›</span>
-      <span>Lesson Index</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-vue.html">Vue.js</a><span class="sep">›</span>
+      <span class="current">Master Index: Vue.js 3 Roadmap</span>
     </div>
-    
-    
-<h1 class="page-title">Vue.js Programming Tutorial</h1>
-<div class="page-meta">
-  <span class="badge">💚 Vue.js</span>
-  <span class="badge">🟢 Beginner Friendly</span>
-  <span class="badge">📅 July 2026</span>
-</div>
 
-<div class="intro-box">
-  <p>Vue.js is a progressive web development framework designed to build reactive interfaces incrementally. In this comprehensive, 15-lesson course, you will learn progressive framework architectures, Vite setup scaffolding, Options API structure properties, Composition API reactivity definitions (ref & reactive), conditional displays comparisons, list loops iteration tracking, event listeners triggers modifiers, class dynamic styling bindings, v-model forms bindings modifiers, computed caching getters watchers, components interfaces props define, child custom emit event parameters, slot projections layouts distribution, Vue Router mapping views, and global Pinia store states configurations.</p>
-</div>
+    <h1 class="page-title">Vue.js 3 Complete Masterclass Roadmap</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-  <p>Choose a topic from the left sidebar or click a lesson below to start learning Vue.js:</p>
-  <table class="tbl" style="margin-top: 15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    
-      <tr>
-        <td><strong>Lesson 1</strong></td>
-        <td><strong><a href="/blog-vue/intro.html">Introduction to Vue.js & Vite</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 2</strong></td>
-        <td><strong><a href="/blog-vue/instance-options.html">The Vue Instance & Options API</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 3</strong></td>
-        <td><strong><a href="/blog-vue/template-syntax.html">Template Syntax & Interpolation</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 4</strong></td>
-        <td><strong><a href="/blog-vue/reactivity-composition.html">Reactivity Basics & Composition API (ref & reactive)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 5</strong></td>
-        <td><strong><a href="/blog-vue/conditional.html">Conditional Rendering (v-if vs v-show)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 6</strong></td>
-        <td><strong><a href="/blog-vue/list-rendering.html">List Rendering (v-for & Key Tracking)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 7</strong></td>
-        <td><strong><a href="/blog-vue/event-handling.html">Event Handling (v-on & Modifiers)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 8</strong></td>
-        <td><strong><a href="/blog-vue/class-style-bindings.html">Class & Style Bindings</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 9</strong></td>
-        <td><strong><a href="/blog-vue/form-bindings.html">Form Input Bindings (v-model & Modifiers)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 10</strong></td>
-        <td><strong><a href="/blog-vue/computed-watch.html">Computed Properties vs Watchers</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 11</strong></td>
-        <td><strong><a href="/blog-vue/components-props.html">Components & Props</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 12</strong></td>
-        <td><strong><a href="/blog-vue/custom-events.html">Custom Events & Communication ($emit)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 13</strong></td>
-        <td><strong><a href="/blog-vue/slots.html">Slots & Content Distribution</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 14</strong></td>
-        <td><strong><a href="/blog-vue/routing.html">Vue Router & Navigation</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 15</strong></td>
-        <td><strong><a href="/blog-vue/pinia-state.html">State Management (Pinia Basics)</a></strong></td>
-      </tr>
-    
-  </table>
-</div>
+    <div class="page-meta">
+      <span class="badge">💚 Vue.js 3.4+</span>
+      <span class="badge">🟢 30 Chapters Complete</span>
+      <span class="badge">📂 Phases 1 to 10 Complete</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
 
-    
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">What is Vue.js 3? · Vite Setup · Options vs Composition API · ref() vs reactive() · Directives (v-if, v-for, v-on, v-bind) · Form Bindings (v-model) · Computed Properties &amp; Watchers · Single File Components (.vue) · Props &amp; Custom Events (defineEmits) · Slots &amp; Provide/Inject · Lifecycle Hooks &amp; Custom Composables · Vue Router 4 Dynamic Routing &amp; Guards · Pinia State Management Stores · KeepAlive &amp; Teleport · Testing with Vitest · Production Build &amp; Deployment</span>
+    </div>
+
+    <div style="background: linear-gradient(135deg, rgba(66,184,131,0.15), rgba(20,24,32,0.6)); border: 1px solid rgba(66,184,131,0.3); border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+      <h3 style="color:#42b883; margin-bottom: 10px; font-size:18px;">🎯 Complete Vue.js 3 Masterclass Roadmap (30 Chapters)</h3>
+      <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Master modern Vue 3 development: explore Vite scaffolding, Composition API with <code>&lt;script setup&gt;</code>, reactive primitives, dynamic routing with Vue Router 4, centralized store management with Pinia, custom composables, component testing with Vitest, and production cloud deployment:</p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/blog-vue/01-vuejs-introduction-and-setup.html" style="background:linear-gradient(135deg, #42b883, #35495e); color:#fff; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: What is Vue 3? →</a>
+        <a href="/blog-vue/05-vuejs-composition-api.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 2: Composition API →</a>
+        <a href="/blog-vue/14-vuejs-components-basics.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 5: Components →</a>
+        <a href="/blog-vue/22-vuejs-router-setup.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 7: Vue Router →</a>
+        <a href="/blog-vue/25-vuejs-pinia-setup.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 8: Pinia →</a>
+        <a href="/online-html-editor.html" style="background:var(--bg3); border:1px solid var(--border); color:#42b883; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">▶ Web Playground →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 01</div><h3 class="phase-roadmap-title">Introduction & Fundamentals</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/01-vuejs-introduction-and-setup.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">01</span>
+              <div class="lesson-info">
+                <span class="lesson-title">1. What is Vue.js 3?</span>
+                <span class="lesson-subtopics">Progressive Framework Philosophy · Virtual DOM · Vue vs React vs Angular · Scaffolding with Vite · SPA Architecture</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/02-vuejs-instance-and-app.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">02</span>
+              <div class="lesson-info">
+                <span class="lesson-title">2. Vue Application &amp; Instance</span>
+                <span class="lesson-subtopics">createApp API · Mounting Root DOM Node · Application Configurations · Global Directives · Plugin Registration</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/03-vuejs-template-syntax.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">03</span>
+              <div class="lesson-info">
+                <span class="lesson-title">3. Template Syntax &amp; Interpolation</span>
+                <span class="lesson-subtopics">Mustache Syntax {{ }} · v-html Raw Output · Attribute Binding (v-bind) · Shorthand Colon Syntax · JS Expression Scope</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 02</div><h3 class="phase-roadmap-title">Options API vs Composition API</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/04-vuejs-options-api.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">04</span>
+              <div class="lesson-info">
+                <span class="lesson-title">4. The Options API</span>
+                <span class="lesson-subtopics">Options API Structure · data() Function · Methods Property · Options Computed &amp; Watchers · Legacy Migration</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/05-vuejs-composition-api.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">05</span>
+              <div class="lesson-info">
+                <span class="lesson-title">5. Composition API &amp; &lt;script setup&gt;</span>
+                <span class="lesson-subtopics">Composition API Concept · setup() Method · &lt;script setup&gt; Macro · Code Organization by Feature · Top-level Imports</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/06-vuejs-reactivity-ref-reactive.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">06</span>
+              <div class="lesson-info">
+                <span class="lesson-title">6. Reactivity: ref() vs reactive()</span>
+                <span class="lesson-subtopics">ref() Primitive · reactive() Object State · Ref Unwrapping · toRef() &amp; toRefs() · shallowRef() Optimization</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 03</div><h3 class="phase-roadmap-title">Directives & Event Handling</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/07-vuejs-conditional-rendering.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">07</span>
+              <div class="lesson-info">
+                <span class="lesson-title">7. Conditional Rendering</span>
+                <span class="lesson-subtopics">v-if / v-else-if / v-else · v-show Toggle · Virtual DOM Compilation Differences · Performance Trade-offs · &lt;template&gt; Grouping</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/08-vuejs-list-rendering.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">08</span>
+              <div class="lesson-info">
+                <span class="lesson-title">8. List Rendering &amp; v-for</span>
+                <span class="lesson-subtopics">v-for Directive Syntax · Array &amp; Object Iteration · Maintaining Identity with :key · Array Mutation Methods · v-for with v-if</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/09-vuejs-event-handling.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">09</span>
+              <div class="lesson-info">
+                <span class="lesson-title">9. Event Handling &amp; Modifiers</span>
+                <span class="lesson-subtopics">v-on / @ Listener Syntax · Inline &amp; Method Handlers · Event Modifiers (.prevent/.stop) · Key Modifiers · System Modifiers</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/10-vuejs-class-and-style-bindings.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">10</span>
+              <div class="lesson-info">
+                <span class="lesson-title">10. Class &amp; Style Bindings</span>
+                <span class="lesson-subtopics">Dynamic Class Binding · Object &amp; Array Syntax · Inline Style Objects · CSS Modules · Scoped CSS (&lt;style scoped&gt;)</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 04</div><h3 class="phase-roadmap-title">Form Bindings & Computed Properties</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/11-vuejs-form-input-bindings.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">11</span>
+              <div class="lesson-info">
+                <span class="lesson-title">11. Form Input Bindings &amp; v-model</span>
+                <span class="lesson-subtopics">v-model Two-Way Binding · Text &amp; Textarea · Checkboxes &amp; Radios · Select Dropdowns · .lazy / .number / .trim Modifiers</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/12-vuejs-computed-properties.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">12</span>
+              <div class="lesson-info">
+                <span class="lesson-title">12. Computed Properties</span>
+                <span class="lesson-subtopics">computed() Getter Function · Writable Computed Setters · Automatic Reactive Caching · Computed vs Method Performance</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/13-vuejs-watchers.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">13</span>
+              <div class="lesson-info">
+                <span class="lesson-title">13. Watchers &amp; watchEffect()</span>
+                <span class="lesson-subtopics">watch() Source Listening · watchEffect() Auto Tracking · Deep Watchers (deep: true) · Immediate Triggers · Stopping Watchers</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 05</div><h3 class="phase-roadmap-title">Components & Component Architecture</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/14-vuejs-components-basics.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">14</span>
+              <div class="lesson-info">
+                <span class="lesson-title">14. Component Architecture</span>
+                <span class="lesson-subtopics">Single File Components (.vue) · Global vs Local Registration · SFC Template/Script/Style · Component Tree Structure</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/15-vuejs-props.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">15</span>
+              <div class="lesson-info">
+                <span class="lesson-title">15. Component Props</span>
+                <span class="lesson-subtopics">defineProps() Macro · Type Validation · Required Props &amp; Defaults · One-Way Data Flow · Boolean Casting</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/16-vuejs-custom-events-emit.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">16</span>
+              <div class="lesson-info">
+                <span class="lesson-title">16. Custom Events &amp; defineEmits()</span>
+                <span class="lesson-subtopics">defineEmits() Macro · Child-to-Parent Communication · Custom Event Validation · Component v-model &amp; defineModel()</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/17-vuejs-slots.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">17</span>
+              <div class="lesson-info">
+                <span class="lesson-title">17. Slots &amp; Content Distribution</span>
+                <span class="lesson-subtopics">&lt;slot&gt; Content Projection · Default Fallback Content · Named Slots (v-slot: / #) · Scoped Slots Data Passing</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/18-vuejs-provide-inject.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">18</span>
+              <div class="lesson-info">
+                <span class="lesson-title">18. Provide &amp; Inject Dependency Injection</span>
+                <span class="lesson-subtopics">Provide / Inject Concept · Deep Component Trees · Reactive Provided State · Symbol Keys · Preventing Prop Drilling</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 06</div><h3 class="phase-roadmap-title">Lifecycle & Advanced Composition API</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/19-vuejs-lifecycle-hooks.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">19</span>
+              <div class="lesson-info">
+                <span class="lesson-title">19. Lifecycle Hooks</span>
+                <span class="lesson-subtopics">Component Lifecycle Phases · onMounted &amp; DOM Access · onUpdated &amp; Reactive Repaint · onUnmounted Cleanup · Debug Hooks</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/20-vuejs-composables.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">20</span>
+              <div class="lesson-info">
+                <span class="lesson-title">20. Custom Composables Pattern</span>
+                <span class="lesson-subtopics">Custom Composables Architecture · Stateful Logic Reuse · useAsyncState / useFetch · Return Conventions · Mixins vs Composables</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/21-vuejs-template-refs.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">21</span>
+              <div class="lesson-info">
+                <span class="lesson-title">21. Template Refs &amp; defineExpose()</span>
+                <span class="lesson-subtopics">Template Refs with ref() · DOM Element Access · Component Instance Refs · defineExpose() Public API · Function Refs</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 07</div><h3 class="phase-roadmap-title">Routing with Vue Router</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/22-vuejs-router-setup.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">22</span>
+              <div class="lesson-info">
+                <span class="lesson-title">22. Vue Router 4 Setup &amp; Config</span>
+                <span class="lesson-subtopics">Vue Router 4 Installation · createRouter Config · &lt;RouterView&gt; &amp; &lt;RouterLink&gt; · HTML5 Web History vs Hash Mode</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/23-vuejs-dynamic-routing.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">23</span>
+              <div class="lesson-info">
+                <span class="lesson-title">23. Dynamic Routing &amp; Navigation</span>
+                <span class="lesson-subtopics">Dynamic Route Params (:id) · useRoute() Hook · Programmatic Navigation (useRouter) · Nested Children Routes</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/24-vuejs-navigation-guards.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">24</span>
+              <div class="lesson-info">
+                <span class="lesson-title">24. Navigation Guards &amp; Auth Flow</span>
+                <span class="lesson-subtopics">Global Navigation Guards (beforeEach) · Route Meta Fields (meta: { requiresAuth }) · Redirects · Per-Route Guards</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 08</div><h3 class="phase-roadmap-title">State Management with Pinia</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/25-vuejs-pinia-setup.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">25</span>
+              <div class="lesson-info">
+                <span class="lesson-title">25. Pinia State Management Setup</span>
+                <span class="lesson-subtopics">Pinia Store Architecture · Pinia vs Vuex · defineStore() API · Setup Stores vs Option Stores · Store Registration</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/26-vuejs-pinia-state-getters-actions.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">26</span>
+              <div class="lesson-info">
+                <span class="lesson-title">26. Pinia State, Getters &amp; Actions</span>
+                <span class="lesson-subtopics">Reactive Store State · Getters (Computed Store Values) · Sync &amp; Async Actions · storeToRefs() Helper · Store Resetting</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 09</div><h3 class="phase-roadmap-title">Built-in Components & Performance</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/27-vuejs-keep-alive-teleport-suspense.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">27</span>
+              <div class="lesson-info">
+                <span class="lesson-title">27. Built-in Components: KeepAlive &amp; Teleport</span>
+                <span class="lesson-subtopics">&lt;KeepAlive&gt; Component Caching · include / exclude Filters · &lt;Teleport&gt; DOM Portals · &lt;Suspense&gt; Async Dependencies</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/28-vuejs-transitions-and-animations.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">28</span>
+              <div class="lesson-info">
+                <span class="lesson-title">28. Transitions &amp; Animations</span>
+                <span class="lesson-subtopics">&lt;Transition&gt; Wrapper · CSS Enter/Leave Classes · &lt;TransitionGroup&gt; List Animation · JavaScript Animation Hooks</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+        
+          <div class="phase-roadmap-card" style="margin-top:20px;">
+            <div class="phase-roadmap-header">
+              <div class="phase-roadmap-title-wrap"><span class="phase-roadmap-icon">💚</span><div><div class="phase-roadmap-tag">Phase 10</div><h3 class="phase-roadmap-title">Testing, Build & Deployment</h3></div></div>
+            </div>
+            <div class="phase-lessons-list">
+        
+          <a href="/blog-vue/29-vuejs-testing-vitest.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">29</span>
+              <div class="lesson-info">
+                <span class="lesson-title">29. Testing Vue Components with Vitest</span>
+                <span class="lesson-subtopics">Vitest Test Runner Setup · Vue Test Utils · shallowMount vs mount · Event Triggering &amp; Assertions · Mocking Pinia</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+      
+        
+          <a href="/blog-vue/30-vuejs-build-and-deployment.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">30</span>
+              <div class="lesson-info">
+                <span class="lesson-title">30. Build Scaffolding &amp; Production Deployment</span>
+                <span class="lesson-subtopics">Vite Production Bundling · Environment Variables (import.meta.env) · Vercel / Netlify Deployment · Bundle Splitting</span>
+              </div>
+            </div>
+            <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+          </a>
+        
+            </div>
+          </div>
+        
+      
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(66,184,131,0.15); color:#42b883; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is Vue.js 3?</h4>
+      <p>Vue.js 3 is a progressive JavaScript framework used for building web user interfaces. It provides reactive data binding, component-based architecture, and official tooling for routing (Vue Router) and state management (Pinia).</p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(66,184,131,0.15); color:#42b883; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the difference between Options API and Composition API?</h4>
+      <p>The Options API organizes component logic into options object properties (data, methods, computed), whereas the Composition API allows grouping component logic by logical feature using functions (ref, computed, watch), making code much cleaner and reusable via Composables.</p>
+    </div>
+
     <div class="nav-footer">
-      <a href="/blog-vue.html" class="nav-btn">
-        <span class="label">← Vue.js Overview</span>
-        <span class="title">Course Index</span>
-      </a>
-      <a href="/blog-vue/intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">Introduction to Vue.js & Vite</span>
-      </a>
+      <a href="/blog-vue.html" class="nav-btn"><span class="label">← Vue.js Overview</span><span class="title">Course Index</span></a>
+      <a href="/blog-vue/01-vuejs-introduction-and-setup.html" class="nav-btn" style="text-align:right;"><span class="label">Start Course →</span><span class="title">1. What is Vue.js 3?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

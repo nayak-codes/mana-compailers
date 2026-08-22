@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GraphQL — Custom Directives | Our Compiler</title>
+  <meta name="description" content="Complete GraphQL Chapter 26: Custom Directives. Learn Defining directives (@upper, @deprecated, @cacheControl) · Directive visitors · Schema transformations · Metadata decoration with practical GraphQL SDL definitions, queries, mutations, resolvers, and step-by-step walkthroughs." />
+  <meta name="keywords" content="graphql tutorial, learn graphql, custom directives, apollo server, dataloader, schema sdl" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-graphql/26-custom-directives.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-graphql/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-graphql">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html" class="active">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">GraphQL Tutorial</div>
+    <a href="/blog-graphql.html" class="sidebar-home-link">🚀 GraphQL HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">GraphQL Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/01-what-is-graphql.html" class="">1. GraphQL Ante Enti?</a><a href="/blog-graphql/02-graphql-vs-rest.html" class="">2. GraphQL vs REST</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First GraphQL App</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/03-graphql-project-setup.html" class="">3. GraphQL Project Setup</a><a href="/blog-graphql/04-first-graphql-server.html" class="">4. First GraphQL Server</a><a href="/blog-graphql/05-project-structure.html" class="">5. Project Structure</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Schema and Type System</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">6 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/06-schema-basics.html" class="">6. Schema Basics</a><a href="/blog-graphql/07-scalar-types.html" class="">7. Scalar Types</a><a href="/blog-graphql/08-object-types.html" class="">8. Object Types</a><a href="/blog-graphql/09-enums.html" class="">9. Enums</a><a href="/blog-graphql/10-input-types.html" class="">10. Input Types</a><a href="/blog-graphql/11-interfaces-and-unions.html" class="">11. Interfaces and Unions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Queries, Mutations & Subscriptions</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/12-writing-queries.html" class="">12. Writing Queries</a><a href="/blog-graphql/13-writing-mutations.html" class="">13. Writing Mutations</a><a href="/blog-graphql/14-subscriptions.html" class="">14. Subscriptions & Real-Time Data</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Resolvers & Execution Architecture</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/15-resolver-functions.html" class="">15. Resolver Functions</a><a href="/blog-graphql/16-nested-resolvers.html" class="">16. Nested Resolvers</a><a href="/blog-graphql/17-dataloader.html" class="">17. N+1 Query Problem & DataLoader</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Authentication, Security & Performance</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/18-graphql-authentication.html" class="">18. Authentication in GraphQL</a><a href="/blog-graphql/19-authorization-and-directives.html" class="">19. Authorization & Directives</a><a href="/blog-graphql/20-graphql-security.html" class="">20. Security & Protection</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💻</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Client Integration & State</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/21-client-side-graphql.html" class="">21. Client-Side GraphQL</a><a href="/blog-graphql/22-apollo-client-basics.html" class="">22. Apollo Client Basics</a><a href="/blog-graphql/23-fragment-colocation.html" class="">23. Fragment Colocation</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Advanced Schema Architecture & Federation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-graphql/24-apollo-federation.html" class="">24. Apollo Federation & Subgraphs</a><a href="/blog-graphql/25-code-first-vs-schema-first.html" class="">25. Code-First vs Schema-First</a><a href="/blog-graphql/26-custom-directives.html" class="active">26. Custom Directives</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Testing, Tooling & Monitoring</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/27-graphql-codegen.html" class="">27. GraphQL Code Generator</a><a href="/blog-graphql/28-testing-graphql-apis.html" class="">28. Testing GraphQL APIs</a><a href="/blog-graphql/29-graphql-monitoring.html" class="">29. Monitoring & Performance</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Certification & Knowledge Check</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-graphql/30-graphql-quiz.html" class="">30. GraphQL Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-graphql.html">GraphQL</a><span class="sep">›</span>
+      <span class="current">GraphQL — Custom Directives</span>
+    </div>
+
+    <h1 class="page-title">GraphQL — Custom Directives</h1>
+
+    <div class="page-meta">
+      <span class="badge">🚀 GraphQL Spec 2026</span>
+      <span class="badge">🟢 Chapter 26 of 30</span>
+      <span class="badge">📂 Phase 08: Advanced Schema Architecture & Federation</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Defining directives (@upper, @deprecated, @cacheControl) · Directive visitors · Schema transformations · Metadata decoration</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>GraphQL — Custom Directives</strong> in our GraphQL Complete Masterclass! Write custom schema directives to transform field outputs dynamically (e.g. @upper for uppercase strings).</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In API engineering, understanding <strong>Custom Directives</strong> is essential for building flexible, strongly-typed GraphQL APIs. GraphQL replaces multiple REST endpoints with a single endpoint and client-driven field selections.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#e10098;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master schema definition language (SDL) and type mechanics behind <strong>Custom Directives</strong></li>
+          <li>Understand resolver execution flows, context injection, and DataLoader optimization</li>
+          <li>Design standardized, production-ready GraphQL schemas and operations</li>
+          <li>Avoid common architectural pitfalls, N+1 query performance bugs, and security risks</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Custom Directives is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>GraphQL empowers frontend teams to request exact data shapes without backend API modifications. Mastering <strong>Custom Directives</strong> enables full-stack developers to build efficient, scalable GraphQL services in Node.js, TypeScript, Python, and Go.</p>
+      </div>
+    </div>
+
+    <!-- 4. Resource / Schema design -->
+    <div class="section-title"><span class="num">4</span>Resource &amp; Schema Design</div>
+    <div class="section-body">
+      <p>GraphQL Schema Type / Entity: <code>CustomDirective</code>. GraphQL schemas use SDL (Schema Definition Language) to define explicit types, fields, and relationships.</p>
+    </div>
+
+    <!-- 5. GraphQL operation type -->
+    <div class="section-title"><span class="num">5</span>GraphQL Operation Type</div>
+    <div class="section-body">
+      <p>Operation Type: <code style="color:#e10098;font-weight:700;">POST</code>. Specifies whether the operation reads data (Query), modifies state (Mutation), or streams real-time updates (Subscription).</p>
+    </div>
+
+    <!-- 6. Endpoint URL / Sandbox -->
+    <div class="section-title"><span class="num">6</span>Endpoint URL / Sandbox</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Target Endpoint URL</span></div>
+        <pre><code>POST /graphql</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Request example -->
+    <div class="section-title"><span class="num">7</span>Request Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">GraphQL Operation Request Example</span></div>
+        <pre><code>type Query {
+  title: String! @upper
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Response example -->
+    <div class="section-title"><span class="num">8</span>Response Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">GraphQL JSON Response Example</span></div>
+        <pre><code>200 OK
+{
+  "data": { "title": "PYTHON MASTERCLASS" }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 9. Status code -->
+    <div class="section-title"><span class="num">9</span>Status Code Behavior</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #e10098;">
+        <strong style="color:#e10098;">HTTP Response Status: 200 OK</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">GraphQL servers always return <code>HTTP 200 OK</code> for valid GraphQL operations, conveying errors inside the top-level <code>errors</code> JSON array envelope.</p>
+      </div>
+    </div>
+
+    <!-- 10. Server-side flow / Resolver execution -->
+    <div class="section-title"><span class="num">10</span>Server-Side Flow &amp; Resolver Execution</div>
+    <div class="section-body">
+      <div class="diagram-box">GraphQL HTTP POST Request -> AST Parsing & Schema Validation -> Root Resolver Execution -> Nested Resolver Tree Walk -> DataLoader Batching -> JSON Data Payload Response</div>
+    </div>
+
+    <!-- 11. Validation -->
+    <div class="section-title"><span class="num">11</span>Validation</div>
+    <div class="section-body">
+      <p>GraphQL engine automatically validates incoming query strings against the target Schema definition before resolver execution. Unrecognized fields or incorrect scalar types trigger schema validation errors before database execution.</p>
+    </div>
+
+    <!-- 12. Database operation -->
+    <div class="section-title"><span class="num">12</span>Database Operation / Service Execution</div>
+    <div class="section-body">
+      <p>Resolvers execute database operations or call underlying microservices using ORM queries (e.g. Prisma, TypeORM, Mongoose), utilizing DataLoader to batch parallel ID lookups into single SQL queries.</p>
+    </div>
+
+    <!-- 13. Common mistakes -->
+    <div class="section-title"><span class="num">13</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Causing N+1 query database bottlenecks by fetching nested relationships inside un-batched field resolvers.</li>
+          <li>Forgetting to secure introspection or query depth in production, exposing full schema definitions to public scanners.</li>
+          <li>Overusing custom scalars when built-in primitives or Input objects suffice.</li>
+          <li>Exposing sensitive database fields directly in GraphQL schemas without context authentication checks.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 14. Coding challenge -->
+    <div class="section-title"><span class="num">14</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#e10098;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Implement a GraphQL schema and resolver for <strong>Custom Directives</strong> using Apollo Server or GraphQL Yoga. Test your operation in Apollo Sandbox or GraphQL IDE!</p>
+      </div>
+    </div>
+
+    <!-- 15. Mini quiz -->
+    <div class="section-title"><span class="num">15</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary advantage of Custom Directives in GraphQL API development?</h4>
+        <p><strong>Answer:</strong> It enables strongly-typed schema contracts and Defining directives (@upper, @deprecated, @cacheControl), eliminating REST over-fetching and under-fetching.</p>
+      </div>
+    </div>
+
+    <!-- 16. Quick recap -->
+    <div class="section-title"><span class="num">16</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Write custom schema directives to transform field outputs dynamically (e.g. @upper for uppercase strings).</li>
+        <li>GraphQL operations use Query (Read), Mutation (Write), and Subscription (Real-time events).</li>
+        <li>Follow GraphQL SDL best practices and DataLoader batching conventions.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GraphQL Spec 2026 Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 17 & 18. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="25-code-first-vs-schema-first.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">25. Code-First vs Schema-First</span></a>
+      <a href="27-graphql-codegen.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">27. GraphQL Code Generator</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

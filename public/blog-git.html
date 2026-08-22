@@ -3,135 +3,955 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Git & GitHub Tutorial — Complete Beginner to Advanced Guide | Our Compiler</title>
-  <meta name="description" content="Learn Git and GitHub — Git & GitHub Tutorial — Complete Beginner to Advanced Guide with clear commands, branching diagrams, repository workflows, and challenges." />
+  <title>Git &amp; GitHub Complete Masterclass — 50 Chapters, 10 Phases (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master Git version control and GitHub workflow from beginner to advanced: repositories, staging area, commits, branching, merging, pull requests, rebasing, SSH keys, GitHub Actions, and production team workflows with our 50-chapter bootcamp." />
+  <meta name="keywords" content="git tutorial, learn git, github tutorial, git commands, git branch, git merge, git rebase, github actions, git cheat sheet" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-git.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-git/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
-    (function(){
-      var t=localStorage.getItem("theme")||"dark";
-      if(t==="light"){document.documentElement.classList.add("light-theme");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("light-theme");});}
-      window.addEventListener("DOMContentLoaded",function(){
-        var nav=document.querySelector(".topnav");
-        if(nav){var btn=document.createElement("button");btn.style.cssText="margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;";var upd=function(){btn.innerHTML=document.body.classList.contains("light-theme")?"&#127769; Dark":"&#9728;&#65039; Light";};upd();btn.onclick=function(){document.body.classList.toggle("light-theme");document.documentElement.classList.toggle("light-theme");localStorage.setItem("theme",document.body.classList.contains("light-theme")?"light":"dark");upd();};nav.appendChild(btn);}
-        document.querySelectorAll(".code-block").forEach(function(block){var header=block.querySelector(".code-block-header");var codeEl=block.querySelector("pre code");if(!header||!codeEl)return;var ac=header.querySelector(".code-actions");if(!ac){ac=document.createElement("div");ac.className="code-actions";ac.style.cssText="display:flex;gap:8px;align-items:center;margin-left:auto;";header.appendChild(ac);}var cb=document.createElement("button");cb.innerHTML="&#128203; Copy";cb.style.cssText="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:Inter,sans-serif;white-space:nowrap;";cb.onclick=function(){navigator.clipboard.writeText(codeEl.textContent).then(function(){cb.innerHTML="&#9989; Copied!";setTimeout(function(){cb.innerHTML="&#128203; Copy";},2000);});};ac.appendChild(cb);});
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-git">
+
 <nav class="topnav">
-  <a href="/" class="brand">&#128187; Our Compiler</a>
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-git.html" class="active">Git &amp; GitHub</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
   <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
+  <a href="/blog-php.html">PHP</a>
   <a href="/blog-go.html">Go</a>
   <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
-  <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html">Angular</a>
-  <a href="/blog-vue.html">Vue.js</a>
-  <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
   <a href="/blog-rest-api.html">REST API</a>
   <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
+  <a href="/blog-rust.html">Rust</a>
   <a href="/blog-django.html">Django</a>
   <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-postgresql.html">PostgreSQL</a>
   <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html">MongoDB</a>
-  <a href="/blog-sqlite.html">SQLite</a>
-  <a href="/blog-redis.html">Redis</a>
-  <a href="/blog-cassandra.html">Cassandra</a>
-  <a href="/blog-aws.html">AWS</a>
-  <a href="/blog-azure.html">Azure</a>
-  <a href="/blog-gcloud.html">Google Cloud</a>
-  <a href="/blog-docker.html">Docker</a>
-  <a href="/blog-kubernetes.html">Kubernetes</a>
-  <a href="/blog-cicd.html">CI/CD</a>
-  <a href="/blog-data-science.html">Data Science</a>
-  <a href="/blog-ml.html">Machine Learning</a>
-  <a href="/blog-deep-learning.html">Deep Learning</a>
-  <a href="/blog-tensorflow.html">TensorFlow</a>
-  <a href="/blog-pytorch.html">PyTorch</a>
-  <a href="/blog-big-data.html">Big Data</a>
-  <a href="/blog-git.html" class="active">Git &amp; GitHub</a>
-  <a href="/blog-linux.html">Linux</a>
-  <a href="/blog-shell.html">Shell Scripting</a>
-  <a href="/blog-testing.html">Testing</a>
-  <a href="/blog-agile.html">Agile &amp; Scrum</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
 </nav>
+
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-heading">Git &amp; GitHub</div>
-    <a href="/blog-git.html" class="active">Git HOME</a>
-    <a href="/blog-git/intro.html">1. Introduction to Version Control &amp; Git</a>
-    <a href="/blog-git/installation-config.html">2. Installing Git &amp; Profile Configuration</a>
-    <a href="/blog-git/git-init-clone.html">3. Initializing &amp; Cloning Repositories</a>
-    <a href="/blog-git/staging-commits.html">4. Staging Area: git add &amp; git commit</a>
-    <a href="/blog-git/git-status-log.html">5. Inspecting Status, Diff &amp; Commit History</a>
-    <a href="/blog-git/git-branching.html">6. Branching: Creating, Switching &amp; Deleting</a>
-    <a href="/blog-git/git-merging.html">7. Merging Branches &amp; Conflict Resolution</a>
-    <a href="/blog-git/remote-repositories.html">8. Remotes: git push, pull, fetch &amp; clone</a>
-    <a href="/blog-git/undoing-changes.html">9. Undoing Changes: reset, revert &amp; restore</a>
-    <a href="/blog-git/git-stashing.html">10. Temporary Saves: git stash pop &amp; apply</a>
-    <a href="/blog-git/git-rebasing.html">11. Rebasing vs Merging &amp; Squashing</a>
-    <a href="/blog-git/github-intro.html">12. GitHub Collaboration &amp; Pull Requests</a>
-    <a href="/blog-git/ssh-keys.html">13. SSH Keys Configuration &amp; Security</a>
-    <a href="/blog-git/git-workflows.html">14. Git Workflows: Git Flow vs GitHub Flow</a>
-    <a href="/blog-git/git-best-practices.html">15. Best Practices, gitignore &amp; Hooks</a>
-
-    <div class="sidebar-heading">Related Topics</div>
-    <a href="/blog-linux.html">Linux</a>
-    <a href="/blog-shell.html">Shell Scripting</a>
-    <a href="/blog-docker.html">Docker</a>
-    <a href="/blog.html">All Tutorials</a>
+    <div class="sidebar-heading">Git Roadmap</div>
+    <a href="/blog-git.html" class="sidebar-home-link active">🐙 Git Course HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐙</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Git Fundamentals & Setup</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/01-git-introduction-and-version-control.html" class="">1. What is Git & Version Control?</a><a href="/blog-git/02-git-installation-and-configuration.html" class="">2. Git Installation & Global Config</a><a href="/blog-git/03-creating-a-git-repository.html" class="">3. Creating & Initializing Repositories</a><a href="/blog-git/04-working-tree-and-staging-area.html" class="">4. Working Tree & Staging Area</a><a href="/blog-git/05-git-commits.html" class="">5. Commits & Commit Messages</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Tracking, Differences & Inspection</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/06-viewing-changes-git-diff.html" class="">6. Inspecting Changes with git diff</a><a href="/blog-git/07-restoring-files.html" class="">7. Restoring Files (git restore)</a><a href="/blog-git/08-git-reset.html" class="">8. Git Reset (Soft, Mixed, Hard)</a><a href="/blog-git/09-git-revert-and-reflog.html" class="">9. Git Revert & Reflog Recovery</a><a href="/blog-git/10-git-log-and-history-formatting.html" class="">10. Git Log & History Formatting</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌿</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Branching & Merging</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/11-git-branch-basics.html" class="">11. Git Branch Basics</a><a href="/blog-git/12-branch-workflow.html" class="">12. Branch Workflows & Naming Conventions</a><a href="/blog-git/13-git-merging.html" class="">13. Merging Branches</a><a href="/blog-git/14-merge-conflicts.html" class="">14. Merge Conflicts Resolution</a><a href="/blog-git/15-fast-forward-vs-3way-merges.html" class="">15. Fast-Forward vs 3-Way Merges</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">GitHub & Remote Repositories</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/16-github-repository.html" class="">16. GitHub Repositories Setup</a><a href="/blog-git/17-connecting-local-and-remote.html" class="">17. Connecting Local & Remote Repositories</a><a href="/blog-git/18-git-push-and-pull.html" class="">18. Push & Pull Mechanics</a><a href="/blog-git/19-git-fetch-and-remote-tracking.html" class="">19. Fetch & Remote Tracking Branches</a><a href="/blog-git/20-upstream-remotes-and-syncing.html" class="">20. Upstream Remotes & Fork Syncing</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Pull Requests & Collaboration</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/21-pull-requests.html" class="">21. Pull Requests & Code Reviews</a><a href="/blog-git/22-code-review.html" class="">22. Code Review Best Practices</a><a href="/blog-git/23-forks-and-contributions.html" class="">23. Forks & Open-Source Contributions</a><a href="/blog-git/24-github-issues.html" class="">24. GitHub Issues & Bug Tracking</a><a href="/blog-git/25-github-projects.html" class="">25. GitHub Projects & Kanban Boards</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Advanced Git Operations</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/26-releases-and-tags.html" class="">26. Releases & Git Tags</a><a href="/blog-git/27-git-rebase.html" class="">27. Git Rebase & Interactive Rebasing</a><a href="/blog-git/28-git-cherry-pick.html" class="">28. Git Cherry-Pick</a><a href="/blog-git/29-git-stash.html" class="">29. Git Stash & Stash Stack</a><a href="/blog-git/30-reflog-and-recovery.html" class="">30. Reflog & Commit Recovery</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Repository Management & Customization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/31-commit-best-practices.html" class="">31. Commit Best Practices & Conventions</a><a href="/blog-git/32-gitignore.html" class="">32. .gitignore & Pattern Matching</a><a href="/blog-git/33-git-hooks.html" class="">33. Git Hooks & Husky Automation</a><a href="/blog-git/34-git-submodules-and-subtrees.html" class="">34. Git Submodules & Subtrees</a><a href="/blog-git/35-git-attributes-and-lfs.html" class="">35. Git Attributes & LFS (Large File Storage)</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">GitHub Actions & CI/CD</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/36-github-actions-introduction.html" class="">36. GitHub Actions Workflows</a><a href="/blog-git/37-continuous-integration.html" class="">37. Continuous Integration with GitHub Actions</a><a href="/blog-git/38-deployment-with-actions.html" class="">38. Deployment Pipelines with Actions</a><a href="/blog-git/39-custom-github-actions.html" class="">39. Custom GitHub Actions</a><a href="/blog-git/40-matrix-builds-and-caching.html" class="">40. Matrix Builds & Dependency Caching</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Security & Authentication</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/41-repository-security.html" class="">41. Repository Security & Dependabot</a><a href="/blog-git/42-github-authentication.html" class="">42. GitHub Authentication (HTTPS, PAT & SSH)</a><a href="/blog-git/43-branch-protection.html" class="">43. Branch Protection Rules</a><a href="/blog-git/44-signed-commits-gpg-ssh.html" class="">44. Signed Commits with GPG & SSH</a><a href="/blog-git/45-codeowners-and-team-permissions.html" class="">45. CODEOWNERS & Team Permissions</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Hosting, Workflows & Interview Prep</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-git/46-readme-documentation.html" class="">46. README & Technical Documentation</a><a href="/blog-git/47-github-pages.html" class="">47. Free Web Hosting with GitHub Pages</a><a href="/blog-git/48-team-collaboration.html" class="">48. Enterprise Team Collaboration</a><a href="/blog-git/49-professional-git-workflow.html" class="">49. Professional Git Workflows (Trunk-Based vs Git-Flow)</a><a href="/blog-git/50-git-interview-preparation.html" class="">50. Top 50 Git & GitHub Technical Interview Q&A</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Navigation</div>
+    <a href="/blog.html">📚 All Tutorials</a>
   </aside>
+
   <main class="content">
-    <div class="breadcrumb"><a href="/">Home</a><span>&#8250;</span><a href="/blog.html">Tutorials</a><span>&#8250;</span><a href="/blog-git.html">Git</a><span>&#8250;</span><span>Lesson Index</span></div>
-    <h1 class="page-title">Git &amp; GitHub Tutorial &#8212; Complete Guide</h1>
-<div class="page-meta"><span class="badge">&#128187; Git</span><span class="badge">&#128994; Beginner to Advanced</span><span class="badge">&#128197; July 2026</span></div>
-<div class="intro-box"><p>Git is the universal standard version control system for software development. This 15-lesson tutorial takes you from setting up profiles, committing changes, and managing feature branches, to resolving merge conflicts, configuring secure SSH credentials, running interactive rebases, and managing team workflow conventions on GitHub.</p></div>
-<div class="section">
-  <div class="section-title"><span class="num">&#9658;</span> Course Curriculum</div>
-  <table class="tbl" style="margin-top:15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    <tr><td><strong>Lesson 1</strong></td><td><a href="/blog-git/intro.html"><strong>Introduction to Version Control &amp; Git</strong></a></td></tr>
-    <tr><td><strong>Lesson 2</strong></td><td><a href="/blog-git/installation-config.html"><strong>Installing Git &amp; Profile Configuration</strong></a></td></tr>
-    <tr><td><strong>Lesson 3</strong></td><td><a href="/blog-git/git-init-clone.html"><strong>Initializing &amp; Cloning Repositories</strong></a></td></tr>
-    <tr><td><strong>Lesson 4</strong></td><td><a href="/blog-git/staging-commits.html"><strong>Staging Area: git add &amp; git commit</strong></a></td></tr>
-    <tr><td><strong>Lesson 5</strong></td><td><a href="/blog-git/git-status-log.html"><strong>Inspecting Status, Diff &amp; Commit History</strong></a></td></tr>
-    <tr><td><strong>Lesson 6</strong></td><td><a href="/blog-git/git-branching.html"><strong>Branching: Creating, Switching &amp; Deleting</strong></a></td></tr>
-    <tr><td><strong>Lesson 7</strong></td><td><a href="/blog-git/git-merging.html"><strong>Merging Branches &amp; Conflict Resolution</strong></a></td></tr>
-    <tr><td><strong>Lesson 8</strong></td><td><a href="/blog-git/remote-repositories.html"><strong>Remotes: git push, pull, fetch &amp; clone</strong></a></td></tr>
-    <tr><td><strong>Lesson 9</strong></td><td><a href="/blog-git/undoing-changes.html"><strong>Undoing Changes: reset, revert &amp; restore</strong></a></td></tr>
-    <tr><td><strong>Lesson 10</strong></td><td><a href="/blog-git/git-stashing.html"><strong>Temporary Saves: git stash pop &amp; apply</strong></a></td></tr>
-    <tr><td><strong>Lesson 11</strong></td><td><a href="/blog-git/git-rebasing.html"><strong>Rebasing vs Merging &amp; Squashing</strong></a></td></tr>
-    <tr><td><strong>Lesson 12</strong></td><td><a href="/blog-git/github-intro.html"><strong>GitHub Collaboration &amp; Pull Requests</strong></a></td></tr>
-    <tr><td><strong>Lesson 13</strong></td><td><a href="/blog-git/ssh-keys.html"><strong>SSH Keys Configuration &amp; Security</strong></a></td></tr>
-    <tr><td><strong>Lesson 14</strong></td><td><a href="/blog-git/git-workflows.html"><strong>Git Workflows: Git Flow vs GitHub Flow</strong></a></td></tr>
-    <tr><td><strong>Lesson 15</strong></td><td><a href="/blog-git/git-best-practices.html"><strong>Best Practices, gitignore &amp; Hooks</strong></a></td></tr>
-  </table>
-</div>
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">Git &amp; GitHub Roadmap</span>
+    </div>
+
+    <h1 class="page-title">Git &amp; GitHub Masterclass (50 Chapters, 10 Phases)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐙 Git 2.40+</span>
+      <span class="badge">🟢 50 Complete Chapters</span>
+      <span class="badge">📂 10 Complete Phases</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">Git Basics · Configuration · Repositories · Staging Area · Commits · git diff · Restoring Files · git reset · git revert · Reflog · Branching · Merging · Conflict Resolution · Remote Repos · Push &amp; Pull · Fetch · Pull Requests · Code Review · Forks · Issues &amp; Projects · Releases · Rebase · Cherry-Pick · Stash · .gitignore · Git Hooks · Submodules · Git LFS · GitHub Actions · CI/CD · SSH Keys · GPG Signing · Branch Protection · Professional Workflows · Top 50 Interview Q&amp;A</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's Git &amp; GitHub Complete Master Course</strong>. Git is the universal standard distributed version control system powering modern software engineering. From repository initialization, staging, and branching to Pull Requests, automated CI/CD pipelines with GitHub Actions, signed commits, and top technical interview preparation, this 50-chapter course covers every essential concept in depth.</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(241,78,50,0.12),rgba(20,24,32,0.6));border:1px solid rgba(241,78,50,0.3);border-radius:12px;padding:24px;margin:28px 0;">
+      <h3 style="color:#f14e32;margin-bottom:10px;font-size:18px;">🎯 Ready to Master Git Version Control?</h3>
+      <p style="color:var(--text2);margin-bottom:16px;font-size:14.5px;">Choose where to start: explore Git introduction, branching, GitHub pull requests, interactive rebasing, GitHub Actions CI/CD, or interview prep:</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/blog-git/01-git-introduction-and-version-control.html" style="background:linear-gradient(135deg,#f14e32,#e24329);color:#ffffff;font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 1: Git Intro →</a>
+        <a href="/blog-git/11-git-branch-basics.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 3: Branching &amp; Merging →</a>
+        <a href="/blog-git/21-pull-requests.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 5: Pull Requests →</a>
+        <a href="/blog-git/27-git-rebase.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 6: Advanced Rebase →</a>
+        <a href="/blog-git/36-github-actions-introduction.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 8: GitHub Actions →</a>
+        <a href="/blog-git/50-git-interview-preparation.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 10: Interview Prep →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🐙</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 01</div>
+                <h3 class="phase-roadmap-title">Git Fundamentals & Setup</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/01-git-introduction-and-version-control.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">01</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">1. What is Git & Version Control?</span>
+                    <span class="lesson-subtopics">Git ante enti? · Version control · Local vs Remote · Repositories · Commits · Distributed VCS</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/02-git-installation-and-configuration.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">02</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">2. Git Installation & Global Config</span>
+                    <span class="lesson-subtopics">git config · user.name · user.email · Global vs Local config · Default branch init.defaultBranch</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/03-creating-a-git-repository.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">03</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">3. Creating & Initializing Repositories</span>
+                    <span class="lesson-subtopics">git init · .git folder structure · Object database · HEAD pointer · Initializing local repos</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/04-working-tree-and-staging-area.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">04</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">4. Working Tree & Staging Area</span>
+                    <span class="lesson-subtopics">Working Directory · Staging Area (Index) · git add · Untracked vs Tracked files · File lifecycle</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/05-git-commits.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">05</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">5. Commits & Commit Messages</span>
+                    <span class="lesson-subtopics">git commit -m · Commit message best practices · SHA-1/SHA-256 hashes · Commit history · Atomic commits</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔍</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 02</div>
+                <h3 class="phase-roadmap-title">Tracking, Differences & Inspection</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/06-viewing-changes-git-diff.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">06</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">6. Inspecting Changes with git diff</span>
+                    <span class="lesson-subtopics">git diff · Staged diff (--staged) · Working tree diff · Comparing commits & branches · Patch format</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/07-restoring-files.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">07</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">7. Restoring Files (git restore)</span>
+                    <span class="lesson-subtopics">git restore · Unstaging files (--staged) · Discarding local workspace changes · Selective restoring</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/08-git-reset.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">08</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">8. Git Reset (Soft, Mixed, Hard)</span>
+                    <span class="lesson-subtopics">git reset --soft · git reset --mixed · git reset --hard · Resetting HEAD · Moving branch pointers</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/09-git-revert-and-reflog.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">09</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">9. Git Revert & Reflog Recovery</span>
+                    <span class="lesson-subtopics">git revert · Safe undoing in public branches · git reflog · Recovering lost commits & resets</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/10-git-log-and-history-formatting.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">10</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">10. Git Log & History Formatting</span>
+                    <span class="lesson-subtopics">git log --oneline --graph --decorate · Filtering log history · Searching commit logs (--grep)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🌿</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 03</div>
+                <h3 class="phase-roadmap-title">Branching & Merging</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/11-git-branch-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">11</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">11. Git Branch Basics</span>
+                    <span class="lesson-subtopics">git branch · Creating branches · Switching branches (checkout/switch) · Deleting branches</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/12-branch-workflow.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">12</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">12. Branch Workflows & Naming Conventions</span>
+                    <span class="lesson-subtopics">Feature branching · Hotfix branches · Release branches · Branch naming conventions (feature/ bugfix/)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/13-git-merging.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">13</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">13. Merging Branches</span>
+                    <span class="lesson-subtopics">git merge · Fast-forward merges · Recursive merge commits · 3-way merge algorithm</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/14-merge-conflicts.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">14</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">14. Merge Conflicts Resolution</span>
+                    <span class="lesson-subtopics">Merge conflicts · Conflict markers (<<<<<<<, =======, >>>>>>>) · Resolving conflicts · git merge --abort</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/15-fast-forward-vs-3way-merges.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">15</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">15. Fast-Forward vs 3-Way Merges</span>
+                    <span class="lesson-subtopics">git merge --no-ff · Preserving branch history · Fast-forward advantages vs Merge commit safety</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🌐</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 04</div>
+                <h3 class="phase-roadmap-title">GitHub & Remote Repositories</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/16-github-repository.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">16</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">16. GitHub Repositories Setup</span>
+                    <span class="lesson-subtopics">GitHub dashboard · Public vs Private repos · Creating remote repos · Template repositories</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/17-connecting-local-and-remote.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">17</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">17. Connecting Local & Remote Repositories</span>
+                    <span class="lesson-subtopics">git remote add origin · Checking remotes (-v) · Changing remote URLs (set-url) · Multiple remotes</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/18-git-push-and-pull.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">18</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">18. Push & Pull Mechanics</span>
+                    <span class="lesson-subtopics">git push -u origin main · git pull · Upstream tracking · Force pushing gotchas (--force-with-lease)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/19-git-fetch-and-remote-tracking.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">19</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">19. Fetch & Remote Tracking Branches</span>
+                    <span class="lesson-subtopics">git fetch · Remote tracking branches (origin/main) · Fetch vs Pull · Inspecting remote refs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/20-upstream-remotes-and-syncing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">20</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">20. Upstream Remotes & Fork Syncing</span>
+                    <span class="lesson-subtopics">git remote add upstream · Syncing forks · Rebase on upstream/main · Keeping forks updated</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 05</div>
+                <h3 class="phase-roadmap-title">Pull Requests & Collaboration</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/21-pull-requests.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">21</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">21. Pull Requests & Code Reviews</span>
+                    <span class="lesson-subtopics">Creating PRs · PR templates · Requesting reviews · Draft PRs · Merging PR strategies</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/22-code-review.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">22</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">22. Code Review Best Practices</span>
+                    <span class="lesson-subtopics">Reviewing code · Inline comments · Requesting changes · Approving PRs · Suggesting code changes</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/23-forks-and-contributions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">23</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">23. Forks & Open-Source Contributions</span>
+                    <span class="lesson-subtopics">Forking repos · Syncing forks · Upstream remotes · Open source etiquette · Contribution guidelines</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/24-github-issues.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">24</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">24. GitHub Issues & Bug Tracking</span>
+                    <span class="lesson-subtopics">Issue tracking · Labels · Assignees · Milestones · Closing issues via commits (Closes #12)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/25-github-projects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">25</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">25. GitHub Projects & Kanban Boards</span>
+                    <span class="lesson-subtopics">Project boards · Kanban workflows · Automation rules · Sprint planning · Field customizations</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 06</div>
+                <h3 class="phase-roadmap-title">Advanced Git Operations</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/26-releases-and-tags.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">26</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">26. Releases & Git Tags</span>
+                    <span class="lesson-subtopics">git tag · Lightweight vs Annotated tags · Creating GitHub Releases · Release binaries · Semantic Versioning</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/27-git-rebase.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">27</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">27. Git Rebase & Interactive Rebasing</span>
+                    <span class="lesson-subtopics">git rebase · Interactive rebase (rebase -i) · Squashing commits · Rebase safety rules · Rebase onto</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/28-git-cherry-pick.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">28</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">28. Git Cherry-Pick</span>
+                    <span class="lesson-subtopics">git cherry-pick · Applying specific commits across branches · Resolving cherry-pick conflicts</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/29-git-stash.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">29</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">29. Git Stash & Stash Stack</span>
+                    <span class="lesson-subtopics">git stash · git stash pop · git stash apply · Stash list · Stashing untracked files (-u) · Stash drop</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/30-reflog-and-recovery.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">30</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">30. Reflog & Commit Recovery</span>
+                    <span class="lesson-subtopics">git reflog · Recovering deleted branches · Restoring hard reset commits · Dangling commits</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🛠️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 07</div>
+                <h3 class="phase-roadmap-title">Repository Management & Customization</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/31-commit-best-practices.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">31</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">31. Commit Best Practices & Conventions</span>
+                    <span class="lesson-subtopics">Atomic commits · Conventional commits (feat, fix, docs) · Writing great commit messages · Imperative mood</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/32-gitignore.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">32</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">32. .gitignore & Pattern Matching</span>
+                    <span class="lesson-subtopics">.gitignore patterns · Global gitignore · Ignoring tracked files · git rm --cached · Wildcards & negation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/33-git-hooks.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">33</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">33. Git Hooks & Husky Automation</span>
+                    <span class="lesson-subtopics">Pre-commit hooks · Post-commit hooks · Husky · Automating linters & tests · Client-side vs Server-side hooks</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/34-git-submodules-and-subtrees.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">34</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">34. Git Submodules & Subtrees</span>
+                    <span class="lesson-subtopics">git submodule add · Submodule initialization & update · Git subtree · Managing external repo dependencies</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/35-git-attributes-and-lfs.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">35</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">35. Git Attributes & LFS (Large File Storage)</span>
+                    <span class="lesson-subtopics">.gitattributes · Git LFS (Large File Storage) · Handling binary assets · Line ending normalizations (crlf/lf)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 08</div>
+                <h3 class="phase-roadmap-title">GitHub Actions & CI/CD</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/36-github-actions-introduction.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">36</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">36. GitHub Actions Workflows</span>
+                    <span class="lesson-subtopics">Workflows · Jobs · Steps · Actions syntax (.github/workflows) · Triggers (push, pull_request)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/37-continuous-integration.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">37</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">37. Continuous Integration with GitHub Actions</span>
+                    <span class="lesson-subtopics">Automated testing · Build matrices · Caching dependencies · Artifacts upload/download</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/38-deployment-with-actions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">38</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">38. Deployment Pipelines with Actions</span>
+                    <span class="lesson-subtopics">Automated deployments · Secrets management (secrets.GITHUB_TOKEN) · Deploying to AWS/Vercel/GitHub Pages</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/39-custom-github-actions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">39</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">39. Custom GitHub Actions</span>
+                    <span class="lesson-subtopics">Composite Actions · JavaScript Actions · Docker Container Actions · Action inputs & outputs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/40-matrix-builds-and-caching.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">40</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">40. Matrix Builds & Dependency Caching</span>
+                    <span class="lesson-subtopics">Build matrix strategy (OS & Node/Python versions) · actions/cache · Optimizing CI pipeline duration</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔒</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 09</div>
+                <h3 class="phase-roadmap-title">Security & Authentication</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/41-repository-security.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">41</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">41. Repository Security & Dependabot</span>
+                    <span class="lesson-subtopics">Dependabot automated alerts & security updates · Secret scanning · Security advisories · CODEOWNERS file</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/42-github-authentication.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">42</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">42. GitHub Authentication (HTTPS, PAT & SSH)</span>
+                    <span class="lesson-subtopics">Personal Access Tokens (PAT) · SSH key pair generation (ed25519) · Adding SSH keys · ssh -T git@github.com</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/43-branch-protection.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">43</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">43. Branch Protection Rules</span>
+                    <span class="lesson-subtopics">Protecting main branch · Requiring PR reviews · Requiring status checks to pass · Restricting force pushes</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/44-signed-commits-gpg-ssh.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">44</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">44. Signed Commits with GPG & SSH</span>
+                    <span class="lesson-subtopics">GPG signing keys · SSH commit signing · Verified badge on GitHub · Sign commits with git commit -S</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/45-codeowners-and-team-permissions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">45</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">45. CODEOWNERS & Team Permissions</span>
+                    <span class="lesson-subtopics">CODEOWNERS syntax · Mandatory code reviews by domain experts · Organization permissions · Team roles</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏆</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 10</div>
+                <h3 class="phase-roadmap-title">Hosting, Workflows & Interview Prep</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-git/46-readme-documentation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">46</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">46. README & Technical Documentation</span>
+                    <span class="lesson-subtopics">Markdown syntax · Badges · Architecture diagrams · GitHub Wiki & Discussions · Open-source documentation</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/47-github-pages.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">47</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">47. Free Web Hosting with GitHub Pages</span>
+                    <span class="lesson-subtopics">Free static web hosting · Custom domains · Deploying static sites from main branch or gh-pages branch</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/48-team-collaboration.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">48</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">48. Enterprise Team Collaboration</span>
+                    <span class="lesson-subtopics">Organization roles · Teams · Access controls · Code review assignments · Cross-functional team workflows</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/49-professional-git-workflow.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">49</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">49. Professional Git Workflows (Trunk-Based vs Git-Flow)</span>
+                    <span class="lesson-subtopics">GitHub Flow vs Git Flow vs Trunk-Based Development · Release strategies · Production deployment checklist</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-git/50-git-interview-preparation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">50</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">50. Top 50 Git & GitHub Technical Interview Q&A</span>
+                    <span class="lesson-subtopics">Top 50 Git Interview Questions & Answers · Rebase vs Merge · Soft vs Hard Reset · Reflog recovery mechanics</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Git &amp; GitHub Complete Masterclass · 50 Chapters · 10 Phases · 2026 Edition</span>
+      </div>
+    </div>
 
     <div class="nav-footer">
-      <a href="/blog-git.html" class="nav-btn"><span class="label">&#8592; Git Overview</span><span class="title">Course Index</span></a>
-      <a href="/blog-git/intro.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson &#8594;</span><span class="title">Introduction to Version Control &amp; Git</span></a>
+      <a href="/blog.html" class="nav-btn"><span class="label">← All Tutorials</span><span class="title">Course Hub</span></a>
+      <a href="/blog-git/01-git-introduction-and-version-control.html" class="nav-btn" style="text-align:right;"><span class="label">Start Learning →</span><span class="title">1. What is Git &amp; Version Control?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

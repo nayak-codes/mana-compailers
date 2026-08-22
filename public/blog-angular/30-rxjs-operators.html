@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Angular — RxJS Operators | Our Compiler</title>
+  <meta name="description" content="Complete Angular Chapter 30: RxJS Operators. Learn Observable · Subject · BehaviorSubject · map · filter · switchMap · catchError · debounceTime · distinctUntilChanged · AsyncPipe with practical TypeScript code examples, Angular templates, signals, services, and step-by-step walkthroughs." />
+  <meta name="keywords" content="angular tutorial, learn angular, rxjs operators, angular signals, standalone components" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-angular/30-rxjs-operators.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-angular/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-angular">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-angular.html" class="active">Angular</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Angular Tutorial</div>
+    <a href="/blog-angular.html" class="sidebar-home-link">🅰️ Angular HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🅰️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Angular Basics</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/01-what-is-angular.html" class="">1. What Is Angular?</a><a href="/blog-angular/02-angular-prerequisites.html" class="">2. Angular Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and Project Structure</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/03-angular-installation.html" class="">3. Angular Installation</a><a href="/blog-angular/04-angular-project-structure.html" class="">4. Angular Project Structure</a><a href="/blog-angular/05-first-angular-component.html" class="">5. First Angular Component</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Templates and Data Binding</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/06-angular-templates.html" class="">6. Angular Templates</a><a href="/blog-angular/07-data-binding.html" class="">7. Data Binding</a><a href="/blog-angular/08-conditions-and-loops.html" class="">8. Conditions and Loops</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Components Communication</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/09-inputs.html" class="">9. Inputs</a><a href="/blog-angular/10-outputs.html" class="">10. Outputs</a><a href="/blog-angular/11-content-projection.html" class="">11. Content Projection</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛠️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Directives and Pipes</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/12-directives.html" class="">12. Directives</a><a href="/blog-angular/13-pipes.html" class="">13. Pipes</a><a href="/blog-angular/14-custom-pipes.html" class="">14. Custom Pipes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Signals and Reactivity</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/15-signals.html" class="">15. Signals</a><a href="/blog-angular/16-computed.html" class="">16. computed()</a><a href="/blog-angular/17-effect.html" class="">17. effect()</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">💉</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Services and Dependency Injection</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/18-services.html" class="">18. Services</a><a href="/blog-angular/19-dependency-injection.html" class="">19. Dependency Injection</a><a href="/blog-angular/20-configuration.html" class="">20. Configuration</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧭</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Routing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/21-router-basics.html" class="">21. Router Basics</a><a href="/blog-angular/22-dynamic-routes.html" class="">22. Dynamic Routes</a><a href="/blog-angular/23-route-guards.html" class="">23. Route Guards</a><a href="/blog-angular/24-lazy-loading.html" class="">24. Lazy Loading</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Forms</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/25-template-driven-forms.html" class="">25. Template-Driven Forms</a><a href="/blog-angular/26-reactive-forms.html" class="">26. Reactive Forms</a><a href="/blog-angular/27-dynamic-forms.html" class="">27. Dynamic Forms</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">HTTP & RxJS Integration</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-angular/28-httpclient.html" class="">28. HttpClient</a><a href="/blog-angular/29-http-interceptors.html" class="">29. HTTP Interceptors</a><a href="/blog-angular/30-rxjs-operators.html" class="active">30. RxJS Operators</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">State Management & Testing</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/31-state-management-and-ngrx.html" class="">31. State Management & NgRx</a><a href="/blog-angular/32-unit-testing.html" class="">32. Unit Testing Components & Services</a><a href="/blog-angular/33-e2e-testing-and-harnesses.html" class="">33. E2E Testing & Component Harnesses</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Advanced Architecture & Optimization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/34-performance-optimization.html" class="">34. Performance Optimization</a><a href="/blog-angular/35-ssr-and-hydration.html" class="">35. SSR & Hydration</a><a href="/blog-angular/36-micro-frontends.html" class="">36. Micro Frontends & Module Federation</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Projects & Certification</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-angular/37-beginner-angular-projects.html" class="">37. Beginner Projects</a><a href="/blog-angular/38-intermediate-angular-projects.html" class="">38. Intermediate Projects</a><a href="/blog-angular/39-our-compiler-angular-app-project.html" class="">39. Our Compiler Angular App Project</a><a href="/blog-angular/40-angular-quiz.html" class="">40. Angular Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-angular.html">Angular</a><span class="sep">›</span>
+      <span class="current">Angular — RxJS Operators</span>
+    </div>
+
+    <h1 class="page-title">Angular — RxJS Operators</h1>
+
+    <div class="page-meta">
+      <span class="badge">🅰️ Angular 18+</span>
+      <span class="badge">🟢 Chapter 30 of 40</span>
+      <span class="badge">📂 Phase 10: HTTP & RxJS Integration</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">Observable · Subject · BehaviorSubject · map · filter · switchMap · catchError · debounceTime · distinctUntilChanged · AsyncPipe</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Angular — RxJS Operators</strong> in our Angular Complete Masterclass! Transform and combine asynchronous event streams using RxJS reactive operators.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In Angular web development, understanding <strong>RxJS Operators</strong> is essential for building structured, scalable frontend applications. Angular components and directives participate in Angular's reactive system and dependency injection system seamlessly.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#dd0031;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master TypeScript mechanics and Angular decorators for <strong>RxJS Operators</strong></li>
+          <li>Understand templates, data binding, Signals, and dependency injection</li>
+          <li>Implement clean, production-ready Angular components and services</li>
+          <li>Avoid common binding mistakes, subscription memory leaks, and change detection pitfalls</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why RxJS Operators is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Angular components and directives dependency injection system lo automatically participate chestayi; dependencies ni inject chesi use cheyyachu. Mastering <strong>RxJS Operators</strong> gives you full control over dynamic user interfaces in enterprise web apps.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required Component / Service design -->
+    <div class="section-title"><span class="num">4</span>Required Component / Service Design</div>
+    <div class="section-body">
+      <p>Target Class / Artifact: <code>RxDemo</code>. Configured using Angular metadata decorators (e.g. <code>@Component</code>, <code>@Injectable</code>, <code>@Directive</code>, <code>@Pipe</code>).</p>
+    </div>
+
+    <!-- 5. Angular syntax / mechanism -->
+    <div class="section-title"><span class="num">5</span>Angular Mechanism &amp; Type</div>
+    <div class="section-body">
+      <p>Mechanism: <code style="color:#dd0031;font-weight:700;">RxJS</code>. File Path: <code>src/app/search.component.ts</code>.</p>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example Code</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Angular Component / Service Code</span></div>
+        <pre><code>import { BehaviorSubject, debounceTime, switchMap } from 'rxjs';
+
+export class SearchComponent {
+  private query$ = new BehaviorSubject<string>('');
+
+  results$ = this.query$.pipe(
+    debounceTime(300),
+    switchMap(q => this.api.search(q))
+  );
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Variables & Binding -->
+    <div class="section-title"><span class="num">7</span>Variables &amp; Binding Expressions</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Template / CLI Usage</span></div>
+        <pre><code>query$.pipe(debounceTime(300), switchMap(q => api.search(q)));</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Response output -->
+    <div class="section-title"><span class="num">8</span>Rendered Output</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">UI Render / Execution Output</span></div>
+        <pre><code>Debounced search stream emits filtered results</code></pre>
+      </div>
+    </div>
+
+    <!-- 9. Execution flow -->
+    <div class="section-title"><span class="num">9</span>Execution Flow &amp; Change Detection</div>
+    <div class="section-body">
+      <div class="diagram-box">Angular Bootstrapping -> Component Instantiation -> Dependency Injection -> Data Binding / Signal Update -> Template Render -> Zone.js / Signal Change Detection -> DOM Tree Sync</div>
+    </div>
+
+    <!-- 10. Status & State -->
+    <div class="section-title"><span class="num">10</span>State &amp; Verification Status</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #dd0031;">
+        <strong style="color:#dd0031;">Verification Status: Stream Transformed</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Angular components automatically track template bindings and update the browser DOM reactively when data state changes.</p>
+      </div>
+    </div>
+
+    <!-- 11. Performance note -->
+    <div class="section-title"><span class="num">11</span>Performance Note</div>
+    <div class="section-body">
+      <p>Use Angular Signals (<code>signal()</code>, <code>computed()</code>) and <code>ChangeDetectionStrategy.OnPush</code> to minimize change detection cycles. For heavy template lists, always pass <code>track</code> expressions in <code>@for</code> blocks.</p>
+    </div>
+
+    <!-- 12. Common mistakes -->
+    <div class="section-title"><span class="num">12</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Forgetting to unsubscribe from manual RxJS Observables, leading to memory leaks.</li>
+          <li>Omitting <code>track</code> in <code>@for</code> loops causing full list DOM re-renders on array updates.</li>
+          <li>Mutating objects directly instead of updating Signals via <code>.set()</code> or <code>.update()</code>.</li>
+          <li>Putting heavy computation directly inside HTML template expression interpolation.</li>
+          <li>Injecting services in non-injection contexts instead of constructors or <code>inject()</code> functions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 13. Coding challenge -->
+    <div class="section-title"><span class="num">13</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#dd0031;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Build an Angular component for <strong>RxJS Operators</strong> using standalone component syntax. Bind properties dynamically to your template and test user interactions in your browser at <code>http://localhost:4200</code>!</p>
+      </div>
+    </div>
+
+    <!-- 14. Mini quiz -->
+    <div class="section-title"><span class="num">14</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary advantage of RxJS Operators in Angular?</h4>
+        <p><strong>Answer:</strong> It provides structured TypeScript type safety and Observable, streamlining single-page app development.</p>
+      </div>
+    </div>
+
+    <!-- 15. Quick recap -->
+    <div class="section-title"><span class="num">15</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Transform and combine asynchronous event streams using RxJS reactive operators.</li>
+        <li>Angular components participate automatically in the Dependency Injection system.</li>
+        <li>Utilize standalone components, Angular Signals, and modern control flow syntax (@if, @for).</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Angular 18+ Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 17 & 18. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="29-http-interceptors.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">29. HTTP Interceptors</span></a>
+      <a href="31-state-management-and-ngrx.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">31. State Management & NgRx</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

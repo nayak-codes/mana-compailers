@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go — HTTP Testing | Our Compiler</title>
+  <meta name="description" content="Complete Go Chapter 38: HTTP Testing. Learn httptest · Testing handlers · Testing routes · Request creation · ResponseRecorder · JSON response testing · Status code testing · Integration API tests with practical Go code examples, memory diagrams, and step-by-step walkthroughs." />
+  <meta name="keywords" content="go tutorial, golang, http testing, learn go, goroutines, go web development" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-go/38-http-testing.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-go/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-go">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-go.html" class="active">Go</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-django.html">Django</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Go Tutorial</div>
+    <a href="/blog-go.html" class="sidebar-home-link">🐹 Go HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐹</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Go Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/01-what-is-go.html" class="">1. What is Go?</a><a href="/blog-go/02-go-prerequisites.html" class="">2. Go Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First Program</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/03-go-installation.html" class="">3. Go Installation</a><a href="/blog-go/04-your-first-go-program.html" class="">4. Your First Go Program</a><a href="/blog-go/05-go-modules-and-tools.html" class="">5. Go Modules & Tools</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔢</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Variables and Data Types</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/06-variables-and-constants.html" class="">6. Variables & Constants</a><a href="/blog-go/07-data-types.html" class="">7. Data Types</a><a href="/blog-go/08-type-conversion.html" class="">8. Type Conversion</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Operators and Control Flow</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/09-operators.html" class="">9. Operators</a><a href="/blog-go/10-conditions.html" class="">10. Conditions</a><a href="/blog-go/11-loops.html" class="">11. Loops</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Functions</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/12-functions.html" class="">12. Functions</a><a href="/blog-go/13-defer-panic-and-recover.html" class="">13. Defer, Panic & Recover</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Arrays, Slices and Maps</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/14-arrays.html" class="">14. Arrays</a><a href="/blog-go/15-slices.html" class="">15. Slices</a><a href="/blog-go/16-maps.html" class="">16. Maps</a><a href="/blog-go/17-strings-and-runes.html" class="">17. Strings & Runes</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📍</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Structs and Methods</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/18-structs.html" class="">18. Structs</a><a href="/blog-go/19-methods.html" class="">19. Methods</a><a href="/blog-go/20-interfaces.html" class="">20. Interfaces</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Error Handling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/21-errors.html" class="">21. Errors</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📚</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Packages and Standard Library</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/22-packages.html" class="">22. Packages</a><a href="/blog-go/23-standard-library.html" class="">23. Standard Library</a><a href="/blog-go/24-file-handling.html" class="">24. File Handling</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">JSON and Serialization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/25-json.html" class="">25. JSON</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">HTTP and Web Servers</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/26-http-basics.html" class="">26. HTTP Basics</a><a href="/blog-go/27-http-server.html" class="">27. HTTP Server</a><a href="/blog-go/28-routing-and-middleware.html" class="">28. Routing & Middleware</a><a href="/blog-go/29-rest-apis.html" class="">29. REST APIs</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏱️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">Context and Cancellation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/30-context.html" class="">30. Context</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Database Access</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/31-sql-databases.html" class="">31. SQL Databases</a><a href="/blog-go/32-orm-and-query-builders.html" class="">32. ORM & Query Builders</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Concurrency</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/33-goroutines.html" class="">33. Goroutines</a><a href="/blog-go/34-channels.html" class="">34. Channels</a><a href="/blog-go/35-select.html" class="">35. Select</a><a href="/blog-go/36-synchronization.html" class="">36. Synchronization</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Testing & Code Quality</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-go/37-unit-testing.html" class="">37. Unit Testing</a><a href="/blog-go/38-http-testing.html" class="active">38. HTTP Testing</a><a href="/blog-go/39-fuzzing-and-benchmarks.html" class="">39. Fuzzing & Benchmarks</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Advanced Backend & Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/40-authentication.html" class="">40. Authentication</a><a href="/blog-go/41-security.html" class="">41. Security</a><a href="/blog-go/42-caching.html" class="">42. Caching</a><a href="/blog-go/43-messaging.html" class="">43. Messaging & Events</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐳</span>
+          <div class="phase-info"><span class="phase-tag">Phase 17</span><span class="phase-title">Deployment & Production</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/44-docker.html" class="">44. Docker</a><a href="/blog-go/45-ci-cd.html" class="">45. CI/CD</a><a href="/blog-go/46-production-deployment.html" class="">46. Production Deployment</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 18</span><span class="phase-title">Projects & Quiz</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/47-go-projects.html" class="">47. Go Projects</a><a href="/blog-go/48-go-quiz.html" class="">48. Go Practice Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-go.html">Go</a><span class="sep">›</span>
+      <span class="current">Go — HTTP Testing</span>
+    </div>
+
+    <h1 class="page-title">Go — HTTP Testing</h1>
+
+    <div class="page-meta">
+      <span class="badge">🐹 Go 1.22+</span>
+      <span class="badge">🟢 Chapter 38 of 48</span>
+      <span class="badge">📂 Phase 15: Testing & Code Quality</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">httptest · Testing handlers · Testing routes · Request creation · ResponseRecorder · JSON response testing · Status code testing · Integration API tests</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Go — HTTP Testing</strong> in our Go Complete Masterclass! Test HTTP web handlers and REST API endpoints in Go using net/http/httptest ResponseRecorder.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In Go programming, understanding <strong>HTTP Testing</strong> is essential for writing clean, efficient, and concurrent software. Every Go program is constructed out of packages, compiled directly to machine code for maximum execution speed.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master core Go language mechanics behind <strong>HTTP Testing</strong></li>
+          <li>Understand memory allocation, stack/heap semantics, and zero values</li>
+          <li>Write production-ready, formatted idiomatic Go source code</li>
+          <li>Avoid common concurrency deadlocks, type conversion traps, and pointer bugs</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why HTTP Testing is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Go is built for modern cloud infrastructure, microservices, and high-performance server architectures. Mastering <strong>HTTP Testing</strong> equips developers to build scalable systems at companies like Google, Uber, Docker, and Kubernetes.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required imports & packages -->
+    <div class="section-title"><span class="num">4</span>Required Packages &amp; Imports</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Go — Package Declaration</span>
+        </div>
+        <pre><code>package main
+
+import (
+    "fmt"
+)</code></pre>
+      </div>
+    </div>
+
+    <!-- 5. Basic syntax -->
+    <div class="section-title"><span class="num">5</span>Basic Syntax</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Go — Code Structure</span>
+        </div>
+        <pre><code>package main
+
+import (
+    "net/http"
+    "net/http/httptest"
+    "testing"
+)
+
+func TestHomeHandler(t *testing.T) {
+    req := httptest.NewRequest("GET", "/", nil)
+    rec := httptest.NewRecorder()
+    if rec.Code != http.StatusOK { t.Errorf("Got %d", rec.Code) }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Go — Executable Code</span>
+        </div>
+        <pre><code>package main
+
+import (
+    "net/http"
+    "net/http/httptest"
+    "testing"
+)
+
+func TestHomeHandler(t *testing.T) {
+    req := httptest.NewRequest("GET", "/", nil)
+    rec := httptest.NewRecorder()
+    if rec.Code != http.StatusOK { t.Errorf("Got %d", rec.Code) }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Run command & execution -->
+    <div class="section-title"><span class="num">7</span>Run Command &amp; Compilation</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Terminal — Go CLI</span>
+        </div>
+        <pre><code># Run Go file directly
+go run main.go
+
+# Compile binary executable
+go build main.go
+./main</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Program output -->
+    <div class="section-title"><span class="num">8</span>Program Output</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:16px;border-radius:8px;margin:16px 0;font-size:13.5px;border-left:4px solid #10b981;">
+        <strong style="color:#10b981;">📊 Expected Terminal Output:</strong>
+        <pre style="margin-top:8px;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;color:#a6e22e;font-family:'JetBrains Mono',monospace;">Program executed successfully.</pre>
+      </div>
+    </div>
+
+    <!-- 9. Code explanation & breakdown -->
+    <div class="section-title"><span class="num">9</span>Code Explanation &amp; Breakdown</div>
+    <div class="section-body">
+      <table class="tbl spec-table">
+        <thead><tr><th>Go Construct</th><th>Function &amp; Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>package main</code></td><td>Defines an executable Go application rather than a shared library.</td></tr>
+          <tr><td><code>func main()</code></td><td>Entry point of the executable program where code execution begins.</td></tr>
+          <tr><td><code>HTTP</code></td><td>Core Go language keyword or feature used in this lesson.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 10. Line-by-line breakdown -->
+    <div class="section-title"><span class="num">10</span>Line-by-Line Breakdown</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Line 1: <code>package main</code> declares that this Go file builds an executable program.</li>
+        <li>Line 3: <code>import "fmt"</code> imports standard formatting and I/O package.</li>
+        <li>Line 5: <code>func main()</code> defines the starting point of program execution.</li>
+      </ul>
+    </div>
+
+    <!-- 11. Execution flow & memory diagram -->
+    <div class="section-title"><span class="num">11</span>Execution Flow &amp; Memory Diagram</div>
+    <div class="section-body">
+      <div class="diagram-box">Main Thread Execution
+  │
+  ├── Stack Frame Allocation
+  │     ├── Local Variables
+  │     └── Pointer References
+  │
+  └── Go Runtime Scheduler Execution
+        └── Output Stream -> Terminal Console</div>
+    </div>
+
+    <!-- 12. Common mistakes -->
+    <div class="section-title"><span class="num">12</span>Common Mistakes</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Pitfalls to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Unused variables cause compilation errors in Go — delete or use blank identifier <code>_</code>!</li>
+          <li>Forgetting to format code with <code>gofmt</code> before committing.</li>
+          <li>Dereferencing a <code>nil</code> pointer causing an unhandled runtime panic.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 13. Coding challenge -->
+    <div class="section-title"><span class="num">13</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#10b981;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Write a Go program demonstrating <strong>HTTP Testing</strong>. Format your code using <code>gofmt</code> and run it with <code>go run</code> to verify expected output!</p>
+      </div>
+    </div>
+
+    <!-- 14. Mini quiz -->
+    <div class="section-title"><span class="num">14</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary purpose of HTTP Testing in Go?</h4>
+        <p><strong>Answer:</strong> It provides Go language capabilities for httptest, helping build statically typed, high-performance concurrent software.</p>
+      </div>
+    </div>
+
+    <!-- 15. Quick recap & Prev/Next buttons -->
+    <div class="section-title"><span class="num">15</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Test HTTP web handlers and REST API endpoints in Go using net/http/httptest ResponseRecorder.</li>
+        <li>Subtopics covered: httptest · Testing handlers · Testing routes · Request creation · ResponseRecorder · JSON response testing · Status code testing · Integration API tests</li>
+        <li>Format your Go code with <code>gofmt</code> and build efficient binaries with <code>go build</code>.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Go 1.22+ · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="37-unit-testing.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">37. Unit Testing</span></a>
+      <a href="39-fuzzing-and-benchmarks.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">39. Fuzzing & Benchmarks</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

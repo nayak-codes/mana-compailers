@@ -334,19 +334,14 @@ const TerminalInput = ({ onSubmit }) => {
 }
 
 const parseTerminalSession = (rawOutput, inputs, code, langId, isEofError = false) => {
-  if (!rawOutput) return []
+  const text = rawOutput === '(no output)' ? '' : (rawOutput || '')
 
   // If code does NOT call any input functions, return the output directly as pure output
   if (!detectsInput(code, langId)) {
-    return [{ type: 'output', text: rawOutput }]
+    return text ? [{ type: 'output', text }] : []
   }
 
-  // Count how many input() calls exist in the code to know when to stop matching prompts
   const maxInputs = countInputCalls(code, langId)
-
-  // Determine prompt limit:
-  // If maxInputs > 0, match up to maxInputs prompts.
-  // If maxInputs === 0 (unknown/dynamic loop), match up to (inputs.length + 1) prompts.
   const promptLimit = maxInputs > 0 ? maxInputs : (inputs.length + 1)
 
   const promptRegex = /([^]*?[:?❯>$#](?!\/|\d)\s*)/g
@@ -354,43 +349,53 @@ const parseTerminalSession = (rawOutput, inputs, code, langId, isEofError = fals
   let lastIndex = 0
   let match
 
-  while ((match = promptRegex.exec(rawOutput)) !== null) {
-    matches.push(match[1])
-    lastIndex = promptRegex.lastIndex
-    // Stop matching after we've found all allowed input prompts
-    if (matches.length >= promptLimit) {
-      break
+  if (text) {
+    while ((match = promptRegex.exec(text)) !== null) {
+      matches.push(match[1])
+      lastIndex = promptRegex.lastIndex
+      if (matches.length >= promptLimit) {
+        break
+      }
     }
   }
 
-  const remainder = rawOutput.substring(lastIndex)
+  const remainder = text ? text.substring(lastIndex) : ''
   const segments = []
   let inputIdx = 0
 
-  for (let i = 0; i < matches.length; i++) {
-    const promptText = matches[i]
-    if (inputIdx < inputs.length) {
-      segments.push({ type: 'output', text: promptText })
-      segments.push({ type: 'input', text: inputs[inputIdx] })
-      segments.push({ type: 'output', text: '\n' })
-      inputIdx++
-    } else {
-      segments.push({ type: 'output', text: promptText })
-      segments.push({ type: 'active-input' })
-      return segments
+  if (matches.length > 0) {
+    for (let i = 0; i < matches.length; i++) {
+      const promptText = matches[i]
+      if (inputIdx < inputs.length) {
+        segments.push({ type: 'output', text: promptText })
+        segments.push({ type: 'input', text: inputs[inputIdx] })
+        segments.push({ type: 'output', text: '\n' })
+        inputIdx++
+      } else {
+        segments.push({ type: 'output', text: promptText })
+        segments.push({ type: 'active-input' })
+        return segments
+      }
     }
+  }
+
+  // Any inputs already entered without a printed prompt string
+  while (inputIdx < inputs.length) {
+    segments.push({ type: 'generic-input', text: inputs[inputIdx] })
+    inputIdx++
   }
 
   if (remainder) {
     segments.push({ type: 'output', text: remainder })
   }
 
-  if (detectsInput(code, langId) && !segments.some(s => s.type === 'active-input')) {
-    // Only show generic active input if the execution actually hit an EOF error (was interrupted waiting for input)
-    // AND maxInputs === 0 AND we have provided fewer inputs than 10
-    if (isEofError && maxInputs === 0 && inputs.length < 10) {
-      segments.push({ type: 'generic-active-input' })
-    }
+  // If we still need more inputs (either inputs.length < maxInputs OR execution hit EOF/interrupted OR first run with empty output)
+  const stillNeedsInput = (maxInputs > 0 && inputs.length < maxInputs) ||
+                          (isEofError && inputs.length < 10) ||
+                          (inputs.length === 0 && detectsInput(code, langId) && (!text || isEofError))
+
+  if (stillNeedsInput && !segments.some(s => s.type === 'active-input' || s.type === 'generic-active-input')) {
+    segments.push({ type: 'generic-active-input' })
   }
 
   return segments
@@ -435,13 +440,15 @@ const countInputCalls = (code, langId) => {
     case 'cpp17':
       return (code.match(/\bcin\s*>>|\bgetline\s*\(/gi) || []).length
     case 'java':
-      return (code.match(/\.next(Line|Int|Double|Long|Float|Byte|Short|Boolean)?\s*\(|\.readLine\s*\(|\.read\s*\(/gi) || []).length
+      return (code.match(/\.next(?:Line|Int|Double|Long|Float|Byte|Short|Boolean)?\s*\(|\.readLine\s*\(|\.read\s*\(/gi) || []).length
     case 'ruby':
       return (code.match(/\bgets\s*\b/gi) || []).length
     case 'csharp':
-      return (code.match(/Console\.Read(Line)?\s*\(/gi) || []).length
+      return (code.match(/Console\.Read(?:Line)?\s*\(/gi) || []).length
+    case 'go':
+      return (code.match(/\b(?:Scan|Scanln|Scanf|ReadString)\s*\(/gi) || []).length
     default:
-      return 0 // Unknown — fallback to old behavior
+      return 0
   }
 }
 
@@ -450,7 +457,6 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
 
   // Clean up docker container internal paths (e.g. /tmp/mana-compiler/xxxxxx/)
   const cleanedText = text.replace(/\/tmp\/mana-compiler\/[^/]+\//g, '');
-
   const lines = cleanedText.split('\n');
 
   return lines.map((line, idx) => {
@@ -459,313 +465,325 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
       return null;
     }
 
-    let style = { color: isErrorStatus ? '#ff6b6b' : 'var(--green)' };
-    let lineElements = [];
+    const isPointerLine = /^\s*[\^~]+\s*$/.test(line);
+    const isFileLine = /File\s+"[^"]+",\s+line\s+\d+|:\d+:\d+:\s+error/i.test(line);
+    const isErrorLine = /(SyntaxError|IndentationError|NameError|TypeError|ValueError|ZeroDivisionError|IndexError|KeyError|AttributeError|Exception|Error|error:|fatal error:)/i.test(line);
+    const isWarningLine = /warning:/i.test(line);
 
-    const isError = /error:/i.test(line) || /exception/i.test(line) || /failed/i.test(line);
-    const isWarning = /warning:/i.test(line);
-    const isLineNumber = /^\s*\d+\s*\|/g.test(line); // e.g. "  20 |"
+    if (isPointerLine) {
+      return (
+        <span key={idx} style={{ display: 'block', color: '#ff7b72', fontWeight: 800, minHeight: '1.2em' }}>
+          {line}
+        </span>
+      );
+    }
 
-    if (isError) {
-      style.color = '#ff6b6b';
-      const parts = line.split(/(error:)/i);
-      lineElements = parts.map((part, pIdx) => {
-        if (part.toLowerCase() === 'error:') {
-          return <strong key={pIdx} style={{ backgroundColor: 'rgba(255, 107, 107, 0.15)', padding: '1px 6px', borderRadius: '4px', marginRight: '6px', color: '#ff6b6b' }}>{part}</strong>;
-        }
-        return <span key={pIdx}>{part}</span>;
-      });
-    } else if (isWarning) {
-      style.color = '#f1c40f';
-      const parts = line.split(/(warning:)/i);
-      lineElements = parts.map((part, pIdx) => {
-        if (part.toLowerCase() === 'warning:') {
-          return <strong key={pIdx} style={{ backgroundColor: 'rgba(241, 196, 15, 0.15)', padding: '1px 6px', borderRadius: '4px', marginRight: '6px', color: '#f1c40f' }}>{part}</strong>;
-        }
-        return <span key={pIdx}>{part}</span>;
-      });
-    } else if (isLineNumber) {
-      const pipeIdx = line.indexOf('|');
-      if (pipeIdx !== -1) {
-        const numPart = line.substring(0, pipeIdx + 1);
-        const codePart = line.substring(pipeIdx + 1);
-        lineElements = [
-          <span key="num" style={{ color: 'var(--text3)', marginRight: '8px' }}>{numPart}</span>,
-          <span key="code" style={{ color: isErrorStatus ? '#ff6b6b' : 'var(--green)' }}>{codePart}</span>
-        ];
-      } else {
-        lineElements = [<span>{line}</span>];
-      }
-    } else if (line.trim().startsWith('|') || /^\s*\|\s*[\^~]+/.test(line)) {
-      style.color = '#58a6ff';
-      lineElements = [<span>{line}</span>];
-    } else {
-      lineElements = [<span>{line}</span>];
+    if (isFileLine) {
+      return (
+        <span key={idx} style={{ display: 'block', color: '#58a6ff', minHeight: '1.2em' }}>
+          {line}
+        </span>
+      );
+    }
+
+    if (isWarningLine) {
+      return (
+        <span key={idx} style={{ display: 'block', color: '#f1c40f', minHeight: '1.2em' }}>
+          {line}
+        </span>
+      );
+    }
+
+    if (isErrorLine) {
+      return (
+        <span key={idx} style={{ display: 'block', color: '#ff7b72', fontWeight: 600, minHeight: '1.2em' }}>
+          {line}
+        </span>
+      );
     }
 
     return (
-      <span key={idx} style={{ display: 'block', ...style, minHeight: '1.2em' }}>
-        {lineElements}
+      <span key={idx} style={{ display: 'block', color: isErrorStatus ? '#e6edf3' : 'var(--green)', minHeight: '1.2em' }}>
+        {line}
       </span>
     );
   });
-}
+};
 
 const analyzeStudentError = (rawText, code = '', langId = '') => {
   if (!rawText) return null;
 
-  const isErrorPattern = /error|exception|failed|invalid syntax|traceback/i.test(rawText);
+  const isErrorPattern = /error|exception|failed|invalid syntax|traceback|undefined reference|cannot find symbol|fatal error/i.test(rawText);
   if (!isErrorPattern) return null;
 
   // Extract line number if present
   let lineNum = null;
-  const lineMatch = rawText.match(/line\s+(\d+)/i) || rawText.match(/:\s*(\d+)\s*:/) || rawText.match(/\[(\d+)\]/);
+  const lineMatch = rawText.match(/line\s+(\d+)/i) || rawText.match(/:(\d+):\d*:/) || rawText.match(/\[(\d+)\]/);
   if (lineMatch) {
     lineNum = parseInt(lineMatch[1], 10);
+  }
+
+  // Extract pointer line if present in rawText (e.g., "    ^" or "   ^~~~")
+  let pointer = '';
+  const lines = rawText.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^\s*[\^~]+\s*$/.test(l)) {
+      pointer = l;
+      break;
+    }
   }
 
   // Extract source line if code and lineNum are available
   const codeLines = code ? code.split('\n') : [];
   const problematicLine = (lineNum && codeLines[lineNum - 1]) ? codeLines[lineNum - 1].trim() : '';
 
-  // Check specific error patterns
-  const isIndentationError = /IndentationError|TabError|unexpected indent|expected an indented block/i.test(rawText);
-  const isSyntaxError = /SyntaxError/i.test(rawText);
-  const isUnclosedBracket = /'\(|'\[|'\{'|\) was never closed|was never closed|unmatched '\)'|unexpected EOF while parsing/i.test(rawText);
-  const isUnterminatedString = /unterminated string literal|EOL while scanning string literal/i.test(rawText);
-  const nameErrorMatch = rawText.match(/NameError:\s*name\s*['"](\w+)['"]\s*is not defined/i);
+  // 1. Python unclosed string literal
+  if (/unterminated string literal|EOL while scanning string literal/i.test(rawText)) {
+    return {
+      title: 'Unclosed String (Missing Quote)',
+      line: lineNum,
+      cause: 'A text string was opened with a quotation mark (" or \') but was never closed before the line ended.',
+      fix: 'Add the matching closing quotation mark (" or \') at the end of the text.',
+      fixExample: problematicLine ? (problematicLine.endsWith(')') ? problematicLine.slice(0, -1) + '")' : problematicLine + '"') : null,
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 2. Python missing colon
+  if (/expected ':'/i.test(rawText) || (/SyntaxError/i.test(rawText) && problematicLine && /^(if|else|elif|for|while|def|class)\b/i.test(problematicLine) && !problematicLine.includes(':'))) {
+    const kw = problematicLine.split(/\s|\(/)[0];
+    return {
+      title: 'Missing Colon Error (:)',
+      line: lineNum,
+      cause: `In Python, '${kw}' statements must end with a colon ':'.`,
+      fix: `Add a colon ':' at the end of line ${lineNum || ''}.`,
+      fixExample: `${problematicLine}:`,
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 3. Python unclosed bracket / parenthesis
+  if (/'\(|'\[|'\{'|\) was never closed|was never closed|unmatched '\)'|unexpected EOF while parsing/i.test(rawText)) {
+    return {
+      title: 'Unclosed Parenthesis / Bracket Error',
+      line: lineNum,
+      cause: 'An opening parenthesis ( or bracket [ { on this line was never properly closed.',
+      fix: 'Make sure every opening bracket has a matching closing bracket ), ], or } at the end.',
+      fixExample: problematicLine ? `${problematicLine})` : null,
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 4. Indentation Error
+  if (/IndentationError|TabError|unexpected indent|expected an indented block/i.test(rawText)) {
+    return {
+      title: 'Indentation Error (Spacing)',
+      line: lineNum,
+      cause: 'Python relies on indentation (4 spaces or 1 tab) to structure code blocks inside if, for, while, and def.',
+      fix: 'Indent this line with 4 spaces, or align it with the matching statement above.',
+      fixExample: `    ${problematicLine}`,
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 5. NameError (Python) / ReferenceError (JS)
+  const nameErrorMatch = rawText.match(/NameError:\s*name\s*['"](\w+)['"]\s*is not defined/i) || rawText.match(/ReferenceError:\s*(\w+)\s*is not defined/i);
+  if (nameErrorMatch) {
+    const varName = nameErrorMatch[1];
+    return {
+      title: `Undefined Variable / NameError ('${varName}')`,
+      line: lineNum,
+      cause: `The identifier '${varName}' is not defined. Python is case-sensitive and does not recognize this name.`,
+      fix: `Check for spelling or capitalization typos (e.g. 'print' vs 'Print'), or define '${varName} = ...' before using it.`,
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 6. TypeError
   const typeErrorMatch = rawText.match(/TypeError:\s*(.*)/i);
-  const isZeroDivision = /ZeroDivisionError/i.test(rawText);
-  const isIndexError = /IndexError:\s*list index out of range/i.test(rawText);
+  if (typeErrorMatch) {
+    return {
+      title: 'Type Mismatch Error (TypeError)',
+      line: lineNum,
+      cause: 'An operation was attempted on incompatible data types (such as combining text with a number directly).',
+      fix: 'Convert values to the appropriate type using str(), int(), or float() before performing the operation.',
+      fixExample: 'str(value)  # or f"Result: {value}"',
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
 
-  // C / C++ / Java Compiler "Did you mean?" & Function Typo Detection
-  const didYouMeanMatch = rawText.match(/did you mean\s*[`'"]?(\w+)[`'"]?/i);
-  const undefinedRefMatch = rawText.match(/(?:undefined reference to|implicit declaration of function)\s*[`'"]?(\w+)[`'"]?/i);
+  // 7. ZeroDivisionError
+  if (/ZeroDivisionError|division by zero/i.test(rawText)) {
+    return {
+      title: 'Zero Division Error (/ 0)',
+      line: lineNum,
+      cause: 'A number cannot be divided by zero in mathematics or programming.',
+      fix: 'Verify the divisor variable or calculation to ensure it never evaluates to 0.',
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 8. IndexError / Out of bounds
+  if (/IndexError|ArrayIndexOutOfBoundsException|out of range|index out of bounds/i.test(rawText)) {
+    return {
+      title: 'Index Out of Range Error',
+      line: lineNum,
+      cause: 'Attempted to access an item at an index that does not exist in the list or array.',
+      fix: 'Remember that indexing starts at 0 and ends at (length - 1). Check list bounds before accessing.',
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 9. C/C++ missing semicolon or Java missing semicolon
   const missingSemicolonMatch = /expected\s*[`'"]?;[`'"]?|missing\s*[`'"]?;[`'"]?|';'\s*expected/i.test(rawText);
+  if (missingSemicolonMatch) {
+    return {
+      title: 'Missing Semicolon (;)',
+      line: lineNum,
+      cause: 'Every statement in C, C++, and Java must end with a semicolon \';\'.',
+      fix: `Add a semicolon ';' at the end of line ${lineNum || ''}.`,
+      fixExample: `${problematicLine};`,
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
 
+  // 10. C / C++ / Java Typo in function name (print vs printf, scan vs scanf)
+  const didYouMeanMatch = rawText.match(/did you mean\s*[`'"]?(\w+)[`'"]?/i);
+  const undefinedRefMatch = rawText.match(/(?:undefined reference to|implicit declaration of function|cannot find symbol:\s*(?:method|variable))\s*[`'"]?(\w+)[`'"]?/i);
   if (undefinedRefMatch || didYouMeanMatch) {
     const wrongFn = undefinedRefMatch ? undefinedRefMatch[1] : '';
     let suggestedFn = didYouMeanMatch ? didYouMeanMatch[1] : '';
 
-    // Smart fallback suggestions for common C typos
     if (!suggestedFn && wrongFn === 'scan') suggestedFn = 'scanf';
     if (!suggestedFn && wrongFn === 'print') suggestedFn = 'printf';
     if (!suggestedFn && wrongFn === 'println') suggestedFn = 'printf';
 
-    const fnNameDisplay = wrongFn || 'function';
-
-    let specificDetail = `The function '${fnNameDisplay}' on line ${lineNum || ''} is not recognized by the compiler.`;
-    if (suggestedFn) {
-      if (suggestedFn.startsWith(fnNameDisplay)) {
-        const missingChar = suggestedFn.replace(fnNameDisplay, '');
-        specificDetail = `On line ${lineNum || ''}, you wrote '${fnNameDisplay}' instead of '${suggestedFn}'. You missed the letter '${missingChar}' at the end!`;
-      } else {
-        specificDetail = `On line ${lineNum || ''}, you wrote '${fnNameDisplay}'. Did you mean '${suggestedFn}'?`;
-      }
-    }
+    const fnNameDisplay = wrongFn || 'identifier';
 
     return {
-      title: `⚠️ Function Typo ('${fnNameDisplay}' → '${suggestedFn || 'printf'}')`,
+      title: `Function Typo ('${fnNameDisplay}' → '${suggestedFn || 'printf'}')`,
       line: lineNum,
-      problem: specificDetail,
+      cause: `The function '${fnNameDisplay}' on line ${lineNum || ''} is not recognized. ${suggestedFn ? `Did you mean '${suggestedFn}'?` : ''}`,
       fix: suggestedFn
-        ? `Change '${fnNameDisplay}' to '${suggestedFn}' on line ${lineNum || ''}. (Example: \`${suggestedFn}(...)\`)`
-        : `Check the spelling of '${fnNameDisplay}' or ensure you included the required header file at the top (e.g. #include <stdio.h>).`,
-      snippet: problematicLine
+        ? `Change '${fnNameDisplay}' to '${suggestedFn}' on line ${lineNum || ''} and ensure the proper header is included.`
+        : `Check the spelling of '${fnNameDisplay}' or ensure the required header/import is included.`,
+      fixExample: suggestedFn ? `${suggestedFn}(...)` : null,
+      snippet: problematicLine,
+      pointer: pointer
     };
   }
 
-  if (missingSemicolonMatch) {
+  // 11. Generic Syntax Error fallback
+  if (/SyntaxError|syntax error|invalid syntax/i.test(rawText)) {
     return {
-      title: '⚠️ Missing Semicolon Error (;)',
+      title: 'Syntax Error',
       line: lineNum,
-      problem: `Line ${lineNum || ''} is missing a semicolon ';' at the end of the statement.`,
-      fix: `Add a semicolon ';' at the end of line ${lineNum || ''}. (Example: \`${problematicLine};\`)`,
-      snippet: problematicLine
+      cause: 'The compiler/interpreter found invalid syntax on this line.',
+      fix: 'Check this line for missing punctuation (colons, quotation marks, commas, or parentheses).',
+      snippet: problematicLine,
+      pointer: pointer
     };
   }
 
-  if (isIndentationError) {
-    return {
-      title: '⚠️ Indentation Error',
-      line: lineNum,
-      problem: 'Python requires consistent spacing (indentation). Code blocks inside statements like if, else, for, while, or def must be indented properly.',
-      fix: `1. Remove extra leading spaces or add 4 spaces (or 1 Tab) at the beginning of line ${lineNum || ''}.\n2. Ensure 'else:' or 'elif:' is aligned at the same indentation level as its matching 'if'.`,
-      snippet: problematicLine
-    };
-  }
-
-  if (isSyntaxError && problematicLine) {
-    const isControlKeyword = /^(if|else|elif|for|while|def|class)\b/i.test(problematicLine);
-    const hasColon = problematicLine.includes(':');
-    if (isControlKeyword && !hasColon) {
-      const kw = problematicLine.split(' ')[0];
-      return {
-        title: "⚠️ Missing Colon Error",
-        line: lineNum,
-        problem: `You forgot to put a colon ':' at the end of '${kw}' on line ${lineNum || ''}.`,
-        fix: `Add a colon ':' at the end of line ${lineNum || ''}. (Example: \`${problematicLine}:\`)`,
-        snippet: problematicLine
-      };
-    }
-  }
-
-  if (isSyntaxError) {
-    let problemDesc = 'A syntax error occurred in your code.';
-    let fixDesc = 'Check line numbers for missing colons (:), quotation marks (""), brackets (), commas (,), or incorrect indentation.';
-
-    if (problematicLine) {
-      if (/\belse\b/.test(problematicLine) && !problematicLine.endsWith(':')) {
-        problemDesc = `Line ${lineNum || ''} has an 'else' statement that is either missing a colon ':' or has incorrect indentation.`;
-        fixDesc = `Align 'else:' directly with its matching 'if' statement and ensure it ends with a colon ':'.`;
-      } else if (!problematicLine.includes(',') && problematicLine.includes('print')) {
-        problemDesc = `Line ${lineNum || ''} might be missing a comma ',' or quote marks in the print/function call parameters.`;
-        fixDesc = `Ensure all parameters are separated by commas ',' and strings are enclosed in quotes "".`;
-      }
-    }
-
-    return {
-      title: '⚠️ Syntax Error',
-      line: lineNum,
-      problem: problemDesc,
-      fix: fixDesc,
-      snippet: problematicLine
-    };
-  }
-
-  if (isUnclosedBracket) {
-    return {
-      title: '⚠️ Missing Bracket Error',
-      line: lineNum,
-      problem: 'An opening bracket (, [, or { was not properly closed.',
-      fix: `Check line ${lineNum || ''} and ensure every opening bracket has a matching closing bracket ), ], or }.`,
-      snippet: problematicLine
-    };
-  }
-
-  if (isUnterminatedString) {
-    return {
-      title: '⚠️ Missing Quote Error',
-      line: lineNum,
-      problem: 'A string/text literal was started with a quote (" or \') but never closed.',
-      fix: `Add the matching quote mark (" or \') at the end of the text on line ${lineNum || ''}.`,
-      snippet: problematicLine
-    };
-  }
-
-  if (nameErrorMatch) {
-    const varName = nameErrorMatch[1];
-    return {
-      title: `⚠️ NameError ('${varName}' is not defined)`,
-      line: lineNum,
-      problem: `The variable or function name '${varName}' has not been defined.`,
-      fix: `1. Check '${varName}' for spelling or capitalization typos (Python is case-sensitive).\n2. Ensure '${varName}' is declared or assigned a value before using it.`,
-      snippet: problematicLine
-    };
-  }
-
-  if (typeErrorMatch) {
-    return {
-      title: '⚠️ TypeError',
-      line: lineNum,
-      problem: 'An operation was attempted on incompatible data types (e.g., combining a String and an Integer).',
-      fix: 'Use type conversion functions like str(), int(), or float() before performing the operation.',
-      snippet: problematicLine
-    };
-  }
-
-  if (isZeroDivision) {
-    return {
-      title: '⚠️ ZeroDivisionError',
-      line: lineNum,
-      problem: 'Division by zero (0) is not allowed in mathematics or programming.',
-      fix: 'Ensure the divisor variable or number is not zero before performing division.',
-      snippet: problematicLine
-    };
-  }
-
-  if (isIndexError) {
-    return {
-      title: '⚠️ IndexError (Out of Bounds)',
-      line: lineNum,
-      problem: 'Attempted to access an index that is outside the range of the list.',
-      fix: 'Remember that list indices start at 0 and go up to (length - 1).',
-      snippet: problematicLine
-    };
-  }
-
+  // 12. General fallback
   return {
-    title: '💡 Student Error Assistant',
+    title: 'Diagnostic Assistant',
     line: lineNum,
-    problem: lineNum ? `An execution or syntax error occurred on line ${lineNum}.` : 'An error occurred while running your code.',
-    fix: lineNum ? `Review line ${lineNum} and check the error message in the terminal.` : 'Review your code and check the terminal output for details.',
-    snippet: problematicLine
+    cause: lineNum ? `An error occurred on line ${lineNum}.` : 'An error was encountered during execution.',
+    fix: 'Inspect the line indicated in the terminal output below to resolve the issue.',
+    snippet: problematicLine,
+    pointer: pointer
   };
 };
 
-const StudentErrorCard = ({ analysis }) => {
+const StudentErrorCard = ({ analysis, isCollapsed = false, onToggleCollapse }) => {
   if (!analysis) return null;
 
+  if (isCollapsed) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0 10px 0' }}>
+        <button
+          type="button"
+          className="diagnostic-toggle-btn diagnostic-show-btn"
+          onClick={() => onToggleCollapse?.(false)}
+          title="Show error hint and fix suggestion"
+        >
+          💡 Show Hint
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div style={{
-      marginTop: 14,
-      marginBottom: 10,
-      background: 'rgba(255, 107, 107, 0.08)',
-      border: '1px solid rgba(255, 107, 107, 0.3)',
-      borderRadius: 12,
-      padding: '14px 16px',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      textAlign: 'left'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, borderBottom: '1px solid rgba(255,107,107,0.2)', paddingBottom: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 18 }}>💡</span>
-          <span style={{ fontWeight: 700, color: '#ff6b6b', fontSize: 14 }}>
-            {analysis.title}
-          </span>
+    <div className="diagnostic-error-card">
+      <div className="diagnostic-header">
+        <div className="diagnostic-title-badge">
+          <span>🚨</span>
+          <span>{analysis.title}</span>
         </div>
-        {analysis.line && (
-          <span style={{
-            fontSize: 12,
-            fontWeight: 700,
-            background: '#ff6b6b',
-            color: '#fff',
-            padding: '2px 10px',
-            borderRadius: 6,
-            fontFamily: 'JetBrains Mono, monospace'
-          }}>
-            Line {analysis.line}
-          </span>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {analysis.line && (
+            <span className="diagnostic-line-badge">
+              📍 Line {analysis.line}
+            </span>
+          )}
+          <button
+            type="button"
+            className="diagnostic-toggle-btn diagnostic-hide-btn"
+            onClick={() => onToggleCollapse?.(true)}
+            title="Hide error hint suggestion"
+          >
+            👁️ Hide Hint
+          </button>
+        </div>
       </div>
 
       {analysis.snippet && (
-        <div style={{
-          background: '#0d1117',
-          border: '1px solid #30363d',
-          borderRadius: 6,
-          padding: '6px 10px',
-          fontSize: 12,
-          fontFamily: 'JetBrains Mono, monospace',
-          color: '#e6edf3',
-          marginBottom: 10,
-          whiteSpace: 'pre-wrap',
-          overflowX: 'auto'
-        }}>
-          <span style={{ color: '#8b949e', marginRight: 8, fontSize: 11 }}>Code:</span>
-          {analysis.snippet}
+        <div className="diagnostic-code-box">
+          <div className="diagnostic-code-line">
+            <span className="diagnostic-line-num">{analysis.line || 1} |</span>
+            <span>{analysis.snippet}</span>
+          </div>
+          {analysis.pointer && (
+            <div className="diagnostic-pointer-line">
+              <span className="diagnostic-line-num">   |</span>
+              <span>{analysis.pointer}</span>
+            </div>
+          )}
         </div>
       )}
 
-      <div style={{ fontSize: 13, color: '#e6edf3', lineHeight: 1.6, marginBottom: 8 }}>
-        <strong style={{ color: '#f85149' }}>🔍 What went wrong?:</strong>
-        <div style={{ color: '#c9d1d9', marginTop: 2, paddingLeft: 4 }}>{analysis.problem}</div>
-      </div>
+      <div className="diagnostic-section">
+        <div className="diagnostic-row">
+          <span className="diagnostic-row-icon">💡</span>
+          <div className="diagnostic-row-content">
+            <span className="diagnostic-row-label diagnostic-cause-label">Cause:</span>
+            <span>{analysis.cause || analysis.problem}</span>
+          </div>
+        </div>
 
-      <div style={{ fontSize: 13, color: '#e6edf3', lineHeight: 1.6 }}>
-        <strong style={{ color: '#3fb950' }}>🛠️ How to fix it?:</strong>
-        <div style={{ color: '#8b949e', marginTop: 2, paddingLeft: 4, whiteSpace: 'pre-wrap' }}>{analysis.fix}</div>
+        <div className="diagnostic-row">
+          <span className="diagnostic-row-icon">✨</span>
+          <div className="diagnostic-row-content">
+            <span className="diagnostic-row-label diagnostic-fix-label">Suggested Fix:</span>
+            <span>{analysis.fix}</span>
+            {analysis.fixExample && (
+              <div style={{ marginTop: 4 }}>
+                <span className="diagnostic-fix-code">{analysis.fixExample}</span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -857,6 +875,20 @@ export default function App() {
   })
   const [editingFileId, setEditingFileId] = useState(null)
   const [editingFileName, setEditingFileName] = useState('')
+  const [hideErrorHint, setHideErrorHint] = useState(() => {
+    try {
+      return localStorage.getItem('hide_error_hint') === 'true'
+    } catch (e) {
+      return false
+    }
+  })
+
+  const toggleHideErrorHint = (hide) => {
+    setHideErrorHint(hide)
+    try {
+      localStorage.setItem('hide_error_hint', hide ? 'true' : 'false')
+    } catch (e) {}
+  }
 
   const activeFile = programs.find(p => p.id === activeFileId) || programs[0] || { id: 'file_1', name: getDefaultFileName(lang, 1), code: '' }
 
@@ -877,16 +909,20 @@ export default function App() {
   const currentCode = lang.id === 'html' ? (htmlFiles[activeHtmlTab] ?? '') : (activeFile?.code ?? '')
 
   const [tutorialHtml, setTutorialHtml] = useState('')
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark')
+  const [siteTheme, setSiteTheme] = useState(() => localStorage.getItem('site_theme') || 'light')
+  const [compilerTheme, setCompilerTheme] = useState('dark')
+
+  const activeTheme = view === 'compiler' ? compilerTheme : siteTheme
 
   useEffect(() => {
-    if (theme === 'light') {
+    if (activeTheme === 'light') {
       document.body.classList.add('light-theme')
+      document.documentElement.classList.add('light-theme')
     } else {
       document.body.classList.remove('light-theme')
+      document.documentElement.classList.remove('light-theme')
     }
-    localStorage.setItem('theme', theme)
-  }, [theme])
+  }, [activeTheme])
 
   useEffect(() => {
     let langFile = lang.id
@@ -1307,14 +1343,14 @@ export default function App() {
   return (
     <div style={s.root}>
       {view === 'home' && (
-        <AppTopnav theme={theme} setTheme={setTheme} goHome={goHome} view={view} lang={lang} />
+        <AppTopnav theme={siteTheme} setTheme={setSiteTheme} goHome={goHome} view={view} lang={lang} />
       )}
       {view === 'home' ? (
-        <HomePage selectLanguage={selectLanguage} theme={theme} setTheme={setTheme} />
+        <HomePage selectLanguage={selectLanguage} theme={siteTheme} setTheme={setSiteTheme} />
       ) : (
-        <>
+        <div className="compiler-view-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
 
-          <CompilerHeader theme={theme} setTheme={setTheme} goHome={goHome} />
+          <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} />
 
           {/* TOOLBAR */}
           <div style={s.toolbar} className="compiler-toolbar">
@@ -1630,7 +1666,7 @@ export default function App() {
                       })
                     }
                   }}
-                  theme={theme === 'light' ? 'vs' : 'vs-dark'}
+                  theme={compilerTheme === 'light' ? 'vs' : 'vs-dark'}
                   onMount={(editor, monaco) => {
                     document.fonts.ready.then(() => {
                       monaco.editor.remeasureFonts();
@@ -1644,7 +1680,6 @@ export default function App() {
                     wordWrap: isMobile ? 'on' : 'off',
                     automaticLayout: true,
                     padding: { top: 12 },
-                    lineNumbersMinChars: isMobile ? 3 : 5,
                     scrollbar: { horizontalScrollbarSize: 6 }
                   }}
                 />
@@ -1720,11 +1755,17 @@ export default function App() {
                       <TerminalLoader lang={lang} fileName={activeFile?.name} isMobile={isMobile} />
                     )}
                     {!output && !running && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
-                    {output?.text && (
+                    {output && output.status !== 'running' && (
                       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                         {(() => {
-                          const studentAnalysis = analyzeStudentError(output.text, currentCode, lang.id)
-                          return studentAnalysis ? <StudentErrorCard analysis={studentAnalysis} /> : null
+                          const studentAnalysis = output.text ? analyzeStudentError(output.text, currentCode, lang.id) : null
+                          return studentAnalysis ? (
+                            <StudentErrorCard
+                              analysis={studentAnalysis}
+                              isCollapsed={hideErrorHint}
+                              onToggleCollapse={toggleHideErrorHint}
+                            />
+                          ) : null
                         })()}
                         <div style={{
                           ...s.outText,
@@ -1754,6 +1795,14 @@ export default function App() {
                               }
                               if (seg.type === 'input') {
                                 return <span key={idx} style={{ color: '#58a6ff', fontWeight: 600 }}>{seg.text}</span>
+                              }
+                              if (seg.type === 'generic-input') {
+                                return (
+                                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <span style={{ color: 'var(--green)', fontWeight: 700 }}>❯</span>
+                                    <span style={{ color: '#58a6ff', fontWeight: 600 }}>{seg.text}</span>
+                                  </div>
+                                )
                               }
                               if (seg.type === 'active-input') {
                                 return (
@@ -1894,7 +1943,7 @@ export default function App() {
               >🔷 A Balanju Solutions Product</a>
             </div>
           </footer>
-        </>
+        </div>
       )}
     </div>
   )
@@ -2157,18 +2206,18 @@ function HomePage({ selectLanguage, theme, setTheme }) {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)' }}>
       {/* MAIN CONTENT */}
       <main style={{ flex: 1, padding: '40px 20px 80px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-        {/* CHOOSE LANGUAGE SECTION */}
+        {/* START CODING SECTION */}
         <section style={{ marginBottom: 70 }}>
           <div style={{ marginBottom: 28 }}>
             <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#58a6ff', textTransform: 'uppercase', marginBottom: 8 }}>⚡ Online Compiler &amp; Web Editor</p>
             <h2 style={{
-              fontSize: 'clamp(24px,4vw,36px)',
+              fontSize: 'clamp(26px,4vw,38px)',
               fontWeight: 800,
               marginBottom: 10,
               color: 'var(--text)',
               letterSpacing: '-0.5px'
             }}>
-              Choose Your Compiler
+              Start Coding
             </h2>
             <p style={{
               color: 'var(--text2)',
@@ -2176,118 +2225,95 @@ function HomePage({ selectLanguage, theme, setTheme }) {
               margin: 0,
               maxWidth: '600px'
             }}>
-              11 free online compilers &amp; live web editors — click any compiler to run code instantly in your browser.
+              11 free online compilers &amp; live web editors — select your language and start coding instantly.
             </p>
           </div>
 
-          {/* LANGUAGE GRID — Responsive 3-Column Grid */}
+          {/* LANGUAGE GRID — Responsive 4-Column Perfect 1:1 Square Card Tiles */}
           <div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: 16,
-            }}>
+            <div className="home-compiler-grid">
               {LANG_CARDS.map(lang => (
                 <button
                   key={lang.id}
+                  className="home-compiler-card"
                   onClick={() => selectLanguage(lang.id)}
                   style={{
                     display: 'flex',
+                    flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '16px 22px',
-                    minHeight: '62px',
+                    justifyContent: 'center',
+                    padding: '18px 14px',
+                    minHeight: '135px',
                     background: 'var(--bg2)',
                     border: '1px solid var(--border)',
-                    borderLeft: `4px solid ${lang.accentColor}`,
-                    borderRadius: 10,
+                    borderTop: `4px solid ${lang.accentColor}`,
+                    borderRadius: 14,
                     cursor: 'pointer',
-                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                    textAlign: 'left',
+                    transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+                    textAlign: 'center',
                     width: '100%',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                    position: 'relative',
+                    overflow: 'hidden',
                   }}
                   onMouseEnter={e => {
                     e.currentTarget.style.background = lang.bgGlow
                     e.currentTarget.style.borderColor = lang.accentColor
-                    e.currentTarget.style.transform = 'translateX(4px)'
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.08)'
-                    const arrow = e.currentTarget.querySelector('.programiz-arrow')
-                    if (arrow) {
-                      arrow.style.transform = 'translateX(3px)'
-                      arrow.style.opacity = '1'
-                      arrow.style.color = lang.accentColor
-                    }
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                    e.currentTarget.style.boxShadow = `0 10px 20px ${lang.accentColor}22`
                   }}
                   onMouseLeave={e => {
                     e.currentTarget.style.background = 'var(--bg2)'
                     e.currentTarget.style.borderColor = 'var(--border)'
-                    e.currentTarget.style.borderLeftColor = lang.accentColor
-                    e.currentTarget.style.transform = 'translateX(0)'
-                    e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'
-                    const arrow = e.currentTarget.querySelector('.programiz-arrow')
-                    if (arrow) {
-                      arrow.style.transform = 'translateX(0)'
-                      arrow.style.opacity = '0.45'
-                      arrow.style.color = 'var(--text2)'
-                    }
+                    e.currentTarget.style.borderTopColor = lang.accentColor
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.04)'
                   }}
                 >
-                  {/* Left: Logo + Compiler Label */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-                    <div style={{
-                      width: 30, height: 30, flexShrink: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <div style={{ transform: 'scale(0.62)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {LangLogos[lang.id] || <span style={{ fontSize: 20 }}>💻</span>}
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{
-                        fontSize: 15.5,
-                        fontWeight: 700,
-                        color: 'var(--text)',
-                        whiteSpace: 'nowrap',
-                        letterSpacing: '-0.2px',
-                      }}>
-                        {lang.label}
-                      </span>
-                      {lang.badge && (
-                        <span style={{
-                          fontSize: 9.5,
-                          fontWeight: 700,
-                          letterSpacing: 0.6,
-                          textTransform: 'uppercase',
-                          color: '#3fb950',
-                          background: 'rgba(63,185,80,0.12)',
-                          border: '1px solid rgba(63,185,80,0.3)',
-                          borderRadius: 999,
-                          padding: '2px 7px',
-                          flexShrink: 0,
-                        }}>
-                          {lang.badge}
-                        </span>
-                      )}
+                  {/* Top Logo Container */}
+                  <div style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 12,
+                    background: `${lang.accentColor}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 8,
+                  }}>
+                    <div style={{ transform: 'scale(0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {LangLogos[lang.id] || <span style={{ fontSize: 22 }}>💻</span>}
                     </div>
                   </div>
 
-                  {/* Right: Thin Minimal Arrow */}
-                  <svg
-                    className="programiz-arrow"
-                    width="17" height="17" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                    style={{
-                      flexShrink: 0,
-                      opacity: 0.45,
-                      color: 'var(--text2)',
-                      transition: 'all 0.2s ease',
-                      marginLeft: 10,
-                    }}
-                  >
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
+                  {/* Title */}
+                  <span className="home-compiler-label" style={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: 'var(--text)',
+                    letterSpacing: '-0.2px',
+                    lineHeight: 1.2,
+                  }}>
+                    {lang.label}
+                  </span>
+
+                  {/* Badge */}
+                  {lang.badge && (
+                    <span style={{
+                      fontSize: 9,
+                      fontWeight: 700,
+                      letterSpacing: 0.5,
+                      textTransform: 'uppercase',
+                      color: '#3fb950',
+                      background: 'rgba(63,185,80,0.12)',
+                      border: '1px solid rgba(63,185,80,0.3)',
+                      borderRadius: 999,
+                      padding: '2px 7px',
+                      marginTop: 5,
+                    }}>
+                      {lang.badge}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

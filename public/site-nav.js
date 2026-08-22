@@ -46,7 +46,7 @@
         { name: 'Express.js', url: '/blog-express.html' },
         { name: 'Django', url: '/blog-django.html' },
         { name: 'Flask', url: '/blog-flask.html' },
-        { name: 'Spring Boot', url: '/blog-spring-boot.html' }
+        { name: 'Spring Boot', url: '/blog-springboot.html' }
       ]
     },
     {
@@ -257,7 +257,10 @@
       themeBtn.addEventListener('click', function () {
         document.body.classList.toggle('light-theme');
         document.documentElement.classList.toggle('light-theme');
-        localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        var isLight = document.body.classList.contains('light-theme');
+        var isCompiler = window.location.pathname.indexOf('online-') !== -1 || window.location.pathname === '/' || window.location.pathname === '/index.html';
+        localStorage.setItem(isCompiler ? 'compiler_theme' : 'theme', isLight ? 'light' : 'dark');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
         updateThemeIcon();
       });
     }
@@ -329,6 +332,7 @@
       'django': '/?lang=python3',
       'flask': '/?lang=python3',
       'spring-boot': '/?lang=java',
+      'springboot': '/?lang=java',
       'mysql': '/?lang=python3',
       'mongodb': '/?lang=nodejs',
       'graphql': '/?lang=nodejs',

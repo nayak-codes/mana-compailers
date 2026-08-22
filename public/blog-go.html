@@ -3,39 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Go Programming Tutorial & Reference Guide | Our Compiler</title>
-  <meta name="description" content="Learn Go — Go Programming Tutorial & Reference Guide with clear explanations, concurrency tutorials, goroutine channels, and interactive compiler executions." />
+  <title>Go Complete Masterclass & Roadmap (48 Chapters, 18 Phases) | Our Compiler</title>
+  <meta name="description" content="Master Go (Golang) programming from zero to production ready with our complete 48-chapter masterclass roadmap across 18 phases: Setup, Variables, Operators, Conditions, Loops, Functions, Errors, Defer/Panic/Recover, Slices, Maps, Structs, Methods, Interfaces, Packages, File Handling, JSON, HTTP net/http Servers, REST API, Context, SQL Databases, ORM, Goroutines, Channels, Select, Synchronization, Testing, Auth, Security, Docker, CI/CD, and Projects." />
+  <meta name="keywords" content="go tutorial, learn go, golang masterclass, go programming, structs, receiver methods, go interfaces, error handling, json marshal, net http server, go context, sql databases, goroutines, go channels, select, race detector, unit testing, docker, microservices" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-go.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  
-  <!-- Blog Theme Switcher -->
+  <link rel="stylesheet" href="/blog-go/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('light-theme');
-        });
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
       }
       window.addEventListener('DOMContentLoaded', () => {
-        // Theme Toggle Button
         const topnav = document.querySelector('.topnav');
         if (topnav) {
           const toggleBtn = document.createElement('button');
           toggleBtn.className = 'blog-theme-toggle';
           toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-          toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            toggleBtn.style.borderColor = '#ffffff';
-          });
-          toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
           const updateText = () => {
             const isLight = document.body.classList.contains('light-theme');
             toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
@@ -50,72 +48,14 @@
           });
           topnav.appendChild(toggleBtn);
         }
-
-        // Decorate Code Blocks (Copy Code & Preload Run Code)
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          // Find or create actions container inside header
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) {
-              actionsContainer.appendChild(tryBtn);
-            }
-            header.appendChild(actionsContainer);
-          }
-
-          // Inject Copy Button
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('mouseenter', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-            copyBtn.style.borderColor = '#ffffff';
-          });
-          copyBtn.addEventListener('mouseleave', () => {
-            copyBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-            copyBtn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          });
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeEl.textContent).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => {
-                copyBtn.innerHTML = '📋 Copy';
-              }, 2000);
-            }).catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          // Preload Code into Editor on Run Click
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const url = tryBtn.getAttribute('href');
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const langId = urlParams.get('lang') || 'go';
-              localStorage.setItem('code_' + langId, codeEl.textContent);
-              window.location.href = url;
-            });
-          }
-        });
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-go">
 
-<!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
@@ -123,171 +63,1080 @@
   <a href="/blog-javascript.html">JavaScript</a>
   <a href="/blog-c.html">C</a>
   <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
+  <a href="/?lang=csharp">C#</a>
   <a href="/blog-go.html" class="active">Go</a>
   <a href="/blog-ruby.html">Ruby</a>
   <a href="/blog-rust.html">Rust</a>
   <a href="/blog-php.html">PHP</a>
-  <a href="/?lang=nodejs">Node.js</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    
-    <div class="sidebar-heading">Go Tutorial</div>
-    <a href="/blog-go.html" class="active">Go HOME</a>
-    <a href="/blog-go/intro.html">1. Welcome & Hello World</a>
-    <a href="/blog-go/variables.html">2. Variables & Constants</a>
-    <a href="/blog-go/types-casting.html">3. Data Types & Strict Casting</a>
-    <a href="/blog-go/conditionals.html">4. Conditionals (if-else & switch)</a>
-    <a href="/blog-go/loops.html">5. Loops & Control Flow</a>
-    <a href="/blog-go/arrays-slices.html">6. Arrays & Dynamic Slices</a>
-    <a href="/blog-go/maps.html">7. Maps (Key-Value Pairs)</a>
-    <a href="/blog-go/pointers.html">8. Pointers & Memory Addresses</a>
-    <a href="/blog-go/functions-defer.html">9. Functions, Returns & Defer</a>
-    <a href="/blog-go/structs-methods.html">10. Structs & Custom Methods</a>
-    <a href="/blog-go/encapsulation.html">11. Encapsulation & Package Exports</a>
-    <a href="/blog-go/interfaces.html">12. Interfaces & Implicit Duck Typing</a>
-    <a href="/blog-go/goroutines.html">13. Goroutines & Concurrency Basics</a>
-    <a href="/blog-go/channels.html">14. Channels & Select Operations</a>
-    <a href="/blog-go/error-handling.html">15. Error Handling (Explicit Check)</a>
-
-    <div class="sidebar-heading">Reference</div>
-    <a href="/blog.html">All Tutorials</a>
-    <a href="/?lang=go">▶ Try Go Online</a>
-
-    <div class="sidebar-heading">Other Languages</div>
-    <a href="/blog-python.html">Python 3</a>
-    <a href="/blog-java.html">Java</a>
-    <a href="/blog-javascript.html">JavaScript</a>
-    <a href="/blog-c.html">C</a>
-    <a href="/blog-cpp.html">C++</a>
-    <a href="/blog-csharp.html">C#</a>
-    <a href="/blog-rust.html">Rust</a>
-    <a href="/blog-php.html">PHP</a>
-    <a href="/blog-ruby.html">Ruby</a>
-
+    <div class="sidebar-heading">Go Master Course</div>
+    <a href="/blog-go.html" class="sidebar-home-link active">🐹 Go Course HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐹</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Go Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/01-what-is-go.html" class="">1. What is Go?</a><a href="/blog-go/02-go-prerequisites.html" class="">2. Go Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First Program</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/03-go-installation.html" class="">3. Go Installation & Environment Setup</a><a href="/blog-go/04-your-first-go-program.html" class="">4. Your First Go Program</a><a href="/blog-go/05-go-modules-and-tools.html" class="">5. Go Modules & Dependency Management</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔢</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">Variables and Data Types</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/06-variables-and-constants.html" class="">6. Variables & Constants in Go</a><a href="/blog-go/07-data-types.html" class="">7. Primitive Data Types in Go</a><a href="/blog-go/08-type-conversion.html" class="">8. Type Conversion & Casting in Go</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Operators and Control Flow</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/09-operators.html" class="">9. Operators & Precedence in Go</a><a href="/blog-go/10-conditions.html" class="">10. Conditional Statements in Go</a><a href="/blog-go/11-loops.html" class="">11. For Loops in Go (The Only Loop)</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Functions</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/12-functions.html" class="">12. Functions & Multiple Return Values</a><a href="/blog-go/13-defer-panic-and-recover.html" class="">13. Defer, Panic & Recover in Go</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Arrays, Slices and Maps</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/14-arrays.html" class="">14. Arrays in Go</a><a href="/blog-go/15-slices-deep-dive.html" class="">15. Slices Deep-Dive in Go</a><a href="/blog-go/16-maps.html" class="">16. Maps in Go (Hash Tables)</a><a href="/blog-go/17-range-loop.html" class="">17. Range Loops over Collections</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Structs and Methods</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/18-structs-basics.html" class="">18. Structs in Go</a><a href="/blog-go/19-methods-and-receivers.html" class="">19. Methods & Receivers in Go</a><a href="/blog-go/20-struct-embedding-composition.html" class="">20. Struct Embedding & Composition</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛡️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Error Handling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/21-error-handling-basics.html" class="">21. Idiomatic Error Handling in Go</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Packages and Standard Library</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/22-custom-packages.html" class="">22. Custom Packages & Exporting Rules</a><a href="/blog-go/23-standard-library.html" class="">23. Go Standard Library Deep-Dive</a><a href="/blog-go/24-fmt-strings-strconv.html" class="">24. String Manipulation & Formatting</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Pointers in Go</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/25-pointers-basics.html" class="">25. Pointers & Memory Addresses in Go</a><a href="/blog-go/26-pointers-with-functions-and-structs.html" class="">26. Pointers with Functions & Structs</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔌</span>
+          <div class="phase-info"><span class="phase-tag">Phase 11</span><span class="phase-title">Interfaces</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/27-interfaces-basics.html" class="">27. Interfaces in Go</a><a href="/blog-go/28-empty-interface-type-assertion.html" class="">28. Empty Interface & Type Assertions</a><a href="/blog-go/29-interface-composition.html" class="">29. Interface Composition & Best Practices</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 12</span><span class="phase-title">HTTP and Web Servers</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/30-http-basics.html" class="">30. HTTP Protocol Basics</a><a href="/blog-go/31-http-server.html" class="">31. HTTP Server with net/http</a><a href="/blog-go/32-routing-and-middleware.html" class="">32. HTTP Routing & Middleware Chaining</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏱️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 13</span><span class="phase-title">Context and Cancellation</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/33-context.html" class="">33. Go Context Package</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 14</span><span class="phase-title">Database Access</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/34-sql-databases.html" class="">34. SQL Database Access (database/sql)</a><a href="/blog-go/35-orm-and-query-builders.html" class="">35. ORM with GORM & SQLC</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 15</span><span class="phase-title">Concurrency</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/36-goroutines.html" class="">36. Goroutines Basics</a><a href="/blog-go/37-channels.html" class="">37. Channels in Go</a><a href="/blog-go/38-select.html" class="">38. Select Statement & Channel Multiplexing</a><a href="/blog-go/39-sync-waitgroup-mutex.html" class="">39. Synchronization with Mutexes & WaitGroups</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧪</span>
+          <div class="phase-info"><span class="phase-tag">Phase 16</span><span class="phase-title">Testing and Profiling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/40-unit-testing.html" class="">40. Unit Testing in Go (testing package)</a><a href="/blog-go/41-table-driven-tests.html" class="">41. Table-Driven Testing Pattern</a><a href="/blog-go/42-benchmarking-pprof.html" class="">42. Benchmarking & Profiling in Go</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔒</span>
+          <div class="phase-info"><span class="phase-tag">Phase 17</span><span class="phase-title">Advanced Backend & Security</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/43-authentication.html" class="">43. JWT Authentication & Bcrypt in Go</a><a href="/blog-go/44-security.html" class="">44. Web Security Best Practices in Go</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🐳</span>
+          <div class="phase-info"><span class="phase-tag">Phase 18</span><span class="phase-title">Deployment & Projects</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-go/45-docker.html" class="">45. Containerizing Go Applications with Docker</a><a href="/blog-go/46-ci-cd.html" class="">46. CI/CD Pipelines for Go</a><a href="/blog-go/47-go-projects.html" class="">47. Production REST API Microservice Project</a><a href="/blog-go/48-go-quiz.html" class="">48. Go Masterclass Certification Practice Quiz</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=go" style="color:#10b981;font-weight:700;">▶ Try Go Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/blog.html">Tutorials</a><span>›</span>
-      <a href="/blog-go.html">Go</a><span>›</span>
-      <span>Lesson Index</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">Go Programming Masterclass</span>
     </div>
-    
-    
-<h1 class="page-title">Go Programming Tutorial</h1>
-<div class="page-meta">
-  <span class="badge">🐹 Go Language</span>
-  <span class="badge">🟢 Beginner Friendly</span>
-  <span class="badge">📅 July 2026</span>
-</div>
 
-<div class="intro-box">
-  <p>Go (often called Golang) is an open-source programming language developed by Google. Focused on simplicity, reliability, and extreme execution speed, Go compiles directly to static stand-alone binaries. In this comprehensive course, you will master Go syntax, dynamic type inference, strict type casting, single-loop constructs, dynamic slices, pointer parameters, receiver methods, implicit duck-typing interfaces, Goroutine concurrency, thread channel communication, and explicit error checking paradigms.</p>
-</div>
+    <h1 class="page-title">Go Programming Master Tutorial & Complete Roadmap</h1>
 
-<div class="section">
-  <div class="section-title"><span class="num">▶</span> Course Curriculum</div>
-  <p>Choose a topic from the left sidebar or click a lesson below to start learning Go:</p>
-  <table class="tbl" style="margin-top: 15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    
-      <tr>
-        <td><strong>Lesson 1</strong></td>
-        <td><strong><a href="/blog-go/intro.html">Welcome & Hello World</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 2</strong></td>
-        <td><strong><a href="/blog-go/variables.html">Variables & Constants</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 3</strong></td>
-        <td><strong><a href="/blog-go/types-casting.html">Data Types & Strict Casting</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 4</strong></td>
-        <td><strong><a href="/blog-go/conditionals.html">Conditionals (if-else & switch)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 5</strong></td>
-        <td><strong><a href="/blog-go/loops.html">Loops & Control Flow</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 6</strong></td>
-        <td><strong><a href="/blog-go/arrays-slices.html">Arrays & Dynamic Slices</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 7</strong></td>
-        <td><strong><a href="/blog-go/maps.html">Maps (Key-Value Pairs)</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 8</strong></td>
-        <td><strong><a href="/blog-go/pointers.html">Pointers & Memory Addresses</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 9</strong></td>
-        <td><strong><a href="/blog-go/functions-defer.html">Functions, Returns & Defer</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 10</strong></td>
-        <td><strong><a href="/blog-go/structs-methods.html">Structs & Custom Methods</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 11</strong></td>
-        <td><strong><a href="/blog-go/encapsulation.html">Encapsulation & Package Exports</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 12</strong></td>
-        <td><strong><a href="/blog-go/interfaces.html">Interfaces & Implicit Duck Typing</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 13</strong></td>
-        <td><strong><a href="/blog-go/goroutines.html">Goroutines & Concurrency Basics</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 14</strong></td>
-        <td><strong><a href="/blog-go/channels.html">Channels & Select Operations</a></strong></td>
-      </tr>
-    
-      <tr>
-        <td><strong>Lesson 15</strong></td>
-        <td><strong><a href="/blog-go/error-handling.html">Error Handling (Explicit Check)</a></strong></td>
-      </tr>
-    
-  </table>
-</div>
+    <div class="page-meta">
+      <span class="badge">🐹 Go 1.22+</span>
+      <span class="badge">🟢 48 Master Chapters Across 18 Phases</span>
+      <span class="badge">📂 Unified Emerald Green Theme</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
 
-    
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">What is Go? · Setup &amp; Modules · Variables &amp; Types · Operators &amp; Control Flow · Functions &amp; Defer/Panic/Recover · Slices &amp; Maps · Structs, Methods &amp; Interfaces · Error Handling · Packages &amp; File I/O · JSON &amp; net/http Servers · REST APIs &amp; Context · SQL Databases &amp; ORM · Goroutines, Channels, Select &amp; Mutexes · Unit Testing &amp; Benchmarks · Auth, Security &amp; Caching · Docker, CI/CD &amp; Deployments · Projects &amp; Quiz</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's Go Complete Master Course</strong>. Designed at Google by computer science pioneers Rob Pike, Ken Thompson, and Robert Griesemer, Go is a modern, statically typed, compiled programming language built for cloud-native software engineering, microservices, and massive multi-threaded backend systems. Explore all 18 phases below with live runnable code examples and architectural breakdowns.</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(20,24,32,0.6));border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:24px;margin:28px 0;">
+      <h3 style="color:#10b981;margin-bottom:10px;font-size:18px;">🎯 Complete 18-Phase Go Masterclass Roadmap</h3>
+      <p style="color:var(--text2);margin-bottom:16px;font-size:14.5px;">Select any phase below to master Go fundamentals, memory layout, structs, interfaces, web servers, Goroutines &amp; channels, and microservices deployment:</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/blog-go/01-what-is-go.html" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 1: Go Intro →</a>
+        <a href="/blog-go/18-structs-basics.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 7: Structs &amp; Methods →</a>
+        <a href="/blog-go/31-http-server.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 12: HTTP Servers →</a>
+        <a href="/blog-go/34-sql-databases.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 14: SQL Databases →</a>
+        <a href="/blog-go/36-goroutines.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 15: Concurrency →</a>
+        <a href="/blog-go/47-go-projects.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 18: Projects &amp; Quiz →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🐹</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 01</div>
+                <h3 class="phase-roadmap-title">Go Introduction</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/01-what-is-go.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">01</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">1. What is Go?</span>
+                    <span class="lesson-subtopics">Go language ante enti? · History (Rob Pike, Ken Thompson, Robert Griesemer at Google) · Why Go was created · Core features · Go vs C/C++/Java/Rust comparison · Real-world uses (Docker, Kubernetes, Terraform, Microservices)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/02-go-prerequisites.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">02</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">2. Go Prerequisites</span>
+                    <span class="lesson-subtopics">Programming fundamentals · Command line / terminal basics · Variables & types · Control flow · HTTP & REST concepts · JSON data format · Environment variables · Source control with Git</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 02</div>
+                <h3 class="phase-roadmap-title">Setup and First Program</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/03-go-installation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">03</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">3. Go Installation & Environment Setup</span>
+                    <span class="lesson-subtopics">Installing Go on Windows, Linux, macOS · GOROOT vs GOPATH vs Go Modules · go env command · VS Code setup & gopls language server</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/04-your-first-go-program.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">04</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">4. Your First Go Program</span>
+                    <span class="lesson-subtopics">package main · import "fmt" · func main() · go run vs go build · Creating standalone binaries · gofmt code formatting</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/05-go-modules-and-tools.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">05</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">5. Go Modules & Dependency Management</span>
+                    <span class="lesson-subtopics">go mod init · go.mod manifest file · go.sum checksum file · go mod tidy dependency cleaner · Semantic versioning</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔢</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 03</div>
+                <h3 class="phase-roadmap-title">Variables and Data Types</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/06-variables-and-constants.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">06</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">6. Variables & Constants in Go</span>
+                    <span class="lesson-subtopics">var keyword · Short declaration operator := · Zero values · Block scope vs Package scope · const keyword · iota enumerator</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/07-data-types.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">07</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">7. Primitive Data Types in Go</span>
+                    <span class="lesson-subtopics">Signed ints (int8-int64) · Unsigned ints (uint8-uint64) · Floats (float32, float64) · Booleans · Strings · byte (uint8) · rune (int32/UTF-8)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/08-type-conversion.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">08</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">8. Type Conversion & Casting in Go</span>
+                    <span class="lesson-subtopics">Explicit type conversion int(f) · strconv.Atoi() · strconv.Itoa() · strconv.ParseFloat() · fmt.Sprintf() format verbs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 04</div>
+                <h3 class="phase-roadmap-title">Operators and Control Flow</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/09-operators.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">09</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">9. Operators & Precedence in Go</span>
+                    <span class="lesson-subtopics">Arithmetic operators · Relational operators · Logical operators · Bitwise & Shift operators · Postfix increment/decrement (x++) · No ternary operator</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/10-conditions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">10</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">10. Conditional Statements in Go</span>
+                    <span class="lesson-subtopics">if, else if, else branching · Short statement initialization in if (if err := ...; err != nil) · Guard clause pattern</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/11-loops.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">11</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">11. For Loops in Go (The Only Loop)</span>
+                    <span class="lesson-subtopics">Traditional for (init; cond; post) · While-style for · Infinite for {} · Range loop (for i, v := range) · break, continue & labels</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 05</div>
+                <h3 class="phase-roadmap-title">Functions</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/12-functions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">12</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">12. Functions & Multiple Return Values</span>
+                    <span class="lesson-subtopics">Function signature · Parameters & Return types · Multiple returns (val, err) · Named returns · Variadic functions (...int) · Anonymous functions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/13-defer-panic-and-recover.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">13</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">13. Defer, Panic & Recover in Go</span>
+                    <span class="lesson-subtopics">defer keyword LIFO order · Resource cleanup (files/connections) · panic() runtime errors · recover() exception interceptor</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📊</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 06</div>
+                <h3 class="phase-roadmap-title">Arrays, Slices and Maps</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/14-arrays.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">14</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">14. Arrays in Go</span>
+                    <span class="lesson-subtopics">Fixed size [N]T · Value semantics & copy on pass · Array initialization [...]T · Iterating with len()</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/15-slices-deep-dive.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">15</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">15. Slices Deep-Dive in Go</span>
+                    <span class="lesson-subtopics">Slice header (Pointer, Length, Capacity) · make([]T, len, cap) · append() mechanics · Reslicing [start:end] · copy()</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/16-maps.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">16</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">16. Maps in Go (Hash Tables)</span>
+                    <span class="lesson-subtopics">map[K]V initialization with make() · Key-value pairs · Comma-ok idiom (val, ok := m[key]) · delete() · Unordered iteration</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/17-range-loop.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">17</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">17. Range Loops over Collections</span>
+                    <span class="lesson-subtopics">Ranging over arrays, slices, maps, strings, and channels · Blank identifier _ usage · Value copying traps</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏗️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 07</div>
+                <h3 class="phase-roadmap-title">Structs and Methods</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/18-structs-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">18</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">18. Structs in Go</span>
+                    <span class="lesson-subtopics">type Name struct definition · Field instantiation · Anonymous structs · Struct tags (json:"key") · Pointer to struct</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/19-methods-and-receivers.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">19</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">19. Methods & Receivers in Go</span>
+                    <span class="lesson-subtopics">Value receiver func (s Shape) vs Pointer receiver func (s *Shape) · Mutation vs Read-only · Automatic dereferencing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/20-struct-embedding-composition.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">20</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">20. Struct Embedding & Composition</span>
+                    <span class="lesson-subtopics">Composition over Inheritance · Embedded structs · Outer field promotion · Overriding promoted fields</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🛡️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 08</div>
+                <h3 class="phase-roadmap-title">Error Handling</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">1 In-Depth Chapter</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/21-error-handling-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">21</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">21. Idiomatic Error Handling in Go</span>
+                    <span class="lesson-subtopics">error interface · Returning (result, error) · Custom errors with errors.New() / fmt.Errorf() · errors.Is() & errors.As()</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📦</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 09</div>
+                <h3 class="phase-roadmap-title">Packages and Standard Library</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/22-custom-packages.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">22</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">22. Custom Packages & Exporting Rules</span>
+                    <span class="lesson-subtopics">Exported identifiers (Capitalized) vs Unexported (lowercase) · Package initialization init() · Package organization</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/23-standard-library.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">23</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">23. Go Standard Library Deep-Dive</span>
+                    <span class="lesson-subtopics">Overview of fmt, os, io, strings, time, math, encoding/json, net/http, sync, testing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/24-fmt-strings-strconv.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">24</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">24. String Manipulation & Formatting</span>
+                    <span class="lesson-subtopics">strings package (Contains, Split, Join, ReplaceAll) · fmt.Printf verbs (%v, %+v, %#v, %T) · strconv conversions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🎯</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 10</div>
+                <h3 class="phase-roadmap-title">Pointers in Go</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/25-pointers-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">25</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">25. Pointers & Memory Addresses in Go</span>
+                    <span class="lesson-subtopics">Memory addresses & Address-of operator & · Dereferencing operator * · nil pointers · No pointer arithmetic</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/26-pointers-with-functions-and-structs.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">26</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">26. Pointers with Functions & Structs</span>
+                    <span class="lesson-subtopics">Pass-by-value vs Pass-by-pointer · In-place mutation · Escape Analysis (Stack vs Heap allocation) · new() function</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔌</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 11</div>
+                <h3 class="phase-roadmap-title">Interfaces</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/27-interfaces-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">27</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">27. Interfaces in Go</span>
+                    <span class="lesson-subtopics">type Reader interface · Implicit implementation (Duck typing) · Decoupling software components · Interface variables</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/28-empty-interface-type-assertion.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">28</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">28. Empty Interface & Type Assertions</span>
+                    <span class="lesson-subtopics">interface{} / any type · Type assertion (val, ok := i.(string)) · Type switch (switch v := i.(type))</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/29-interface-composition.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">29</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">29. Interface Composition & Best Practices</span>
+                    <span class="lesson-subtopics">Combining interfaces (io.ReadWriter) · Small focused interfaces · Accept interfaces, return structs guideline</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🌐</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 12</div>
+                <h3 class="phase-roadmap-title">HTTP and Web Servers</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/30-http-basics.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">30</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">30. HTTP Protocol Basics</span>
+                    <span class="lesson-subtopics">HTTP request methods (GET, POST, PUT, DELETE) · Headers · Query params · Status codes (200, 201, 400, 404, 500) · REST principles</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/31-http-server.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">31</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">31. HTTP Server with net/http</span>
+                    <span class="lesson-subtopics">http.HandleFunc() · http.ListenAndServe() · ResponseWriter · *http.Request · Serving JSON responses · Graceful server shutdown</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/32-routing-and-middleware.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">32</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">32. HTTP Routing & Middleware Chaining</span>
+                    <span class="lesson-subtopics">Middleware pattern (func(http.Handler) http.Handler) · Request logging middleware · Auth middleware · CORS headers</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⏱️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 13</div>
+                <h3 class="phase-roadmap-title">Context and Cancellation</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">1 In-Depth Chapter</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/33-context.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">33</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">33. Go Context Package</span>
+                    <span class="lesson-subtopics">context.Background() · context.WithTimeout() · context.WithCancel() · context.WithValue() · Propagating deadlines in HTTP/DB</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🗄️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 14</div>
+                <h3 class="phase-roadmap-title">Database Access</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/34-sql-databases.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">34</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">34. SQL Database Access (database/sql)</span>
+                    <span class="lesson-subtopics">sql.Open() · Ping() · Connection pooling · Exec() · Query() · QueryRow() · Scan() · Prepared statements · Transactions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/35-orm-and-query-builders.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">35</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">35. ORM with GORM & SQLC</span>
+                    <span class="lesson-subtopics">GORM models & migrations · Querying with GORM · SQLC type-safe code generation · Repository abstraction</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 15</div>
+                <h3 class="phase-roadmap-title">Concurrency</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/36-goroutines.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">36</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">36. Goroutines Basics</span>
+                    <span class="lesson-subtopics">go keyword · M:N scheduler model · Green threads (~2KB stack) · sync.WaitGroup · Preventing main exit</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/37-channels.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">37</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">37. Channels in Go</span>
+                    <span class="lesson-subtopics">make(chan T) · Channel send ch <- val · Channel receive val := <-ch · Unbuffered channel synchronization · Deadlocks</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/38-select.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">38</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">38. Select Statement & Channel Multiplexing</span>
+                    <span class="lesson-subtopics">select block · Non-blocking channel operations with default · Timeouts with time.After() · Worker pool pattern</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/39-sync-waitgroup-mutex.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">39</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">39. Synchronization with Mutexes & WaitGroups</span>
+                    <span class="lesson-subtopics">Data race conditions · go test -race · sync.Mutex Lock()/Unlock() · sync.RWMutex · sync.Once</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🧪</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 16</div>
+                <h3 class="phase-roadmap-title">Testing and Profiling</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">3 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/40-unit-testing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">40</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">40. Unit Testing in Go (testing package)</span>
+                    <span class="lesson-subtopics">Test function signature TestXxx(t *testing.T) · go test command · t.Error(), t.Fail(), t.Fatal() · Code coverage (go test -cover)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/41-table-driven-tests.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">41</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">41. Table-Driven Testing Pattern</span>
+                    <span class="lesson-subtopics">Structuring test cases in slice of structs · t.Run() subtests · Parallel subtests t.Parallel()</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/42-benchmarking-pprof.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">42</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">42. Benchmarking & Profiling in Go</span>
+                    <span class="lesson-subtopics">BenchmarkXxx(b *testing.B) · go test -bench · Allocation profiling (b.ReportAllocs()) · pprof CPU & Memory analysis</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🔒</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 17</div>
+                <h3 class="phase-roadmap-title">Advanced Backend & Security</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">2 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/43-authentication.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">43</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">43. JWT Authentication & Bcrypt in Go</span>
+                    <span class="lesson-subtopics">Bcrypt password hashing · JWT token generation & verification · Authorization middleware · Claims parsing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/44-security.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">44</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">44. Web Security Best Practices in Go</span>
+                    <span class="lesson-subtopics">SQL injection prevention with parameterized queries · XSS & CSRF protection · CORS headers · Rate limiting</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🐳</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 18</div>
+                <h3 class="phase-roadmap-title">Deployment & Projects</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">4 In-Depth Chapters</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-go/45-docker.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">45</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">45. Containerizing Go Applications with Docker</span>
+                    <span class="lesson-subtopics">Multi-stage Dockerfile · Compiling binary in golang builder stage · Ultra-small runtime image using scratch or alpine (<10MB)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/46-ci-cd.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">46</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">46. CI/CD Pipelines for Go</span>
+                    <span class="lesson-subtopics">GitHub Actions workflow · Automated testing & race detection · Automated Docker build & push</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/47-go-projects.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">47</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">47. Production REST API Microservice Project</span>
+                    <span class="lesson-subtopics">Building a complete modular Go REST API microservice with net/http, GORM database, JWT Auth, and Docker containerization</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-go/48-go-quiz.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">48</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">48. Go Masterclass Certification Practice Quiz</span>
+                    <span class="lesson-subtopics">30-Question Certification Exam covering Go syntax, Goroutines, Channels, Interfaces, Web Servers, and SQL</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Go Complete Masterclass · 48 Chapters · 18 Phases · 2026 Edition</span>
+      </div>
+    </div>
+
     <div class="nav-footer">
-      <a href="/blog-go.html" class="nav-btn">
-        <span class="label">← Go Overview</span>
-        <span class="title">Course Index</span>
-      </a>
-      <a href="/blog-go/intro.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">Welcome & Hello World</span>
-      </a>
+      <a href="/blog.html" class="nav-btn"><span class="label">← All Tutorials</span><span class="title">Course Hub</span></a>
+      <a href="/blog-go/01-what-is-go.html" class="nav-btn" style="text-align:right;"><span class="label">Start Learning →</span><span class="title">1. What is Go?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+<script src="/site-nav.js" defer></script>
+<footer class="footer" id="site-footer"></footer>
 </body>
 </html>

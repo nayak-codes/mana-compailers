@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Django — Request and Response | Our Compiler</title>
+  <meta name="description" content="Complete Django Chapter 8: Request and Response. Learn request.method · request.GET · request.POST · request.FILES · request.user · request.session · Request headers · Cookies · JSON request body · JsonResponse · Redirect response · File response · Streaming response with practical Python code examples, Django templates, ORM models, views, and step-by-step walkthroughs." />
+  <meta name="keywords" content="django tutorial, learn django, request and response, django orm, django views" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-django/08-request-and-response.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-django/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+        });
+      });
+    })();
+  </script>
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
+</head>
+<body class="lang-django">
+
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-django.html" class="active">Django</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rest-api.html">REST API</a>
+  <a href="/blog-graphql.html">GraphQL</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-react.html">React</a>
+  <a href="/blog-angular.html">Angular</a>
+  <a href="/blog-vue.html">Vue.js</a>
+  <a href="/blog-nextjs.html">Next.js</a>
+  <a href="/blog-flask.html">Flask</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-html.html">HTML</a>
+  <a href="/blog-css.html">CSS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading">Django Tutorial</div>
+    <a href="/blog-django.html" class="sidebar-home-link">🎸 Django HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎸</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">Django Introduction</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">2 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/01-what-is-django.html" class="">1. Django Ante Enti?</a><a href="/blog-django/02-django-prerequisites.html" class="">2. Django Prerequisites</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Setup and First Project</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/03-django-installation.html" class="">3. Django Installation</a><a href="/blog-django/04-creating-a-django-project.html" class="">4. Creating a Django Project</a><a href="/blog-django/05-django-project-structure.html" class="">5. Django Project Structure</a>
+      </div>
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🛣️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">URLs and Views</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-django/06-url-routing.html" class="">6. URL Routing</a><a href="/blog-django/07-function-based-views.html" class="">7. Function-Based Views</a><a href="/blog-django/08-request-and-response.html" class="active">8. Request and Response</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎨</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Templates and Static Files</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/09-django-templates.html" class="">9. Django Templates</a><a href="/blog-django/10-template-inheritance.html" class="">10. Template Inheritance</a><a href="/blog-django/11-static-and-media-files.html" class="">11. Static and Media Files</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🗄️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Models and Database (ORM)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/12-django-models.html" class="">12. Django Models & Fields</a><a href="/blog-django/13-migrations.html" class="">13. Migrations & Schema Changes</a><a href="/blog-django/14-orm-queries.html" class="">14. Django ORM Queries & QuerySets</a><a href="/blog-django/15-model-relationships.html" class="">15. Model Relationships</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📝</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Admin Panel and Forms</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/16-django-admin.html" class="">16. Django Admin Panel Customization</a><a href="/blog-django/17-django-forms.html" class="">17. Django Forms & Validation</a><a href="/blog-django/18-model-forms.html" class="">18. ModelForms & File Uploads</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔑</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Authentication and Authorization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">3 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/19-authentication.html" class="">19. Built-in User Authentication</a><a href="/blog-django/20-user-permissions.html" class="">20. User Permissions & Groups</a><a href="/blog-django/21-custom-user-model.html" class="">21. Custom User Model & AbstractUser</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Class-Based Views (CBV)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">1 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/22-class-based-views.html" class="">22. Generic Class-Based Views</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Django REST Framework (DRF)</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/23-drf-introduction.html" class="">23. Django REST Framework (DRF) Intro</a><a href="/blog-django/24-drf-serializers.html" class="">24. DRF Serializers & ModelSerializers</a><a href="/blog-django/25-drf-viewsets.html" class="">25. DRF APIViews, Generic Views & ViewSets</a><a href="/blog-django/26-drf-authentication.html" class="">26. DRF Authentication (Token, JWT & Permissions)</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Middleware, Testing & Production</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">4 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-django/27-middleware-and-signals.html" class="">27. Custom Middleware & Signal Handlers</a><a href="/blog-django/28-django-testing.html" class="">28. Django Unit Testing</a><a href="/blog-django/29-performance-optimization.html" class="">29. Performance Optimization</a><a href="/blog-django/30-deployment.html" class="">30. Production Deployment</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-django.html">Django</a><span class="sep">›</span>
+      <span class="current">Django — Request and Response</span>
+    </div>
+
+    <h1 class="page-title">Django — Request and Response</h1>
+
+    <div class="page-meta">
+      <span class="badge">🎸 Django 5.0+</span>
+      <span class="badge">🟢 Chapter 8 of 30</span>
+      <span class="badge">📂 Phase 03: URLs and Views</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this chapter:</span>
+      <span class="topic-pill-text">request.method · request.GET · request.POST · request.FILES · request.user · request.session · Request headers · Cookies · JSON request body · JsonResponse · Redirect response · File response · Streaming response</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Django — Request and Response</strong> in our Django Complete Masterclass! Access HTTP headers, request parameters (GET, POST), cookies, sessions, and return JsonResponse objects.</p>
+    </div>
+
+    <!-- 1. Simple introduction -->
+    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
+    <div class="section-body">
+      <p>In Django web development, understanding <strong>Request and Response</strong> is essential for building robust, secure, database-driven Python web applications. Django follows MTV (Model-Template-View) architecture to cleanly decouple data models, business logic, and UI templates.</p>
+    </div>
+
+    <!-- 2. What you will learn -->
+    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+        <strong style="color:#44b78b;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
+        <ul style="margin:0 0 0 20px;line-height:1.8;">
+          <li>Master core Django mechanisms and Python patterns for <strong>Request and Response</strong></li>
+          <li>Understand request-response lifecycles, MTV flow, ORM models, and templates</li>
+          <li>Implement clean, production-ready Django views, forms, models, and serializers</li>
+          <li>Avoid common SQL N+1 pitfalls, security flaws, and configuration mistakes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Why this concept is useful -->
+    <div class="section-title"><span class="num">3</span>Why Request and Response is Useful</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">💡 Practical Utility</div>
+        <p>Django is a Python web framework used to build secure and database-backed web applications quickly. Django lo URL routing, views, templates, ORM, forms, authentication and admin panel built-in ga provide chestundi. Mastering <strong>Request and Response</strong> accelerates backend development.</p>
+      </div>
+    </div>
+
+    <!-- 4. Required Component / Model / View design -->
+    <div class="section-title"><span class="num">4</span>Required Component / Model / View Design</div>
+    <div class="section-body">
+      <p>Target Class / Module: <code>JsonResponseView</code>. Configured inside Django app modules (e.g. <code>models.py</code>, <code>views.py</code>, <code>urls.py</code>, <code>forms.py</code>, <code>serializers.py</code>).</p>
+    </div>
+
+    <!-- 5. Django syntax / mechanism -->
+    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
+    <div class="section-body">
+      <p>Mechanism: <code style="color:#44b78b;font-weight:700;">HTTPView</code>. File Path: <code>tutorials/views.py</code>.</p>
+    </div>
+
+    <!-- 6. Basic example -->
+    <div class="section-title"><span class="num">6</span>Basic Example Code</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Django Code (Python)</span></div>
+        <pre><code>from django.http import JsonResponse
+
+def courses(request):
+    return JsonResponse({
+        "courses": ["Python", "Django", "REST API"]
+    })</code></pre>
+      </div>
+    </div>
+
+    <!-- 7. Browser output -->
+    <div class="section-title"><span class="num">7</span>Browser Output / Response Payload</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">UI Render / JSON Output</span></div>
+        <pre><code>JSON Output: {"courses": ["Python", "Django", "REST API"]}</code></pre>
+      </div>
+    </div>
+
+    <!-- 8. Line-by-line explanation -->
+    <div class="section-title"><span class="num">8</span>Line-by-Line Explanation / Request Flow</div>
+    <div class="section-body">
+      <div class="diagram-box">Browser Request -> WSGI/ASGI Server -> URL Dispatcher (urls.py) -> View Handler (views.py) -> Model Query (models.py) -> Template Engine / Serializer -> HTTP Response</div>
+    </div>
+
+    <!-- 9. Practical example -->
+    <div class="section-title"><span class="num">9</span>Practical Example Usage</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header"><span class="lang-tag">Command / Template / Invocation</span></div>
+        <pre><code>from django.http import JsonResponse
+def courses(request):
+    return JsonResponse({"courses": ["Python", "Django", "REST API"]})</code></pre>
+      </div>
+    </div>
+
+    <!-- 10. Concept comparison -->
+    <div class="section-title"><span class="num">10</span>Concept Comparison / MTV vs MVC</div>
+    <div class="section-body">
+      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #44b78b;">
+        <strong style="color:#44b78b;">Verification Status: JsonResponse 200 OK</strong>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">Django's MTV architecture maps Model to database table, Template to HTML presentation layer, and View to business logic handler.</p>
+      </div>
+    </div>
+
+    <!-- 11. Common mistakes -->
+    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
+    <div class="section-body">
+      <div class="callout" style="margin-bottom:24px;">
+        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
+        <ul style="margin:8px 0 0 18px;line-height:1.7;">
+          <li>Performing N+1 database queries inside template loops instead of using <code>select_related()</code> or <code>prefetch_related()</code>.</li>
+          <li>Forgetting to run <code>makemigrations</code> and <code>migrate</code> after modifying <code>models.py</code>.</li>
+          <li>Leaving <code>DEBUG = True</code> and <code>SECRET_KEY</code> exposed in production settings.</li>
+          <li>Putting heavy database or business logic inside Django template tags instead of view functions or model methods.</li>
+          <li>Failing to validate user input forms with <code>form.is_valid()</code> before persisting records to database.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 12. Coding challenge -->
+    <div class="section-title"><span class="num">12</span>Coding Challenge</div>
+    <div class="section-body">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
+        <strong style="color:#44b78b;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
+        <p>Build a Django view and template for <strong>Request and Response</strong> inside your local <code>ourcompiler</code> app. Run <code>python manage.py runserver</code> and test in your browser at <code>http://127.0.0.1:8000/</code>!</p>
+      </div>
+    </div>
+
+    <!-- 13. Mini quiz -->
+    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
+    <div class="section-body">
+      <div class="faq-card">
+        <h4>❓ Question: What is the primary role of Request and Response in Django?</h4>
+        <p><strong>Answer:</strong> It provides structured Python mechanisms for request.method, streamlining secure web development.</p>
+      </div>
+    </div>
+
+    <!-- 14. Quick recap -->
+    <div class="section-title"><span class="num">14</span>Quick Recap</div>
+    <div class="section-body">
+      <ul style="line-height:1.8;margin-left:20px;">
+        <li>Access HTTP headers, request parameters (GET, POST), cookies, sessions, and return JsonResponse objects.</li>
+        <li>Django follows the Model-Template-View (MTV) architectural pattern.</li>
+        <li>Utilize Django built-in ORM, admin panel, forms, and template tags.</li>
+      </ul>
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on Django 5.0+ Standards · Last updated August 2026</span>
+      </div>
+    </div>
+
+    <!-- 15 & 16. Previous & Next Lesson Navigation -->
+    <div class="nav-footer">
+      <a href="07-function-based-views.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">7. Function-Based Views</span></a>
+      <a href="09-django-templates.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">9. Django Templates</span></a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>

@@ -3,137 +3,953 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MongoDB Tutorial — Complete Beginner to Advanced Guide | Our Compiler</title>
-  <meta name="description" content="Learn MongoDB — MongoDB Tutorial — Complete Beginner to Advanced Guide with clear BSON examples, Mongoose model structures, aggregation pipelines, and challenges." />
+  <title>MongoDB Complete Masterclass — 50 Chapters, 10 Phases (2026 Edition) | Our Compiler</title>
+  <meta name="description" content="Master MongoDB NoSQL database from beginner to advanced: BSON documents, collections, CRUD operations, query operators, indexing, aggregation pipeline, Mongoose ODM, transactions, sharding, and production Atlas deployment." />
+  <meta name="keywords" content="mongodb tutorial, learn mongodb, nosql database, mongoose tutorial, mongodb aggregation, bson, mongodb atlas, mongodb indexes" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-mongodb.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-mongodb/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
   <script>
-    (function(){
-      var t=localStorage.getItem("theme")||"dark";
-      if(t==="light"){document.documentElement.classList.add("light-theme");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("light-theme");});}
-      window.addEventListener("DOMContentLoaded",function(){
-        var nav=document.querySelector(".topnav");
-        if(nav){var btn=document.createElement("button");btn.style.cssText="margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;";var upd=function(){btn.innerHTML=document.body.classList.contains("light-theme")?"&#127769; Dark":"&#9728;&#65039; Light";};upd();btn.onclick=function(){document.body.classList.toggle("light-theme");document.documentElement.classList.toggle("light-theme");localStorage.setItem("theme",document.body.classList.contains("light-theme")?"light":"dark");upd();};nav.appendChild(btn);}
-        document.querySelectorAll(".code-block").forEach(function(block){var header=block.querySelector(".code-block-header");var codeEl=block.querySelector("pre code");if(!header||!codeEl)return;var ac=header.querySelector(".code-actions");if(!ac){ac=document.createElement("div");ac.className="code-actions";ac.style.cssText="display:flex;gap:8px;align-items:center;margin-left:auto;";header.appendChild(ac);}var cb=document.createElement("button");cb.innerHTML="&#128203; Copy";cb.style.cssText="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:Inter,sans-serif;white-space:nowrap;";cb.onclick=function(){navigator.clipboard.writeText(codeEl.textContent).then(function(){cb.innerHTML="&#9989; Copied!";setTimeout(function(){cb.innerHTML="&#128203; Copy";},2000);});};ac.appendChild(cb);});
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) { content.classList.remove('open'); btn.classList.remove('active'); }
+      else { content.classList.add('open'); btn.classList.add('active'); }
+    }
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Inter",sans-serif;transition:all 0.2s;white-space:nowrap;margin-right:12px;';
+          const updateText = () => { toggleBtn.innerHTML = document.body.classList.contains('light-theme') ? '🌙 Dark' : '☀️ Light'; };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
       });
     })();
   </script>
-  <link rel="stylesheet" href="/site-nav.css" />
+  <script src="/site-footer.js" defer></script>
+  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-mongodb">
+
 <nav class="topnav">
-  <a href="/" class="brand">&#128187; Our Compiler</a>
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-mongodb.html" class="active">MongoDB</a>
+  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-express.html">Express.js</a>
+  <a href="/blog-javascript.html">JavaScript</a>
   <a href="/blog-python.html">Python</a>
   <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-csharp.html">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/blog-html.html">HTML</a>
-  <a href="/blog-css.html">CSS</a>
-  <a href="/blog-react.html">React</a>
-  <a href="/blog-angular.html">Angular</a>
-  <a href="/blog-vue.html">Vue.js</a>
-  <a href="/blog-nextjs.html">Next.js</a>
-  <a href="/blog-nodejs.html">Node.js</a>
+  <a href="/blog-mysql.html">MySQL</a>
+  <a href="/blog-postgresql.html">PostgreSQL</a>
+  <a href="/blog-redis.html">Redis</a>
   <a href="/blog-rest-api.html">REST API</a>
   <a href="/blog-graphql.html">GraphQL</a>
-  <a href="/blog-spring-boot.html">Spring Boot</a>
   <a href="/blog-django.html">Django</a>
   <a href="/blog-flask.html">Flask</a>
-  <a href="/blog-express.html">Express.js</a>
-  <a href="/blog-postgresql.html">PostgreSQL</a>
-  <a href="/blog-mysql.html">MySQL</a>
-  <a href="/blog-mongodb.html" class="active">MongoDB</a>
-  <a href="/blog-sqlite.html">SQLite</a>
-  <a href="/blog-redis.html">Redis</a>
-  <a href="/blog-cassandra.html">Cassandra</a>
-  <a href="/blog-aws.html">AWS</a>
-  <a href="/blog-azure.html">Azure</a>
-  <a href="/blog-gcloud.html">Google Cloud</a>
-  <a href="/blog-docker.html">Docker</a>
-  <a href="/blog-kubernetes.html">Kubernetes</a>
-  <a href="/blog-cicd.html">CI/CD</a>
-  <a href="/blog-data-science.html">Data Science</a>
-  <a href="/blog-ml.html">Machine Learning</a>
-  <a href="/blog-deep-learning.html">Deep Learning</a>
-  <a href="/blog-tensorflow.html">TensorFlow</a>
-  <a href="/blog-pytorch.html">PyTorch</a>
-  <a href="/blog-big-data.html">Big Data</a>
-  <a href="/blog-git.html">Git &amp; GitHub</a>
-  <a href="/blog-linux.html">Linux</a>
-  <a href="/blog-shell.html">Shell Scripting</a>
-  <a href="/blog-testing.html">Testing</a>
-  <a href="/blog-agile.html">Agile &amp; Scrum</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
 </nav>
+
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-heading">MongoDB Tutorial</div>
-    <a href="/blog-mongodb.html" class="active">MongoDB HOME</a>
-    <a href="/blog-mongodb/intro.html">1. Introduction to NoSQL &amp; MongoDB</a>
-    <a href="/blog-mongodb/installation-setup.html">2. Installing MongoDB &amp; mongosh Setup</a>
-    <a href="/blog-mongodb/documents-collections.html">3. BSON Documents &amp; Collections</a>
-    <a href="/blog-mongodb/crud-insert-find.html">4. Creating &amp; Finding Documents</a>
-    <a href="/blog-mongodb/operators-filtering.html">5. Query Operators &amp; Filtering</a>
-    <a href="/blog-mongodb/crud-update-delete.html">6. Updating &amp; Deleting Documents</a>
-    <a href="/blog-mongodb/embedded-documents.html">7. Embedded Documents &amp; Subdocuments</a>
-    <a href="/blog-mongodb/document-references.html">8. Document References vs Embedding</a>
-    <a href="/blog-mongodb/indexes.html">9. Indexing: Single, Compound &amp; Text</a>
-    <a href="/blog-mongodb/aggregation-pipeline.html">10. The Aggregation Pipeline Framework</a>
-    <a href="/blog-mongodb/mongoose-schemas.html">11. Mongoose: Schemas &amp; Models in Node.js</a>
-    <a href="/blog-mongodb/mongoose-middleware.html">12. Mongoose: Middleware, Hooks &amp; Virtuals</a>
-    <a href="/blog-mongodb/transactions.html">13. Multi-Document ACID Transactions</a>
-    <a href="/blog-mongodb/backups-restore.html">14. Atlas Backup, mongodump &amp; Restore</a>
-    <a href="/blog-mongodb/security-deployment.html">15. Atlas Deployment &amp; Security Settings</a>
-
-    <div class="sidebar-heading">Related Topics</div>
-    <a href="/blog-nodejs.html">Node.js</a>
-    <a href="/blog-express.html">Express.js</a>
-    <a href="/blog-postgresql.html">PostgreSQL</a>
-    <a href="/blog-mysql.html">MySQL</a>
-    <a href="/blog-redis.html">Redis</a>
-    <a href="/blog.html">All Tutorials</a>
+    <div class="sidebar-heading">MongoDB Roadmap</div>
+    <a href="/blog-mongodb.html" class="sidebar-home-link active">🍃 MongoDB HOME</a>
+    <div class="sidebar-accordion">
+      
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🍃</span>
+          <div class="phase-info"><span class="phase-tag">Phase 01</span><span class="phase-title">MongoDB & NoSQL Basics</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/01-mongodb-introduction.html" class="">1. What is MongoDB & NoSQL?</a><a href="/blog-mongodb/02-mongodb-vs-sql.html" class="">2. MongoDB vs SQL Databases</a><a href="/blog-mongodb/03-mongodb-installation.html" class="">3. MongoDB Installation & Setup</a><a href="/blog-mongodb/04-mongodb-atlas.html" class="">4. MongoDB Atlas Cloud Database</a><a href="/blog-mongodb/05-compass-and-mongosh.html" class="">5. MongoDB Compass & mongosh CLI</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info"><span class="phase-tag">Phase 02</span><span class="phase-title">Databases, Collections & BSON Documents</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/06-databases-and-collections.html" class="">6. Databases & Collections Management</a><a href="/blog-mongodb/07-documents-and-bson.html" class="">7. Documents & BSON Data Types</a><a href="/blog-mongodb/08-id-and-objectid.html" class="">8. The _id Field & ObjectId Mechanics</a><a href="/blog-mongodb/09-json-vs-bson.html" class="">9. JSON vs BSON Deep Dive</a><a href="/blog-mongodb/10-data-modeling-and-schema-design.html" class="">10. Data Modeling & Schema Design</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">✏️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 03</span><span class="phase-title">CRUD Operations — Reading & Writing Data</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/11-inserting-documents.html" class="">11. Inserting Documents</a><a href="/blog-mongodb/12-finding-documents.html" class="">12. Finding Documents & Query Selectors</a><a href="/blog-mongodb/13-comparison-operators.html" class="">13. Comparison Operators</a><a href="/blog-mongodb/14-logical-operators.html" class="">14. Logical Operators</a><a href="/blog-mongodb/15-element-and-evaluation-operators.html" class="">15. Element & Evaluation Operators</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info"><span class="phase-tag">Phase 04</span><span class="phase-title">Advanced Querying, Array & Embedded Documents</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/16-querying-arrays.html" class="">16. Querying Arrays & Multikey Fields</a><a href="/blog-mongodb/17-querying-embedded-documents.html" class="">17. Querying Nested & Embedded Documents</a><a href="/blog-mongodb/18-projection-and-field-selection.html" class="">18. Projection & Field Selection</a><a href="/blog-mongodb/19-sorting-limiting-pagination.html" class="">19. Sorting, Limiting & Pagination</a><a href="/blog-mongodb/20-updating-documents.html" class="">20. Updating Documents & Field Modifiers</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info"><span class="phase-tag">Phase 05</span><span class="phase-title">Array Updates, Upserts & Deletions</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/21-updating-arrays.html" class="">21. Updating Arrays in Documents</a><a href="/blog-mongodb/22-upsert-and-find-and-modify.html" class="">22. Upsert Operations & FindAndModify</a><a href="/blog-mongodb/23-deleting-documents.html" class="">23. Deleting Documents & Collection Cleanup</a><a href="/blog-mongodb/24-bulk-write-operations.html" class="">24. Bulk Write Operations</a><a href="/blog-mongodb/25-schema-validation.html" class="">25. Schema Validation & JSON Schema</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info"><span class="phase-tag">Phase 06</span><span class="phase-title">Indexing & Performance Optimization</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/26-indexing-fundamentals.html" class="">26. Indexing Fundamentals</a><a href="/blog-mongodb/27-single-field-and-compound-indexes.html" class="">27. Compound Indexes & Prefix Rule</a><a href="/blog-mongodb/28-specialized-indexes.html" class="">28. Specialized Indexes: Multikey, Text & Hashed</a><a href="/blog-mongodb/29-geospatial-and-ttl-indexes.html" class="">29. Geospatial & TTL Indexes</a><a href="/blog-mongodb/30-query-performance-explain.html" class="">30. Query Performance Analysis with explain()</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info"><span class="phase-tag">Phase 07</span><span class="phase-title">Aggregation Framework Pipeline</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/31-aggregation-pipeline-intro.html" class="">31. Aggregation Pipeline Introduction</a><a href="/blog-mongodb/32-filtering-transformation-stages.html" class="">32. Aggregation Expressions & Operators</a><a href="/blog-mongodb/33-grouping-deconstruction-stages.html" class="">33. Advanced Aggregation: $lookup & $facet</a><a href="/blog-mongodb/34-sorting-pagination-lookup-joins.html" class="">34. Reporting Project & Leaderboards</a><a href="/blog-mongodb/35-advanced-aggregation-stages.html" class="">35. Transactions & Consistency</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info"><span class="phase-tag">Phase 08</span><span class="phase-title">Application Integration & Multi-Language Drivers</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/36-nodejs-driver-integration.html" class="">36. MongoDB with Node.js</a><a href="/blog-mongodb/37-mongoose-schemas-and-models.html" class="">37. MongoDB with Python (PyMongo)</a><a href="/blog-mongodb/38-mongoose-crud-and-validation.html" class="">38. MongoDB with Java (Spring Data MongoDB)</a><a href="/blog-mongodb/39-mongoose-middleware-and-virtuals.html" class="">39. MongoDB with C# (.NET Driver)</a><a href="/blog-mongodb/40-mongoose-population-referencing.html" class="">40. Users, Roles & Security Controls</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info"><span class="phase-tag">Phase 09</span><span class="phase-title">Backup, Replication & Scaling</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/41-multi-document-acid-transactions.html" class="">41. Backup & Restore (mongodump & Restore)</a><a href="/blog-mongodb/42-replication-and-high-availability.html" class="">42. Replication & High Availability</a><a href="/blog-mongodb/43-sharding-and-horizontal-scaling.html" class="">43. Real-Time Change Streams</a><a href="/blog-mongodb/44-mongodb-backups-restore-monitoring.html" class="">44. Sharding & Horizontal Scaling</a><a href="/blog-mongodb/45-mongodb-security-access-control.html" class="">45. Testing & Database Metrics Monitoring</a>
+      </div>
+      <button class="accordion-header " onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏆</span>
+          <div class="phase-info"><span class="phase-tag">Phase 10</span><span class="phase-title">Our Compiler Schema & Interview Prep</span></div>
+        </div>
+        <div class="accordion-header-meta"><span class="phase-count-badge">5 Ch</span><svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+      </button>
+      <div class="accordion-content ">
+        <a href="/blog-mongodb/46-real-time-change-streams.html" class="">46. Our Compiler Platform Schema Design</a><a href="/blog-mongodb/47-gridfs-large-file-storage.html" class="">47. GridFS for Large File Storage</a><a href="/blog-mongodb/48-timeseries-and-atlas-search.html" class="">48. MongoDB Time-Series & Search</a><a href="/blog-mongodb/49-enterprise-database-design-patterns.html" class="">49. Enterprise Database Design Patterns</a><a href="/blog-mongodb/50-mongodb-interview-preparation.html" class="">50. Top 50 MongoDB Technical Interview Q&A</a>
+      </div>
+    </div>
+    <div class="sidebar-heading">Navigation</div>
+    <a href="/blog.html">📚 All Tutorials</a>
   </aside>
+
   <main class="content">
-    <div class="breadcrumb"><a href="/">Home</a><span>&#8250;</span><a href="/blog.html">Tutorials</a><span>&#8250;</span><a href="/blog-mongodb.html">MongoDB</a><span>&#8250;</span><span>Lesson Index</span></div>
-    <h1 class="page-title">MongoDB Tutorial &#8212; Complete Guide</h1>
-<div class="page-meta"><span class="badge">&#127809; MongoDB</span><span class="badge">&#128994; Beginner to Advanced</span><span class="badge">&#128197; July 2026</span></div>
-<div class="intro-box"><p>MongoDB is the world&#39;s most popular document database, allowing developers to build flexible, high-performance applications without relational SQL bottlenecks. This 15-lesson bootcamp takes you from NoSQL fundamentals and document structure to query operators, indexing, aggregation frameworks, Mongoose models, and production Atlas deployments.</p></div>
-<div class="section">
-  <div class="section-title"><span class="num">&#9658;</span> Course Curriculum</div>
-  <table class="tbl" style="margin-top:15px;">
-    <tr><th>Lesson</th><th>Topic</th></tr>
-    <tr><td><strong>Lesson 1</strong></td><td><a href="/blog-mongodb/intro.html"><strong>Introduction to NoSQL &amp; MongoDB</strong></a></td></tr>
-    <tr><td><strong>Lesson 2</strong></td><td><a href="/blog-mongodb/installation-setup.html"><strong>Installing MongoDB &amp; mongosh Setup</strong></a></td></tr>
-    <tr><td><strong>Lesson 3</strong></td><td><a href="/blog-mongodb/documents-collections.html"><strong>BSON Documents &amp; Collections</strong></a></td></tr>
-    <tr><td><strong>Lesson 4</strong></td><td><a href="/blog-mongodb/crud-insert-find.html"><strong>Creating &amp; Finding Documents</strong></a></td></tr>
-    <tr><td><strong>Lesson 5</strong></td><td><a href="/blog-mongodb/operators-filtering.html"><strong>Query Operators &amp; Filtering</strong></a></td></tr>
-    <tr><td><strong>Lesson 6</strong></td><td><a href="/blog-mongodb/crud-update-delete.html"><strong>Updating &amp; Deleting Documents</strong></a></td></tr>
-    <tr><td><strong>Lesson 7</strong></td><td><a href="/blog-mongodb/embedded-documents.html"><strong>Embedded Documents &amp; Subdocuments</strong></a></td></tr>
-    <tr><td><strong>Lesson 8</strong></td><td><a href="/blog-mongodb/document-references.html"><strong>Document References vs Embedding</strong></a></td></tr>
-    <tr><td><strong>Lesson 9</strong></td><td><a href="/blog-mongodb/indexes.html"><strong>Indexing: Single, Compound &amp; Text</strong></a></td></tr>
-    <tr><td><strong>Lesson 10</strong></td><td><a href="/blog-mongodb/aggregation-pipeline.html"><strong>The Aggregation Pipeline Framework</strong></a></td></tr>
-    <tr><td><strong>Lesson 11</strong></td><td><a href="/blog-mongodb/mongoose-schemas.html"><strong>Mongoose: Schemas &amp; Models in Node.js</strong></a></td></tr>
-    <tr><td><strong>Lesson 12</strong></td><td><a href="/blog-mongodb/mongoose-middleware.html"><strong>Mongoose: Middleware, Hooks &amp; Virtuals</strong></a></td></tr>
-    <tr><td><strong>Lesson 13</strong></td><td><a href="/blog-mongodb/transactions.html"><strong>Multi-Document ACID Transactions</strong></a></td></tr>
-    <tr><td><strong>Lesson 14</strong></td><td><a href="/blog-mongodb/backups-restore.html"><strong>Atlas Backup, mongodump &amp; Restore</strong></a></td></tr>
-    <tr><td><strong>Lesson 15</strong></td><td><a href="/blog-mongodb/security-deployment.html"><strong>Atlas Deployment &amp; Security Settings</strong></a></td></tr>
-  </table>
-</div>
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">MongoDB Roadmap</span>
+    </div>
+
+    <h1 class="page-title">MongoDB Programming Masterclass (50 Chapters, 10 Phases)</h1>
+
+    <div class="page-meta">
+      <span class="badge">🍃 MongoDB 7.0+</span>
+      <span class="badge">🟢 50 Complete Chapters</span>
+      <span class="badge">📂 10 Complete Phases</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <div class="topic-pill-box">
+      <span class="topic-pill-label">📌 Covered in this course:</span>
+      <span class="topic-pill-text">NoSQL Basics · BSON Documents · Collections · ObjectId · Atlas Cloud · Compass GUI · mongosh · CRUD Operations · Query Operators · Projection · Sorting &amp; Pagination · Array Updates · Upserts · Schema Validation · B-Tree Indexes · Compound Indexes · Geospatial &amp; TTL · explain() · Aggregation Pipeline ($match, $group, $unwind, $lookup) · Node.js Driver · Mongoose ODM (Schemas, Models, Middleware, Population) · ACID Transactions · Replication · Sharding · Backups · Security &amp; RBAC · Change Streams · Top 50 Interview Q&amp;A</span>
+    </div>
+
+    <div class="intro-box">
+      <p>Welcome to <strong>Our Compiler's MongoDB Complete Master Course</strong>. MongoDB is the leading document-oriented NoSQL database powering high-performance modern web applications, microservices, and cloud architectures. From collection creation, BSON documents, and flexible schema modeling to complex aggregation pipelines, Mongoose ODM integration in Node.js, transactions, sharding, and interview preparation, this 50-chapter course covers every essential concept in depth.</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(19,170,82,0.12),rgba(20,24,32,0.6));border:1px solid rgba(19,170,82,0.3);border-radius:12px;padding:24px;margin:28px 0;">
+      <h3 style="color:#00ed64;margin-bottom:10px;font-size:18px;">🎯 Ready to Master MongoDB Engineering?</h3>
+      <p style="color:var(--text2);margin-bottom:16px;font-size:14.5px;">Choose where to start: explore NoSQL introduction, CRUD operations, indexing, aggregation framework, Mongoose ODM, or interview prep:</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/blog-mongodb/01-mongodb-introduction.html" style="background:linear-gradient(135deg,#13aa52,#119246);color:#ffffff;font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 1: MongoDB Intro →</a>
+        <a href="/blog-mongodb/11-inserting-documents.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 3: CRUD Operations →</a>
+        <a href="/blog-mongodb/26-indexing-fundamentals.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 6: Indexing →</a>
+        <a href="/blog-mongodb/31-aggregation-pipeline-intro.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 7: Aggregation →</a>
+        <a href="/blog-mongodb/36-nodejs-driver-integration.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 8: Multi-Language Drivers →</a>
+        <a href="/blog-mongodb/50-mongodb-interview-preparation.html" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Phase 10: Interview Prep →</a>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
+    <div class="curriculum-roadmap-container">
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🍃</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 01</div>
+                <h3 class="phase-roadmap-title">MongoDB & NoSQL Basics</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/01-mongodb-introduction.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">01</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">1. What is MongoDB & NoSQL?</span>
+                    <span class="lesson-subtopics">MongoDB ante enti? · NoSQL database · BSON vs JSON · Flexible schema · MongoDB architecture · Advantages</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/02-mongodb-vs-sql.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">02</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">2. MongoDB vs SQL Databases</span>
+                    <span class="lesson-subtopics">Database/Collection/Document vs DB/Table/Row · Primary key _id · $lookup vs JOINs · Flexible schema comparison</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/03-mongodb-installation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">03</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">3. MongoDB Installation & Setup</span>
+                    <span class="lesson-subtopics">MongoDB Community Edition · Starting mongod service · Port configuration (27017) · macOS/Linux/Windows setup</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/04-mongodb-atlas.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">04</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">4. MongoDB Atlas Cloud Database</span>
+                    <span class="lesson-subtopics">Atlas cloud clusters · Free tier M0 · IP allowlist · Database users & credentials · Atlas Connection Strings</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/05-compass-and-mongosh.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">05</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">5. MongoDB Compass & mongosh CLI</span>
+                    <span class="lesson-subtopics">Compass GUI interface · mongosh REPL shell · Database navigation (`show dbs`, `use db`, `show collections`)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📁</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 02</div>
+                <h3 class="phase-roadmap-title">Databases, Collections & BSON Documents</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/06-databases-and-collections.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">06</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">6. Databases & Collections Management</span>
+                    <span class="lesson-subtopics">Creating databases · db.createCollection() · Dropping databases & collections · Capped collections · Time-series</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/07-documents-and-bson.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">07</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">7. Documents & BSON Data Types</span>
+                    <span class="lesson-subtopics">Document structures · BSON data types (String, Int, Long, Double, Date, Boolean, Array, Object, Null, Binary)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/08-id-and-objectid.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">08</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">8. The _id Field & ObjectId Mechanics</span>
+                    <span class="lesson-subtopics">_id field primary key · 12-byte ObjectId structure (timestamp, machine, process, counter) · Custom IDs · UUIDs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/09-json-vs-bson.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">09</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">9. JSON vs BSON Deep Dive</span>
+                    <span class="lesson-subtopics">JSON text format vs BSON binary format · Extended JSON v2 · Serialization speed · Type richness comparison</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/10-data-modeling-and-schema-design.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">10</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">10. Data Modeling & Schema Design</span>
+                    <span class="lesson-subtopics">Embedded documents vs Document references · 1-to-1, 1-to-Many, Many-to-Many relationships · Denormalization rules</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">✏️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 03</div>
+                <h3 class="phase-roadmap-title">CRUD Operations — Reading & Writing Data</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/11-inserting-documents.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">11</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">11. Inserting Documents</span>
+                    <span class="lesson-subtopics">insertOne() · insertMany() · Write Concern · Ordered vs Unordered inserts · Duplicate key errors</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/12-finding-documents.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">12</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">12. Finding Documents & Query Selectors</span>
+                    <span class="lesson-subtopics">find() · findOne() · Query filters · Equality matching · Cursor objects · Pretty printing</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/13-comparison-operators.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">13</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">13. Comparison Operators</span>
+                    <span class="lesson-subtopics">$eq · $ne · $gt · $gte · $lt · $lte · $in · $nin query comparison operators</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/14-logical-operators.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">14</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">14. Logical Operators</span>
+                    <span class="lesson-subtopics">$and · $or · $not · $nor logical query evaluation · Combining multiple filter clauses</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/15-element-and-evaluation-operators.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">15</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">15. Element & Evaluation Operators</span>
+                    <span class="lesson-subtopics">$exists · $type · $regex · $expr · $text · $mod query evaluation operators</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🎯</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 04</div>
+                <h3 class="phase-roadmap-title">Advanced Querying, Array & Embedded Documents</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/16-querying-arrays.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">16</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">16. Querying Arrays & Multikey Fields</span>
+                    <span class="lesson-subtopics">$all · $elemMatch · $size · Array index element queries · Matching array elements</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/17-querying-embedded-documents.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">17</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">17. Querying Nested & Embedded Documents</span>
+                    <span class="lesson-subtopics">Dot notation ("instructor.name") · Exact document matching · Embedded object filters</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/18-projection-and-field-selection.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">18</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">18. Projection & Field Selection</span>
+                    <span class="lesson-subtopics">Selecting fields ({ title: 1, level: 1, _id: 0 }) · Sensitive field exclusion · Projection performance</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/19-sorting-limiting-pagination.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">19</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">19. Sorting, Limiting & Pagination</span>
+                    <span class="lesson-subtopics">sort({ level: 1 }) · limit() · skip() · Range-based cursor pagination vs skip-limit pagination</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/20-updating-documents.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">20</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">20. Updating Documents & Field Modifiers</span>
+                    <span class="lesson-subtopics">updateOne() · updateMany() · replaceOne() · $set · $unset · $inc · $mul · $rename · $min · $max · $currentDate</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚡</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 05</div>
+                <h3 class="phase-roadmap-title">Array Updates, Upserts & Deletions</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/21-updating-arrays.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">21</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">21. Updating Arrays in Documents</span>
+                    <span class="lesson-subtopics">$push · $addToSet · $pop · $pull · $pullAll · Array positional operators ($ and $[<identifier>])</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/22-upsert-and-find-and-modify.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">22</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">22. Upsert Operations & FindAndModify</span>
+                    <span class="lesson-subtopics">Upsert option ({ upsert: true }) · findOneAndUpdate() · findOneAndDelete() · replaceOne()</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/23-deleting-documents.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">23</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">23. Deleting Documents & Collection Cleanup</span>
+                    <span class="lesson-subtopics">deleteOne() · deleteMany() · Soft delete vs Hard delete · Safe delete workflow</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/24-bulk-write-operations.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">24</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">24. Bulk Write Operations</span>
+                    <span class="lesson-subtopics">bulkWrite() · Ordered vs Unordered bulk executions · Performance optimization for high-throughput batching</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/25-schema-validation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">25</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">25. Schema Validation & JSON Schema</span>
+                    <span class="lesson-subtopics">Collection validator rules ($jsonSchema) · Validation levels (off, strict, warn) · Field type enforcement</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🚀</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 06</div>
+                <h3 class="phase-roadmap-title">Indexing & Performance Optimization</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/26-indexing-fundamentals.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">26</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">26. Indexing Fundamentals</span>
+                    <span class="lesson-subtopics">Index ante enti? · Default _id index · Single field index · Unique index · Sparse & Partial indexes · TTL index</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/27-single-field-and-compound-indexes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">27</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">27. Compound Indexes & Prefix Rule</span>
+                    <span class="lesson-subtopics">Compound index · Field order · Equality fields · Sort fields · Range fields · Prefix rule · Covered queries</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/28-specialized-indexes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">28</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">28. Specialized Indexes: Multikey, Text & Hashed</span>
+                    <span class="lesson-subtopics">Multikey indexes on arrays · Text search indexes ($text) · Unique indexes · Hashed indexes for sharding</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/29-geospatial-and-ttl-indexes.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">29</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">29. Geospatial & TTL Indexes</span>
+                    <span class="lesson-subtopics">GeoJSON format · 2dsphere indexes ($near, $geoWithin) · Time-To-Live (TTL) auto-expiring documents</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/30-query-performance-explain.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">30</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">30. Query Performance Analysis with explain()</span>
+                    <span class="lesson-subtopics">explain("executionStats") · Query planner · COLLSCAN vs IXSCAN · Covered query · Slow operation monitoring</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📊</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 07</div>
+                <h3 class="phase-roadmap-title">Aggregation Framework Pipeline</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/31-aggregation-pipeline-intro.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">31</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">31. Aggregation Pipeline Introduction</span>
+                    <span class="lesson-subtopics">Aggregation pipeline stages · $match · $project · $sort · $limit · $skip · $count · $group · $unwind · $lookup</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/32-filtering-transformation-stages.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">32</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">32. Aggregation Expressions & Operators</span>
+                    <span class="lesson-subtopics">Arithmetic, String, Date expressions · $cond · $ifNull · $map · $filter · $reduce · $mergeObjects</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/33-grouping-deconstruction-stages.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">33</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">33. Advanced Aggregation: $lookup & $facet</span>
+                    <span class="lesson-subtopics">$lookup · $unwind · $facet · $bucket · $bucketAuto · $graphLookup · $unionWith · $merge · $out</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/34-sorting-pagination-lookup-joins.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">34</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">34. Reporting Project & Leaderboards</span>
+                    <span class="lesson-subtopics">Course completion report · User progress report · Quiz score report · Popular language report · Daily submissions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/35-advanced-aggregation-stages.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">35</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">35. Transactions & Consistency</span>
+                    <span class="lesson-subtopics">Transaction ante enti? · Single-document atomicity · Multi-document transactions · Sessions · Commit · Abort</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">📦</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 08</div>
+                <h3 class="phase-roadmap-title">Application Integration & Multi-Language Drivers</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/36-nodejs-driver-integration.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">36</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">36. MongoDB with Node.js</span>
+                    <span class="lesson-subtopics">MongoDB Node.js driver · Connection URI · MongoClient · Collection access · Express & Mongoose integration</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/37-mongoose-schemas-and-models.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">37</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">37. MongoDB with Python (PyMongo)</span>
+                    <span class="lesson-subtopics">PyMongo driver · MongoClient · Query filters · Flask, Django & FastAPI integration</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/38-mongoose-crud-and-validation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">38</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">38. MongoDB with Java (Spring Data MongoDB)</span>
+                    <span class="lesson-subtopics">Java MongoDB driver · BSON Documents · Filters & Projections · Spring Data MongoDB repository pattern</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/39-mongoose-middleware-and-virtuals.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">39</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">39. MongoDB with C# (.NET Driver)</span>
+                    <span class="lesson-subtopics">MongoDB .NET driver · POCO classes · Builders · ASP.NET Core integration & Repository pattern</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/40-mongoose-population-referencing.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">40</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">40. Users, Roles & Security Controls</span>
+                    <span class="lesson-subtopics">Database users · Authentication & Authorization · Built-in roles (readWrite) · SCRAM · TLS/SSL · NoSQL injection</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">⚙️</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 09</div>
+                <h3 class="phase-roadmap-title">Backup, Replication & Scaling</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/41-multi-document-acid-transactions.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">41</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">41. Backup & Restore (mongodump & Restore)</span>
+                    <span class="lesson-subtopics">Logical backup · mongodump · mongorestore · Export JSON · Import JSON · Atlas point-in-time recovery</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/42-replication-and-high-availability.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">42</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">42. Replication & High Availability</span>
+                    <span class="lesson-subtopics">Replica set · Primary node · Secondary nodes · Elections · Automatic failover · Read preferences · Oplog</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/43-sharding-and-horizontal-scaling.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">43</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">43. Real-Time Change Streams</span>
+                    <span class="lesson-subtopics">Change stream ante enti? · Watching a collection / database / deployment · Insert/Update/Delete events · Real-time</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/44-mongodb-backups-restore-monitoring.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">44</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">44. Sharding & Horizontal Scaling</span>
+                    <span class="lesson-subtopics">Sharding · Horizontal scaling · Shard · Config server · mongos router · Shard key · Range vs Hashed sharding</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/45-mongodb-security-access-control.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">45</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">45. Testing & Database Metrics Monitoring</span>
+                    <span class="lesson-subtopics">Unit & Integration testing · Test databases & fixtures · Seed data · Slow operation logs · Atlas dashboards</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+        <div class="phase-roadmap-card">
+          <div class="phase-roadmap-header">
+            <div class="phase-roadmap-title-wrap">
+              <span class="phase-roadmap-icon">🏆</span>
+              <div>
+                <div class="phase-roadmap-tag">Phase 10</div>
+                <h3 class="phase-roadmap-title">Our Compiler Schema & Interview Prep</h3>
+              </div>
+            </div>
+            <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
+          </div>
+          <div class="phase-lessons-list">
+            
+              <a href="/blog-mongodb/46-real-time-change-streams.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">46</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">46. Our Compiler Platform Schema Design</span>
+                    <span class="lesson-subtopics">users · languages · tutorials · lessons · quizzes · questions · userProgress · bookmarks · codeSubmissions</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/47-gridfs-large-file-storage.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">47</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">47. GridFS for Large File Storage</span>
+                    <span class="lesson-subtopics">GridFS specification · fs.files & fs.chunks collections · Streaming files >16MB · Audio/video asset storage</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/48-timeseries-and-atlas-search.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">48</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">48. MongoDB Time-Series & Search</span>
+                    <span class="lesson-subtopics">Native Time-Series collections · Granularity settings · Atlas Search (Lucene text & vector search)</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/49-enterprise-database-design-patterns.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">49</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">49. Enterprise Database Design Patterns</span>
+                    <span class="lesson-subtopics">Subset pattern · Bucket pattern · Outlier pattern · Extended reference pattern · Polymorphic pattern</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+              <a href="/blog-mongodb/50-mongodb-interview-preparation.html" class="curriculum-lesson-row">
+                <div class="lesson-row-left">
+                  <span class="lesson-idx">50</span>
+                  <div class="lesson-info">
+                    <span class="lesson-title">50. Top 50 MongoDB Technical Interview Q&A</span>
+                    <span class="lesson-subtopics">Top 50 MongoDB Interview Questions & Answers · BSON vs JSON · Indexing rules · Transactions vs Relational JOINs</span>
+                  </div>
+                </div>
+                <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <div class="author">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>MongoDB Complete Masterclass · 50 Chapters · 10 Phases · 2026 Edition</span>
+      </div>
+    </div>
 
     <div class="nav-footer">
-      <a href="/blog-mongodb.html" class="nav-btn"><span class="label">&#8592; MongoDB Overview</span><span class="title">Course Index</span></a>
-      <a href="/blog-mongodb/intro.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson &#8594;</span><span class="title">Introduction to NoSQL &amp; MongoDB</span></a>
+      <a href="/blog.html" class="nav-btn"><span class="label">← All Tutorials</span><span class="title">Course Hub</span></a>
+      <a href="/blog-mongodb/01-mongodb-introduction.html" class="nav-btn" style="text-align:right;"><span class="label">Start Learning →</span><span class="title">1. What is MongoDB &amp; NoSQL?</span></a>
     </div>
   </main>
 </div>
-  <script src="/site-nav.js" defer></script>
+<script src="/site-nav.js" defer></script>
+  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>
