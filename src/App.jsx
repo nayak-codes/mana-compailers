@@ -834,7 +834,43 @@ function preprocessJavaCode(code) {
   return code;
 }
 
-const BACKEND_URL = 'https://mana-compailer-backend-docker.onrender.com'
+async function runJavaFastRunner(code, stdin) {
+  try {
+    const processedCode = preprocessJavaCode(code)
+    const createRes = await fetch('https://api.paiza.io/runners/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: 'java',
+        source_code: processedCode,
+        input: stdin || '',
+        api_key: 'guest'
+      })
+    })
+    const createData = await createRes.json()
+    if (!createData || !createData.id) return null
+
+    const id = createData.id
+    let maxTries = 35
+    while (maxTries-- > 0) {
+      await new Promise(r => setTimeout(r, 150))
+      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`)
+      const details = await detailsRes.json()
+      if (details.status === 'completed') {
+        if (details.build_stderr) {
+          return { error: details.build_stderr, output: details.stdout || '' }
+        }
+        return { output: (details.stdout || '') + (details.stderr || ''), error: details.stderr || null }
+      }
+    }
+  } catch (e) {
+    console.warn('[Fast Java Runner] Exception, falling back:', e)
+  }
+  return null
+}
+
+const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+const BACKEND_URL = isLocal ? 'http://localhost:3002' : ''
 
 
 
@@ -1299,18 +1335,39 @@ export default function App() {
     const start = Date.now()
 
     try {
-      // ✅ Docker backend — Unlimited, No API limits!
-      const res = await fetch(`${BACKEND_URL}/api/run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          language: lang.id,
-          code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
-          stdin: inputToSend || ''
-        })
-      })
+      let data = null
 
-      const data = await res.json()
+      // ⚡ Sub-2s Java Execution Strategy
+      if (lang.id === 'java') {
+        data = await runJavaFastRunner(codeToRun, inputToSend)
+      }
+
+      if (!data) {
+        const primaryApi = BACKEND_URL ? `${BACKEND_URL}/api/run` : '/api/run'
+        try {
+          const res = await fetch(primaryApi, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              language: lang.id,
+              code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+              stdin: inputToSend || ''
+            })
+          })
+          data = await res.json()
+        } catch (err) {
+          const res = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              language: lang.id,
+              code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+              stdin: inputToSend || ''
+            })
+          })
+          data = await res.json()
+        }
+      }
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
 
       let isEofError = false

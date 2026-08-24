@@ -40,6 +40,41 @@ function preprocessJavaCode(code) {
   return code;
 }
 
+async function runJavaFastRunner(code, stdin) {
+  try {
+    const processedCode = preprocessJavaCode(code)
+    const createRes = await fetch('https://api.paiza.io/runners/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: 'java',
+        source_code: processedCode,
+        input: stdin || '',
+        api_key: 'guest'
+      })
+    })
+    const createData = await createRes.json()
+    if (!createData || !createData.id) return null
+
+    const id = createData.id
+    let maxTries = 35
+    while (maxTries-- > 0) {
+      await new Promise(r => setTimeout(r, 150))
+      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`)
+      const details = await detailsRes.json()
+      if (details.status === 'completed') {
+        if (details.build_stderr) {
+          return { error: details.build_stderr, output: details.stdout || '' }
+        }
+        return { output: (details.stdout || '') + (details.stderr || ''), error: details.stderr || null }
+      }
+    }
+  } catch (e) {
+    console.warn('[Fast Java Runner Vercel] Exception, falling back:', e.message)
+  }
+  return null
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
@@ -56,16 +91,24 @@ export default async function handler(req, res) {
 
   try {
     const payload = { ...req.body }
+    let data = null
+
     if (payload.language === 'java' && payload.code) {
-      payload.code = preprocessJavaCode(payload.code)
+      data = await runJavaFastRunner(payload.code, payload.stdin)
     }
 
-    const r = await fetch(`${BACKEND_URL}/api/run`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    const data = await r.json()
+    if (!data) {
+      if (payload.language === 'java' && payload.code) {
+        payload.code = preprocessJavaCode(payload.code)
+      }
+      const r = await fetch(`${BACKEND_URL}/api/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      data = await r.json()
+    }
+
     return res.status(200).json(data)
   } catch (err) {
     return res.status(500).json({ error: err.message })

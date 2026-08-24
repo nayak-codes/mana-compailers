@@ -120,6 +120,41 @@ app.get('/api/clipboard', (req, res) => {
   })
 })
 
+async function runJavaFastRunner(code, stdin) {
+  try {
+    const processedCode = preprocessJavaCode(code)
+    const createRes = await fetch('https://api.paiza.io/runners/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: 'java',
+        source_code: processedCode,
+        input: stdin || '',
+        api_key: 'guest'
+      })
+    })
+    const createData = await createRes.json()
+    if (!createData || !createData.id) return null
+
+    const id = createData.id
+    let maxTries = 35
+    while (maxTries-- > 0) {
+      await new Promise(r => setTimeout(r, 150))
+      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`)
+      const details = await detailsRes.json()
+      if (details.status === 'completed') {
+        if (details.build_stderr) {
+          return { error: details.build_stderr, output: details.stdout || '' }
+        }
+        return { output: (details.stdout || '') + (details.stderr || ''), error: details.stderr || null }
+      }
+    }
+  } catch (e) {
+    console.warn('[Fast Java Runner Server] Exception, falling back:', e.message)
+  }
+  return null
+}
+
 app.post('/api/run', async (req, res) => {
   const { code, language, stdin } = req.body
 
@@ -130,20 +165,27 @@ app.post('/api/run', async (req, res) => {
   try {
     console.log(`[Mana Compiler] Running: ${language}`)
     const startTime = Date.now()
+    let data = null
 
-    // ✅ Use Render Docker backend (faster, no API rate limits!)
-    const response = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: language,
-        code: language === 'java' ? preprocessJavaCode(code) : code,
-        stdin: stdin || ''
-      }),
-      agent  // ✅ Keep-alive connections
-    })
+    if (language === 'java') {
+      data = await runJavaFastRunner(code, stdin)
+    }
 
-    const data = await response.json()
+    if (!data) {
+      // ✅ Fallback to Render Docker backend
+      const response = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language: language,
+          code: language === 'java' ? preprocessJavaCode(code) : code,
+          stdin: stdin || ''
+        }),
+        agent  // ✅ Keep-alive connections
+      })
+      data = await response.json()
+    }
+
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(2)
     console.log(`[Mana Compiler] Result (${elapsed}s):`, data.output || data.error)
     return res.json(data)
