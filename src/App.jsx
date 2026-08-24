@@ -1184,8 +1184,9 @@ export default function App() {
       const updated = prev.map(p => p.id === fileId ? { ...p, name: trimmed } : p)
       try {
         localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
-        if (fileId === activeFileId) {
-          localStorage.setItem(`code_${lang.id}`, p.code || '')
+        const renamed = updated.find(p => p.id === fileId)
+        if (fileId === activeFileId && renamed) {
+          localStorage.setItem(`code_${lang.id}`, renamed.code || '')
         }
       } catch (e) {}
       return updated
@@ -1722,7 +1723,7 @@ export default function App() {
                 <WebPreview
                   files={htmlFiles}
                   code={currentCode}
-                  theme={theme}
+                  theme={compilerTheme}
                   isMobile={isMobile}
                   maximized={maximizedPanel === 'output'}
                   onToggleMaximize={() => toggleMaximize('output')}
