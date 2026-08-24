@@ -1425,7 +1425,7 @@ export default function App() {
           <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} />
 
           {/* TOOLBAR */}
-          <div style={{ ...s.toolbar, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }} className="compiler-toolbar">
+          <div style={s.toolbar} className="compiler-toolbar">
             {/* Left: Language Selector */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
@@ -1435,8 +1435,9 @@ export default function App() {
               </select>
             </div>
 
-            {/* Center: Run Code Button (as requested with ✔️ in sketch) */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: isMobile ? 'none' : '1 1 auto' }}>
+            {/* Right: Run Code + Action Buttons */}
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginLeft: 'auto' }}>
+              {/* ▶ Run Code (Positioned right before Home, as indicated by down-arrow in sketch) */}
               <button 
                 onClick={runCode} 
                 onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
@@ -1446,18 +1447,14 @@ export default function App() {
                   opacity: running ? 0.6 : 1,
                   cursor: running ? 'not-allowed' : 'pointer',
                   fontSize: 14,
-                  padding: '8px 26px',
+                  padding: '7px 20px',
                   fontWeight: 700,
-                  borderRadius: 8,
-                  boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)'
+                  marginRight: 4
                 }}
               >
                 {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh Preview' : '▶ Run Code'}
               </button>
-            </div>
 
-            {/* Right: Actions */}
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
               <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
               {!isMobile && (
