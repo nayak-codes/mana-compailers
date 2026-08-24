@@ -275,7 +275,15 @@ function loadProgramsForLang(language) {
     if (saved) {
       const parsed = JSON.parse(saved)
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed
+        return parsed.map(p => {
+          if (!p.code || p.code.trim() === '') {
+            return {
+              ...p,
+              code: getStarterTemplate(language, p.name)
+            }
+          }
+          return p
+        })
       }
     }
   } catch (e) {}
@@ -897,7 +905,13 @@ export default function App() {
       const saved = localStorage.getItem('code_html_files')
       if (saved) {
         const parsed = JSON.parse(saved)
-        if (parsed && typeof parsed === 'object' && parsed.html !== undefined) return parsed
+        if (parsed && typeof parsed === 'object' && parsed.html !== undefined) {
+          return {
+            html: (parsed.html && parsed.html.trim() !== '') ? parsed.html : DEFAULT_HTML_FILES.html,
+            css: (parsed.css !== undefined && parsed.css !== null && parsed.css.trim() !== '') ? parsed.css : DEFAULT_HTML_FILES.css,
+            js: (parsed.js !== undefined && parsed.js !== null && parsed.js.trim() !== '') ? parsed.js : DEFAULT_HTML_FILES.js,
+          }
+        }
       }
     } catch (e) {}
     return DEFAULT_HTML_FILES
