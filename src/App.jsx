@@ -851,17 +851,15 @@ async function runJavaFastRunner(code, stdin) {
     if (!createData || !createData.id) return null
 
     const id = createData.id
-    let maxTries = 35
+    let maxTries = 50
     while (maxTries-- > 0) {
-      await new Promise(r => setTimeout(r, 150))
+      await new Promise(r => setTimeout(r, 100))
       const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`)
       const details = await detailsRes.json()
       if (details.status === 'completed') {
         if (details.build_stderr) {
           return { error: details.build_stderr, output: details.stdout || '' }
         }
-        // ✅ Return ONLY stdout as output, stderr separately as error
-        // (Merging them caused exception text to appear in terminal output)
         return { output: details.stdout || '', error: details.stderr || null }
       }
     }
@@ -935,6 +933,16 @@ export default function App() {
       localStorage.setItem('hide_error_hint', hide ? 'true' : 'false')
     } catch (e) {}
   }
+
+  // ⚡ Pre-warm backend container in background on mount so execution is instant (sub-2s)
+  useEffect(() => {
+    try {
+      if (BACKEND_URL) {
+        fetch(`${BACKEND_URL}/api/health`).catch(() => {})
+      }
+      fetch('https://mana-compailer-backend-docker.onrender.com/api/health').catch(() => {})
+    } catch (e) {}
+  }, [])
 
   const activeFile = programs.find(p => p.id === activeFileId) || programs[0] || { id: 'file_1', name: getDefaultFileName(lang, 1), code: '' }
 
