@@ -1338,7 +1338,11 @@ export default function App() {
       let data = null
 
       // ⚡ Sub-2s Java Execution Strategy
-      if (lang.id === 'java') {
+      // Skip Paiza if code needs Scanner input but no stdin provided yet
+      // (Paiza crashes with NoSuchElementException when stdin is empty)
+      const javaNeedsInput = lang.id === 'java' && detectsInput(codeToRun, 'java')
+      const hasStdin = inputToSend && inputToSend.trim().length > 0
+      if (lang.id === 'java' && (!javaNeedsInput || hasStdin)) {
         data = await runJavaFastRunner(codeToRun, inputToSend)
       }
 
