@@ -173,15 +173,7 @@ app.post('/api/run', async (req, res) => {
     let data = null
 
     if (language === 'java') {
-      // Skip Paiza if code needs Scanner/input but no stdin provided
-      // (Paiza crashes with NoSuchElementException on empty stdin)
-      const needsInput = javaUsesInput(code)
-      const hasStdin = stdin && stdin.trim().length > 0
-      if (!needsInput || hasStdin) {
-        data = await runJavaFastRunner(code, stdin)
-      } else {
-        console.log('[Mana Compiler] Java needs Scanner input, skipping Paiza → using Render backend')
-      }
+      data = await runJavaFastRunner(code, stdin)
     }
 
     if (!data) {

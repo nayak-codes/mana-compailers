@@ -1340,11 +1340,7 @@ export default function App() {
       let data = null
 
       // ⚡ Sub-2s Java Execution Strategy
-      // Skip Paiza if code needs Scanner input but no stdin provided yet
-      // (Paiza crashes with NoSuchElementException when stdin is empty)
-      const javaNeedsInput = lang.id === 'java' && detectsInput(codeToRun, 'java')
-      const hasStdin = inputToSend && inputToSend.trim().length > 0
-      if (lang.id === 'java' && (!javaNeedsInput || hasStdin)) {
+      if (lang.id === 'java') {
         data = await runJavaFastRunner(codeToRun, inputToSend)
       }
 
@@ -1425,24 +1421,8 @@ export default function App() {
     if (isMobile) {
       setMobileTab('terminal')
     }
-
-    // If Java code uses Scanner/BufferedReader but no stdin yet,
-    // show the input prompt immediately WITHOUT running code.
-    // Code will run once user provides input via terminal.
-    const codeToCheck = currentCode
-    if (lang.id === 'java' && detectsInput(codeToCheck, 'java')) {
-      setOutput({
-        status: 'ok',
-        text: '',
-        elapsed: null,
-        label: 'Input Required',
-        isEofError: true
-      })
-      return
-    }
-
     executeCode("")
-  }, [executeCode, isMobile, currentCode, lang])
+  }, [executeCode, isMobile])
 
   const handleTerminalClick = () => {
     const inputEl = document.querySelector('.terminal-active-input')
