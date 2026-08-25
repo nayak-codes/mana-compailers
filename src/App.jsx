@@ -860,7 +860,9 @@ async function runJavaFastRunner(code, stdin) {
         if (details.build_stderr) {
           return { error: details.build_stderr, output: details.stdout || '' }
         }
-        return { output: (details.stdout || '') + (details.stderr || ''), error: details.stderr || null }
+        // ✅ Return ONLY stdout as output, stderr separately as error
+        // (Merging them caused exception text to appear in terminal output)
+        return { output: details.stdout || '', error: details.stderr || null }
       }
     }
   } catch (e) {
@@ -1381,12 +1383,29 @@ export default function App() {
           isEofError = true
         }
       }
+      // Also detect if the error is embedded in output (some backends merge stderr into stdout)
+      if (!isEofError && data.output && detectsInput(codeToRun, lang.id)) {
+        const eofPatterns = /(EOFError|NoSuchElementException|No line found|EOF)/i
+        if (eofPatterns.test(data.output)) {
+          isEofError = true
+        }
+      }
 
       if (data.error && !isEofError) throw new Error(data.error)
 
+      // When isEofError, strip exception stacktrace from output so terminal stays clean
+      let cleanOutput = data.output || ''
+      if (isEofError && cleanOutput) {
+        // Remove from "Exception in thread..." or "EOFError" onwards
+        const exceptionStart = cleanOutput.search(/(Exception in thread|NoSuchElementException|EOFError|Error:)/i)
+        if (exceptionStart !== -1) {
+          cleanOutput = cleanOutput.substring(0, exceptionStart).trimEnd()
+        }
+      }
+
       setOutput({
         status: 'ok',
-        text: isEofError ? (data.output || '') : (data.output || '(no output)'),
+        text: isEofError ? cleanOutput : (data.output || '(no output)'),
         elapsed,
         label: 'Success',
         usedStdin: inputToSend,
