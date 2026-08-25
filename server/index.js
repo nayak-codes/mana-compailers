@@ -11,6 +11,11 @@ const PORT = 3002  // Changed to 3002 to avoid conflicts
 // Reuse HTTPS connections to reduce cold-start latency
 const agent = new https.Agent({ keepAlive: true })
 
+// Detect if Java code uses Scanner/BufferedReader/System.in
+function javaUsesInput(code) {
+  return /scanner|bufferedreader|system\.in/i.test(code);
+}
+
 function preprocessJavaCode(code) {
   // 1. Escape non-ASCII characters to \uXXXX unicode escapes
   let escapedCode = '';
@@ -168,7 +173,15 @@ app.post('/api/run', async (req, res) => {
     let data = null
 
     if (language === 'java') {
-      data = await runJavaFastRunner(code, stdin)
+      // Skip Paiza if code needs Scanner/input but no stdin provided
+      // (Paiza crashes with NoSuchElementException on empty stdin)
+      const needsInput = javaUsesInput(code)
+      const hasStdin = stdin && stdin.trim().length > 0
+      if (!needsInput || hasStdin) {
+        data = await runJavaFastRunner(code, stdin)
+      } else {
+        console.log('[Mana Compiler] Java needs Scanner input, skipping Paiza → using Render backend')
+      }
     }
 
     if (!data) {

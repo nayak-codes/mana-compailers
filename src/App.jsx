@@ -1406,8 +1406,24 @@ export default function App() {
     if (isMobile) {
       setMobileTab('terminal')
     }
+
+    // If Java code uses Scanner/BufferedReader but no stdin yet,
+    // show the input prompt immediately WITHOUT running code.
+    // Code will run once user provides input via terminal.
+    const codeToCheck = currentCode
+    if (lang.id === 'java' && detectsInput(codeToCheck, 'java')) {
+      setOutput({
+        status: 'ok',
+        text: '',
+        elapsed: null,
+        label: 'Input Required',
+        isEofError: true
+      })
+      return
+    }
+
     executeCode("")
-  }, [executeCode, isMobile])
+  }, [executeCode, isMobile, currentCode, lang])
 
   const handleTerminalClick = () => {
     const inputEl = document.querySelector('.terminal-active-input')
