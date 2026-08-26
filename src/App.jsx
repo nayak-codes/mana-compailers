@@ -984,6 +984,27 @@ export default function App() {
     }
   }, [activeTheme])
 
+  // 🏷️ Dynamically update page title based on active language and view
+  useEffect(() => {
+    if (view === 'compiler' && lang) {
+      let pageTitle = 'Compiler - Our Compiler'
+      if (lang.id === 'python3') pageTitle = 'Python Compiler - Our Compiler'
+      else if (lang.id === 'java') pageTitle = 'Java Compiler - Our Compiler'
+      else if (lang.id === 'c') pageTitle = 'C Compiler - Our Compiler'
+      else if (lang.id === 'cpp17') pageTitle = 'C++ Compiler - Our Compiler'
+      else if (lang.id === 'nodejs') pageTitle = 'JavaScript Compiler - Our Compiler'
+      else if (lang.id === 'html') pageTitle = 'HTML Editor - Our Compiler'
+      else if (lang.id === 'csharp') pageTitle = 'C# Compiler - Our Compiler'
+      else if (lang.id === 'go') pageTitle = 'Go Compiler - Our Compiler'
+      else if (lang.id === 'rust') pageTitle = 'Rust Compiler - Our Compiler'
+      else if (lang.id === 'php') pageTitle = 'PHP Compiler - Our Compiler'
+      else if (lang.id === 'ruby') pageTitle = 'Ruby Compiler - Our Compiler'
+      document.title = pageTitle
+    } else if (view === 'home') {
+      document.title = 'Our Compiler – Free Online Code Compiler'
+    }
+  }, [lang, view])
+
   useEffect(() => {
     let langFile = lang.id
     if (lang.id === 'python3') langFile = 'python'
@@ -1449,7 +1470,7 @@ export default function App() {
       ) : (
         <div className="compiler-view-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
 
-          <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} />
+          <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} lang={lang} />
 
           {/* TOOLBAR */}
           <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar">

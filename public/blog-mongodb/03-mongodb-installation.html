@@ -222,7 +222,7 @@
     </div>
   </aside>
 
-  <main class="content">
+      <main class="content">
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
@@ -239,166 +239,117 @@
       <span class="badge">📅 2026 Edition</span>
     </div>
 
-    <div class="topic-pill-box">
-      <span class="topic-pill-label">📌 Covered in this chapter:</span>
-      <span class="topic-pill-text">MongoDB Community Edition · Starting mongod service · Port configuration (27017) · macOS/Linux/Windows setup</span>
-    </div>
-
     <div class="intro-box">
-      <p>Welcome to <strong>MongoDB — MongoDB Installation & Setup</strong> in our MongoDB Complete Masterclass! Install MongoDB Community Server, manage background services, and verify port binding.</p>
+      <p>Complete guide to downloading, installing, and configuring MongoDB Community Server 7.0+ on Windows, macOS, and Linux. Learn how to verify the mongod background service and launch mongosh.</p>
     </div>
 
-    <!-- 1. Simple introduction -->
-    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
-    <div class="section-body">
-      <p>In modern backend software architecture, <strong>MongoDB Installation & Setup</strong> plays a critical role in managing flexible document storage, optimizing query performance, and structuring high-throughput NoSQL database systems. MongoDB stores data as BSON (Binary JSON) documents organized inside collections.</p>
-    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">1</span>MongoDB Architecture: Server vs Shell vs GUI</div>
+      <div class="section-body">
 
-    <!-- 2. What you will learn -->
-    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
-    <div class="section-body">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
-        <strong style="color:#00ed64;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
-        <ul style="margin:0 0 0 20px;line-height:1.8;">
-          <li>Master mongosh CLI and Mongoose ODM syntax for <strong>MongoDB Installation & Setup</strong></li>
-          <li>Understand internal BSON document storage, B-tree indexing rules, and WiredTiger engine mechanics</li>
-          <li>Implement production-grade schema validation, aggregation pipelines, and ACID transactions</li>
-          <li>Avoid unindexed collection scans (COLLSCAN), memory limit overflows, and schema denormalization mistakes</li>
-        </ul>
+<p>Before installing, it is essential to understand the three distinct binaries in the MongoDB ecosystem:</p>
+
+<ul style="line-height:1.8;margin-left:20px;">
+  <li><strong><code>mongod</code> (Database Daemon):</strong> The background database server process that handles disk read/write, memory caching, index creation, and client connections.</li>
+  <li><strong><code>mongosh</code> (MongoDB Shell):</strong> The modern interactive JavaScript command-line interface used to run queries and admin commands.</li>
+  <li><strong>MongoDB Compass:</strong> The official graphical user interface (GUI) for visual data inspection.</li>
+</ul>
+
       </div>
     </div>
 
-    <!-- 3. Why this concept is useful -->
-    <div class="section-title"><span class="num">3</span>Why MongoDB Installation & Setup is Useful</div>
-    <div class="section-body">
-      <div class="callout" style="margin-bottom:24px;">
-        <div class="callout-title">💡 Practical Utility</div>
-        <p>Mastering <strong>MongoDB Installation & Setup</strong> allows you to build scalable NoSQL backend applications, handle high-concurrency read/write workloads, and integrate MongoDB seamlessly with Node.js, Express, and modern cloud microservices.</p>
+    <div class="section">
+      <div class="section-title"><span class="num">2</span>Installing MongoDB on Windows (Step-by-Step)</div>
+      <div class="section-body">
+
+<ol style="line-height:1.8;margin-left:20px;">
+  <li>Go to the official <a href="https://www.mongodb.com/try/download/community" target="_blank" style="color:#00ed64;">MongoDB Download Center</a> and download the <strong>Windows MSI Installer</strong> for MongoDB Community Server 7.0+.</li>
+  <li>Run the installer executable. Choose <strong>Complete Setup</strong>.</li>
+  <li>Check the option <strong>"Install MongoDB as a Service"</strong>. This ensures <code>mongod</code> starts automatically when Windows boots up.</li>
+  <li>Leave the default Service Name (<code>MongoDB</code>) and Data Directory paths (<code>C:\Program Files\MongoDB\Server\7.0\data\</code>).</li>
+  <li>Check <strong>"Install MongoDB Compass"</strong> to get the official visual GUI client. Click Install!</li>
+</ol>
+
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">Windows Command Prompt / PowerShell Verification</span></div>
+  <pre><code># Check if mongod service is running
+net start | findstr MongoDB
+
+# If not running, start it manually
+net start MongoDB</code></pre>
+</div>
+
       </div>
     </div>
 
-    <!-- 4. Required project/command structure -->
-    <div class="section-title"><span class="num">4</span>Required Command / Code Structure</div>
-    <div class="section-body">
-      <p>Target Command / Syntax: <code>sudo systemctl start mongod</code>. Executed inside mongosh terminal shell or Node.js Mongoose models connected to a MongoDB database instance.</p>
-    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">3</span>Installing MongoDB on macOS via Homebrew</div>
+      <div class="section-body">
 
-    <!-- 5. Syntax & mechanism -->
-    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
-    <div class="section-body">
-      <p>Mechanism: <code style="color:#00ed64;font-weight:700;">MongoDB WiredTiger Storage Engine &amp; BSON Parser</code>. Core Topic: <code>MongoDB Community Edition</code>.</p>
-    </div>
+<p>For Mac users, Homebrew is the easiest way to install and manage MongoDB:</p>
 
-    <!-- 6. Basic example code -->
-    <div class="section-title"><span class="num">6</span>Basic Example Code / Command</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">mongosh / JavaScript</span></div>
-        <pre><code>// Basic invocation for MongoDB Installation & Setup
-sudo systemctl start mongod</code></pre>
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">macOS Terminal Commands</span></div>
+  <pre><code># 1. Tap the official MongoDB Homebrew repository
+brew tap mongodb/brew
+
+# 2. Install MongoDB Community Edition
+brew install mongodb-community@7.0
+
+# 3. Start MongoDB background service
+brew services start mongodb-community@7.0
+
+# 4. Verify service status
+brew services list</code></pre>
+</div>
+
       </div>
     </div>
 
-    <!-- 7. Execution output / terminal log -->
-    <div class="section-title"><span class="num">7</span>Execution Output &amp; Response</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">JSON Output</span></div>
-        <pre><code>{
-  "acknowledged": true,
-  "insertedId": ObjectId("60c72b2f9b1d8b2d88a4e123"),
-  "matchedCount": 1,
-  "modifiedCount": 1,
-  "operationTime": Timestamp({ t: 1787289600, i: 1 })
-}</code></pre>
+    <div class="section">
+      <div class="section-title"><span class="num">4</span>Installing MongoDB on Linux (Ubuntu/Debian)</div>
+      <div class="section-body">
+
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">Ubuntu Terminal Commands</span></div>
+  <pre><code># 1. Import official GPG key
+curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
+
+# 2. Add APT repository list
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+
+# 3. Update package list and install
+sudo apt update
+sudo apt install -y mongodb-org
+
+# 4. Start & enable systemd service
+sudo systemctl start mongod
+sudo systemctl enable mongod</code></pre>
+</div>
+
       </div>
     </div>
 
-    <!-- 8. Internal flow & memory mechanics -->
-    <div class="section-title"><span class="num">8</span>Internal Flow &amp; Database Architecture</div>
-    <div class="section-body">
-      <div class="diagram-box">mongosh CLI / App Driver -> BSON Serializer -> WiredTiger Cache -> Journal Log -> Data Files on Disk (.wt)</div>
-    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">5</span>Verifying Installation with mongosh</div>
+      <div class="section-body">
 
-    <!-- 9. Practical production usage -->
-    <div class="section-title"><span class="num">9</span>Practical Production Workflow Example</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">Node.js / Mongoose Production Snippet</span></div>
-        <pre><code>// Production workflow for MongoDB Installation & Setup
-import mongoose from 'mongoose';
+<p>Open your terminal or command prompt and execute <code>mongosh</code>:</p>
 
-const courseSchema = new mongoose.Schema({
-  title: { type: String, required: true, trim: true },
-  category: { type: String, default: 'Engineering' },
-  active: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now }
-});
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">mongosh Output</span></div>
+  <pre><code>$ mongosh
+Connecting to: mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000
+Using MongoDB:      7.0.5
+Using Mongosh:      2.1.1
 
-const Course = mongoose.model('Course', courseSchema);
+test> db.runCommand({ ping: 1 })
+{ ok: 1 }</code></pre>
+</div>
 
-async function runProductionTask() {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log("Connected to MongoDB Atlas!");
-  
-  // Execute task: MongoDB Installation & Setup
-  sudo systemctl start mongod
-}
+<p>If you see <code>{ ok: 1 }</code>, congratulations! Your local MongoDB database engine is running smoothly.</p>
 
-runProductionTask().catch(console.error);</code></pre>
       </div>
-    </div>
-
-    <!-- 10. Verification & status -->
-    <div class="section-title"><span class="num">10</span>Verification &amp; Architecture Status</div>
-    <div class="section-body">
-      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #13aa52;">
-        <strong style="color:#00ed64;">Verification Status: MongoDB Installation & Setup Verified</strong>
-        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">MongoDB's WiredTiger storage engine uses checkpointing and write-ahead logging (journaling) to ensure data durability and high concurrency.</p>
-      </div>
-    </div>
-
-    <!-- 11. Common mistakes -->
-    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
-    <div class="section-body">
-      <div class="callout" style="margin-bottom:24px;">
-        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
-        <ul style="margin:8px 0 0 18px;line-height:1.7;">
-          <li>Creating unbounded arrays inside single documents — exceeds the 16MB document size limit. Use referencing for 1-to-N relationships.</li>
-          <li>Running unindexed queries on large collections — results in expensive full collection scans (COLLSCAN). Always verify indexes with <code>explain()</code>.</li>
-          <li>Using <code>$where</code> or custom JavaScript evaluation functions in production queries — disables index optimization and slows down throughput.</li>
-          <li>Forgetting to handle connection disconnects or missing index creation during Node.js application startup.</li>
-          <li>Over-normalizing schemas like a relational SQL database instead of leveraging document embedding.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 12. Coding challenge -->
-    <div class="section-title"><span class="num">12</span>Hands-On Coding Challenge</div>
-    <div class="section-body">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
-        <strong style="color:#00ed64;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
-        <p>Open mongosh terminal or MongoDB Compass. Execute <code>sudo systemctl start mongod</code>, inspect the collection stats using <code>db.stats()</code>, and verify document insertion with <code>db.collection.find().pretty()</code>!</p>
-      </div>
-    </div>
-
-    <!-- 13. Mini quiz -->
-    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
-    <div class="section-body">
-      <div class="faq-card">
-        <h4>❓ Question: What is the primary role of MongoDB Installation & Setup in MongoDB?</h4>
-        <p><strong>Answer:</strong> It enables efficient NoSQL data management for MongoDB Community Edition, optimizing document storage and query speed.</p>
-      </div>
-    </div>
-
-    <!-- 14. Quick recap -->
-    <div class="section-title"><span class="num">14</span>Quick Recap</div>
-    <div class="section-body">
-      <ul style="line-height:1.8;margin-left:20px;">
-        <li>Install MongoDB Community Server, manage background services, and verify port binding.</li>
-        <li>MongoDB organizes data in BSON format inside dynamic collections without rigid SQL table schemas.</li>
-        <li>Combine index optimization, aggregation pipelines, and Mongoose ODM for scalable Node.js applications.</li>
-      </ul>
     </div>
 
     <div class="author">
@@ -409,7 +360,6 @@ runProductionTask().catch(console.error);</code></pre>
       </div>
     </div>
 
-    <!-- 15 & 16. Previous & Next Lesson Navigation -->
     <div class="nav-footer">
       <a href="02-mongodb-vs-sql.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">2. MongoDB vs SQL Databases</span></a>
       <a href="04-mongodb-atlas.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">4. MongoDB Atlas Cloud Database</span></a>

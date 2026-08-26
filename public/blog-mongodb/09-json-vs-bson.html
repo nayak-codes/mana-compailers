@@ -222,7 +222,7 @@
     </div>
   </aside>
 
-  <main class="content">
+      <main class="content">
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
@@ -239,166 +239,46 @@
       <span class="badge">📅 2026 Edition</span>
     </div>
 
-    <div class="topic-pill-box">
-      <span class="topic-pill-label">📌 Covered in this chapter:</span>
-      <span class="topic-pill-text">JSON text format vs BSON binary format · Extended JSON v2 · Serialization speed · Type richness comparison</span>
-    </div>
-
     <div class="intro-box">
-      <p>Welcome to <strong>MongoDB — JSON vs BSON Deep Dive</strong> in our MongoDB Complete Masterclass! Compare JSON human-readable text representations with BSON binary indexing and speed optimizations.</p>
+      <p>Compare human-readable JSON against binary BSON. Learn about Extended JSON (EJSON) formats and how MongoDB driver serialization works.</p>
     </div>
 
-    <!-- 1. Simple introduction -->
-    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
-    <div class="section-body">
-      <p>In modern backend software architecture, <strong>JSON vs BSON Deep Dive</strong> plays a critical role in managing flexible document storage, optimizing query performance, and structuring high-throughput NoSQL database systems. MongoDB stores data as BSON (Binary JSON) documents organized inside collections.</p>
-    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">1</span>Side-by-Side Comparison: JSON vs BSON</div>
+      <div class="section-body">
 
-    <!-- 2. What you will learn -->
-    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
-    <div class="section-body">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
-        <strong style="color:#00ed64;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
-        <ul style="margin:0 0 0 20px;line-height:1.8;">
-          <li>Master mongosh CLI and Mongoose ODM syntax for <strong>JSON vs BSON Deep Dive</strong></li>
-          <li>Understand internal BSON document storage, B-tree indexing rules, and WiredTiger engine mechanics</li>
-          <li>Implement production-grade schema validation, aggregation pipelines, and ACID transactions</li>
-          <li>Avoid unindexed collection scans (COLLSCAN), memory limit overflows, and schema denormalization mistakes</li>
-        </ul>
+<table class="tbl">
+  <thead>
+    <tr><th>Feature</th><th>JSON (JavaScript Object Notation)</th><th>BSON (Binary JSON)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Format</td><td>Text-based string format</td><td>Binary encoded bytes</td></tr>
+    <tr><td>Readability</td><td>Human-readable</td><td>Machine-readable (requires parser)</td></tr>
+    <tr><td>Data Types</td><td>String, Number, Boolean, Array, Object, Null</td><td>20+ Data types (Date, ObjectId, Decimal128, BinData)</td></tr>
+    <tr><td>Traversal Speed</td><td>Slow (must parse entire text string)</td><td>Fast (contains length prefixes & index offsets)</td></tr>
+    <tr><td>Storage Efficiency</td><td>Space inefficient for large numbers/dates</td><td>Highly optimized for disk and memory RAM</td></tr>
+  </tbody>
+</table>
+
       </div>
     </div>
 
-    <!-- 3. Why this concept is useful -->
-    <div class="section-title"><span class="num">3</span>Why JSON vs BSON Deep Dive is Useful</div>
-    <div class="section-body">
-      <div class="callout" style="margin-bottom:24px;">
-        <div class="callout-title">💡 Practical Utility</div>
-        <p>Mastering <strong>JSON vs BSON Deep Dive</strong> allows you to build scalable NoSQL backend applications, handle high-concurrency read/write workloads, and integrate MongoDB seamlessly with Node.js, Express, and modern cloud microservices.</p>
-      </div>
-    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">2</span>MongoDB Extended JSON (EJSON)</div>
+      <div class="section-body">
 
-    <!-- 4. Required project/command structure -->
-    <div class="section-title"><span class="num">4</span>Required Command / Code Structure</div>
-    <div class="section-body">
-      <p>Target Command / Syntax: <code>EJSON.stringify(doc)</code>. Executed inside mongosh terminal shell or Node.js Mongoose models connected to a MongoDB database instance.</p>
-    </div>
+<p>When converting BSON data to standard JSON for REST APIs, special BSON types are serialized using <strong>MongoDB Extended JSON (EJSON)</strong> specification:</p>
 
-    <!-- 5. Syntax & mechanism -->
-    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
-    <div class="section-body">
-      <p>Mechanism: <code style="color:#00ed64;font-weight:700;">MongoDB WiredTiger Storage Engine &amp; BSON Parser</code>. Core Topic: <code>JSON text format vs BSON binary format</code>.</p>
-    </div>
-
-    <!-- 6. Basic example code -->
-    <div class="section-title"><span class="num">6</span>Basic Example Code / Command</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">mongosh / JavaScript</span></div>
-        <pre><code>// Basic invocation for JSON vs BSON Deep Dive
-EJSON.stringify(doc)</code></pre>
-      </div>
-    </div>
-
-    <!-- 7. Execution output / terminal log -->
-    <div class="section-title"><span class="num">7</span>Execution Output &amp; Response</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">JSON Output</span></div>
-        <pre><code>{
-  "acknowledged": true,
-  "insertedId": ObjectId("60c72b2f9b1d8b2d88a4e123"),
-  "matchedCount": 1,
-  "modifiedCount": 1,
-  "operationTime": Timestamp({ t: 1787289600, i: 1 })
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">Canonical EJSON Example</span></div>
+  <pre><code>{
+  "_id": { "$oid": "65d8f1e2a9b3c4d5e6f7a8b9" },
+  "createdAt": { "$date": "2026-08-26T12:00:00Z" },
+  "price": { "$numberDecimal": "99.95" }
 }</code></pre>
+</div>
+
       </div>
-    </div>
-
-    <!-- 8. Internal flow & memory mechanics -->
-    <div class="section-title"><span class="num">8</span>Internal Flow &amp; Database Architecture</div>
-    <div class="section-body">
-      <div class="diagram-box">mongosh CLI / App Driver -> BSON Serializer -> WiredTiger Cache -> Journal Log -> Data Files on Disk (.wt)</div>
-    </div>
-
-    <!-- 9. Practical production usage -->
-    <div class="section-title"><span class="num">9</span>Practical Production Workflow Example</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">Node.js / Mongoose Production Snippet</span></div>
-        <pre><code>// Production workflow for JSON vs BSON Deep Dive
-import mongoose from 'mongoose';
-
-const courseSchema = new mongoose.Schema({
-  title: { type: String, required: true, trim: true },
-  category: { type: String, default: 'Engineering' },
-  active: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const Course = mongoose.model('Course', courseSchema);
-
-async function runProductionTask() {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log("Connected to MongoDB Atlas!");
-  
-  // Execute task: JSON vs BSON Deep Dive
-  EJSON.stringify(doc)
-}
-
-runProductionTask().catch(console.error);</code></pre>
-      </div>
-    </div>
-
-    <!-- 10. Verification & status -->
-    <div class="section-title"><span class="num">10</span>Verification &amp; Architecture Status</div>
-    <div class="section-body">
-      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #13aa52;">
-        <strong style="color:#00ed64;">Verification Status: JSON vs BSON Deep Dive Verified</strong>
-        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">MongoDB's WiredTiger storage engine uses checkpointing and write-ahead logging (journaling) to ensure data durability and high concurrency.</p>
-      </div>
-    </div>
-
-    <!-- 11. Common mistakes -->
-    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
-    <div class="section-body">
-      <div class="callout" style="margin-bottom:24px;">
-        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
-        <ul style="margin:8px 0 0 18px;line-height:1.7;">
-          <li>Creating unbounded arrays inside single documents — exceeds the 16MB document size limit. Use referencing for 1-to-N relationships.</li>
-          <li>Running unindexed queries on large collections — results in expensive full collection scans (COLLSCAN). Always verify indexes with <code>explain()</code>.</li>
-          <li>Using <code>$where</code> or custom JavaScript evaluation functions in production queries — disables index optimization and slows down throughput.</li>
-          <li>Forgetting to handle connection disconnects or missing index creation during Node.js application startup.</li>
-          <li>Over-normalizing schemas like a relational SQL database instead of leveraging document embedding.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 12. Coding challenge -->
-    <div class="section-title"><span class="num">12</span>Hands-On Coding Challenge</div>
-    <div class="section-body">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
-        <strong style="color:#00ed64;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
-        <p>Open mongosh terminal or MongoDB Compass. Execute <code>EJSON.stringify(doc)</code>, inspect the collection stats using <code>db.stats()</code>, and verify document insertion with <code>db.collection.find().pretty()</code>!</p>
-      </div>
-    </div>
-
-    <!-- 13. Mini quiz -->
-    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
-    <div class="section-body">
-      <div class="faq-card">
-        <h4>❓ Question: What is the primary role of JSON vs BSON Deep Dive in MongoDB?</h4>
-        <p><strong>Answer:</strong> It enables efficient NoSQL data management for JSON text format vs BSON binary format, optimizing document storage and query speed.</p>
-      </div>
-    </div>
-
-    <!-- 14. Quick recap -->
-    <div class="section-title"><span class="num">14</span>Quick Recap</div>
-    <div class="section-body">
-      <ul style="line-height:1.8;margin-left:20px;">
-        <li>Compare JSON human-readable text representations with BSON binary indexing and speed optimizations.</li>
-        <li>MongoDB organizes data in BSON format inside dynamic collections without rigid SQL table schemas.</li>
-        <li>Combine index optimization, aggregation pipelines, and Mongoose ODM for scalable Node.js applications.</li>
-      </ul>
     </div>
 
     <div class="author">
@@ -409,7 +289,6 @@ runProductionTask().catch(console.error);</code></pre>
       </div>
     </div>
 
-    <!-- 15 & 16. Previous & Next Lesson Navigation -->
     <div class="nav-footer">
       <a href="08-id-and-objectid.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">8. The _id Field & ObjectId Mechanics</span></a>
       <a href="10-data-modeling-and-schema-design.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">10. Data Modeling & Schema Design</span></a>

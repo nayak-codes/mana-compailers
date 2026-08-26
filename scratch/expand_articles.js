@@ -513,14 +513,14 @@ function buildNewMain(article) {
   // Derive breadcrumb language info
   const fileBase = article.file;
   let langSlug = 'java', langName = 'Java', langHomeUrl = '/blog-java.html';
-  if (fileBase.includes('python')) { langSlug='python'; langName='Python 3'; langHomeUrl='/blog-python.html'; }
-  else if (fileBase.includes('javascript')) { langSlug='javascript'; langName='JavaScript'; langHomeUrl='/blog-javascript.html'; }
-  else if (fileBase.includes('cpp')) { langSlug='cpp'; langName='C++'; langHomeUrl='/blog-cpp.html'; }
-  else if (fileBase.includes('blog-c-')) { langSlug='c'; langName='C'; langHomeUrl='/blog-c.html'; }
-  else if (fileBase.includes('rust')) { langSlug='rust'; langName='Rust'; langHomeUrl='/blog-rust.html'; }
-  else if (fileBase.includes('go')) { langSlug='go'; langName='Go'; langHomeUrl='/blog-go.html'; }
-  else if (fileBase.includes('php')) { langSlug='php'; langName='PHP'; langHomeUrl='/blog-php.html'; }
-  else if (fileBase.includes('ruby')) { langSlug='ruby'; langName='Ruby'; langHomeUrl='/blog-ruby.html'; }
+  if (fileBase.includes('python')) { langSlug = 'python'; langName = 'Python 3'; langHomeUrl = '/blog-python.html'; }
+  else if (fileBase.includes('javascript')) { langSlug = 'javascript'; langName = 'JavaScript'; langHomeUrl = '/blog-javascript.html'; }
+  else if (fileBase.includes('cpp')) { langSlug = 'cpp'; langName = 'C++'; langHomeUrl = '/blog-cpp.html'; }
+  else if (fileBase.includes('blog-c-')) { langSlug = 'c'; langName = 'C'; langHomeUrl = '/blog-c.html'; }
+  else if (fileBase.includes('rust')) { langSlug = 'rust'; langName = 'Rust'; langHomeUrl = '/blog-rust.html'; }
+  else if (fileBase.includes('go')) { langSlug = 'go'; langName = 'Go'; langHomeUrl = '/blog-go.html'; }
+  else if (fileBase.includes('php')) { langSlug = 'php'; langName = 'PHP'; langHomeUrl = '/blog-php.html'; }
+  else if (fileBase.includes('ruby')) { langSlug = 'ruby'; langName = 'Ruby'; langHomeUrl = '/blog-ruby.html'; }
 
   return `  <!-- MAIN CONTENT -->
   <main class="content">
@@ -528,7 +528,7 @@ function buildNewMain(article) {
       <a href="/">Home</a><span>›</span>
       <a href="/blog.html">Tutorials</a><span>›</span>
       <a href="${langHomeUrl}">${langName}</a><span>›</span>
-      <span>${article.title.replace(/&amp;/g,'&')}</span>
+      <span>${article.title.replace(/&amp;/g, '&')}</span>
     </div>
 <h1 class="page-title">${article.title}</h1>
 <div class="page-meta">

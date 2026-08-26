@@ -222,7 +222,7 @@
     </div>
   </aside>
 
-  <main class="content">
+      <main class="content">
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
@@ -239,166 +239,70 @@
       <span class="badge">📅 2026 Edition</span>
     </div>
 
-    <div class="topic-pill-box">
-      <span class="topic-pill-label">📌 Covered in this chapter:</span>
-      <span class="topic-pill-text">_id field primary key · 12-byte ObjectId structure (timestamp, machine, process, counter) · Custom IDs · UUIDs</span>
-    </div>
-
     <div class="intro-box">
-      <p>Welcome to <strong>MongoDB — The _id Field & ObjectId Mechanics</strong> in our MongoDB Complete Masterclass! Understand default _id primary key generation, 12-byte binary ObjectId composition, and custom ID strategies.</p>
+      <p>Explore the 12-byte binary structure of MongoDB ObjectIds, extract creation timestamps, and learn when to use custom _id values vs auto-generated ObjectIds.</p>
     </div>
 
-    <!-- 1. Simple introduction -->
-    <div class="section-title"><span class="num">1</span>Simple Introduction</div>
-    <div class="section-body">
-      <p>In modern backend software architecture, <strong>The _id Field & ObjectId Mechanics</strong> plays a critical role in managing flexible document storage, optimizing query performance, and structuring high-throughput NoSQL database systems. MongoDB stores data as BSON (Binary JSON) documents organized inside collections.</p>
-    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">1</span>The Role of the _id Field</div>
+      <div class="section-body">
 
-    <!-- 2. What you will learn -->
-    <div class="section-title"><span class="num">2</span>What You Will Learn</div>
-    <div class="section-body">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;">
-        <strong style="color:#00ed64;display:block;margin-bottom:10px;">📚 Learning Objectives:</strong>
-        <ul style="margin:0 0 0 20px;line-height:1.8;">
-          <li>Master mongosh CLI and Mongoose ODM syntax for <strong>The _id Field & ObjectId Mechanics</strong></li>
-          <li>Understand internal BSON document storage, B-tree indexing rules, and WiredTiger engine mechanics</li>
-          <li>Implement production-grade schema validation, aggregation pipelines, and ACID transactions</li>
-          <li>Avoid unindexed collection scans (COLLSCAN), memory limit overflows, and schema denormalization mistakes</li>
-        </ul>
+<p>In MongoDB, every document stored in a collection MUST contain a unique <code>_id</code> field that acts as its primary key. If you insert a document without an <code>_id</code> field, MongoDB automatically generates a 12-byte <code>ObjectId</code> for you.</p>
+
       </div>
     </div>
 
-    <!-- 3. Why this concept is useful -->
-    <div class="section-title"><span class="num">3</span>Why The _id Field & ObjectId Mechanics is Useful</div>
-    <div class="section-body">
-      <div class="callout" style="margin-bottom:24px;">
-        <div class="callout-title">💡 Practical Utility</div>
-        <p>Mastering <strong>The _id Field & ObjectId Mechanics</strong> allows you to build scalable NoSQL backend applications, handle high-concurrency read/write workloads, and integrate MongoDB seamlessly with Node.js, Express, and modern cloud microservices.</p>
+    <div class="section">
+      <div class="section-title"><span class="num">2</span>Anatomy of a 12-Byte ObjectId</div>
+      <div class="section-body">
+
+<p>An <code>ObjectId</code> (e.g. <code>65d8f1e2a9b3c4d5e6f7a8b9</code>) is represented as a 24-character hexadecimal string, but internally it consists of <strong>12 raw binary bytes</strong> divided into three parts:</p>
+
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">12-Byte Layout Breakdown</span></div>
+  <pre><code> 4 Bytes: Unix Timestamp (seconds since epoch)
++ 5 Bytes: Random Value (unique per process/machine)
++ 3 Bytes: Incrementing Counter (initialized to random value)
+-----------------------------------------------------------
+= 12 Bytes total globally unique ID!</code></pre>
+</div>
+
       </div>
     </div>
 
-    <!-- 4. Required project/command structure -->
-    <div class="section-title"><span class="num">4</span>Required Command / Code Structure</div>
-    <div class="section-body">
-      <p>Target Command / Syntax: <code>ObjectId("60c72b2f9b1d8b2d88a4e123")</code>. Executed inside mongosh terminal shell or Node.js Mongoose models connected to a MongoDB database instance.</p>
-    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">3</span>Extracting Creation Date from ObjectId</div>
+      <div class="section-body">
 
-    <!-- 5. Syntax & mechanism -->
-    <div class="section-title"><span class="num">5</span>Syntax &amp; Mechanism</div>
-    <div class="section-body">
-      <p>Mechanism: <code style="color:#00ed64;font-weight:700;">MongoDB WiredTiger Storage Engine &amp; BSON Parser</code>. Core Topic: <code>_id field primary key</code>.</p>
-    </div>
+<p>Because the first 4 bytes of an <code>ObjectId</code> encode a Unix timestamp, you can extract the exact document creation time without storing a separate <code>createdAt</code> field!</p>
 
-    <!-- 6. Basic example code -->
-    <div class="section-title"><span class="num">6</span>Basic Example Code / Command</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">mongosh / JavaScript</span></div>
-        <pre><code>// Basic invocation for The _id Field & ObjectId Mechanics
-ObjectId("60c72b2f9b1d8b2d88a4e123")</code></pre>
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">mongosh Timestamp Extraction</span></div>
+  <pre><code>// Extract creation time from an ObjectId
+const id = ObjectId("65d8f1e2a9b3c4d5e6f7a8b9");
+console.log(id.getTimestamp());
+// Output: 2024-02-23T19:30:10.000Z</code></pre>
+</div>
+
       </div>
     </div>
 
-    <!-- 7. Execution output / terminal log -->
-    <div class="section-title"><span class="num">7</span>Execution Output &amp; Response</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">JSON Output</span></div>
-        <pre><code>{
-  "acknowledged": true,
-  "insertedId": ObjectId("60c72b2f9b1d8b2d88a4e123"),
-  "matchedCount": 1,
-  "modifiedCount": 1,
-  "operationTime": Timestamp({ t: 1787289600, i: 1 })
-}</code></pre>
+    <div class="section">
+      <div class="section-title"><span class="num">4</span>Custom _id Values vs Auto-Generated ObjectIds</div>
+      <div class="section-body">
+
+<p>You can supply custom <code>_id</code> values (e.g., strings, integers, UUIDs) when inserting documents:</p>
+
+<div class="code-block">
+  <div class="code-block-header"><span class="lang-tag">Custom _id Examples</span></div>
+  <pre><code>// Custom string _id (e.g. SKU or Email)
+db.products.insertOne({ _id: "SKU-9921", title: "Wireless Mouse", price: 29.99 });
+
+// Custom integer _id
+db.categories.insertOne({ _id: 101, name: "Electronics" });</code></pre>
+</div>
+
       </div>
-    </div>
-
-    <!-- 8. Internal flow & memory mechanics -->
-    <div class="section-title"><span class="num">8</span>Internal Flow &amp; Database Architecture</div>
-    <div class="section-body">
-      <div class="diagram-box">mongosh CLI / App Driver -> BSON Serializer -> WiredTiger Cache -> Journal Log -> Data Files on Disk (.wt)</div>
-    </div>
-
-    <!-- 9. Practical production usage -->
-    <div class="section-title"><span class="num">9</span>Practical Production Workflow Example</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header"><span class="lang-tag">Node.js / Mongoose Production Snippet</span></div>
-        <pre><code>// Production workflow for The _id Field & ObjectId Mechanics
-import mongoose from 'mongoose';
-
-const courseSchema = new mongoose.Schema({
-  title: { type: String, required: true, trim: true },
-  category: { type: String, default: 'Engineering' },
-  active: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const Course = mongoose.model('Course', courseSchema);
-
-async function runProductionTask() {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log("Connected to MongoDB Atlas!");
-  
-  // Execute task: The _id Field & ObjectId Mechanics
-  ObjectId("60c72b2f9b1d8b2d88a4e123")
-}
-
-runProductionTask().catch(console.error);</code></pre>
-      </div>
-    </div>
-
-    <!-- 10. Verification & status -->
-    <div class="section-title"><span class="num">10</span>Verification &amp; Architecture Status</div>
-    <div class="section-body">
-      <div class="card" style="background:var(--bg2);padding:14px 18px;border-radius:8px;margin:16px 0;border-left:4px solid #13aa52;">
-        <strong style="color:#00ed64;">Verification Status: The _id Field & ObjectId Mechanics Verified</strong>
-        <p style="margin-top:6px;font-size:13.5px;color:var(--text2);">MongoDB's WiredTiger storage engine uses checkpointing and write-ahead logging (journaling) to ensure data durability and high concurrency.</p>
-      </div>
-    </div>
-
-    <!-- 11. Common mistakes -->
-    <div class="section-title"><span class="num">11</span>Common Mistakes &amp; Anti-Patterns</div>
-    <div class="section-body">
-      <div class="callout" style="margin-bottom:24px;">
-        <div class="callout-title">⚠️ Anti-Patterns to Avoid</div>
-        <ul style="margin:8px 0 0 18px;line-height:1.7;">
-          <li>Creating unbounded arrays inside single documents — exceeds the 16MB document size limit. Use referencing for 1-to-N relationships.</li>
-          <li>Running unindexed queries on large collections — results in expensive full collection scans (COLLSCAN). Always verify indexes with <code>explain()</code>.</li>
-          <li>Using <code>$where</code> or custom JavaScript evaluation functions in production queries — disables index optimization and slows down throughput.</li>
-          <li>Forgetting to handle connection disconnects or missing index creation during Node.js application startup.</li>
-          <li>Over-normalizing schemas like a relational SQL database instead of leveraging document embedding.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 12. Coding challenge -->
-    <div class="section-title"><span class="num">12</span>Hands-On Coding Challenge</div>
-    <div class="section-body">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:24px;">
-        <strong style="color:#00ed64;display:block;margin-bottom:8px;">🎯 Hands-On Challenge:</strong>
-        <p>Open mongosh terminal or MongoDB Compass. Execute <code>ObjectId("60c72b2f9b1d8b2d88a4e123")</code>, inspect the collection stats using <code>db.stats()</code>, and verify document insertion with <code>db.collection.find().pretty()</code>!</p>
-      </div>
-    </div>
-
-    <!-- 13. Mini quiz -->
-    <div class="section-title"><span class="num">13</span>Mini Quiz</div>
-    <div class="section-body">
-      <div class="faq-card">
-        <h4>❓ Question: What is the primary role of The _id Field & ObjectId Mechanics in MongoDB?</h4>
-        <p><strong>Answer:</strong> It enables efficient NoSQL data management for _id field primary key, optimizing document storage and query speed.</p>
-      </div>
-    </div>
-
-    <!-- 14. Quick recap -->
-    <div class="section-title"><span class="num">14</span>Quick Recap</div>
-    <div class="section-body">
-      <ul style="line-height:1.8;margin-left:20px;">
-        <li>Understand default _id primary key generation, 12-byte binary ObjectId composition, and custom ID strategies.</li>
-        <li>MongoDB organizes data in BSON format inside dynamic collections without rigid SQL table schemas.</li>
-        <li>Combine index optimization, aggregation pipelines, and Mongoose ODM for scalable Node.js applications.</li>
-      </ul>
     </div>
 
     <div class="author">
@@ -409,7 +313,6 @@ runProductionTask().catch(console.error);</code></pre>
       </div>
     </div>
 
-    <!-- 15 & 16. Previous & Next Lesson Navigation -->
     <div class="nav-footer">
       <a href="07-documents-and-bson.html" class="nav-btn"><span class="label">← Previous Lesson</span><span class="title">7. Documents & BSON Data Types</span></a>
       <a href="09-json-vs-bson.html" class="nav-btn" style="text-align:right;"><span class="label">Next Lesson →</span><span class="title">9. JSON vs BSON Deep Dive</span></a>
