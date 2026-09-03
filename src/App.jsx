@@ -921,9 +921,10 @@ export default function App() {
   const [editingFileName, setEditingFileName] = useState('')
   const [hideErrorHint, setHideErrorHint] = useState(() => {
     try {
-      return localStorage.getItem('hide_error_hint') === 'true'
+      const saved = localStorage.getItem('hide_error_hint')
+      return saved !== null ? saved === 'true' : true
     } catch (e) {
-      return false
+      return true
     }
   })
 
