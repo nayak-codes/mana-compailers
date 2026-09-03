@@ -717,82 +717,72 @@ const analyzeStudentError = (rawText, code = '', langId = '') => {
 const StudentErrorCard = ({ analysis, isCollapsed = false, onToggleCollapse }) => {
   if (!analysis) return null;
 
-  if (isCollapsed) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0 10px 0' }}>
+  return (
+    <div style={{ margin: '4px 0 10px 0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: isCollapsed ? 0 : 8 }}>
         <button
           type="button"
-          className="diagnostic-toggle-btn diagnostic-show-btn"
-          onClick={() => onToggleCollapse?.(false)}
-          title="Show error hint and fix suggestion"
+          className={`diagnostic-toggle-btn ${isCollapsed ? 'diagnostic-show-btn' : 'diagnostic-hide-btn'}`}
+          onClick={() => onToggleCollapse?.(!isCollapsed)}
+          title={isCollapsed ? "Show error hint and fix suggestion" : "Hide error hint suggestion"}
         >
-          💡 Show Hint
+          {isCollapsed ? '💡 Show Hint' : '👁️ Hide Hint'}
         </button>
       </div>
-    );
-  }
 
-  return (
-    <div className="diagnostic-error-card">
-      <div className="diagnostic-header">
-        <div className="diagnostic-title-badge">
-          <span>🚨</span>
-          <span>{analysis.title}</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {analysis.line && (
-            <span className="diagnostic-line-badge">
-              📍 Line {analysis.line}
-            </span>
-          )}
-          <button
-            type="button"
-            className="diagnostic-toggle-btn diagnostic-hide-btn"
-            onClick={() => onToggleCollapse?.(true)}
-            title="Hide error hint suggestion"
-          >
-            👁️ Hide Hint
-          </button>
-        </div>
-      </div>
-
-      {analysis.snippet && (
-        <div className="diagnostic-code-box">
-          <div className="diagnostic-code-line">
-            <span className="diagnostic-line-num">{analysis.line || 1} |</span>
-            <span>{analysis.snippet}</span>
-          </div>
-          {analysis.pointer && (
-            <div className="diagnostic-pointer-line">
-              <span className="diagnostic-line-num">   |</span>
-              <span>{analysis.pointer}</span>
+      {!isCollapsed && (
+        <div className="diagnostic-error-card" style={{ marginTop: 0 }}>
+          <div className="diagnostic-header">
+            <div className="diagnostic-title-badge">
+              <span>🚨</span>
+              <span>{analysis.title}</span>
             </div>
-          )}
-        </div>
-      )}
-
-      <div className="diagnostic-section">
-        <div className="diagnostic-row">
-          <span className="diagnostic-row-icon">💡</span>
-          <div className="diagnostic-row-content">
-            <span className="diagnostic-row-label diagnostic-cause-label">Cause:</span>
-            <span>{analysis.cause || analysis.problem}</span>
-          </div>
-        </div>
-
-        <div className="diagnostic-row">
-          <span className="diagnostic-row-icon">✨</span>
-          <div className="diagnostic-row-content">
-            <span className="diagnostic-row-label diagnostic-fix-label">Suggested Fix:</span>
-            <span>{analysis.fix}</span>
-            {analysis.fixExample && (
-              <div style={{ marginTop: 4 }}>
-                <span className="diagnostic-fix-code">{analysis.fixExample}</span>
-              </div>
+            {analysis.line && (
+              <span className="diagnostic-line-badge">
+                📍 Line {analysis.line}
+              </span>
             )}
           </div>
+
+          {analysis.snippet && (
+            <div className="diagnostic-code-box">
+              <div className="diagnostic-code-line">
+                <span className="diagnostic-line-num">{analysis.line || 1} |</span>
+                <span>{analysis.snippet}</span>
+              </div>
+              {analysis.pointer && (
+                <div className="diagnostic-pointer-line">
+                  <span className="diagnostic-line-num">   |</span>
+                  <span>{analysis.pointer}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="diagnostic-section">
+            <div className="diagnostic-row">
+              <span className="diagnostic-row-icon">💡</span>
+              <div className="diagnostic-row-content">
+                <span className="diagnostic-row-label diagnostic-cause-label">Cause:</span>
+                <span>{analysis.cause || analysis.problem}</span>
+              </div>
+            </div>
+
+            <div className="diagnostic-row">
+              <span className="diagnostic-row-icon">✨</span>
+              <div className="diagnostic-row-content">
+                <span className="diagnostic-row-label diagnostic-fix-label">Suggested Fix:</span>
+                <span>{analysis.fix}</span>
+                {analysis.fixExample && (
+                  <div style={{ marginTop: 4 }}>
+                    <span className="diagnostic-fix-code">{analysis.fixExample}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
