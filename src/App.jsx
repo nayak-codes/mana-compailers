@@ -197,7 +197,12 @@ function ClipboardModal({ code, lang, onClose, onReceive }) {
                       }
                       if (e.key === 'Enter' && receivePin.length === 4) receiveCode()
                     }}
-                    style={ms.pinInput}
+                    style={{
+                      ...ms.pinInput,
+                      borderColor: receivePin[i] ? '#3fb950' : '#30363d'
+                    }}
+                    onFocus={e => e.target.style.borderColor = '#58a6ff'}
+                    onBlur={e => e.target.style.borderColor = receivePin[i] ? '#3fb950' : '#30363d'}
                     autoFocus={i === 0}
                   />
                 ))}
@@ -229,6 +234,7 @@ const ms = {
   successBox: { background: 'rgba(63,185,80,0.06)', border: '1px solid rgba(63,185,80,0.2)', borderRadius: 12, padding: 20, textAlign: 'center' },
   pinDisplay: { display: 'flex', gap: 12, justifyContent: 'center', margin: '16px 0' },
   pinDigit: { width: 56, height: 72, background: '#0d1117', border: '2px solid #3fb950', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, fontWeight: 800, color: '#3fb950', fontFamily: 'JetBrains Mono, monospace', boxShadow: '0 0 16px rgba(63,185,80,0.2)' },
+  pinInput: { width: 54, height: 64, background: '#0d1117', border: '2px solid #30363d', borderRadius: 12, textAlign: 'center', fontSize: 30, fontWeight: 700, color: '#58a6ff', fontFamily: 'JetBrains Mono, monospace', outline: 'none', boxSizing: 'border-box', transition: 'all 0.2s ease' },
   copyBtn: { background: 'rgba(63,185,80,0.15)', color: '#3fb950', border: '1px solid rgba(63,185,80,0.4)', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
   resetBtn: { width: '100%', marginTop: 12, padding: '8px', background: 'transparent', color: '#8b949e', border: '1px solid #30363d', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: 'Inter, sans-serif' },
 }
