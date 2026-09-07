@@ -862,8 +862,106 @@ async function runJavaFastRunner(code, stdin) {
 const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
 const BACKEND_URL = isLocal ? 'http://localhost:3002' : ''
 
+// ── Multi-Language Code Formatter (Auto Beautify & Operator Spacing) ───────
+function formatCodeLine(line, langId) {
+  if (!line.trim()) return ''
 
+  const indent = line.match(/^\s*/)[0]
+  const content = line.trim()
 
+  const tokens = []
+  let current = ''
+  let inString = null
+  let isEscaped = false
+  let isComment = false
+
+  for (let i = 0; i < content.length; i++) {
+    const char = content[i]
+    const nextChar = i < content.length - 1 ? content[i + 1] : ''
+
+    if (inString) {
+      current += char
+      if (isEscaped) {
+        isEscaped = false
+      } else if (char === '\\') {
+        isEscaped = true
+      } else if (char === inString) {
+        inString = null
+        tokens.push({ type: 'string', text: current })
+        current = ''
+      }
+      continue
+    }
+
+    if (isComment) {
+      current += char
+      continue
+    }
+
+    if ((char === '#' && (langId === 'python3' || langId === 'ruby' || langId === 'php')) ||
+        (char === '/' && nextChar === '/' && langId !== 'python3' && langId !== 'ruby')) {
+      if (current) {
+        tokens.push({ type: 'code', text: current })
+        current = ''
+      }
+      isComment = true
+      current = content.slice(i)
+      break
+    }
+
+    if (char === '"' || char === "'" || char === '`') {
+      if (current) {
+        tokens.push({ type: 'code', text: current })
+        current = ''
+      }
+      inString = char
+      current = char
+      continue
+    }
+
+    current += char
+  }
+
+  if (isComment) {
+    tokens.push({ type: 'comment', text: current })
+  } else if (inString) {
+    tokens.push({ type: 'string', text: current })
+  } else if (current) {
+    tokens.push({ type: 'code', text: current })
+  }
+
+  const formattedContent = tokens.map(token => {
+    if (token.type !== 'code') return token.text
+
+    let text = token.text
+
+    // Format assignment & comparison operators: ==, !=, <=, >=, +=, -=, *=, /=, =
+    // Add space around operators if missing: number=random -> number = random, guess==number -> guess == number
+    text = text.replace(/([^!<>=+\-*/%\s])(==|!=|<=|>=|\+=|-=|\*=|\/=|=)([^=<>\s])/g, '$1 $2 $3')
+    text = text.replace(/([^!<>=+\-*/%\s])(==|!=|<=|>=|\+=|-=|\*=|\/=|=)\s+([^=<>\s])/g, '$1 $2 $3')
+    text = text.replace(/([^!<>=+\-*/%\s])\s+(==|!=|<=|>=|\+=|-=|\*=|\/=|=)([^=<>\s])/g, '$1 $2 $3')
+
+    // Format commas (e.g., (1,10) -> (1, 10))
+    text = text.replace(/,([^\s\)])/g, ', $1')
+
+    // Format colons after keywords (e.g., if guess==number: -> if guess == number:)
+    text = text.replace(/([^:\s]):([^\s:])/g, '$1: $2')
+
+    // Normalize multiple consecutive spaces in code token
+    text = text.replace(/ {2,}/g, ' ')
+
+    return text
+  }).join('')
+
+  return indent + formattedContent
+}
+
+function formatCode(code, langId) {
+  if (!code) return code
+  const lines = code.split('\n')
+  const formattedLines = lines.map(line => formatCodeLine(line, langId))
+  return formattedLines.join('\n')
+}
 
 export default function App() {
   const queryParams = new URLSearchParams(window.location.search)
@@ -1036,6 +1134,7 @@ export default function App() {
   const [dragStartX, setDragStartX] = useState(0)
   const [dragStartWidth, setDragStartWidth] = useState(0)
   const containerRef = useRef(null)
+  const editorRef = useRef(null)
   const [highlightStdin, setHighlightStdin] = useState(false)
 
   const [showClipboard, setShowClipboard] = useState(false)
@@ -1255,6 +1354,34 @@ export default function App() {
   const cancelInlineRename = () => {
     setEditingFileId(null)
   }
+
+  const handleFormatCode = useCallback(() => {
+    if (editorRef.current) {
+      try {
+        editorRef.current.getAction('editor.action.formatDocument')?.run()
+      } catch (e) {}
+    }
+
+    const formatted = formatCode(currentCode, lang.id)
+    if (!formatted) return
+
+    if (lang.id === 'html') {
+      const updated = { ...htmlFiles, [activeHtmlTab]: formatted }
+      setHtmlFiles(updated)
+      try {
+        localStorage.setItem('code_html_files', JSON.stringify(updated))
+      } catch (e) {}
+    } else {
+      setPrograms(prev => {
+        const updated = prev.map(p => p.id === activeFileId ? { ...p, code: formatted } : p)
+        try {
+          localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+          localStorage.setItem(`code_${lang.id}`, formatted)
+        } catch (e) {}
+        return updated
+      })
+    }
+  }, [currentCode, lang, activeHtmlTab, htmlFiles, activeFileId])
 
   // ⚡ Silent backend warmup — wakes Render server in background on page load
   useEffect(() => {
@@ -1568,6 +1695,13 @@ export default function App() {
                       : `${lang.icon} ${activeFile?.name || lang.label}`}
                   </span>
                   <button 
+                    onClick={handleFormatCode}
+                    style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px', background: 'var(--bg3)', cursor: 'pointer', color: 'var(--text)', fontWeight: 600 }}
+                    title="Format code (add proper spacing & operator formatting)"
+                  >
+                    ✨ Format Code
+                  </button>
+                  <button 
                     onClick={() => { 
                       if (lang.id === 'html') {
                         const updated = { ...htmlFiles, [activeHtmlTab]: '' }
@@ -1790,6 +1924,7 @@ export default function App() {
                   }}
                   theme={compilerTheme === 'light' ? 'vs' : 'vs-dark'}
                   onMount={(editor, monaco) => {
+                    editorRef.current = editor
                     document.fonts.ready.then(() => {
                       monaco.editor.remeasureFonts();
                     });
