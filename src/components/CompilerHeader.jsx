@@ -1,4 +1,4 @@
-export default function CompilerHeader({ theme, setTheme, goHome, lang }) {
+export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartTour }) {
   let headerName = 'Our Compiler'
   if (lang) {
     if (lang.id === 'python3') headerName = 'Python Compiler'
@@ -28,15 +28,28 @@ export default function CompilerHeader({ theme, setTheme, goHome, lang }) {
         <img src="/logo-nav.png" alt="Compiler logo" />
         <span className="compiler-header-name">{headerName}</span>
       </div>
-      <button
-        type="button"
-        onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
-        className="compiler-header-theme"
-        aria-label="Toggle theme"
-      >
-        {theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {onStartTour && (
+          <button
+            type="button"
+            onClick={onStartTour}
+            className="tour-guide-trigger-btn"
+            title="Interactive Feature Walkthrough"
+          >
+            💡 Guided Tour
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
+          className="compiler-header-theme"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+        </button>
+      </div>
     </header>
   )
 }
+
 

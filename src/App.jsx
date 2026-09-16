@@ -5,6 +5,7 @@ import AppTopnav from './components/AppTopnav'
 import CompilerHeader from './components/CompilerHeader'
 import WebPreview from './components/WebPreview'
 import TerminalLoader from './components/TerminalLoader'
+import OnboardingTour from './components/OnboardingTour'
 
 
 
@@ -1066,6 +1067,22 @@ export default function App() {
   const [tutorialHtml, setTutorialHtml] = useState('')
   const [siteTheme, setSiteTheme] = useState(() => localStorage.getItem('site_theme') || 'light')
   const [compilerTheme, setCompilerTheme] = useState('dark')
+  const [showTour, setShowTour] = useState(false)
+
+  // 💡 Auto-launch tour ONLY ONCE for first-time visitors
+  useEffect(() => {
+    if (view === 'compiler') {
+      try {
+        const hasSeen = localStorage.getItem('has_seen_compiler_tour')
+        if (!hasSeen) {
+          // Immediately mark as seen so it NEVER auto-opens again on reload or page switch
+          localStorage.setItem('has_seen_compiler_tour', 'true')
+          setShowTour(true)
+        }
+      } catch (e) {}
+    }
+  }, [view])
+
 
   const activeTheme = view === 'compiler' ? compilerTheme : siteTheme
 
@@ -1594,10 +1611,10 @@ export default function App() {
       ) : (
         <div className="compiler-view-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
 
-          <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} lang={lang} />
+          <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} lang={lang} onStartTour={() => setShowTour(true)} />
 
           {/* TOOLBAR */}
-          <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar">
+          <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar" id="tour-step-run">
             {/* Left: Language Selector */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
@@ -1643,11 +1660,12 @@ export default function App() {
               {!isMobile && (
                 <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
               )}
-              <button onClick={() => setShowClipboard(true)} style={s.btnShare} title="Share code with a 4-digit PIN">
+              <button id="tour-step-share" onClick={() => setShowClipboard(true)} style={s.btnShare} title="Share code with a 4-digit PIN">
                 📤 Share Code
               </button>
             </div>
           </div>
+
 
           {/* MOBILE SEGMENTED TABS */}
           {isMobile && (
@@ -1701,6 +1719,7 @@ export default function App() {
                       : `${lang.icon} ${activeFile?.name || lang.label}`}
                   </span>
                   <button 
+                    id="tour-step-format"
                     onClick={handleFormatCode}
                     style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px', background: 'var(--bg3)', cursor: 'pointer', color: 'var(--text)', fontWeight: 600 }}
                     title="Format code (add proper spacing & operator formatting)"
@@ -1739,7 +1758,7 @@ export default function App() {
 
               {/* TABS: HTML/CSS/JS (FOR HTML) OR MULTI-PROGRAM TABS (VS CODE & ANTIGRAVITY STYLE FOR OTHER LANGUAGES) */}
               {lang.id === 'html' ? (
-                <div style={{
+                <div id="tour-step-tabs" style={{
                   display: 'flex',
                   alignItems: 'center',
                   background: 'var(--bg3)',
@@ -1818,7 +1837,8 @@ export default function App() {
                   </div>
                 </div>
               ) : (
-                <div className="multi-program-tabbar">
+                <div className="multi-program-tabbar" id="tour-step-tabs">
+
                   <div className="multi-program-tabs-scroll">
                     {programs.map((p) => {
                       const isActive = p.id === activeFileId
@@ -1979,6 +1999,7 @@ export default function App() {
               </div>
             ) : (
               <div
+                id="tour-step-terminal"
                 onClick={handleTerminalClick}
                 style={{
                   ...s.outPanel,
@@ -1989,6 +2010,7 @@ export default function App() {
                   cursor: 'text',
                 }}
               >
+
                 {/* TERMINAL HEADER */}
                 <div style={s.tabs} className="compiler-panel-head">
                   <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -2116,8 +2138,9 @@ export default function App() {
                 </div>
               </div>
             )}
-
           </div>
+
+
 
           {/* FLOATING RUN BUTTON ON MOBILE */}
           {isMobile && (
@@ -2131,6 +2154,8 @@ export default function App() {
               {running ? '⏳ Executing...' : '▶ Run Code'}
             </button>
           )}
+
+
 
 
 
@@ -2188,6 +2213,27 @@ export default function App() {
               }}
             />
           )}
+
+          {/* FEATURE ONBOARDING TOUR MODAL */}
+          <OnboardingTour
+            isOpen={showTour}
+            onClose={() => setShowTour(false)}
+            isMobile={isMobile}
+          />
+
+          {/* FLOATING SHARE WITH FRIENDS BUTTON (BOTTOM RIGHT OF COMPILER VIEW) */}
+          {view === 'compiler' && (
+            <button
+              type="button"
+              onClick={() => setShowClipboard(true)}
+              className="compiler-floating-share"
+              title="Share code with your friends (4-digit PIN / Share Link)"
+            >
+              <span>📤</span>
+              <span>Share with Friends</span>
+            </button>
+          )}
+
 
 
 
