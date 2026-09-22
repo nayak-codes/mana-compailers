@@ -12,8 +12,8 @@ import OnboardingTour from './components/OnboardingTour'
 // ── Code Clipboard Modal ─────────────────────────────────────────────────
 const CLIP_API = '/api/clipboard'
 
-function ClipboardModal({ code, lang, onClose, onReceive }) {
-  const [tab, setTab] = useState('send')
+function ClipboardModal({ code, lang, onClose, onReceive, initialTab = 'send', autoSend = false }) {
+  const [tab, setTab] = useState(initialTab)
   const [pin, setPin] = useState('')
   const [receivePin, setReceivePin] = useState('')
   const [loading, setLoading] = useState(false)
@@ -21,6 +21,7 @@ function ClipboardModal({ code, lang, onClose, onReceive }) {
   const [success, setSuccess] = useState('')
   const [copied, setCopied] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
+
 
   const getShareLink = (p) => {
     const base = window.location.origin
@@ -64,6 +65,16 @@ function ClipboardModal({ code, lang, onClose, onReceive }) {
   const copyLink = (p) => {
     navigator.clipboard.writeText(getShareLink(p)).then(() => { setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000) })
   }
+
+  // Auto-send on mount if autoSend=true (after sendCode is defined)
+  const autoSentRef = useRef(false)
+  useEffect(() => {
+    if (autoSend && !autoSentRef.current && code && code.trim()) {
+      autoSentRef.current = true
+      sendCode()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div style={ms.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
@@ -1014,6 +1025,8 @@ export default function App() {
   })
   const [editingFileId, setEditingFileId] = useState(null)
   const [editingFileName, setEditingFileName] = useState('')
+  const editingFileNameRef = useRef('')  // always has latest value, no stale closure
+  const isSavingRef = useRef(false)      // prevents double-save (Enter + onBlur)
   const [hideErrorHint, setHideErrorHint] = useState(() => {
     try {
       const saved = localStorage.getItem('hide_error_hint')
@@ -1161,6 +1174,20 @@ export default function App() {
   const [highlightStdin, setHighlightStdin] = useState(false)
 
   const [showClipboard, setShowClipboard] = useState(false)
+  const [clipboardInitialTab, setClipboardInitialTab] = useState('send')
+  const [clipboardAutoSend, setClipboardAutoSend] = useState(false)
+
+  const openShareCode = () => {
+    setClipboardInitialTab('send')
+    setClipboardAutoSend(true)
+    setShowClipboard(true)
+  }
+
+  const openReceiveCode = () => {
+    setClipboardInitialTab('receive')
+    setClipboardAutoSend(false)
+    setShowClipboard(true)
+  }
 
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
   const [mobileTab, setMobileTab] = useState('editor')
@@ -1344,21 +1371,24 @@ export default function App() {
 
   const startInlineRename = (file) => {
     if (!file) return
+    isSavingRef.current = false
+    editingFileNameRef.current = file.name
     setEditingFileId(file.id)
     setEditingFileName(file.name)
   }
 
   const saveInlineRename = (fileId) => {
-    if (!editingFileId) return
-    let trimmed = editingFileName.trim()
-    if (!trimmed) {
+    if (isSavingRef.current) return  // already saving (e.g. Enter key fired, onBlur follows)
+    if (!fileId) return
+    isSavingRef.current = true
+    const trimmedRaw = editingFileNameRef.current.trim()
+    if (!trimmedRaw) {
       setEditingFileId(null)
+      isSavingRef.current = false
       return
     }
     const defaultExt = '.' + (lang?.ext || 'txt')
-    if (!trimmed.includes('.')) {
-      trimmed += defaultExt
-    }
+    const trimmed = trimmedRaw.includes('.') ? trimmedRaw : trimmedRaw + defaultExt
 
     setPrograms(prev => {
       const updated = prev.map(p => p.id === fileId ? { ...p, name: trimmed } : p)
@@ -1372,11 +1402,28 @@ export default function App() {
       return updated
     })
     setEditingFileId(null)
+    // reset after a tick so the blur event that follows Enter doesn't double-save
+    setTimeout(() => { isSavingRef.current = false }, 100)
   }
 
   const cancelInlineRename = () => {
+    isSavingRef.current = false
     setEditingFileId(null)
   }
+
+  // Select all text in rename input ONCE when editing starts (not on every keystroke)
+  useEffect(() => {
+    if (editingFileId) {
+      const timer = setTimeout(() => {
+        const input = document.querySelector('.inline-tab-rename-input')
+        if (input) {
+          input.focus()
+          input.select()
+        }
+      }, 30)
+      return () => clearTimeout(timer)
+    }
+  }, [editingFileId])
 
   const handleFormatCode = useCallback(() => {
     if (editorRef.current) {
@@ -1660,8 +1707,45 @@ export default function App() {
               {!isMobile && (
                 <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
               )}
-              <button id="tour-step-share" onClick={() => setShowClipboard(true)} style={s.btnShare} title="Share code with a 4-digit PIN">
+              {/* Divider */}
+              <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
+              <button
+                id="toolbar-share-btn"
+                onClick={openShareCode}
+                style={{
+                  background: 'rgba(63,185,80,0.12)',
+                  color: '#3fb950',
+                  border: '1px solid rgba(63,185,80,0.45)',
+                  borderRadius: 8,
+                  padding: '6px 13px',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.18s',
+                  whiteSpace: 'nowrap'
+                }}
+                title="Share your code instantly — auto-generates a direct link"
+              >
                 📤 Share Code
+              </button>
+              <button
+                id="toolbar-receive-btn"
+                onClick={openReceiveCode}
+                style={{
+                  background: 'rgba(88,166,255,0.12)',
+                  color: '#58a6ff',
+                  border: '1px solid rgba(88,166,255,0.45)',
+                  borderRadius: 8,
+                  padding: '6px 13px',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.18s',
+                  whiteSpace: 'nowrap'
+                }}
+                title="Enter a 4-digit PIN to receive shared code"
+              >
+                📥 Receive Code
               </button>
             </div>
           </div>
@@ -1862,23 +1946,23 @@ export default function App() {
                             <input
                               type="text"
                               value={editingFileName}
-                              autoFocus
-                              ref={(el) => {
-                                if (el) {
-                                  el.select()
-                                }
-                              }}
-                              onFocus={(e) => e.target.select()}
                               className="inline-tab-rename-input"
                               onClick={(e) => e.stopPropagation()}
-                              onChange={(e) => setEditingFileName(e.target.value)}
+                              onChange={(e) => {
+                                editingFileNameRef.current = e.target.value
+                                setEditingFileName(e.target.value)
+                              }}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                   e.preventDefault()
+                                  e.stopPropagation()
                                   saveInlineRename(p.id)
+                                  e.target.blur()
                                 } else if (e.key === 'Escape') {
                                   e.preventDefault()
+                                  e.stopPropagation()
                                   cancelInlineRename()
+                                  e.target.blur()
                                 }
                               }}
                               onBlur={() => saveInlineRename(p.id)}
@@ -2180,7 +2264,9 @@ export default function App() {
             <ClipboardModal
               code={lang.id === 'html' ? JSON.stringify(htmlFiles) : currentCode}
               lang={lang}
-              onClose={() => setShowClipboard(false)}
+              initialTab={clipboardInitialTab}
+              autoSend={clipboardAutoSend}
+              onClose={() => { setShowClipboard(false); setClipboardAutoSend(false); }}
               onReceive={(data) => {
                 const targetLang = LANGUAGES.find(l => l.id === data.language)
                 if (targetLang) {
