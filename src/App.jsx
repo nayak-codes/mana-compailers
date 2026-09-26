@@ -1654,100 +1654,172 @@ export default function App() {
         <AppTopnav theme={siteTheme} setTheme={setSiteTheme} goHome={goHome} view={view} lang={lang} />
       )}
       {view === 'home' ? (
-        <HomePage selectLanguage={selectLanguage} theme={siteTheme} setTheme={setSiteTheme} />
+        <HomePage selectLanguage={selectLanguage} theme={siteTheme} setTheme={setSiteTheme} isMobile={isMobile} />
       ) : (
         <div className="compiler-view-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
 
-          <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} lang={lang} onStartTour={() => setShowTour(true)} />
+          <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} lang={lang} onStartTour={() => setShowTour(true)} isMobile={isMobile} />
 
           {/* TOOLBAR */}
           <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar" id="tour-step-run">
-            {/* Left: Language Selector */}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
-                {LANGUAGES.map(l => (
-                  <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
-                ))}
-              </select>
-            </div>
+            {isMobile ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 6 }}>
+                {/* Left: Language Selector */}
+                <select 
+                  value={lang.id} 
+                  onChange={e => changeLang(e.target.value)} 
+                  style={{ ...s.select, fontSize: 13, padding: '6px 8px', maxWidth: '145px', textOverflow: 'ellipsis' }}
+                >
+                  {LANGUAGES.map(l => (
+                    <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
+                  ))}
+                </select>
 
-            {/* Exact Middle: ▶ Run Code button (Centered in middle space marked by blue box and tick) */}
-            <div style={{
-              position: isMobile ? 'static' : 'absolute',
-              left: isMobile ? 'auto' : '50%',
-              transform: isMobile ? 'none' : 'translateX(-50%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: isMobile ? '6px 0' : 0
-            }}>
-              <button 
-                onClick={runCode} 
-                onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
-                disabled={running} 
-                style={{
-                  ...s.btnRun,
-                  opacity: running ? 0.6 : 1,
-                  cursor: running ? 'not-allowed' : 'pointer',
-                  fontSize: 14,
-                  padding: '8px 24px',
-                  fontWeight: 700,
-                  borderRadius: 8,
-                  boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)'
-                }}
-              >
-                {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh Preview' : '▶ Run Code'}
-              </button>
-            </div>
+                {/* Center: ▶ Run Code Button */}
+                <button 
+                  onClick={runCode} 
+                  onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+                  disabled={running} 
+                  style={{
+                    ...s.btnRun,
+                    opacity: running ? 0.6 : 1,
+                    cursor: running ? 'not-allowed' : 'pointer',
+                    fontSize: 13,
+                    padding: '6px 14px',
+                    fontWeight: 700,
+                    borderRadius: 8,
+                    boxShadow: '0 3px 10px rgba(46, 160, 67, 0.4)',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
+                </button>
 
-            {/* Right: Action Buttons */}
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginLeft: 'auto' }}>
-              <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
-              <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
-              {!isMobile && (
-                <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
-              )}
-              {/* Divider */}
-              <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
-              <button
-                id="toolbar-share-btn"
-                onClick={openShareCode}
-                style={{
-                  background: 'rgba(63,185,80,0.12)',
-                  color: '#3fb950',
-                  border: '1px solid rgba(63,185,80,0.45)',
-                  borderRadius: 8,
-                  padding: '6px 13px',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.18s',
-                  whiteSpace: 'nowrap'
-                }}
-                title="Share your code instantly — auto-generates a direct link"
-              >
-                📤 Share Code
-              </button>
-              <button
-                id="toolbar-receive-btn"
-                onClick={openReceiveCode}
-                style={{
-                  background: 'rgba(88,166,255,0.12)',
-                  color: '#58a6ff',
-                  border: '1px solid rgba(88,166,255,0.45)',
-                  borderRadius: 8,
-                  padding: '6px 13px',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.18s',
-                  whiteSpace: 'nowrap'
-                }}
-                title="Enter a 4-digit PIN to receive shared code"
-              >
-                📥 Receive Code
-              </button>
-            </div>
+                {/* Right: Quick Action Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <button
+                    id="toolbar-share-btn-mobile"
+                    onClick={openShareCode}
+                    style={{
+                      background: 'rgba(63,185,80,0.12)',
+                      color: '#3fb950',
+                      border: '1px solid rgba(63,185,80,0.45)',
+                      borderRadius: 8,
+                      padding: '5px 8px',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                    title="Share Code"
+                  >
+                    📤
+                  </button>
+                  <button
+                    id="toolbar-receive-btn-mobile"
+                    onClick={openReceiveCode}
+                    style={{
+                      background: 'rgba(88,166,255,0.12)',
+                      color: '#58a6ff',
+                      border: '1px solid rgba(88,166,255,0.45)',
+                      borderRadius: 8,
+                      padding: '5px 8px',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                    title="Receive Code"
+                  >
+                    📥
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Left: Language Selector */}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
+                    {LANGUAGES.map(l => (
+                      <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Exact Middle: ▶ Run Code button */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <button 
+                    onClick={runCode} 
+                    onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+                    disabled={running} 
+                    style={{
+                      ...s.btnRun,
+                      opacity: running ? 0.6 : 1,
+                      cursor: running ? 'not-allowed' : 'pointer',
+                      fontSize: 14,
+                      padding: '8px 24px',
+                      fontWeight: 700,
+                      borderRadius: 8,
+                      boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)'
+                    }}
+                  >
+                    {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh Preview' : '▶ Run Code'}
+                  </button>
+                </div>
+
+                {/* Right: Action Buttons */}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginLeft: 'auto' }}>
+                  <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
+                  <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
+                  <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
+                  {/* Divider */}
+                  <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
+                  <button
+                    id="toolbar-share-btn"
+                    onClick={openShareCode}
+                    style={{
+                      background: 'rgba(63,185,80,0.12)',
+                      color: '#3fb950',
+                      border: '1px solid rgba(63,185,80,0.45)',
+                      borderRadius: 8,
+                      padding: '6px 13px',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.18s',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title="Share your code instantly — auto-generates a direct link"
+                  >
+                    📤 Share Code
+                  </button>
+                  <button
+                    id="toolbar-receive-btn"
+                    onClick={openReceiveCode}
+                    style={{
+                      background: 'rgba(88,166,255,0.12)',
+                      color: '#58a6ff',
+                      border: '1px solid rgba(88,166,255,0.45)',
+                      borderRadius: 8,
+                      padding: '6px 13px',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.18s',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title="Enter a 4-digit PIN to receive shared code"
+                  >
+                    📥 Receive Code
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
 
@@ -1802,14 +1874,16 @@ export default function App() {
                       ? (activeHtmlTab === 'html' ? '🌐 index.html' : activeHtmlTab === 'css' ? '🎨 styles.css' : '⚡ script.js')
                       : `${lang.icon} ${activeFile?.name || lang.label}`}
                   </span>
-                  <button 
-                    id="tour-step-format"
-                    onClick={handleFormatCode}
-                    style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px', background: 'var(--bg3)', cursor: 'pointer', color: 'var(--text)', fontWeight: 600 }}
-                    title="Format code (add proper spacing & operator formatting)"
-                  >
-                    ✨ Format Code
-                  </button>
+                  {!isMobile && (
+                    <button 
+                      id="tour-step-format"
+                      onClick={handleFormatCode}
+                      style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px', background: 'var(--bg3)', cursor: 'pointer', color: 'var(--text)', fontWeight: 600 }}
+                      title="Format code (add proper spacing & operator formatting)"
+                    >
+                      ✨ Format Code
+                    </button>
+                  )}
                   <button 
                     onClick={() => { 
                       if (lang.id === 'html') {
@@ -1993,20 +2067,22 @@ export default function App() {
                     </button>
                   </div>
 
-                  <div className="multi-program-actions">
-                    <button
-                      type="button"
-                      className="tabbar-action-btn"
-                      onClick={() => {
-                        if (activeFile) {
-                          startInlineRename(activeFile)
-                        }
-                      }}
-                      title="Rename active program in place"
-                    >
-                      ✏️ Rename
-                    </button>
-                  </div>
+                  {!isMobile && (
+                    <div className="multi-program-actions">
+                      <button
+                        type="button"
+                        className="tabbar-action-btn"
+                        onClick={() => {
+                          if (activeFile) {
+                            startInlineRename(activeFile)
+                          }
+                        }}
+                        title="Rename active program in place"
+                      >
+                        ✏️ Rename
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -2226,18 +2302,7 @@ export default function App() {
 
 
 
-          {/* FLOATING RUN BUTTON ON MOBILE */}
-          {isMobile && (
-            <button
-              onClick={runCode}
-              onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
-              disabled={running}
-              className="compiler-floating-run"
-              title="Run Code"
-            >
-              {running ? '⏳ Executing...' : '▶ Run Code'}
-            </button>
-          )}
+
 
 
 
@@ -2307,18 +2372,7 @@ export default function App() {
             isMobile={isMobile}
           />
 
-          {/* FLOATING SHARE WITH FRIENDS BUTTON (BOTTOM RIGHT OF COMPILER VIEW) */}
-          {view === 'compiler' && (
-            <button
-              type="button"
-              onClick={() => setShowClipboard(true)}
-              className="compiler-floating-share"
-              title="Share code with your friends (4-digit PIN / Share Link)"
-            >
-              <span>📤</span>
-              <span>Share with Friends</span>
-            </button>
-          )}
+
 
 
 
@@ -2590,7 +2644,7 @@ const TUTORIAL_GUIDES = [
   { path: '/blog-git.html',        id: 'git',      title: 'Git & GitHub Guide',  category: 'tools',color: '#F05032' },
 ]
 
-function HomePage({ selectLanguage, theme, setTheme }) {
+function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
   const [tutCategory, setTutCategory] = useState('all')
 
   const displayedTutorials = tutCategory === 'all'
@@ -2600,15 +2654,15 @@ function HomePage({ selectLanguage, theme, setTheme }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)' }}>
       {/* MAIN CONTENT */}
-      <main style={{ flex: 1, padding: '40px 20px 80px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+      <main style={{ flex: 1, padding: isMobile ? '24px 14px 60px' : '40px 20px 80px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         {/* START CODING SECTION */}
-        <section style={{ marginBottom: 70 }}>
-          <div style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#58a6ff', textTransform: 'uppercase', marginBottom: 8 }}>⚡ Online Compiler &amp; Web Editor</p>
+        <section style={{ marginBottom: isMobile ? 40 : 70 }}>
+          <div style={{ marginBottom: isMobile ? 18 : 28 }}>
+            <p style={{ fontSize: isMobile ? 11 : 12, fontWeight: 700, letterSpacing: isMobile ? 1.5 : 2.5, color: '#58a6ff', textTransform: 'uppercase', marginBottom: 6 }}>⚡ Online Compiler &amp; Web Editor</p>
             <h2 style={{
-              fontSize: 'clamp(26px,4vw,38px)',
+              fontSize: isMobile ? 26 : 'clamp(26px,4vw,38px)',
               fontWeight: 800,
-              marginBottom: 10,
+              marginBottom: 8,
               color: 'var(--text)',
               letterSpacing: '-0.5px'
             }}>
@@ -2616,7 +2670,7 @@ function HomePage({ selectLanguage, theme, setTheme }) {
             </h2>
             <p style={{
               color: 'var(--text2)',
-              fontSize: 15,
+              fontSize: isMobile ? 13.5 : 15,
               margin: 0,
               maxWidth: '600px'
             }}>

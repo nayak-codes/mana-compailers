@@ -1,4 +1,4 @@
-export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartTour }) {
+export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartTour, isMobile }) {
   let headerName = 'Our Compiler'
   if (lang) {
     if (lang.id === 'python3') headerName = 'Python Compiler'
@@ -29,7 +29,7 @@ export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartT
         <span className="compiler-header-name">{headerName}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        {onStartTour && (
+        {onStartTour && !isMobile && (
           <button
             type="button"
             onClick={onStartTour}
