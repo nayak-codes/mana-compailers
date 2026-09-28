@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
-import Editor from '@monaco-editor/react'
+import { useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react'
+const Editor = lazy(() => import('@monaco-editor/react'))
 import { LANGUAGES, TEMPLATES, DEFAULT_HTML_FILES } from './languages'
 import AppTopnav from './components/AppTopnav'
 import CompilerHeader from './components/CompilerHeader'
@@ -2087,45 +2087,52 @@ export default function App() {
               )}
 
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                <Editor
-                  height="100%"
-                  language={lang.id === 'html' ? (activeHtmlTab === 'html' ? 'html' : activeHtmlTab === 'css' ? 'css' : 'javascript') : lang.monacoLang}
-                  value={currentCode}
-                  onChange={v => {
-                    const newCode = v || ''
-                    if (lang.id === 'html') {
-                      const updated = { ...htmlFiles, [activeHtmlTab]: newCode }
-                      setHtmlFiles(updated)
-                      localStorage.setItem('code_html_files', JSON.stringify(updated))
-                    } else {
-                      setPrograms(prev => {
-                        const updated = prev.map(p => p.id === activeFileId ? { ...p, code: newCode } : p)
-                        try {
-                          localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
-                          localStorage.setItem(`code_${lang.id}`, newCode)
-                        } catch (e) {}
-                        return updated
-                      })
-                    }
-                  }}
-                  theme={compilerTheme === 'light' ? 'vs' : 'vs-dark'}
-                  onMount={(editor, monaco) => {
-                    editorRef.current = editor
-                    document.fonts.ready.then(() => {
-                      monaco.editor.remeasureFonts();
-                    });
-                  }}
-                  options={{
-                    fontSize: isMobile ? 13 : 14,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    minimap: { enabled: false },
-                    scrollBeyondLastLine: false,
-                    wordWrap: isMobile ? 'on' : 'off',
-                    automaticLayout: true,
-                    padding: { top: 12 },
-                    scrollbar: { horizontalScrollbarSize: 6 }
-                  }}
-                />
+                <Suspense fallback={
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: 'var(--bg)', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ width: 32, height: 32, border: '3px solid var(--border)', borderTopColor: '#58a6ff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                    <span style={{ color: 'var(--text2)', fontSize: 13 }}>Loading Editor...</span>
+                  </div>
+                }>
+                  <Editor
+                    height="100%"
+                    language={lang.id === 'html' ? (activeHtmlTab === 'html' ? 'html' : activeHtmlTab === 'css' ? 'css' : 'javascript') : lang.monacoLang}
+                    value={currentCode}
+                    onChange={v => {
+                      const newCode = v || ''
+                      if (lang.id === 'html') {
+                        const updated = { ...htmlFiles, [activeHtmlTab]: newCode }
+                        setHtmlFiles(updated)
+                        localStorage.setItem('code_html_files', JSON.stringify(updated))
+                      } else {
+                        setPrograms(prev => {
+                          const updated = prev.map(p => p.id === activeFileId ? { ...p, code: newCode } : p)
+                          try {
+                            localStorage.setItem(`programs_${lang.id}`, JSON.stringify(updated))
+                            localStorage.setItem(`code_${lang.id}`, newCode)
+                          } catch (e) {}
+                          return updated
+                        })
+                      }
+                    }}
+                    theme={compilerTheme === 'light' ? 'vs' : 'vs-dark'}
+                    onMount={(editor, monaco) => {
+                      editorRef.current = editor
+                      document.fonts.ready.then(() => {
+                        monaco.editor.remeasureFonts();
+                      });
+                    }}
+                    options={{
+                      fontSize: isMobile ? 13 : 14,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      minimap: { enabled: false },
+                      scrollBeyondLastLine: false,
+                      wordWrap: isMobile ? 'on' : 'off',
+                      automaticLayout: true,
+                      padding: { top: 12 },
+                      scrollbar: { horizontalScrollbarSize: 6 }
+                    }}
+                  />
+                </Suspense>
               </div>
             </div>
 

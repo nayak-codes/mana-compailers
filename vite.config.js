@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild',
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
@@ -20,6 +22,14 @@ export default defineConfig({
         html: resolve(__dirname, 'online-html-editor.html'),
         php: resolve(__dirname, 'online-php-compiler.html'),
         ruby: resolve(__dirname, 'online-ruby-compiler.html'),
+      },
+      output: {
+        manualChunks: {
+          // Monaco editor (~4MB) — separate chunk, only loads when compiler opens
+          'monaco-editor': ['@monaco-editor/react'],
+          // React core — cached separately
+          'react-core': ['react', 'react-dom'],
+        }
       }
     }
   },
@@ -33,3 +43,4 @@ export default defineConfig({
     }
   }
 })
+
