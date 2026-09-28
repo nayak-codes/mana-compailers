@@ -235,12 +235,83 @@
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028247458903242"
     crossorigin="anonymous"></script>
+
+  <!-- Loading screen styles (inline for instant paint) -->
+  <style>
+  #app-loading {
+    position: fixed; inset: 0;
+    background: #0d1117;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 24px; z-index: 9999;
+    transition: opacity 0.3s ease;
+  }
+  #app-loading.hide { opacity: 0; pointer-events: none; }
+  .ld-logo {
+    width: 64px; height: 64px; border-radius: 16px;
+    background: linear-gradient(135deg, #1f6feb, #388bfd);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 0 32px rgba(88,166,255,0.4);
+    animation: ldPulse 1.6s ease-in-out infinite;
+  }
+  .ld-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 22px; font-weight: 700; color: #e6edf3; letter-spacing: -0.3px;
+  }
+  .ld-bar {
+    width: 200px; height: 3px; background: #21262d; border-radius: 99px; overflow: hidden;
+  }
+  .ld-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #1f6feb, #58a6ff, #3fb950);
+    background-size: 200% 100%;
+    border-radius: 99px;
+    animation: ldSlide 1.4s ease-in-out infinite;
+  }
+  .ld-sub {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 13px; color: #484f58;
+  }
+  @keyframes ldPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 32px rgba(88,166,255,0.4); }
+    50% { transform: scale(1.06); box-shadow: 0 0 48px rgba(88,166,255,0.65); }
+  }
+  @keyframes ldSlide {
+    0% { width: 0%; margin-left: 0; }
+    50% { width: 70%; margin-left: 10%; }
+    100% { width: 0%; margin-left: 100%; }
+  }
+</style>
 </head>
 
 <body>
+  <div id="app-loading">
+    <div class="ld-logo">🖥️</div>
+    <div class="ld-title">Our Compiler</div>
+    <div class="ld-bar"><div class="ld-bar-fill"></div></div>
+    <div class="ld-sub">Free Online Code Compiler</div>
+  </div>
+
   <div id="root"></div>
 
   <script type="module" src="/src/main.jsx"></script>
+  <script>
+    // Hide loading screen as soon as React starts rendering
+    document.addEventListener('DOMContentLoaded', function() {
+      var observer = new MutationObserver(function() {
+        var root = document.getElementById('root');
+        if (root && root.firstChild) {
+          var loader = document.getElementById('app-loading');
+          if (loader) {
+            loader.classList.add('hide');
+            setTimeout(function() { loader.remove(); }, 350);
+          }
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.getElementById('root'), { childList: true });
+    });
+  </script>
 </body>
 
 </html>
