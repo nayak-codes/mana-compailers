@@ -2,13 +2,24 @@
 <html lang="en">
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-85HHBBBPWN"></script>
+  <!-- Google Analytics - loaded after page is interactive -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-85HHBBBPWN');
+    // Load GA script lazily after page interaction
+    function loadGA() {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-85HHBBBPWN';
+      document.head.appendChild(s);
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadGA, { timeout: 3000 });
+    } else {
+      setTimeout(loadGA, 2000);
+    }
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -232,9 +243,23 @@
 }
   </script>
 
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028247458903242"
-    crossorigin="anonymous"></script>
+  <!-- Google AdSense - Lazy Loaded to prevent blocking page load -->
+  <script>
+    function loadAdSense() {
+      if (window.adsenseLoaded) return;
+      window.adsenseLoaded = true;
+      var s = document.createElement('script');
+      s.async = true;
+      s.crossOrigin = 'anonymous';
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028247458903242';
+      document.head.appendChild(s);
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadAdSense, { timeout: 3500 });
+    } else {
+      setTimeout(loadAdSense, 2500);
+    }
+  </script>
 
   <!-- Loading screen styles (inline for instant paint) -->
   <style>

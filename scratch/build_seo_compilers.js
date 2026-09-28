@@ -353,8 +353,23 @@ function generateHTML(lang) {
   ${JSON.stringify(faqSchema, null, 2)}
   </script>
 
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028247458903242" crossorigin="anonymous"></script>
+  <!-- Google AdSense - Lazy Loaded to prevent blocking page load -->
+  <script>
+    function loadAdSense() {
+      if (window.adsenseLoaded) return;
+      window.adsenseLoaded = true;
+      var s = document.createElement('script');
+      s.async = true;
+      s.crossOrigin = 'anonymous';
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028247458903242';
+      document.head.appendChild(s);
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadAdSense, { timeout: 3500 });
+    } else {
+      setTimeout(loadAdSense, 2500);
+    }
+  </script>
 </head>
 <body>
   <!-- Pre-rendered Static Content for SEO & Search Engine Crawlers -->
