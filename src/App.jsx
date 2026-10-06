@@ -1780,46 +1780,7 @@ export default function App() {
                   {!isMobile && (
                     <>
                       <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
-                      <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
                       <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
-                      {/* Divider */}
-                      <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
-                      <button
-                        id="toolbar-share-btn"
-                        onClick={openShareCode}
-                        style={{
-                          background: 'rgba(63,185,80,0.12)',
-                          color: '#3fb950',
-                          border: '1px solid rgba(63,185,80,0.45)',
-                          borderRadius: 8,
-                          padding: '6px 13px',
-                          fontSize: 13,
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          transition: 'all 0.18s',
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        📤 Share Code
-                      </button>
-                      <button
-                        id="toolbar-receive-btn"
-                        onClick={openReceiveCode}
-                        style={{
-                          background: 'rgba(88,166,255,0.12)',
-                          color: '#58a6ff',
-                          border: '1px solid rgba(88,166,255,0.45)',
-                          borderRadius: 8,
-                          padding: '6px 13px',
-                          fontSize: 13,
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          transition: 'all 0.18s',
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        📥 Receive Code
-                      </button>
                     </>
                   )}
                 </div>
@@ -2130,9 +2091,19 @@ export default function App() {
                   <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
                     🖥️ Terminal {activeFile?.name && <span style={{ fontSize: 11.5, color: 'var(--text2)', fontWeight: 500, fontFamily: 'var(--mono)' }}>({activeFile.name})</span>}
                   </span>
+
+                  {!isMobile && (
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0, marginLeft: 'auto' }}>
+                      <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>🧹 Clear Output</button>
+                      <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
+                      <button id="toolbar-share-btn" onClick={openShareCode} style={{ background: 'rgba(63,185,80,0.12)', color: '#3fb950', border: '1px solid rgba(63,185,80,0.45)', borderRadius: 8, padding: '6px 13px', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.18s', whiteSpace: 'nowrap' }}>📤 Share Code</button>
+                      <button id="toolbar-receive-btn" onClick={openReceiveCode} style={{ background: 'rgba(88,166,255,0.12)', color: '#58a6ff', border: '1px solid rgba(88,166,255,0.45)', borderRadius: 8, padding: '6px 13px', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.18s', whiteSpace: 'nowrap' }}>📥 Receive Code</button>
+                    </div>
+                  )}
+
                   {output && output.status !== 'running' && (
                     <span style={{
-                      marginLeft: 'auto', marginRight: 10, fontSize: 11, padding: '2px 10px', borderRadius: 999, fontWeight: 600,
+                      marginLeft: isMobile ? 'auto' : 10, marginRight: 10, fontSize: 11, padding: '2px 10px', borderRadius: 999, fontWeight: 600,
                       background: output.status === 'ok' ? '#1a3a25' : '#3d1a1a',
                       color: output.status === 'ok' ? 'var(--green)' : 'var(--red)'
                     }}>
@@ -2140,7 +2111,7 @@ export default function App() {
                     </span>
                   )}
                   {!isMobile && (
-                    <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: !output || output.status === 'running' ? 'auto' : 0 }}>
+                    <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: 10 }}>
                       {maximizedPanel === 'output' ? '🗗' : '⛶'}
                     </button>
                   )}
