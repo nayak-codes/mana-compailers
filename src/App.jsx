@@ -1725,55 +1725,7 @@ export default function App() {
                   {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
                 </button>
 
-                {/* Spacer to push action buttons to the right */}
-                <div style={{ flex: 1 }} />
 
-                {/* Right: Action Buttons */}
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0, marginLeft: 8 }}>
-                  <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
-                  <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
-                  <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
-                  {/* Divider */}
-                  <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
-                  <button
-                    id="toolbar-share-btn"
-                    onClick={openShareCode}
-                    style={{
-                      background: 'rgba(63,185,80,0.12)',
-                      color: '#3fb950',
-                      border: '1px solid rgba(63,185,80,0.45)',
-                      borderRadius: 8,
-                      padding: '6px 13px',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      transition: 'all 0.18s',
-                      whiteSpace: 'nowrap'
-                    }}
-                    title="Share your code instantly — auto-generates a direct link"
-                  >
-                    📤 Share Code
-                  </button>
-                  <button
-                    id="toolbar-receive-btn"
-                    onClick={openReceiveCode}
-                    style={{
-                      background: 'rgba(88,166,255,0.12)',
-                      color: '#58a6ff',
-                      border: '1px solid rgba(88,166,255,0.45)',
-                      borderRadius: 8,
-                      padding: '6px 13px',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      transition: 'all 0.18s',
-                      whiteSpace: 'nowrap'
-                    }}
-                    title="Enter a 4-digit PIN to receive shared code"
-                  >
-                    📥 Receive Code
-                  </button>
-                </div>
               </>
             )}
           </div>
@@ -1823,13 +1775,56 @@ export default function App() {
               overflow: 'hidden'
             }}>
               <div style={s.panelHead} className="compiler-panel-head">
-                <span style={{ fontSize: 13, fontWeight: 600 }}>📝 Editor</span>
+                {/* Left: Action Buttons (Moved from Toolbar) */}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0 }}>
+                  {!isMobile && (
+                    <>
+                      <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
+                      <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
+                      <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
+                      {/* Divider */}
+                      <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
+                      <button
+                        id="toolbar-share-btn"
+                        onClick={openShareCode}
+                        style={{
+                          background: 'rgba(63,185,80,0.12)',
+                          color: '#3fb950',
+                          border: '1px solid rgba(63,185,80,0.45)',
+                          borderRadius: 8,
+                          padding: '6px 13px',
+                          fontSize: 13,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.18s',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        📤 Share Code
+                      </button>
+                      <button
+                        id="toolbar-receive-btn"
+                        onClick={openReceiveCode}
+                        style={{
+                          background: 'rgba(88,166,255,0.12)',
+                          color: '#58a6ff',
+                          border: '1px solid rgba(88,166,255,0.45)',
+                          borderRadius: 8,
+                          padding: '6px 13px',
+                          fontSize: 13,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.18s',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        📥 Receive Code
+                      </button>
+                    </>
+                  )}
+                </div>
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 12, color: 'var(--text2)', fontFamily: 'var(--mono)' }}>
-                    {lang.id === 'html'
-                      ? (activeHtmlTab === 'html' ? '🌐 index.html' : activeHtmlTab === 'css' ? '🎨 styles.css' : '⚡ script.js')
-                      : `${lang.icon} ${activeFile?.name || lang.label}`}
-                  </span>
                   {!isMobile && (
                     <button 
                       id="tour-step-format"
@@ -1862,11 +1857,7 @@ export default function App() {
                   >
                     🧹 Clear Code
                   </button>
-                  {!isMobile && (
-                    <button onClick={() => toggleMaximize('editor')} style={s.panelBtn}>
-                      {maximizedPanel === 'editor' ? '🗗' : '⛶'}
-                    </button>
-                  )}
+
                 </div>
               </div>
 
