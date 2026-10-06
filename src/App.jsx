@@ -1662,8 +1662,8 @@ export default function App() {
           <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} lang={lang} onStartTour={() => setShowTour(true)} isMobile={isMobile} />
 
           {/* TOOLBAR */}
-          <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar" id="tour-step-run">
-            {isMobile ? (
+          <div style={{ ...s.toolbar, position: 'relative', display: isMobile ? undefined : 'none' }} className="compiler-toolbar" id="tour-step-run">
+            {isMobile && (
               <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 8 }}>
                 {/* Custom Language Dropdown */}
                 <LangDropdown
@@ -1694,39 +1694,6 @@ export default function App() {
                   {running ? '⏳' : '▶ Run'}
                 </button>
               </div>
-            ) : (
-              <>
-                {/* Left: Language Dropdown */}
-                <LangDropdown
-                  lang={lang}
-                  languages={LANGUAGES}
-                  onChange={changeLang}
-                  isMobile={false}
-                />
-
-                {/* ▶ Run Code button - immediately next to dropdown */}
-                <button 
-                  onClick={runCode} 
-                  onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
-                  disabled={running} 
-                  style={{
-                    ...s.btnRun,
-                    opacity: running ? 0.6 : 1,
-                    cursor: running ? 'not-allowed' : 'pointer',
-                    fontSize: 14,
-                    padding: '8px 22px',
-                    fontWeight: 700,
-                    borderRadius: 8,
-                    boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0,
-                  }}
-                >
-                  {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
-                </button>
-
-
-              </>
             )}
           </div>
 
@@ -1778,10 +1745,12 @@ export default function App() {
                 {/* Left: Action Buttons (Moved from Toolbar) */}
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0 }}>
                   {!isMobile && (
-                    <>
-                      <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
-                      <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
-                    </>
+                    <LangDropdown
+                      lang={lang}
+                      languages={LANGUAGES}
+                      onChange={changeLang}
+                      isMobile={false}
+                    />
                   )}
                 </div>
 
@@ -1818,6 +1787,28 @@ export default function App() {
                   >
                     🧹 Clear Code
                   </button>
+
+                  {!isMobile && (
+                    <button 
+                      onClick={runCode} 
+                      onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+                      disabled={running} 
+                      style={{
+                        ...s.btnRun,
+                        opacity: running ? 0.6 : 1,
+                        cursor: running ? 'not-allowed' : 'pointer',
+                        fontSize: 14,
+                        padding: '6px 18px',
+                        fontWeight: 700,
+                        borderRadius: 8,
+                        boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
+                    </button>
+                  )}
 
                 </div>
               </div>
