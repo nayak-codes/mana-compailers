@@ -796,6 +796,15 @@ function generateHTML(lang) {
       setTimeout(loadAdSense, 2500);
     }
   </script>
+  <!-- Ezoic Privacy & Header Scripts -->
+  <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+  <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+  <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+  <script>
+    window.ezstandalone = window.ezstandalone || {};
+    ezstandalone.cmd = ezstandalone.cmd || [];
+  </script>
+  <script src="//ezoicanalytics.com/analytics.js"></script>
 </head>
 <body>
   <!-- Pre-rendered Static Content for SEO & Search Engine Crawlers -->

@@ -31,6 +31,16 @@ function getHeader(title, description, canonical) {
   <script src="/pages-common.js"></script>
   <script src="/site-nav.js" defer></script>
   <script src="/site-footer.js" defer></script>
+
+  <!-- Ezoic Privacy & Header Scripts -->
+  <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+  <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+  <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+  <script>
+    window.ezstandalone = window.ezstandalone || {};
+    ezstandalone.cmd = ezstandalone.cmd || [];
+  </script>
+  <script src="//ezoicanalytics.com/analytics.js"></script>
 </head>
 <body>
   <main class="page-content">`;
