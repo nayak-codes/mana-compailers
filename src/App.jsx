@@ -1663,44 +1663,29 @@ export default function App() {
           {/* TOOLBAR */}
           <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar" id="tour-step-run">
             {isMobile ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 6 }}>
-                {/* Horizontal Language Logos Bar */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, overflowX: 'auto', flex: 1, paddingRight: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                  {LANGUAGES.map(l => {
-                    const isActive = l.id === lang.id;
-                    return (
-                      <button
-                        key={l.id}
-                        onClick={() => changeLang(l.id)}
-                        title={l.label}
-                        aria-label={l.label}
-                        style={{
-                          width: 35,
-                          height: 35,
-                          background: isActive ? 'rgba(35, 134, 54, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                          border: isActive ? '2px solid #3fb950' : '1px solid rgba(255, 255, 255, 0.12)',
-                          borderRadius: 8,
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'all 0.18s ease',
-                          flexShrink: 0,
-                          boxShadow: isActive ? '0 2px 8px rgba(46, 160, 67, 0.4)' : 'none',
-                          transform: isActive ? 'scale(1.04)' : 'scale(1)'
-                        }}
-                      >
-                        {l.logo ? (
-                          <img src={l.logo} alt={l.label} style={{ width: 20, height: 20, objectFit: 'contain' }} />
-                        ) : (
-                          <span style={{ fontSize: 18 }}>{l.icon}</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 5 }}>
+                {/* Horizontal Language Logos Bar — fills left, right pushes to Run */}
+                {LANGUAGES.map((l, i) => {
+                  const isActive = l.id === lang.id;
+                  return (
+                    <button
+                      key={l.id}
+                      onClick={() => changeLang(l.id)}
+                      title={l.label}
+                      aria-label={l.label}
+                      className={`lang-logo-btn mobile-size${isActive ? ' active' : ''}`}
+                      style={{ animationDelay: `${i * 35}ms` }}
+                    >
+                      {l.logo ? (
+                        <img src={l.logo} alt={l.label} />
+                      ) : (
+                        <span style={{ fontSize: 17, lineHeight: 1 }}>{l.icon}</span>
+                      )}
+                    </button>
+                  );
+                })}
 
-                {/* Center: ▶ Run Code Button */}
+                {/* ▶ Run Code Button */}
                 <button 
                   onClick={runCode} 
                   onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
@@ -1710,60 +1695,23 @@ export default function App() {
                     opacity: running ? 0.6 : 1,
                     cursor: running ? 'not-allowed' : 'pointer',
                     fontSize: 13,
-                    padding: '6px 14px',
+                    padding: '6px 12px',
                     fontWeight: 700,
                     borderRadius: 8,
                     boxShadow: '0 3px 10px rgba(46, 160, 67, 0.4)',
                     whiteSpace: 'nowrap',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    marginLeft: 'auto'
                   }}
                 >
-                  {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
+                  {running ? '⏳' : '▶ Run'}
                 </button>
-
-                {/* Right: Quick Action Buttons */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-                  <button
-                    id="toolbar-share-btn-mobile"
-                    onClick={openShareCode}
-                    style={{
-                      background: 'rgba(63,185,80,0.12)',
-                      color: '#3fb950',
-                      border: '1px solid rgba(63,185,80,0.45)',
-                      borderRadius: 8,
-                      padding: '5px 8px',
-                      fontSize: 12,
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                    title="Share Code"
-                  >
-                    📤
-                  </button>
-                  <button
-                    id="toolbar-receive-btn-mobile"
-                    onClick={openReceiveCode}
-                    style={{
-                      background: 'rgba(88,166,255,0.12)',
-                      color: '#58a6ff',
-                      border: '1px solid rgba(88,166,255,0.45)',
-                      borderRadius: 8,
-                      padding: '5px 8px',
-                      fontSize: 12,
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                    title="Receive Code"
-                  >
-                    📥
-                  </button>
-                </div>
               </div>
             ) : (
               <>
-                {/* Left: Horizontal Language Logos Bar (Dropdown Removed) */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflowX: 'auto', flex: 1, paddingRight: 12, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                  {LANGUAGES.map(l => {
+                {/* Left: Horizontal Language Logos Bar — evenly spaced to Run button */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 7, flex: 1, overflowX: 'hidden' }}>
+                  {LANGUAGES.map((l, i) => {
                     const isActive = l.id === lang.id;
                     return (
                       <button
@@ -1771,26 +1719,13 @@ export default function App() {
                         onClick={() => changeLang(l.id)}
                         title={l.label}
                         aria-label={l.label}
-                        style={{
-                          width: 38,
-                          height: 38,
-                          background: isActive ? 'rgba(35, 134, 54, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                          border: isActive ? '2px solid #3fb950' : '1px solid rgba(255, 255, 255, 0.12)',
-                          borderRadius: 9,
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'all 0.18s ease',
-                          flexShrink: 0,
-                          boxShadow: isActive ? '0 3px 12px rgba(46, 160, 67, 0.45)' : 'none',
-                          transform: isActive ? 'scale(1.05)' : 'scale(1)'
-                        }}
+                        className={`lang-logo-btn${isActive ? ' active' : ''}`}
+                        style={{ animationDelay: `${i * 40}ms` }}
                       >
                         {l.logo ? (
-                          <img src={l.logo} alt={l.label} style={{ width: 22, height: 22, objectFit: 'contain' }} />
+                          <img src={l.logo} alt={l.label} />
                         ) : (
-                          <span style={{ fontSize: 20 }}>{l.icon}</span>
+                          <span style={{ fontSize: 20, lineHeight: 1 }}>{l.icon}</span>
                         )}
                       </button>
                     );
