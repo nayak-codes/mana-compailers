@@ -1657,7 +1657,7 @@ export default function App() {
       {view === 'home' ? (
         <HomePage selectLanguage={selectLanguage} theme={siteTheme} setTheme={setSiteTheme} isMobile={isMobile} />
       ) : (
-        <div className="compiler-view-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+        <div className="compiler-view-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflowY: 'auto', overflowX: 'hidden' }}>
 
           <CompilerHeader theme={compilerTheme} setTheme={setCompilerTheme} goHome={goHome} lang={lang} onStartTour={() => setShowTour(true)} isMobile={isMobile} />
 
@@ -2321,7 +2321,7 @@ const s = {
   panelBtn: { background: 'transparent', color: 'var(--text2)', border: '1px solid transparent', borderRadius: 6, padding: '4px 8px', fontSize: 13, cursor: 'pointer' },
   btnShare: { background: 'linear-gradient(135deg, #1a3a5c, #1f6feb)', color: '#58a6ff', border: '1px solid rgba(88,166,255,0.4)', borderRadius: 8, padding: '6px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' },
   btnRun: { background: '#238636', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 20px', fontSize: 14, fontWeight: 600 },
-  main: { display: 'flex', flex: 1, minHeight: '520px', minWidth: 0, overflow: 'hidden' },
+  main: { display: 'flex', flex: 1, minHeight: 'calc(100vh - 65px)', flexShrink: 0, minWidth: 0, overflow: 'hidden' },
   editorPanel: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 },
   panelHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
   resizer: { width: 10, cursor: 'col-resize', background: 'transparent', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' },
