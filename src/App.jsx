@@ -1806,7 +1806,7 @@ export default function App() {
                         flexShrink: 0,
                       }}
                     >
-                      {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
+                      {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run'}
                     </button>
                   )}
 
