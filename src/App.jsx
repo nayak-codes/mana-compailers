@@ -6,6 +6,7 @@ import CompilerHeader from './components/CompilerHeader'
 import WebPreview from './components/WebPreview'
 import TerminalLoader from './components/TerminalLoader'
 import OnboardingTour from './components/OnboardingTour'
+import LangDropdown from './components/LangDropdown'
 
 
 
@@ -1664,41 +1665,13 @@ export default function App() {
           <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar" id="tour-step-run">
             {isMobile ? (
               <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 8 }}>
-                {/* Language Logo Pill Bar — dropdown-style container */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  flex: 1,
-                  overflowX: 'auto',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                  background: 'var(--bg3)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 10,
-                  padding: '4px 6px',
-                  minWidth: 0,
-                }}>
-                  {LANGUAGES.map((l, i) => {
-                    const isActive = l.id === lang.id;
-                    return (
-                      <button
-                        key={l.id}
-                        onClick={() => changeLang(l.id)}
-                        title={l.label}
-                        aria-label={l.label}
-                        className={`lang-logo-btn mobile-size${isActive ? ' active' : ''}`}
-                        style={{ animationDelay: `${i * 35}ms`, flexShrink: 0 }}
-                      >
-                        {l.logo ? (
-                          <img src={l.logo} alt={l.label} />
-                        ) : (
-                          <span style={{ fontSize: 17, lineHeight: 1 }}>{l.icon}</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+                {/* Custom Language Dropdown */}
+                <LangDropdown
+                  lang={lang}
+                  languages={LANGUAGES}
+                  onChange={changeLang}
+                  isMobile={true}
+                />
 
                 {/* ▶ Run Code Button */}
                 <button 
@@ -1716,6 +1689,7 @@ export default function App() {
                     boxShadow: '0 3px 10px rgba(46, 160, 67, 0.4)',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
+                    marginLeft: 'auto',
                   }}
                 >
                   {running ? '⏳' : '▶ Run'}
@@ -1723,42 +1697,13 @@ export default function App() {
               </div>
             ) : (
               <>
-                {/* Left: Language Logo Pill Bar — dropdown-style unified container */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  flex: 1,
-                  overflowX: 'auto',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                  background: 'var(--bg3)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 12,
-                  padding: '5px 8px',
-                  minWidth: 0,
-                  marginRight: 12,
-                }}>
-                  {LANGUAGES.map((l, i) => {
-                    const isActive = l.id === lang.id;
-                    return (
-                      <button
-                        key={l.id}
-                        onClick={() => changeLang(l.id)}
-                        title={l.label}
-                        aria-label={l.label}
-                        className={`lang-logo-btn${isActive ? ' active' : ''}`}
-                        style={{ animationDelay: `${i * 40}ms`, flexShrink: 0 }}
-                      >
-                        {l.logo ? (
-                          <img src={l.logo} alt={l.label} />
-                        ) : (
-                          <span style={{ fontSize: 20, lineHeight: 1 }}>{l.icon}</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+                {/* Left: Custom Language Dropdown */}
+                <LangDropdown
+                  lang={lang}
+                  languages={LANGUAGES}
+                  onChange={changeLang}
+                  isMobile={false}
+                />
 
                 {/* Center-Right: ▶ Run Code button */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
