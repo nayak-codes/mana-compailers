@@ -2092,15 +2092,6 @@ export default function App() {
                     </div>
                   )}
 
-                  {output && output.status !== 'running' && (
-                    <span style={{
-                      marginLeft: isMobile ? 'auto' : 10, marginRight: 10, fontSize: 11, padding: '2px 10px', borderRadius: 999, fontWeight: 600,
-                      background: output.status === 'ok' ? '#1a3a25' : '#3d1a1a',
-                      color: output.status === 'ok' ? 'var(--green)' : 'var(--red)'
-                    }}>
-                      {output.label}
-                    </span>
-                  )}
                   {!isMobile && (
                     <button onClick={() => toggleMaximize('output')} style={{ ...s.panelBtn, marginLeft: 10 }}>
                       {maximizedPanel === 'output' ? '🗗' : '⛶'}
@@ -2330,7 +2321,7 @@ const s = {
   panelBtn: { background: 'transparent', color: 'var(--text2)', border: '1px solid transparent', borderRadius: 6, padding: '4px 8px', fontSize: 13, cursor: 'pointer' },
   btnShare: { background: 'linear-gradient(135deg, #1a3a5c, #1f6feb)', color: '#58a6ff', border: '1px solid rgba(88,166,255,0.4)', borderRadius: 8, padding: '6px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' },
   btnRun: { background: '#238636', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 20px', fontSize: 14, fontWeight: 600 },
-  main: { display: 'flex', height: 'calc(100vh - 140px)', minHeight: '520px', flexShrink: 0 },
+  main: { display: 'flex', flex: 1, minHeight: '520px', minWidth: 0, overflow: 'hidden' },
   editorPanel: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 },
   panelHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', flexShrink: 0 },
   resizer: { width: 10, cursor: 'col-resize', background: 'transparent', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' },
