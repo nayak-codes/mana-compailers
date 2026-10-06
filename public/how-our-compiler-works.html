@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Our Compiler Works — Architecture & Execution Engine</title>
+  <meta name="description" content="Discover the technical architecture behind Our Compiler. Learn how code goes from Monaco editor to sandboxed Docker containers and returns execution results in under 2 seconds." />
+  <meta name="author" content="Our Compiler — Balanju Solutions" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="canonical" href="https://www.ourcompiler.com/how-our-compiler-works.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.ourcompiler.com/how-our-compiler-works.html" />
+  <meta property="og:title" content="How Our Compiler Works — Architecture & Execution Engine" />
+  <meta property="og:description" content="Discover the technical architecture behind Our Compiler. Learn how code goes from Monaco editor to sandboxed Docker containers and returns execution results in under 2 seconds." />
+  <meta property="og:image" content="https://www.ourcompiler.com/logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/pages.css" />
+
+  <script src="/pages-common.js"></script>
+  <script src="/site-nav.js" defer></script>
+  <script src="/site-footer.js" defer></script>
+</head>
+<body>
+  <main class="page-content">
+    <div class="breadcrumb">
+      <a href="/">Home</a> <span>/</span> <span style="color: var(--text);">How Our Compiler Works</span>
+    </div>
+
+    <section class="hero-section">
+      <span class="page-hero-badge">⚙️ TECHNICAL ARCHITECTURE &amp; ENGINE</span>
+      <h1>How Our Compiler Works</h1>
+      <p class="subtitle">Understand the inner workings of Our Compiler. From client-side Monaco Editor interactions to cloud container sandboxing and sub-2-second execution output delivery.</p>
+    </section>
+
+    <!-- ARCHITECTURE FLOWCHART / CARDS -->
+    <section class="full-card">
+      <h2><span>🔄</span> Code Execution Flowchart</h2>
+      <p style="color: var(--text2); line-height: 1.7; margin-bottom: 24px;">When you click <strong>Run Code</strong> in Our Compiler, your source program passes through five distinct technical layers to ensure fast, isolated, and safe execution:</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+        <div style="background: var(--bg2); border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
+          <div style="color: var(--blue); font-weight: 800; font-size: 14px; font-family: var(--mono); margin-bottom: 6px;">STEP 1: FRONTEND CAPTURE</div>
+          <h3 style="font-size: 17px; margin-bottom: 8px;">Monaco Editor</h3>
+          <p style="color: var(--text2); font-size: 14px; line-height: 1.6;">The editor captures source code, language configuration, active tab state, and interactive custom inputs (stdin).</p>
+        </div>
+
+        <div style="background: var(--bg2); border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
+          <div style="color: var(--blue); font-weight: 800; font-size: 14px; font-family: var(--mono); margin-bottom: 6px;">STEP 2: ENCRYPTED DISPATCH</div>
+          <h3 style="font-size: 17px; margin-bottom: 8px;">TLS 1.3 Payload</h3>
+          <p style="color: var(--text2); font-size: 14px; line-height: 1.6;">The code payload is securely serialized into JSON and sent over an encrypted HTTPS connection to execution API endpoints.</p>
+        </div>
+
+        <div style="background: var(--bg2); border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
+          <div style="color: var(--blue); font-weight: 800; font-size: 14px; font-family: var(--mono); margin-bottom: 6px;">STEP 3: SANDBOX CONTAINER</div>
+          <h3 style="font-size: 17px; margin-bottom: 8px;">Docker Isolation</h3>
+          <p style="color: var(--text2); font-size: 14px; line-height: 1.6;">An ephemeral Docker container initializes with strict resource constraints (512MB RAM, 10s CPU limit, no root access).</p>
+        </div>
+
+        <div style="background: var(--bg2); border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
+          <div style="color: var(--blue); font-weight: 800; font-size: 14px; font-family: var(--mono); margin-bottom: 6px;">STEP 4: COMPILATION &amp; EXECUTION</div>
+          <h3 style="font-size: 17px; margin-bottom: 8px;">Native Toolchain</h3>
+          <p style="color: var(--text2); font-size: 14px; line-height: 1.6;">The runtime toolchain (e.g. GCC 11, JDK 17, Python 3.10) compiles and executes the program against stdin buffers.</p>
+        </div>
+
+        <div style="background: var(--bg2); border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
+          <div style="color: var(--blue); font-weight: 800; font-size: 14px; font-family: var(--mono); margin-bottom: 6px;">STEP 5: STREAMED OUTPUT</div>
+          <h3 style="font-size: 17px; margin-bottom: 8px;">Console Display</h3>
+          <p style="color: var(--text2); font-size: 14px; line-height: 1.6;">Standard output (stdout), compilation errors (stderr), and execution status (exit code 0/1) are returned to the user console.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAILED DEEP DIVE SECTIONS -->
+    <div class="grid-section">
+      <div class="card">
+        <h2><span>🛡️</span> Container Security &amp; Isolation</h2>
+        <p>Security is the highest priority when building a public online compiler. Allowing arbitrary user code execution means preventing malicious system calls, infinite loops, and resource exhaustion. Our Compiler handles security via:</p>
+        <ul style="color: var(--text2); line-height: 1.7; margin-left: 20px; font-size: 14px;">
+          <li><strong>CPU &amp; Time Limits:</strong> Programs execution is limited to 10 seconds. Infinite loops are terminated automatically.</li>
+          <li><strong>Memory Constraints:</strong> Each sandbox container is capped at 512MB RAM.</li>
+          <li><strong>Disabled Network Access:</strong> Execution containers operate in offline network modes to prevent unauthorized outbound requests.</li>
+          <li><strong>Ephemeral Disk Storage:</strong> Created temporary files are destroyed immediately after execution finishes.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><span>⚡</span> High-Performance Latency Optimization</h2>
+        <p>To deliver execution times under 2 seconds, Our Compiler utilizes pre-warmed container pools. Instead of spinning up a fresh container on every request, idle container runtimes stand ready to compile code instantly, eliminating cold-start delays.</p>
+        <p style="color: var(--text2); font-size: 14px; line-height: 1.65; margin-top: 12px;">Whether you write Python script, C++ template code, or Java object-oriented classes, your output appears almost instantly.</p>
+      </div>
+    </div>
+
+    <!-- CALL TO ACTION -->
+    <section class="page-cta-banner">
+      <h2>Test the Engine Yourself</h2>
+      <p>Select any language and experience sub-2-second execution in your browser today.</p>
+      <a href="/online-python-compiler.html" class="page-cta-btn">▶ Open Python Compiler</a>
+    </section>
+  </main>
+  <footer class="footer" id="site-footer"></footer>
+</body>
+</html>
