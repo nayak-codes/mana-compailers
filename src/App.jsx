@@ -1785,7 +1785,7 @@ export default function App() {
                     style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
                     title={lang.id === 'html' ? `Clear current ${activeHtmlTab === 'html' ? 'HTML' : activeHtmlTab === 'css' ? 'CSS' : 'JS'} file` : 'Clear editor code'}
                   >
-                    🧹 Clear Code
+                    🧹
                   </button>
 
                   {!isMobile && (
@@ -2085,7 +2085,7 @@ export default function App() {
 
                   {!isMobile && (
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0, marginLeft: 'auto' }}>
-                      <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>🧹 Clear Output</button>
+                      <button onClick={() => { setOutput(null); setInputs([]); }} style={{ ...s.panelBtn, padding: '4px 8px', border: '1px solid var(--border)', borderRadius: '4px' }} title="Clear Output">🧹</button>
                       <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
                       <button id="toolbar-share-btn" onClick={openShareCode} style={{ background: 'rgba(63,185,80,0.12)', color: '#3fb950', border: '1px solid rgba(63,185,80,0.45)', borderRadius: 8, padding: '6px 13px', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.18s', whiteSpace: 'nowrap' }}>📤 Share Code</button>
                       <button id="toolbar-receive-btn" onClick={openReceiveCode} style={{ background: 'rgba(88,166,255,0.12)', color: '#58a6ff', border: '1px solid rgba(88,166,255,0.45)', borderRadius: 8, padding: '6px 13px', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.18s', whiteSpace: 'nowrap' }}>📥 Receive Code</button>
