@@ -35,9 +35,10 @@ export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartT
             type="button"
             onClick={onStartTour}
             className="tour-guide-trigger-btn"
-            title="Interactive Feature Walkthrough"
+            title="Guided Tour"
+            aria-label="Start Guided Tour"
           >
-            💡 Guided Tour
+            💡
           </button>
         )}
         <button
@@ -45,8 +46,9 @@ export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartT
           onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
           className="compiler-header-theme"
           aria-label="Toggle theme"
+          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
-          {theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+          {theme === 'dark' ? '🌙' : '☀️'}
         </button>
       </div>
     </header>

@@ -1673,7 +1673,7 @@ export default function App() {
                   isMobile={true}
                 />
 
-                {/* ▶ Run Code Button */}
+                {/* ▶ Run Code Button - right next to dropdown */}
                 <button 
                   onClick={runCode} 
                   onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
@@ -1689,7 +1689,6 @@ export default function App() {
                     boxShadow: '0 3px 10px rgba(46, 160, 67, 0.4)',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
-                    marginLeft: 'auto',
                   }}
                 >
                   {running ? '⏳' : '▶ Run'}
@@ -1697,7 +1696,7 @@ export default function App() {
               </div>
             ) : (
               <>
-                {/* Left: Custom Language Dropdown */}
+                {/* Left: Language Dropdown */}
                 <LangDropdown
                   lang={lang}
                   languages={LANGUAGES}
@@ -1705,27 +1704,29 @@ export default function App() {
                   isMobile={false}
                 />
 
-                {/* Center-Right: ▶ Run Code button */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                  <button 
-                    onClick={runCode} 
-                    onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
-                    disabled={running} 
-                    style={{
-                      ...s.btnRun,
-                      opacity: running ? 0.6 : 1,
-                      cursor: running ? 'not-allowed' : 'pointer',
-                      fontSize: 14,
-                      padding: '8px 22px',
-                      fontWeight: 700,
-                      borderRadius: 8,
-                      boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh Preview' : '▶ Run Code'}
-                  </button>
-                </div>
+                {/* ▶ Run Code button - immediately next to dropdown */}
+                <button 
+                  onClick={runCode} 
+                  onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
+                  disabled={running} 
+                  style={{
+                    ...s.btnRun,
+                    opacity: running ? 0.6 : 1,
+                    cursor: running ? 'not-allowed' : 'pointer',
+                    fontSize: 14,
+                    padding: '8px 22px',
+                    fontWeight: 700,
+                    borderRadius: 8,
+                    boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                  }}
+                >
+                  {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
+                </button>
+
+                {/* Spacer to push action buttons to the right */}
+                <div style={{ flex: 1 }} />
 
                 {/* Right: Action Buttons */}
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0, marginLeft: 8 }}>
