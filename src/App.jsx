@@ -1664,16 +1664,41 @@ export default function App() {
           <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar" id="tour-step-run">
             {isMobile ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 6 }}>
-                {/* Left: Language Selector */}
-                <select 
-                  value={lang.id} 
-                  onChange={e => changeLang(e.target.value)} 
-                  style={{ ...s.select, fontSize: 13, padding: '6px 8px', maxWidth: '145px', textOverflow: 'ellipsis' }}
-                >
-                  {LANGUAGES.map(l => (
-                    <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
-                  ))}
-                </select>
+                {/* Horizontal Language Logos Bar */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, overflowX: 'auto', flex: 1, paddingRight: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  {LANGUAGES.map(l => {
+                    const isActive = l.id === lang.id;
+                    return (
+                      <button
+                        key={l.id}
+                        onClick={() => changeLang(l.id)}
+                        title={l.label}
+                        aria-label={l.label}
+                        style={{
+                          width: 35,
+                          height: 35,
+                          background: isActive ? 'rgba(35, 134, 54, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                          border: isActive ? '2px solid #3fb950' : '1px solid rgba(255, 255, 255, 0.12)',
+                          borderRadius: 8,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.18s ease',
+                          flexShrink: 0,
+                          boxShadow: isActive ? '0 2px 8px rgba(46, 160, 67, 0.4)' : 'none',
+                          transform: isActive ? 'scale(1.04)' : 'scale(1)'
+                        }}
+                      >
+                        {l.logo ? (
+                          <img src={l.logo} alt={l.label} style={{ width: 20, height: 20, objectFit: 'contain' }} />
+                        ) : (
+                          <span style={{ fontSize: 18 }}>{l.icon}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
 
                 {/* Center: ▶ Run Code Button */}
                 <button 
@@ -1689,14 +1714,15 @@ export default function App() {
                     fontWeight: 700,
                     borderRadius: 8,
                     boxShadow: '0 3px 10px rgba(46, 160, 67, 0.4)',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
                   }}
                 >
                   {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run Code'}
                 </button>
 
                 {/* Right: Quick Action Buttons */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                   <button
                     id="toolbar-share-btn-mobile"
                     onClick={openShareCode}
@@ -1735,14 +1761,8 @@ export default function App() {
               </div>
             ) : (
               <>
-                {/* Left: Language Dropdown + Horizontal Language Pills Bar */}
+                {/* Left: Horizontal Language Logos Bar (Dropdown Removed) */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflowX: 'auto', flex: 1, paddingRight: 12, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                  <select value={lang.id} onChange={e => changeLang(e.target.value)} style={{ ...s.select, minWidth: 125, flexShrink: 0 }}>
-                    {LANGUAGES.map(l => (
-                      <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
-                    ))}
-                  </select>
-                  <div style={{ width: 1, height: 22, background: 'var(--border)', flexShrink: 0, margin: '0 4px' }} />
                   {LANGUAGES.map(l => {
                     const isActive = l.id === lang.id;
                     return (
@@ -1752,10 +1772,11 @@ export default function App() {
                         title={l.label}
                         aria-label={l.label}
                         style={{
-                          background: isActive ? 'rgba(35, 134, 54, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+                          width: 38,
+                          height: 38,
+                          background: isActive ? 'rgba(35, 134, 54, 0.25)' : 'rgba(255, 255, 255, 0.05)',
                           border: isActive ? '2px solid #3fb950' : '1px solid rgba(255, 255, 255, 0.12)',
-                          borderRadius: 10,
-                          padding: '6px 12px',
+                          borderRadius: 9,
                           cursor: 'pointer',
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -1767,7 +1788,7 @@ export default function App() {
                         }}
                       >
                         {l.logo ? (
-                          <img src={l.logo} alt={l.label} style={{ width: 24, height: 24, objectFit: 'contain' }} />
+                          <img src={l.logo} alt={l.label} style={{ width: 22, height: 22, objectFit: 'contain' }} />
                         ) : (
                           <span style={{ fontSize: 20 }}>{l.icon}</span>
                         )}
