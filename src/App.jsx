@@ -1767,7 +1767,11 @@ export default function App() {
                           boxShadow: isActive ? '0 2px 8px rgba(46, 160, 67, 0.35)' : 'none'
                         }}
                       >
-                        <span>{l.icon}</span>
+                        {l.logo ? (
+                          <img src={l.logo} alt={l.label} style={{ width: 16, height: 16, objectFit: 'contain' }} />
+                        ) : (
+                          <span>{l.icon}</span>
+                        )}
                         <span>{l.label}</span>
                       </button>
                     );

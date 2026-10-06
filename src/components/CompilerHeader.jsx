@@ -1,18 +1,19 @@
 export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartTour, isMobile }) {
   let headerName = 'Our Compiler'
+  let logoSrc = '/logo-nav.png'
   if (lang) {
-    if (lang.id === 'python3') headerName = 'Python Compiler'
-    else if (lang.id === 'java') headerName = 'Java Compiler'
-    else if (lang.id === 'c') headerName = 'C Compiler'
-    else if (lang.id === 'cpp17') headerName = 'C++ Compiler'
-    else if (lang.id === 'nodejs') headerName = 'JavaScript Compiler'
-    else if (lang.id === 'html') headerName = 'HTML Editor'
-    else if (lang.id === 'csharp') headerName = 'C# Compiler'
-    else if (lang.id === 'go') headerName = 'Go Compiler'
-    else if (lang.id === 'rust') headerName = 'Rust Compiler'
-    else if (lang.id === 'php') headerName = 'PHP Compiler'
-    else if (lang.id === 'ruby') headerName = 'Ruby Compiler'
-    else headerName = `${lang.label || lang.name} Compiler`
+    if (lang.id === 'python3') { headerName = 'Python Compiler'; logoSrc = '/logos/python.svg'; }
+    else if (lang.id === 'java') { headerName = 'Java Compiler'; logoSrc = '/logos/java.svg'; }
+    else if (lang.id === 'c') { headerName = 'C Compiler'; logoSrc = '/logos/c.svg'; }
+    else if (lang.id === 'cpp17') { headerName = 'C++ Compiler'; logoSrc = '/logos/cpp.svg'; }
+    else if (lang.id === 'nodejs') { headerName = 'JavaScript Compiler'; logoSrc = '/logos/javascript.svg'; }
+    else if (lang.id === 'html') { headerName = 'HTML Editor'; logoSrc = '/logos/html.svg'; }
+    else if (lang.id === 'csharp') { headerName = 'C# Compiler'; logoSrc = '/logos/csharp.svg'; }
+    else if (lang.id === 'go') { headerName = 'Go Compiler'; logoSrc = '/logos/go.svg'; }
+    else if (lang.id === 'rust') { headerName = 'Rust Compiler'; logoSrc = '/logos/rust.svg'; }
+    else if (lang.id === 'php') { headerName = 'PHP Compiler'; logoSrc = '/logos/php.svg'; }
+    else if (lang.id === 'ruby') { headerName = 'Ruby Compiler'; logoSrc = '/logos/ruby.svg'; }
+    else { headerName = `${lang.label || lang.name} Compiler`; if (lang.logo) logoSrc = lang.logo; }
   }
 
   return (
@@ -25,7 +26,7 @@ export default function CompilerHeader({ theme, setTheme, goHome, lang, onStartT
         tabIndex={0}
         aria-label="Go to homepage"
       >
-        <img src="/logo-nav.png" alt="Compiler logo" />
+        <img src={logoSrc} alt={`${headerName} logo`} style={{ height: 26, width: 26, objectFit: 'contain' }} />
         <span className="compiler-header-name">{headerName}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
