@@ -1735,24 +1735,47 @@ export default function App() {
               </div>
             ) : (
               <>
-                {/* Left: Language Selector */}
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <select value={lang.id} onChange={e => changeLang(e.target.value)} style={s.select}>
+                {/* Left: Language Dropdown + Horizontal Language Pills Bar */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflowX: 'auto', flex: 1, paddingRight: 12, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <select value={lang.id} onChange={e => changeLang(e.target.value)} style={{ ...s.select, minWidth: 125, flexShrink: 0 }}>
                     {LANGUAGES.map(l => (
                       <option key={l.id} value={l.id}>{l.icon} {l.label}</option>
                     ))}
                   </select>
+                  <div style={{ width: 1, height: 22, background: 'var(--border)', flexShrink: 0, margin: '0 4px' }} />
+                  {LANGUAGES.map(l => {
+                    const isActive = l.id === lang.id;
+                    return (
+                      <button
+                        key={l.id}
+                        onClick={() => changeLang(l.id)}
+                        style={{
+                          background: isActive ? 'rgba(35, 134, 54, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                          color: isActive ? '#3fb950' : 'var(--text2)',
+                          border: isActive ? '1px solid #3fb950' : '1px solid var(--border)',
+                          borderRadius: 8,
+                          padding: '5px 11px',
+                          fontSize: 12.5,
+                          fontWeight: isActive ? 700 : 500,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 5,
+                          transition: 'all 0.15s ease',
+                          flexShrink: 0,
+                          boxShadow: isActive ? '0 2px 8px rgba(46, 160, 67, 0.35)' : 'none'
+                        }}
+                      >
+                        <span>{l.icon}</span>
+                        <span>{l.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {/* Exact Middle: ▶ Run Code button */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+                {/* Center-Right: ▶ Run Code button */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   <button 
                     onClick={runCode} 
                     onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
@@ -1762,10 +1785,11 @@ export default function App() {
                       opacity: running ? 0.6 : 1,
                       cursor: running ? 'not-allowed' : 'pointer',
                       fontSize: 14,
-                      padding: '8px 24px',
+                      padding: '8px 22px',
                       fontWeight: 700,
                       borderRadius: 8,
-                      boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)'
+                      boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)',
+                      whiteSpace: 'nowrap'
                     }}
                   >
                     {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh Preview' : '▶ Run Code'}
@@ -1773,7 +1797,7 @@ export default function App() {
                 </div>
 
                 {/* Right: Action Buttons */}
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginLeft: 'auto' }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0, marginLeft: 8 }}>
                   <button onClick={goHome} style={s.btnHome}>🏠 Home</button>
                   <button onClick={() => { setOutput(null); setInputs([]); }} style={s.btnGhost}>Clear Output</button>
                   <button onClick={() => setSwap(x => !x)} style={s.btnSwap}>{swap ? '⇤ Editor Right' : 'Editor Left ⇥'}</button>
