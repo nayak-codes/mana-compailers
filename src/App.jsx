@@ -1663,27 +1663,42 @@ export default function App() {
           {/* TOOLBAR */}
           <div style={{ ...s.toolbar, position: 'relative' }} className="compiler-toolbar" id="tour-step-run">
             {isMobile ? (
-              <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 5 }}>
-                {/* Horizontal Language Logos Bar — fills left, right pushes to Run */}
-                {LANGUAGES.map((l, i) => {
-                  const isActive = l.id === lang.id;
-                  return (
-                    <button
-                      key={l.id}
-                      onClick={() => changeLang(l.id)}
-                      title={l.label}
-                      aria-label={l.label}
-                      className={`lang-logo-btn mobile-size${isActive ? ' active' : ''}`}
-                      style={{ animationDelay: `${i * 35}ms` }}
-                    >
-                      {l.logo ? (
-                        <img src={l.logo} alt={l.label} />
-                      ) : (
-                        <span style={{ fontSize: 17, lineHeight: 1 }}>{l.icon}</span>
-                      )}
-                    </button>
-                  );
-                })}
+              <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 8 }}>
+                {/* Language Logo Pill Bar — dropdown-style container */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  flex: 1,
+                  overflowX: 'auto',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  background: 'var(--bg3)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 10,
+                  padding: '4px 6px',
+                  minWidth: 0,
+                }}>
+                  {LANGUAGES.map((l, i) => {
+                    const isActive = l.id === lang.id;
+                    return (
+                      <button
+                        key={l.id}
+                        onClick={() => changeLang(l.id)}
+                        title={l.label}
+                        aria-label={l.label}
+                        className={`lang-logo-btn mobile-size${isActive ? ' active' : ''}`}
+                        style={{ animationDelay: `${i * 35}ms`, flexShrink: 0 }}
+                      >
+                        {l.logo ? (
+                          <img src={l.logo} alt={l.label} />
+                        ) : (
+                          <span style={{ fontSize: 17, lineHeight: 1 }}>{l.icon}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
 
                 {/* ▶ Run Code Button */}
                 <button 
@@ -1695,13 +1710,12 @@ export default function App() {
                     opacity: running ? 0.6 : 1,
                     cursor: running ? 'not-allowed' : 'pointer',
                     fontSize: 13,
-                    padding: '6px 12px',
+                    padding: '7px 14px',
                     fontWeight: 700,
                     borderRadius: 8,
                     boxShadow: '0 3px 10px rgba(46, 160, 67, 0.4)',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
-                    marginLeft: 'auto'
                   }}
                 >
                   {running ? '⏳' : '▶ Run'}
@@ -1709,8 +1723,22 @@ export default function App() {
               </div>
             ) : (
               <>
-                {/* Left: Horizontal Language Logos Bar — evenly spaced to Run button */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 12, flex: 1, overflowX: 'hidden' }}>
+                {/* Left: Language Logo Pill Bar — dropdown-style unified container */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  flex: 1,
+                  overflowX: 'auto',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  background: 'var(--bg3)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 12,
+                  padding: '5px 8px',
+                  minWidth: 0,
+                  marginRight: 12,
+                }}>
                   {LANGUAGES.map((l, i) => {
                     const isActive = l.id === lang.id;
                     return (
@@ -1720,7 +1748,7 @@ export default function App() {
                         title={l.label}
                         aria-label={l.label}
                         className={`lang-logo-btn${isActive ? ' active' : ''}`}
-                        style={{ animationDelay: `${i * 40}ms` }}
+                        style={{ animationDelay: `${i * 40}ms`, flexShrink: 0 }}
                       >
                         {l.logo ? (
                           <img src={l.logo} alt={l.label} />
