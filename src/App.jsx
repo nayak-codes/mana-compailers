@@ -1710,7 +1710,7 @@ export default function App() {
             ) : (
               <>
                 {/* Left: Horizontal Language Logos Bar — evenly spaced to Run button */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 7, flex: 1, overflowX: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 12, flex: 1, overflowX: 'hidden' }}>
                   {LANGUAGES.map((l, i) => {
                     const isActive = l.id === lang.id;
                     return (
