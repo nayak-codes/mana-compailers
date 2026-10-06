@@ -1749,30 +1749,28 @@ export default function App() {
                       <button
                         key={l.id}
                         onClick={() => changeLang(l.id)}
+                        title={l.label}
+                        aria-label={l.label}
                         style={{
-                          background: isActive ? 'rgba(35, 134, 54, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                          color: isActive ? '#3fb950' : 'var(--text2)',
-                          border: isActive ? '1px solid #3fb950' : '1px solid var(--border)',
-                          borderRadius: 8,
-                          padding: '5px 11px',
-                          fontSize: 12.5,
-                          fontWeight: isActive ? 700 : 500,
+                          background: isActive ? 'rgba(35, 134, 54, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+                          border: isActive ? '2px solid #3fb950' : '1px solid rgba(255, 255, 255, 0.12)',
+                          borderRadius: 10,
+                          padding: '6px 12px',
                           cursor: 'pointer',
-                          whiteSpace: 'nowrap',
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: 5,
-                          transition: 'all 0.15s ease',
+                          justifyContent: 'center',
+                          transition: 'all 0.18s ease',
                           flexShrink: 0,
-                          boxShadow: isActive ? '0 2px 8px rgba(46, 160, 67, 0.35)' : 'none'
+                          boxShadow: isActive ? '0 3px 12px rgba(46, 160, 67, 0.45)' : 'none',
+                          transform: isActive ? 'scale(1.05)' : 'scale(1)'
                         }}
                       >
                         {l.logo ? (
-                          <img src={l.logo} alt={l.label} style={{ width: 16, height: 16, objectFit: 'contain' }} />
+                          <img src={l.logo} alt={l.label} style={{ width: 24, height: 24, objectFit: 'contain' }} />
                         ) : (
-                          <span>{l.icon}</span>
+                          <span style={{ fontSize: 20 }}>{l.icon}</span>
                         )}
-                        <span>{l.label}</span>
                       </button>
                     );
                   })}
