@@ -2156,16 +2156,7 @@ export default function App() {
                     {!output && !running && <div style={s.ph}>Click ▶ Run Code to see output...</div>}
                     {output && output.status !== 'running' && (
                       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        {(() => {
-                          const studentAnalysis = output.text ? analyzeStudentError(output.text, currentCode, lang.id) : null
-                          return studentAnalysis ? (
-                            <StudentErrorCard
-                              analysis={studentAnalysis}
-                              isCollapsed={hideErrorHint}
-                              onToggleCollapse={toggleHideErrorHint}
-                            />
-                          ) : null
-                        })()}
+
                         <div style={{
                           ...s.outText,
                           color: 'var(--green)',
