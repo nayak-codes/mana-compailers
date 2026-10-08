@@ -19,49 +19,19 @@
 
   var TUTORIAL_GROUPS = [
     {
-      title: 'Core Languages',
+      title: 'Free Tutorials',
       items: [
         { name: 'Python', url: '/blog-python.html' },
         { name: 'Java', url: '/blog-java.html' },
-        { name: 'JavaScript', url: '/blog-javascript.html' },
+        { name: 'HTML / CSS / JS', url: '/blog-html.html' },
         { name: 'C', url: '/blog-c.html' },
         { name: 'C++', url: '/blog-cpp.html' },
+        { name: 'JavaScript', url: '/blog-javascript.html' },
         { name: 'C#', url: '/blog-csharp.html' },
         { name: 'Go', url: '/blog-go.html' },
         { name: 'Rust', url: '/blog-rust.html' },
         { name: 'PHP', url: '/blog-php.html' },
         { name: 'Ruby', url: '/blog-ruby.html' }
-      ]
-    },
-    {
-      title: 'Web & Frameworks',
-      items: [
-        { name: 'HTML', url: '/blog-html.html' },
-        { name: 'CSS', url: '/blog-css.html' },
-        { name: 'React', url: '/blog-react.html' },
-        { name: 'Angular', url: '/blog-angular.html' },
-        { name: 'Vue.js', url: '/blog-vue.html' },
-        { name: 'Next.js', url: '/blog-nextjs.html' },
-        { name: 'Node.js', url: '/blog-nodejs.html' },
-        { name: 'Express.js', url: '/blog-express.html' },
-        { name: 'Django', url: '/blog-django.html' },
-        { name: 'Flask', url: '/blog-flask.html' },
-        { name: 'Spring Boot', url: '/blog-springboot.html' }
-      ]
-    },
-    {
-      title: 'Databases & APIs',
-      items: [
-        { name: 'MySQL', url: '/blog-mysql.html' },
-        { name: 'MongoDB', url: '/blog-mongodb.html' },
-        { name: 'REST API', url: '/blog-rest-api.html' },
-        { name: 'GraphQL', url: '/blog-graphql.html' }
-      ]
-    },
-    {
-      title: 'Version Control',
-      items: [
-        { name: 'Git & GitHub', url: '/blog-git.html' }
       ]
     }
   ];
