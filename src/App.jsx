@@ -1426,6 +1426,38 @@ export default function App() {
     }
   }, [editingFileId])
 
+  // Intercept global Ctrl+S / Cmd+S to save code file instead of HTML page
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        
+        let codeToSave = ''
+        let fileName = ''
+
+        if (lang.id === 'html') {
+          codeToSave = htmlFiles[activeHtmlTab] || ''
+          fileName = activeHtmlTab === 'html' ? 'index.html' : activeHtmlTab === 'css' ? 'styles.css' : 'script.js'
+        } else {
+          const p = programs.find(p => p.id === activeFileId)
+          codeToSave = p ? p.code : ''
+          fileName = p ? p.name : `main.txt`
+        }
+
+        const blob = new Blob([codeToSave], { type: 'text/plain' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = fileName
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [lang, htmlFiles, activeHtmlTab, programs, activeFileId])
+
   const handleFormatCode = useCallback(() => {
     if (editorRef.current) {
       try {
@@ -2018,6 +2050,9 @@ export default function App() {
                       editorRef.current = editor
                       document.fonts.ready.then(() => {
                         monaco.editor.remeasureFonts();
+                      });
+                      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+                        window.dispatchEvent(new KeyboardEvent('keydown', { key: 's', ctrlKey: true }));
                       });
                     }}
                     options={{
