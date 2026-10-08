@@ -1426,37 +1426,40 @@ export default function App() {
     }
   }, [editingFileId])
 
+  const saveCurrentCodeToLocal = useCallback(() => {
+    let codeToSave = ''
+    let fileName = ''
+
+    if (lang.id === 'html') {
+      codeToSave = htmlFiles[activeHtmlTab] || ''
+      fileName = activeHtmlTab === 'html' ? 'index.html' : activeHtmlTab === 'css' ? 'styles.css' : 'script.js'
+    } else {
+      const p = programs.find(p => p.id === activeFileId)
+      codeToSave = p ? p.code : ''
+      fileName = p ? p.name : `main.txt`
+    }
+
+    const blob = new Blob([codeToSave], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = fileName
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [lang, htmlFiles, activeHtmlTab, programs, activeFileId])
+
   // Intercept global Ctrl+S / Cmd+S to save code file instead of HTML page
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault()
-        
-        let codeToSave = ''
-        let fileName = ''
-
-        if (lang.id === 'html') {
-          codeToSave = htmlFiles[activeHtmlTab] || ''
-          fileName = activeHtmlTab === 'html' ? 'index.html' : activeHtmlTab === 'css' ? 'styles.css' : 'script.js'
-        } else {
-          const p = programs.find(p => p.id === activeFileId)
-          codeToSave = p ? p.code : ''
-          fileName = p ? p.name : `main.txt`
-        }
-
-        const blob = new Blob([codeToSave], { type: 'text/plain' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = fileName
-        a.click()
-        URL.revokeObjectURL(url)
+        saveCurrentCodeToLocal()
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [lang, htmlFiles, activeHtmlTab, programs, activeFileId])
+  }, [saveCurrentCodeToLocal])
 
   const handleFormatCode = useCallback(() => {
     if (editorRef.current) {
@@ -1788,14 +1791,23 @@ export default function App() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   {!isMobile && (
-                    <button 
-                      id="tour-step-format"
-                      onClick={handleFormatCode}
-                      style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px', background: 'var(--bg3)', cursor: 'pointer', color: 'var(--text)', fontWeight: 600 }}
-                      title="Format code (add proper spacing & operator formatting)"
-                    >
-                      ✨ Format Code
-                    </button>
+                    <>
+                      <button 
+                        onClick={saveCurrentCodeToLocal}
+                        style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
+                        title="Save code locally (Ctrl+S)"
+                      >
+                        💾
+                      </button>
+                      <button 
+                        id="tour-step-format"
+                        onClick={handleFormatCode}
+                        style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
+                        title="Format code (add proper spacing & operator formatting)"
+                      >
+                        ✨
+                      </button>
+                    </>
                   )}
                   <button 
                     onClick={() => { 
