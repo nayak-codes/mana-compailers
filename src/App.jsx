@@ -2556,45 +2556,23 @@ const LANG_CARDS = [
   { id: 'ruby',     label: 'Ruby Compiler',          accentColor: '#E82D09', bgGlow: 'rgba(232,45,9,0.18)' },
 ]
 
-// ── Complete Categorized Tutorials Catalog (24 Guides) ──────────────────
+// ── Tutorials Catalog (11 Compiler Languages) ──────────────────
 const TUTORIAL_GUIDES = [
-  // Core Languages (10)
-  { path: '/blog-python.html',     id: 'python3',  title: 'Python Tutorial',     category: 'core', color: '#3776AB', badge: 'Popular' },
-  { path: '/blog-java.html',       id: 'java',     title: 'Java Tutorial',       category: 'core', color: '#f0a500' },
-  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript Tutorial', category: 'core', color: '#F0DB4F', badge: 'Hot' },
-  { path: '/blog-c.html',          id: 'c',        title: 'C Tutorial',          category: 'core', color: '#659AD3' },
-  { path: '/blog-cpp.html',        id: 'cpp17',    title: 'C++ Tutorial',        category: 'core', color: '#9C033A' },
-  { path: '/blog-csharp.html',     id: 'csharp',   title: 'C# Tutorial',         category: 'core', color: '#9B4F96' },
-  { path: '/blog-go.html',         id: 'go',       title: 'Go Tutorial',         category: 'core', color: '#00ACD7' },
-  { path: '/blog-rust.html',       id: 'rust',     title: 'Rust Tutorial',       category: 'core', color: '#CE412B' },
-  { path: '/blog-php.html',        id: 'php',      title: 'PHP Tutorial',        category: 'core', color: '#8892BF' },
-  { path: '/blog-ruby.html',       id: 'ruby',     title: 'Ruby Tutorial',       category: 'core', color: '#E82D09' },
-
-  // Web & Frameworks (10)
-  { path: '/blog-html.html',       id: 'html',     title: 'HTML5 Tutorial',      category: 'web',  color: '#E44D26' },
-  { path: '/blog-css.html',        id: 'css',      title: 'CSS3 Tutorial',       category: 'web',  color: '#1572B6' },
-  { path: '/blog-react.html',      id: 'react',    title: 'React Tutorial',      category: 'web',  color: '#61DAFB', badge: 'Popular' },
-  { path: '/blog-nextjs.html',     id: 'nextjs',   title: 'Next.js Tutorial',    category: 'web',  color: '#000000', badge: 'New' },
-  { path: '/blog-angular.html',    id: 'angular',  title: 'Angular Tutorial',    category: 'web',  color: '#E23237' },
-  { path: '/blog-vue.html',        id: 'vue',      title: 'Vue.js Tutorial',     category: 'web',  color: '#42B883' },
-  { path: '/blog-nodejs.html',     id: 'nodejs',   title: 'Node.js Tutorial',    category: 'web',  color: '#68A063' },
-  { path: '/blog-express.html',    id: 'express',  title: 'Express.js Tutorial', category: 'web',  color: '#666666' },
-  { path: '/blog-django.html',     id: 'django',   title: 'Django Tutorial',     category: 'web',  color: '#092E20' },
-  { path: '/blog-flask.html',      id: 'flask',    title: 'Flask Tutorial',      category: 'web',  color: '#444444' },
-
-  // Databases & Tools (4)
-  { path: '/blog-mysql.html',      id: 'mysql',    title: 'MySQL Tutorial',      category: 'db',   color: '#00758F' },
-  { path: '/blog-mongodb.html',    id: 'mongodb',  title: 'MongoDB Tutorial',    category: 'db',   color: '#47A248' },
-  { path: '/blog-graphql.html',    id: 'graphql',  title: 'GraphQL Tutorial',    category: 'db',   color: '#E10098' },
-  { path: '/blog-git.html',        id: 'git',      title: 'Git & GitHub Guide',  category: 'tools',color: '#F05032' },
+  { path: '/blog-python.html',     id: 'python3',  title: 'Python Tutorial',     color: '#3776AB', badge: 'Popular' },
+  { path: '/blog-java.html',       id: 'java',     title: 'Java Tutorial',       color: '#f0a500' },
+  { path: '/blog-html.html',       id: 'html',     title: 'HTML/CSS/JS Tutorial',color: '#E44D26', badge: 'Live Preview' },
+  { path: '/blog-c.html',          id: 'c',        title: 'C Tutorial',          color: '#659AD3' },
+  { path: '/blog-cpp.html',        id: 'cpp17',    title: 'C++ Tutorial',        color: '#9C033A' },
+  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript Tutorial', color: '#F0DB4F', badge: 'Hot' },
+  { path: '/blog-csharp.html',     id: 'csharp',   title: 'C# Tutorial',         color: '#9B4F96' },
+  { path: '/blog-go.html',         id: 'go',       title: 'Go Tutorial',         color: '#00ACD7' },
+  { path: '/blog-rust.html',       id: 'rust',     title: 'Rust Tutorial',       color: '#CE412B' },
+  { path: '/blog-php.html',        id: 'php',      title: 'PHP Tutorial',        color: '#8892BF' },
+  { path: '/blog-ruby.html',       id: 'ruby',     title: 'Ruby Tutorial',       color: '#E82D09' },
 ]
 
 function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
-  const [tutCategory, setTutCategory] = useState('all')
 
-  const displayedTutorials = tutCategory === 'all'
-    ? TUTORIAL_GUIDES
-    : TUTORIAL_GUIDES.filter(g => tutCategory === 'db_tools' ? (g.category === 'db' || g.category === 'tools') : g.category === tutCategory)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)' }}>
@@ -2714,59 +2692,21 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
           </div>
         </section>
 
-        {/* ── TUTORIALS GRID WITH CATEGORY FILTER TABS ── */}
-        {false && (
+        {/* ── TUTORIALS GRID ── */}
         <section style={{ marginBottom: 80 }}>
-          <div style={{ marginBottom: 20, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             <div>
               <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#3fb950', textTransform: 'uppercase', marginBottom: 8 }}>📚 Learn Programming</p>
               <h2 style={{ fontSize: 'clamp(24px,4vw,36px)', fontWeight: 800, color: 'var(--text)', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
                 Free Step-by-Step Tutorials
               </h2>
               <p style={{ color: 'var(--text2)', fontSize: 15, margin: 0, maxWidth: 580 }}>
-                Comprehensive structured lessons with code snippets, diagrams, and live runnable examples.
+                Comprehensive structured lessons with code snippets, diagrams, and live runnable examples for all 11 compiler languages.
               </p>
             </div>
             <a href="/blog.html" style={{ fontSize: 13.5, fontWeight: 700, color: '#58a6ff', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
               View all tutorials →
             </a>
-          </div>
-
-          {/* Interactive Category Filter Pills */}
-          <div style={{
-            display: 'flex',
-            gap: 10,
-            marginBottom: 24,
-            overflowX: 'auto',
-            paddingBottom: 4,
-            flexWrap: 'wrap',
-          }}>
-            {[
-              { key: 'all', label: `⭐ All Tutorials (${TUTORIAL_GUIDES.length})` },
-              { key: 'core', label: `💻 Core Languages (10)` },
-              { key: 'web', label: `🌐 Web & Frameworks (10)` },
-              { key: 'db_tools', label: `🗄️ Databases & Tools (4)` },
-            ].map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setTutCategory(tab.key)}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: 999,
-                  fontSize: 13.5,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  transition: 'all 0.18s ease',
-                  borderColor: tutCategory === tab.key ? '#3fb950' : 'var(--border)',
-                  background: tutCategory === tab.key ? 'rgba(63,185,80,0.12)' : 'var(--bg2)',
-                  color: tutCategory === tab.key ? '#3fb950' : 'var(--text2)',
-                  boxShadow: tutCategory === tab.key ? '0 2px 8px rgba(63,185,80,0.2)' : 'none',
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
           </div>
 
           {/* Dynamic Tutorials Grid */}
@@ -2775,7 +2715,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
             gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
             gap: 16,
           }}>
-            {displayedTutorials.map(guide => (
+            {TUTORIAL_GUIDES.map(guide => (
               <a
                 key={guide.path}
                 href={guide.path}
@@ -2879,7 +2819,6 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
             ))}
           </div>
         </section>
-        )}
 
         {/* ── FEATURES GRID ── */}
         <section style={{ marginBottom: 96 }}>

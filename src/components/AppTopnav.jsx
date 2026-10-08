@@ -14,53 +14,18 @@ const COMPILER_LANGS = [
   { name: 'Ruby', url: '/online-ruby-compiler.html', blog: '/blog-ruby.html' },
 ]
 
-const TUTORIAL_GROUPS = [
-  {
-    title: 'Core Languages',
-    items: [
-      { name: 'Python', url: '/blog-python.html' },
-      { name: 'Java', url: '/blog-java.html' },
-      { name: 'JavaScript', url: '/blog-javascript.html' },
-      { name: 'C', url: '/blog-c.html' },
-      { name: 'C++', url: '/blog-cpp.html' },
-      { name: 'C#', url: '/blog-csharp.html' },
-      { name: 'Go', url: '/blog-go.html' },
-      { name: 'Rust', url: '/blog-rust.html' },
-      { name: 'PHP', url: '/blog-php.html' },
-      { name: 'Ruby', url: '/blog-ruby.html' },
-    ],
-  },
-  {
-    title: 'Web & Frameworks',
-    items: [
-      { name: 'HTML', url: '/blog-html.html' },
-      { name: 'CSS', url: '/blog-css.html' },
-      { name: 'React', url: '/blog-react.html' },
-      { name: 'Angular', url: '/blog-angular.html' },
-      { name: 'Vue.js', url: '/blog-vue.html' },
-      { name: 'Next.js', url: '/blog-nextjs.html' },
-      { name: 'Node.js', url: '/blog-nodejs.html' },
-      { name: 'Express.js', url: '/blog-express.html' },
-      { name: 'Django', url: '/blog-django.html' },
-      { name: 'Flask', url: '/blog-flask.html' },
-      { name: 'Spring Boot', url: '/blog-spring-boot.html' },
-    ],
-  },
-  {
-    title: 'Databases & APIs',
-    items: [
-      { name: 'MySQL', url: '/blog-mysql.html' },
-      { name: 'MongoDB', url: '/blog-mongodb.html' },
-      { name: 'REST API', url: '/blog-rest-api.html' },
-      { name: 'GraphQL', url: '/blog-graphql.html' },
-    ],
-  },
-  {
-    title: 'Version Control',
-    items: [
-      { name: 'Git & GitHub', url: '/blog-git.html' },
-    ],
-  },
+const TUTORIAL_LANGS = [
+  { name: 'Python', url: '/blog-python.html' },
+  { name: 'Java', url: '/blog-java.html' },
+  { name: 'HTML / CSS / JS', url: '/blog-html.html' },
+  { name: 'C', url: '/blog-c.html' },
+  { name: 'C++', url: '/blog-cpp.html' },
+  { name: 'JavaScript', url: '/blog-javascript.html' },
+  { name: 'C#', url: '/blog-csharp.html' },
+  { name: 'Go', url: '/blog-go.html' },
+  { name: 'Rust', url: '/blog-rust.html' },
+  { name: 'PHP', url: '/blog-php.html' },
+  { name: 'Ruby', url: '/blog-ruby.html' },
 ]
 
 const STATIC_LINKS = [
@@ -152,7 +117,33 @@ export default function AppTopnav({ theme, setTheme, goHome, view, lang }) {
             </div>
           </div>
 
-
+          <div className={`app-topnav-dropdown${openMenu === 'tutorials' ? ' open' : ''}`}>
+            <button
+              type="button"
+              className={`app-topnav-link app-topnav-trigger${view === 'tutorials' ? ' active' : ''}`}
+              onClick={() => toggleMenu('tutorials')}
+              aria-expanded={openMenu === 'tutorials'}
+            >
+              Tutorials
+              <svg className="app-topnav-chevron" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+                <path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+            <div className="app-topnav-panel app-topnav-panel--compiler">
+              <p className="app-topnav-panel-title">Free Tutorials</p>
+              <div className="app-topnav-compiler-grid">
+                {TUTORIAL_LANGS.map(item => (
+                  <a
+                    key={item.name}
+                    href={item.url}
+                    className={`app-topnav-compiler-item${activeLangSlug && item.url.includes(activeLangSlug) ? ' active' : ''}`}
+                  >
+                    {item.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
 
           {STATIC_LINKS.filter(l => l.name !== 'Home').map(link => (
             <a key={link.name} href={link.href} className="app-topnav-link">
@@ -188,6 +179,15 @@ export default function AppTopnav({ theme, setTheme, goHome, view, lang }) {
           <p className="app-topnav-mobile-heading">Online Compiler</p>
           <div className="app-topnav-mobile-grid">
             {COMPILER_LANGS.map(item => (
+              <a key={item.name} href={item.url} className="app-topnav-mobile-chip" onClick={() => setMobileOpen(false)}>
+                {item.name}
+              </a>
+            ))}
+          </div>
+
+          <p className="app-topnav-mobile-heading">Tutorials</p>
+          <div className="app-topnav-mobile-grid">
+            {TUTORIAL_LANGS.map(item => (
               <a key={item.name} href={item.url} className="app-topnav-mobile-chip" onClick={() => setMobileOpen(false)}>
                 {item.name}
               </a>
