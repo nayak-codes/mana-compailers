@@ -152,36 +152,7 @@ export default function AppTopnav({ theme, setTheme, goHome, view, lang }) {
             </div>
           </div>
 
-          <div className={`app-topnav-dropdown${openMenu === 'tutorials' ? ' open' : ''}`}>
-            <button
-              type="button"
-              className="app-topnav-link app-topnav-trigger"
-              onClick={() => toggleMenu('tutorials')}
-              aria-expanded={openMenu === 'tutorials'}
-            >
-              Tutorials
-              <svg className="app-topnav-chevron" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
-                <path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </button>
-            <div className="app-topnav-panel app-topnav-panel--mega">
-              <div className="app-topnav-mega-grid">
-                {TUTORIAL_GROUPS.map(group => (
-                  <div key={group.title} className="app-topnav-mega-col">
-                    <p className="app-topnav-mega-title">{group.title}</p>
-                    {group.items.map(item => (
-                      <a key={item.name} href={item.url} className="app-topnav-mega-link">
-                        {item.name}
-                      </a>
-                    ))}
-                  </div>
-                ))}
-              </div>
-              <a href="/blog.html" className="app-topnav-mega-footer">
-                View All Tutorials →
-              </a>
-            </div>
-          </div>
+
 
           {STATIC_LINKS.filter(l => l.name !== 'Home').map(link => (
             <a key={link.name} href={link.href} className="app-topnav-link">
@@ -222,7 +193,7 @@ export default function AppTopnav({ theme, setTheme, goHome, view, lang }) {
               </a>
             ))}
           </div>
-          <a href="/blog.html" className="app-topnav-mobile-link" onClick={() => setMobileOpen(false)}>All Tutorials</a>
+
           {STATIC_LINKS.filter(l => l.name !== 'Home').map(link => (
             <a key={link.name} href={link.href} className="app-topnav-mobile-link" onClick={() => setMobileOpen(false)}>
               {link.name}

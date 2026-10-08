@@ -2715,6 +2715,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
         </section>
 
         {/* ── TUTORIALS GRID WITH CATEGORY FILTER TABS ── */}
+        {false && (
         <section style={{ marginBottom: 80 }}>
           <div style={{ marginBottom: 20, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             <div>
@@ -2878,6 +2879,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
             ))}
           </div>
         </section>
+        )}
 
         {/* ── FEATURES GRID ── */}
         <section style={{ marginBottom: 96 }}>
