@@ -843,64 +843,24 @@ function preprocessJavaCode(code) {
   return code;
 }
 
-// Paiza.io language ID mapping
-const PAIZA_LANG_MAP = {
-  java: 'java',
-  python3: 'python3',
-  c: 'c',
-  cpp17: 'cpp',
-  nodejs: 'javascript',
-  go: 'go',
-  ruby: 'ruby',
-  php: 'php',
-}
+// ── Own Render Backend URL (always direct) ────────────────────────────────
+const RENDER_BACKEND = 'https://mana-compailer-backend-docker.onrender.com'
 
-async function runViaFastRunner(langId, code, stdin) {
-  const paizaLang = PAIZA_LANG_MAP[langId]
-  if (!paizaLang) return null
+// Keep backend alive — ping status so we know if it's warm
+let _backendWarm = false
+function setBackendWarm(val) { _backendWarm = val }
+function isBackendWarm() { return _backendWarm }
+
+async function warmupBackend() {
   try {
-    const sourceCode = langId === 'java' ? preprocessJavaCode(code) : code
-    const createRes = await fetch('https://api.paiza.io/runners/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: paizaLang,
-        source_code: sourceCode,
-        input: stdin || '',
-        api_key: 'guest'
-      }),
-      signal: AbortSignal.timeout(12000)
+    const res = await fetch(`${RENDER_BACKEND}/`, {
+      signal: AbortSignal.timeout(8000)
     })
-    const createData = await createRes.json()
-    if (!createData || !createData.id) return null
-
-    const id = createData.id
-    let maxTries = 60
-    while (maxTries-- > 0) {
-      await new Promise(r => setTimeout(r, 100))
-      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`, {
-        signal: AbortSignal.timeout(5000)
-      })
-      const details = await detailsRes.json()
-      if (details.status === 'completed') {
-        if (details.build_stderr) {
-          return { error: details.build_stderr, output: details.stdout || '' }
-        }
-        return { output: details.stdout || '', error: details.stderr || null }
-      }
-    }
-  } catch (e) {
-    console.warn('[FastRunner] Exception, falling back to Render:', e?.message)
+    if (res.ok) setBackendWarm(true)
+  } catch (_) {
+    setBackendWarm(false)
   }
-  return null
 }
-
-async function runJavaFastRunner(code, stdin) {
-  return runViaFastRunner('java', code, stdin)
-}
-
-const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-const BACKEND_URL = isLocal ? 'http://localhost:3002' : ''
 
 // ── Multi-Language Code Formatter (Auto Beautify & Operator Spacing) ───────
 function formatCodeLine(line, langId) {
@@ -1510,13 +1470,15 @@ export default function App() {
     }
   }, [currentCode, lang, activeHtmlTab, htmlFiles, activeFileId])
 
-  // ⚡ Silent backend warmup — wakes Render Docker server in background on page load
+  // ⚡ Backend warmup on page load + every 10 minutes to prevent Render sleep
   useEffect(() => {
-    const renderUrl = 'https://mana-compailer-backend-docker.onrender.com'
-    // Ping Render backend to wake it from sleep (free tier sleeps after 15 min idle)
-    fetch(`${renderUrl}/`, { mode: 'no-cors' }).catch(() => {})
-    // Also ping via Vercel proxy
-    fetch('/api/run', { method: 'GET' }).catch(() => {})
+    // Immediate warmup on page load
+    warmupBackend()
+    // Keep alive every 10 minutes (Render sleeps after 15 min idle)
+    const keepAliveInterval = setInterval(() => {
+      warmupBackend()
+    }, 10 * 60 * 1000)
+    return () => clearInterval(keepAliveInterval)
   }, [])
 
   // Handle browser back button
@@ -1617,43 +1579,41 @@ export default function App() {
     try {
       let data = null
 
-      // ⚡ Step 1: Try Paiza.io fast runner for supported languages (bypasses Render cold start)
-      if (PAIZA_LANG_MAP[lang.id]) {
-        data = await runViaFastRunner(lang.id, codeToRun, inputToSend)
+      // ⚡ Use our own Render Docker backend directly
+      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      const apiUrl = isLocal
+        ? 'http://localhost:3002/api/run'
+        : `${RENDER_BACKEND}/api/run`
+
+      // If backend might be cold, show warming message first
+      if (!isBackendWarm() && !isLocal) {
+        setOutput({ status: 'running', text: '🔄 Server is starting up... please wait (this takes ~20s on first run)' })
       }
 
-      // ⚡ Step 2: If Paiza failed or lang not supported, try Render backend via Vercel proxy
-      if (!data) {
-        const primaryApi = BACKEND_URL ? `${BACKEND_URL}/api/run` : '/api/run'
-        try {
-          const controller = new AbortController()
-          const tid = setTimeout(() => controller.abort(), 25000)
-          const res = await fetch(primaryApi, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              language: lang.id,
-              code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
-              stdin: inputToSend || ''
-            }),
-            signal: controller.signal
-          })
-          clearTimeout(tid)
-          data = await res.json()
-        } catch (err) {
-          // Step 3: Direct Render fallback if proxy fails
-          const res = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              language: lang.id,
-              code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
-              stdin: inputToSend || ''
-            }),
-            signal: AbortSignal.timeout(30000)
-          })
-          data = await res.json()
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 55000)
+
+      try {
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            language: lang.id,
+            code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+            stdin: inputToSend || ''
+          }),
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        data = await res.json()
+        // Mark backend as warm after successful call
+        setBackendWarm(true)
+      } catch (fetchErr) {
+        clearTimeout(timeoutId)
+        if (fetchErr.name === 'AbortError') {
+          throw new Error('Server took too long to respond. Please try again — it should be warmed up now.')
         }
+        throw fetchErr
       }
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
 
