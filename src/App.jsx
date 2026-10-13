@@ -843,27 +843,44 @@ function preprocessJavaCode(code) {
   return code;
 }
 
-async function runJavaFastRunner(code, stdin) {
+// Paiza.io language ID mapping
+const PAIZA_LANG_MAP = {
+  java: 'java',
+  python3: 'python3',
+  c: 'c',
+  cpp17: 'cpp',
+  nodejs: 'javascript',
+  go: 'go',
+  ruby: 'ruby',
+  php: 'php',
+}
+
+async function runViaFastRunner(langId, code, stdin) {
+  const paizaLang = PAIZA_LANG_MAP[langId]
+  if (!paizaLang) return null
   try {
-    const processedCode = preprocessJavaCode(code)
+    const sourceCode = langId === 'java' ? preprocessJavaCode(code) : code
     const createRes = await fetch('https://api.paiza.io/runners/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        language: 'java',
-        source_code: processedCode,
+        language: paizaLang,
+        source_code: sourceCode,
         input: stdin || '',
         api_key: 'guest'
-      })
+      }),
+      signal: AbortSignal.timeout(12000)
     })
     const createData = await createRes.json()
     if (!createData || !createData.id) return null
 
     const id = createData.id
-    let maxTries = 50
+    let maxTries = 60
     while (maxTries-- > 0) {
       await new Promise(r => setTimeout(r, 100))
-      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`)
+      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`, {
+        signal: AbortSignal.timeout(5000)
+      })
       const details = await detailsRes.json()
       if (details.status === 'completed') {
         if (details.build_stderr) {
@@ -873,9 +890,13 @@ async function runJavaFastRunner(code, stdin) {
       }
     }
   } catch (e) {
-    console.warn('[Fast Java Runner] Exception, falling back:', e)
+    console.warn('[FastRunner] Exception, falling back to Render:', e?.message)
   }
   return null
+}
+
+async function runJavaFastRunner(code, stdin) {
+  return runViaFastRunner('java', code, stdin)
 }
 
 const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -1489,9 +1510,13 @@ export default function App() {
     }
   }, [currentCode, lang, activeHtmlTab, htmlFiles, activeFileId])
 
-  // ⚡ Silent backend warmup — wakes Render server in background on page load
+  // ⚡ Silent backend warmup — wakes Render Docker server in background on page load
   useEffect(() => {
-    fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})
+    const renderUrl = 'https://mana-compailer-backend-docker.onrender.com'
+    // Ping Render backend to wake it from sleep (free tier sleeps after 15 min idle)
+    fetch(`${renderUrl}/`, { mode: 'no-cors' }).catch(() => {})
+    // Also ping via Vercel proxy
+    fetch('/api/run', { method: 'GET' }).catch(() => {})
   }, [])
 
   // Handle browser back button
@@ -1592,14 +1617,17 @@ export default function App() {
     try {
       let data = null
 
-      // ⚡ Sub-2s Java Execution Strategy
-      if (lang.id === 'java') {
-        data = await runJavaFastRunner(codeToRun, inputToSend)
+      // ⚡ Step 1: Try Paiza.io fast runner for supported languages (bypasses Render cold start)
+      if (PAIZA_LANG_MAP[lang.id]) {
+        data = await runViaFastRunner(lang.id, codeToRun, inputToSend)
       }
 
+      // ⚡ Step 2: If Paiza failed or lang not supported, try Render backend via Vercel proxy
       if (!data) {
         const primaryApi = BACKEND_URL ? `${BACKEND_URL}/api/run` : '/api/run'
         try {
+          const controller = new AbortController()
+          const tid = setTimeout(() => controller.abort(), 25000)
           const res = await fetch(primaryApi, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1607,10 +1635,13 @@ export default function App() {
               language: lang.id,
               code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
               stdin: inputToSend || ''
-            })
+            }),
+            signal: controller.signal
           })
+          clearTimeout(tid)
           data = await res.json()
         } catch (err) {
+          // Step 3: Direct Render fallback if proxy fails
           const res = await fetch('https://mana-compailer-backend-docker.onrender.com/api/run', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1618,7 +1649,8 @@ export default function App() {
               language: lang.id,
               code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
               stdin: inputToSend || ''
-            })
+            }),
+            signal: AbortSignal.timeout(30000)
           })
           data = await res.json()
         }
