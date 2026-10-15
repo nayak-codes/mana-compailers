@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linked Lists (Singly) - Basics (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో Data Structures (డేటా స్ట్రక్చర్స్) ప్రపంచంలోకి అడుగుపెడదాం! Array కి లిమిట్ ఉంటుంది, కానీ అన్-లిమిటెడ్ గా డేటా స్టోర్ చేసే Linked List అంటే ఏంటి? Nodes (నోడ్స్) ఎలా తయారుచేయాలి? ఒక ట్రైన్ లాగా దాన్ని ఎలా కనెక్ట్ చేయాలో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c tutorial, linked lists (singly) - basics (తెలుగులో), setjmp longjmp c, variable arguments c, pthreads c, linked lists c, insert delete linked list" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/51-c-linked-lists-singly-creation-traversal.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 17: Advanced Concepts -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Advanced Concepts</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/48-c-error-handling-setjmp-longjmp.html">48. Error Handling (setjmp, longjmp)</a>
+        <a href="/blog-c/49-c-variable-arguments-stdarg-h.html">49. Variable Arguments (stdarg.h)</a>
+        <a href="/blog-c/50-c-multi-threading-pthreads-basics.html">50. Multi-threading in C (pthreads)</a>
+      </div>
+
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html" class="active">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html">55. Queue Implementation</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 51: Linked Lists (Singly) - Basics (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Linked Lists (Singly) - Basics (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 51</span>
+      <span class="badge">📂 Phase 18: Data Structures - 1</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Arrays vs Linked Lists · Nodes (Data & Next) · Linked List Creation · Traversal (Printing)</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఇంతవరకు మనం చాలా కాన్సెప్ట్స్ నేర్చుకున్నాం, కానీ ఇప్పుడు <strong>Data Structures (డేటా స్ట్రక్చర్స్)</strong> అనే అసలైన ప్రోగ్రామింగ్ ప్రపంచంలోకి అడుగుపెడుతున్నాం! మామూలుగా ఒక అర్రే (Array) వాడితే దాని సైజు ముందే ఫిక్స్ చేయాలి, దాన్ని పెంచడం కష్టం. ఆ ప్రాబ్లమ్ కి సొల్యూషన్ ఏంటంటే, ఎప్పుడు డేటా వస్తే అప్పుడు ఆన్ ది స్పాట్ లో ఒక బాక్స్ తయారుచేసి, దాన్ని పాత బాక్స్ కి లింక్ చేయడం! దీన్నే <strong>Linked List (లింక్డ్ లిస్ట్)</strong> అంటారు. ఇది అచ్చం ట్రైన్ డబ్బాల్లా పనిచేస్తుంది. ఒక డబ్బా ఇంకో డబ్బాకి చైన్ తో కనెక్ట్ అయ్యి ఉంటుంది. దాన్ని C లో డైనమిక్ మెమరీ (malloc) తో ఎలా సృష్టిస్తారో ఈరోజు నేర్చుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> Array వర్సెస్ Linked List (తేడా ఏంటి?)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>Array:</strong> మీ దగ్గర ఒక పెద్ద బెంచ్ ఉంది. అందరూ పక్కపక్కనే (Contiguous memory) కూర్చోవాలి. మధ్యలో ఎవడైనా కొత్తవాడు రావాలంటే, మిగతా అందరూ పక్కకి జరగాలి (Shift). ఇది చాలా టైమ్ వేస్ట్!
+      </p>
+      <p class="text-prose">
+        <strong>Linked List:</strong> ఒక థియేటర్ లో ఎవరికి ఎక్కడ ఖాళీ దొరికితే అక్కడ కూర్చుంటారు (Random memory). కానీ మొదటివాడి చేతిలో రెండో వాడి అడ్రస్ స్లిప్ ఉంటుంది, రెండో వాడి చేతిలో మూడో వాడి అడ్రస్ ఉంటుంది. ఇలా ఒకరి తర్వాత ఒకరు కనెక్ట్ అవుతారు!
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🚂 రియల్ లైఫ్ స్టోరీ: ట్రైన్ డబ్బాలు (Nodes)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          లింక్డ్ లిస్ట్ లో ప్రతి బాక్స్ ని <strong>Node (నోడ్)</strong> అంటారు. ఒక ట్రైన్ డబ్బాలో ఏముంటాయి? ప్యాసింజర్స్ కూర్చునే సీట్స్ (Data), మరియు వెనక డబ్బాకి కనెక్ట్ చేసే ఇనుప చైన్ (Pointer).<br><br>
+          C లో ఒక స్ట్రక్చర్ రాసి అందులో ఒక వేరియబుల్ (Data), మరియు దాని స్వంత స్ట్రక్చర్ కే పాయింట్ చేసే ఒక అడ్రస్ <code>struct Node* next;</code> ని పెడతాము. దీన్నే <strong>Self-referential Structure</strong> అంటారు. లాస్ట్ డబ్బాకి ఇంకేమీ కనెక్ట్ అవ్వదు కాబట్టి దాని చైన్ ని తెంపేస్తాం (అదే నల్ పాయింటర్ - <code>NULL</code>).
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> లింక్డ్ లిస్ట్ పార్ట్స్ (Head & NULL)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>Head (హెడ్):</strong> ఇది ట్రైన్ ఇంజిన్ లాంటిది. ఇది లిస్ట్ లో మొదటి నోడ్ యొక్క అడ్రస్ ని మాత్రమే పట్టుకుని ఉంటుంది. హెడ్ దొరికితే చాలు, చైన్ పట్టుకుని లాస్ట్ వరకు వెళ్లిపోవచ్చు. హెడ్ మిస్సయితే మీ డేటా మొత్తం లాస్ట్ (Memory Leak)!
+      </p>
+      <div class="memory-diagram">
+[HEAD] ---> [ Data: 10 | Next ] ---> [ Data: 20 | Next ] ---> [ Data: 30 | NULL ]</div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Creating a Linked List)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో 3 నోడ్స్ ని <code>malloc</code> తో ఎలా తయారు చేసామో, వాటిని చైన్ లాగా ఒకదానికొకటి ఎలా లింక్ చేసామో, ఆ తర్వాత లూప్ లో ఎలా ప్రింట్ (Traversal) చేసామో క్రియేటివ్ గా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Singly Linked List</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+// 1. ఒక నోడ్ బ్లూప్రింట్ (ట్రైన్ డబ్బా)
+struct Node {
+    int data;           // డేటా దాచుకోవడానికి
+    struct Node* next;  // నెక్స్ట్ డబ్బా అడ్రస్ దాచుకోవడానికి (చైన్)
+};
+
+// లిస్ట్ ని ప్రింట్ చేయడానికి ఒక స్పెషల్ ఫంక్షన్ (Traversal)
+void printList(struct Node* head) {
+    struct Node* temp = head; // హెడ్ ని కదపకుండా ఒక టెంప్ పాయింటర్ వాడాలి
+    
+    printf("Linked List: ");
+    while (temp != NULL) {
+        printf("[%d] -> ", temp->data); // డేటా ప్రింట్ చేయి
+        temp = temp->next;              // చైన్ పట్టుకుని నెక్స్ట్ డబ్బాకి వెళ్ళు!
+    }
+    printf("NULL\n"); // లాస్ట్ కి వచ్చేశాం
+}
+
+int main() {
+    printf("--- Building a Linked List ---\n\n");
+    
+    // 2. మూడు ఖాళీ డబ్బాలను Heap లో తయారు చేద్దాం
+    struct Node* head = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* second = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* third = (struct Node*)malloc(sizeof(struct Node));
+    
+    // 3. వాటిలో డేటా పెట్టి చైన్ కనెక్ట్ చేద్దాం
+    
+    // మొదటి డబ్బా
+    head->data = 10;       // డేటా 10
+    head->next = second;   // రెండో డబ్బాకి లింక్
+    
+    // రెండో డబ్బా
+    second->data = 20;
+    second->next = third;  // మూడో డబ్బాకి లింక్
+    
+    // మూడో డబ్బా (లాస్ట్ డబ్బా)
+    third->data = 30;
+    third->next = NULL;    // ట్రైన్ ఎండ్ అయింది కాబట్టి NULL
+    
+    // 4. ప్రింట్ చేద్దాం
+    printList(head);
+    
+    // (రియల్ ప్రోగ్రామ్స్ లో వాడేసాక free() చేయాలి)
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>struct Node* next;</code>: ఒక స్ట్రక్చర్ లోపల అదే స్ట్రక్చర్ క్రియేట్ చేయలేము (అది అన్-లిమిటెడ్ సైజ్ అవుతుంది). కానీ పాయింటర్ (అడ్రస్) మాత్రం స్టోర్ చేసుకోవచ్చు! ఎందుకంటే పాయింటర్ సైజ్ ఎప్పుడూ 4 లేదా 8 బైట్స్ గా ఫిక్స్ అయి ఉంటుంది.</li>
+        <li><code>temp = temp-&gt;next;</code>: ఇది లింక్డ్ లిస్ట్ కి గుండెకాయ లాంటిది. <code>temp</code> ఉన్న చోట ప్రింట్ చేసి, దాని చేతిలో ఉన్న నెక్స్ట్ అడ్రస్ (<code>next</code>) ని తీసుకుని <code>temp</code> లో పెట్టుకుంటుంది. అంటే జంప్ అవుతుంది! నల్ (NULL) వచ్చేదాకా ఈ జంపింగ్ లూప్ జరుగుతుంది.</li>
+        <li><code>struct Node* temp = head;</code>: మనం ప్రింట్ చేసేటప్పుడు ఒరిజినల్ <code>head</code> ని ఎప్పుడూ మార్చకూడదు! ఒకవేళ మార్చేసి లాస్ట్ కి వెళ్ళిపోతే, లిస్ట్ ముందు డేటా అంతా పోతుంది (Memory Leak). అందుకే దానికి డూప్లికేట్ <code>temp</code> వాడాం.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: Array వాడటం మానేసి అందరూ లింక్డ్ లిస్ట్ వాడొచ్చు కదా?</h4>
+          <p>దీనికి కొన్ని మైనస్ పాయింట్స్ ఉన్నాయి! అర్రే లో మీరు డైరెక్ట్ గా <code>arr[5]</code> అంటే ఐదో ఐటమ్ సెకనులో వచ్చేస్తుంది (O(1)). కానీ లింక్డ్ లిస్ట్ లో 5వ ఐటమ్ కావాలంటే హెడ్ దగ్గరి నుండి ఒకటి, రెండు అని గుడ్డిగా చైన్ పట్టుకుని వెతుక్కుంటూ వెళ్ళాలి (O(N)). సెర్చ్ చేయడానికి ఇది చాలా స్లో!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ఎక్కడ Array వాడాలి? ఎక్కడ Linked List వాడాలి?</h4>
+          <p>మీకు సైజు ముందే తెలుసు, అండ్ మీరు డేటాని ఫాస్ట్ గా చదవాలి (Read Heavy) అనుకుంటే Array బెస్ట్. కానీ మీకు సైజు తెలీదు, మీరు మధ్యలో కొత్త డేటాని దూర్చడం (Insert) లేదా తీసేయడం (Delete) ఎక్కువగా చేస్తారు అంటే అప్పుడు Linked List కచ్చితంగా వాడాలి. ఎందుకంటే ఇందులో షిఫ్టింగ్ (Shifting) అవసరం లేదు, చైన్ మార్చితే చాలు!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: లింక్డ్ లిస్ట్ లో లాస్ట్ నోడ్ ని కనుక్కోవాలంటే ఏంటి కండిషన్?</h4>
+          <p>ట్రావర్సల్ (Traversal) చేసేటప్పుడు <code>temp != NULL</code> వాడతాం (అది మొత్తం ప్రింట్ చేయడానికి). కానీ మీరు ఎగ్జాక్ట్ గా లాస్ట్ డబ్బా దగ్గర ఆగిపోవాలంటే <code>temp-&gt;next != NULL</code> అని వాడాలి. ఇది లాస్ట్ డబ్బా కి ఉన్న చైన్ 0 అవ్వగానే ఆగిపోతుంది!</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="50-c-multi-threading-pthreads-basics.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">50. Multi-threading in C (pthreads)</span>
+      </a>
+
+      
+      <a href="52-c-linked-lists-insertion-deletion.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">52. Insert & Delete (Linked List)</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

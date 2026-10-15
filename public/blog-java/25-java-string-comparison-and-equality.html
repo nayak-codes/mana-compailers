@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java String Comparison: == vs equals(), compareTo() & Hashing — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering string equality in Java: understanding the critical architectural difference between the == reference identity operator and the .equals() content comparison method, case-insensitive comparison, lexicographical sorting with compareTo(), writing null-safe comparison expressions, and understanding String hashCode caching." />
-  <meta name="keywords" content="java string comparison: == vs equals(), compareto() & hashing, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java String Comparison: == vs equals(), compareTo() & Hashing (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="స్ట్రింగ్స్ ని ఒకదానితో ఒకటి ఎలా కంపేర్ చేయాలి? ఇక్కడ అందరూ చేసే అతి పెద్ద తప్పు `==` వాడటం. దాని బదులు `.equals()` ఎందుకు వాడాలో ఇక్కడ తెలుసుకుందాం. అలాగే క్యాపిటల్స్/స్మాల్స్ ఉన్నా మ్యాచ్ చేయడం (IgnoreCase), ఆల్ఫాబెట్ ఆర్డర్ లో సార్టింగ్ చేయడం, యాప్ క్రాష్ అవ్వకుండా యోడా (Yoda) ప్యాట్రన్ వాడటం నేర్చుకుందాం." />
+  <meta name="keywords" content="java string comparison: == vs equals(), compareto() & hashing (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/25-java-string-comparison-and-equality.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 25: 25. String Equality & Comparison</span>
     </div>
 
-    <h1 class="page-title">Java String Comparison: == vs equals(), compareTo() & Hashing</h1>
+    <h1 class="page-title">Java String Comparison: == vs equals(), compareTo() & Hashing (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,88 +541,89 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering string equality in Java: understanding the critical architectural difference between the == reference identity operator and the .equals() content comparison method, case-insensitive comparison, lexicographical sorting with compareTo(), writing null-safe comparison expressions, and understanding String hashCode caching.</p>
+      <p>స్ట్రింగ్స్ ని ఒకదానితో ఒకటి ఎలా కంపేర్ చేయాలి? ఇక్కడ అందరూ చేసే అతి పెద్ద తప్పు `==` వాడటం. దాని బదులు `.equals()` ఎందుకు వాడాలో ఇక్కడ తెలుసుకుందాం. అలాగే క్యాపిటల్స్/స్మాల్స్ ఉన్నా మ్యాచ్ చేయడం (IgnoreCase), ఆల్ఫాబెట్ ఆర్డర్ లో సార్టింగ్ చేయడం, యాప్ క్రాష్ అవ్వకుండా యోడా (Yoda) ప్యాట్రన్ వాడటం నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The Golden Rule: == vs equals() in Java</h2>
+      <h2>1. గోల్డెన్ రూల్: == కి, .equals() కి తేడా ఏంటి?</h2>
       <div class="theory-text">
-        <p>One of the most frequent sources of bugs in Java is confusing <strong>reference equality (<code>==</code>)</strong> with <strong>value equality (<code>.equals()</code>)</strong>:</p>
-<p>1. <strong>The <code>==</code> Operator (Reference / Address Comparison):</strong><br>The <code>==</code> operator checks if two reference variables point to the <strong>exact same memory address in RAM</strong>. It does NOT inspect the characters inside the string!</p>
-<p>2. <strong>The <code>.equals()</code> Method (Character Content Comparison):</strong><br>The <code>.equals()</code> method is overridden in the <code>String</code> class to inspect and compare the <strong>actual character sequence</strong> character-by-character.</p>
+        <p>జావా ప్రోగ్రామర్స్ కి ఎప్పుడూ వచ్చే బగ్స్ లో ఇదొకటి. రెండు స్ట్రింగ్స్ సమానమో కాదో చెక్ చేయడానికి <code>==</code> వాడకూడదు:</p>
+<p>1. <strong><code>==</code> ఆపరేటర్ (అడ్రెస్ చెక్ చేస్తుంది):</strong><br>ఇది రెండు వేరియబుల్స్ ర్యామ్ లో ఒకే అడ్రెస్ లో ఉన్నాయా లేదా అని మాత్రమే చూస్తుంది. లోపల ఏ అక్షరాలు ఉన్నాయో ఇది అసలు చూడదు!</p>
+<p>2. <strong><code>.equals()</code> మెథడ్ (లోపల ఉన్న కంటెంట్ చూస్తుంది):</strong><br>ఇది అడ్రెస్ తో సంబంధం లేకుండా, లోపల ఉన్న అక్షరాలని ఒక్కొక్కటిగా చెక్ చేసి పర్ఫెక్ట్ గా చెప్తుంది.</p>
 <div class="code-block"><pre><code>String a = "hello";                  String b = "hello";
       |                                    |
-      +-------------&gt; [ 0x1000: "hello" ] &lt;+  ===&gt; (a == b) is TRUE (Both share SCP address)
-<p>String c = new String("hello");<br>      |<br>      +-------------&gt; [ 0x9500: "hello" ]     ===&gt; (a == c) is FALSE (Different addresses!)<br>                                              ===&gt; a.equals(c) is TRUE (Identical characters!)</code></pre></div></p>
+      +-------------&gt; [ 0x1000: "hello" ] &lt;+  ===&gt; (a == b) అంటే TRUE వస్తుంది (రెండు ఒకే SCP అడ్రెస్)
+<p>String c = new String("hello");<br>      |<br>      +-------------&gt; [ 0x9500: "hello" ]     ===&gt; (a == c) అంటే FALSE వస్తుంది (అడ్రెస్ లు వేరు కదా!)<br>                                              ===&gt; a.equals(c) అంటే TRUE వస్తుంది (లోపల అక్షరాలు సేమ్ కాబట్టి)</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Case-Insensitive Comparison: equalsIgnoreCase()</h2>
+      <h2>2. స్మాల్స్/క్యాపిటల్స్ పట్టించుకోకూడదు అంటే: equalsIgnoreCase()</h2>
       <div class="theory-text">
-        <p>When comparing user inputs like login usernames, promo codes, or command-line flags, casing differences should often be ignored:</p>
-<p>- <strong><code>equals("admin")</code>:</strong> <code>"ADMIN".equals("admin")</code> returns <code>false</code>.<br>- <strong><code>equalsIgnoreCase("admin")</code>:</strong> <code>"ADMIN".equalsIgnoreCase("admin")</code> returns <code>true</code>.</p>
-<p>Under the hood, <code>equalsIgnoreCase()</code> compares characters by first converting them to uppercase and then to lowercase if necessary, handling Unicode casing rules correctly without creating new temporary string objects in memory.</p>
+        <p>యూజర్ లాగిన్ అయ్యేటప్పుడు ఒక్కోసారి క్యాపిటల్స్ లో టైప్ చేయొచ్చు. అప్పుడు నార్మల్ గా చెక్ చేస్తే ఫెయిల్ అవుతుంది:</p>
+<p>- <strong><code>equals("admin")</code>:</strong> <code>"ADMIN".equals("admin")</code> అని చెక్ చేస్తే <code>false</code> వస్తుంది.<br>- <strong><code>equalsIgnoreCase("admin")</code>:</strong> <code>"ADMIN".equalsIgnoreCase("admin")</code> అని చెక్ చేస్తే పర్ఫెక్ట్ గా <code>true</code> వస్తుంది.</p>
+<p>ఇది ఇంటర్నల్ గా రెండిటినీ ముందు ఒకే ఫార్మాట్ కి (లోయర్ కేస్ కి) మార్చుకుని అప్పుడు చెక్ చేస్తుంది.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Lexicographical Comparison: compareTo()</h2>
+      <h2>3. డిక్షనరీ ఆర్డర్ లో చెక్ చేయడం: compareTo()</h2>
       <div class="theory-text">
-        <p>When sorting strings alphabetically (in dictionaries, phonebooks, or database indexes), you need to know which string comes first. The <strong><code>compareTo(String other)</code></strong> method implements the <code>Comparable&lt;String&gt;</code> interface:</p>
+        <p>స్ట్రింగ్స్ ని ఆల్ఫాబెట్ ఆర్డర్ లో (A-Z) సార్ట్ చేయాలంటే ఏ పదం ముందు వస్తుందో తెలియాలి. దానికి <strong><code>compareTo(String other)</code></strong> వాడతాం:</p>
 <div class="ref-table-wrap">
   <table class="ref-table">
     <thead>
       <tr>
-        <th>Return Value</th>
-        <th>Meaning</th>
-        <th>Example</th>
+        <th>రిటర్న్ వాల్యూ</th>
+        <th>మీనింగ్</th>
+        <th>ఎగ్జాంపుల్</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><code>&lt; 0</code> (Negative integer)</td>
-        <td>The current string comes <strong>before</strong> <code>other</code> alphabetically.</td>
-        <td><code>"Apple".compareTo("Banana")</code> returns <code>-1</code></td>
+        <td><code>&lt; 0</code> (మైనస్ వాల్యూ)</td>
+        <td>కరెంట్ పదం ఆల్ఫాబెటికల్ గా <strong>ముందు</strong> వస్తుంది.</td>
+        <td><code>"Apple".compareTo("Banana")</code> అంటే <code>-1</code> వస్తుంది</td>
       </tr>
       <tr>
-        <td><code>0</code> (Zero)</td>
-        <td>Both strings are <strong>identical</strong> in content (<code>equals() == true</code>).</td>
-        <td><code>"Java".compareTo("Java")</code> returns <code>0</code></td>
+        <td><code>0</code> (జీరో)</td>
+        <td>రెండు పదాలు <strong>ఒకటే</strong> (<code>equals() == true</code>).</td>
+        <td><code>"Java".compareTo("Java")</code> అంటే <code>0</code> వస్తుంది</td>
       </tr>
       <tr>
-        <td><code>&gt; 0</code> (Positive integer)</td>
-        <td>The current string comes <strong>after</strong> <code>other</code> alphabetically.</td>
-        <td><code>"Zebra".compareTo("Apple")</code> returns <code>25</code></td>
+        <td><code>&gt; 0</code> (ప్లస్ వాల్యూ)</td>
+        <td>కరెంట్ పదం ఆల్ఫాబెటికల్ గా <strong>తర్వాత</strong> వస్తుంది.</td>
+        <td><code>"Zebra".compareTo("Apple")</code> అంటే <code>25</code> వస్తుంది</td>
       </tr>
     </tbody>
   </table>
 </div>
-<p>The return value is the mathematical difference between the first mismatched ASCII/Unicode code points:<br>Result = char1 - char2.<br>For case-insensitive sorting, use <strong><code>compareToIgnoreCase()</code></strong>.</p>
+<p>వచ్చే ఆ నంబర్ ఏంటంటే.. రెండిటి అక్షరాల మధ్య ఉన్న ASCII వాల్యూస్ డిఫరెన్స్ (Result = char1 - char2).<br>ఒకవేళ క్యాపిటల్స్ పట్టించుకోకుండా సార్ట్ చేయాలంటే <strong><code>compareToIgnoreCase()</code></strong> వాడాలి.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Null-Safe String Comparison (The "Yoda Condition" Pattern)</h2>
+      <h2>4. యాప్ క్రాష్ అవ్వకుండా చెక్ చేయడం (Yoda ప్యాట్రన్)</h2>
       <div class="theory-text">
-        <p>In Java, calling any method on a <code>null</code> reference triggers a fatal <strong><code>NullPointerException</code> (NPE)</strong>.</p>
-<div class="code-block"><pre><code>String userRole = null; // Might come from an optional database column or request
-<p>// DANGEROUS (Throws NullPointerException if userRole is null):<br>if (userRole.equals("ADMIN")) { ... }</p>
-<p>// SAFE PATTERN 1: Put the known non-null literal on the LEFT (Yoda Pattern)<br>if ("ADMIN".equals(userRole)) { // Evaluates safely to false without NPE!<br>    ...<br>}</p>
-<p>// SAFE PATTERN 2: Use Objects.equals() (Java 7+)<br>if (java.util.Objects.equals(userRole, "ADMIN")) {<br>    ...<br>}</code></pre></div></p>
+        <p>జావాలో ఏ వేరియబుల్ లో అయినా <code>null</code> ఉన్నప్పుడు దాని మీద ఏదైనా మెథడ్ కాల్ చేస్తే వెంటనే <strong><code>NullPointerException</code> (NPE)</strong> వచ్చి యాప్ మొత్తం క్రాష్ అవుతుంది.</p>
+<div class="code-block"><pre><code>String userRole = null; // డేటాబేస్ నుంచి null వచ్చింది అనుకుందాం
+<p>// ఇది డేంజర్ (క్రాష్ అవుతుంది): ఎందుకంటే userRole లో ఏమీ లేదు కదా, దానికి equals ఎలా అడుగుతాం?<br>if (userRole.equals("ADMIN")) { ... }</p>
+<p>// సేఫ్ ప్యాట్రన్ 1 (దీన్నే యోడా ప్యాట్రన్ అంటారు): ఫిక్స్డ్ గా ఉన్న వాల్యూ ని ముందు పెట్టాలి<br>if ("ADMIN".equals(userRole)) { // ఇది క్రాష్ అవ్వకుండా ప్రశాంతంగా false ఇచ్చేస్తుంది!<br>    ...<br>}</p>
+<p>// సేఫ్ ప్యాట్రన్ 2 (Java 7+): Objects క్లాస్ వాడటం<br>if (java.util.Objects.equals(userRole, "ADMIN")) {<br>    ...<br>}</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. String Hashing & the hashCode() Contract</h2>
+      <h2>5. స్ట్రింగ్ HashCode అనేది ఫాస్ట్ ఎందుకు?</h2>
       <div class="theory-text">
-        <p>Because strings are immutable, Java calculates a string's <strong>32-bit hash code</strong> using a deterministic polynomial algorithm:<br>s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]<br>- The prime multiplier <strong>31</strong> is chosen because 31 * i can be optimized by the JVM compiler into a fast bit-shift: <code>(i &lt;&lt; 5) - i</code>.<br>- If <code>s1.equals(s2)</code> is <code>true</code>, their <code>hashCode()</code> values are <strong>guaranteed to be identical</strong>.<br>- The <code>String</code> class caches this calculated hash in a private field <code>private int hash;</code>, so subsequent calls to <code>hashCode()</code> are instantaneous O(1) operations.</p>
+        <p>స్ట్రింగ్స్ ఎప్పుడూ మారవు కాబట్టి.. జావా ఒక్కొక్క స్ట్రింగ్ కి ఒక యూనిక్ ఐడీ లాంటిదాన్ని (32-bit hash code) ఇస్తుంది.</p>
+<p>- జావా దీన్ని క్యాలిక్యులేట్ చేయడానికి 31 అనే ప్రైమ్ నంబర్ వాడి ఒక పెద్ద మ్యాథ్స్ ఫార్ములా వేస్తుంది.<br>- ఒకవేళ రెండు స్ట్రింగ్స్ <code>equals()</code> వాడినప్పుడు <code>true</code> అయితే, వాటి <code>hashCode()</code> కూడా <strong>కచ్చితంగా ఒకటే</strong> ఉంటుంది.<br>- స్ట్రింగ్ మారదు కాబట్టి జావా ఈ కోడ్ ని ముందే క్యాలిక్యులేట్ చేసి దాచుకుంటుంది. మనం ఎప్పుడు అడిగినా ఏ టైమ్ వేస్ట్ కాకుండా వెంటనే ఇచ్చేస్తుంది (O(1)).</p>
       </div>
     </section>
   
@@ -640,71 +641,71 @@
         </div>
         <pre><code>public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1. == vs equals() In-Depth ===");
+        System.out.println("=== 1. == కి, equals() కి ఉన్న అసలు తేడా ===");
         String literal1 = "Hello";
         String literal2 = "Hello";
         String heapObj1 = new String("Hello");
         String heapObj2 = new String("Hello");
 
-        System.out.println("literal1 == literal2 (Both SCP) : " + (literal1 == literal2)); // true
-        System.out.println("literal1 == heapObj1 (SCP vs Heap): " + (literal1 == heapObj1)); // false
-        System.out.println("heapObj1 == heapObj2 (Two Heaps)  : " + (heapObj1 == heapObj2)); // false
-        System.out.println("heapObj1.equals(heapObj2)         : " + heapObj1.equals(heapObj2)); // true
+        System.out.println("literal1 == literal2 (రెండు SCP లే)     : " + (literal1 == literal2)); // true
+        System.out.println("literal1 == heapObj1 (ఒకటి SCP, ఒకటి Heap): " + (literal1 == heapObj1)); // false
+        System.out.println("heapObj1 == heapObj2 (రెండు వేరే వేరే Heaps) : " + (heapObj1 == heapObj2)); // false
+        System.out.println("heapObj1.equals(heapObj2) (కంటెంట్ ఒకటేనా?): " + heapObj1.equals(heapObj2)); // true
 
         System.out.println("
-=== 2. Case Insensitivity ===");
+=== 2. స్మాల్/క్యాపిటల్స్ ఇష్యూ లేకుండా ===");
         String roleInput = "admin";
         System.out.println("equals('ADMIN')                   : " + roleInput.equals("ADMIN")); // false
         System.out.println("equalsIgnoreCase('ADMIN')          : " + roleInput.equalsIgnoreCase("ADMIN")); // true
 
         System.out.println("
-=== 3. Lexicographical compareTo() ===");
+=== 3. డిక్షనరీ ఆర్డర్ compareTo() ===");
         String fruitA = "Apple";
         String fruitB = "Banana";
         String fruitC = "Apple";
 
-        System.out.println("'Apple' compareTo 'Banana'        : " + fruitA.compareTo(fruitB)); // Negative (-1)
-        System.out.println("'Banana' compareTo 'Apple'        : " + fruitB.compareTo(fruitA)); // Positive (1)
-        System.out.println("'Apple' compareTo 'Apple'         : " + fruitA.compareTo(fruitC)); // 0
+        System.out.println("'Apple' compareTo 'Banana'        : " + fruitA.compareTo(fruitB)); // -1 వస్తుంది
+        System.out.println("'Banana' compareTo 'Apple'        : " + fruitB.compareTo(fruitA)); // 1 వస్తుంది
+        System.out.println("'Apple' compareTo 'Apple'         : " + fruitA.compareTo(fruitC)); // 0 వస్తుంది
 
         System.out.println("
-=== 4. Null-Safe Comparison ===");
+=== 4. క్రాష్ అవ్వకుండా చెక్ చేయడం (Null-Safe) ===");
         String nullableRole = null;
-        System.out.println("'ADMIN'.equals(nullRole) (Safe)   : " + "ADMIN".equals(nullableRole)); // false
-        System.out.println("Objects.equals(nullRole, 'ADMIN') : " + java.util.Objects.equals(nullableRole, "ADMIN")); // false
+        System.out.println("'ADMIN'.equals(nullRole) (ఇది సేఫ్)   : " + "ADMIN".equals(nullableRole)); // false
+        System.out.println("Objects.equals(nullRole, 'ADMIN')   : " + java.util.Objects.equals(nullableRole, "ADMIN")); // false
 
         System.out.println("
-=== 5. String HashCode Caching ===");
-        System.out.println("HashCode of 'Hello'               : " + literal1.hashCode());
-        System.out.println("HashCode of heapObj1              : " + heapObj1.hashCode()); // Identical!
+=== 5. String HashCode ఫీచర్ ===");
+        System.out.println("literal1 యొక్క HashCode              : " + literal1.hashCode());
+        System.out.println("heapObj1 యొక్క HashCode              : " + heapObj1.hashCode()); // రెండు అడ్రెస్ లు వేరైనా హ్యాష్ కోడ్ ఒకటే ఉంటుంది!
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. == vs equals() In-Depth ===
-literal1 == literal2 (Both SCP) : true
-literal1 == heapObj1 (SCP vs Heap): false
-heapObj1 == heapObj2 (Two Heaps)  : false
-heapObj1.equals(heapObj2)         : true
+        <div class="output-content">=== 1. == కి, equals() కి ఉన్న అసలు తేడా ===
+literal1 == literal2 (రెండు SCP లే)     : true
+literal1 == heapObj1 (ఒకటి SCP, ఒకటి Heap): false
+heapObj1 == heapObj2 (రెండు వేరే వేరే Heaps) : false
+heapObj1.equals(heapObj2) (కంటెంట్ ఒకటేనా?): true
 
-=== 2. Case Insensitivity ===
+=== 2. స్మాల్/క్యాపిటల్స్ ఇష్యూ లేకుండా ===
 equals('ADMIN')                   : false
 equalsIgnoreCase('ADMIN')          : true
 
-=== 3. Lexicographical compareTo() ===
+=== 3. డిక్షనరీ ఆర్డర్ compareTo() ===
 'Apple' compareTo 'Banana'        : -1
 'Banana' compareTo 'Apple'        : 1
 'Apple' compareTo 'Apple'         : 0
 
-=== 4. Null-Safe Comparison ===
-'ADMIN'.equals(nullRole) (Safe)   : false
-Objects.equals(nullRole, 'ADMIN') : false
+=== 4. క్రాష్ అవ్వకుండా చెక్ చేయడం (Null-Safe) ===
+'ADMIN'.equals(nullRole) (ఇది సేఫ్)   : false
+Objects.equals(nullRole, 'ADMIN')   : false
 
-=== 5. String HashCode Caching ===
-HashCode of 'Hello'               : 69609650
-HashCode of heapObj1              : 69609650</div>
+=== 5. String HashCode ఫీచర్ ===
+literal1 యొక్క HashCode              : 69609650
+heapObj1 యొక్క HashCode              : 69609650</div>
       </div>
 
       <div class="explain-card">
@@ -712,31 +713,25 @@ HashCode of heapObj1              : 69609650</div>
         
     <div class="explain-item">
       <code class="code-token">literal1 == literal2</code>
-      <p>Returns true because both variables hold the reference to the single pooled SCP instance.</p>
-    </div>
-  
-
-    <div class="explain-item">
-      <code class="code-token">literal1 == heapObj1</code>
-      <p>Returns false because literal1 points to SCP while heapObj1 points to a distinct Heap memory address.</p>
+      <p>ఇవి రెండు ఒకే SCP ఆబ్జెక్ట్ ని పాయింట్ చేస్తున్నాయి కాబట్టి వాటి అడ్రెస్ ఒకటే ఉండి true వస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">heapObj1.equals(heapObj2)</code>
-      <p>Returns true because the equals() method inspects character content ("Hello" == "Hello") regardless of address.</p>
+      <p>ఈ రెండిటి మెమరీ అడ్రెస్ లు వేరే అయినా సరే, మనం అడుగుతుంది లోపల టెక్స్ట్ సేమ్ ఉందా అని.. కాబట్టి equals() true ఇస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">fruitA.compareTo(fruitB)</code>
-      <p>Compares ASCII values of "A" (65) and "B" (66), returning 65 - 66 = -1.</p>
+      <p>"A" కి "B" కి ఒక లెటర్ గ్యాప్ (వెనకపడి) ఉంది కాబట్టి -1 ఇస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">"ADMIN".equals(nullableRole)</code>
-      <p>Demonstrates the Yoda comparison pattern: calling .equals() on the non-null string literal safely handles null parameters.</p>
+      <p>ముందు పదం ఉండటం వల్ల nullableRole లో null ఉన్నా సరే యాప్ క్రాష్ అవ్వకుండా false ఇచ్చేసి సైలెంట్ అవుతుంది (యూజ్ ఫుల్ ట్రిక్).</p>
     </div>
   
       </div>
@@ -754,10 +749,13 @@ HashCode of heapObj1              : 69609650</div>
           </div>
         </div>
         <pre><code>public class PracticalApplication {
+    // యూజర్ కి యాక్సెస్ ఉందా లేదా చెక్ చేసే సెక్యూరిటీ మెథడ్
     public static boolean hasAccess(String userRole, String requiredRole) {
+        // ముందు ఏమైనా null ఉంటే ఆపేయాలి
         if (userRole == null || requiredRole == null) {
             return false;
         }
+        // అడ్డమైన స్పేస్ లు తీసేసి (trim), క్యాపిటల్స్/స్మాల్స్ పట్టించుకోకుండా (equalsIgnoreCase) చెక్ చేయాలి
         return userRole.trim().equalsIgnoreCase(requiredRole.trim());
     }
 
@@ -766,18 +764,18 @@ HashCode of heapObj1              : 69609650</div>
         String inputRole2 = "super_admin";
         String inputRole3 = null;
 
-        System.out.println("User 1 Access: " + hasAccess(inputRole1, "SUPER_ADMIN")); // true
-        System.out.println("User 2 Access: " + hasAccess(inputRole2, "SUPER_ADMIN")); // true
-        System.out.println("User 3 Access: " + hasAccess(inputRole3, "SUPER_ADMIN")); // false (Safe, no NPE)
+        System.out.println("యూజర్ 1 కి యాక్సెస్ ఉందా?: " + hasAccess(inputRole1, "SUPER_ADMIN")); // true
+        System.out.println("యూజర్ 2 కి యాక్సెస్ ఉందా?: " + hasAccess(inputRole2, "SUPER_ADMIN")); // true
+        System.out.println("యూజర్ 3 కి యాక్సెస్ ఉందా?: " + hasAccess(inputRole3, "SUPER_ADMIN")); // false (క్రాష్ అవ్వలేదు)
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">User 1 Access: true
-User 2 Access: true
-User 3 Access: false</div>
+        <div class="output-content">యూజర్ 1 కి యాక్సెస్ ఉందా?: true
+యూజర్ 2 కి యాక్సెస్ ఉందా?: true
+యూజర్ 3 కి యాక్సెస్ ఉందా?: false</div>
       </div>
     </section>
 
@@ -786,16 +784,13 @@ User 3 Access: false</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using == to validate login credentials or user inputs (e.g. if (password == "secret")), causing authentication failures.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">యూజర్ నేమ్, పాస్వర్డ్స్ చెక్ చేయడానికి <code>if (password == "secret")</code> అని రాయడం. ఇలా రాస్తే ఎప్పటికీ లాగిన్ ఫెయిల్ అవుతూనే ఉంటుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Calling .equals() on potentially null variables without checking for null or using "CONSTANT".equals(var).</li>
+    <li style="margin-bottom:8px; line-height:1.6;">ఒక వేరియబుల్ లోకి డేటాబేస్ నుంచి ఏమొస్తుందో తెలియకుండా దానిమీద <code>str.equals("ADMIN")</code> వాడటం. దానివల్ల null వస్తే యాప్ క్రాష్ అవుతుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Assuming compareTo() returns only -1, 0, or 1. It can return ANY negative or positive integer (e.g. -25, 32).</li>
-  
-
-    <li style="margin-bottom:8px; line-height:1.6;">Forgetting that equalsIgnoreCase() handles standard casing but may have locale-specific quirks with characters like the Turkish dotless "i".</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>compareTo()</code> ఎప్పుడూ -1, 0, 1 మాత్రమే ఇస్తుంది అనుకోవడం. అది క్యారెక్టర్స్ మధ్య ఉన్న గ్యాప్ బట్టి -25, 32 లాంటి నంబర్స్ కూడా ఇస్తుంది.</li>
   
       </ul>
     </div>
@@ -812,9 +807,9 @@ User 3 Access: false</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Write a custom method isAlphabeticallySorted(String[] words) that:
-// 1. Iterates through the array and uses compareTo() to check if words are in strictly ascending alphabetical order.
-// 2. Returns true if sorted, false otherwise.
+// isAlphabeticallySorted(String[] words) అనే మెథడ్ రాయండి:
+// 1. అరే లో ఉన్న పదాలు అన్నీ కరెక్ట్ ఆల్ఫాబెట్ ఆర్డర్ లో ఉన్నాయో లేదో compareTo() వాడి చెక్ చేయండి.
+// 2. ఉంటే true, లేకపోతే false రిటర్న్ చేయండి.
 
 public class Challenge {
     public static boolean isAlphabeticallySorted(String[] words) {
@@ -830,8 +825,8 @@ public class Challenge {
         String[] list1 = {"Apple", "Banana", "Cherry", "Mango"};
         String[] list2 = {"Banana", "Apple", "Cherry"};
 
-        System.out.println("List 1 Sorted: " + isAlphabeticallySorted(list1)); // true
-        System.out.println("List 2 Sorted: " + isAlphabeticallySorted(list2)); // false
+        System.out.println("లిస్ట్ 1 కరెక్ట్ ఆర్డర్ లో ఉందా?: " + isAlphabeticallySorted(list1)); // true
+        System.out.println("లిస్ట్ 2 కరెక్ట్ ఆర్డర్ లో ఉందా?: " + isAlphabeticallySorted(list2)); // false
     }
 }</code></pre>
       </div>
@@ -842,20 +837,14 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why does "a" == "a" return true while new String("a") == new String("a") returns false?</h4>
-      <p>String literals "a" are stored in the String Constant Pool (SCP) and reused, so both point to the exact same reference. new String() explicitly allocates new memory objects on the general heap at different memory addresses.</p>
+      <h4>❓ రెండు స్ట్రింగ్స్ సమానమా కాదా చెక్ చేయడానికి ఎప్పుడూ .equals() మాత్రమే వాడాలా?</h4>
+      <p>అవును! జావాలో స్ట్రింగ్స్ కంటెంట్ చెక్ చేయడానికి 100% ఎప్పుడూ .equals() మాత్రమే వాడాలి. అడ్రెస్ గురించి పట్టించుకోవాల్సిన పని మనకు లేదు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the contract between equals() and hashCode() for Strings?</h4>
-      <p>If s1.equals(s2) is true, their hashCode() must be identical. If s1.hashCode() == s2.hashCode(), s1.equals(s2) is not guaranteed to be true (hash collision), though collisions are rare.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ How does compareTo() calculate its return value?</h4>
-      <p>It compares characters at matching positions until it finds a difference, returning c1 - c2 (the difference between their Unicode values). If one string is a prefix of another, it returns this.length() - other.length().</p>
+      <h4>❓ రెండు స్ట్రింగ్స్ కి .equals() true వస్తే.. వాటి hashCode() కూడా ఒకటే ఉంటుందా?</h4>
+      <p>కచ్చితంగా ఒకటే ఉంటుంది. ఇది జావా రాసిన వాళ్ళు పెట్టిన రూల్. ఒకవేళ hashCode ఒకటే ఉంటే మాత్రం .equals() ఎప్పుడూ true అవ్వాలని లేదు (దాన్ని హ్యాష్ కొలిజన్ అంటారు).</p>
     </div>
   
     </section>
@@ -865,19 +854,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">== compares object references (memory addresses); .equals() compares character values.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">== అనేది కేవలం మెమరీ అడ్రెస్ (Reference) ని మాత్రమే చూస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Always use .equals() or .equalsIgnoreCase() for comparing text in business logic.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">.equals() అనేది లోపల ఉన్న టెక్స్ట్ కరెక్టో కాదో చెక్ చేస్తుంది. ఇదే వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Place known string literals on the left ("ADMIN".equals(role)) to prevent NullPointerException.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Yoda ప్యాట్రన్ ("ADMIN".equals(role)) వాడితే null వచ్చినా క్రాష్ అవ్వకుండా కాపాడుకోవచ్చు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">compareTo() returns negative, zero, or positive integers for lexicographical sorting.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">compareTo() వాడి ఆల్ఫాబెట్స్ ని బట్టి వర్డ్స్ ని డిక్షనరీ ఆర్డర్ లో సార్ట్ చేయొచ్చు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">String caches its hashCode() in memory, making hash lookups in maps exceptionally fast.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">స్ట్రింగ్స్ కి hashCode ముందే సేవ్ అయ్యి ఉంటుంది కాబట్టి చాలా ఫాస్ట్ గా వస్తుంది.</li>
   
       </ul>
     </div>

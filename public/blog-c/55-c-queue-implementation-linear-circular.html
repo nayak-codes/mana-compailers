@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Queue Implementation (Linear & Circular) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో Queue (క్యూ) అనే డేటా స్ట్రక్చర్ అంటే ఏంటి? FIFO (First In First Out) కాన్సెప్ట్ తో సినిమా టికెట్ క్యూ లాగా దీన్ని ఎలా డిజైన్ చేయాలి? మెమరీ వేస్ట్ అవ్వకుండా Circular Queue ఎలా పని చేస్తుందో డీప్ గా నేర్చుకుందాం." />
+  <meta name="keywords" content="c tutorial, queue implementation (linear & circular) (తెలుగులో), doubly linked list c, circular linked list, stack in c, queue in c, binary search tree c, tree traversals c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/55-c-queue-implementation-linear-circular.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html" class="active">55. Queue Implementation</a>
+      </div>
+
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html">59. Graphs (Matrix & List)</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 55: Queue Implementation (Linear & Circular) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Queue Implementation (Linear & Circular) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 55</span>
+      <span class="badge">📂 Phase 18: Data Structures - 1</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>FIFO Concept · Enqueue and Dequeue · Front & Rear Pointers · Circular Queue Magic</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>లాస్ట్ లెసన్ లో మనం ప్లేట్ల దొంతర లాంటి స్టాక్ (LIFO) గురించి నేర్చుకున్నాం కదా. కానీ రియల్ లైఫ్ లో ఎవరైనా సినిమా టికెట్స్ కోసం లైన్ లో నిలబడితే, ముందు వచ్చిన వాడికే ముందు టికెట్ ఇస్తారు కానీ లాస్ట్ వచ్చిన వాడికి ఇవ్వరు కదా! ఈ లాజిక్ ని కంప్యూటర్ లో డిజైన్ చేయడాన్నే <strong>Queue (క్యూ)</strong> అంటారు. దీన్ని FIFO (First In, First Out) అంటారు. మీరు ప్రింటర్ కి 10 ఫైల్స్ ఇస్తే ఏది ముందు ప్రింట్ అవ్వాలి? కస్టమర్ కేర్ కాల్స్ లో ఎవరితో ముందు మాట్లాడాలి? ఇలాంటి సర్వీస్ లాజిక్స్ అన్నీ ఈ Queue స్ట్రక్చర్ మీదే రన్ అవుతాయి. ఇదెలాగో ఈరోజు అద్భుతంగా నేర్చుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> క్యూ (Queue) లో రెండు పాయింటర్స్!</div>
+    <div class="section-body">
+      <p class="text-prose">
+        స్టాక్ లో కేవలం ఒకటే టాప్ (Top) ఉంటుంది. కానీ క్యూ లో ఇద్దరు ఉంటారు. ఒకటి ముందు (Front), రెండు వెనక (Rear).
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>🎟️ రియల్ లైఫ్ స్టోరీ: సినిమా థియేటర్ లైన్ (Enqueue & Dequeue)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          ఒక థియేటర్ ముందు క్యూ లైన్ ఉంది.<br><br>
+          <strong>1. Enqueue (లోపలికి వెళ్లడం):</strong> కొత్తగా ఒకడు వస్తే ఎక్కడ నిలబడతాడు? క్యూ వెనకాల (Rear) నిలబడతాడు. అంటే మనం డేటా యాడ్ చేయాలంటే ఎప్పుడూ Rear దగ్గరే యాడ్ చేయాలి. ఆ తర్వాత Rear ఒక స్టెప్ వెనక్కి జరుగుతుంది.<br><br>
+          <strong>2. Dequeue (బయటికి రావడం):</strong> కౌంటర్ లో ఉన్నవాడు ఎవరికి టికెట్ ఇస్తాడు? లైన్ లో ముందు (Front) ఉన్నోడికే! వాడు టికెట్ తీసుకుని వెళ్ళిపోగానే, Front ఒక స్టెప్ వెనక్కి వస్తుంది.<br><br>
+          క్యూ పూర్తిగా ఫుల్ అయితే <em>Overflow</em>, అసలు ఎవరూ లేకపోతే <em>Underflow</em> అంటారు.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> మామూలు క్యూ లో ప్రాబ్లమ్ ఏంటి? (Linear Waste)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీ దగ్గర 5 కుర్చీలు ఉన్న ఒక క్యూ ఉంది అనుకోండి (Array Size 5). ఐదుగురు వచ్చి కూర్చున్నారు (ఫుల్). ఇప్పుడు ముందు ఉన్న ఇద్దరు టికెట్ తీసుకుని వెళ్లిపోయారు. వాళ్ళ కుర్చీలు (Index 0, 1) ఖాళీ అయ్యాయి! కానీ కొత్త వాళ్లు రావాలంటే అటు వెనకాలే రావాలి, వెనకాల కుర్చీలు లేవు! ముందు రెండు కుర్చీలు ఖాళీ ఉన్నా వాడలేము. దీన్నే <strong>Linear Queue Waste</strong> అంటారు.
+      </p>
+      <p class="text-prose">
+        దీన్ని సాల్వ్ చేయడానికే <strong>Circular Queue (చక్రాకార క్యూ)</strong> కనిపెట్టారు. ఇందులో లాస్ట్ కుర్చీ తర్వాత మళ్ళీ డైరెక్ట్ గా ఫస్ట్ కుర్చీ కి లింక్ ఉంటుంది.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Linear Queue Demo)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో అర్రే వాడి ఒక సింపుల్ క్యూ ని ఎలా తయారు చేసామో, Front మరియు Rear పాయింటర్స్ ని ఎలా మార్చామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Linear Queue (FIFO)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+#define MAX 5 // క్యూ సైజు 5 
+
+int queue[MAX];
+int front = -1; // ముందు పాయింటర్
+int rear = -1;  // వెనక పాయింటర్
+
+// 1. ఎన్-క్యూ (లైన్ లోకి వెళ్లడం)
+void enqueue(int data) {
+    if (rear == MAX - 1) { // క్యూ మొత్తం నిండిపోయింది
+        printf("[Error] Queue is FULL! (Overflow)\n");
+        return;
+    }
+    
+    // ఒకవేళ ఇదే ఫస్ట్ ఎంట్రీ అయితే ఫ్రంట్ ని కూడా జీరోకి తేవాలి
+    if (front == -1) {
+        front = 0;
+    }
+    
+    rear++; // వెనక ఒక స్టెప్ జరిపి
+    queue[rear] = data; // అక్కడ కూర్చోపెడదాం
+    printf("Enqueued: %d\n", data);
+}
+
+// 2. డి-క్యూ (టికెట్ తీసుకుని వెళ్ళిపోవడం)
+void dequeue() {
+    // అసలు క్యూ లో ఎవరూ లేకపోతే...
+    if (front == -1 || front > rear) {
+        printf("[Error] Queue is EMPTY! (Underflow)\n");
+        return;
+    }
+    
+    printf("Dequeued: %d (He got the ticket!)\n", queue[front]);
+    front++; // నెక్స్ట్ వాడికి ఫ్రంట్ ని జరుపుదాం
+}
+
+// క్యూ లో ఉన్న వాళ్ళందరినీ ప్రింట్ చేద్దాం
+void display() {
+    if (front == -1 || front > rear) {
+        printf("Queue is Empty.\n");
+        return;
+    }
+    
+    printf("Current Queue: ");
+    for (int i = front; i <= rear; i++) {
+        printf("%d ", queue[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    printf("--- Queue Operations (FIFO) ---\n\n");
+    
+    // ముగ్గురిని లైన్ లో పెడదాం
+    enqueue(10);
+    enqueue(20);
+    enqueue(30);
+    
+    display(); // 10 20 30
+    
+    // ఇద్దరికి టికెట్ ఇద్దాం
+    printf("\nIssueing tickets...\n");
+    dequeue(); // 10 వెళ్ళిపోతాడు
+    dequeue(); // 20 వెళ్ళిపోతాడు
+    
+    display(); // ఇప్పుడు కేవలం 30 మాత్రమే లైన్ లో ఉంటాడు
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>front = -1, rear = -1</code>: మొదట్లో ఇద్దరూ గ్రౌండ్ లో ఉంటారు. ఫస్ట్ వాడు వచ్చినప్పుడు ఇద్దరూ ఒకేసారి 0 దగ్గరికి వస్తారు.</li>
+        <li><code>rear++</code>: కొత్త వాడు వస్తే వెనక ఉన్నోడు (Rear) జరిగి జరిగి వాల్యూ పెరుగుతూ వెళ్తుంది.</li>
+        <li><code>front++</code>: ముందున్నోడు వెళ్ళిపోగానే, ఫ్రంట్ పాయింటర్ వాల్యూ పెరుగుతూ వెళ్తుంది. ఒకవేళ ఫ్రంట్ వాల్యూ, రియర్ ని దాటి ముందుకు వెళ్లిపోయిందంటే లైన్ ఖాళీ అయినట్టే లెక్క (<code>front &gt; rear</code>)!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: Circular Queue లాజిక్ ని (<code>%</code>) వాడి ఎలా రాస్తారు?</h4>
+          <p>సింపుల్! నార్మల్ క్యూ లో <code>rear++</code> రాస్తాం కదా, సర్క్యులర్ క్యూ లో <code>rear = (rear + 1) % MAX</code> అని రాస్తాం. ఒకవేళ MAX 5 అయితే, లాస్ట్ ఇండెక్స్ (4+1)%5 చేస్తే ఆన్సర్ 0 వస్తుంది. అంటే 4వ కుర్చీ నుండి డైరెక్ట్ గా మళ్ళీ 0వ కుర్చీకి రౌండ్ తిరిగి వెళ్ళిపోతుంది. ఇదే సర్క్యులర్ క్యూ మ్యాజిక్!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Priority Queue (ప్రియారిటీ క్యూ) అంటే ఏంటి?</h4>
+          <p>ఇది ఒక స్పెషల్ క్యూ! ఆసుపత్రి ఎమర్జెన్సీ వార్డ్ లాంటిది. ఒక నార్మల్ పేషెంట్ వెళ్తే లైన్ లో నిలబడతాడు. కానీ ఎవరికైనా హార్ట్ ఎటాక్ వస్తే, వాడిని లైన్ వెనకాల కాకుండా డైరెక్ట్ గా ఫ్రంట్ కి (Priority) పంపిస్తారు. ఆపరేటింగ్ సిస్టమ్ లో VIP టాస్క్ లకి ముందు ర్యామ్ ఇవ్వడానికి ఈ డేటా స్ట్రక్చరే వాడుతారు (Heaps వాడి రాస్తారు).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: 2 Stacks వాడి ఒక Queue ని తయారు చేయొచ్చా?</h4>
+          <p>ఎస్! ఇది ఇంటర్వ్యూలలో కచ్చితంగా అడిగే పజిల్. స్టాక్ అనేది రివర్స్ చేస్తుంది కదా. ఒక బాక్స్ లో వేసి, మళ్ళీ ఆ బాక్స్ ని రివర్స్ చేసి ఇంకో బాక్స్ లో వేస్తే... రివర్స్ కి రివర్స్ ఒరిజినల్ అవుతుంది కదా! ఈ లాజిక్ తో రెండు స్టాక్స్ వాడి ఒక పర్ఫెక్ట్ క్యూ ని సిమ్యులేట్ చేయొచ్చు.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="54-c-stack-implementation-array-linkedlist.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">54. Stack Implementation</span>
+      </a>
+
+      
+      <a href="56-c-trees-basics-and-binary-search-tree-bst.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">56. Trees Basics & BST</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

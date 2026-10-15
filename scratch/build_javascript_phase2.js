@@ -9,34 +9,37 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML (Inline, Internal, External), console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types (Syntax, Runtime, Logical).',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Control Flow',
-    icon: '⚡',
-    desc: 'Arithmetic, comparison (== vs ===), logical, ternary operator, short-circuiting, if-else, and switch statements.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: 'conditionals.html', title: '5. Conditionals (if-else & switch)', subtopics: 'Strict Equality (===) · Ternary · Short-circuiting · Switch Statements' },
-      { num: 6, file: 'loops.html', title: '6. Loops & Control Flow', subtopics: 'for, while, do-while · for...of & for...in · break & continue' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
@@ -44,10 +47,10 @@ const JS_CURRICULUM = [
     tag: 'Phase 04',
     title: 'Strings & Functions',
     icon: '🧩',
-    desc: 'String manipulation, template literals, function declarations, function expressions, arrow functions, and default parameters.',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'strings.html', title: '7. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Regex Search' },
-      { num: 8, file: 'functions.html', title: '8. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
@@ -57,41 +60,42 @@ const JS_CURRICULUM = [
     icon: '📊',
     desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 9, file: 'arrays.html', title: '9. Arrays & Iteration Methods', subtopics: 'Mutating Methods · map, filter, reduce · Array Spread' },
-      { num: 10, file: 'objects.html', title: '10. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · JSON Parsing' },
-      { num: 11, file: 'es6-features.html', title: '11. ES6+ Destructuring & Spread', subtopics: 'Array & Object Destructuring · Spread/Rest (...) · Nullish Coalescing (??)' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Advanced Functions & OOP',
-    icon: '🏗️',
-    desc: 'Lexical scope, closures, higher-order functions, Object-Oriented JS, prototypes, ES6 classes, and this keyword binding.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 12, file: 'closures.html', title: '12. Closures & Higher-Order Functions', subtopics: 'Lexical Scope · Closures · Currying · Callbacks' },
-      { num: 13, file: 'oop.html', title: '13. OOP: Classes & Prototypes', subtopics: 'Prototypes & Inheritance · ES6 Classes · this Keyword Binding' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Asynchronous JavaScript',
+    title: 'Asynchronous JavaScript & APIs',
     icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Callbacks, Promises, async/await, and Fetch API.',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 14, file: 'promises.html', title: '14. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise · async/await · Fetch API' },
-      { num: 15, file: 'exceptions.html', title: '15. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'DOM & Web Browser APIs',
-    icon: '🌐',
-    desc: 'DOM Selection, manipulation, event handling, Event Delegation, LocalStorage, SessionStorage, and Web APIs.',
+    title: 'Object-Oriented Programming (OOP)',
+    icon: '🏗️',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 16, file: 'dom.html', title: '16. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -207,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -346,7 +350,7 @@ ${accordionSidebar}
     <div class="page-meta">
       <span class="badge">🟨 JavaScript (ES2026+)</span>
       <span class="badge">🟢 Lesson ${currentNum}</span>
-      <span class="badge">📂 Phase 02: Variables & Data Types</span>
+      <span class="badge">📂 Phase 01: JavaScript Fundamentals & Basics</span>
       <span class="badge">📅 2026 Edition</span>
     </div>
 
@@ -389,182 +393,220 @@ ${contentBody}
 
 // ── BUILD LESSON 3: Variables (let, const & var) ───────────────────────────
 function buildLesson3() {
-  const title = "Variables (let, const & var) & Scopes";
-  const desc = "Learn JavaScript variables: Variables ante enti?, let vs const vs var, reassigning values, variable naming rules, global vs function vs block scopes, and Temporal Dead Zone (TDZ).";
+  const title = "JavaScript Variables (let, const, var) in Telugu";
+  const desc = "జావాస్క్రిప్ట్ లో డేటాని దాచుకోవడానికి Variables ఎలా వాడాలి? let, const, var మధ్య ఉన్న ముఖ్యమైన తేడాలు ఏమిటి అనేది తెలుగులో వివరంగా నేర్చుకోండి.";
   const filename = "variables.html";
   const subtopics = "Variables ante enti? · let · const · var · Reassigning Values · Variable Naming Rules · Global vs Function vs Block Scope · TDZ";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to Lesson 3 of <strong>Phase 2: Variables & Data Types</strong>! In JavaScript, data is stored and manipulated through <strong>Variables</strong>. ES6 (2015) introduced modern <code>let</code> and <code>const</code> keywords to replace legacy <code>var</code>. In this comprehensive lesson, you will learn what variables are, the critical differences between <code>let</code>, <code>const</code>, and <code>var</code>, value mutation vs reference mutation, variable naming conventions, and JavaScript scope mechanics.</p>
+      <p>మీ ఫోన్లో కాంటాక్ట్స్ చూడండి. "అమ్మ" అని ఒక పేరు ఉంటుంది, దాని వెనుక ఒక ఫోన్ నంబర్ ఉంటుంది. ప్రతిసారీ పది అంకెల నంబర్ గుర్తుపెట్టుకోకుండా, "అమ్మ" అని పేరు చెబితే చాలు కదా? Programming లో <strong>variable</strong> కూడా అలాంటిదే. ఒక పేరు పెట్టి, దాని వెనుక ఒక విలువ (value) ని దాచిపెడతాం.</p>
+      <p>Programming లో దాదాపు ప్రతి program కి variables అవసరం. అందుకే ఈ chapter చాలా ముఖ్యమైనది. మెల్లగా, ఉదాహరణలతో నేర్చుకుందాం.</p>
     </div>
 
-    <!-- 1. Variables ante enti? -->
-    <div class="section-title"><span class="num">1</span>Variables Ante Enti? (What is a Variable?)</div>
+    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
     <div class="section-body">
-      <p><strong>Variable</strong> anedhi JavaScript engine memory (RAM) lo values ni store chesukovadaniki allocate chesina oka <strong>Named Storage Box (Memory Container)</strong>. Program execution jarige time lo values ni retain cheyyadaniki mariyu mutate (vary) cheyyadaniki variables ni vadathamu.</p>
-
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:16px; margin:16px 0;">
-        <strong style="color:#f7df1e;">📌 Variable Syntax:</strong>
-        <code style="display:block; margin-top:6px; font-size:14px;">keyword variableName = value;</code>
-      </div>
-    </div>
-
-    <!-- 2. let vs const vs var -->
-    <div class="section-title"><span class="num">2</span>The Big 3: let vs const vs var</div>
-    <div class="section-body">
-      <p>JavaScript lo variables declare cheyyadaniki 3 keywords unnaayi: <code>let</code>, <code>const</code>, and legacy <code>var</code>:</p>
-
-      <table class="tbl">
-        <tr><th>Feature</th><th><code>let</code> (Modern ES6)</th><th><code>const</code> (Modern ES6)</th><th><code>var</code> (Legacy ES5)</th></tr>
-        <tr>
-          <td><strong>Scope Type</strong></td>
-          <td>Block Scope <code>{ }</code></td>
-          <td>Block Scope <code>{ }</code></td>
-          <td>Function / Global Scope</td>
-        </tr>
-        <tr>
-          <td><strong>Re-assignable?</strong></td>
-          <td>✅ <strong>Yes</strong></td>
-          <td>❌ <strong>No</strong> (Read-only reference)</td>
-          <td>✅ <strong>Yes</strong></td>
-        </tr>
-        <tr>
-          <td><strong>Re-declarable?</strong></td>
-          <td>❌ <strong>No</strong></td>
-          <td>❌ <strong>No</strong></td>
-          <td>✅ <strong>Yes</strong> (Dangerous!)</td>
-        </tr>
-        <tr>
-          <td><strong>Hoisting & TDZ</strong></td>
-          <td>Hoisted in <strong>Temporal Dead Zone</strong> (Cannot access before declaration)</td>
-          <td>Hoisted in <strong>Temporal Dead Zone</strong> (Cannot access before declaration)</td>
-          <td>Hoisted with <code>undefined</code> default value</td>
-        </tr>
-        <tr>
-          <td><strong>Initial Value Required?</strong></td>
-          <td>No (defaults to <code>undefined</code>)</td>
-          <td>✅ <strong>Must initialize immediately</strong></td>
-          <td>No (defaults to <code>undefined</code>)</td>
-        </tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — let vs const vs var</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// 1. let — Block-scoped & Reassignable
-let age = 21;
-age = 22; // Reassignment allowed!
-console.log("Updated Age:", age);
-
-// 2. const — Block-scoped Constant Reference
-const name = "Ravi";
-// name = "Kalyan"; // TypeError: Assignment to constant variable!
-console.log("Name:", name);
-
-// 3. var — Legacy function-scoped variable
-var city = "Hyderabad";
-var city = "Bangalore"; // Allowed re-declaration (Bad practice!)
-console.log("City:", city);</code></pre>
-      </div>
-    </div>
-
-    <!-- 3. Reassigning Values -->
-    <div class="section-title"><span class="num">3</span>Reassigning Values vs Constant Objects</div>
-    <div class="section-body">
-      <p><code>const</code> primitive value ni re-assign cheyyanivvadu. Kani <code>const</code> tho declare chesina <strong>Object or Array properties ni mutate (change) cheyyavachu</strong>. Endhukante <code>const</code> memory address reference ni lock chesthundi, internal heap data ni kaadhu:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — const Object Mutation</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const student = {
-    name: "Ravi",
-    age: 21
-};
-
-// Modifying object properties IS ALLOWED:
-student.age = 22;
-student.city = "Hyderabad";
-
-console.log("Mutated Student:", student);
-
-// RE-ASSIGNING THE ENTIRE OBJECT IS FORBIDDEN:
-// student = { name: "Kalyan" }; // TypeError!</code></pre>
-      </div>
-    </div>
-
-    <!-- 4. Variable Naming Rules -->
-    <div class="section-title"><span class="num">4</span>JavaScript Variable Naming Rules</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Allowed Characters:</strong> Letters (<code>a-z, A-Z</code>), Digits (<code>0-9</code>), Dollar Sign (<code>$</code>), and Underscore (<code>_</code>).</li>
-        <li><strong>Forbidden:</strong> Cannot start with a digit (e.g. <code>1stUser</code> is illegal, <code>user1</code> is legal).</li>
-        <li><strong>Forbidden:</strong> Reserved JavaScript keywords (e.g. <code>let</code>, <code>class</code>, <code>function</code>, <code>if</code>).</li>
-        <li><strong>Case Sensitivity:</strong> <code>userAge</code>, <code>UserAge</code>, <code>USERAGE</code> are 3 completely separate variables.</li>
-        <li><strong>Industry Convention:</strong> Always use <strong>camelCase</strong> for variable and function names (e.g. <code>isStudent</code>, <code>accountBalance</code>).</li>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>Variable అంటే ఏమిటి, ఎందుకు అవసరం</li>
+        <li><code>let</code>, <code>const</code>, <code>var</code> తో variables ని declare చేయడం</li>
+        <li>ఈ మూడింటి మధ్య తేడాలు, ఏది ఎప్పుడు వాడాలి</li>
+        <li>Variable పేర్లు పెట్టేటప్పుడు పాటించాల్సిన నియమాలు</li>
+        <li>రెండు variables విలువలను swap చేయడం</li>
       </ul>
     </div>
 
-    <!-- 5. Scope Basics -->
-    <div class="section-title"><span class="num">5</span>Scope Basics (Global, Function & Block Scope)</div>
+    <div class="section-title"><span class="num">2</span>Variable అంటే ఏమిటి?</div>
     <div class="section-body">
-      <p>Scope defines the accessibility (visibility) of variables in your code:</p>
+      <p><strong>Variable</strong> అంటే data ని store చేసే ఒక <strong>డబ్బా (box)</strong>. ఆ డబ్బా మీద ఒక <strong>పేరు (label)</strong> అతికిస్తాం. ఆ పేరు చెబితే లోపల ఉన్న విలువ వస్తుంది.</p>
+      <p>ఉదాహరణకు, వంటింట్లో "చక్కెర" అని రాసిన డబ్బా ఉంటుంది. లోపల ఏముందో తెరవకుండానే మనకు తెలుస్తుంది. అలాగే, <code>age</code> అనే variable లో <code>20</code> ఉంటే, <code>age</code> అని రాస్తే <code>20</code> వస్తుంది.</p>
+      <p>"Variable" అనే పదానికి అర్థం "మారగలిగేది". అంటే డబ్బాలో విలువ తర్వాత మారొచ్చు (కొన్ని సందర్భాల్లో).</p>
 
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:14px;">
-          <strong style="color:#f7df1e;">1. Global Scope</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Anywhere outside functions/blocks. Accessible everywhere in the file.</p>
+      <h3 style="margin-top: 15px; margin-bottom: 10px; font-size: 16px;">మొదటి variable</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — First Variable</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
+        <pre><code>let name = "రవి";
+let age = 20;
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:14px;">
-          <strong style="color:#38bdf8;">2. Function Scope</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Declared inside a <code>function() { }</code>. Accessible only inside that function.</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:14px;">
-          <strong style="color:#3fb950;">3. Block Scope { }</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Declared inside <code>{ }</code> using <code>let</code> or <code>const</code>. Destroyed on block exit.</p>
-        </div>
+console.log(name);
+console.log(age);
+console.log("పేరు:", name, "వయసు:", age);</code></pre>
       </div>
+      <p style="margin-top:8px;"><strong>Output:</strong></p>
+      <pre style="background: #1e1e1e; color: #fff; padding: 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;">రవి
+20
+పేరు: రవి వయసు: 20</pre>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px;">Code అర్థం చేసుకుందాం</h3>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><code>let</code> అనేది ఒక <strong>keyword</strong>. "ఇప్పుడు ఒక కొత్త variable తయారు చేస్తున్నాను" అని JavaScript కి చెబుతుంది.</li>
+        <li><code>name</code> అనేది variable పేరు (డబ్బా మీద label).</li>
+        <li><code>=</code> అంటే "సమానం" కాదు. ఇక్కడ దీని అర్థం "కుడివైపు ఉన్న విలువను ఎడమవైపు ఉన్న డబ్బాలో పెట్టు" (assignment).</li>
+        <li><code>"రవి"</code> అనేది ఆ డబ్బాలో పెట్టిన విలువ.</li>
+        <li><code>console.log("పేరు:", name, "వయసు:", age)</code> లో కామాలతో ఎన్ని విషయాలైనా కలిపి print చేయొచ్చు.</li>
+      </ul>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px;">ఖాళీ variable</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Uninitialized Variable</span>
+        </div>
+        <pre><code>let city;
+console.log(city);
+city = "హైదరాబాద్";
+console.log(city);</code></pre>
+      </div>
+      <p style="margin-top:8px;"><strong>Output:</strong></p>
+      <pre style="background: #1e1e1e; color: #fff; padding: 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;">undefined
+హైదరాబాద్</pre>
+      <p>విలువ ఇవ్వనప్పుడు, variable లో <code>undefined</code> ఉంటుంది. అంటే "ఇంకా ఏ విలువా పెట్టలేదు".</p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>మూడు keywords: let, const, var</div>
+    <div class="section-body">
+      <p>JavaScript లో variable తయారు చేయడానికి మూడు keywords ఉన్నాయి. ఒక్కొక్కటి చూద్దాం.</p>
+      
+      <h3 style="margin-top: 15px; margin-bottom: 10px; font-size: 16px;">1. let: విలువ మారొచ్చు</h3>
+      <p>తర్వాత విలువ మారే అవకాశం ఉన్నప్పుడు <code>let</code> వాడతాం. ఉదాహరణకు, ఆటలో score.</p>
+      <div class="code-block">
+        <pre><code>let score = 10;
+console.log(score);
+
+score = 25;
+console.log(score);</code></pre>
+      </div>
+      <p style="margin-top:8px;"><strong>Output:</strong> <code>10</code>, <code>25</code>. (రెండోసారి <code>score</code> ముందు <code>let</code> రాయలేదు, ఎందుకంటే డబ్బా ముందే తయారైంది).</p>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px;">2. const: విలువ మారదు</h3>
+      <p><strong>const</strong> అంటే constant (స్థిరంగా ఉండేది). ఒక్కసారి విలువ పెట్టాక, దాన్ని మార్చలేం. π విలువ లేదా వారంలో రోజుల సంఖ్య లాంటివి మారవు కదా, అలాంటి వాటికి <code>const</code> వాడతాం.</p>
+      <div class="code-block">
+        <pre><code>const pi = 3.14159;
+console.log(pi);
+
+// pi = 3.14; // ❌ TypeError: Assignment to constant variable.</code></pre>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px;">3. var: పాత పద్ధతి</h3>
+      <p><code>var</code> అనేది JavaScript లో పాత పద్ధతి. 2015 లో <code>let</code> మరియు <code>const</code> వచ్చాయి. <code>var</code> తో ఒకే పేరుతో రెండోసారి declare చేసినా error రాదు, కానీ దానికి సరైన స్కోప్ లేకపోవడం వల్ల బగ్స్ వస్తాయి.</p>
+
+      <table class="tbl" style="margin-top:15px;">
+        <tr><th>లక్షణం</th><th>var</th><th>let</th><th>const</th></tr>
+        <tr><td>విలువ మార్చొచ్చా?</td><td>అవును</td><td>అవును</td><td><strong>కాదు</strong></td></tr>
+        <tr><td>అదే పేరుతో మళ్ళీ declare చేయొచ్చా?</td><td>అవును</td><td><strong>కాదు</strong></td><td><strong>కాదు</strong></td></tr>
+        <tr><td>Scope</td><td>Function scope</td><td>Block scope</td><td>Block scope</td></tr>
+        <tr><td>ఈ రోజుల్లో వాడాలా?</td><td>వద్దు (పాత code లో మాత్రమే)</td><td>అవును</td><td>అవును</td></tr>
+      </table>
+
+      <div class="callout" style="margin-top:15px;">
+        <div class="callout-title">💡 ఏది ఎప్పుడు వాడాలి? (సులభమైన నియమం):</div>
+        <ol style="margin-left: 20px; color: var(--text2); font-size: 14px;">
+          <li>ముందు ఎప్పుడూ <strong>const</strong> తో మొదలుపెట్టండి.</li>
+          <li>తర్వాత విలువ మార్చాల్సి వస్తే మాత్రమే <strong>let</strong> కి మార్చండి.</li>
+          <li><strong>var</strong> ని కొత్త code లో వాడకండి.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>Variable పేర్లు పెట్టే నియమాలు</div>
+    <div class="section-body">
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>పేరులో అక్షరాలు, అంకెలు, <code>_</code> (underscore), <code>$</code> ఉండొచ్చు.</li>
+        <li>పేరు <strong>అంకెతో మొదలవ్వకూడదు.</strong> (<code>1name</code> తప్పు, <code>name1</code> సరైనది).</li>
+        <li>పేరులో <strong>space ఉండకూడదు.</strong> (<code>my name</code> తప్పు, <code>myName</code> సరైనది).</li>
+        <li>పెద్ద అక్షరం, చిన్న అక్షరం తేడా ఉంటుంది. <code>age</code> మరియు <code>Age</code> వేరు వేరు variables.</li>
+        <li>JavaScript Keywords (<code>let</code>, <code>const</code>, <code>if</code>, <code>function</code>) ని పేర్లుగా వాడకూడదు.</li>
+      </ol>
+
+      <h3 style="margin-top: 15px; margin-bottom: 10px; font-size: 16px;">Naming Convention: camelCase</h3>
+      <div class="code-block">
+        <pre><code>let studentName = "సీత";
+let totalMarks = 450;
+let isPassed = true;</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">5</span>ఉదాహరణ: రెండు variables ని swap చేయడం</div>
+    <div class="section-body">
+      <p>ఇంటర్వ్యూలలో తరచూ అడిగే ప్రశ్న ఇది. రెండు గ్లాసుల్లో ఒకదానిలో పాలు, ఇంకోదానిలో టీ ఉన్నాయి. వాటిని ఒకదానిలోంచి ఒకదానికి మార్చాలంటే మూడో ఖాళీ గ్లాసు (<code>temp</code>) కావాలి కదా!</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Variable Swapping</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>let a = 5;
+let b = 10;
+
+let temp = a;
+a = b;
+b = temp;
+
+console.log("a =", a); // 10
+console.log("b =", b); // 5</code></pre>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు</div>
+      <ul>
+        <li><strong>Declare చేయకుండా variable వాడటం:</strong> <code>console.log(price)</code> ని declare చేయకుండా వాడితే <code>ReferenceError: price is not defined</code> వస్తుంది.</li>
+        <li><strong>const విలువను మార్చడం:</strong> <code>const lang = "JS"; lang = "Py";</code> చేస్తే <code>TypeError: Assignment to constant variable</code> వస్తుంది.</li>
+        <li><strong>const కి విలువ ఇవ్వకపోవడం:</strong> <code>const rate;</code> అని వదిలేస్తే <code>SyntaxError: Missing initializer in const declaration</code> వస్తుంది.</li>
+        <li><strong>పేరు అంకెతో మొదలుపెట్టడం:</strong> <code>let 1stRank = "Ravi";</code> రాస్తే <code>SyntaxError</code> వస్తుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">6</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <div class="section-body">
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><code>studentName</code> అనే variable లో మీ పేరు, <code>studentAge</code> లో మీ వయసు పెట్టి print చేయండి.</li>
+        <li>ఒక <code>let</code> variable <code>balance</code> లో <code>1000</code> పెట్టండి. తర్వాత దాన్ని <code>1500</code> గా మార్చి print చేయండి.</li>
+        <li>మూడు సబ్జెక్టుల మార్కులను <code>const</code> లో పెట్టి, వాటి మొత్తాన్ని print చేయండి.</li>
+        <li>ఈ పేర్లలో ఏవి తప్పు? <code>my-name</code>, <code>_count</code>, <code>2ndPlace</code>, <code>$price</code>, <code>total marks</code></li>
+      </ol>
+      
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: var(--text);">సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 10px; font-size: 14px; color: var(--text2);">
+          <p><strong>1.</strong> <code>let studentName = "రవి"; let studentAge = 20; console.log(studentName, studentAge);</code></p>
+          <p style="margin-top: 8px;"><strong>2.</strong> <code>let balance = 1000; balance = 1500; console.log(balance);</code> (Output: 1500)</p>
+          <p style="margin-top: 8px;"><strong>3.</strong> <code>const s1 = 60, s2 = 70, s3 = 80; console.log(s1 + s2 + s3);</code> (Output: 210)</p>
+          <p style="margin-top: 8px;"><strong>4.</strong> తప్పు పేర్లు: <code>my-name</code> (hyphen ఉంది), <code>2ndPlace</code> (నంబర్ తో మొదలైంది), <code>total marks</code> (space ఉంది). సరైనవి: <code>_count</code>, <code>$price</code>.</p>
+        </div>
+      </details>
     </div>
 
     <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this variable profile example from the curriculum:</p>
-      
+      <div class="try-title">🚀 మీరే try చేయండి</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">ఈ code ని మన compiler లో run చేయండి. తర్వాత విలువలు మార్చి మళ్ళీ run చేయండి:</p>
       <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
+        <pre><code>const shopName = "Ravi Stores";
+let itemPrice = 50;
+let quantity = 3;
 
-const name = "Ravi";
-let age = 21;
-const isStudent = true;
+let totalBill = itemPrice * quantity;
+console.log(shopName);
+console.log("మొత్తం బిల్లు:", totalBill);
 
-console.log("Name:", name);
-console.log("Age:", age);
-console.log("Is Student:", isStudent);
-console.log("Type of Age:", typeof age);</code></pre>
+quantity = 5;
+totalBill = itemPrice * quantity;
+console.log("కొత్త బిల్లు:", totalBill);</code></pre>
       </div>
-      <a class="run-btn" href="/?lang=nodejs">Run in Our Compiler →</a>
+      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript try చేయండి</a>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li><strong>Variable</strong> అంటే పేరు ఉన్న ఒక డబ్బా, అందులో data ని store చేస్తాం.</li>
+        <li><strong>let</strong>: విలువ మారొచ్చు. <strong>const</strong>: విలువ మారదు. <strong>var</strong>: పాత పద్ధతి, వాడకండి.</li>
+        <li>ఎప్పుడూ <code>const</code> తో మొదలుపెట్టి, అవసరమైతేనే <code>let</code> కి మార్చండి.</li>
+        <li>Variable పేరు నంబర్ తో మొదలవ్వకూడదు, space ఉండకూడదు, camelCase వాడండి.</li>
+      </ul>
     </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 3, subtopics, contentBody, '02-javascript-syntax-and-errors.html', '2. Syntax & Errors', 'operators.html', '4. Data Types, typeof & Coercion');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -572,179 +614,281 @@ console.log("Type of Age:", typeof age);</code></pre>
 
 // ── BUILD LESSON 4: Data Types, typeof & Coercion (Phase 2 Part 2) ─────────
 function buildLesson4() {
-  const title = "Data Types, typeof & Type Coercion";
-  const desc = "Exhaustive guide to JavaScript Data Types: 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.";
+  const title = "JavaScript Data Types తెలుగులో | string, number, boolean, null, undefined";
+  const desc = "JavaScript లో data types అంటే ఏమిటి, string, number, boolean, null, undefined మధ్య తేడాలు, typeof operator ని తెలుగులో ఉదాహరణలతో నేర్చుకోండి.";
   const filename = "operators.html";
-  const subtopics = "7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol) · Objects · typeof Operator · Historic typeof null Bug · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy Values";
+  const subtopics = "string · number · boolean · null · undefined · typeof Operator · NaN · Infinity · \"5\" vs 5";
 
   const contentBody = `
     <div class="intro-box">
-      <p>JavaScript data types are divided into two main categories: <strong>7 Primitive Types</strong> (stored directly by value) and <strong>Reference Objects</strong> (stored by reference pointer). In this lesson, you will master all 7 primitives, object literals, the <code>typeof</code> operator and its historic <code>typeof null === "object"</code> quirk, dynamic typing, explicit type conversions vs implicit type coercions, and the 8 Falsy values in JavaScript.</p>
+      <p>ఇంట్లో వంటగదిలో చూడండి. బియ్యం, పప్పు, ఉప్పు, నూనె అన్నీ వేర్వేరు డబ్బాల్లో ఉంటాయి. ఎందుకంటే అవన్నీ వేర్వేరు రకాలు. బియ్యాన్ని కొలిచే విధానం వేరు, నూనెను కొలిచే విధానం వేరు కదా?</p>
+      <p>Programming లో కూడా అంతే. Variable డబ్బాల్లో పెట్టే విలువలు వేర్వేరు <strong>రకాలు</strong> (types) గా ఉంటాయి. పేరు (text), సంఖ్య (number), అవును/కాదు (true/false) ఇలా. ఈ రకాలనే <strong>Data Types</strong> అంటారు.</p>
+      <p>ఒక విలువ ఏ రకానికి చెందినదో తెలిస్తేనే, దానితో ఏం చేయొచ్చో, ఏం చేయలేమో తెలుస్తుంది. ఉదాహరణకు, రెండు సంఖ్యలను కూడొచ్చు, కానీ "పేరు" ను "పేరు" తో కూడితే ఏమవుతుంది? ఈ chapter లో అవన్నీ చూద్దాం.</p>
     </div>
 
-    <!-- SECTION 1: 7 Primitives + Objects -->
-    <div class="section-title"><span class="num">1</span>The 7 Primitive Data Types + Objects</div>
+    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
     <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>JavaScript లోని ముఖ్యమైన data types: string, number, boolean, null, undefined</li>
+        <li><code>typeof</code> operator తో ఒక విలువ ఏ రకమో తెలుసుకోవడం</li>
+        <li><code>null</code> మరియు <code>undefined</code> మధ్య తేడా</li>
+        <li><code>NaN</code> మరియు <code>Infinity</code> అంటే ఏమిటి</li>
+        <li><code>"5"</code> మరియు <code>5</code> మధ్య తేడా</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Primitive Data Types అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p>JavaScript లో సరళమైన, ప్రాథమిక రకాలను <strong>Primitive data types</strong> అంటారు. ఈ chapter లో మనం ముఖ్యమైన ఐదింటిని నేర్చుకుందాం:</p>
+
       <table class="tbl">
-        <tr><th>Data Type</th><th>Category</th><th>Description / Range</th><th>Example</th></tr>
-        <tr><td><strong>String</strong></td><td>Primitive</td><td>Textual character data enclosed in <code>''</code>, <code>""</code>, or <code>\`...\`</code>.</td><td><code>"Ravi"</code></td></tr>
-        <tr><td><strong>Number</strong></td><td>Primitive</td><td>64-bit IEEE 754 floating point (Integers & Decimals up to $2^{53}-1$).</td><td><code>21</code>, <code>99.99</code></td></tr>
-        <tr><td><strong>BigInt</strong></td><td>Primitive</td><td>Arbitrary precision large integer ending with <code>n</code> suffix.</td><td><code>9007199254740991n</code></td></tr>
-        <tr><td><strong>Boolean</strong></td><td>Primitive</td><td>Logical truth value: strictly <code>true</code> or <code>false</code>.</td><td><code>true</code></td></tr>
-        <tr><td><strong>undefined</strong></td><td>Primitive</td><td>Automatically assigned to declared variables without a value.</td><td><code>let x; // undefined</code></td></tr>
-        <tr><td><strong>null</strong></td><td>Primitive</td><td>Intentional absence of any value / empty pointer.</td><td><code>const user = null;</code></td></tr>
-        <tr><td><strong>Symbol</strong></td><td>Primitive</td><td>Unique, immutable identifier created via <code>Symbol()</code>.</td><td><code>Symbol("id")</code></td></tr>
-        <tr><td><strong>Object</strong></td><td>Reference</td><td>Collection of key-value pairs (Arrays, Functions, Objects).</td><td><code>{ name: "Ravi" }</code></td></tr>
+        <tr><th>Data Type</th><th>అర్థం</th><th>ఉదాహరణ</th></tr>
+        <tr><td><strong>string</strong></td><td>అక్షరాల text</td><td><code>"రవి"</code>, <code>'Hello'</code></td></tr>
+        <tr><td><strong>number</strong></td><td>సంఖ్యలు (పూర్ణ మరియు దశాంశ)</td><td><code>25</code>, <code>3.14</code>, <code>-7</code></td></tr>
+        <tr><td><strong>boolean</strong></td><td>అవును లేదా కాదు</td><td><code>true</code>, <code>false</code></td></tr>
+        <tr><td><strong>null</strong></td><td>"ఉద్దేశపూర్వకంగా ఖాళీ"</td><td><code>null</code></td></tr>
+        <tr><td><strong>undefined</strong></td><td>"ఇంకా విలువ ఇవ్వలేదు"</td><td><code>undefined</code></td></tr>
       </table>
+      <p style="margin-top:10px; color:var(--text2); font-size:13.5px;">(ఇవి కాకుండా <code>bigint</code>, <code>symbol</code> అనే మరో రెండు ఉన్నాయి. అవి చాలా అరుదుగా వాడతారు, కాబట్టి ప్రస్తుతానికి వదిలేద్దాం.)</p>
     </div>
 
-    <!-- SECTION 2: typeof Operator & The Historic null Bug -->
-    <div class="section-title"><span class="num">2</span>The typeof Operator & Historic "typeof null" Quirk</div>
+    <div class="section-title"><span class="num">3</span>typeof operator: విలువ ఏ రకమో తెలుసుకోవడం</div>
     <div class="section-body">
-      <p>Oka variable or expression yokka data type ni runtime lo check cheyyadaniki <code>typeof</code> operator vadathamu:</p>
+      <p>ఏదైనా విలువ ఏ data type కి చెందినదో తెలుసుకోవడానికి <strong><code>typeof</code></strong> అనే operator వాడతాం.</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — typeof Demo</span>
+          <span class="lang-tag">JavaScript — typeof Operator</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
+        <pre><code>console.log(typeof "Hello");
+console.log(typeof 25);
+console.log(typeof true);
+console.log(typeof undefined);</code></pre>
+      </div>
+      <p style="margin-top:8px;"><strong>Output:</strong></p>
+      <pre style="background: #1e1e1e; color: #fff; padding: 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;">string
+number
+boolean
+undefined</pre>
+      <p><code>typeof</code> తర్వాత విలువ లేదా variable రాస్తే, దాని రకం text గా వస్తుంది. ఈ chapter అంతా దీన్ని వాడుతూనే ఉంటాం.</p>
+    </div>
 
-console.log(typeof "Ravi");        // "string"
-console.log(typeof 21);            // "number"
-console.log(typeof 90071992547n);   // "bigint"
-console.log(typeof true);          // "boolean"
-console.log(typeof undefined);     // "undefined"
-console.log(typeof Symbol("id"));  // "symbol"
-console.log(typeof { age: 21 });   // "object"
-console.log(typeof function(){});  // "function"
+    <div class="section-title"><span class="num">4</span>1. String: Text డేటా</div>
+    <div class="section-body">
+      <p><strong>String</strong> అంటే అక్షరాల వరుస. పేరు, ఊరు, message, ఇలా text ఏదైనా string. String ని ఎప్పుడూ <strong>quotes</strong> మధ్యలో రాయాలి.</p>
 
-// ⚠️ THE HISTORIC JAVASCRIPT BUG:
-console.log(typeof null);          // "object" (Bug since JS 1.0 in 1995!)</code></pre>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — String Creation</span>
+        </div>
+        <pre><code>let name1 = "రవి";
+let name2 = 'సీత';
+let message = &#96;నమస్కారం&#96;;
+
+console.log(name1);
+console.log(name2);
+console.log(message);
+console.log(typeof name1); // string</code></pre>
       </div>
 
+      <h3 style="margin-top: 15px; margin-bottom: 8px; font-size: 16px;">Quotes లోపల quotes రాయడం</h3>
+      <div class="code-block">
+        <pre><code>console.log("It's a nice day");
+console.log('అతను "హాయ్" అన్నాడు');</code></pre>
+      </div>
+
+      <h3 style="margin-top: 15px; margin-bottom: 8px; font-size: 16px;">String పొడవు (.length)</h3>
+      <div class="code-block">
+        <pre><code>let language = "JavaScript";
+console.log(language.length); // 10</code></pre>
+      </div>
+      <p><code>.length</code> తో string లో ఎన్ని అక్షరాలు ఉన్నాయో సులభంగా తెలుస్తుంది.</p>
+    </div>
+
+    <div class="section-title"><span class="num">5</span>2. Number: సంఖ్యలు, Infinity & NaN</div>
+    <div class="section-body">
+      <p>JavaScript లో <strong>number</strong> అనే ఒకే రకం ఉంటుంది. పూర్ణ సంఖ్యలు (<code>10</code>), దశాంశ సంఖ్యలు (<code>3.14</code>), రుణ సంఖ్యలు (<code>-5</code>) అన్నీ number లే.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Number Type</span>
+        </div>
+        <pre><code>let age = 25;
+let price = 99.50;
+let temperature = -4;
+
+console.log(typeof age);   // number
+console.log(typeof price); // number</code></pre>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">ప్రత్యేక number విలువలు: Infinity మరియు NaN</h3>
+      <p><strong>Infinity:</strong> ఒక సంఖ్యను సున్నాతో భాగిస్తే (గణితంలో ఇది కుదరదు), JavaScript <code>Infinity</code> ఇస్తుంది.</p>
+      <div class="code-block">
+        <pre><code>console.log(10 / 0);  // Infinity
+console.log(-10 / 0); // -Infinity</code></pre>
+      </div>
+
+      <p style="margin-top: 10px;"><strong>NaN (Not a Number):</strong> సంఖ్య కాని దాన్ని సంఖ్యలా లెక్కించడానికి ప్రయత్నిస్తే <code>NaN</code> వస్తుంది. ఆశ్చర్యంగా <strong>NaN కూడా "number" రకమే!</strong></p>
+      <div class="code-block">
+        <pre><code>console.log("abc" * 2);  // NaN
+console.log(typeof NaN); // number</code></pre>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">దశాంశ సంఖ్యల విచిత్రం (Floating Point Quirk)</h3>
+      <div class="code-block">
+        <pre><code>console.log(0.1 + 0.2); // 0.30000000000000004</code></pre>
+      </div>
+      <p><code>0.3</code> రావాలి కదా? కంప్యూటర్లు దశాంశ సంఖ్యలను binary లో store చేసే విధానం వల్ల చిన్న తేడా వస్తుంది. డబ్బు లెక్కల్లో దీని గురించి జాగ్రత్తగా ఉండాలి.</p>
+    </div>
+
+    <div class="section-title"><span class="num">6</span>3. Boolean: అవును లేదా కాదు (true / false)</div>
+    <div class="section-body">
+      <p><strong>Boolean</strong> కి కేవలం రెండే విలువలు ఉంటాయి: <code>true</code> (అవును) మరియు <code>false</code> (కాదు). ఇది లైట్ స్విచ్ లాంటిది — ఆన్ లేదా ఆఫ్.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Boolean Comparisons</span>
+        </div>
+        <pre><code>let isStudent = true;
+let isMarried = false;
+
+console.log(typeof isStudent); // boolean
+console.log(10 > 5);           // true
+console.log(3 === 4);          // false</code></pre>
+      </div>
+      <p><strong>గుర్తుంచుకోండి:</strong> <code>true</code> మరియు <code>false</code> ని quotes లో రాయకూడదు. <code>"true"</code> అనేది కేవలం ఒక text (string).</p>
+    </div>
+
+    <div class="section-title"><span class="num">7</span>4. undefined vs 5. null</div>
+    <div class="section-body">
       <div class="callout">
-        <div class="callout-title">💡 Why does 'typeof null' return "object"?</div>
-        <p>1995 lo original JavaScript implementation lo values memory lo 32-bit units ga store aveyi. Type tags lowest 3 bits lo unte — <code>000</code> was the tag for <strong>Object</strong>. Null memory address <code>0x00</code> (all zeros) gaa read avvanivvadam dwara engine tag check lo <code>000</code> (Object) gaa return aindhi. Backward compatibility karanam ga eppatiki dhenini fix cheyyanivvaledhu!</p>
-      </div>
-    </div>
-
-    <!-- SECTION 3: Dynamic Typing -->
-    <div class="section-title"><span class="num">3</span>Dynamic Typing in JavaScript</div>
-    <div class="section-body">
-      <p>JavaScript is a <strong>dynamically-typed language</strong>. Variables variables data types ni bind cheskovavu; dynamically values change ayyetappudu type mari pothundi:</p>
-
-      <code style="display:block; padding:12px 16px; background:#0d1117; border-radius:8px; color:#7ee787; margin:10px 0; font-size:13px;">let data = 100; // Type: number<br>data = "Hello World"; // Type: string (Valid in JS!)<br>data = true; // Type: boolean (Valid in JS!)</code>
-    </div>
-
-    <!-- SECTION 4: Type Conversion vs Type Coercion -->
-    <div class="section-title"><span class="num">4</span>Type Conversion (Explicit) vs Type Coercion (Implicit)</div>
-    <div class="section-body">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
-          <strong style="color:#3fb950;">1. Explicit Type Conversion</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Developer manually built-in functions (<code>Number()</code>, <code>String()</code>, <code>Boolean()</code>) dwara type change cheyyadam.</p>
-          <code style="display:block; margin-top:6px;">Number("123") // 123<br>String(456) // "456"</code>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:16px;">
-          <strong style="color:#f7df1e;">2. Implicit Type Coercion</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Operators execution appudu JS engine automatically type convert cheyadam.</p>
-          <code style="display:block; margin-top:6px;">'5' + 2 // "52" (String concatenation)<br>'5' - 2 // 3 (Numeric subtraction)</code>
-        </div>
+        <div class="callout-title">🎬 రియల్ లైఫ్ అనలాజీ: సినిమా హాల్ సీట్ బుకింగ్</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">ఈ రెంటికి తేడా చాలా సులభం:</p>
+        <ul style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">
+          <li><strong>undefined:</strong> డబ్బా ఉంది కానీ ఏమీ పెట్టడం మర్చిపోయాం, లేదా ఇంకా పెట్టలేదు. (మీరు ఇంకా seat select చేయలేదు).</li>
+          <li><strong>null:</strong> డబ్బా ఉంది, మరియు "ఇది ఖాళీ" అని మనమే ఉద్దేశపూర్వకంగా చెప్పాం. (మీరు "నాకు ఏ seat వద్దు" అని స్పష్టంగా చెప్పారు).</li>
+        </ul>
       </div>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Coercion Examples</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          <span class="lang-tag">JavaScript — null vs undefined</span>
         </div>
-        <pre><code>"use strict";
+        <pre><code>let phoneNumber;
+console.log(phoneNumber);        // undefined
+console.log(typeof phoneNumber); // undefined
 
-console.log("5" + 10);    // "510" (String + Operator converts 10 to string)
-console.log("5" - 2);     // 3     (Minus operator coerces "5" to number)
-console.log("5" * "2");   // 10    (Multiplication coerces strings to numbers)
-console.log(true + 1);    // 2     (true coerces to 1)
-console.log(false + 1);   // 1     (false coerces to 0)</code></pre>
+let selectedSeat = null;
+console.log(selectedSeat);        // null
+console.log(typeof selectedSeat); // object (హిస్టారిక్ బగ్!)</code></pre>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:15px;">
+        <div class="callout-title">⚠️ typeof null విచిత్రం:</div>
+        <p><code>typeof null</code> ఎప్పుడూ <strong>"object"</strong> అని వస్తుంది! ఇది 1995 లో JavaScript మొదటి version లో జరిగిన ఒక పొరపాటు. పాత వెబ్సైట్లు పాడవ్వకూడదని దీన్ని అలాగే ఉంచేశారు.</p>
       </div>
     </div>
 
-    <!-- SECTION 5: Truthy and Falsy Values -->
-    <div class="section-title"><span class="num">5</span>Truthy vs Falsy Values in JavaScript</div>
+    <div class="section-title"><span class="num">8</span>"5" మరియు 5 మధ్య తేడా (కూడిక vs అతికింపు)</div>
     <div class="section-body">
-      <p>JavaScript lo Boolean context lo (like <code>if</code> conditions) evaluate ayye values ni Truthy or Falsy antaru. Exactly <strong>8 Falsy Values</strong> unnaayi — ivevi kaavu anukunte remaining PRAYETHNAM THOO UNNA VALUES ANNI <strong>TRUTHY</strong>:</p>
-
-      <div style="background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:18px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; color:#ff7b72; margin:16px 0;">
-🚫 THE EXACT 8 FALSY VALUES IN JAVASCRIPT:
-1. false
-2. 0 (Integer zero)
-3. -0 (Negative zero)
-4. 0n (BigInt zero)
-5. "" or '' or \`\` (Empty String)
-6. null
-7. undefined
-8. NaN (Not a Number)
-      </div>
-
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px; margin:16px 0;">
-        <strong style="color:#3fb950;">✅ Notable Truthy Values (Common Traps):</strong>
-        <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>"0"</code> (Non-empty string), <code>"false"</code> (Non-empty string), <code>[]</code> (Empty array object), <code>{}</code> (Empty object), <code>function(){}</code> are ALL <strong>TRUTHY</strong>!</p>
-      </div>
-
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Truthy & Falsy Test</span>
+          <span class="lang-tag">JavaScript — String Concatenation vs Number Addition</span>
+        </div>
+        <pre><code>console.log(5 + 3);   // 8 (నంబర్ల కూడిక)
+console.log("5" + 3); // "53" (టెక్స్ట్ అతికింపు - Concatenation!)</code></pre>
+      </div>
+      <p><code>5 + 3</code> రెండూ number లు కాబట్టి సంకలనం జరిగింది. కానీ <code>"5" + 3</code> లో ఒకటి string కాబట్టి JavaScript వాటిని పక్కపక్కనే అతికించింది (Concatenation).</p>
+    </div>
+
+    <div class="section-title"><span class="num">9</span>అన్నీ కలిపి ఒక ఉదాహరణ: విద్యార్థి వివరాలు</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Full Data Types Example</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
+        <pre><code>let studentName = "సీత";
+let marks = 87.5;
+let isPassed = true;
+let address = null;
+let phoneNumber;
 
-console.log("Boolean(''):", Boolean(""));           // false (Falsy)
-console.log("Boolean(0):", Boolean(0));             // false (Falsy)
-console.log("Boolean(null):", Boolean(null));       // false (Falsy)
-
-console.log("Boolean('0'):", Boolean("0"));         // true (Truthy!)
-console.log("Boolean([]):", Boolean([]));           // true (Truthy!)
-console.log("Boolean({}):", Boolean({}));           // true (Truthy!)</code></pre>
+console.log(studentName, "->", typeof studentName); // string
+console.log(marks, "->", typeof marks);             // number
+console.log(isPassed, "->", typeof isPassed);       // boolean
+console.log(address, "->", typeof address);         // object
+console.log(phoneNumber, "->", typeof phoneNumber); // undefined</code></pre>
       </div>
     </div>
 
-    <!-- Practice Challenge -->
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు</div>
+      <ul>
+        <li><strong>Number ని quotes లో రాయడం:</strong> <code>let age = "25"; age + 5;</code> అంటే <code>"255"</code> వస్తుంది కానీ <code>30</code> రాదు! సంఖ్యలకు quotes వాడకూడదు.</li>
+        <li><strong>Boolean ని quotes లో రాయడం:</strong> <code>let isLoggedIn = "false";</code> అనేది boolean కాదు, string! దీన్ని <code>if</code> లో వాడితే <code>true</code> లా ప్రవర్తిస్తుంది!</li>
+        <li><strong>NaN ని === తో పోల్చడం:</strong> <code>NaN === NaN</code> రిజల్ట్ <code>false</code>! NaN ని చెక్ చేయడానికి ఎప్పుడూ <code>Number.isNaN()</code> వాడాలి.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">10</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <div class="section-body">
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>కింది విలువల data types చెప్పండి: <code>"hello"</code>, <code>42</code>, <code>3.14</code>, <code>true</code>, <code>null</code>, <code>undefined</code>, <code>"100"</code>, <code>false</code>.</li>
+        <li>ఈ <code>typeof</code> లు ఏం print చేస్తాయి? <code>typeof "true"</code>, <code>typeof true</code>, <code>typeof (7 / 2)</code>, <code>typeof NaN</code>.</li>
+        <li>ఒక variable లో మీ పేరు, వయసు, student అవునా కాదా (boolean) పెట్టి, ప్రతిదాని <code>typeof</code> print చేయండి.</li>
+        <li><code>"10" + 5</code> మరియు <code>10 + 5</code> ఫలితాలు ఏమిటి? ఎందుకు వేర్వేరు?</li>
+        <li><code>0.1 + 0.2 === 0.3</code> ఏం ఇస్తుంది?</li>
+      </ol>
+
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: var(--text);">సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 10px; font-size: 14px; color: var(--text2);">
+          <p><strong>1.</strong> <code>"hello"</code> → string, <code>42</code> → number, <code>3.14</code> → number, <code>true</code> → boolean, <code>null</code> → null (కానీ typeof object), <code>undefined</code> → undefined, <code>"100"</code> → string, <code>false</code> → boolean.</p>
+          <p style="margin-top: 8px;"><strong>2.</strong> <code>string</code>, <code>boolean</code>, <code>number</code>, <code>number</code> (NaN కూడా number రకమే!).</p>
+          <p style="margin-top: 8px;"><strong>3.</strong> <code>let myName = "రవి"; let myAge = 20; let isStudent = true;</code> (Types: string, number, boolean).</p>
+          <p style="margin-top: 8px;"><strong>4.</strong> <code>"10" + 5</code> → <code>"105"</code> (string concatenation). <code>10 + 5</code> → <code>15</code> (number addition).</p>
+          <p style="margin-top: 8px;"><strong>5.</strong> <code>false</code>. ఎందుకంటే <code>0.1 + 0.2</code> ఫలితం <code>0.30000000000000004</code>.</p>
+        </div>
+      </details>
+    </div>
+
     <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — Curriculum Code Challenge</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this complete Phase 2 Variables and Data Types code snippet:</p>
-      
+      <div class="try-title">🚀 మీరే try చేయండి</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">ఈ code ని మన compiler లో run చేసి, విలువలు మార్చి ఫలితాలు చూడండి:</p>
       <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
+        <pre><code>let productName = "Laptop";
+let price = 45000;
+let inStock = true;
+let discount = null;
+let rating;
 
-const name = "Ravi";
-let age = 21;
-const isStudent = true;
-
-console.log("Name:", name);
-console.log("Age:", age);
-console.log("Is Student:", isStudent);
-console.log("Type of Age:", typeof age);
-
-// Coercion test
-let output = "Age in 5 years: " + (age + 5);
-console.log(output);</code></pre>
+console.log(productName, "->", typeof productName);
+console.log(price, "->", typeof price);
+console.log(inStock, "->", typeof inStock);
+console.log(discount, "->", typeof discount);
+console.log(rating, "->", typeof rating);</code></pre>
       </div>
-      <a class="run-btn" href="/?lang=nodejs">Run in Our Compiler →</a>
+      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript try చేయండి</a>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>Data type అంటే విలువ యొక్క రకం. <code>typeof</code> తో తెలుసుకోవచ్చు.</li>
+        <li><strong>string</strong>: text. <strong>number</strong>: సంఖ్యలు (Infinity, NaN తో సహా). <strong>boolean</strong>: <code>true</code> / <code>false</code>.</li>
+        <li><strong>undefined</strong>: విలువ ఇంకా ఇవ్వలేదు. <strong>null</strong>: ఉద్దేశపూర్వకంగా ఖాళీ.</li>
+        <li><code>typeof null</code> ఎప్పుడూ <code>"object"</code> అని ఇస్తుంది (ఒక పాత quirk).</li>
+        <li><code>"5"</code> (string) మరియు <code>5</code> (number) వేరు వేరు. <code>"5" + 3</code> ఫలితం <code>"53"</code>.</li>
+      </ul>
     </div>
-  `;
+`;
 
-  const html = wrapJSLessonPage(title, desc, filename, 4, subtopics, contentBody, 'variables.html', '3. Variables (let, const & var)', 'conditionals.html', 'Phase 3: Conditionals');
+  const html = wrapJSLessonPage(title, desc, filename, 4, subtopics, contentBody, 'variables.html', '3. Variables (let, const, var)', '05-operators-expressions-and-precedence.html', '5. Operators, Expressions & Precedence');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
-  console.log(`✅ Generated ${filename}`);
+  fs.writeFileSync(path.join(jsDir, 'data-types.html'), html, 'utf8');
+  console.log(`✅ Generated ${filename} and data-types.html`);
 }
 
 // ── UPDATE blog-javascript.html HOME PAGE ──────────────────────────────────
@@ -838,7 +982,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

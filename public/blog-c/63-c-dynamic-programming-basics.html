@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Programming (DP) Basics (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ లో పెద్ద పెద్ద ప్రాబ్లమ్స్ ని సాల్వ్ చేసే బ్రహ్మాస్త్రం! Dynamic Programming (డైనమిక్ ప్రోగ్రామింగ్) అంటే ఏంటి? ఇప్పటికే చేసిన పనిని మళ్ళీ చేయకుండా ఎలా గుర్తుపెట్టుకోవాలో (Memoization) పక్కా రియల్ లైఫ్ ఎగ్జాంపుల్ తో చూద్దాం." />
+  <meta name="keywords" content="c tutorial, dynamic programming (dp) basics (తెలుగులో), dynamic programming c, system calls c, fork exec wait, final project c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/63-c-dynamic-programming-basics.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 20: Algorithms & Final -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Algorithms & Final</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/60-c-searching-linear-and-binary-search.html">60. Linear & Binary Search</a>
+        <a href="/blog-c/61-c-sorting-1-bubble-selection-insertion.html">61. Sorting (Bubble, Selection, Insertion)</a>
+        <a href="/blog-c/62-c-sorting-2-merge-sort-quick-sort.html">62. Sorting (Merge & Quick Sort)</a>
+        <a href="/blog-c/63-c-dynamic-programming-basics.html" class="active">63. Dynamic Programming Basics</a>
+        <a href="/blog-c/64-c-system-calls-basics-fork-exec-wait.html">64. System Calls (fork, exec, wait)</a>
+        <a href="/blog-c/65-c-building-a-mini-c-project.html">65. C Master Project & Conclusion</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 63: Dynamic Programming (DP) Basics (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Dynamic Programming (DP) Basics (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 63</span>
+      <span class="badge">📂 Phase 20: Algorithms & Final</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Recursion vs DP · Memoization (Top-down) · Tabulation (Bottom-up) · Fibonacci DP</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>మామూలుగా మనం Recursion (రికర్షన్) వాడి ప్రాబ్లమ్స్ సాల్వ్ చేస్తాం. కానీ రికర్షన్ లో ఒక పెద్ద ప్రాబ్లమ్ ఉంది! ఒకసారి చేసిన లెక్కనే, అది పిచ్చోడిలాగా మళ్ళీ మళ్ళీ చేస్తూనే ఉంటుంది. దీనివల్ల టైమ్ వేస్ట్ అయిపోయి 40వ నంబర్ కనుక్కోవడానికే గంటల టైమ్ పడుతుంది. ఇక్కడే <strong>Dynamic Programming (DP)</strong> అనే అద్భుతమైన కాన్సెప్ట్ వస్తుంది. "ఒకసారి ఆన్సర్ కనుక్కున్నాక, దాన్ని ఒక బుక్ లో రాసుకుని గుర్తుపెట్టుకో, మళ్ళీ చేయొద్దు" అని చెప్పేదే డైనమిక్ ప్రోగ్రామింగ్. గూగుల్ మ్యాప్స్ లో రూట్స్ కనుక్కోవాలన్నా ఈ DP నే వాడతారు. అదెలాగో ఈరోజు ఫిబొనాచీ (Fibonacci) సిరీస్ తో చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> రికర్షన్ లో ఉన్న పిచ్చితనం (Overlapping Subproblems)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఫిబొనాచీ (Fibonacci) అంటే ముందు రెండు నంబర్స్ ని కలిపితే నెక్స్ట్ నంబర్ వస్తుంది (0, 1, 1, 2, 3, 5, 8...). దీనికి <code>fib(n) = fib(n-1) + fib(n-2)</code> అని ఫార్ములా వాడి రికర్షన్ రాస్తాం.
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>🧠 రియల్ లైఫ్ స్టోరీ: ఒకే లెక్క మళ్ళీ మళ్ళీ...</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          మీరు ఒక చిన్న పిల్లాడిని పిలిచి "బాబు 2+2 ఎంత?" అని అడిగారు. వాడు వేళ్ల మీద లెక్కపెట్టి "4" అని చెప్పాడు. ఆ తర్వాత వెంటనే "బాబు 2+2+1 ఎంత?" అని అడిగారు. వాడు ఏం చేయాలి? "ఇందాకే 4 అన్నావు కదా, దానికి 1 కలిపితే 5" అని టక్కున చెప్పాలి (ఇదే <strong>Dynamic Programming</strong>).<br><br>
+          కానీ ఆ పిల్లాడు పిచ్చోడైతే ఏం చేస్తాడు? మళ్ళీ మొదటినుండి "1, 2, 3, 4.. దానికి ఇంకో 1 కలిపితే 5" అని మొత్తం లెక్క పెడతాడు! (ఇదే నార్మల్ <strong>Recursion</strong>). రికర్షన్ ట్రీ లో పాత లెక్కలని మర్చిపోయి మళ్ళీ చేయడం వల్ల <code>fib(50)</code> కనుక్కోవడానికి సంవత్సరాల టైమ్ పడుతుంది!
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> DP లో రెండు పద్ధతులు (Memoization & Tabulation)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>1. మెమోయిజేషన్ (Memoization / Top-Down):</strong> ఇది రికర్షన్ కి ఒక మెమరీ (అర్రే) ని తగిలిస్తుంది. ఒకసారి లెక్క కనుక్కోగానే దాన్ని నోట్ బుక్ (Array) లో రాసుకుంటాం. మళ్ళీ ఆ లెక్క వచ్చినప్పుడు, ఆన్సర్ నోట్ బుక్ లో ఉంటే డైరెక్ట్ గా ఇచ్చేస్తాం, లేకపోతేనే లెక్క చేస్తాం!
+      </p>
+      <p class="text-prose">
+        <strong>2. ట్యాబులేషన్ (Tabulation / Bottom-Up):</strong> ఇది అసలు రికర్షన్ కే పోదు. డైరెక్ట్ గా ఒక ఫర్ లూప్ (for loop) వేసుకుని, కింద నుండి (0 నుండి) లెక్క చేసుకుంటూ పైకి వస్తుంది. ఇది ఇంకా చాలా ఫాస్ట్!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Fibonacci with DP)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో నార్మల్ రికర్షన్ కి, DP కి మధ్య స్పీడ్ డిఫరెన్స్ ఎలా ఉందో చూడండి. <code>memo</code> అనే ఒక చిన్న అర్రే యాడ్ చేస్తే చాలు, కోడ్ రాకెట్ లాగా దూసుకెళ్తుంది.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Dynamic Programming (Memoization)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// మనం ఒక నోట్ బుక్ (అర్రే) తయారుచేద్దాం (మ్యాక్స్ 100 దాకా)
+// మొదట్లో అన్నీ -1 తో నింపుదాం (అంటే ఏ ఆన్సర్ తెలీదని అర్థం)
+int memo[100];
+
+// మామూలు రికర్షన్ (స్లో) - అర్థం చేసుకోవడానికి మాత్రమే!
+int fibSlow(int n) {
+    if (n <= 1) return n;
+    return fibSlow(n - 1) + fibSlow(n - 2);
+}
+
+// డైనమిక్ ప్రోగ్రామింగ్ రికర్షన్ (సూపర్ ఫాస్ట్!)
+long long fibDP(int n) {
+    if (n <= 1) return n;
+    
+    // ఆన్సర్ కోసం నోట్ బుక్ చెక్ చేద్దాం! 
+    // -1 కాకుండా వేరే నంబర్ ఉందంటే, ఆన్సర్ ఆల్రెడీ చేసేసినట్టే!
+    if (memo[n] != -1) {
+        return memo[n]; // డైరెక్ట్ గా ఆన్సర్ ఇచ్చేయ్ (టైమ్ సేవ్)
+    }
+    
+    // ఒకవేళ ఆన్సర్ లేకపోతే, అప్పుడు లెక్క చేసి నోట్ బుక్ లో రాయి
+    memo[n] = fibDP(n - 1) + fibDP(n - 2);
+    
+    return memo[n]; // రాసిన దాన్ని రిటర్న్ చేయి
+}
+
+int main() {
+    printf("--- Dynamic Programming (DP) ---\n\n");
+    
+    // నోట్ బుక్ అంతా -1 (ఖాళీ) చేద్దాం
+    for (int i = 0; i < 100; i++) {
+        memo[i] = -1;
+    }
+    
+    int num = 45; // 45 వ నంబర్ కనుక్కోవాలి
+    
+    // [గమనిక: fibSlow(45) రన్ చేస్తే మీ కంప్యూటర్ దాదాపు 10 సెకన్లు ఫ్రీజ్ అవుతుంది]
+    // printf("Slow Recursive Answer: %d\n", fibSlow(num)); 
+    
+    // కానీ DP వాడితే... 0.0001 సెకనులో ఆన్సర్ వస్తుంది!
+    printf("DP Fast Answer for fib(%d) : %lld\n", num, fibDP(num));
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>memo[100]</code>: ఇది గ్లోబల్ అర్రే. ఇందులో ఇండెక్స్ అంటే <code>n</code>. (ఉదాహరణకు 5వ ఫిబొనాచీ నంబర్ వాల్యూ 5 అనుకుంటే, అది <code>memo[5] = 5</code> అని సేవ్ అవుతుంది).</li>
+        <li><code>if (memo[n] != -1) return memo[n];</code>: ఇదే DP కి గుండెకాయ! రికర్షన్ కిందికి వెళ్లేముందు ఇక్కడ బ్రేక్ పడుతుంది. ఆన్సర్ దొరికితే వెంటనే వెనక్కి వచ్చేస్తుంది (O(1) టైమ్). దీనివల్ల <code>fib(40)</code> లాంటివి మళ్ళీ క్యాలిక్యులేట్ అయ్యే పనే లేదు!</li>
+        <li><code>memo[n] = ...</code>: ఆన్సర్ కనుక్కున్నాక, దాన్ని నెక్స్ట్ టైమ్ కోసం సేవ్ చేసి పెట్టుకుంటుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: DP కి Time Complexity (టైమ్) ఎంత?</h4>
+          <p>నార్మల్ రికర్షన్ కి O(2^N) పడుతుంది (అంటే n=50 ఇస్తే కోట్లు టైమ్ పడుతుంది). కానీ DP కి కేవలం <strong>O(N)</strong> పడుతుంది! అంటే మీరు n=50 ఇస్తే కేవలం 50 సార్లు మాత్రమే లెక్క చేసి పడేస్తుంది. దట్స్ ద పవర్ ఆఫ్ DP!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: DP ఎక్కడ పడితే అక్కడ వాడొచ్చా?</h4>
+          <p>వాడలేం! దీనికి రెండు రూల్స్ ఉన్నాయి. 1. <strong>Overlapping Subproblems:</strong> పాత లెక్కలే మళ్ళీ మళ్ళీ రిపీట్ అవ్వాలి (ఇప్పుడు చూసింది). 2. <strong>Optimal Substructure:</strong> ఒక పెద్ద ప్రాబ్లమ్ ని చిన్న ముక్కలుగా చేసి, ఆ చిన్న ఆన్సర్స్ కలిపితే పెద్ద ఆన్సర్ రావాలి. ఈ రెండు ఉంటేనే DP పనిచేస్తుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: Knapsack Problem (బ్యాగ్ లో వస్తువులు నింపడం) ఏంటి?</h4>
+          <p>అది ప్రపంచంలో అత్యంత ఫేమస్ DP క్వశ్చన్! ఒక దొంగ దగ్గర 10 కేజీలు పట్టే సంచి ఉంది. ఇంట్లో 5 వస్తువులు ఉన్నాయి (వాటి బరువు, రేటు వేరువేరుగా ఉంటాయి). ఏయే వస్తువులు పెట్టుకుంటే వాడికి ఎక్కువ డబ్బులు వస్తాయి? దీన్ని కూడా ఒక 2D అర్రే (Tabulation DP) వాడి సెకనులో సాల్వ్ చేసేస్తారు. గూగుల్ ఇంటర్వ్యూస్ లో ఇవి పక్కా అడుగుతారు!</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="62-c-sorting-2-merge-sort-quick-sort.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">62. Sorting (Merge/Quick)</span>
+      </a>
+
+      
+      <a href="64-c-system-calls-basics-fork-exec-wait.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">64. System Calls</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stack Implementation (Array & LinkedList) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో Stack (స్టాక్) అనే డేటా స్ట్రక్చర్ అంటే ఏంటి? LIFO (Last In First Out) కాన్సెప్ట్ తో ఒక ప్లేట్ల దొంతర లాగా దీన్ని Array వాడి లేదా Linked List వాడి ఎలా కోడ్ చేయాలో పక్కా యానిమేటెడ్ రియల్ లైఫ్ ఎగ్జాంపుల్స్ తో నేర్చుకుందాం." />
+  <meta name="keywords" content="c tutorial, stack implementation (array & linkedlist) (తెలుగులో), doubly linked list c, circular linked list, stack in c, queue in c, binary search tree c, tree traversals c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/54-c-stack-implementation-array-linkedlist.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html" class="active">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html">55. Queue Implementation</a>
+      </div>
+
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html">59. Graphs (Matrix & List)</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 54: Stack Implementation (Array & LinkedList) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Stack Implementation (Array & LinkedList) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 54</span>
+      <span class="badge">📂 Phase 18: Data Structures - 1</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>LIFO Concept · Push and Pop · Stack Overflow/Underflow · Undo Feature</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>డేటా స్ట్రక్చర్స్ లో అత్యంత సింపుల్ మరియు ఫేమస్ కాన్సెప్ట్ <strong>Stack (స్టాక్)</strong>. దీన్ని LIFO (Last In, First Out) అంటారు. అంటే చివరగా పెట్టిందే ముందుగా బయటికి వస్తుంది. మీరు ఎప్పుడైనా ఎంఎస్ వర్డ్ (MS Word) లో ఏదైనా తప్పు టైప్ చేసి <strong>Undo (Ctrl+Z)</strong> నొక్కితే కరెక్ట్ గా లాస్ట్ చేసిన యాక్షనే వెనక్కి వెళ్తుంది కదా! అలాగే బ్రౌజర్ లో బ్యాక్ బటన్ నొక్కినా, ఫంక్షన్స్ కాల్ అయ్యి వెనక్కి రావాలన్నా ఈ స్టాక్ పద్ధతే వాడుతారు. దీన్ని C లాంగ్వేజ్ లో ఎలా డిజైన్ చేయాలో ఈరోజు ఒక ఆటలాగా నేర్చుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> స్టాక్ (Stack) అంటే ఏంటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీరు ఒక బుఫే (Buffet) భోజనానికి వెళ్లారు అనుకోండి. అక్కడ ఖాళీ ప్లేట్లు అన్నీ ఒకదాని మీద ఒకటి పేర్చి ఉంటాయి. ఎవరైనా ప్లేట్ కావాలంటే ఎక్కడి నుండి తీసుకుంటారు? కచ్చితంగా పైనుండే తీసుకుంటారు! అలాగే సర్వర్ కొత్త ప్లేట్ కడిగి తెస్తే ఎక్కడ పెడతాడు? పైన మాత్రమే పెడతాడు. దీన్నే LIFO అంటారు. కింద ఉన్న ప్లేట్ తీయాలంటే పైన ఉన్నవన్నీ తీశాకే కుదురుతుంది.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>📚 రియల్ లైఫ్ స్టోరీ: పుస్తకాల దొంతర (Push & Pop)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          స్టాక్ లో మెయిన్ గా రెండు ఆపరేషన్స్ ఉంటాయి:<br><br>
+          <strong>1. Push (పుష్ - లోపలికి తోయడం):</strong> మీరు చదివిన బుక్ ని ఒక బాక్స్ లోపల పైనుండి పడేయడాన్ని పుష్ అంటారు. మీరు ఎన్ని వేసినా, ఎప్పుడూ 'Top' లోనే పడుతుంది.<br><br>
+          <strong>2. Pop (పాప్ - బయటికి తీయడం):</strong> బాక్స్ లోపల పైన ఉన్న బుక్ ని బయటికి తీయడాన్ని పాప్ అంటారు. మీరు 3వ బుక్ తీయాలంటే, ముందు 1, 2 బుక్స్ ని పాప్ చేయాల్సిందే!<br><br>
+          ఒకవేళ బాక్స్ మొత్తం ఫుల్ అయ్యి బయటికి పడిపోతే దాన్ని <em>Stack Overflow</em> అంటారు. అసలు బాక్స్ లో ఏమీ లేకపోయినా చేయి పెట్టి వెతికితే దాన్ని <em>Stack Underflow</em> అంటారు.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> స్టాక్ ని ఎలా తయారు చేయొచ్చు?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        స్టాక్ అనేది కేవలం ఒక "రూల్" మాత్రమే (LIFO రూల్). ఆ రూల్ ని మీరు Array వాడి అయినా రాయొచ్చు, లేదా Linked List వాడి అయినా రాయొచ్చు.
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>Array తో:</strong> సైజు ముందుగానే ఫిక్స్ అయిపోతుంది. కానీ చాలా ఫాస్ట్ గా పనిచేస్తుంది.</li>
+        <li><strong>Linked List తో:</strong> సైజు లిమిట్ ఉండదు (డైనమిక్). ఎప్పుడు కావాలంటే అప్పుడు కొత్త బాక్స్ తయారు చేసి (Head కి) తగిలిస్తారు.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Array Stack Demo)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో సింపుల్ గా ఒక 5 సైజు ఉన్న Array వాడి, <code>Top</code> అనే ఒక పాయింటర్ తో Push మరియు Pop ఆపరేషన్స్ ఎలా రాశామో క్లియర్ గా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Stack (Array Implementation)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+#define MAX 5 // బాక్స్ సైజు 5 పుస్తకాలు మాత్రమే పడుతుంది
+
+int stack[MAX];
+int top = -1; // బాక్స్ ఖాళీగా ఉందని చెప్పడానికి (Ground floor)
+
+// 1. పుష్ ఆపరేషన్ (పైన పెట్టడం)
+void push(int data) {
+    if (top == MAX - 1) { // 4వ ఇండెక్స్ కి వస్తే ఫుల్ అయినట్టు!
+        printf("[Error] Stack Overflow! బాక్స్ ఫుల్ అయిపోయింది.\n");
+        return;
+    }
+    top++; // ముందు టేబుల్ హైట్ (Top) పెంచుతాం
+    stack[top] = data; // ఆ హైట్ లో బుక్ పెడతాం
+    printf("Pushed -> %d\n", data);
+}
+
+// 2. పాప్ ఆపరేషన్ (పైనుండి తీయడం)
+void pop() {
+    if (top == -1) { // అసలు బాక్స్ ఖాళీగా ఉంటే...
+        printf("[Error] Stack Underflow! బాక్స్ లో ఏమీ లేవు.\n");
+        return;
+    }
+    printf("Popped <- %d\n", stack[top]); // పైన ఉన్నది బయటికి ఇచ్చేస్తాం
+    top--; // టేబుల్ హైట్ తగ్గిస్తాం
+}
+
+// 3. లాస్ట్ బుక్ ఏంటో చూడటం (తీయకుండా జస్ట్ తొంగి చూడటం)
+void peek() {
+    if (top == -1) {
+        printf("Stack is Empty!\n");
+    } else {
+        printf("Top element is : %d\n", stack[top]);
+    }
+}
+
+int main() {
+    printf("--- Stack Operations (LIFO) ---\n\n");
+    
+    // బాక్స్ లో 3 బుక్స్ వేద్దాం
+    push(10);
+    push(20);
+    push(30);
+    
+    printf("\n");
+    peek(); // పైన ఏముందో చూద్దాం (30 ఉండాలి)
+    printf("\n");
+    
+    // ఇప్పుడు రెండు బుక్స్ బయటికి తీద్దాం (పాప్)
+    pop(); // ముందు 30 వస్తుంది
+    pop(); // ఆ తర్వాత 20 వస్తుంది
+    
+    printf("\n");
+    peek(); // ఇప్పుడు 10 మిగలాలి
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>int top = -1;</code>: అర్రే ఇండెక్స్ 0 తో స్టార్ట్ అవుతుంది. అందుకే 0 కంటే కింద (అంటే నేల మీద) ఉన్నాం అని చెప్పడానికి <code>-1</code> తీసుకున్నాం. ఖాళీ స్టాక్ కి ఇదే గుర్తు.</li>
+        <li><code>push()</code>: పుష్ చేసిన ప్రతిసారీ ఫస్ట్ <code>top</code> ఇంక్రిమెంట్ అవుతుంది (0 కి వస్తుంది), ఆ 0 ఇండెక్స్ లోకి డేటా కూర్చుంటుంది. మళ్ళీ పుష్ చేస్తే 1 కి వెళ్తుంది.</li>
+        <li><code>pop()</code>: పాప్ చేసినప్పుడు డేటా ని నిజంగా డిలీట్ చేయక్కర్లేదు! జస్ట్ <code>top--</code> అని కిందకు వచ్చేస్తే చాలు. మళ్ళీ రేపు పుష్ చేసినప్పుడు ఆ పాత డేటా మీదనే కొత్త డేటా ఓవర్-రైట్ అవుతుంది. చాలా ఫాస్ట్ ట్రిక్ ఇది!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ప్రోగ్రామ్ రన్ అయ్యే మెమరీ "Stack" కి, ఈ డేటా స్ట్రక్చర్ "Stack" కి తేడా ఏంటి?</h4>
+          <p>చాలా పెద్ద కన్ఫ్యూజన్ ఇది! మీ CPU లో ఉండే స్టాక్ మెమరీ (లోకల్ వేరియబుల్స్ కి వాడేది) కూడా సేమ్ ఈ LIFO కాన్సెప్ట్ తోనే (ఆటోమేటిక్ గా) రన్ అవుతుంది కాబట్టి దానికి ఆ పేరు వచ్చింది. కానీ మనం పైన కోడ్ తో రాసిన స్టాక్ అనేది ఒక కస్టమ్ డేటా స్ట్రక్చర్. ఇది (మనం అర్రే కి malloc వాడితే) హీప్ లో కూడా రన్ అవ్వగలదు!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Linked List తో స్టాక్ రాస్తే పుష్/పాప్ ఎక్కడ చేయాలి?</h4>
+          <p>లింక్డ్ లిస్ట్ వాడినప్పుడు మీరు పుష్ ని ఎప్పుడూ మొదటి డబ్బాకి (Insert at Head) మాత్రమే చేయాలి. పాప్ కూడా అక్కడే (Delete at Head) చేయాలి. ఎందుకంటే లాస్ట్ లో చేస్తే (O(N) టైమ్ పడుతుంది). హెడ్ దగ్గర అయితే 1 సెకనులో (O(1)) అయిపోతుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: బ్రాకెట్స్ మ్యాచింగ్ (Balanced Parenthesis) క్వశ్చన్ ఏంటి?</h4>
+          <p>ఇది ప్రాబ్లమ్ సాల్వింగ్ లో టాప్ క్వశ్చన్. ఒక కోడ్ లో <code>{ [ ( ) ] }</code> ఇలా బ్రాకెట్స్ అన్నీ కరెక్ట్ గా క్లోజ్ అయ్యాయా లేదా అని కంపైలర్ ఎలా చెక్ చేస్తుంది? ఓపెన్ బ్రాకెట్ వస్తే స్టాక్ లోకి పుష్ చేస్తుంది, క్లోజ్ బ్రాకెట్ వస్తే పాప్ చేసి రెండూ మ్యాచ్ అయ్యాయా అని చూస్తుంది. లాస్ట్ కి స్టాక్ ఖాళీ అయితే కోడ్ కరెక్ట్ అని అర్థం!</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="53-c-doubly-and-circular-linked-lists.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">53. Doubly & Circular Linked Lists</span>
+      </a>
+
+      
+      <a href="55-c-queue-implementation-linear-circular.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">55. Queue Implementation</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

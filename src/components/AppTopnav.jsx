@@ -7,9 +7,7 @@ const COMPILER_LANGS = [
   { name: 'JavaScript', url: '/online-javascript-compiler.html', blog: '/blog-javascript.html' },
   { name: 'C', url: '/online-c-compiler.html', blog: '/blog-c.html' },
   { name: 'C++', url: '/online-cpp-compiler.html', blog: '/blog-cpp.html' },
-  { name: 'C#', url: '/online-csharp-compiler.html', blog: '/blog-csharp.html' },
   { name: 'Go', url: '/online-go-compiler.html', blog: '/blog-go.html' },
-  { name: 'Rust', url: '/online-rust-compiler.html', blog: '/blog-rust.html' },
   { name: 'PHP', url: '/online-php-compiler.html', blog: '/blog-php.html' },
   { name: 'Ruby', url: '/online-ruby-compiler.html', blog: '/blog-ruby.html' },
 ]

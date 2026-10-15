@@ -10,61 +10,61 @@ module.exports = [
     phaseId: 'phase4',
     phaseTitle: 'Phase 4: Conditions & Branching',
     slug: '15-java-if-else-and-nested-conditions',
-    title: 'Java Conditional Statements: if, if-else, else-if & Nested if',
+    title: 'Java Conditional Statements: if, if-else, else-if & Nested if (తెలుగులో)',
     badge: '15. if-else & Nested Branching',
     subtopics: 'Why Conditions are Needed · if Statement · if-else · else-if Ladder · Nested if · Combining Logical Conditions (&&, ||, !)',
     readTime: '16 min read',
-    intro: 'Mastering decision-making and flow control in Java: understanding how boolean conditions direct program execution paths, building clean multi-way branching ladders with else-if, structuring nested decision trees, and combining complex logical criteria with short-circuit boolean operators.',
+    intro: 'జావా ప్రోగ్రామ్ లో డెసిషన్స్ (నిర్ణయాలు) ఎలా తీసుకోవాలి? ఒక కండిషన్ పాస్ అయితే ఒకలా, ఫెయిల్ అయితే ఇంకోలా ప్రోగ్రామ్ ని ఎలా రన్ చేయాలి? if, else, else-if మరియు ఒక if లోపల ఇంకో if (nested) ఎలా రాయాలో ఈ చాప్టర్ లో డీటెయిల్డ్ గా నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. Why are Conditions Needed in Programming?',
-        content: `By default, computer programs execute statements **sequentially** (line 1, then line 2, then line 3).
+        heading: '1. అసలు Conditions ఎందుకు కావాలి?',
+        content: `కంప్యూటర్ ఎప్పుడూ ఒక ఆర్డర్ లో (లైన్ 1, 2, 3...) కోడ్ ని రన్ చేసుకుంటూ వెళ్తుంది.
+        
+కానీ రియల్ వరల్డ్ యాప్స్ లో అలా కుదరదు. మనం కొన్ని కండిషన్స్ ని బట్టి నిర్ణయాలు తీసుకోవాల్సి ఉంటుంది:
+- యూజర్ పాస్వర్డ్ కరెక్ట్ గా ఇస్తేనే డాష్ బోర్డ్ కి పంపించాలి, *లేదంటే* లాక్ చేయాలి.
+- అకౌంట్ లో బ్యాలెన్స్ ఉంటేనే డబ్బులు డ్రా చేయనివ్వాలి, *లేదంటే* "బ్యాలెన్స్ లేదు" అని చెప్పాలి.
+- ఆర్డర్ 1000 రూపాయలు దాటితే ఫ్రీ షిప్పింగ్ ఇవ్వాలి.
 
-However, real-world software must make dynamic **decisions** based on runtime data:
-- *If* a user enters the correct password, grant dashboard access; *otherwise*, lock the account.
-- *If* an account balance is sufficient, process the withdrawal; *otherwise*, display "Insufficient Funds".
-- *If* an e-commerce order exceeds ₹1000, apply free shipping.
-
-**Conditional Statements** allow your program to evaluate a boolean expression (\`true\` or \`false\`) and choose which branch of code to execute.
+**Conditional Statements** వాడి ఇలాంటి డెసిషన్స్ అన్నీ ప్రోగ్రామ్ తో చేయించొచ్చు.
 
 \`\`\`
-                     [ Start Evaluation ]
-                               |
-                               v
-                     < Condition True? >
-                         /          \\
-                  (Yes) /            \\ (No)
-                       v              v
-               [ Execute Block A ]  [ Execute Block B ]
-                       \\              /
-                        \\            /
-                         v          v
-                       [ Continue Program ]
+                     [ కండిషన్ స్టార్ట్ ]
+                                |
+                                v
+                      < పాస్వర్డ్ కరెక్టా? >
+                          /          \\
+                   (అవును)/            \\(కాదు)
+                        v              v
+                 [ లాగిన్ సక్సెస్ ]    [ ఎర్రర్ చూపించు ]
+                        \\              /
+                         \\            /
+                          v          v
+                       [ ప్రోగ్రామ్ కంటిన్యూ ]
 \`\`\``
       },
       {
-        heading: '2. The 4 Forms of If-Branching in Java',
-        content: `### 1. Simple \`if\` Statement
-Executes a block of code **only if** the specified condition evaluates to \`true\`:
+        heading: '2. జావాలో ఉన్న 4 రకాల if కండిషన్స్',
+        content: `### 1. సింపుల్ \`if\` Statement
+లోపల ఉన్న కండిషన్ **\`true\`** (నిజం) అయితేనే ఆ బ్లాక్ లో ఉన్న కోడ్ రన్ అవుతుంది:
 \`\`\`java
 if (age >= 18) {
-    System.out.println("Eligible to vote.");
+    System.out.println("మీకు ఓటు హక్కు ఉంది.");
 }
 \`\`\`
 
 ### 2. \`if-else\` Statement
-Provides two mutually exclusive branches: executes the \`if\` block when \`true\`, or the \`else\` block when \`false\`:
+ఒకవేళ నిజమైతే \`if\` లోపల ఉన్నది రన్ అవుతుంది, కాకపోతే (లేదంటే) \`else\` లోపల ఉన్నది రన్ అవుతుంది:
 \`\`\`java
 if (balance >= withdrawAmount) {
     balance -= withdrawAmount;
-    System.out.println("Withdrawal successful.");
+    System.out.println("డబ్బులు డ్రా అయ్యాయి.");
 } else {
-    System.out.println("Error: Insufficient balance!");
+    System.out.println("ఎర్రర్: మీ అకౌంట్ లో బ్యాలెన్స్ లేదు!");
 }
 \`\`\`
 
-### 3. \`else-if\` Ladder (Multi-Way Branching)
-Evaluates multiple sequential conditions top-to-bottom. The first condition that evaluates to \`true\` executes, and the rest of the ladder is skipped:
+### 3. \`else-if\` Ladder (చాలా ఆప్షన్స్ ఉన్నప్పుడు)
+పై నుంచి కిందకు ఒక్కో కండిషన్ చెక్ చేసుకుంటూ వస్తుంది. ఏ కండిషన్ అయితే ఫస్ట్ \`true\` అవుతుందో, దాన్ని రన్ చేసి.. ఇక మిగతావన్నీ వదిలేస్తుంది (స్కిప్ చేస్తుంది):
 \`\`\`java
 if (score >= 90) {
     grade = 'A';
@@ -73,37 +73,36 @@ if (score >= 90) {
 } else if (score >= 70) {
     grade = 'C';
 } else {
-    grade = 'F'; // Default fallback
+    grade = 'F'; // పైవేమీ కాకపోతే ఇది రన్ అవుతుంది
 }
 \`\`\`
 
-### 4. Nested \`if\` (Condition within a Condition)
-An \`if\` statement placed inside the body of another \`if\` statement, used when a secondary decision depends on a primary condition passing:
+### 4. Nested \`if\` (if లోపల ఇంకో if)
+ఒక కండిషన్ పాస్ అయ్యాక, దానిలోపల ఇంకో కండిషన్ చెక్ చేయాల్సి వస్తే దీన్ని వాడతాం:
 \`\`\`java
-if (hasAccount) {
-    if (isAccountActive) {
-        System.out.println("Access granted to Banking Portal.");
+if (hasAccount) { // అకౌంట్ ఉందా?
+    if (isAccountActive) { // ఉంటే.. అది యాక్టివ్ గా ఉందా?
+        System.out.println("బ్యాంకింగ్ యాప్ లోకి స్వాగతం.");
     } else {
-        System.out.println("Account is suspended. Contact support.");
+        System.out.println("మీ అకౌంట్ ఆగిపోయింది, బ్రాంచ్ కి వెళ్ళండి.");
     }
 } else {
-    System.out.println("Please register a new account.");
+    System.out.println("దయచేసి కొత్త అకౌంట్ క్రియేట్ చేసుకోండి.");
 }
 \`\`\``
       },
       {
-        heading: '3. Combining Multiple Conditions with Logical Operators',
-        content: `You can evaluate complex compound business rules within a single \`if\` expression using logical operators:
+        heading: '3. లాజికల్ ఆపరేటర్స్ వాడి మల్టిపుల్ కండిషన్స్ కలపడం',
+        content: `మనం లాజికల్ ఆపరేటర్స్ (AND, OR) వాడి ఒకే \`if\` లోపల చాలా కండిషన్స్ రాసుకోవచ్చు:
 
-- **Logical AND (\`&&\`):** All individual conditions must be \`true\`.
-- **Logical OR (\`||\`):** At least one condition must be \`true\`.
-- **Logical NOT (\`!\`):** Reverses the condition.
+- **Logical AND (\`&&\`):** రాసిన కండిషన్స్ అన్నీ పాస్ అవ్వాలి.
+- **Logical OR (\`||\`):** రాసిన వాటిలో ఏ ఒక్కటి పాస్ అయినా చాలు.
 
 \`\`\`java
-// Loan Approval Criteria:
-// (Age between 21 and 60) AND (Annual Income >= 5,00,000 OR CIBIL Score >= 750)
+// బ్యాంక్ లోన్ రావాలంటే కండిషన్స్:
+// (వయసు 21 నుంచి 60 మధ్యలో ఉండాలి) మరియు (జీతం 5 లక్షల కన్నా ఎక్కువైనా ఉండాలి లేదా సిబిల్ స్కోర్ 750 కన్నా ఎక్కువైనా ఉండాలి)
 if ((age >= 21 && age <= 60) && (annualIncome >= 500000 || cibilScore >= 750)) {
-    System.out.println("Loan Pre-Approved!");
+    System.out.println("మీ లోన్ అప్రూవ్ అయ్యింది!");
 }
 \`\`\``
       }
@@ -113,9 +112,9 @@ if ((age >= 21 && age <= 60) && (annualIncome >= 500000 || cibilScore >= 750)) {
         int studentMarks = 84;
         boolean hasDisciplinaryAction = false;
 
-        System.out.println("=== Academic Grading & Scholarship Engine ===");
+        System.out.println("=== స్టూడెంట్ గ్రేడింగ్ & స్కాలర్ షిప్ ఇంజిన్ ===");
 
-        // 1. Multi-way else-if ladder for grade evaluation
+        // 1. గ్రేడ్ క్యాలిక్యులేట్ చేయడానికి else-if 
         char finalGrade;
         if (studentMarks >= 90) {
             finalGrade = 'A';
@@ -129,29 +128,29 @@ if ((age >= 21 && age <= 60) && (annualIncome >= 500000 || cibilScore >= 750)) {
             finalGrade = 'F';
         }
 
-        System.out.println("Student Marks : " + studentMarks);
-        System.out.println("Assigned Grade: " + finalGrade);
+        System.out.println("స్టూడెంట్ మార్క్స్ : " + studentMarks);
+        System.out.println("వచ్చిన గ్రేడ్      : " + finalGrade);
 
-        // 2. Nested if with compound logical validation for scholarship
+        // 2. స్కాలర్ షిప్ ఇవ్వాలా వద్దా (Nested if & Logical Operators)
         if (finalGrade == 'A' || finalGrade == 'B') {
             if (!hasDisciplinaryAction) {
-                System.out.println("Scholarship   : ELIGIBLE (₹25,000 Annual Grant Approved)");
+                System.out.println("స్కాలర్ షిప్       : ELIGIBLE (₹25,000 మంజూరయ్యాయి)");
             } else {
-                System.out.println("Scholarship   : DISQUALIFIED (Disciplinary Record Found)");
+                System.out.println("స్కాలర్ షిప్       : DISQUALIFIED (కాలేజ్ రూల్స్ బ్రేక్ చేసినందుకు)");
             }
         } else {
-            System.out.println("Scholarship   : NOT ELIGIBLE (Requires Grade B or higher)");
+            System.out.println("స్కాలర్ షిప్       : NOT ELIGIBLE (కనీసం B గ్రేడ్ రావాలి)");
         }
     }
 }`,
-    output: `=== Academic Grading & Scholarship Engine ===
-Student Marks : 84
-Assigned Grade: B
-Scholarship   : ELIGIBLE (₹25,000 Annual Grant Approved)`,
+    output: `=== స్టూడెంట్ గ్రేడింగ్ & స్కాలర్ షిప్ ఇంజిన్ ===
+స్టూడెంట్ మార్క్స్ : 84
+వచ్చిన గ్రేడ్      : B
+స్కాలర్ షిప్       : ELIGIBLE (₹25,000 మంజూరయ్యాయి)`,
     lineByLine: [
-      { line: 'else if (studentMarks >= 80)', explanation: 'Evaluates only because studentMarks < 90 was false; 84 >= 80 evaluates to true, assigning finalGrade = \'B\'.' },
-      { line: 'if (finalGrade == \'A\' || finalGrade == \'B\')', explanation: 'Logical OR checks if student achieved either top grade tier.' },
-      { line: 'if (!hasDisciplinaryAction)', explanation: 'Logical NOT inverts boolean false to true, verifying clean disciplinary standing.' }
+      { line: 'else if (studentMarks >= 80)', explanation: 'ఫస్ట్ 90 చెక్ చేసింది, అది ఫెయిల్ అయ్యింది కాబట్టి నెక్స్ట్ దీనికి వచ్చింది (84 >= 80) కాబట్టి ఇది పాస్ అయ్యి B గ్రేడ్ అసైన్ అయ్యింది.' },
+      { line: 'if (finalGrade == \'A\' || finalGrade == \'B\')', explanation: 'A లేదా B గ్రేడ్.. ఈ రెండిట్లో ఏది వచ్చినా ఈ కండిషన్ పాస్ అవుతుంది.' },
+      { line: 'if (!hasDisciplinaryAction)', explanation: '! వాడి రివర్స్ చేసాం. స్టూడెంట్ మీద ఎలాంటి రిమార్క్ లేకపోతేనే ఇది పాస్ అవుతుంది.' }
     ],
     practicalExample: `public class ATMWithdrawalSecurity {
     public static void main(String[] args) {
@@ -161,69 +160,65 @@ Scholarship   : ELIGIBLE (₹25,000 Annual Grant Approved)`,
         double withdrawAmt = 3500.00;
         boolean isCardActive = true;
 
-        System.out.println("--- Secure ATM Transaction Processing ---");
+        System.out.println("--- సెక్యూర్ ATM ట్రాన్సాక్షన్ ---");
 
-        // Step 1: Validate PIN authentication
+        // Step 1: PIN కరెక్టా కాదా?
         if (enteredPin == registeredPin) {
-            // Step 2: Validate Card Status
+            // Step 2: కార్డ్ యాక్టివ్ గా ఉందా?
             if (isCardActive) {
-                // Step 3: Validate Sufficient Funds
+                // Step 3: అకౌంట్ లో తగినంత బ్యాలెన్స్ ఉందా?
                 if (withdrawAmt <= balance) {
                     balance -= withdrawAmt;
-                    System.out.println("✓ Cash Dispensed: ₹" + withdrawAmt);
-                    System.out.println("✓ Remaining Balance: ₹" + balance);
+                    System.out.println("✓ తీసుకోండి: ₹" + withdrawAmt);
+                    System.out.println("✓ మిగిలిన బ్యాలెన్స్: ₹" + balance);
                 } else {
-                    System.out.println("✗ Transaction Failed: Insufficient funds in account!");
+                    System.out.println("✗ ఫెయిల్: మీ అకౌంట్ లో తగినంత బ్యాలెన్స్ లేదు!");
                 }
             } else {
-                System.out.println("✗ Transaction Failed: Card is blocked or inactive!");
+                System.out.println("✗ ఫెయిల్: మీ కార్డ్ బ్లాక్ అయ్యింది!");
             }
         } else {
-            System.out.println("✗ Security Alert: Incorrect PIN entered!");
+            System.out.println("✗ సెక్యూరిటీ ఎర్రర్: రాంగ్ PIN ఎంటర్ చేసారు!");
         }
     }
 }`,
-    practicalOutput: `--- Secure ATM Transaction Processing ---
-✓ Cash Dispensed: ₹3500.0
-✓ Remaining Balance: ₹6500.0`,
+    practicalOutput: `--- సెక్యూర్ ATM ట్రాన్సాక్షన్ ---
+✓ తీసుకోండి: ₹3500.0
+✓ మిగిలిన బ్యాలెన్స్: ₹6500.0`,
     commonMistakes: [
-      'Accidentally placing a semicolon after if: Writing "if (x > 10);" terminates the if statement immediately, causing the block underneath to ALWAYS execute regardless of the condition!',
-      'Using single = (assignment) instead of == (comparison): Writing "if (isStudent = true)" assigns true instead of checking equality.',
-      'Unreachable else-if conditions: Writing "if (score >= 60) ... else if (score >= 90) ..." means score >= 90 will never execute because score >= 60 catches it first. Always order conditions from most restrictive to least restrictive.'
+      'if తర్వాత సెమికోలన్ (;) పెట్టడం: "if (x > 10);" ఇలా రాస్తే, ఆ కండిషన్ తో సంబంధం లేకుండా కింద ఉన్న కోడ్ ఎప్పుడూ రన్ అవుతూనే ఉంటుంది (పెద్ద బగ్).',
+      'కంపేర్ చేయడానికి (==) బదులు (=) వాడటం: "if (isStudent = true)" అని రాస్తే జావా దాన్ని ఎర్రర్ కింద తీసుకోదు, అదొక అసైన్మెంట్ లాగా తీసుకుని ఎప్పుడూ ట్రూ చేసేస్తుంది.',
+      'else-if ఆర్డర్ తప్పుగా రాయడం: "if (score >= 60) ... else if (score >= 90)" అని రాస్తే, 95 వచ్చినోడికి కూడా 60 లాజిక్ కే పనిచేస్తుంది. ఎప్పుడూ కండిషన్స్ పై నుంచి కిందకి (పెద్ద నుంచి చిన్నకి) రాయాలి.'
     ],
     challenge: `// Coding Challenge:
-// Write a program to calculate Electricity Bill based on units consumed:
-// - Up to 100 units: ₹3.00 per unit
-// - 101 to 200 units: ₹4.50 per unit
-// - Above 200 units: ₹6.00 per unit
-// If units = 150, calculate and print the total bill amount.
+// ఒక కరెంట్ బిల్ క్యాలిక్యులేటర్ రాయండి. రూల్స్ ఇవి:
+// - 100 యూనిట్స్ వరకు: యూనిట్ కి ₹3.00
+// - 101 నుంచి 200 యూనిట్స్ వరకు: యూనిట్ కి ₹4.50
+// - 200 పైన దాటితే: యూనిట్ కి ₹6.00
+// మీరు వాడిన యూనిట్స్ 150 (units = 150) అయితే, బిల్ ఎంత వచ్చిందో ప్రింట్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
         int units = 150;
-        // TODO: Calculate bill using else-if ladder
+        // TODO: else-if లాడర్ వాడి లాజిక్ రాయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Is the curly brace {} mandatory for single-line if statements?',
-        a: 'Technically no, but it is considered an essential industry best practice to ALWAYS use curly braces {}. Omitting braces often leads to catastrophic bugs (like Apple\'s famous "goto fail" security vulnerability).'
+        q: 'if కింద ఒకే లైన్ రాస్తే కర్లీ బ్రాకెట్స్ {} పెట్టాల్సిన అవసరం లేదా?',
+        a: 'టెక్నికల్ గా అవసరం లేదు కానీ, ప్రొఫెషనల్ గా కోడ్ రాసేటప్పుడు ఎప్పుడూ {} పెట్టాలి. ఒకవేళ పెట్టకపోతే రేపు పొద్దున్న ఎవరైనా వచ్చి రెండో లైన్ రాస్తే అది ఫెయిల్ అయ్యే ప్రమాదం ఉంది (ఆపిల్ కంపెనీకి ఇలాంటి బగ్ వల్లే ఒక పెద్ద సెక్యూరిటీ ఇష్యూ వచ్చింది).'
       },
       {
-        q: 'What is the performance difference between multiple if statements vs else-if ladder?',
-        a: 'Multiple individual "if" statements evaluate EVERY condition even if earlier conditions passed. An "else-if" ladder halts evaluation the instant one condition passes, saving CPU cycles.'
-      },
-      {
-        q: 'Can an if statement evaluate non-boolean values like numbers in Java?',
-        a: 'No! Unlike C/C++ or JavaScript where 0 is false and 1 is true, Java conditions MUST strictly evaluate to a boolean type (true or false). Writing "if (1)" is a compile error.'
+        q: 'చాలా if లు రాయడానికి, ఒకే else-if రాయడానికి డిఫరెన్స్ ఏంటి?',
+        a: 'చాలా if లు రాస్తే ప్రోగ్రామ్ ప్రతి కండిషన్ ని చెక్ చేసుకుంటూ టైమ్ వేస్ట్ చేస్తుంది. else-if వాడితే ఎక్కడ కండిషన్ పాస్ అవుతుందో అక్కడే ఆగిపోయి, కిందకి వెళ్లకుండా మెమరీని సేవ్ చేస్తుంది.'
       }
     ],
     recap: [
-      'if, if-else, and else-if ladders control execution flow based on boolean expressions.',
-      'Nested if statements allow multi-tier validation checks.',
-      'Always order else-if conditions from highest/most specific to lowest/most general.',
-      'Always enclose conditional code blocks inside curly braces {}.'
+      'ప్రోగ్రామ్ ఫ్లో ని కంట్రోల్ చేయడానికి if, if-else, else-if వాడతాం.',
+      'చాలా కండిషన్స్ చెక్ చేయాలి అనుకుంటే Nested if వాడతాం.',
+      'else-if రాసేటప్పుడు ఎప్పుడూ హైయెస్ట్ నుంచి లోయెస్ట్ కి (order) రాయాలి.',
+      'if రాసాక కచ్చితంగా కర్లీ బ్రాకెట్స్ {} వాడటం మంచి అలవాటు.'
     ]
   },
 
@@ -235,18 +230,18 @@ public class Main {
     phaseId: 'phase4',
     phaseTitle: 'Phase 4: Conditions & Branching',
     slug: '16-java-ternary-operator-and-string-comparison',
-    title: 'Ternary Expressions & String Comparisons (.equals vs ==)',
+    title: 'Ternary Expressions & String Comparisons (.equals vs ==) (తెలుగులో)',
     badge: '16. Ternary & String Equality',
     subtopics: 'Ternary Operator (? :) · Nested Ternary Expressions · String Equality (.equals vs ==) · equalsIgnoreCase() · String Constant Pool Mechanics · Null-Safe Comparisons',
     readTime: '15 min read',
-    intro: 'Deep dive into concise decision expressions and the critical mechanics of String equality in Java: understanding the ternary operator, why using == on Strings leads to subtle production bugs, how .equals() and .equalsIgnoreCase() work, and writing null-safe string comparisons.',
+    intro: 'if-else ని ఒకే లైన్ లో షార్ట్ కట్ లో (Ternary) ఎలా రాయాలి? మరియు జావాలో స్ట్రింగ్స్ ని కంపేర్ చేయడానికి `==` ఎందుకు వాడకూడదు? దానికి బదులుగా `.equals()` ఎలా వాడాలి? Null వచ్చినప్పుడు యాప్ క్రాష్ అవ్వకుండా ఎలా చూసుకోవాలో నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. The Ternary Operator (\`? :\`) in Java',
-        content: `The **Ternary Operator** (also known as the conditional operator) is Java\'s only operator that takes three operands. It is an inline shorthand for an \`if-else\` statement that **returns a value**:
+        heading: '1. Ternary Operator (`? :`) అంటే ఏంటి?',
+        content: `**Ternary Operator** అనేది \`if-else\` కి ఒక షార్ట్ కట్. 4 లైన్లలో రాసే కోడ్ ని ఒకే లైన్ లో రాసి, ఆ వచ్చిన వాల్యూ ని డైరెక్ట్ గా ఒక వేరియబుల్ కి ఇచ్చేయొచ్చు:
 
 \`\`\`
-variable = (condition) ? valueIfTrue : valueIfFalse;
+వాల్యూ = (కండిషన్) ? కండిషన్ ట్రూ అయితే ఇక్కడున్నది : ఫాల్స్ అయితే ఇక్కడున్నది;
 \`\`\`
 
 \`\`\`java
@@ -254,61 +249,61 @@ int score = 75;
 String status = (score >= 50) ? "PASS" : "FAIL";
 
 int a = 20, b = 45;
-int maximum = (a > b) ? a : b; // Evaluates to 45
+int maximum = (a > b) ? a : b; // ఇక్కడ a పెద్దది కాదు కాబట్టి b ని తీసుకుంటుంది (45)
 \`\`\`
 
-### When to Use Ternary vs If-Else:
-- **Use Ternary:** For simple, one-line value assignments or variable initializations.
-- **Use If-Else:** When executing multi-line statements, database calls, or complex logging actions.`
+### ఏది ఎప్పుడు వాడాలి?:
+- **Ternary వాడాలి:** సింపుల్ గా వాల్యూస్ అసైన్ చేసేటప్పుడు ఒకే లైన్ లో ఉంటే.
+- **If-Else వాడాలి:** లోపల డేటాబేస్ కాల్స్, పెద్ద పెద్ద లాజిక్స్ ఉన్నప్పుడు (ఎందుకంటే చదవడానికి ఈజీగా ఉంటుంది).`
       },
       {
-        heading: '2. The Fatal Flaw: Comparing Strings with `==` vs `.equals()`',
-        content: `One of the most dangerous and common bugs in Java is comparing \`String\` content using the \`==\` operator.
+        heading: '2. పెద్ద బగ్: స్ట్రింగ్స్ కి `==` వాడకూడదు.. ఎందుకు?',
+        content: `జావాలో చాలామంది డెవలపర్స్ చేసే పెద్ద తప్పు.. రెండు స్ట్రింగ్స్ వాల్యూస్ ఒకటే ఉన్నాయా లేదా అని చెక్ చేయడానికి \`==\` వాడటం.
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
-|                        == vs .equals() IN JAVA MEMORY                             |
+|                        == vs .equals() తేడా ఏంటి?                                    |
 +-----------------------------------------------------------------------------------+
-|  1. == OPERATOR (Reference Address Check):                                        |
-|     Checks if two variables point to the EXACT SAME MEMORY LOCATION in RAM.       |
-|     (Does NOT check what letters or characters are inside the string!)            |
+|  1. == ఆపరేటర్ (అడ్రెస్ చెక్):                                                          |
+|     ఇది రెండు స్ట్రింగ్స్ RAM లో ఒకే మెమరీ అడ్రెస్ లో ఉన్నాయా లేదా అని మాత్రమే చెక్ చేస్తుంది.         |
+|     (లోపల ఏ అక్షరాలు ఉన్నాయో ఇది అసలు చూడదు!)                                            |
 +-----------------------------------------------------------------------------------+
-|  2. .equals() METHOD (Character Content Check):                                   |
-|     Compares the actual sequence of characters character-by-character.            |
+|  2. .equals() ఫంక్షన్ (కంటెంట్ చెక్):                                                    |
+|     ఇది మెమరీతో సంబంధం లేకుండా, లోపల ఉన్న అక్షరాలని ఒక్కొక్కటిగా చెక్ చేసి కరెక్ట్ గా చెప్తుంది.     |
 +-----------------------------------------------------------------------------------+
 \`\`\`
 
-### Why \`==\` Seems to Work Sometimes (The String Pool Trap):
+### అప్పుడప్పుడు \`==\` కూడా ఎందుకు పనిచేస్తుంది? (String Pool ట్రాప్):
 \`\`\`java
 String s1 = "Admin";
 String s2 = "Admin";
 String s3 = new String("Admin");
 
-System.out.println(s1 == s2);      // true! (Both point to same String Pool object)
-System.out.println(s1 == s3);      // FALSE! (s3 is a separate object in Heap memory)
-System.out.println(s1.equals(s3)); // TRUE! (Both contain the exact characters 'A','d','m','i','n')
+System.out.println(s1 == s2);      // true! (ఎందుకంటే రెండూ String Pool లో ఒకే అడ్రెస్ ని షేర్ చేసుకుంటాయి)
+System.out.println(s1 == s3);      // FALSE! (s3 అనేది new వాడటం వల్ల సపరేట్ గా Heap లో క్రియేట్ అయ్యింది)
+System.out.println(s1.equals(s3)); // TRUE! (లోపల ఉన్న కంటెంట్ సేమ్ కదా.. అందుకే .equals() కరెక్ట్ గా పనిచేసింది)
 \`\`\`
 
-**Golden Rule of Java:** **NEVER** use \`==\` to compare String values! **ALWAYS** use \`.equals()\` or \`.equalsIgnoreCase()\`!`
+**గోల్డెన్ రూల్:** జావాలో స్ట్రింగ్స్ ని కంపేర్ చేయడానికి **ఎప్పుడూ** \`==\` వాడకండి! **కచ్చితంగా** \`.equals()\` మాత్రమే వాడాలి!`
       },
       {
-        heading: '3. \`.equals()\` vs \`.equalsIgnoreCase()\`',
-        content: `| Method | Case Sensitive? | Example | Result |
+        heading: '3. `.equals()` కి `.equalsIgnoreCase()` కి తేడా ఏంటి?',
+        content: `| ఫంక్షన్ | అక్షరాలు (Case) పర్ఫెక్ట్ గా ఉండాలా? | ఎగ్జాంపుల్ | రిజల్ట్ |
 | :--- | :--- | :--- | :--- |
-| **\`str1.equals(str2)\`** | **Yes** (Strict) | \`"Java".equals("java")\` | \`false\` |
-| **\`str1.equalsIgnoreCase(str2)\`** | **No** (Ignores case) | \`"Java".equalsIgnoreCase("java")\` | \`true\` |`
+| **\`str1.equals(str2)\`** | **అవును** (Strict) | \`"Java".equals("java")\` | \`false\` |
+| **\`str1.equalsIgnoreCase(str2)\`** | **అవసరం లేదు** (స్మాల్/క్యాపిటల్స్ ఉన్నా ఓకే) | \`"Java".equalsIgnoreCase("java")\` | \`true\` |`
       },
       {
-        heading: '4. Null-Safe String Comparisons (Yoda Conditions)',
-        content: `If a String variable is \`null\`, calling \`userRole.equals("ADMIN")\` will throw a fatal **\`NullPointerException\`**!
+        heading: '4. Null వస్తే యాప్ క్రాష్ అవ్వకుండా ఎలా ఆపాలి? (Yoda Conditions)',
+        content: `మీరు ఎప్పుడైనా \`userRole.equals("ADMIN")\` అని రాశారనుకోండి. ఒకవేళ ఏ కారణం చేతనైనా ఆ userRole వేరియబుల్ లోకి \`null\` వస్తే.. యాప్ వెంటనే క్రాష్ అయిపోతుంది (దీన్నే **\`NullPointerException\`** అంటారు).
 
-### The Two Professional Fixes:
-1. **Yoda Condition (Literal First):**
+### దీన్ని సాల్వ్ చేయడానికి ప్రొఫెషనల్స్ వాడే 2 ట్రిక్స్:
+1. **Yoda Condition (కొటేషన్స్ లో ఉన్నది ముందు రాయడం):**
    \`\`\`java
-   // Safe even if userRole is null! Literals are guaranteed non-null.
+   // ఒకవేళ userRole లో null ఉన్నా సరే యాప్ క్రాష్ అవ్వదు, సింపుల్ గా false వస్తుంది!
    if ("ADMIN".equalsIgnoreCase(userRole)) { ... }
    \`\`\`
-2. **Objects.equals() Utility (Java 7+):**
+2. **Objects.equals() వాడటం (Java 7 నుంచి):**
    \`\`\`java
    import java.util.Objects;
    if (Objects.equals(userRole, "ADMIN")) { ... }
@@ -319,105 +314,102 @@ System.out.println(s1.equals(s3)); // TRUE! (Both contain the exact characters '
 
 public class Main {
     public static void main(String[] args) {
-        // 1. Ternary Operator Demonstration
+        // 1. Ternary ఆపరేటర్ 
         int userAge = 20;
-        String eligibility = (userAge >= 18) ? "Eligible for Driving License" : "Underage";
-        System.out.println("Age Check: " + eligibility);
+        String eligibility = (userAge >= 18) ? "లైసెన్స్ కి ఎలిజిబుల్" : "ఇంకా వయసు రాలేదు";
+        System.out.println("ఏజ్ చెక్: " + eligibility);
 
         // 2. String Equality (.equals vs ==)
-        String roleFromAuthToken = "SUPER_ADMIN";
-        String roleFromDatabase  = new String("SUPER_ADMIN");
+        String authRole = "SUPER_ADMIN";
+        String dbRole  = new String("SUPER_ADMIN");
 
-        System.out.println("\n--- String Comparison Deep Dive ---");
-        System.out.println("Using == (Memory Address Check) : " + (roleFromAuthToken == roleFromDatabase)); // false
-        System.out.println("Using .equals() (Content Check) : " + roleFromAuthToken.equals(roleFromDatabase)); // true
+        System.out.println("\n--- స్ట్రింగ్ కంపారిజన్ (String Comparison) ---");
+        System.out.println("== వాడితే (అడ్రెస్ చెక్)     : " + (authRole == dbRole)); // false వస్తుంది
+        System.out.println(".equals() వాడితే (కంటెంట్ చెక్) : " + authRole.equals(dbRole)); // true వస్తుంది
 
-        // 3. Case-Insensitive Comparison
+        // 3. Case-Insensitive (స్మాల్/క్యాపిటల్స్ ఇష్యూ లేకుండా)
         String inputCoupon = "save20";
         String validCoupon = "SAVE20";
         boolean isCouponValid = inputCoupon.equalsIgnoreCase(validCoupon);
-        System.out.println("Coupon Validation (IgnoreCase)  : " + isCouponValid);
+        System.out.println("కూపన్ చెకింగ్ (IgnoreCase)    : " + isCouponValid);
 
-        // 4. Null-Safe Comparison
+        // 4. Null-Safe (క్రాష్ అవ్వకుండా)
         String nullableRole = null;
-        // System.out.println(nullableRole.equals("ADMIN")); // Throws NullPointerException!
-        boolean isSafeAdmin = "ADMIN".equalsIgnoreCase(nullableRole); // Safe!
-        System.out.println("Null-Safe Admin Check (Yoda)    : " + isSafeAdmin);
+        // System.out.println(nullableRole.equals("ADMIN")); // ఇది రన్ చేస్తే యాప్ క్రాష్ అవుతుంది (NullPointerException)!
+        boolean isSafeAdmin = "ADMIN".equalsIgnoreCase(nullableRole); // కానీ ఇది సేఫ్ గా క్రాష్ అవ్వకుండా false అని ఇస్తుంది.
+        System.out.println("క్రాష్ అవ్వకుండా అడ్మిన్ చెక్ (Yoda) : " + isSafeAdmin);
     }
 }`,
-    output: `Age Check: Eligible for Driving License
+    output: `ఏజ్ చెక్: లైసెన్స్ కి ఎలిజిబుల్
 
---- String Comparison Deep Dive ---
-Using == (Memory Address Check) : false
-Using .equals() (Content Check) : true
-Coupon Validation (IgnoreCase)  : true
-Null-Safe Admin Check (Yoda)    : false`,
+--- స్ట్రింగ్ కంపారిజన్ (String Comparison) ---
+== వాడితే (అడ్రెస్ చెక్)     : false
+.equals() వాడితే (కంటెంట్ చెక్) : true
+కూపన్ చెకింగ్ (IgnoreCase)    : true
+క్రాష్ అవ్వకుండా అడ్మిన్ చెక్ (Yoda) : false`,
     lineByLine: [
-      { line: '(userAge >= 18) ? ... : ...', explanation: 'Inline ternary expression evaluating boolean age check and returning the corresponding string.' },
-      { line: 'roleFromAuthToken == roleFromDatabase', explanation: 'Evaluates to false because new String() forces a separate heap memory allocation.' },
-      { line: 'roleFromAuthToken.equals(roleFromDatabase)', explanation: 'Evaluates to true by inspecting actual string character content.' },
-      { line: '"ADMIN".equalsIgnoreCase(nullableRole)', explanation: 'Null-safe comparison: placing non-null string literal first prevents NullPointerException.' }
+      { line: '(userAge >= 18) ? ... : ...', explanation: 'Ternary ఆపరేటర్: 18 దాటింది కాబట్టి ఫస్ట్ వాల్యూ ని అసైన్ చేసింది.' },
+      { line: 'authRole == dbRole', explanation: 'new String() వాడటం వల్ల అది సపరేట్ గా వేరే మెమరీలో స్టోర్ అయ్యింది. అందుకే అడ్రెస్ లు మ్యాచ్ అవ్వక false వచ్చింది.' },
+      { line: 'authRole.equals(dbRole)', explanation: 'మెమరీలతో సంబంధం లేకుండా లోపల ఉన్న అక్షరాలు సేమ్ కాబట్టి true వచ్చింది.' },
+      { line: '"ADMIN".equalsIgnoreCase(nullableRole)', explanation: 'దీన్నే యోడా (Yoda) కండిషన్ అంటారు. హార్డ్ కోడెడ్ స్ట్రింగ్ ని ముందు పెడితే యాప్ ఎప్పటికీ క్రాష్ అవ్వదు.' }
     ],
     practicalExample: `public class LoginAuthenticationService {
     public static void main(String[] args) {
         String registeredUser = "BalajiNayak";
-        String enteredUsername = "balajinayak";
+        String enteredUsername = "balajinayak"; // యూజర్ స్మాల్ లెటర్స్ లో టైప్ చేసాడు
         String enteredPassword = "Password@2026";
         String correctPassword = "Password@2026";
 
-        // Username should be case-insensitive, Password MUST be strictly case-sensitive
+        // యూజర్ నేమ్ లో క్యాపిటల్స్ ఉన్నా, స్మాల్స్ ఉన్నా ఓకే (equalsIgnoreCase) 
+        // కానీ పాస్వర్డ్ మాత్రం ఎగ్జాక్ట్ గా మ్యాచ్ అవ్వాలి (equals)
         boolean isUsernameMatch = registeredUser.equalsIgnoreCase(enteredUsername);
         boolean isPasswordMatch = correctPassword.equals(enteredPassword);
 
         if (isUsernameMatch && isPasswordMatch) {
-            System.out.println("✓ Login Successful! Welcome, " + registeredUser);
+            System.out.println("✓ లాగిన్ సక్సెస్! వెల్కమ్, " + registeredUser);
         } else if (!isUsernameMatch) {
-            System.out.println("✗ Login Failed: Username not found!");
+            System.out.println("✗ ఫెయిల్: అసలు యూజర్ నేమ్ డేటాబేస్ లో లేదు!");
         } else {
-            System.out.println("✗ Login Failed: Invalid password provided!");
+            System.out.println("✗ ఫెయిల్: మీరు తప్పు పాస్వర్డ్ ఎంటర్ చేసారు!");
         }
     }
 }`,
-    practicalOutput: `✓ Login Successful! Welcome, BalajiNayak`,
+    practicalOutput: `✓ లాగిన్ సక్సెస్! వెల్కమ్, BalajiNayak`,
     commonMistakes: [
-      'Using == for String content check: "if (name == \"Ravi\")" fails when String comes from Scanner, database, or network requests. Always use .equals().',
-      'Calling .equals() on potentially null variables: "str.equals(\"text\")" crashes if str is null. Use "\"text\".equals(str)" instead.',
-      'Over-complicating ternary with multiple statements: Ternary operators should only evaluate expressions that return a single value, not execute multi-step blocks.'
+      'స్ట్రింగ్స్ కి == వాడటం: "if (name == \"Ravi\")" అని రాస్తే, యూజర్ Scanner ద్వారా గాని, డేటాబేస్ నుంచి గాని ఆ పేరు వస్తే ఇది కచ్చితంగా ఫెయిల్ అవుతుంది. ఎప్పుడూ .equals() మాత్రమే వాడాలి.',
+      '.equals() కి ముందు వేరియబుల్ పెట్టడం: "str.equals(\"text\")" వాడితే str లో null ఉన్నప్పుడు క్రాష్ అవుతుంది. రివర్స్ లో "\"text\".equals(str)" అని వాడటం మంచి అలవాటు.',
+      'Ternary లోపల పెద్ద లాజిక్స్ రాయడం: Ternary అనేది వాల్యూస్ అసైన్ చేయడానికి మాత్రమే వాడాలి. లోపల ప్రింట్ స్టేట్మెంట్స్, లూప్స్ రాస్తే కోడ్ అర్థం కాదు.'
     ],
     challenge: `// Coding Challenge:
-// Given two strings: str1 = "Java21", str2 = new String("java21"):
-// 1. Check if they are equal with == (result1)
-// 2. Check if they are equal with .equals() (result2)
-// 3. Check if they are equal with .equalsIgnoreCase() (result3)
-// Print all 3 boolean outcomes.
+// కింది రెండు స్ట్రింగ్స్ ని తీసుకోండి: str1 = "Java21", str2 = new String("java21"):
+// 1. "==" వాడి చెక్ చేయండి (result1)
+// 2. ".equals()" వాడి చెక్ చేయండి (result2)
+// 3. ".equalsIgnoreCase()" వాడి చెక్ చేయండి (result3)
+// మూడింటి రిజల్ట్స్ ప్రింట్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
         String str1 = "Java21";
         String str2 = new String("java21");
-        // TODO: Perform the 3 checks
+        // TODO: ఆ 3 చెక్స్ చేసి ప్రింట్ చేయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Why does "==" sometimes return true for Strings?',
-        a: 'Because of Java\'s String Constant Pool. If both strings are created as identical string literals (e.g. String a = "hi"; String b = "hi";), the JVM assigns them the same memory address, making a == b true by coincidence. However, dynamic strings from Scanner or new String() will fail ==.'
+        q: 'స్ట్రింగ్స్ కి "==" వాడినప్పుడు అప్పుడప్పుడు ఎందుకు true వస్తుంది?',
+        a: 'ఎందుకంటే జావాలో మెమరీని సేవ్ చేయడానికి ఒకే పేరుతో ఉన్న స్ట్రింగ్స్ ని String Pool లోకి పంపుతుంది. అప్పుడు రెండింటికీ ఒకటే అడ్రెస్ ఉంటుంది కాబట్టి true వస్తుంది. కానీ మనం Scanner నుంచి తీసుకున్నప్పుడు వేరే అడ్రెస్ వస్తుంది కాబట్టి అక్కడ తప్పు ఆన్సర్ వస్తుంది.'
       },
       {
-        q: 'How does .compareTo() differ from .equals()?',
-        a: '".equals()" returns a boolean (true/false) indicating exact match. ".compareTo()" returns an integer (negative, 0, positive) indicating alphabetical lexicographical order, essential for sorting.'
-      },
-      {
-        q: 'Can the ternary operator return different data types in its branches?',
-        a: 'Yes, but the compiler will infer the common supertype (e.g. Object or double if mixing int and double), which can cause subtle auto-unboxing type issues.'
+        q: 'Ternary వాడినప్పుడు ఒక దాంట్లో int, ఇంకో దాంట్లో double వాల్యూ ఇవ్వొచ్చా?',
+        a: 'ఇవ్వొచ్చు, కానీ జావా ఆటోమాటిక్ గా int ని కూడా double కింద మార్చేస్తుంది. ఇది కొన్నిసార్లు మనం ఊహించని బగ్స్ కి దారితీస్తుంది.'
       }
     ],
     recap: [
-      'Ternary operator: (condition ? valIfTrue : valIfFalse) returns an evaluated value.',
-      'NEVER use == for String content comparison; == checks memory address references.',
-      'Use .equals() for case-sensitive equality and .equalsIgnoreCase() for case-insensitive matching.',
-      'Prevent NullPointerException by placing the string literal first ("ADMIN".equals(role)).'
+      'Ternary operator: if-else ని ఒకే లైన్ లో రాసి, వచ్చిన రిజల్ట్ ని వేరియబుల్ లో స్టోర్ చేయడం.',
+      'స్ట్రింగ్స్ కి ఎప్పుడూ == వాడకండి. అది కేవలం మెమరీ అడ్రెస్ ని మాత్రమే చెక్ చేస్తుంది.',
+      'ఎగ్జాక్ట్ గా మ్యాచ్ అవ్వాలంటే .equals(), క్యాపిటల్స్/స్మాల్స్ పట్టించుకోకూడదు అంటే .equalsIgnoreCase() వాడాలి.',
+      'null వచ్చినప్పుడు క్రాష్ అవ్వకుండా ఉండాలంటే ("ADMIN".equals(role)) ఇలా యోడా కండిషన్ వాడాలి.'
     ]
   },
 
@@ -429,65 +421,65 @@ public class Main {
     phaseId: 'phase4',
     phaseTitle: 'Phase 4: Conditions & Branching',
     slug: '17-java-switch-statement-and-string-switching',
-    title: 'Java Traditional switch Statement & String Switching',
+    title: 'Java Traditional switch Statement & String Switching (తెలుగులో)',
     badge: '17. switch, case, break & default',
     subtopics: 'switch Syntax · case Labels · The break Keyword · Fall-Through Mechanism · default Fallback · Switching on byte, short, char, int, enum, and String',
     readTime: '15 min read',
-    intro: 'Mastering multi-branch decision making with the traditional Java switch statement: understanding case matching, why the break keyword prevents fall-through bugs, utilizing the default clause, and switching across supported types including Strings and enums.',
+    intro: 'చాలా కండిషన్స్ ఉన్నప్పుడు else-if లాడర్ వాడితే కోడ్ అంతా గజిబిజిగా మారుతుంది. దానికి బదులుగా జావాలో ఉన్న `switch` స్టేట్మెంట్ ఎలా వాడాలి? `break` ఎందుకు ముఖ్యం? మరియు `default` ఎప్పుడు వాడాలో ఈ చాప్టర్ లో చూద్దాం.',
     theorySections: [
       {
-        heading: '1. What is the switch Statement?',
-        content: `When a program needs to choose among many discrete, constant values (such as days of the week, menu selections, HTTP status codes, or user roles), an \`else-if\` ladder can become verbose and repetitive.
+        heading: '1. switch Statement అంటే ఏంటి?',
+        content: `ఒక వేరియబుల్ వాల్యూ ని బట్టి చాలా ఆప్షన్స్ లో ఒకదాన్ని సెలెక్ట్ చేసుకోవాల్సి వచ్చినప్పుడు (ఉదాహరణకి: ఏ రోజు, ఏ ఆప్షన్ సెలెక్ట్ చేసారు లాంటివి) \`else-if\` కంటే **\`switch\`** వాడటం చాలా నీట్ గా ఉంటుంది.
 
-The **\`switch\`** statement provides a clean, jump-table-optimized multi-way branch based on a single variable or expression:
+ఇది చాలా ఫాస్ట్ గా పనిచేస్తుంది:
 
 \`\`\`java
 switch (expression) {
     case value1:
-        // Statements
+        // లాజిక్
         break;
     case value2:
-        // Statements
+        // లాజిక్
         break;
     default:
-        // Default fallback statements
+        // ఏదీ మ్యాచ్ కాకపోతే ఇది రన్ అవుతుంది
 }
 \`\`\``
       },
       {
-        heading: '2. Allowed Data Types for switch in Java',
-        content: `Not every data type can be used in a \`switch\` expression. In Java, \`switch\` is supported for:
+        heading: '2. switch లో ఏయే డేటా టైప్స్ వాడొచ్చు?',
+        content: `మీ ఇష్టం వచ్చిన డేటా టైప్ ని \`switch\` లో పెట్టడానికి కుదరదు. జావా కొన్నింటికి మాత్రమే పర్మిషన్ ఇచ్చింది:
 
-1. **Primitive Integral Types:** \`byte\`, \`short\`, \`char\`, \`int\` (and their Wrapper classes: \`Byte\`, \`Short\`, \`Character\`, \`Integer\`).
-2. **Strings (Java 7+):** \`java.lang.String\` (compares content via \`.equals()\`).
-3. **Enums (Java 5+):** Java enumerated types (\`enum\`).
+1. **సింపుల్ నంబర్స్/క్యారెక్టర్స్:** \`byte\`, \`short\`, \`char\`, \`int\` (మరియు వాటి Wrapper classes).
+2. **స్ట్రింగ్స్ (Strings - Java 7 నుంచి):** \`String\` కూడా వాడొచ్చు (ఇంటర్నల్ గా ఇది \`.equals()\` లాగే పనిచేస్తుంది).
+3. **Enums (Java 5 నుంచి):** కాన్స్టంట్స్ గ్రూప్ (Enum).
 
-*(Note: \`long\`, \`float\`, \`double\`, and \`boolean\` are NOT supported in traditional switch statements).*`
+*(గమనిక: \`long\`, \`float\`, \`double\` మరియు \`boolean\` ని switch లో వాడలేము).*`
       },
       {
-        heading: '3. The \`break\` Keyword & The Fall-Through Behavior',
-        content: `In a traditional \`switch\`, when a matching \`case\` is found, the JVM executes all statements starting from that case **until it hits a \`break\` statement** or reaches the end of the switch block.
+        heading: '3. `break` కీవర్డ్ లేకపోతే ఏమవుతుంది? (Fall-Through)',
+        content: `పాత \`switch\` స్టేట్మెంట్ లో ఒక \`case\` మ్యాచ్ అయితే, అందులో ఉన్న కోడ్ రన్ అవుతుంది. ఆ తర్వాత **\`break\`** అని కనిపిస్తేనే ఆ బ్లాక్ లోంచి బయటకొస్తుంది.
 
-If you omit the \`break\` keyword, execution continues into subsequent \`case\` blocks regardless of whether their values match! This is known as **Fall-Through**:
+ఒకవేళ మీరు పొరపాటున \`break\` రాయడం మర్చిపోతే.. మ్యాచ్ అయిన కండిషన్ తో పాటు దాని కింద ఉన్న కండిషన్స్ కూడా రన్ అయిపోతాయి (దాన్నే **Fall-Through** అంటారు).
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
-|                     SWITCH FALL-THROUGH MECHANISM                                 |
+|                     SWITCH FALL-THROUGH (బగ్)                                      |
 +-----------------------------------------------------------------------------------+
 |  int day = 2;                                                                     |
 |  switch (day) {                                                                   |
-|      case 1: System.out.println("Mon"); // Skipped                                |
-|      case 2: System.out.println("Tue"); // Matches! Prints "Tue"                  |
-|              // MISSING BREAK! Falls through to case 3!                           |
-|      case 3: System.out.println("Wed"); // Executed! Prints "Wed"                 |
-|              break; // Stops execution here                                       |
+|      case 1: System.out.println("Mon"); // ఇది రన్ అవ్వదు                            |
+|      case 2: System.out.println("Tue"); // మ్యాచ్ అయ్యింది! కాబట్టి ప్రింట్ అవుతుంది          |
+|              // ఇక్కడ BREAK రాయడం మర్చిపోయారు! కాబట్టి కిందకి పడిపోతుంది (Fall through)   |
+|      case 3: System.out.println("Wed"); // ఇది కూడా రన్ అయిపోతుంది!                     |
+|              break; // ఇక్కడ ఆగుతుంది                                              |
 |  }                                                                                |
-|  (Output: "Tue" and "Wed")                                                        |
+|  (అవుట్పుట్: "Tue" మరియు "Wed" రెండు ప్రింట్ అవుతాయి)                                  |
 +-----------------------------------------------------------------------------------+
 \`\`\`
 
-### Intentional Fall-Through (Grouping Cases):
-Fall-through is sometimes used deliberately to group multiple cases that share identical logic:
+### కావాలని Fall-Through వాడటం (Grouping Cases):
+కొన్నిసార్లు చాలా కండిషన్స్ కి ఒకటే లాజిక్ రాయాల్సి వచ్చినప్పుడు కావాలని \`break\` రాయకుండా వదిలేస్తారు:
 \`\`\`java
 switch (dayOfWeek) {
     case "MONDAY":
@@ -495,18 +487,18 @@ switch (dayOfWeek) {
     case "WEDNESDAY":
     case "THURSDAY":
     case "FRIDAY":
-        System.out.println("Weekday: Time to work!");
+        System.out.println("ఇది వర్కింగ్ డే!"); // 5 రోజుల్లో ఏది వచ్చినా ఇదే రన్ అవుతుంది
         break;
     case "SATURDAY":
     case "SUNDAY":
-        System.out.println("Weekend: Time to relax!");
+        System.out.println("ఇది వీకెండ్! ఎంజాయ్!");
         break;
 }
 \`\`\``
       },
       {
-        heading: '4. The \`default\` Clause',
-        content: `The **\`default\`** block is optional but highly recommended. It acts like the \`else\` in an \`if-else\` ladder, executing whenever none of the explicit \`case\` labels match the evaluated expression.`
+        heading: '4. `default` బ్లాక్ ఎందుకు?',
+        content: `ఇది ఆప్షనల్ (రాసినా రాయకపోయినా పర్లేదు), కానీ కచ్చితంగా రాయడం మంచి అలవాటు. పైన రాసిన \`case\` లలో ఏదీ మ్యాచ్ అవ్వకపోతే ఫైనల్ గా ఈ \`default\` బ్లాక్ రన్ అవుతుంది. (\`if-else\` లో \`else\` లాంటిది).`
       }
     ],
     codeExample: `public class Main {
@@ -514,142 +506,137 @@ switch (dayOfWeek) {
         int dayNumber = 3;
         String dayName;
 
-        System.out.println("=== Day of Week Resolution Engine ===");
+        System.out.println("=== ఏ రోజు ఏంటి? ===");
 
-        // Traditional switch statement with break statements
+        // నార్మల్ switch స్టేట్మెంట్ (break వాడి)
         switch (dayNumber) {
             case 1:
-                dayName = "Monday";
+                dayName = "మండే";
                 break;
             case 2:
-                dayName = "Tuesday";
+                dayName = "ట్యూస్ డే";
                 break;
             case 3:
-                dayName = "Wednesday";
+                dayName = "వెడ్నెస్ డే"; // ఇది మ్యాచ్ అయ్యింది
                 break;
             case 4:
-                dayName = "Thursday";
+                dayName = "థర్స్ డే";
                 break;
             case 5:
-                dayName = "Friday";
+                dayName = "ఫ్రైడే";
                 break;
             case 6:
-                dayName = "Saturday";
+                dayName = "సాటర్ డే";
                 break;
             case 7:
-                dayName = "Sunday";
+                dayName = "సండే";
                 break;
             default:
-                dayName = "Invalid Day Number (Must be 1-7)";
+                dayName = "ఇన్వాలిడ్ నంబర్ (1-7 మధ్యలోనే ఇవ్వాలి)";
                 break;
         }
 
-        System.out.println("Day " + dayNumber + " is: " + dayName);
+        System.out.println("Day " + dayNumber + " అంటే: " + dayName);
 
-        // String switch with intentional case grouping
+        // స్ట్రింగ్ switch (కలిపి రాయడం - Grouping)
         String userRole = "MANAGER";
-        System.out.print("Permission Level for " + userRole + ": ");
+        System.out.print("పవర్ (Role: " + userRole + "): ");
 
         switch (userRole) {
             case "SUPER_ADMIN":
             case "ADMIN":
-                System.out.println("Full Administrative Control (Read, Write, Delete)");
+                System.out.println("ఫుల్ కంట్రోల్ (చదవడం, రాయడం, డిలీట్ చేయడం)");
                 break;
             case "MANAGER":
             case "TEAM_LEAD":
-                System.out.println("Elevated Access (Read, Write, Approve)");
+                System.out.println("సగం కంట్రోల్ (చదవడం, రాయడం, అప్రూవ్ చేయడం)");
                 break;
             case "VIEWER":
-                System.out.println("Read-Only Access");
+                System.out.println("చదవడానికి మాత్రమే పర్మిషన్ ఉంది");
                 break;
             default:
-                System.out.println("No Access Rights Assigned");
+                System.out.println("అసలు పర్మిషనే లేదు");
                 break;
         }
     }
 }`,
-    output: `=== Day of Week Resolution Engine ===
-Day 3 is: Wednesday
-Permission Level for MANAGER: Elevated Access (Read, Write, Approve)`,
+    output: `=== ఏ రోజు ఏంటి? ===
+Day 3 అంటే: వెడ్నెస్ డే
+పవర్ (Role: MANAGER): సగం కంట్రోల్ (చదవడం, రాయడం, అప్రూవ్ చేయడం)`,
     lineByLine: [
-      { line: 'switch (dayNumber)', explanation: 'Evaluates the integer variable dayNumber and jumps directly to matching case 3.' },
-      { line: 'dayName = "Wednesday"; break;', explanation: 'Assigns value and breaks out of the switch block to prevent unwanted fall-through.' },
-      { line: 'case "MANAGER": case "TEAM_LEAD":', explanation: 'Intentional fall-through grouping multiple case labels sharing identical permission behavior.' },
-      { line: 'default: ...', explanation: 'Fallback safety block executed if no case matches.' }
+      { line: 'switch (dayNumber)', explanation: 'dayNumber వాల్యూ ని తీసుకుని డైరెక్ట్ గా ఎక్కడ 3 ఉందో అక్కడికి జంప్ అవుతుంది.' },
+      { line: 'dayName = "వెడ్నెస్ డే"; break;', explanation: 'అసైన్ చేసాక, కింద లైన్స్ కి వెళ్లకుండా break వాడి బయటకొచ్చేస్తుంది.' },
+      { line: 'case "MANAGER": case "TEAM_LEAD":', explanation: 'రెండిటికీ ఒకటే లాజిక్ కావాలి కాబట్టి, మధ్యలో break రాయకుండా కలిపేసాం (Fall-through గ్రూపింగ్).' },
+      { line: 'default: ...', explanation: 'ఏదీ మ్యాచ్ కాకపోతే సేఫ్ సైడ్ గా ఇది రన్ అవుతుంది.' }
     ],
     practicalExample: `public class HttpStatusCodeHandler {
     public static void main(String[] args) {
         int httpStatusCode = 404;
 
-        System.out.println("--- Web API Response Dispatcher ---");
-        System.out.print("HTTP " + httpStatusCode + " Status: ");
+        System.out.println("--- వెబ్ API రెస్పాన్స్ కోడ్స్ ---");
+        System.out.print("HTTP " + httpStatusCode + " స్టాటస్: ");
 
         switch (httpStatusCode) {
             case 200:
-                System.out.println("200 OK — Request succeeded.");
+                System.out.println("200 OK — సక్సెస్ అయ్యింది.");
                 break;
             case 201:
-                System.out.println("201 Created — Resource successfully created.");
+                System.out.println("201 Created — డేటా క్రియేట్ అయ్యింది.");
                 break;
             case 400:
-                System.out.println("400 Bad Request — Invalid client payload.");
+                System.out.println("400 Bad Request — మీరు పంపిన డేటా రాంగ్.");
                 break;
             case 401:
-                System.out.println("401 Unauthorized — Authentication credentials missing.");
+                System.out.println("401 Unauthorized — లాగిన్ అవ్వండి.");
                 break;
             case 404:
-                System.out.println("404 Not Found — Requested endpoint does not exist.");
+                System.out.println("404 Not Found — మీరు అడిగిన పేజ్/డేటా లేదు.");
                 break;
             case 500:
-                System.out.println("500 Internal Server Error — Server encountered an unhandled exception.");
+                System.out.println("500 Internal Server Error — సర్వర్ లో ప్రాబ్లమ్ వచ్చింది.");
                 break;
             default:
-                System.out.println("Unhandled HTTP Status Code.");
+                System.out.println("కొత్త ఎర్రర్ కోడ్ వచ్చింది.");
                 break;
         }
     }
 }`,
-    practicalOutput: `--- Web API Response Dispatcher ---
-HTTP 404 Status: 404 Not Found — Requested endpoint does not exist.`,
+    practicalOutput: `--- వెబ్ API రెస్పాన్స్ కోడ్స్ ---
+HTTP 404 స్టాటస్: 404 Not Found — మీరు అడిగిన పేజ్/డేటా లేదు.`,
     commonMistakes: [
-      'Forgetting the break statement: Omission causes unintentional execution of all subsequent cases down to the next break.',
-      'Attempting to switch on double or float: "switch (3.14)" fails compilation. Floating point equality is mathematically imprecise.',
-      'Duplicate case labels: Having two "case 1:" blocks in the same switch statement is a compile-time error.',
-      'Passing null to String switch: "String s = null; switch(s)" throws a NullPointerException immediately when entering the switch.'
+      'break రాయడం మర్చిపోవడం: ఇది చాలా కామన్ మిస్టేక్. ఇది మర్చిపోతే దాని కింద ఉన్నవి అన్నీ రన్ అయిపోయి అవుట్పుట్ గజిబిజిగా వస్తుంది.',
+      'double, float వాడటం: "switch (3.14)" అని రాస్తే జావా ఒప్పుకోదు. డెసిమల్స్ కరెక్ట్ గా ఉండవు కాబట్టి జావా వాటిని switch లో సపోర్ట్ చేయదు.',
+      'స్ట్రింగ్ కి null రావడం: switch లో స్ట్రింగ్ పాస్ చేసినప్పుడు అందులో గనక null ఉంటే వెంటనే NullPointerException వచ్చి యాప్ క్రాష్ అవుతుంది.'
     ],
     challenge: `// Coding Challenge:
-// Create a calculator menu using switch:
+// సింపుల్ క్యాలిక్యులేటర్ రాయండి:
 // Variables: char operator = '+'; int a = 20, b = 5;
-// Use switch (operator) with cases '+', '-', '*', '/' to compute and print the result.
-// Include a default case for invalid operators.
+// switch (operator) వాడి '+', '-', '*', '/' వచ్చినప్పుడు వాటికి తగ్గ లాజిక్ చేసి ప్రింట్ చేయండి.
+// ఒకవేళ వేరే ఏదైనా ఆపరేటర్ వస్తే default లో "Invalid Operator" అని రాయండి.
 
 public class Main {
     public static void main(String[] args) {
         char operator = '*';
         int a = 20, b = 5;
-        // TODO: Implement calculation using switch
+        // TODO: switch వాడి క్యాలిక్యులేషన్ చేయండి
         
     }
 }`,
     faq: [
       {
-        q: 'How does switch internally execute faster than an else-if ladder?',
-        a: 'The JVM compiles switch statements into low-level bytecode instructions called "tableswitch" (O(1) direct array indexing) or "lookupswitch" (O(log n) binary search), whereas an else-if ladder executes linearly in O(n) sequential comparisons.'
+        q: 'else-if కంటే switch ఎలా ఫాస్ట్ గా పనిచేస్తుంది?',
+        a: 'else-if ప్రతి కండిషన్ ని లైన్ బై లైన్ చెక్ చేసుకుంటూ వెళ్తుంది (టైమ్ వేస్ట్). కానీ switch అనేది ఇంటర్నల్ గా ఒక టేబుల్ ని క్రియేట్ చేసుకుని, ఏ వాల్యూకి వెళ్లాలో డైరెక్ట్ గా ఆ లైన్ కి జంప్ అయిపోతుంది.'
       },
       {
-        q: 'Can case labels contain variables?',
-        a: 'No. Case labels must be compile-time constants (literals or final constant variables like "public static final int CODE = 1").'
-      },
-      {
-        q: 'Why can we not switch on boolean variables?',
-        a: 'Because a boolean has only two possible states (true/false). An "if-else" statement is cleaner, more readable, and standard for binary choices.'
+        q: 'case తర్వాత వేరియబుల్స్ (ఉదా: case x:) వాడొచ్చా?',
+        a: 'వాడకూడదు. case తర్వాత ఎప్పుడూ కాన్స్టంట్స్ (నంబర్స్, టెక్స్ట్) మాత్రమే వాడాలి. వాల్యూస్ మారుతూ ఉండే వేరియబుల్స్ ని జావా ఒప్పుకోదు.'
       }
     ],
     recap: [
-      'switch provides fast multi-way jump branching on int, char, byte, short, enum, and String.',
-      'Always include break statements to prevent unintended fall-through.',
-      'Group case labels together when multiple values share the same action.',
-      'Always supply a default case to handle unexpected inputs safely.'
+      'ఒకటే వాల్యూ తో చాలా కండిషన్స్ చెక్ చేయాలంటే switch వాడటం బెస్ట్.',
+      'దీంట్లో int, char, byte, short, enum, మరియు String వాడొచ్చు.',
+      'break మర్చిపోతే Fall-through అయ్యి బగ్స్ వస్తాయి.',
+      'చాలా కండిషన్స్ కి ఒకటే లాజిక్ అయితే, కలుపుకుని (Grouping) రాసుకోవచ్చు.'
     ]
   },
 
@@ -661,78 +648,75 @@ public class Main {
     phaseId: 'phase4',
     phaseTitle: 'Phase 4: Conditions & Branching',
     slug: '18-java-modern-switch-expressions-and-pitfalls',
-    title: 'Modern Java Switch Expressions (Java 14+) & Condition Pitfalls',
+    title: 'Modern Java Switch Expressions (Java 14+) & Condition Pitfalls (తెలుగులో)',
     badge: '18. Modern Switch & Pitfalls',
     subtopics: 'Traditional vs Modern Switch · Arrow Syntax (->) · yield Keyword · Returning Values from Switch · Exhaustive Pattern Matching · Common Condition Anti-Patterns',
     readTime: '16 min read',
-    intro: 'Mastering modern Java 14+ enhanced switch expressions: replacing verbose break statements with concise arrow (->) syntax, returning direct values, utilizing the yield keyword for multi-line logic, and avoiding the top 10 common conditional anti-patterns in enterprise code.',
+    intro: 'జావా 14 లో switch స్టేట్మెంట్ ని పూర్తిగా మార్చేశారు! పాత switch లో ఉన్న ప్రాబ్లమ్స్ (break మర్చిపోవడం లాంటివి) లేకుండా, చాలా షార్ట్ గా Arrow (->) సింటాక్స్ తో ఎలా రాయాలో చూద్దాం. అలాగే డెవలపర్స్ కామన్ గా చేసే if-else తప్పులు (Anti-patterns) ఎలా అవాయిడ్ చేయాలో నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. The Evolution: Traditional switch vs Modern switch Expressions (Java 14+)',
-        content: `In **Java 14**, Java revolutionized the \`switch\` construct by turning it into a **First-Class Expression** (meaning it can directly compute and return a value to a variable).
+        heading: '1. ఏంటి మార్పు? పాత switch కీ, కొత్త switch కీ తేడా.',
+        content: `**Java 14** నుంచి, జావా \`switch\` ని ఒక **Expression** గా మార్చేసింది (అంటే అందులోంచి డైరెక్ట్ గా వాల్యూస్ ని బయటకి పంపించి ఒక వేరియబుల్ లో స్టోర్ చేయొచ్చు).
 
-### Key Advantages of Modern Switch Expressions:
-1. **Arrow Syntax (\`->\`):** Eliminates the need for \`break\` statements! No more accidental fall-through bugs.
-2. **Direct Value Assignment:** Assign the evaluated switch result directly to a variable.
-3. **Comma-Separated Multiple Labels:** Group multiple cases on a single line (\`case 1, 2, 3 -> ...\`).
-4. **Exhaustiveness Guarantee:** The compiler forces you to cover all possible values (or provide a \`default\`), preventing unhandled edge cases.`
+### కొత్త Switch అడ్వాంటేజెస్:
+1. **Arrow సింటాక్స్ (\`->\`):** ఇక్కడ \`break\` రాయాల్సిన అవసరమే లేదు! కాబట్టి కింది లైన్స్ లోకి పొరపాటున వెళ్లిపోవడం (Fall-through బగ్స్) అస్సలు ఉండవు.
+2. **డైరెక్ట్ గా వాల్యూ అసైన్ చేయడం:** వచ్చిన రిజల్ట్ ని ఒకేసారి వేరియబుల్ లో స్టోర్ చేసుకోవచ్చు.
+3. **కామా (,) తో మల్టిపుల్ లేబుల్స్:** ఒకే లాజిక్ ఉన్న వాటిని కామా పెట్టి ఒకే లైన్ లో రాసేయొచ్చు (\`case 1, 2, 3 -> ...\`).
+4. **ఆటోమెటిక్ చెకింగ్:** మనం ఏ కండిషన్ అన్నా మిస్ అయితే జావానే వార్నింగ్ ఇచ్చి ఆపేస్తుంది.`
       },
       {
-        heading: '2. Modern Switch Expression Syntax & Examples',
-        content: `### 1. Basic Arrow Syntax
+        heading: '2. మోడ్రన్ Switch సింటాక్స్ & ఎగ్జాంపుల్స్',
+        content: `### 1. బేసిక్ Arrow (\`->\`) సింటాక్స్
 \`\`\`java
 String dayType = switch (day) {
-    case 1, 2, 3, 4, 5 -> "Weekday";
-    case 6, 7           -> "Weekend";
-    default             -> "Invalid Day";
-};
+    case 1, 2, 3, 4, 5 -> "వర్కింగ్ డే"; // బ్రేక్ అవసరం లేదు, డైరెక్ట్ వాల్యూ ఇస్తున్నాం
+    case 6, 7           -> "వీకెండ్";
+    default             -> "ఇన్వాలిడ్ రోజు";
+}; // వేరియబుల్ కి అసైన్ చేస్తున్నాం కాబట్టి ఇక్కడ సెమికోలన్ (;) కచ్చితంగా ఉండాలి.
 \`\`\`
 
-### 2. Multi-line Logic with the \`yield\` Keyword
-If a case requires multiple statements or calculations before returning a value, enclose it in curly braces \`{}\` and use the **\`yield\`** keyword to return the value:
+### 2. రెండు మూడు లైన్స్ రాయాలంటే \`yield\` వాడాలి
+ఒకవేళ మీరు డైరెక్ట్ గా వాల్యూ ఇవ్వకుండా, లోపల ఇంకేదన్నా లాజిక్ చేసి అప్పుడు వాల్యూ పంపించాలంటే బ్రాకెట్స్ \`{}\` పెట్టి, రిటర్న్ చేయడానికి **\`yield\`** అనే కీవర్డ్ వాడాలి:
 \`\`\`java
 double discount = switch (customerTier) {
     case "PLATINUM" -> 0.25;
     case "GOLD"     -> 0.15;
-    case "SILVER"   -> 0.05;
     case "REGULAR"  -> {
-        System.out.println("Applying standard seasonal rebate...");
-        yield 0.02; // Returns 0.02 from the block
+        System.out.println("నార్మల్ కస్టమర్స్ కి కూడా ఆఫర్ ఇస్తున్నాం...");
+        yield 0.02; // ఇక్కడినుంచి 0.02 వాల్యూని పైకి పంపిస్తున్నాం
     }
     default -> 0.0;
 };
 \`\`\``
       },
       {
-        heading: '3. Side-by-Side Comparison',
-        content: `| Feature | Traditional switch (Java 1.0 - 13) | Modern switch Expression (Java 14+ LTS) |
+        heading: '3. పాత దానికి, కొత్త దానికి కంపారిజన్',
+        content: `| ఫీచర్ | పాత switch (Java 1 - 13) | కొత్త మోడ్రన్ switch (Java 14+) |
 | :--- | :--- | :--- |
-| **Construct Type** | Statement only (does not return values). | Expression (returns a value) or Statement. |
-| **Fall-Through Risk** | High (missing \`break\` falls through). | **Zero** (Arrow \`->\` never falls through). |
-| **Syntax Style** | \`case VAL: stmt; break;\` | \`case VAL -> result;\` |
-| **Multiple Labels** | Stacked \`case 1: case 2:\` | Comma-separated: \`case 1, 2, 3 ->\` |
-| **Block Returns** | Re-assign variable and \`break\`. | Use **\`yield\`** keyword. |`
+| **ఏం చేస్తుంది?** | జస్ట్ కోడ్ రన్ చేస్తుంది, వాల్యూస్ తిరిగి ఇవ్వదు. | వాల్యూస్ ని డైరెక్ట్ గా రిటర్న్ చేస్తుంది. |
+| **Fall-Through బగ్స్** | చాలా ఎక్కువ (break మర్చిపోతే అంతే). | **జీరో** (Arrow \`->\` వాడితే కిందకి అసలు వెళ్ళదు). |
+| **ఎలా రాస్తాం?** | \`case VAL: లాజిక్; break;\` | \`case VAL -> రిజల్ట్;\` |
+| **ఎక్కువ కండిషన్స్ కి** | కింద కింద రాయాలి \`case 1: case 2:\` | కామాతో రాయొచ్చు \`case 1, 2, 3 ->\` |
+| **మల్టిపుల్ లైన్స్ కి** | వేరియబుల్ ని మార్చి \`break\` రాయాలి. | **\`yield\`** వాడాలి. |`
       },
       {
-        heading: '4. Top 5 Common Condition Anti-Patterns & How to Avoid Them',
-        content: `1. **The Boolean Redundancy Trap:**
-   - ❌ *Anti-Pattern:* \`if (isLoggedIn == true)\`
-   - ✅ *Clean Code:* \`if (isLoggedIn)\`
-2. **The Inverted Null Bug:**
-   - ❌ *Anti-Pattern:* \`if (user.getRole().equals("ADMIN"))\` (Crashes if role is null!)
-   - ✅ *Clean Code:* \`if ("ADMIN".equals(user.getRole()))\`
-3. **The Dangling Else Ambiguity:**
-   - Always enclose nested \`if\` statements inside explicit curly braces \`{}\` to ensure \`else\` attaches to the intended \`if\`.
-4. **Integer Division in Conditions:**
-   - ❌ *Anti-Pattern:* \`if (score / 100 > 0.5)\` (Integer math truncates to 0!)
-   - ✅ *Clean Code:* \`if (score / 100.0 > 0.5)\`
-5. **Deeply Nested "Arrow Code":**
-   - ❌ 5 levels of nested \`if\` blocks make code unmaintainable.
-   - ✅ Use **Guard Clauses (Early Return)**:
+        heading: '4. కోడింగ్ లో కామన్ గా చేసే 5 తప్పులు (Anti-Patterns) & వాటి సొల్యూషన్స్',
+        content: `1. **డబుల్ బూలియన్ చెకింగ్ (Boolean Redundancy Trap):**
+   - ❌ *తప్పు:* \`if (isLoggedIn == true)\` (బూలియన్ కి మళ్ళీ true అని రాయక్కర్లేదు)
+   - ✅ *కరెక్ట్:* \`if (isLoggedIn)\`
+2. **Null తో క్రాష్ అయ్యే బగ్ (The Inverted Null Bug):**
+   - ❌ *తప్పు:* \`if (user.getRole().equals("ADMIN"))\` (ఒకవేళ role null ఉంటే క్రాష్ అవుతుంది!)
+   - ✅ *కరెక్ట్:* \`if ("ADMIN".equals(user.getRole()))\`
+3. **ఇంటిజర్ డివిజన్ మిస్టేక్ (Integer Division in Conditions):**
+   - ❌ *తప్పు:* \`if (score / 100 > 0.5)\` (score ఇంటిజర్ కాబట్టి డెసిమల్స్ కట్ అయిపోయి 0 అయిపోతుంది, సో కండిషన్ ఎప్పటికీ పాస్ అవ్వదు!)
+   - ✅ *కరెక్ట్:* \`if (score / 100.0 > 0.5)\`
+4. **అతిగా లోపలికి వెళ్లడం (Deeply Nested "Arrow Code"):**
+   - ❌ if లోపల ఇంకో if, దాని లోపల ఇంకో if.. ఇలా 5, 6 రాసుకుంటూ వెళ్తే చదవడానికి కష్టంగా ఉంటుంది.
+   - ✅ దానికి బదులు **Guard Clauses (Early Return)** వాడాలి:
      \`\`\`java
-     if (!isAuthenticated) return "Access Denied";
-     if (!hasFunds) return "Insufficient Balance";
-     // Process main logic cleanly here...
+     if (!isAuthenticated) return "యాక్సెస్ లేదు";
+     if (!hasFunds) return "బ్యాలెన్స్ లేదు";
+     // ఇప్పుడు మెయిన్ లాజిక్ ప్రశాంతంగా రాసుకోవచ్చు...
      \`\`\``
       }
     ],
@@ -742,116 +726,110 @@ double discount = switch (customerTier) {
 
         System.out.println("=== Modern Java 14+ Switch Expressions ===");
 
-        // 1. Switch Expression assigning directly to a variable with arrow syntax
+        // 1. డైరెక్ట్ గా వాల్యూస్ అసైన్ చేయడం (Arrow సింటాక్స్)
         int fiscalQuarter = switch (quarterMonth) {
             case "JANUARY", "FEBRUARY", "MARCH"     -> 1;
-            case "APRIL", "MAY", "JUNE"             -> 2;
+            case "APRIL", "MAY", "JUNE"             -> 2; // ఇది మ్యాచ్ అయ్యింది కాబట్టి డైరెక్ట్ గా 2 వెళ్ళిపోతుంది
             case "JULY", "AUGUST", "SEPTEMBER"      -> 3;
             case "OCTOBER", "NOVEMBER", "DECEMBER"  -> 4;
             default -> 0;
         };
 
-        System.out.println("Month: " + quarterMonth + " belongs to Q" + fiscalQuarter);
+        System.out.println("నెల: " + quarterMonth + " అనేది క్వార్టర్ Q" + fiscalQuarter + " కి వస్తుంది");
 
-        // 2. Multi-statement block using the 'yield' keyword
+        // 2. రెండు మూడు లైన్స్ కోసం 'yield' వాడటం
         String priorityLevel = "HIGH";
         int responseTimeHours = switch (priorityLevel) {
             case "CRITICAL" -> 1;
             case "HIGH"     -> {
-                System.out.println("[Log] High-priority incident escalated to On-Call Engineer.");
-                yield 4; // Returns 4 hours SLA
+                System.out.println("[లాగ్] హై-ప్రయారిటీ.. వెంటనే టీమ్ కి మెసేజ్ పంపాం.");
+                yield 4; // 4 గంటల్లో సాల్వ్ చేయాలి అని వాల్యూ పంపిస్తున్నాం
             }
             case "MEDIUM"   -> 12;
             case "LOW"      -> 24;
             default         -> {
-                System.out.println("[Log] Unknown priority. Defaulting to standard SLA.");
+                System.out.println("[లాగ్] ప్రయారిటీ తెలీదు.. డీఫాల్ట్ టైమ్ సెట్ చేసాం.");
                 yield 48;
             }
         };
 
-        System.out.println("Incident SLA Response Time: " + responseTimeHours + " Hours");
+        System.out.println("మీ ఇష్యూకి టైమ్ లిమిట్ (SLA): " + responseTimeHours + " గంటలు");
     }
 }`,
     output: `=== Modern Java 14+ Switch Expressions ===
-Month: APRIL belongs to Q2
-[Log] High-priority incident escalated to On-Call Engineer.
-Incident SLA Response Time: 4 Hours`,
+నెల: APRIL అనేది క్వార్టర్ Q2 కి వస్తుంది
+[లాగ్] హై-ప్రయారిటీ.. వెంటనే టీమ్ కి మెసేజ్ పంపాం.
+మీ ఇష్యూకి టైమ్ లిమిట్ (SLA): 4 గంటలు`,
     lineByLine: [
-      { line: 'int fiscalQuarter = switch (quarterMonth) { ... };', explanation: 'Modern switch expression computing and directly returning an integer value to fiscalQuarter (note the ending semicolon ;).' },
-      { line: 'case "APRIL", "MAY", "JUNE" -> 2;', explanation: 'Comma-separated multi-case label returning value 2 without requiring break statements.' },
-      { line: 'yield 4;', explanation: 'The yield keyword returns the computed integer 4 from a multi-line code block.' }
+      { line: 'int fiscalQuarter = switch (quarterMonth) { ... };', explanation: 'కొత్త switch లో రిజల్ట్ వస్తుంది కాబట్టి డైరెక్ట్ గా వేరియబుల్ కి అసైన్ చేసాం (చివర్లో సెమికోలన్ ; పెట్టాలి).' },
+      { line: 'case "APRIL", "MAY", "JUNE" -> 2;', explanation: 'కామా వాడి ఒకే లైన్ లో రాసేసాం. break రాయాల్సిన పనే లేదు.' },
+      { line: 'yield 4;', explanation: 'బ్రాకెట్స్ వాడినప్పుడు రిటర్న్ చేయడానికి yield వాడాలి.' }
     ],
     practicalExample: `public class OrderDiscountCalculator {
     public static void main(String[] args) {
         String customerTier = "GOLD";
         double orderAmount   = 5000.00;
 
-        // Compute discount rate using Modern Switch Expression
+        // కొత్త Switch Expression వాడి డిస్కౌంట్ కనుక్కోవడం
         double discountRate = switch (customerTier) {
-            case "VIP", "PLATINUM" -> 0.20; // 20% Discount
-            case "GOLD"            -> 0.15; // 15% Discount
-            case "SILVER"          -> 0.10; // 10% Discount
-            case "BRONZE"          -> 0.05; // 5% Discount
-            default                -> 0.00; // No Discount
+            case "VIP", "PLATINUM" -> 0.20; // 20% డిస్కౌంట్
+            case "GOLD"            -> 0.15; // 15% డిస్కౌంట్
+            case "SILVER"          -> 0.10; // 10% డిస్కౌంట్
+            case "BRONZE"          -> 0.05; // 5% డిస్కౌంట్
+            default                -> 0.00; // డిస్కౌంట్ లేదు
         };
 
         double discountAmount = orderAmount * discountRate;
         double finalPayable   = orderAmount - discountAmount;
 
-        System.out.println("=== E-Commerce Checkout Summary ===");
-        System.out.printf("Customer Tier   : %s%n", customerTier);
-        System.out.printf("Original Order  : ₹%,.2f%n", orderAmount);
-        System.out.printf("Applied Discount: %.0f%%%n", (discountRate * 100));
-        System.out.printf("Savings Amount  : ₹%,.2f%n", discountAmount);
-        System.out.printf("Final Total Due : ₹%,.2f%n", finalPayable);
+        System.out.println("--- ఫైనల్ బిల్ ---");
+        System.out.printf("అసలు అమౌంట్ : ₹%,.2f%n", orderAmount);
+        System.out.printf("డిస్కౌంట్ (-%d%%): ₹%,.2f%n", (int)(discountRate * 100), discountAmount);
+        System.out.println("-----------------");
+        System.out.printf("కట్టాల్సింది : ₹%,.2f%n", finalPayable);
     }
 }`,
-    practicalOutput: `=== E-Commerce Checkout Summary ===
-Customer Tier   : GOLD
-Original Order  : ₹5,000.00
-Applied Discount: 15%
-Savings Amount  : ₹750.00
-Final Total Due : ₹4,250.00`,
+    practicalOutput: `--- ఫైనల్ బిల్ ---
+అసలు అమౌంట్ : ₹5,000.00
+డిస్కౌంట్ (-15%): ₹750.00
+-----------------
+కట్టాల్సింది : ₹4,250.00`,
     commonMistakes: [
-      'Forgetting the semicolon after a switch expression: "int x = switch (y) { ... };" requires a semicolon at the end of the curly brace because it is an assignment statement.',
-      'Mixing colon (:) and arrow (->) syntax in the same switch: Java forbids mixing old-style "case 1:" and new-style "case 2 ->" within the same switch block.',
-      'Using "return" instead of "yield" inside a switch expression block: "return" exits the entire enclosing method; "yield" returns a value only from the switch branch.'
+      'సెమికోలన్ (;) మర్చిపోవడం: పాత switch కి చివర సెమికోలన్ అవసరం లేదు, కానీ కొత్త switch ఒక Expression కాబట్టి చివర్లో బ్రాకెట్ క్లోజ్ చేసాక కచ్చితంగా ";" పెట్టాలి.',
+      'Arrow వాడి మళ్ళీ break రాయడం: Arrow (->) వాడితే ఆటోమాటిక్ గా బ్రేక్ అయిపోతుంది, మళ్ళీ లోపల break రాస్తే ఎర్రర్ వస్తుంది.',
+      'return కి బదులు yield మర్చిపోవడం: బ్రాకెట్స్ వాడినప్పుడు ఫంక్షన్స్ లో లాగా "return 4;" అని రాస్తే ఒప్పుకోదు, switch లోపల "yield 4;" అని మాత్రమే రాయాలి.'
     ],
     challenge: `// Coding Challenge:
-// Refactor the following traditional switch into a Modern Switch Expression using -> arrow syntax:
-// String trafficLight = "YELLOW";
-// Output action:
-// - "RED" -> "STOP"
-// - "YELLOW" -> "PREPARE TO STOP"
-// - "GREEN" -> "GO"
-// - default -> "INVALID SIGNAL"
+// ఒక ట్రాఫిక్ సిగ్నల్ లాజిక్ రాయండి: 
+// String color = "RED"; 
+// కొత్త switch (->) వాడి:
+// "RED" కి -> "ఆగండి"
+// "YELLOW" కి -> "రెడీ అవ్వండి"
+// "GREEN" కి -> "వెళ్లండి"
+// అని రిటర్న్ చేసి ఒక String వేరియబుల్ (action) లో స్టోర్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
-        String trafficLight = "YELLOW";
-        // TODO: Use Modern switch expression to assign action to a String variable
+        String color = "RED";
+        // TODO: లాజిక్ రాయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Why was the "yield" keyword introduced instead of reusing "return"?',
-        a: 'Because "return" in Java has always meant "exit the current method and return a value". If switch expressions used return, it would create confusion between exiting the method vs returning from the switch expression. "yield" clearly signifies yielding a value from a block.'
+        q: 'పాత switch కి, కొత్త దానికి స్పీడ్ లో తేడా ఉంటుందా?',
+        a: 'స్పీడ్ లో పెద్ద తేడా ఉండదు, ఇంటర్నల్ గా కంపైలర్ రెండింటినీ ఒకేలాగా రన్ చేస్తుంది. కానీ డెవలపర్స్ బగ్స్ లేకుండా ఈజీగా, ఫాస్ట్ గా కోడ్ రాయడానికి ఇది చాలా హెల్ప్ అవుతుంది.'
       },
       {
-        q: 'Does modern switch require a "default" branch when switching on Enums?',
-        a: 'If your switch expression explicitly covers EVERY single constant declared in the enum, the compiler knows the switch is exhaustive and does NOT require a default branch!'
-      },
-      {
-        q: 'Can modern switch expressions be used in older Java versions (like Java 8 or 11)?',
-        a: 'No. Modern switch expressions were finalized in Java 14. Projects running Java 8 or 11 must use the traditional switch statement with break.'
+        q: 'నేను ఇంకా పాత switch వాడుకోవచ్చా?',
+        a: 'వాడుకోవచ్చు. జావా పాత ఫీచర్స్ ని ఎప్పుడూ తీసేయదు. కానీ ఇండస్ట్రీ లోకి వెళ్ళినప్పుడు అందరూ ఈ కొత్త దన్నే వాడుతుంటారు కాబట్టి ఇది నేర్చుకోవడం బెటర్.'
       }
     ],
     recap: [
-      'Java 14+ switch expressions support arrow syntax (->) with zero fall-through risk.',
-      'Group multiple case labels on one line separated by commas.',
-      'Use the yield keyword to return values from multi-statement code blocks.',
-      'Avoid boolean redundancy (use if (flag) instead of if (flag == true)).'
+      'Java 14 లో వచ్చిన కొత్త switch తో వాల్యూస్ ని డైరెక్ట్ గా అసైన్ చేయొచ్చు.',
+      'Arrow (->) సింటాక్స్ వల్ల break రాయాల్సిన పనేలేదు, బగ్స్ తగ్గిపోతాయి.',
+      'మల్టిపుల్ లైన్స్ రాసినప్పుడు రిటర్న్ చేయడానికి yield వాడాలి.',
+      'కోడ్ రాసేటప్పుడు Yoda కండిషన్స్ లాంటివి వాడి బగ్స్ ని ముందే ఆపేయాలి.'
     ]
   }
 ];

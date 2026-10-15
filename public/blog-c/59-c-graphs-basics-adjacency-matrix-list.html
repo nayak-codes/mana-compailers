@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graphs (Adjacency Matrix & List) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో డేటా స్ట్రక్చర్స్ కి బాస్ లాంటి Graphs (గ్రాఫ్స్) అంటే ఏంటి? ఫేస్బుక్ లో మ్యూచువల్ ఫ్రెండ్స్ ని, గూగుల్ మ్యాప్స్ లో షార్టెస్ట్ రూట్ ని గ్రాఫ్స్ వాడి ఎలా కనుక్కుంటారు? Matrix మరియు List రెండింటిలో తేడా ఏంటో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c tutorial, graphs (adjacency matrix & list) (తెలుగులో), hashing c, collision handling, graphs c, binary search c, sorting algorithms c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/59-c-graphs-basics-adjacency-matrix-list.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html" class="active">59. Graphs (Matrix & List)</a>
+      </div>
+
+      <!-- Phase 20: Algorithms & Final -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Algorithms & Final</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/60-c-searching-linear-and-binary-search.html">60. Linear & Binary Search</a>
+        <a href="/blog-c/61-c-sorting-1-bubble-selection-insertion.html">61. Sorting (Bubble, Selection, Insertion)</a>
+        <a href="/blog-c/62-c-sorting-2-merge-sort-quick-sort.html">62. Sorting (Merge & Quick Sort)</a>
+        <a href="/blog-c/63-c-dynamic-programming-basics.html">63. Dynamic Programming Basics</a>
+        <a href="/blog-c/64-c-system-calls-basics-fork-exec-wait.html">64. System Calls (fork, exec, wait)</a>
+        <a href="/blog-c/65-c-building-a-mini-c-project.html">65. C Master Project & Conclusion</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 59: Graphs (Adjacency Matrix & List) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Graphs (Adjacency Matrix & List) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 59</span>
+      <span class="badge">📂 Phase 19: Data Structures - 2</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Nodes & Edges · Directed vs Undirected · Adjacency Matrix · Adjacency List</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>డేటా స్ట్రక్చర్స్ లో అత్యంత కాంప్లెక్స్ మరియు రియల్ లైఫ్ లో అత్యంత ఎక్కువగా వాడే కాన్సెప్ట్ <strong>Graphs (గ్రాఫ్స్)</strong>. ఫేస్బుక్ లో ఫ్రెండ్స్ నెట్వర్క్ అయినా, గూగుల్ మ్యాప్స్ లో ట్రాఫిక్ దారులు అయినా అన్నీ ఈ గ్రాఫ్స్ మీదే పనిచేస్తాయి! ట్రీ (Tree) లో కేవలం పైనుండి కిందికే (Parent-Child) లింక్స్ ఉంటాయి. కానీ గ్రాఫ్స్ లో ఎవరైనా ఎవరికైనా కనెక్ట్ అవ్వచ్చు (లూప్స్ కూడా ఉంటాయి). అసలు దీన్ని C లాంగ్వేజ్ లో ఎలా మెమరీ లో స్టోర్ చేయాలో (Adjacency Matrix వర్సెస్ Adjacency List) ఈరోజు డీప్ గా పోస్ట్‌మార్టం చేద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> గ్రాఫ్స్ (Graphs) అంటే ఏంటి? (Vertices & Edges)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        గ్రాఫ్ లో రెండు మెయిన్ పార్ట్స్ ఉంటాయి:<br>
+        1. <strong>Vertices (నోడ్స్/సిటీస్):</strong> అంటే ఒక మనిషి లేదా ఒక సిటీ (ఉదా: హైదరాబాద్, బెంగళూరు).<br>
+        2. <strong>Edges (లింక్స్/రోడ్లు):</strong> అంటే ఆ రెండు సిటీస్ మధ్య ఉన్న దారి. ఈ దారి వన్-వే (Directed) ఉండొచ్చు, లేదా టూ-వే (Undirected) ఉండొచ్చు.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🌍 రియల్ లైఫ్ స్టోరీ: ఫేస్బుక్ (Facebook) వర్సెస్ ఇన్‌స్టాగ్రామ్ (Instagram)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          <strong>Undirected Graph (ఫేస్బుక్):</strong> మీరు ఒకరికి ఫ్రెండ్ రిక్వెస్ట్ పంపి వాళ్ళు యాక్సెప్ట్ చేస్తే, వాడు మీకు ఫ్రెండ్, మీరు వాడికి ఫ్రెండ్! ఇద్దరి మధ్య టూ-వే (Two-way) కనెక్షన్ వస్తుంది. రోడ్డు కి రెండు వైపులా వెళ్ళొచ్చు.<br><br>
+          <strong>Directed Graph (ఇన్‌స్టాగ్రామ్ / ట్విట్టర్):</strong> మీరు ఒక సెలబ్రిటీ ని ఫాలో (Follow) అవుతారు (అంటే మీ నుండి వాడికి వన్-వే కనెక్షన్ వెళ్ళింది). కానీ వాడు మిమ్మల్ని తిరిగి ఫాలో అవ్వాల్సిన రూల్ లేదు కదా! ఇది వన్-వే (One-way) రోడ్డు లాంటిది. గ్రాఫ్స్ లో దారిని (Arrow) బట్టి లాజిక్ మారిపోతుంది.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> గ్రాఫ్ ని కంప్యూటర్ లో ఎలా దాచాలి? (2 Methods)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మనం డ్రాయింగ్ వేయడానికి బానే ఉంటుంది, కానీ కంపైలర్ కి ఆ రోడ్లు ఎలా చెప్పాలి?
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>1. Adjacency Matrix (మ్యాట్రిక్స్):</strong> ఇదొక 2D Array (టేబుల్). అడ్డు వరుసలు, నిలువు వరుసలు వేసుకుని దారి ఉంటే 1 అని, లేకపోతే 0 అని నింపుతాం. చాలా ఫాస్ట్, కానీ ఖాళీ రోడ్లు లేకపోయినా మెమరీ ఎక్కువ తీసుకుంటుంది.</li>
+        <li><strong>2. Adjacency List (లిస్ట్):</strong> ప్రతి సిటీ కి ఒక లింక్డ్ లిస్ట్ (Linked List) క్రియేట్ చేసి, దానికి కనెక్ట్ అయిన ఊర్ల పేర్లు మాత్రమే ఆ చైన్ లో కనెక్ట్ చేస్తాం. ఇది రియల్ ప్రాజెక్ట్స్ లో బెస్ట్ పద్ధతి (మెమరీ సేవింగ్)!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Adjacency Matrix Demo)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో ఒక 4 సిటీస్ (0, 1, 2, 3) తీసుకుని, వాటి మధ్య 2D Array వాడి రోడ్లు (1 or 0) ఎలా వేసామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Graphs (Adjacency Matrix)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+#define V 4 // టోటల్ 4 సిటీస్ ఉన్నాయి (Vertices)
+
+// గ్రాఫ్ కి మొదట్లో ఏ రోడ్లు లేవని (0) సెట్ చేసే ఫంక్షన్
+void initGraph(int matrix[V][V]) {
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            matrix[i][j] = 0;
+        }
+    }
+}
+
+// సిటీ 'src' నుండి సిటీ 'dest' కి రోడ్డు వేసే ఫంక్షన్
+void addEdge(int matrix[V][V], int src, int dest) {
+    // ఇది Undirected Graph (టూ-వే రోడ్డు)
+    matrix[src][dest] = 1; // వెళ్ళడానికి దారి
+    matrix[dest][src] = 1; // తిరిగి రావడానికి కూడా దారి (Facebook లాగా)
+}
+
+// మ్యాట్రిక్స్ టేబుల్ ని ప్రింట్ చేసే ఫంక్షన్
+void printMatrix(int matrix[V][V]) {
+    printf("   0 1 2 3\n");
+    printf("   --------\n");
+    for (int i = 0; i < V; i++) {
+        printf("%d| ", i);
+        for (int j = 0; j < V; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    // 2D అర్రే నే మన గ్రాఫ్ (4x4 = 16 బాక్సులు)
+    int graphMatrix[V][V];
+    
+    // మొదట అన్నీ జీరోస్ చేద్దాం
+    initGraph(graphMatrix);
+    
+    printf("--- Facebook Friends Graph ---\n\n");
+    // సిటీ 0: హైదరాబాద్
+    // సిటీ 1: బెంగళూరు
+    // సిటీ 2: ముంబై
+    // సిటీ 3: ఢిల్లీ
+    
+    // రోడ్లు (Friends) వేద్దాం
+    addEdge(graphMatrix, 0, 1); // 0 కి 1 ఫ్రెండ్
+    addEdge(graphMatrix, 0, 2); // 0 కి 2 ఫ్రెండ్
+    addEdge(graphMatrix, 1, 2); // 1 కి 2 కూడా ఫ్రెండ్ (Mutual!)
+    addEdge(graphMatrix, 2, 3); // 2 కి 3 ఫ్రెండ్
+    
+    // ఫైనల్ రిపోర్ట్ ప్రింట్ చేద్దాం
+    printf("Adjacency Matrix (1 means Connected):\n");
+    printMatrix(graphMatrix);
+    
+    // ఒకవేళ 0 కి 3 కి కనెక్షన్ ఉందో లేదో వెతకాలంటే?
+    printf("\nCheck: Are 0 and 3 friends? => %s\n", 
+            (graphMatrix[0][3] == 1) ? "Yes" : "No");
+            
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>matrix[src][dest] = 1;</code>: అర్రే ఇండెక్స్ వాడటం వల్ల, ఒకరిద్దరు కనెక్ట్ అయ్యున్నారా లేదా అని చెక్ చేయడానికి కేవలం 1 సెకను (O(1)) పడుతుంది. ఇది దీని సూపర్ పవర్.</li>
+        <li><code>matrix[dest][src] = 1;</code>: ఇది రాయకపోతే, కేవలం <code>src</code> నుండి <code>dest</code> కి వన్-వే రోడ్డు (Directed Graph) ఉన్నట్టు లెక్క. రెండు రాస్తే అది టూ-వే రోడ్డు అవుతుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఫేస్బుక్ వాళ్లు Adjacency Matrix వాడతారా?</h4>
+          <p>అస్సలు వాడరు! ఫేస్బుక్ లో 200 కోట్ల మంది యూజర్స్ (V = 2 బిలియన్) ఉన్నారు. ఒకవేళ 2D అర్రే క్రియేట్ చేయాలంటే (2 బిలియన్ x 2 బిలియన్) బాక్సులు మెమరీ కావాలి! ఆ అర్రే లో ఒక యూజర్ కి సగటున 500 మందే ఫ్రెండ్స్ ఉంటారు, మిగతా వందల కోట్ల బాక్సులు అన్నీ 0 తోనే నిండిపోయి దారుణంగా మెమరీ వేస్ట్ అవుతుంది. అందుకే వాళ్ళు <strong>Adjacency List</strong> వాడతారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Adjacency List అంటే ఏంటి? అది ఎలా బెటర్?</h4>
+          <p>దీనిలో 200 కోట్ల మందికి కేవలం ఒకటే పెద్ద అర్రే తీసుకుంటారు. అందులో మీ బాక్స్ దగ్గర ఒక లింక్డ్ లిస్ట్ (Linked List) ని అటాచ్ చేస్తారు. మీకు ఎంతమంది ఫ్రెండ్స్ ఉంటే, ఆ చైన్ లో అన్ని డబ్బాలు మాత్రమే యాడ్ చేస్తారు. లేని వాళ్ళ కోసం 0 లు పెట్టాల్సిన పనేలేదు! మెమరీ సూపర్ సేవ్ అవుతుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: గ్రాఫ్ లో Weighted Edge అంటే ఏంటి?</h4>
+          <p>గూగుల్ మ్యాప్స్ లో రెండు సిటీల మధ్య దారి ఉండటమే కాదు, ఆ దారి పొడవు ఎంత (కిలోమీటర్లు) లేదా ట్రాఫిక్ ఎంత అనేది కూడా ఉంటుంది కదా! ఆ వాల్యూ నే Weight అంటారు. అప్పుడు మ్యాట్రిక్స్ లో 1 బదులు డైరెక్ట్ గా ఆ వాల్యూ (ఉదా: 50 km) ని పెట్టి సార్టెస్ట్ పాత్ అల్గారిథమ్స్ (Dijkstra) రన్ చేస్తారు.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="58-c-hashing-and-collision-handling.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">58. Hashing & Collisions</span>
+      </a>
+
+      
+      <a href="60-c-searching-linear-and-binary-search.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">60. Linear & Binary Search</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

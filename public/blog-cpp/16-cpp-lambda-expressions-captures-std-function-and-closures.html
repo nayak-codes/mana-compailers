@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Lambda Expressions, Captures, std::function & Closures Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive C++ guide on Lambdas (Phase 16): lambda syntax, capture by value/reference, mutable lambdas, generic lambdas (C++14), IIFE, std::function, functors, std::bind, and performance notes." />
-  <meta name="keywords" content="c++ tutorial, c++ lambda expressions, captures, std::function & closures masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Lambda Expressions & Closures (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++11 లో వచ్చిన ఒక విప్లవం లాంబ్డా ఎక్స్‌ప్రెషన్స్ (Lambda Expressions). పేరు లేని ఫంక్షన్స్ ని ఎలా క్రియేట్ చేయాలి? వాల్యూస్ ని ఎలా క్యాప్చర్ (Capture) చేయాలో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c++ tutorial, lambda expressions & closures (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -490,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 16: C++ Lambda Expressions, Captures, std::function & Closures Masterclass</span>
+      <span class="current">Lesson 16: Lambda Expressions & Closures (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Lambda Expressions, Captures, std::function & Closures Masterclass</h1>
+    <h1 class="page-title">Lambda Expressions & Closures (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 16</span>
@@ -501,179 +478,127 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Lambda Syntax & Anatomy · Capture by Value & Reference · Mutable Lambdas · Generic Lambdas · IIFE · Lambda with Algorithms · std::function · Functors vs Lambdas</span>
+      <span>Anonymous Functions · Capture List [=, &] · std::function · Closures · Modern C++ Callbacks</span>
     </div>
-<div class="intro-box">
-  <p>Welcome to <strong>Phase 16: Lambda Expressions</strong>! Introduced in C++11, lambdas are anonymous inline function objects. They are the modern replacement for hand-written functors, enabling concise callbacks, predicates, and closures that capture surrounding variables.</p>
-</div>
 
-<div class="section-title"><span class="num">1</span>Lambda Syntax Anatomy</div>
-<div class="section-body">
-  <div class="memory-diagram">Lambda Anatomy:
+    <div class="intro-box">
+      <p>మనం ఇంతకుముందు నేర్చుకున్నట్లుగా, ఒక పని చేయాలంటే దానికి ఒక ఫంక్షన్ రాసి, ఒక పేరు పెట్టి, మెయిన్ ఫంక్షన్ లోకి పిలవాలి. కానీ ఒకేఒక్క లైన్ లాజిక్ (ఉదాహరణకు రెండు నంబర్స్ ని గుణించడం) కోసం ఇంకో పెద్ద ఫంక్షన్ రాసి పేరు పెట్టడం టైమ్ వేస్ట్ కాదా? ఈ ప్రాబ్లెమ్ ని సాల్వ్ చేయడానికే C++11 లో <strong>Lambda Expressions (లాంబ్డా ఎక్స్‌ప్రెషన్స్)</strong> వచ్చాయి. ఇవి పేరు లేని ఫంక్షన్స్ (Anonymous Functions). వీటిని డైరెక్ట్ గా కోడ్ మధ్యలోనే ఎక్కడ పడితే అక్కడ వాడేయొచ్చు. ముఖ్యంగా GUI ఈవెంట్స్ లో, త్రెడ్స్ (Threads) లో వీటి వాడకం విపరీతంగా ఉంటుంది. ఇవి ఎలా పనిచేస్తాయో డీప్ గా చూద్దాం.</p>
+    </div>
 
-  [capture list] (parameters) mutable -&gt; return_type { body }
+    <div class="section-title"><span class="num">1</span> అసలు లాంబ్డా (Lambda) అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        లాంబ్డా అనేది పేరు లేని ఒక చిన్న ఫంక్షన్. దీని సింటాక్స్ చూడటానికి చాలా విచిత్రంగా ఉంటుంది: <code>[] (పరామీటర్స్) { కోడ్ }</code>. బ్రాకెట్స్ ఉన్నాయి కదా, వాటినే లాంబ్డా ఐడెంటిటీ అంటారు.
+      </p>
 
-  [=]     — capture all by VALUE
-  [&amp;]     — capture all by REFERENCE
-  [x]     — capture x by value
-  [&amp;x]    — capture x by reference
-  [=, &amp;y] — all by value, y by reference
-  []      — capture nothing</div>
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Lambda Syntax Variants</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
+      <div class="deep-dive-card">
+        <h3>🍔 రియల్ లైఫ్ స్టోరీ: హోటల్ మెనూ vs డ్రైవ్-త్రూ ఆర్డర్</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          ఒక రెగ్యులర్ ఫంక్షన్ రాయడం అనేది పెద్ద హోటల్ లో మెనూ డిజైన్ చేసి, వంటగాడికి పేరు పెట్టి చేయించడం లాంటిది. ఇది చాలా ఫార్మల్ ప్రాసెస్.<br><br>
+          కానీ ఒక లాంబ్డా ఫంక్షన్ అనేది <strong>డ్రైవ్-త్రూ (Drive-thru)</strong> లో ఆర్డర్ ఇవ్వడం లాంటిది. "నాకు ఒక బర్గర్ కావాలి" అని ఫాస్ట్ గా ఆన్ ది స్పాట్ లోనే చెప్పేస్తాం. ఎవరి పేరు అడగం, మెనూ చూడము. జస్ట్ పని అయిపోయిందా లేదా అన్నదే ముఖ్యం. అలాగే కోడ్ లో ఎక్కడైనా ఒక చిన్న ఫంక్షన్ ఆన్ ది స్పాట్ లో కావాలంటే (ఉదా: <code>std::sort</code> కి కస్టమ్ లాజిక్ ఇవ్వడానికి) లాంబ్డాస్ ని వాడుతారు.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Capture List (క్యాప్చర్ లిస్ట్) యొక్క పవర్!</div>
+    <div class="section-body">
+      <p class="text-prose">
+        సాధారణ ఫంక్షన్స్ కి బయట మెయిన్ లో ఉన్న వేరియబుల్స్ ఏమి జరుగుతున్నాయో తెలీదు. కానీ లాంబ్డాస్ కు ఉన్న సూపర్ పవర్ ఏంటంటే, అవి బయట ఉన్న వేరియబుల్స్ ని లోపలికి లాగేసుకుంటాయి. దీన్నే <strong>Capturing (క్యాప్చర్)</strong> అంటారు. ఇది <code>[]</code> స్క్వేర్ బ్రాకెట్స్ ద్వారా జరుగుతుంది.
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>[=]</code> : బయట ఉన్న వేరియబుల్స్ అన్నిటినీ జిరాక్స్ (Copy / Value) తీసుకుని లోపలికి వస్తుంది. లోపల మీరు ఆ వాల్యూ ని మార్చలేరు (Read-only).</li>
+        <li><code>[&]</code> : బయట ఉన్న వేరియబుల్స్ అన్నిటినీ ఒరిజినల్ అడ్రస్ (Reference) ద్వారా లోపలికి తెస్తుంది. లోపల మీరు మార్చితే, బయట కూడా వాల్యూ మారిపోతుంది!</li>
+        <li><code>[x, &y]</code> : కేవలం x ని కాపీ లాగా, y ని రిఫరెన్స్ లాగా పర్టికులర్ గా తీసుకోవడం.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Lambda Demo)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో <code>auto</code> కీవర్డ్ వాడి ఒక లాంబ్డా ని ఎలా సేవ్ చేసుకుంటున్నామో, మరియు క్యాప్చర్ లిస్ట్ ఎలా వాడుతున్నామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++11 — Lambda Expressions</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 #include &lt;vector&gt;
-#include &lt;algorithm&gt;
-#include &lt;functional&gt;
+#include &lt;algorithm&gt; // For for_each
 
 int main() {
-    // Basic lambda
-    auto greet = [](const std::string&amp; name) {
-        std::cout &lt;&lt; "Hello, " &lt;&lt; name &lt;&lt; "!
-";
+    int outsideNumber = 50;
+    int multiplier = 2;
+    
+    // 1. సింపుల్ లాంబ్డా (దీనికి పేరు లేదు, కాబట్టి auto లో స్టోర్ చేసాం)
+    auto sayHello = []() {
+        std::cout << "Hello from Lambda!" << std::endl;
     };
-    greet("World");
-
-    // Lambda with return type
-    auto add = [](double a, double b) -&gt; double { return a + b; };
-    std::cout &lt;&lt; "add: " &lt;&lt; add(3.5, 4.2) &lt;&lt; "
-";
-
-    // Capture by value
-    int threshold = 10;
-    auto isAbove = [threshold](int x) { return x &gt; threshold; };
-    std::cout &lt;&lt; "15 above threshold: " &lt;&lt; std::boolalpha &lt;&lt; isAbove(15) &lt;&lt; "
-";
-
-    // Capture by reference (can modify outer variable)
-    int counter = 0;
-    auto increment = [&amp;counter]() { ++counter; };
-    increment(); increment(); increment();
-    std::cout &lt;&lt; "counter: " &lt;&lt; counter &lt;&lt; "
-";
-
-    // Mutable lambda (can modify captured-by-value copy)
-    int x = 5;
-    auto mutLambda = [x]() mutable {
-        x += 10;  // modifies the COPY, not original x
-        std::cout &lt;&lt; "inside mutable: " &lt;&lt; x &lt;&lt; "
-";
+    sayHello(); // ఫంక్షన్ లాగా కాల్ చేయడం
+    
+    // 2. Capture by Reference [&] వాడి లాంబ్డా రాయడం
+    // బయట ఉన్న outsideNumber ని లోపల మార్చేస్తున్నాం!
+    auto changeNumber = [&]() {
+        outsideNumber += 100; // Original value changes
     };
-    mutLambda();
-    std::cout &lt;&lt; "original x: " &lt;&lt; x &lt;&lt; "
-";
-
-    // Generic lambda (C++14) — auto parameters
-    auto printType = [](auto val) {
-        std::cout &lt;&lt; "value: " &lt;&lt; val &lt;&lt; "
-";
-    };
-    printType(42);
-    printType(3.14);
-    printType(std::string("generic!"));
-
-    // Immediately Invoked Lambda Expression (IIFE)
-    int result = [](int a, int b){ return a * b; }(6, 7);
-    std::cout &lt;&lt; "IIFE result: " &lt;&lt; result &lt;&lt; "
-";
-
-    // Lambda with algorithms
-    std::vector&lt;int&gt; nums{10, 15, 20, 25, 30};
-    std::for_each(nums.begin(), nums.end(), [](int n){
-        if (n % 2 == 0) std::cout &lt;&lt; n &lt;&lt; " ";
+    changeNumber();
+    std::cout << "After Lambda, Number is: " << outsideNumber << std::endl;
+    
+    // 3. అల్గారిథమ్స్ లో ఆన్ ది స్పాట్ వాడకం
+    std::vector&lt;int&gt; marks = {10, 20, 30};
+    std::cout << "Marks multiplied by " << multiplier << ":" << std::endl;
+    
+    // [multiplier] వాడి బయట ఉన్న 2 ని లోపలికి (కాపీ) తెచ్చుకున్నాం
+    std::for_each(marks.begin(), marks.end(), [multiplier](int m) {
+        std::cout << m * multiplier << " ";
     });
-    std::cout &lt;&lt; "
-";
-
-    // sort with custom comparator lambda
-    std::vector&lt;std::string&gt; words{"banana", "apple", "cherry", "date"};
-    std::sort(words.begin(), words.end(), [](const std::string&amp; a, const std::string&amp; b){
-        return a.length() &lt; b.length();  // sort by string length
-    });
-    for (const auto&amp; w : words) std::cout &lt;&lt; w &lt;&lt; " ";
-    std::cout &lt;&lt; "
-";
+    std::cout << std::endl;
+    
     return 0;
 }</code></pre>
-  </div>
-</div>
+      </div>
+    </div>
 
-<div class="section-title"><span class="num">2</span>std::function &amp; Function Objects</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — std::function, callbacks, function objects</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;functional&gt;
-#include &lt;vector&gt;
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>auto sayHello = []() { ... }</code>: ఇక్కడ లాంబ్డా కి అసలు పేరు లేదు. కానీ దాన్ని ఎప్పుడైనా మళ్ళీ వాడుకోవడానికి మనం ఒక <code>auto</code> వేరియబుల్ కి అసైన్ చేశాం.</li>
+        <li><code>[&]()</code>: ఈ స్క్వేర్ బ్రాకెట్ లో <code>&amp;</code> ఉండటం వల్ల, ఆ ఫంక్షన్ బయట ఉన్న <code>outsideNumber</code> ని డైరెక్ట్ గా రిఫరెన్స్ చేసుకుంది. ఒకవేళ <code>[=]</code> అని రాసి ఉంటే లోపల <code>+= 100</code> చేసినప్పుడు కంపైలర్ ఎర్రర్ ఇచ్చేది (Read-only అని).</li>
+        <li><code>std::for_each</code>: ఇది ఒక అద్భుతమైన ఫంక్షన్. వెక్టార్ లో ఉన్న ప్రతి ఐటమ్ ని తీసుకుని, మనం పక్కన రాసిన లాంబ్డా లోపలికి (పరామీటర్ గా) పంపుతుంది. ఇలా సింగిల్ లైన్ లో లూప్స్ ని ముగించేయొచ్చు.</li>
+      </ul>
+    </div>
 
-// Accept any callable matching (int)-&gt;bool signature
-void filterAndPrint(const std::vector&lt;int&gt;&amp; v, std::function&lt;bool(int)&gt; pred) {
-    for (int x : v) {
-        if (pred(x)) std::cout &lt;&lt; x &lt;&lt; " ";
-    }
-    std::cout &lt;&lt; "
-";
-}
-
-// Functor (class with operator())
-struct Multiplier {
-    int factor;
-    explicit Multiplier(int f) : factor{f} {}
-    int operator()(int x) const { return x * factor; }
-};
-
-int main() {
-    std::vector&lt;int&gt; nums{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-
-    // Pass lambda to std::function parameter
-    filterAndPrint(nums, [](int x){ return x % 3 == 0; });  // multiples of 3
-
-    // Store lambda in std::function variable
-    std::function&lt;int(int, int)&gt; op;
-    op = [](int a, int b) { return a + b; };
-    std::cout &lt;&lt; "op(3,4): " &lt;&lt; op(3, 4) &lt;&lt; "
-";
-    op = [](int a, int b) { return a * b; };
-    std::cout &lt;&lt; "op(3,4): " &lt;&lt; op(3, 4) &lt;&lt; "
-";
-
-    // Functor usage
-    Multiplier times3{3};
-    std::cout &lt;&lt; "times3(7): " &lt;&lt; times3(7) &lt;&lt; "
-";
-
-    // std::bind (older, lambdas preferred)
-    auto addFive = std::bind(std::plus&lt;int&gt;{}, std::placeholders::_1, 5);
-    std::cout &lt;&lt; "addFive(10): " &lt;&lt; addFive(10) &lt;&lt; "
-";
-    return 0;
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">3</span>Technical FAQs</div>
-<div class="section-body">
-  <div class="faq-grid">
-    <div class="faq-item"><h4>Q1: What is the type of a lambda?</h4><p>Each lambda has a unique, compiler-generated anonymous type (closure type). You cannot name it — use <code>auto</code> to hold it, or <code>std::function</code> to store it in a type-erased container.</p></div>
-    <div class="faq-item"><h4>Q2: Capture by value vs reference — when to use which?</h4><p>Capture by value (<code>[=]</code>) for short-lived lambdas or when the lambda outlives the local variables. Capture by reference (<code>[&amp;]</code>) when you need to modify outer variables or avoid copying large objects.</p></div>
-    <div class="faq-item"><h4>Q3: What is a dangling reference in a lambda?</h4><p>If a lambda captures a local variable by reference, and the lambda outlives that variable (e.g., returned from function), dereferencing the captured reference is Undefined Behaviour.</p></div>
-    <div class="faq-item"><h4>Q4: Performance of std::function vs auto lambda?</h4><p><code>std::function</code> has type-erasure overhead (heap allocation + virtual dispatch). Storing a lambda in <code>auto</code> gives zero-overhead inlining. Prefer <code>auto</code> when the type doesn't need to be stored polymorphically.</p></div>
-    <div class="faq-item"><h4>Q5: What is a recursive lambda?</h4><p>Lambdas cannot refer to themselves by name directly. Use <code>std::function</code> or (C++23) deducing <code>this</code> parameter: <code>auto fib = [&amp;fib](int n) -&gt; int { ... };</code></p></div>
-  </div>
-</div>
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: C++ లో క్లోజర్ (Closure) అంటే ఏమిటి?</h4>
+          <p>మీరు ఒక లాంబ్డా ఎక్స్‌ప్రెషన్ ని రాసినప్పుడు, ఆ లాంబ్డా బయట ఉన్న వేరియబుల్స్ ని క్యాప్చర్ (Capture) చేసుకుని, తనలోపల దాచుకుంటుంది కదా. అలా డేటాని, ఫంక్షన్ లాజిక్ ని కలిపి ప్యాక్ చేసిన ఒక రన్-టైమ్ ఆబ్జెక్ట్ నే <strong>Closure</strong> అంటారు. లాంబ్డా అనేది కోడ్ (Syntax), క్లోజర్ అనేది మెమరీలో క్రియేట్ అయిన వస్తువు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: <code>std::function</code> అంటే ఏంటి? అది లాంబ్డా తో ఎందుకు వాడుతారు?</h4>
+          <p>మనం లాంబ్డా ని <code>auto</code> లో స్టోర్ చేసాం. కానీ ఒక లాంబ్డా ని ఇంకో ఫంక్షన్ కి ఆర్గ్యుమెంట్ గా పంపాలంటే (ఉదాహరణకు త్రెడ్ స్టార్ట్ చేయడానికి), అప్పుడు దాని డేటా టైప్ ఎంటో కచ్చితంగా చెప్పాలి. అప్పుడే <code>std::function&lt;void(int)&gt;</code> అనే దాన్ని వాడతారు. ఇది ఎలాంటి ఫంక్షన్ లేదా లాంబ్డా ని అయినా తనలో స్టోర్ చేసుకోగల ఒక స్పెషల్ రాపర్ (Wrapper) క్లాస్.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: క్యాప్చర్ లిస్ట్ లో ఉన్న <code>mutable</code> కీవర్డ్ ఎందుకు?</h4>
+          <p>మీరు <code>[=]</code> (కాపీ) వాడినప్పుడు లోపల వాల్యూస్ మార్చలేరు అని చెప్పుకున్నాం. కానీ మీకు ఒరిజినల్ వేరియబుల్ ని మార్చకుండా, కేవలం కాపీ చేసుకున్న వాల్యూ ని మాత్రమే లోపల మార్చుకోవాలి అనిపిస్తే (ఉదాహరణకు ఒక కౌంటర్ లాగా), అప్పుడు లాంబ్డా పక్కన <code>mutable</code> కీవర్డ్ రాస్తారు. (ఉదా: <code>[=]() mutable { ... }</code>). అప్పుడు రీడ్-ఓన్లీ రెస్ట్రిక్షన్ పోతుంది.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="15-cpp-iterators-algorithms-sort-find-transform-and-stl.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">15. Iterators, sort, find, transform & STL Algorithms</span>
+    <span class="title">15. Iterators & Algorithms</span>
   </a>
   <a href="17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</span>
+    <span class="title">17. Smart Pointers & Memory</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Composition & Dataclasses — Python 3 Tutorial | Our Compiler</title>
-  <meta name="description" content="Master clean decoupled software architecture in Python: favoring composition over inheritance ("Has-A" vs "Is-A"), and dramatically reducing boilerplate code using modern Python dataclasses (PEP 557)." />
-  <meta name="keywords" content="python tutorial, learn python, python composition & dataclasses, python online compiler, python automation, web scraping, python testing" />
+  <title>Composition & Dataclasses (తెలుగులో) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Inheritance కంటే Composition ఎందుకు బెస్ట్ (Has-A vs Is-A)? మరియు మోడ్రన్ పైథాన్ లో @dataclass వాడి కోడ్ ని సగానికి సగం ఎలా తగ్గించొచ్చో చూద్దాం." />
+  <meta name="keywords" content="python tutorial, learn python, composition & dataclasses (తెలుగులో), python online compiler, python automation, web scraping, python testing" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-python/34-python-oop-composition-and-dataclasses.html" />
@@ -20,8 +20,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Python Composition & Dataclasses — Python 3 Master Tutorial",
-  "description": "Master clean decoupled software architecture in Python: favoring composition over inheritance (\"Has-A\" vs \"Is-A\"), and dramatically reducing boilerplate code using modern Python dataclasses (PEP 557).",
+  "headline": "Composition & Dataclasses (తెలుగులో) — Python 3 Master Tutorial",
+  "description": "Inheritance కంటే Composition ఎందుకు బెస్ట్ (Has-A vs Is-A)? మరియు మోడ్రన్ పైథాన్ లో @dataclass వాడి కోడ్ ని సగానికి సగం ఎలా తగ్గించొచ్చో చూద్దాం.",
   "articleSection": "Phase 7: Object-Oriented Programming",
   "author": {
     "@type": "Organization",
@@ -44,26 +44,18 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "When should I choose Composition over Inheritance?",
+      "name": "Dataclass లో నేను నా సొంత ఫంక్షన్స్ రాసుకోవచ్చా?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Use Inheritance when there is a true polymorphic \"Is-A\" relationship and shared interface. Use Composition when you want to build complex behaviors by combining independent components (\"Has-A\") without coupling class hierarchies."
+        "text": "కచ్చితంగా! డేటాక్లాస్ కూడా ఒక నార్మల్ క్లాస్ లాంటిదే. కాకపోతే __init__, __repr__ అది రాసి పెడుతుంది. మిగతా ఫంక్షన్స్ మీ ఇష్టం."
       }
     },
     {
       "@type": "Question",
-      "name": "Can a dataclass have custom methods?",
+      "name": "__post_init__ అంటే ఏంటి?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! A dataclass is a regular Python class with automatically generated dunder methods. You can add methods, properties, class variables, and inheritance freely."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the __post_init__ method in a dataclass?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "__post_init__() is called immediately after the generated __init__() finishes, allowing you to validate data or initialize dependent computed fields."
+        "text": "కొన్నిసార్లు ఆటోమాటిక్ గా వచ్చిన __init__ తర్వాత మనకి ఇంకొంత లాజిక్ (ఉదా: పాస్వర్డ్ హ్యాష్ చేయడం) కావాలి. అప్పుడు దీన్ని వాడతాం."
       }
     }
   ]
@@ -205,8 +197,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-python">
 
@@ -548,7 +538,7 @@
       <span class="current">Chapter 34: 34. Composition & Dataclasses</span>
     </div>
 
-    <h1 class="page-title">Python Composition & Dataclasses</h1>
+    <h1 class="page-title">Composition & Dataclasses (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">🐍 Python 3.12+</span>
@@ -564,22 +554,17 @@
     </div>
 
     <div class="intro-box">
-      Master clean decoupled software architecture in Python: favoring composition over inheritance ("Has-A" vs "Is-A"), and dramatically reducing boilerplate code using modern Python dataclasses (PEP 557).
+      Inheritance కంటే Composition ఎందుకు బెస్ట్ (Has-A vs Is-A)? మరియు మోడ్రన్ పైథాన్ లో @dataclass వాడి కోడ్ ని సగానికి సగం ఎలా తగ్గించొచ్చో చూద్దాం.
     </div>
 
 
-    <div class="section-title"><span class="num">1</span>Composition Over Inheritance ("Has-A" Relationship)</div>
+    <div class="section-title"><span class="num">1</span>Composition ("Has-A" రిలేషన్)</div>
     <div class="section-body">
-      <p>A famous principle in software architecture states: <strong>"Favor Object Composition over Class Inheritance"</strong>.</p>
+      <p>సాఫ్ట్ వేర్ డిజైన్ లో ఒక ఫేమస్ రూల్ ఉంది: <strong>"Inheritance కంటే Composition వాడటమే బెస్ట్"</strong>.</p>
         <ul>
-          <li><strong>Inheritance ("Is-A"):</strong> Tight coupling. A <code>Dog</code> <em>is an</em> <code>Animal</code>. Changes to the parent class risk breaking all child classes across a large codebase.</li>
-          <li><strong>Composition ("Has-A"):</strong> Loose coupling. A <code>Car</code> <em>has an</em> <code>Engine</code>. Complex systems are assembled by combining independent, reusable building block components.</li>
+          <li><strong>Inheritance ("Is-A"):</strong> కుక్క (Dog) అనేది ఒక జంతువు (Animal). ఇది స్ట్రాంగ్ లింక్. పేరెంట్ లో ఏమైనా మారిస్తే చైల్డ్ కూడా అఫెక్ట్ అవుతుంది.</li>
+          <li><strong>Composition ("Has-A"):</strong> కార్ (Car) లోపల ఒక ఇంజిన్ (Engine) ఉంటుంది. ఇది లూస్ లింక్. రేపు పొద్దున్న ఎలక్ట్రిక్ ఇంజిన్ కావాలంటే పాతదాన్ని తీసేసి కొత్తది పెట్టుకోవచ్చు!</li>
         </ul>
-        <div class="diagram-box">┌────────────────────────────────────────────────────────┐
-│  Composite Class: Car                                  │
-│  ├── Has-A: Engine Object (v8_engine)                  │
-│  └── Has-A: List of Tire Objects (4 Michelin tires)    │
-└────────────────────────────────────────────────────────┘</div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Building Modular Systems with Composition</div>
@@ -588,24 +573,24 @@
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Independent Component Classes:
+          <pre><code># విడివిడిగా ఉన్న కాంపోనెంట్స్:
 class Engine:
     def __init__(self, horsepower, fuel_type):
         self.horsepower = horsepower
         self.fuel_type = fuel_type
 
     def ignite(self):
-        return f"🔥 Engine ({self.horsepower} HP, {self.fuel_type}) ignited and purring!"
+        return f"🔥 Engine ({self.horsepower} HP, {self.fuel_type}) స్టార్ట్ అయింది!"
 
 class GPSNavigator:
     def route_to(self, destination):
-        return f"🗺️ Calculating shortest route to '{destination}'..."
+        return f"🗺️ '{destination}' కి రూట్ కనుక్కుంటున్నాను..."
 
-# Composite Class assembling components:
+# వీటిని కలిపి ఒక కార్ ని తయారు చేద్దాం (Composition):
 class Automobile:
     def __init__(self, model, engine_hp, fuel_type):
         self.model = model
-        # COMPOSITION: Automobile "has an" Engine and "has a" GPS:
+        # COMPOSITION: కార్ "లోపల" ఇంజిన్ ఉంది, GPS ఉంది:
         self.engine = Engine(engine_hp, fuel_type)
         self.navigator = GPSNavigator()
 
@@ -619,20 +604,15 @@ my_car.start_trip("Hyderabad Cyber Towers")</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Flexibility:</strong>
-          <p style="margin-top:6px;">If you want an electric car, you can simply swap <code>self.engine = ElectricMotor()</code> without altering the vehicle's navigation, chassis, or seating logic.</p>
+          <strong style="color:#10b981;">🔍 ఫ్లెక్సిబిలిటీ (మంచి డిజైన్):</strong>
+          <p style="margin-top:6px;">రేపు మీరు ఎలక్ట్రిక్ కార్ చేయాలంటే <code>self.engine = ElectricMotor()</code> అని ఇంజిన్ మార్చేస్తే చాలు. కార్ మొత్తం కోడ్ ని మార్చాల్సిన పనిలేదు.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">2</span>Modern Dataclasses: Eliminating Boilerplate (PEP 557)</div>
+    <div class="section-title"><span class="num">2</span>Dataclasses: బోరింగ్ కోడ్ రాయక్కర్లేదు (PEP 557)</div>
     <div class="section-body">
-      <p>Introduced in Python 3.7 (PEP 557), <strong><code>@dataclass</code></strong> automatically writes boilerplate code for you, generating:</p>
-        <ul>
-          <li><code>__init__()</code> with type annotations.</li>
-          <li><code>__repr__()</code> for clean printing.</li>
-          <li><code>__eq__()</code> for value-based comparison.</li>
-        </ul>
+      <p>పైథాన్ లో ఒక ఆబ్జెక్ట్ రాస్తే <code>__init__</code> రాయాలి, <code>__str__</code> రాయాలి, <code>__eq__</code> రాయాలి.. చాలా బోర్ కదా? పైథాన్ 3.7 లో <strong><code>@dataclass</code></strong> వచ్చింది. ఇది ఆటోమాటిక్ గా మనకోసం కోడ్ రాసేస్తుంది!</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Defining Dataclasses with PEP 557</div>
@@ -644,36 +624,36 @@ my_car.start_trip("Hyderabad Cyber Towers")</code></pre>
           <pre><code>from dataclasses import dataclass, field
 from typing import List
 
-# Automatically generates __init__, __repr__, and __eq__ in 5 lines:
+# జస్ట్ ఈ ఒక్క పదం రాస్తే చాలు, __init__, __repr__ అన్నీ అదే రాసుకుంటుంది:
 @dataclass
 class StudentProfile:
     student_id: int
     name: str
     branch: str
     gpa: float = 0.0
-    skills: List[str] = field(default_factory=list) # Safe mutable list!
+    skills: List[str] = field(default_factory=list) # లిస్ట్ కోసం ఇలా వాడాలి!
 
-# Instantiating dataclasses:
+# ఆబ్జెక్ట్స్ క్రియేట్ చేద్దాం:
 s1 = StudentProfile(101, "Balaji", "Computer Science", 9.4, ["Python", "FastAPI"])
 s2 = StudentProfile(101, "Balaji", "Computer Science", 9.4, ["Python", "FastAPI"])
 
-print("--- Dataclass Generated Representation ---")
+print("--- ఆటోమాటిక్ గా వచ్చిన ప్రింట్ అవుట్పుట్ (__repr__) ---")
 print(s1)
 
-print("\n--- Automatic Value Equality (__eq__) ---")
-print("s1 == s2?", s1 == s2) # True! Automatically compares all fields!</code></pre>
+print("\n--- ఆటోమాటిక్ ఈక్వల్స్ చెక్ (__eq__) ---")
+print("s1 == s2?", s1 == s2) # True! రెండు ఆబ్జెక్ట్స్ లోపల డేటా సేమ్ ఉందో లేదో అదే చెక్ చేస్తుంది!</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 field(default_factory=list):</strong>
-          <p style="margin-top:6px;">Never use <code>skills: List[str] = []</code> in a dataclass. Always use <code>field(default_factory=list)</code> to ensure a fresh new list is created for every instance.</p>
+          <strong style="color:#10b981;">🔍 field(default_factory=list) ఎందుకు?:</strong>
+          <p style="margin-top:6px;">ఒకవేళ మీరు <code>skills = []</code> అని ఎంప్టీ లిస్ట్ ఇస్తే, స్టూడెంట్స్ అందరికీ ఒకే లిస్ట్ షేర్ అవుతుంది. అదే <code>default_factory</code> ఇస్తే ప్రతి స్టూడెంట్ కి ఒక కొత్త లిస్ట్ వస్తుంది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">3</span>Immutable Value Objects: Frozen Dataclasses</div>
+    <div class="section-title"><span class="num">3</span>Frozen Dataclasses (ఎవరూ మార్చలేరు)</div>
     <div class="section-body">
-      <p>Adding <code>frozen=True</code> creates an <strong>immutable dataclass</strong> that acts like a write-protected tuple. It can also be hashed and stored in sets or used as dictionary keys:</p>
+      <p>మీరు డేటా క్లాస్ కి <code>frozen=True</code> అని పెడితే, దాన్ని ఎవరు మార్చడానికి ట్రై చేసినా క్రాష్ అవుతుంది. దీన్ని మనం సెట్టింగ్స్ కి, లొకేషన్స్ (GPS) కి వాడతాం:</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Immutable Read-Only Dataclasses with frozen=True</div>
@@ -692,7 +672,7 @@ class GeoCoordinates:
 location = GeoCoordinates(17.3850, 78.4867)
 print("Geo Coordinates:", location)
 
-# Attempting mutation raises FrozenInstanceError:
+# మార్చడానికి ట్రై చేద్దాం (ఎర్రర్ వస్తుంది):
 try:
     location.latitude = 18.0000
 except Exception as err:
@@ -700,20 +680,20 @@ except Exception as err:
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Data Integrity:</strong>
-          <p style="margin-top:6px;">Frozen dataclasses provide thread-safe, unalterable value objects perfect for domain configuration and mathematical vectors.</p>
+          <strong style="color:#10b981;">🔍 లాభం?:</strong>
+          <p style="margin-top:6px;">ఫ్రోజెన్ డేటా క్లాసెస్ ని మనం డిక్షనరీ కి 'Keys' లాగా కూడా వాడుకోవచ్చు (అవి మార్చలేం కాబట్టి Hashable అవుతాయి).</p>
         </div>
     </div>
   
 
     <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfall: Using Mutable Defaults in Dataclasses without field(default_factory=...)</div>
-      <p>Writing "tags: list = []" inside a @dataclass raises ValueError: mutable default <class 'list'> is not allowed. You must write "tags: list = field(default_factory=list)".</p>
+      <div class="callout-title">⚠️ Common Developer Pitfall: Dataclass లో లిస్ట్ ని డైరెక్ట్ గా డిఫాల్ట్ గా ఇవ్వడం</div>
+      <p>మీరు "tags: list = []" అని రాస్తే పైథాన్ ఒప్పుకోదు (ValueError). కచ్చితంగా "tags: list = field(default_factory=list)" అని రాయాలి.</p>
     </div>
 
     <div class="try-box">
       <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p>Create a dataclass InventoryItem with name, price, quantity, and a method total_value() returning price * quantity.</p>
+      <p>ఒక InventoryItem అనే డేటాక్లాస్ రాయండి. అందులో name, price, quantity ఉండాలి. total_value() అనే ఒక మెథడ్ కూడా యాడ్ చేయండి.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">Python 3 Practice Challenge</span>
@@ -740,20 +720,14 @@ print(f"Total Inventory Value: ₹{item.total_value():,.2f}")</code></pre>
     <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> When should I choose Composition over Inheritance?</h4>
-      <p>Use Inheritance when there is a true polymorphic "Is-A" relationship and shared interface. Use Composition when you want to build complex behaviors by combining independent components ("Has-A") without coupling class hierarchies.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Dataclass లో నేను నా సొంత ఫంక్షన్స్ రాసుకోవచ్చా?</h4>
+      <p>కచ్చితంగా! డేటాక్లాస్ కూడా ఒక నార్మల్ క్లాస్ లాంటిదే. కాకపోతే __init__, __repr__ అది రాసి పెడుతుంది. మిగతా ఫంక్షన్స్ మీ ఇష్టం.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Can a dataclass have custom methods?</h4>
-      <p>Yes! A dataclass is a regular Python class with automatically generated dunder methods. You can add methods, properties, class variables, and inheritance freely.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the __post_init__ method in a dataclass?</h4>
-      <p>__post_init__() is called immediately after the generated __init__() finishes, allowing you to validate data or initialize dependent computed fields.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> __post_init__ అంటే ఏంటి?</h4>
+      <p>కొన్నిసార్లు ఆటోమాటిక్ గా వచ్చిన __init__ తర్వాత మనకి ఇంకొంత లాజిక్ (ఉదా: పాస్వర్డ్ హ్యాష్ చేయడం) కావాలి. అప్పుడు దీన్ని వాడతాం.</p>
     </div>
   
 
@@ -782,6 +756,5 @@ print(f"Total Inventory Value: ₹{item.total_value():,.2f}")</code></pre>
 </div>
 
 <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

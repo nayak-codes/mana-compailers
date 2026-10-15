@@ -8,121 +8,100 @@ module.exports = [
     phaseId: 'phase6',
     phaseTitle: 'Phase 6: Exception and File Handling',
     slug: '25-python-exceptions-and-error-handling',
-    title: 'Python Exceptions & Error Handling',
+    title: 'Python Exceptions & Error Handling (తెలుగులో)',
     badge: '25. Exception Handling',
     subtopics: 'Errors vs Exceptions · try-except-else-finally · Multiple Exceptions · raise · Custom Exceptions · Hierarchy · Useful Messages',
-    desc: 'Master robust defensive programming in Python: understanding syntax errors vs runtime exceptions, the complete 4-clause try-except-else-finally lifecycle, exception hierarchy, custom exception classes, and writing actionable error messages.',
+    desc: 'Python లో ఎర్రర్స్ వస్తే కోడ్ ఆగిపోకుండా ఎలా కాపాడుకోవాలి? try-except బ్లాక్స్, ఎర్రర్ రావడం (Exceptions), మన సొంత ఎర్రర్స్ క్రియేట్ చేయడం గురించి పూర్తిగా నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. Syntax Errors vs Runtime Exceptions & The Exception Hierarchy',
-        body: `<p>In Python, defects in code fall into two distinct categories:</p>
+        title: '1. Syntax Errors vs Runtime Exceptions',
+        body: `<p>పైథాన్ లో బగ్స్ (తప్పులు) రెండు రకాలుగా వస్తాయి:</p>
         <ol>
-          <li><strong>Syntax Errors (Compile-Time):</strong> Occur during the parsing stage before the program begins executing. If your code contains a missing colon (<code>if x == 5</code>) or mismatched parenthesis, Python immediately halts with a <code>SyntaxError</code> or <code>IndentationError</code>. <strong>Syntax errors cannot be caught with try-except</strong>.</li>
-          <li><strong>Exceptions (Runtime):</strong> Occur while a syntactically valid program is actively executing. For example, dividing by zero (<code>ZeroDivisionError</code>), accessing a missing dictionary key (<code>KeyError</code>), or opening a non-existent file (<code>FileNotFoundError</code>).</li>
+          <li><strong>Syntax Errors (గ్రామర్ తప్పులు):</strong> మీరు కోడ్ లో <code>:</code> (కోలన్) మర్చిపోయినా, బ్రాకెట్ క్లోజ్ చేయకపోయినా ఇవి వస్తాయి. కోడ్ రన్ అవ్వకముందే పైథాన్ ఆపేస్తుంది (<code>SyntaxError</code>). వీటిని మనం <code>try-except</code> తో ఆపలేం. మీరు కరెక్ట్ చేయాల్సిందే.</li>
+          <li><strong>Exceptions (రన్ టైమ్ లో వచ్చేవి):</strong> మీ కోడ్ కరెక్ట్ గానే ఉన్నా, రన్ అయ్యేటప్పుడు వచ్చే ఎర్రర్స్. ఉదాహరణకి నెంబర్ ని సున్నా (0) తో భాగిస్తే వచ్చే <code>ZeroDivisionError</code> లేదా లేని ఫైల్ ఓపెన్ చేస్తే వచ్చే <code>FileNotFoundError</code>. వీటిని మనం ఆపి కోడ్ ముందుకు వెళ్లేలా చేయొచ్చు.</li>
         </ol>
-        <p><strong>The Python Exception Class Hierarchy:</strong> All built-in exceptions in Python form an inheritance tree rooted at <code>BaseException</code>:</p>
+        <p><strong>The Exception Hierarchy (వంశవృక్షం):</strong> పైథాన్ లో అన్ని ఎర్రర్స్ కి ఒక పేరెంట్ ఉంటుంది:</p>
         <div class="diagram-box">┌────────────────────────────────────────────────────────┐
-│  BaseException                                         │
-│  ├── SystemExit, KeyboardInterrupt (Ctrl+C), GeneratorExit│
-│  └── Exception (The root for all application errors)   │
-│      ├── ArithmeticError (ZeroDivisionError, Overflow)  │
+│  BaseException (తాతయ్య)                                │
+│  ├── SystemExit, KeyboardInterrupt (Ctrl+C)            │
+│  └── Exception (తండ్రి - మన యాప్ ఎర్రర్స్ కి)          │
+│      ├── ArithmeticError (ZeroDivisionError)           │
 │      ├── LookupError (IndexError, KeyError)            │
-│      ├── TypeError, ValueError, NameError               │
-│      └── OSError (FileNotFoundError, PermissionError)   │
+│      ├── TypeError, ValueError                         │
+│      └── OSError (FileNotFoundError)                   │
 └────────────────────────────────────────────────────────┘</div>
         <div class="callout" style="margin:16px 0;">
-          <strong style="color:#ef4444;">⚠️ Rule: Never Catch BaseException Directly:</strong><br>
-          Always inherit your custom exceptions from <code>Exception</code> (not <code>BaseException</code>). Catching <code>BaseException</code> will unintentionally block user keyboard interrupts (<code>Ctrl+C</code> / <code>KeyboardInterrupt</code>) and graceful system shutdowns.
+          <strong style="color:#ef4444;">⚠️ రూల్: ఎప్పుడూ BaseException ని క్యాచ్ చేయకండి:</strong><br>
+          మనం ఎప్పుడూ <code>Exception</code> ని మాత్రమే క్యాచ్ చేయాలి. <code>BaseException</code> ని క్యాచ్ చేస్తే, యూజర్ <code>Ctrl+C</code> నొక్కి ఆపాలనుకున్నా మీ కోడ్ ఆపకుండా ఇబ్బంది పెడుతుంది.
         </div>`,
-        code: `# Inspecting the Exception Class Hierarchy at runtime:
+        code: `# రన్ టైమ్ లో ఈ ఎర్రర్స్ ఏ గ్రూప్ కి చెందుతాయో చూద్దాం:
 print("Is ZeroDivisionError an ArithmeticError?", issubclass(ZeroDivisionError, ArithmeticError))
 print("Is KeyError a LookupError?", issubclass(KeyError, LookupError))
 print("Is FileNotFoundError an OSError?", issubclass(FileNotFoundError, OSError))
 print("Is ArithmeticError an Exception?", issubclass(ArithmeticError, Exception))`,
         codeTitle: 'Example 1: Inspecting Python Built-in Exception Hierarchy',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Inheritance Polymorphism:</strong>
-          <p style="margin-top:6px;">Because <code>KeyError</code> inherits from <code>LookupError</code>, catching <code>except LookupError:</code> will catch both <code>KeyError</code> and <code>IndexError</code> with a single handler!</p>
+          <strong style="color:#10b981;">🔍 Inheritance సీక్రెట్:</strong>
+          <p style="margin-top:6px;"><code>KeyError</code> అనేది <code>LookupError</code> గ్రూప్ లో ఉంటుంది కాబట్టి, మనం <code>except LookupError:</code> అని రాస్తే చాలు, అది రెండు రకాల ఎర్రర్స్ (IndexError, KeyError) ని ఒకేసారి క్యాచ్ చేస్తుంది!</p>
         </div>`
       },
       {
-        title: '2. The 4-Clause Lifecycle: try, except, else, finally',
-        body: `<p>A complete, professional error handling block in Python can utilize up to <strong>four distinct clauses</strong>:</p>
+        title: '2. ది కంప్లీట్ ఫ్లో: try, except, else, finally',
+        body: `<p>ప్రొఫెషనల్ పైథాన్ కోడ్ లో ఎర్రర్ హ్యాండ్లింగ్ కి 4 బ్లాక్స్ ఉంటాయి:</p>
         <ul>
-          <li><strong><code>try</code>:</strong> Encloses the risky code that might raise an exception.</li>
-          <li><strong><code>except ExceptionType as err</code>:</strong> Executes ONLY if a matching exception occurs inside the try block.</li>
-          <li><strong><code>else</code>:</strong> Executes ONLY if the try block completed <strong>successfully with ZERO exceptions</strong>. (Keeps try blocks minimal!).</li>
-          <li><strong><code>finally</code>:</strong> Executes <strong>unconditionally 100% of the time</strong>, regardless of whether an exception occurred, was caught, or if a <code>return</code> statement was encountered. Used for critical cleanup (closing database connections, releasing file locks).</li>
-        </ul>
-        <div class="diagram-box">┌───────────────┐
-│   try block   │
-└───────┬───────┘
-        │
-   Exception? ──▶ YES ──▶ ┌────────────────┐
-        │                 │  except block  │
-        NO                └────────┬───────┘
-        │                          │
-        ▼                          │
-┌───────────────┐                  │
-│  else block   │                  │
-└───────┬───────┘                  │
-        │                          │
-        ▼                          ▼
-┌──────────────────────────────────────────┐
-│              finally block               │ (Guaranteed 100% Execution)
-└──────────────────────────────────────────┘</div>`,
+          <li><strong><code>try</code>:</strong> ఎర్రర్ రావచ్చు అని డౌట్ ఉన్న రిస్కీ కోడ్ ని ఇందులో రాస్తాం.</li>
+          <li><strong><code>except</code>:</strong> <code>try</code> లో ఎర్రర్ వస్తేనే ఈ కోడ్ రన్ అవుతుంది (కోడ్ క్రాష్ అవ్వకుండా ఆపుతుంది).</li>
+          <li><strong><code>else</code>:</strong> <code>try</code> లో <strong>ఎలాంటి ఎర్రర్ రాకపోతేనే</strong> ఇది రన్ అవుతుంది (సక్సెస్ అయితే).</li>
+          <li><strong><code>finally</code>:</strong> ఎర్రర్ వచ్చినా, రాకపోయినా లాస్ట్ లో <strong>ఖచ్చితంగా 100% రన్ అయ్యేది</strong> ఇదే. ఫైల్స్ క్లోజ్ చేయడానికి, డేటాబేస్ డిస్కనెక్ట్ చేయడానికి వాడతారు.</li>
+        </ul>`,
         code: `def safe_divide_engine(a, b):
     print(f"\\n--- Attempting: {a} / {b} ---")
     try:
-        # Step 1: Risky calculation
+        # Step 1: రిస్కీ కోడ్
         result = a / b
     except ZeroDivisionError as err:
-        # Step 2: Handles zero division error
-        print(f"❌ Handled Error: Cannot divide by zero! ({err})")
+        # Step 2: జీరో తో డివైడ్ చేస్తే
+        print(f"❌ Handled Error: సున్నా తో భాగించకూడదు! ({err})")
         return None
     except TypeError as err:
-        # Step 2: Handles invalid data types
-        print(f"❌ Handled Error: Both operands must be numbers! ({err})")
+        # Step 2: వేరేవి ఇస్తే (ఉదా: స్ట్రింగ్)
+        print(f"❌ Handled Error: నెంబర్స్ మాత్రమే ఇవ్వాలి! ({err})")
         return None
     else:
-        # Step 3: Runs ONLY if division was successful
+        # Step 3: సక్సెస్ అయితే మాత్రమే రన్ అవుతుంది
         print(f"✅ Calculation Successful! Result = {result}")
         return result
     finally:
-        # Step 4: Runs ALWAYS for resource cleanup / logging
-        print("🔒 [Cleanup] safe_divide_engine execution cycle finished.")
+        # Step 4: ఎప్పుడూ రన్ అవుతుంది
+        print("🔒 [Cleanup] safe_divide_engine సైకిల్ పూర్తయింది.")
 
-# Test all branches:
+# అన్ని రకాలుగా టెస్ట్ చేద్దాం:
 safe_divide_engine(100, 4)   # Success (try -> else -> finally)
 safe_divide_engine(50, 0)    # Zero Division (try -> except -> finally)
 safe_divide_engine(10, "2")  # Type Error (try -> except -> finally)`,
         codeTitle: 'Example 2: The Complete 4-Clause try-except-else-finally Flow',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Step-by-Step Flow:</strong>
-          <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li>In <code>safe_divide_engine(100, 4)</code>: <code>try</code> succeeds, <code>else</code> prints the result, and <code>finally</code> executes cleanup.</li>
-            <li>In <code>safe_divide_engine(50, 0)</code>: <code>ZeroDivisionError</code> triggers, <code>except</code> handles it, <code>else</code> is skipped, and <code>finally</code> executes before returning <code>None</code>.</li>
-          </ul>
+          <strong style="color:#10b981;">🔍 గమనించారా?:</strong>
+          <p style="margin-top:6px;">ఫస్ట్ దాంట్లో సక్సెస్ అయింది కాబట్టి <code>else</code> రన్ అయింది. మిగతా రెంటిలో ఎర్రర్ వచ్చింది కాబట్టి <code>except</code> రన్ అయింది. కానీ మూడు సార్లూ <code>finally</code> మాత్రం గ్యారెంటీగా రన్ అయింది.</p>
         </div>`
       },
       {
-        title: '3. Handling Multiple Specific Exceptions & Grouping',
-        body: `<p>Never use a bare <code>except:</code> or generic <code>except Exception:</code> unless logging at the top-level boundary. Catching specific exceptions prevents masking unrelated programming bugs.</p>
-        <p>You can define multiple dedicated <code>except</code> blocks, or group related exceptions into a single tuple <code>except (ValueError, TypeError) as err:</code>:</p>`,
+        title: '3. చాలా ఎర్రర్స్ వస్తే? (Grouping Exceptions)',
+        body: `<p>ఎప్పుడూ సింపుల్ గా <code>except:</code> అని రాయకండి. దేనికి ఆ ఎర్రర్ పేరు పెట్టి పట్టుకోవాలి, అప్పుడే ఏ తప్పు జరిగిందో క్లియర్ గా తెలుస్తుంది. మీరు కావాలంటే ఒకేసారి రెండు ఎర్రర్స్ ని బ్రాకెట్స్ (Tuple) లో పెట్టి క్యాచ్ చేయొచ్చు:</p>`,
         code: `def process_user_record(data_dict, key, divisor):
     try:
-        raw_val = data_dict[key]          # May raise KeyError
-        parsed_num = float(raw_val)       # May raise ValueError
-        computed = 1000 / parsed_num      # May raise ZeroDivisionError
+        raw_val = data_dict[key]          # కీ లేకపోతే KeyError
+        parsed_num = float(raw_val)       # టెక్స్ట్ ఉంటే ValueError
+        computed = 1000 / parsed_num      # సున్నా ఉంటే ZeroDivisionError
         return computed
     except KeyError:
-        print(f"❌ Error: Required key '{key}' is missing from user record!")
+        print(f"❌ Error: డేటా లో '{key}' అనే ఫీల్డ్ లేదు!")
     except (ValueError, TypeError) as err:
-        print(f"❌ Data Parsing Error: Invalid numeric input ({err})")
+        print(f"❌ Data Parsing Error: నెంబర్ ఫార్మాట్ తప్పు ({err})")
     except ZeroDivisionError:
-        print("❌ Math Error: Value cannot be zero!")
+        print("❌ Math Error: సున్నా తో క్యాలిక్యులేట్ చేయలేము!")
 
-# Testing different failure scenarios:
+# టెస్టింగ్:
 user_data = {"score": "50", "bonus": "zero", "zero_val": "0"}
 
 print("1. Valid score:    ", process_user_record(user_data, "score", 2))
@@ -131,44 +110,44 @@ print("3. Bad number string:", process_user_record(user_data, "bonus", 2))
 print("4. Division by zero:", process_user_record(user_data, "zero_val", 2))`,
         codeTitle: 'Example 3: Handling Multiple Specific Exceptions and Tuple Grouping',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why Specific Handlers Matter:</strong>
-          <p style="margin-top:6px;">Specific exception blocks allow you to provide targeted recovery actions (e.g. asking for missing keys vs asking for re-entered numbers) rather than failing generically.</p>
+          <strong style="color:#10b981;">🔍 ఎందుకు ఇలా రాయాలి?:</strong>
+          <p style="margin-top:6px;">ఇలా ఒక్కొక్కదానికి రాస్తే, కీ లేకపోతే యూజర్ ని మళ్ళీ కీ అడగమని చెప్పొచ్చు, సున్నా ఇస్తే వేరే నెంబర్ అడగమని చెప్పొచ్చు. జనరిక్ గా ఫెయిల్ అవ్వకుండా ఉండొచ్చు.</p>
         </div>`
       },
       {
-        title: '4. Raising Exceptions & Exception Chaining (raise ... from)',
-        body: `<p>Use the <strong><code>raise</code> statement</strong> to throw an exception when business rule invariants are violated. Python 3 also supports <strong>Exception Chaining</strong> via <code>raise NewException from original_error</code>, preserving the original root cause traceback for debugging:</p>`,
+        title: '4. కావాలని ఎర్రర్ తెప్పించడం (raise)',
+        body: `<p>యూజర్ వయస్సు -5 ఇస్తే మన కోడ్ క్రాష్ అవ్వదు కానీ బిజినెస్ రూల్ ప్రకారం అది తప్పు. ఇలాంటి టైం లో మనమే కావాలని <strong><code>raise</code></strong> వాడి ఎర్రర్ త్రో చేయాలి (విసిరేయాలి):</p>`,
         code: `def validate_account_age(age):
     if not isinstance(age, int):
-        raise TypeError(f"Age must be an integer, received {type(age).__name__}")
+        raise TypeError(f"Age అనేది నెంబర్ అయిఉండాలి, కానీ {type(age).__name__} వచ్చింది")
     if age < 0:
-        raise ValueError(f"Age cannot be negative! Received: {age}")
+        raise ValueError(f"వయస్సు మైనస్ లో ఉండకూడదు! మీరు ఇచ్చింది: {age}")
     if age < 18:
-        raise PermissionError(f"User is {age} years old. Minimum required age is 18.")
+        raise PermissionError(f"వయస్సు {age} ఇయర్స్. అకౌంట్ కి 18 నిండాలి.")
     return "✅ Age verified successfully!"
 
-# Test exception raising:
+# టెస్టింగ్:
 try:
-    print(validate_account_age(22))  # Valid
-    validate_account_age(-5)         # Triggers ValueError
+    print(validate_account_age(22))  # ఓకే
+    validate_account_age(-5)         # ఇక్కడ ValueError వస్తుంది
 except (TypeError, ValueError, PermissionError) as err:
     print(f"🚫 Validation Failed: {err}")`,
         codeTitle: 'Example 4: Explicit Exception Raising and Guarding Business Logic',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Fail-Fast Principle:</strong>
-          <p style="margin-top:6px;">Raising exceptions immediately when invalid inputs arrive prevents corrupted state from propagating deeper into your application and database.</p>
+          <strong style="color:#10b981;">🔍 Fail-Fast రూల్:</strong>
+          <p style="margin-top:6px;">తప్పు డేటా వస్తే అక్కడే కోడ్ ని ఆపేసి ఎర్రర్ ఇవ్వాలి. లేకపోతే ఆ తప్పు డేటా డేటాబేస్ లోకి వెళ్లిపోయి పెద్ద ప్రాబ్లం అవుతుంది.</p>
         </div>`
       },
       {
-        title: '5. Creating Custom Application Exceptions (OOP Hierarchy)',
-        body: `<p>In large production applications (FastAPI backends, payment gateways, microservices), you should define <strong>custom domain-specific exception classes</strong> by inheriting from Python's standard <code>Exception</code> class:</p>`,
-        code: `# Define Custom Application Exceptions
+        title: '5. మన సొంత కస్టమ్ ఎర్రర్స్ రాసుకోవడం',
+        body: `<p>పెద్ద ప్రాజెక్ట్స్ (బ్యాంకింగ్ యాప్స్) లో పైథాన్ ఎర్రర్స్ కాకుండా, మన బిజినెస్ కి తగ్గట్టు మన సొంత ఎర్రర్స్ క్లాసెస్ రాసుకోవచ్చు (Exception ని పేరెంట్ గా పెట్టి):</p>`,
+        code: `# మన సొంత ఎర్రర్స్ ని డిజైన్ చేద్దాం:
 class BankingAppError(Exception):
-    """Base exception for all banking domain errors."""
+    """అన్ని బ్యాంకింగ్ ఎర్రర్స్ కి ఇది పేరెంట్."""
     pass
 
 class InsufficientFundsError(BankingAppError):
-    """Raised when a withdrawal exceeds available balance."""
+    """బ్యాలెన్స్ కంటే ఎక్కువ డబ్బులు అడిగితే వచ్చే ఎర్రర్."""
     def __init__(self, balance, amount_requested):
         self.balance = balance
         self.amount_requested = amount_requested
@@ -179,60 +158,56 @@ class InsufficientFundsError(BankingAppError):
         )
 
 class AccountLockedError(BankingAppError):
-    """Raised when operating on a frozen account."""
+    """అకౌంట్ బ్లాక్ అయి ఉంటే వచ్చే ఎర్రర్."""
     pass
 
 def withdraw_money(account_balance, amount, is_locked=False):
     if is_locked:
-        raise AccountLockedError("Account is temporarily locked. Please contact support.")
+        raise AccountLockedError("అకౌంట్ లాక్ లో ఉంది. కస్టమర్ కేర్ కి కాల్ చేయండి.")
     if amount > account_balance:
-        raise InsufficientFundsError(account_balance, amount)
+        raise InsufficientFundsError(account_balance, amount) # మన ఎర్రర్!
     return account_balance - amount
 
-# Test Custom Exception handling:
+# టెస్టింగ్:
 try:
-    new_bal = withdraw_money(500.0, 750.0)
+    new_bal = withdraw_money(500.0, 750.0) # బ్యాలెన్స్ 500, కానీ 750 కావాలంటున్నాడు
 except InsufficientFundsError as err:
     print("💳 Transaction Blocked:", err)
-    print(f"👉 Customer needs to deposit at least Rs.{err.shortage:.2f} more.")
+    print(f"👉 కస్టమర్ ఇంకా Rs.{err.shortage:.2f} వేయాలి.")
 except BankingAppError as err:
     print("🏦 General Banking Error:", err)`,
         codeTitle: 'Example 5: Designing Custom Application Exceptions',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Architectural Advantage:</strong>
-          <p style="margin-top:6px;">Custom exceptions carry rich structured metadata (like <code>err.shortage</code>) allowing API layers to return structured HTTP 400/403 JSON responses to frontend clients automatically.</p>
+          <strong style="color:#10b981;">🔍 ప్రొఫెషనల్ అప్రోచ్:</strong>
+          <p style="margin-top:6px;">ఇలా మన సొంత ఎర్రర్స్ (ఉదా: <code>InsufficientFundsError</code>) క్రియేట్ చేయడం వల్ల, వేరే వాళ్ళకి మన కోడ్ లో ఏం జరుగుతుందో ఈజీగా అర్థమవుతుంది. అందులో <code>err.shortage</code> లాంటి ఎక్స్ట్రా డేటా కూడా పంపొచ్చు.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Using Bare "except:" or "except Exception: pass" (The Silent Bug Trap)',
-      text: 'Using a bare "except:" or catching Exception and doing "pass" silently suppresses all errors including typos (NameError), keyboard interrupts, and out-of-memory errors, making code completely impossible to debug. Always catch specific exceptions and log them!'
+      title: 'బ్లైండ్ గా "except:" అని వదిలేయడం',
+      text: 'ఉట్టి except: అని రాస్తే అది స్పెల్లింగ్ తప్పులు, అవుట్ ఆఫ్ మెమరీ అన్నీ ఆపేస్తుంది. దీనివల్ల అసలు ఏం తప్పు జరుగుతుందో ఎప్పటికీ అర్థం కాదు. ఎప్పుడూ except ValueError: అలా పేరు పెట్టి పట్టుకోవాలి.'
     },
     tryIt: {
-      desc: 'Write a function parse_integer_input(prompt_text) that repeatedly prompts the user in a while loop until they provide a valid integer, handling ValueError gracefully.',
+      desc: 'యూజర్ ని ఒక ఇంటీజర్ (నెంబర్) అడగండి. అతను తప్పుగా టెక్స్ట్ ఇస్తే క్రాష్ అవ్వకుండా, except వాడి "సరైన నెంబర్ ఇవ్వండి" అని చెప్పే కోడ్ రాయండి.',
       code: `def safe_int_converter(raw_value):
     try:
         return int(raw_value), "Success"
     except ValueError:
-        return None, f"'{raw_value}' is not a valid integer!"
+        return None, f"'{raw_value}' కరెక్ట్ నెంబర్ కాదు!"
 
-# Test inputs:
+# టెస్టింగ్:
 for test_val in ["42", "hello", "100.5", "-99"]:
     val, status = safe_int_converter(test_val)
     print(f"Input: {test_val:8} -> Parsed: {val} ({status})")`
     },
     faqs: [
       {
-        q: 'What is the difference between else and finally in try-except?',
-        a: 'The else block runs ONLY if the try block succeeds with zero exceptions. The finally block runs unconditionally 100% of the time, even if an unhandled exception occurred or a return statement was executed.'
+        q: 'else కి finally కి తేడా ఏంటి?',
+        a: 'try లో ఎర్రర్ రాకుండా అంతా సక్సెస్ అయితేనే else రన్ అవుతుంది. కానీ finally అలా కాదు, ఎర్రర్ వచ్చినా, రాకపోయినా లాస్ట్ లో ఖచ్చితంగా గ్యారెంటీగా రన్ అవుతుంది.'
       },
       {
-        q: 'Why should custom exceptions inherit from Exception and not BaseException?',
-        a: 'BaseException is the root of system-level exits like KeyboardInterrupt and SystemExit. Inheriting from Exception ensures your errors represent application issues without interfering with process termination.'
-      },
-      {
-        q: 'How do I re-raise the currently active exception?',
-        a: 'Inside an except block, simply write "raise" with no arguments. Python will re-raise the active exception up the call stack with its full original traceback intact.'
+        q: 'catch బ్లాక్ లోనే మళ్ళీ ఎర్రర్ వస్తే ఏమవుతుంది?',
+        a: 'except బ్లాక్ లో కూడా ఎర్రర్ వస్తే ప్రోగ్రామ్ అక్కడే క్రాష్ అవుతుంది. పైథాన్ దాన్ని ఆపలేదు.'
       }
     ]
   },
@@ -245,107 +220,96 @@ for test_val in ["42", "hello", "100.5", "-99"]:
     phaseId: 'phase6',
     phaseTitle: 'Phase 6: Exception and File Handling',
     slug: '26-python-file-handling-and-context-managers',
-    title: 'Python File Handling & with open()',
+    title: 'Python File Handling & with open() (తెలుగులో)',
     badge: '26. File I/O & Context Managers',
     subtopics: 'File Modes (r, w, a, x, b) · read() vs readline() · write() vs writelines() · with open() Context Manager · Buffer Management · UTF-8',
-    desc: 'Master file I/O operations in Python: understanding file streams and OS descriptors, all file modes, reading strategies (read, readline, line iterators), writing and appending data, UTF-8 encoding standards, and the with open() context manager.',
+    desc: 'పైథాన్ ద్వారా మన కంప్యూటర్ లోని ఫైల్స్ ని (txt, csv) ఎలా ఓపెన్ చేయాలి? ఎలా చదవాలి? మరియు with open() ఎందుకు వాడాలి అనేది డీటెయిల్ గా చూద్దాం.',
     sections: [
       {
-        title: '1. File Streams, OS Descriptors & The open() Function',
-        body: `<p>In computer operating systems, persistent files are stored on disk (SSD/HDD). When Python interacts with a file, the OS creates an open <strong>File Descriptor</strong> and returns a stream wrapper object in memory.</p>
-        <p>The built-in <code>open(file, mode="r", encoding="utf-8")</code> function connects Python to the physical file system.</p>
-        <h4 style="color:#10b981; margin:16px 0 8px;">Comprehensive Python File Modes:</h4>
+        title: '1. File ఓపెన్ చేయడం: open() ఫంక్షన్ & Modes',
+        body: `<p>పైథాన్ ఫైల్ సిస్టమ్ తో మాట్లాడటానికి <code>open("filename", mode)</code> అనే ఫంక్షన్ ఇస్తుంది. మోడ్ ని బట్టి మనం ఫైల్ తో ఏం చేయగలమో డిసైడ్ అవుతుంది.</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">File Modes ఇవే:</h4>
         <table class="tbl" style="margin-top:8px; font-size:12.5px;">
-          <tr><th>Mode</th><th>Name</th><th>Behavior / Stream Position</th><th>File Must Exist?</th></tr>
-          <tr><td><code>'r'</code></td><td>Read (Default)</td><td>Opens file for reading text. Pointer placed at start.</td><td><strong>Yes</strong> (raises <code>FileNotFoundError</code> if missing)</td></tr>
-          <tr><td><code>'w'</code></td><td>Write (Overwrite)</td><td><strong>Truncates (wipes)</strong> file to 0 bytes and writes from start.</td><td>No (Creates file if missing)</td></tr>
-          <tr><td><code>'a'</code></td><td>Append</td><td>Writes new data to the <strong>end</strong> of file without erasing existing content.</td><td>No (Creates file if missing)</td></tr>
-          <tr><td><code>'x'</code></td><td>Exclusive Creation</td><td>Creates and opens file for writing. <strong>Fails if file already exists</strong>!</td><td>Must <strong>NOT</strong> exist (raises <code>FileExistsError</code>)</td></tr>
-          <tr><td><code>'r+'</code></td><td>Read & Write</td><td>Opens for bidirectional reading and writing.</td><td><strong>Yes</strong></td></tr>
-          <tr><td><code>'rb' / 'wb'</code></td><td>Binary Modes</td><td>Reads/writes raw bytes (images, PDFs, audio, pickles).</td><td>Matches 'r' / 'w' rules</td></tr>
+          <tr><th>Mode</th><th>Name</th><th>ఏం చేస్తుంది?</th><th>ఫైల్ ఉండాలా?</th></tr>
+          <tr><td><code>'r'</code></td><td>Read (డిఫాల్ట్)</td><td>ఫైల్ లోని టెక్స్ట్ చదువుతుంది.</td><td><strong>ఉండాలి</strong> (లేకపోతే FileNotFoundError వస్తుంది)</td></tr>
+          <tr><td><code>'w'</code></td><td>Write</td><td>పాత డేటా <strong>మొత్తం తుడిపేసి (ఎరేజ్ చేసి)</strong> కొత్తది రాస్తుంది.</td><td>అవసరం లేదు (లేకపోతే క్రియేట్ చేస్తుంది)</td></tr>
+          <tr><td><code>'a'</code></td><td>Append</td><td>పాత డేటాని చెరపకుండా, దాని కింద (చివర్లో) కొత్తది <strong>యాడ్ చేస్తుంది</strong>.</td><td>అవసరం లేదు</td></tr>
+          <tr><td><code>'x'</code></td><td>Exclusive</td><td>కొత్త ఫైల్ క్రియేట్ చేస్తుంది. అప్పటికే ఆ ఫైల్ ఉంటే క్రాష్ అవుతుంది.</td><td><strong>ఉండకూడదు!</strong></td></tr>
         </table>`,
-        code: `# Writing and Reading using the open() function:
-# Step 1: Open file in write mode ('w') with explicit UTF-8 encoding
+        code: `# 1. Write మోడ్ ('w') తో ఫైల్ ఓపెన్ చేద్దాం:
 f_write = open("sample_demo.txt", "w", encoding="utf-8")
 f_write.write("Line 1: Hello from Python File I/O! 🚀\\n")
 f_write.write("Line 2: Built-in file streaming is fast and portable.\\n")
-f_write.close() # Always close manually if not using 'with'!
+f_write.close() # ఎప్పుడూ మాన్యువల్ గా క్లోజ్ చేయాలి!
 
-# Step 2: Open file in read mode ('r')
+# 2. Read మోడ్ ('r') తో చదువుదాం:
 f_read = open("sample_demo.txt", "r", encoding="utf-8")
 file_contents = f_read.read()
 f_read.close()
 
-print("--- File Contents Read From Disk ---")
+print("--- ఫైల్ నుంచి చదివిన డేటా ---")
 print(file_contents)`,
         codeTitle: 'Example 1: Basic File Writing and Reading with open() and close()',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why UTF-8 Encoding is Mandatory:</strong>
-          <p style="margin-top:6px;">If you omit <code>encoding="utf-8"</code>, Windows defaults to legacy <code>cp1252</code> or <code>ANSI</code>, causing fatal <code>UnicodeDecodeError</code> crashes when reading emojis, non-English names, or foreign currency symbols!</p>
+          <strong style="color:#10b981;">🔍 UTF-8 ఎందుకు?:</strong>
+          <p style="margin-top:6px;">ఫైల్ ఓపెన్ చేసేటప్పుడు <code>encoding="utf-8"</code> రాయడం మర్చిపోకండి. లేదంటే మీ ఫైల్ లో ఎమోజీలు కానీ, తెలుగు అక్షరాలు కానీ ఉంటే విండోస్ లో క్రాష్ అయిపోతుంది.</p>
         </div>`
       },
       {
-        title: '2. The Context Manager: Why "with open()" is Mandatory',
-        body: `<p>In the manual <code>open() ... close()</code> pattern, if an unexpected exception occurs between <code>open()</code> and <code>close()</code>, the file remains locked in OS memory, causing <strong>resource leaks and file locking crashes</strong>.</p>
-        <p>The <strong><code>with open(...) as f:</code> statement</strong> implements the Python <strong>Context Manager protocol</strong> (<code>__enter__</code> and <code>__exit__</code>). It guarantees that the file stream is <strong>100% automatically flushed and closed</strong> the microsecond execution exits the block, even if an unhandled exception or return statement occurs!</p>
-        <div class="diagram-box">┌────────────────────────────────────────────────────────┐
-│  with open("data.txt", "w", encoding="utf-8") as f:    │
-│      f.write("Safe writing...")                        │
-│                                                        │
-│  [__exit__ automatically triggers OS close() here!]    │
-└────────────────────────────────────────────────────────┘</div>`,
-        code: `# Safe, industry-standard file handling with Context Manager:
+        title: '2. "with open()" (Context Manager) ఎందుకు మ్యాండేటరీ?',
+        body: `<p>మామూలుగా <code>open()</code> వాడితే, పని అయ్యాక కచ్చితంగా <code>close()</code> రాయాలి. ఒకవేళ మధ్యలో ఏదైనా ఎర్రర్ వచ్చి కోడ్ క్రాష్ అయితే, <code>close()</code> రన్ అవ్వదు, ఆ ఫైల్ అలాగే లాక్ అయిపోయి మెమరీ వేస్ట్ అవుతుంది.</p>
+        <p>దీనికి సొల్యూషన్ <strong><code>with open(...) as f:</code></strong>. దీన్ని వాడితే పని అయిపోగానే లేదా మధ్యలో క్రాష్ అయినా సరే, పైథాన్ <strong>ఆటోమాటిక్ గా ఫైల్ ని క్లోజ్ చేస్తుంది</strong> (దీన్నే Context Manager అంటారు)!</p>`,
+        code: `# ఇండస్ట్రీలో వాడే సేఫ్ పద్ధతి ఇది:
 with open("audit_log.txt", "w", encoding="utf-8") as file:
     file.write("2026-08-14 10:00:00 [INFO] System initialized successfully.\\n")
     file.write("2026-08-14 10:05:22 [INFO] Database connection active.\\n")
+    # ఇక్కడ బ్లాక్ అయిపోగానే ఆటోమాటిక్ గా ఫైల్ close() అయిపోతుంది.
 
-# Verify that Python automatically closed the file descriptor:
-print("Is the file closed?", file.closed) # True! Guaranteed!`
-        ,
+# ఫైల్ క్లోజ్ అయిందో లేదో మనమే చెక్ చేద్దాం:
+print("Is the file closed?", file.closed) # True! గ్యారెంటీ!`,
         codeTitle: 'Example 2: Automatic Resource Management with with open()',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Zero Leak Guarantee:</strong>
-          <p style="margin-top:6px;"><code>file.closed</code> evaluates to <code>True</code> immediately outside the <code>with</code> block. You never need to call <code>file.close()</code> manually ever again.</p>
+          <strong style="color:#10b981;">🔍 ఇక క్లోజ్ తో పనిలేదు:</strong>
+          <p style="margin-top:6px;"><code>with</code> వాడిన తర్వాత మీరు మీ లైఫ్ లో ఎప్పుడూ <code>f.close()</code> అని రాయక్కర్లేదు. పైథాన్ చూసుకుంటుంది.</p>
         </div>`
       },
       {
-        title: '3. Reading Strategies: read() vs readline() vs Line Iterator',
-        body: `<p>Python provides three different techniques for reading text streams:</p>
+        title: '3. ఫైల్ చదవడానికి పద్ధతులు (Big Data Secrets)',
+        body: `<p>ఫైల్స్ చదవడానికి మూడు పద్ధతులున్నాయి:</p>
         <ol>
-          <li><code>f.read()</code>: Reads the entire file into a single string in RAM. (Good for small config files; dangerous for 10 GB log files!).</li>
-          <li><code>f.readline()</code>: Reads a single line up to the newline <code>\\n</code> character.</li>
-          <li><code>f.readlines()</code>: Reads all lines and returns them as a Python list of strings.</li>
-          <li><strong>Memory-Efficient Line Iterator (<code>for line in f:</code>):</strong> Streams lines one by one from the OS buffer in $O(1)$ memory! This is the gold standard for large datasets.</li>
+          <li><code>f.read()</code>: ఫైల్ మొత్తాన్ని ఒకేసారి ర్యామ్ (RAM) లోకి లాగుతుంది. (చిన్న ఫైల్స్ కి ఓకే, 10GB లాగ్ ఫైల్స్ అయితే కంప్యూటర్ క్రాష్ అవుతుంది!).</li>
+          <li><code>f.readlines()</code>: ఫైల్ మొత్తాన్ని చదివి ఒక్కో లైన్ ని ఒక లిస్ట్ లో వేస్తుంది.</li>
+          <li><strong>Memory-Efficient పద్ధతి (<code>for line in f:</code>):</strong> ఇది ఫైల్ ని ఒకేసారి కాకుండా లైన్ బై లైన్ ఆపరేటింగ్ సిస్టం నుంచి తెస్తుంది. ఇది బెస్ట్ అప్రోచ్!</li>
         </ol>`,
-        code: `# 1. Prepare multi-line test file:
+        code: `# 1. ఒక డెమో ఫైల్ తయారుచేద్దాం:
 with open("server_metrics.txt", "w", encoding="utf-8") as f:
     f.write("CPU_Usage: 24%\\nMemory_Usage: 58%\\nDisk_Free: 412GB\\nActive_Threads: 16\\n")
 
-# 2. Strategy A: Memory-Efficient Line-by-Line Streaming (O(1) RAM):
-print("--- 🚀 Strategy A: Streaming lines with for loop ---")
+# 2. బెస్ట్ పద్ధతి: For loop వాడి ఒక్కో లైన్ తెచ్చుకోవడం:
+print("--- 🚀 Strategy A: Streaming lines (Best for Big Data) ---")
 with open("server_metrics.txt", "r", encoding="utf-8") as f:
     for line_num, line in enumerate(f, start=1):
-        # line.strip() removes trailing newline character:
+        # .strip() వాడితే లైన్ చివర ఉన్న అదనపు స్పేసెస్ (ఎంటర్) పోతాయి
         print(f"Line {line_num}: {line.strip()}")
 
-# 3. Strategy B: readlines() returning a list:
+# 3. మామూలు పద్ధతి: readlines() వాడి లిస్ట్ గా మార్చడం:
 with open("server_metrics.txt", "r", encoding="utf-8") as f:
     all_lines = f.readlines()
 print(f"\\nTotal Lines in list: {len(all_lines)}")`,
         codeTitle: 'Example 3: Comparing Reading Strategies and Memory Streaming',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Big Data Performance Rule:</strong>
-          <p style="margin-top:6px;">When processing massive multi-gigabyte log files, <strong>NEVER</strong> use <code>f.read()</code> or <code>f.readlines()</code>. Always stream lines using <code>for line in file_handle:</code> to maintain a negligible memory footprint.</p>
+          <strong style="color:#10b981;">🔍 ఇంటర్వ్యూ ప్రశ్న:</strong>
+          <p style="margin-top:6px;">"10 GB సైజ్ ఉన్న ఫైల్ ని పైథాన్ లో ఎలా చదువుతావ్?" అని అడిగితే <code>f.read()</code> చెప్పకూడదు. "for line in file అని లూప్ వాడతాను, అప్పుడు RAM ఫుల్ అవ్వదు" అని చెప్పాలి.</p>
         </div>`
       },
       {
-        title: '4. Appending Data & The Difference Between "w" and "a"',
-        body: `<p>Opening a file in write mode (<code>"w"</code>) <strong>immediately erases all prior content</strong>. To preserve existing data and add new records to the bottom, open the file in append mode (<code>"a"</code>):</p>`,
-        code: `# 1. Initialize log file with header in 'w' mode:
+        title: '4. పాత డేటాని ఉంచి కొత్తది కలపడం ("a" Mode)',
+        body: `<p>మీరు <code>"w"</code> (write) వాడితే పాతది మొత్తం చెరిపేసి రాస్తుంది. అలా కాకుండా డేటాని యాడ్ (Append) చేయాలంటే <code>"a"</code> వాడాలి:</p>`,
+        code: `# 1. ఫైల్ ని 'w' లో స్టార్ట్ చేద్దాం:
 with open("app_activity.log", "w", encoding="utf-8") as log_file:
     log_file.write("=== APPLICATION EVENT LOG ===\\n")
 
-# 2. Append new user actions dynamically using 'a' mode:
+# 2. ఇప్పుడు 'a' (append) వాడి కింద లాగ్స్ రాద్దాం:
 def append_log_event(event_message):
     with open("app_activity.log", "a", encoding="utf-8") as log_file:
         log_file.write(f"• EVENT: {event_message}\\n")
@@ -354,23 +318,23 @@ append_log_event("User 'balaji' logged into the portal")
 append_log_event("Payment of Rs.1499 processed successfully")
 append_log_event("User downloaded invoice PDF")
 
-# Read back accumulated log:
+# మళ్ళీ ఫైల్ ఓపెన్ చేసి చూద్దాం (పాత లైన్ కూడా అలాగే ఉంటుంది):
 with open("app_activity.log", "r", encoding="utf-8") as log_file:
     print(log_file.read())`,
         codeTitle: 'Example 4: Appending Event Logs with "a" Mode',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Append Mechanics:</strong>
-          <p style="margin-top:6px;">In <code>"a"</code> mode, the OS file pointer is automatically moved to the end of the file before every write operation.</p>
+          <strong style="color:#10b981;">🔍 Append సీక్రెట్:</strong>
+          <p style="margin-top:6px;"><code>"a"</code> మోడ్ వాడినప్పుడు ఫైల్ కర్సర్ ఆటోమాటిక్ గా ఎండ్ కి వెళ్లిపోతుంది, కాబట్టి కొత్త డేటా ఎప్పుడూ కిందే పడుతుంది.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Accidentally Overwriting Files by using "w" instead of "a"',
-      text: 'Opening an existing file in "w" mode immediately wipes and truncates its entire content to 0 bytes before you even write a single character. Always use "a" mode when adding records to existing files.'
+      title: 'కొత్త డేటా రాయడానికి పొరపాటున "w" వాడటం',
+      text: 'మీకు పాత డేటా కావాలి, కొత్తది దానికి కింద చేర్చాలి అనుకున్నప్పుడు "w" వాడకూడదు. "w" వాడితే సెకనులో పాతది మొత్తం ఎరేజ్ అయిపోయి ఎంప్టీ అవుతుంది. అపెండ్ కి ఎప్పుడూ "a" వాడాలి.'
     },
     tryIt: {
-      desc: 'Write a small program that asks for a grocery item, appends it to "groceries.txt", and then reads back all saved items with line numbers.',
-      code: `# Writing items to shopping list:
+      desc: 'ఒక గ్రాసరీ లిస్ట్ (ఐటమ్స్) ని ఒక ఫైల్ "groceries.txt" లోకి రైట్ చేయండి, తర్వాత మళ్ళీ రీడ్ చేసి పక్కన నెంబర్స్ వేసి ప్రింట్ చేయండి.',
+      code: `# వస్తువుల లిస్ట్:
 items = ["Milk", "Whole Wheat Bread", "Eggs", "Green Tea"]
 
 with open("groceries.txt", "w", encoding="utf-8") as f:
@@ -384,16 +348,12 @@ with open("groceries.txt", "r", encoding="utf-8") as f:
     },
     faqs: [
       {
-        q: 'Why does Python not close files immediately when leaving a regular function without "with"?',
-        a: 'CPython uses reference counting to close files when the file variable goes out of scope, but garbage collection timing is not guaranteed in other Python implementations (PyPy, Jython). with open() guarantees immediate deterministic closure on all platforms.'
+        q: 'Text mode కి Binary mode ("rb") కి తేడా ఏంటి?',
+        a: 'Text mode వాడితే పైథాన్ డేటాని మనకు అర్థమయ్యే స్ట్రింగ్స్ గా ఇస్తుంది. అదే ఒక ఇమేజ్ గానీ, PDF గానీ ఓపెన్ చేయాలంటే "rb" (read binary) వాడాలి. అప్పుడు బైట్స్ (Bytes) రూపంలో వస్తుంది.'
       },
       {
-        q: 'What is the difference between text mode and binary mode?',
-        a: 'Text mode ("r", "w") handles string encoding (UTF-8) and normalizes platform-specific line endings (\\r\\n on Windows to \\n in Python). Binary mode ("rb", "wb") reads/writes raw unencoded bytes directly.'
-      },
-      {
-        q: 'How do I check if a file is already open or closed in Python?',
-        a: 'Inspect the boolean attribute file_handle.closed. It returns True if closed and False if still open.'
+        q: 'with open() లో ఒకేసారి రెండు ఫైల్స్ ఓపెన్ చేయొచ్చా?',
+        a: 'చేయొచ్చు. with open("file1.txt", "r") as f1, open("file2.txt", "w") as f2: ఇలా కామా పెట్టి రాసుకోవచ్చు.'
       }
     ]
   },
@@ -406,28 +366,26 @@ with open("groceries.txt", "r", encoding="utf-8") as f:
     phaseId: 'phase6',
     phaseTitle: 'Phase 6: Exception and File Handling',
     slug: '27-python-csv-and-json-file-processing',
-    title: 'Python CSV & JSON File Processing',
+    title: 'Python CSV & JSON File Processing (తెలుగులో)',
     badge: '27. CSV & JSON Processing',
     subtopics: 'csv.reader · csv.writer · csv.DictReader · csv.DictWriter · json.dump() & load() · Structured Storage',
-    desc: 'Master structured tabular and document data processing in Python: reading and writing CSV files with csv.reader and csv.DictReader, parsing nested JSON documents with json.dump() and json.load(), and building real-world data pipelines.',
+    desc: 'టేబుల్స్ రూపంలో ఉండే CSV ఫైల్స్ ని, మరియు వెబ్ లో వాడే JSON ఫైల్స్ ని పైథాన్ లో ప్రొఫెషనల్ గా ఎలా ప్రాసెస్ చేయాలో నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. Tabular Data with CSV: csv.reader and csv.writer',
-        body: `<p><strong>CSV (Comma-Separated Values)</strong> is the standard format for tabular spreadsheet data across Excel, Google Sheets, databases, and data science pipelines.</p>
-        <p>Python ships with the built-in <strong><code>csv</code> module</strong>, which automatically handles escaped quotation marks, embedded commas in text, and platform newline quirks:</p>
+        title: '1. CSV (ఎక్సెల్) ఫైల్స్: csv.reader మరియు csv.writer',
+        body: `<p><strong>CSV (Comma-Separated Values)</strong> అనేది ఒక ఎక్సెల్ షీట్ లాంటి టేబుల్ డేటా. దీనికోసం పైథాన్ లో <strong><code>csv</code> మాడ్యూల్</strong> ఉంది.</p>
         <div class="callout" style="margin:16px 0;">
-          <strong style="color:#10b981;">💡 The newline="" Rule in CSV Writing:</strong><br>
-          Always specify <code>newline=""</code> when opening files for writing with the CSV module (<code>open("data.csv", "w", newline="", encoding="utf-8")</code>). This prevents Python from inserting blank empty rows on Windows operating systems!
+          <strong style="color:#10b981;">💡 విండోస్ లో చాలా ముఖ్యం:</strong><br>
+          విండోస్ లో CSV ఫైల్ రాసేటప్పుడు ఎప్పుడూ <code>newline=""</code> అని రాయాలి (<code>open("data.csv", "w", newline="")</code>). లేకపోతే ఎక్సెల్ లో ప్రతి రెండు లైన్ల మధ్యలో ఒక ఖాళీ (ఎంప్టీ) లైన్ వచ్చేస్తుంది!
         </div>`,
         code: `import csv
 
-# 1. Writing tabular records to a CSV file:
+# 1. లిస్ట్స్ తో ఉన్న డేటాని CSV లోకి రాయడం (writerows):
 student_data = [
     ["Roll No", "Student Name", "Grade", "Percentage"],
     [101, "Balaji", "A+", 94.5],
     [102, "Alex Smith", "A", 88.0],
-    [103, "Chloe Davis", "A+", 96.2],
-    [104, "David Brown", "B", 72.4]
+    [103, "Chloe Davis", "A+", 96.2]
 ]
 
 with open("students.csv", "w", newline="", encoding="utf-8") as f:
@@ -435,65 +393,63 @@ with open("students.csv", "w", newline="", encoding="utf-8") as f:
     writer.writerows(student_data)
 print("✅ students.csv written successfully!")
 
-# 2. Reading tabular records back with csv.reader:
+# 2. ఆ ఫైల్ ని మళ్ళీ చదవడం (csv.reader):
 print("\\n--- Reading students.csv ---")
 with open("students.csv", "r", encoding="utf-8") as f:
     reader = csv.reader(f)
-    header = next(reader) # Extract first row as column header
+    header = next(reader) # ఫస్ట్ లైన్ (హెడర్స్) తీసుకుని పక్కన పెడుతుంది
     print("Columns Header:", header)
     
     for row in reader:
+        # row లో మనకి డేటా లిస్ట్ లాగా వస్తుంది
         print(f"Roll: {row[0]:4} | Name: {row[1]:12} | Grade: {row[2]} ({row[3]}%)")`,
         codeTitle: 'Example 1: Reading and Writing CSV Files with csv.reader and writer',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Method Breakdown:</strong>
-          <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li><code>writer.writerows(list_of_lists)</code> writes all 2D table rows in one efficient batch call.</li>
-            <li><code>next(reader)</code> advances the iterator by 1 row, cleanly stripping out the header before looping over data rows.</li>
-          </ul>
+          <strong style="color:#10b981;">🔍 next() ఎందుకు?:</strong>
+          <p style="margin-top:6px;"><code>next(reader)</code> వాడటం వల్ల హెడింగ్స్ (Column names) విడిగా వచ్చేస్తాయి, అప్పుడు లూప్ లో ఓన్లీ డేటా మాత్రమే రన్ అవుతుంది.</p>
         </div>`
       },
       {
-        title: '2. Professional Column Mapping: csv.DictReader & csv.DictWriter',
-        body: `<p>Accessing CSV columns by numeric indexes (like <code>row[1]</code>) is brittle: if a developer adds a new column, all indexes shift and break your code. <strong><code>csv.DictReader</code> and <code>csv.DictWriter</code> map rows directly to Python dictionaries using header keys</strong>:</p>`,
+        title: '2. ప్రొఫెషనల్ అప్రోచ్: csv.DictReader & csv.DictWriter',
+        body: `<p>పైన <code>row[1]</code>, <code>row[2]</code> లాగా నెంబర్స్ వాడటం మంచిది కాదు (ఒకవేళ కాలమ్స్ మారితే కోడ్ క్రాష్ అవుతుంది). అందుకే <strong><code>DictReader</code></strong> వాడతారు. ఇది ఫైల్ హెడర్స్ ని చూసుకుని ప్రతి లైన్ ని ఒక డిక్షనరీ (<code>row['Name']</code>) లాగా ఇస్తుంది:</p>`,
         code: `import csv
 
-# 1. Writing CSV using Dictionary rows (DictWriter):
+# 1. డిక్షనరీస్ తో ఉన్న డేటాని CSV లో రాయడం (DictWriter):
 fieldnames = ["product_id", "product_name", "category", "price"]
 
 products = [
-    {"product_id": "P01", "product_name": "Mechanical Keyboard", "category": "Hardware", "price": 2499.00},
-    {"product_id": "P02", "product_name": "Wireless Mouse", "category": "Hardware", "price": 799.00},
-    {"product_id": "P03", "product_name": "USB-C Hub", "category": "Accessories", "price": 1299.00}
+    {"product_id": "P01", "product_name": "Keyboard", "category": "Hardware", "price": 2499.00},
+    {"product_id": "P02", "product_name": "Mouse", "category": "Hardware", "price": 799.00}
 ]
 
 with open("inventory.csv", "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)
-    writer.writeheader() # Automatically writes the first header row!
+    writer.writeheader() # హెడ్డింగ్స్ అదే రాస్తుంది!
     writer.writerows(products)
 
-# 2. Reading CSV as clean dictionaries (DictReader):
+# 2. డిక్షనరీ లాగా చదవడం (DictReader) - ఇది సూపర్ సేఫ్!:
 print("--- Inventory Catalog (DictReader) ---")
 with open("inventory.csv", "r", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for row in reader:
-        print(f"[{row['product_id']}] {row['product_name']:20} | Rs.{float(row['price']):.2f}")`,
+        # ఇక్కడ మనం నెంబర్ కాకుండా పేరుతో పిలుస్తున్నాం!
+        print(f"[{row['product_id']}] {row['product_name']:10} | Rs.{float(row['price']):.2f}")`,
         codeTitle: 'Example 2: Robust Column Mapping with csv.DictReader and csv.DictWriter',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why DictReader is Superior:</strong>
-          <p style="margin-top:6px;">You access fields by explicit name: <code>row['product_name']</code>. Even if columns in the CSV are reordered, your code continues functioning perfectly without changes!</p>
+          <strong style="color:#10b981;">🔍 DictReader పవర్:</strong>
+          <p style="margin-top:6px;">ఎక్సెల్ లో ఒకవేళ <code>price</code> కాలమ్ ఫస్ట్ కి వచ్చినా, లాస్ట్ కి వెళ్ళినా మీ కోడ్ అస్సలు క్రాష్ అవ్వదు. ఎందుకంటే మనం పేరుతో పిలుస్తున్నాం కాబట్టి!</p>
         </div>`
       },
       {
-        title: '3. Hierarchical Structured Storage with JSON (dump & load)',
-        body: `<p>While CSV is great for flat tabular data, modern web applications, configurations, and nested data schemas use <strong>JSON (JavaScript Object Notation)</strong>.</p>
+        title: '3. JSON తో ఫైల్స్ సేవ్ చేయడం (dump & load)',
+        body: `<p>టేబుల్ డేటా అయితే CSV బెస్ట్. కానీ ఒక యూజర్ ప్రొఫైల్, సెట్టింగ్స్ లాంటి డేటా టేబుల్స్ లో పట్టదు, దానికి <strong>JSON</strong> బెస్ట్.</p>
         <ul>
-          <li><code>json.dump(obj, file_stream, indent=4)</code>: Serializes Python dictionaries/lists directly to a disk file stream.</li>
-          <li><code>json.load(file_stream)</code>: Reads and parses a JSON file directly into native Python dictionaries and lists.</li>
+          <li><code>json.dump(obj, file)</code>: డిక్షనరీని డైరెక్ట్ గా ఫైల్ లోకి సేవ్ చేస్తుంది.</li>
+          <li><code>json.load(file)</code>: ఫైల్ లోంచి డైరెక్ట్ గా డిక్షనరీలోకి లోడ్ చేస్తుంది.</li>
         </ul>`,
         code: `import json
 
-# Nested hierarchical application configuration:
+# మన యాప్ సెట్టింగ్స్ (ఇలాంటివి CSV లో రాయలేము):
 app_settings = {
     "app_name": "ManaCompiler Pro",
     "version": "3.5.0",
@@ -502,39 +458,37 @@ app_settings = {
         "port": 8080,
         "ssl_enabled": True
     },
-    "features": ["code_editor", "realtime_compiler", "ai_code_review"],
-    "supported_languages": ["Python", "Java", "C", "JavaScript"]
+    "features": ["code_editor", "realtime_compiler", "ai_code_review"]
 }
 
-# 1. Save complex dictionary to physical JSON file on disk:
+# 1. ఫైల్ లో సేవ్ చేద్దాం (dump):
 with open("app_config.json", "w", encoding="utf-8") as f:
-    json.dump(app_settings, f, indent=4)
+    json.dump(app_settings, f, indent=4) # అందంగా రాయడానికి indent
 print("✅ app_config.json saved to disk!")
 
-# 2. Read JSON file back from disk into Python dictionary:
+# 2. ఫైల్ లోంచి మళ్ళీ చదువుదాం (load):
 with open("app_config.json", "r", encoding="utf-8") as f:
     loaded_config = json.load(f)
 
 print("\\n--- Loaded JSON Config ---")
 print("App Name: ", loaded_config["app_name"])
-print("Host URL: ", f"http://{loaded_config['server']['host']}:{loaded_config['server']['port']}")
-print("Languages:", ", ".join(loaded_config["supported_languages"]))`,
+print("Host URL: ", f"http://{loaded_config['server']['host']}:{loaded_config['server']['port']}")`,
         codeTitle: 'Example 3: Serializing and Deserializing JSON Data to Disk',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 CSV vs JSON:</strong>
+          <strong style="color:#10b981;">🔍 ఏది వాడాలి?:</strong>
           <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li>Use <strong>CSV</strong> for 2D flat tables (spreadsheets, bank statements, sensor time series).</li>
-            <li>Use <strong>JSON</strong> for nested hierarchical trees (user profiles with sub-arrays, API requests, configuration files).</li>
+            <li>సెన్సార్ డేటా, బ్యాంక్ స్టేట్మెంట్స్ లాంటి టేబుల్ ఫార్మాట్ కి <strong>CSV</strong> వాడాలి.</li>
+            <li>ఆప్ సెట్టింగ్స్, API రెస్పాన్స్ లాంటి లోపల లోపల ఉండే (Nested) డేటాకి <strong>JSON</strong> వాడాలి.</li>
           </ul>
         </div>`
       }
     ],
     mistake: {
-      title: 'Forgetting newline="" When Writing CSV on Windows',
-      text: 'Omitting newline="" when calling open("data.csv", "w") causes the Windows standard C runtime to write \\r\\r\\n line endings, resulting in unwanted blank empty rows between every record in Excel. Always pass newline="".'
+      title: 'CSV లో newline="" మర్చిపోవడం (విండోస్ లో)',
+      text: 'విండోస్ యూజర్లు ఖచ్చితంగా open("file.csv", "w", newline="") ఇవ్వాలి. లేకపోతే పైథాన్ ఎక్సెల్ ఫైల్ లో ఒక లైన్ రాసి, ఒక లైన్ గ్యాప్ (ఎంప్టీ) ఇచ్చి, మళ్ళీ రాస్తుంది.'
     },
     tryIt: {
-      desc: 'Create a list of dictionaries representing 3 books (title, author, price). Save them to a CSV file named "books.csv" using DictWriter and print the file contents.',
+      desc: '3 పుస్తకాల వివరాలతో (title, author, price) ఒక డిక్షనరీస్ లిస్ట్ క్రియేట్ చేసి DictWriter తో "books.csv" లో సేవ్ చేసి చూపించండి.',
       code: `import csv
 
 books = [
@@ -554,16 +508,12 @@ with open("books.csv", "r", encoding="utf-8") as f:
     },
     faqs: [
       {
-        q: 'What is the difference between json.dumps() and json.dump()?',
-        a: 'json.dumps(obj) converts a Python object into a string in RAM. json.dump(obj, file) writes the serialized JSON directly into an open file stream on disk.'
+        q: 'CSV ఫైల్స్ లో కామా (,) కాకుండా సెమికోలన్ (;) వాడొచ్చా?',
+        a: 'వాడొచ్చు! csv.reader(f, delimiter=";") అని ఇస్తే, కామా బదులు సెమికోలన్ తో డేటాని విడగొడుతుంది.'
       },
       {
-        q: 'How do I handle CSV files that use semicolons (;) or tabs (\\t) instead of commas?',
-        a: 'Pass delimiter=";" or delimiter="\\t" into csv.reader() or csv.writer(): csv.reader(f, delimiter=";").'
-      },
-      {
-        q: 'Can CSV files store nested objects or lists?',
-        a: 'No. The standard CSV format is strictly 2D flat tabular text. To store nested arrays or dictionaries, use JSON, YAML, or SQLite.'
+        q: 'JSON ఫైల్స్ లో కామెంట్స్ రాసుకోవచ్చా?',
+        a: 'లేదు, ఒరిజినల్ JSON రూల్స్ ప్రకారం అందులో హాష్ (#) గానీ, స్లాష్ (//) గానీ పెట్టి కామెంట్స్ రాయలేము. రాస్తే ఎర్రర్ వస్తుంది.'
       }
     ]
   },
@@ -576,27 +526,26 @@ with open("books.csv", "r", encoding="utf-8") as f:
     phaseId: 'phase6',
     phaseTitle: 'Phase 6: Exception and File Handling',
     slug: '28-python-filesystem-operations-pathlib',
-    title: 'Python Filesystem & Pathlib Operations',
+    title: 'Python Filesystem & Pathlib (తెలుగులో)',
     badge: '28. Filesystem & Pathlib',
     subtopics: 'pathlib.Path Mastery · Directory Creation (mkdir) · Existence Checks · Renaming & Deleting · Recursive Globbing',
-    desc: 'Master professional filesystem automation in Python: object-oriented path manipulation with pathlib.Path, checking file existence, creating nested folders with mkdir(parents=True), renaming, deleting, and recursive file searching with rglob().',
+    desc: 'పైథాన్ లో pathlib వాడి ఫోల్డర్స్ క్రియేట్ చేయడం, ఫైల్స్ ఉన్నాయో లేదో చెక్ చేయడం, పేర్లు మార్చడం, డిలీట్ చేయడం లాంటి ఫైల్ సిస్టమ్ ఆపరేషన్స్ చూద్దాం.',
     sections: [
       {
-        title: '1. Object-Oriented Path Traversal with pathlib.Path',
-        body: `<p>Modern Python (PEP 428) replaces legacy string path concatenation (<code>os.path.join()</code>) with <strong><code>pathlib.Path</code></strong>, treating paths as rich, platform-independent objects.</p>
-        <div class="diagram-box">Legacy Approach:   os.path.join("data", "exports", "2026", "report.pdf")
-Modern Approach:   Path("data") / "exports" / "2026" / "report.pdf"  (Clean slash operator!)</div>
-        <h4 style="color:#10b981; margin:16px 0 8px;">Key Path Properties:</h4>
+        title: '1. స్మార్ట్ గా పాత్స్ క్రియేట్ చేయడం: pathlib.Path',
+        body: `<p>పాత రోజుల్లో విండోస్, లైనక్స్ పాత్స్ వేరేలా ఉండటం వల్ల చాలా బగ్స్ వచ్చేవి. దాన్ని ఆపడానికి <strong><code>pathlib.Path</code></strong> తీసుకొచ్చారు. ఇది <code>/</code> వాడి చాలా క్లీన్ గా పాత్స్ క్రియేట్ చేస్తుంది.</p>
+        <div class="diagram-box">పాత స్ట్రింగ్ పద్ధతి:   os.path.join("data", "exports", "2026", "report.pdf")
+మోడ్రన్ pathlib:    Path("data") / "exports" / "2026" / "report.pdf"</div>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Path లో ఉండే షార్ట్ కట్స్:</h4>
         <ul>
-          <li><code>path.name</code>: Full filename with extension (<code>"report.pdf"</code>).</li>
-          <li><code>path.stem</code>: Filename without extension (<code>"report"</code>).</li>
-          <li><code>path.suffix</code>: File extension (<code>".pdf"</code>).</li>
-          <li><code>path.parent</code>: Immediate parent directory object.</li>
-          <li><code>path.resolve()</code>: Absolute canonical filesystem path resolving symlinks.</li>
+          <li><code>path.name</code>: ఫైల్ పేరు విత్ ఎక్స్టెన్షన్ (<code>"report.pdf"</code>).</li>
+          <li><code>path.stem</code>: ఫైల్ ఒరిజినల్ పేరు (<code>"report"</code>).</li>
+          <li><code>path.suffix</code>: ఫైల్ ఎక్స్టెన్షన్ (<code>".pdf"</code>).</li>
+          <li><code>path.parent</code>: అది ఏ ఫోల్డర్ లో ఉందో దాని పేరు.</li>
         </ul>`,
         code: `from pathlib import Path
 
-# Constructing cross-platform paths using the / slash operator:
+# / వాడి పాత్ జాయిన్ చేయడం (cross-platform):
 project_dir = Path("my_enterprise_app")
 sub_path = project_dir / "src" / "controllers" / "auth_controller.py"
 
@@ -608,100 +557,100 @@ print("Parent Directory: ", sub_path.parent)
 print("Grandparent Dir:  ", sub_path.parent.parent)`,
         codeTitle: 'Example 1: Object-Oriented Path Inspection with pathlib.Path',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Cross-Platform Guarantee:</strong>
-          <p style="margin-top:6px;"><code>pathlib</code> automatically renders forward slashes on Linux/macOS and backslashes on Windows without any conditional platform code.</p>
+          <strong style="color:#10b981;">🔍 మ్యాజిక్ ఏంటంటే:</strong>
+          <p style="margin-top:6px;">మీరు <code>/</code> పెట్టి కోడ్ రాసినా సరే, ఆ కోడ్ విండోస్ లో రన్ చేస్తే ఆటోమాటిక్ గా అది <code>\\</code> (బ్యాక్ స్లాష్) గా మారిపోతుంది. ఏ క్రాష్ ఉండదు!</p>
         </div>`
       },
       {
-        title: '2. Directory Management: Creating Nested Folders (mkdir)',
-        body: `<p>Creating folders manually can crash if the parent folders do not exist, or if the folder already exists. <code>pathlib.Path.mkdir()</code> solves this cleanly with two critical flags:</p>
+        title: '2. ఫోల్డర్స్ క్రియేట్ చేయడం: mkdir() ట్రిక్స్',
+        body: `<p>ఒక ఫోల్డర్ లోపల ఫోల్డర్ క్రియేట్ చేయాలంటే చాలా కష్టం. కానీ <code>pathlib.Path.mkdir()</code> రెండు పవర్ ఫుల్ ట్రిక్స్ ఇస్తుంది:</p>
         <ul>
-          <li><code>parents=True</code>: Automatically creates all missing intermediate parent directories (like <code>mkdir -p</code> in Unix).</li>
-          <li><code>exist_ok=True</code>: Does not crash if the target folder already exists!</li>
+          <li><code>parents=True</code>: మీరు అడిగిన ఫోల్డర్ తో పాటు దానికి అవసరమైన పేరెంట్ ఫోల్డర్స్ అన్నింటినీ ఒకేసారి క్రియేట్ చేస్తుంది.</li>
+          <li><code>exist_ok=True</code>: ఒకవేళ ఆ ఫోల్డర్ ముందే క్రియేట్ అయి ఉంటే క్రాష్ అవ్వకుండా వదిలేస్తుంది!</li>
         </ul>`,
         code: `from pathlib import Path
 
-# Define a deeply nested target folder:
+# చాలా లోపల ఉన్న ఫోల్డర్ పాత్:
 backup_folder = Path("backups") / "2026" / "august" / "database_dumps"
 
-# Create nested directory tree in ONE line safely:
+# ఒకే ఒక్క లైన్ లో అన్ని ఫోల్డర్స్ సేఫ్ గా క్రియేట్ చేద్దాం:
 backup_folder.mkdir(parents=True, exist_ok=True)
+
 print(f"✅ Verified / Created directory: {backup_folder}")
-print("Does folder exist?", backup_folder.exists())
-print("Is it a directory?", backup_folder.is_dir())`,
+print("ఫోల్డర్ ఉందా? ", backup_folder.exists())
+print("ఇది డైరెక్టరీ నా? ", backup_folder.is_dir())`,
         codeTitle: 'Example 2: Creating Nested Directories Safely with mkdir',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Production Standard:</strong>
-          <p style="margin-top:6px;">Always pass <code>parents=True, exist_ok=True</code> when preparing upload or log folders to ensure idempotent script execution.</p>
+          <strong style="color:#10b981;">🔍 ఎందుకు parents=True?:</strong>
+          <p style="margin-top:6px;">మీరు ఇది ఇవ్వకపోతే, <code>backups</code> అనే ఫోల్డర్ లేనప్పుడు దాని లోపల <code>2026</code> క్రియేట్ చేయలేక క్రాష్ అవుతుంది.</p>
         </div>`
       },
       {
-        title: '3. File Lifecycle: Checking, Renaming, Moving & Deleting',
-        body: `<p>Perform complete CRUD operations on files using built-in Path methods:</p>
+        title: '3. ఫైల్స్ ఆపరేషన్స్ (Rename, Delete, Read)',
+        body: `<p>చాలా సింపుల్ గా ఫైల్స్ తో ఆడుకోవచ్చు:</p>
         <ul>
-          <li><code>path.exists()</code>: Returns <code>True</code> if file or folder exists.</li>
-          <li><code>path.is_file()</code> / <code>path.is_dir()</code>: Type verification.</li>
-          <li><code>path.rename(new_path)</code>: Renames or moves file to a new path.</li>
-          <li><code>path.unlink(missing_ok=True)</code>: <strong>Deletes a file</strong> (with <code>missing_ok=True</code> to prevent errors if already deleted!).</li>
-          <li><code>path.rmdir()</code>: Deletes an <strong>empty directory</strong>.</li>
+          <li><code>path.exists()</code>: ఉందో లేదో చెప్తుంది.</li>
+          <li><code>path.rename(new_path)</code>: పేరు మారుస్తుంది లేదా మూవ్ చేస్తుంది.</li>
+          <li><code>path.unlink(missing_ok=True)</code>: <strong>ఫైల్ ని డిలీట్ చేస్తుంది</strong> (ఒకవేళ లేకపోయినా క్రాష్ అవ్వదు).</li>
+          <li><code>path.rmdir()</code>: <strong>ఖాళీ ఫోల్డర్ ని</strong> డిలీట్ చేస్తుంది.</li>
         </ul>`,
         code: `from pathlib import Path
 
 temp_file = Path("temporary_draft.txt")
 
-# 1. Write text directly to file with write_text():
+# 1. డైరెక్ట్ గా ఒకే లైన్ లో రాయడం (write_text):
 temp_file.write_text("This is temporary draft content.", encoding="utf-8")
 print(f"1. Created {temp_file.name} | Exists? {temp_file.exists()}")
 
-# 2. Rename / Move file:
+# 2. పేరు మార్చడం (Rename):
 archived_file = Path("archived_draft.txt")
 temp_file.rename(archived_file)
-print(f"2. Renamed to {archived_file.name} | Old exists? {temp_file.exists()}")
+print(f"2. Renamed to {archived_file.name} | పాతది ఉందా? {temp_file.exists()}")
 
-# 3. Read back text directly with read_text():
+# 3. డైరెక్ట్ గా చదవడం (read_text):
 content = archived_file.read_text(encoding="utf-8")
 print(f"3. Read content: '{content}'")
 
-# 4. Clean up / Delete file with unlink():
+# 4. ఫైల్ డిలీట్ చేయడం (unlink):
 archived_file.unlink(missing_ok=True)
 print(f"4. Deleted file | Exists? {archived_file.exists()}")`,
         codeTitle: 'Example 3: File Lifecycle Management (Create, Rename, Read, Delete)',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 One-Liner Helpers:</strong>
-          <p style="margin-top:6px;"><code>Path.write_text()</code> and <code>Path.read_text()</code> encapsulate opening, encoding, reading/writing, and closing files into a single, clean line of code!</p>
+          <strong style="color:#10b981;">🔍 One-Liner మ్యాజిక్:</strong>
+          <p style="margin-top:6px;"><code>Path.write_text()</code> వాడితే మీరు <code>open()</code>, <code>close()</code> ఏమీ రాయక్కర్లేదు. అన్నీ అదే చేసుకోని సింగిల్ లైన్ లో పని కానిస్తుంది.</p>
         </div>`
       },
       {
-        title: '4. Recursive File Searching with Pattern Globbing (rglob)',
-        body: `<p>Search across your entire project folder hierarchy using <strong>recursive pattern matching</strong>:</p>
+        title: '4. ఫైల్స్ వెతకడం (rglob)',
+        body: `<p>మీ ఫోల్డర్ లో ఉన్న వందలాది ఫైల్స్ లో మీకు కావాల్సిన ఫైల్స్ వెతకడానికి:</p>
         <ul>
-          <li><code>path.glob("*.py")</code>: Searches matching files in the current folder only.</li>
-          <li><code>path.rglob("*.py")</code>: <strong>Recursive Glob</strong> — searches the current directory AND all nested sub-folders at any depth!</li>
+          <li><code>path.glob("*.py")</code>: ఆ ఒక్క ఫోల్డర్ లోనే వెతుకుతుంది.</li>
+          <li><code>path.rglob("*.py")</code>: <strong>Recursive</strong> - ఆ ఫోల్డర్ లోపల ఉన్న ఫోల్డర్స్, దాని లోపల ఉన్న ఫోల్డర్స్.. ఇలా ఎంత లోపలికైనా వెళ్లి వెతుకుతుంది.</li>
         </ul>`,
         code: `from pathlib import Path
 
-# Search current workspace for all HTML tutorial files:
+# మొత్తం ఫోల్డర్ లో ఎన్ని HTML ఫైల్స్ ఉన్నాయో వెతుకుదాం:
 workspace = Path(".")
-html_files = list(workspace.glob("*.html"))
+html_files = list(workspace.rglob("*.html")) # rglob అంటే recursive
 
 print(f"🔍 Found {len(html_files)} HTML files in root folder.")
 for f in html_files[:4]:
-    # Inspect file size in bytes:
+    # ఫైల్ సైజుని KB లోకి మార్చడం:
     size_kb = f.stat().st_size / 1024
     print(f"• {f.name:30} | {size_kb:.1f} KB")`,
-        codeTitle: 'Example 4: Recursive File Discovery with Path.glob',
+        codeTitle: 'Example 4: Recursive File Discovery with Path.rglob',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Memory Efficiency:</strong>
-          <p style="margin-top:6px;"><code>Path.glob()</code> returns a lazy generator, allowing your program to iterate through hundreds of thousands of files without loading all filenames into RAM at once.</p>
+          <strong style="color:#10b981;">🔍 యూస్ కేస్:</strong>
+          <p style="margin-top:6px;">మీ ప్రాజెక్ట్ లో ఎక్కడో ఉన్న ఒక ఇమేజ్ (<code>.jpg</code>) ని వెతికి డిలీట్ చేయాలంటే <code>rglob("*.jpg")</code> తో రెండు లైన్లలో పని అయిపోతుంది.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Using string concatenation (+) instead of the / operator for Paths',
-      text: 'Writing path = folder + "/" + filename can result in double slashes (folder//file) or fail on Windows if backslashes are hardcoded. Always use pathlib.Path(folder) / filename.'
+      title: 'Path ని మామూలు స్ట్రింగ్స్ లా కలుపుకోవడం',
+      text: 'f = "my_folder" + "/" + "file.txt" ఇలా ప్లస్ ఆపరేటర్ వాడి ఫైల్ పాత్ రాయకూడదు. ఇది తప్పు, విండోస్ లో చాలా ఇబ్బంది పడతారు. ఎప్పుడూ Path("my_folder") / "file.txt" అనే రాయాలి.'
     },
     tryIt: {
-      desc: 'Use pathlib to create a folder "my_test_dir", write a file "hello.txt" inside it, read its content, and clean up both file and folder.',
+      desc: 'pathlib వాడి "test_dir" ఫోల్డర్ క్రియేట్ చేసి, అందులో "hello.txt" ఫైల్ క్రియేట్ చేసి, ప్రింట్ చేసి, మళ్ళీ రెండింటినీ డిలీట్ (క్లీన్ అప్) చేయండి.',
       code: `from pathlib import Path
 
 test_dir = Path("my_test_dir")
@@ -712,23 +661,19 @@ test_file.write_text("Hello from Pathlib! 🚀", encoding="utf-8")
 
 print("File Content:", test_file.read_text(encoding="utf-8"))
 
-# Cleanup:
+# Cleanup: ఫస్ట్ ఫైల్ డిలీట్ చేసి అప్పుడు ఫోల్డర్ డిలీట్ చేయాలి
 test_file.unlink()
 test_dir.rmdir()
 print("Cleaned up directory successfully! ✅")`
     },
     faqs: [
       {
-        q: 'What is the difference between unlink() and rmdir() in pathlib?',
-        a: 'unlink() deletes a physical file. rmdir() deletes an empty directory. If a directory contains files, rmdir() will raise an OSError (use shutil.rmtree() for recursive directory deletion).'
+        q: 'unlink() కి rmdir() కి తేడా ఏంటి?',
+        a: 'unlink() ఫైల్ ని డిలీట్ చేస్తుంది. rmdir() ఫోల్డర్ ని డిలీట్ చేస్తుంది. కానీ ఆ ఫోల్డర్ ఖాళీగా ఉంటేనే రన్ అవుతుంది.'
       },
       {
-        q: 'Why is pathlib.Path preferred over the os.path module?',
-        a: 'pathlib provides an object-oriented, readable interface with built-in path methods (.read_text(), .write_text(), .mkdir(), .glob()) and natural slash (/) path joining.'
-      },
-      {
-        q: 'How do I convert a pathlib.Path object to a string for older third-party libraries?',
-        a: 'Simply call str(my_path) or pass the Path object directly, as all standard Python 3.6+ functions accept Path objects seamlessly via the os.PathLike interface.'
+        q: 'పాత లైబ్రరీస్ Pathlib ఆబ్జెక్ట్ ని తీసుకోకపోతే?',
+        a: 'సింపుల్ గా str(my_path) అని పాస్ చేస్తే అది మామూలు స్ట్రింగ్ లాగా మారిపోయి ఎక్కడైనా పనిచేస్తుంది.'
       }
     ]
   },
@@ -741,14 +686,14 @@ print("Cleaned up directory successfully! ✅")`
     phaseId: 'phase6',
     phaseTitle: 'Phase 6: Exception and File Handling',
     slug: '29-python-file-handling-capstone-projects',
-    title: 'File Handling Capstone Projects',
+    title: 'File Handling Capstone Projects (తెలుగులో)',
     badge: '29. File Capstone Projects',
     subtopics: '4 Projects · 1. File Notes App · 2. Contact Book · 3. CSV Expense Tracker · 4. JSON Student Records',
-    desc: 'Build four complete, production-grade, file-persisted applications in Python: a timestamped text notes app, an interactive contact book, a CSV-based expense tracker with budget analytics, and a JSON-backed student records CRUD management system.',
+    desc: 'మనం నేర్చుకున్న ఫైల్స్ కాన్సెప్ట్స్ తో 4 రియల్ వరల్డ్ ప్రాజెక్ట్స్ చేద్దాం: నోట్స్ యాప్, కాంటాక్ట్స్ బుక్, ఎక్స్పెన్స్ (ఖర్చుల) ట్రాకర్, మరియు స్టూడెంట్స్ రికార్డ్స్ మేనేజ్మెంట్ సిస్టం.',
     sections: [
       {
-        title: '1. Project 1: File-Based Timestamped Notes Application',
-        body: `<p>A persistent, timestamped command-line note-taking application that logs notes to a text file with automated datetime headers and keyword searching:</p>`,
+        title: '1. Project 1: టైమ్ స్టాంప్స్ తో నోట్స్ యాప్',
+        body: `<p>మనం ఏ నోట్ యాడ్ చేసినా, ఆ టైమ్ తో సహా ఫైల్ లోకి శాశ్వతంగా (Append) సేవ్ చేసుకునే ఒక సింపుల్ నోట్స్ యాప్:</p>`,
         code: `# =========================================================================
 # PROJECT 1: FILE-BASED TIMESTAMPED NOTES APPLICATION
 # =========================================================================
@@ -758,21 +703,21 @@ from pathlib import Path
 NOTES_FILE = Path("daily_notes.txt")
 
 def add_note(note_text):
-    """Append a new note with timestamp."""
+    """కొత్త నోట్ ని టైమ్ తో సహా సేవ్ చేస్తుంది."""
     timestamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open(NOTES_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{timestamp}] {note_text.strip()}\\n")
     return "✅ Note saved successfully!"
 
 def view_all_notes():
-    """Read and display all notes from file."""
+    """ఉన్న నోట్స్ అన్నీ ఫైల్ లోంచి తెస్తుంది."""
     if not NOTES_FILE.exists():
         return "ℹ️ No notes recorded yet."
     with open(NOTES_FILE, "r", encoding="utf-8") as f:
         return f.read().strip()
 
 def search_notes(keyword):
-    """Search for notes containing a specific keyword."""
+    """ఒక కీవర్డ్ తో నోట్స్ వెతకడం."""
     if not NOTES_FILE.exists():
         return []
     matches = []
@@ -782,11 +727,10 @@ def search_notes(keyword):
                 matches.append(line.strip())
     return matches
 
-# Run Notes App Demonstration:
+# డెమో రన్ చేద్దాం:
 print("--- 📝 Notes Application Demo ---")
-add_note("Studied Python Exception Handling (try-except-else-finally)")
-add_note("Built CSV Expense Tracker with DictReader")
-add_note("Reviewing FastAPI background tasks for production")
+add_note("Studied Python Exception Handling")
+add_note("Built CSV Expense Tracker")
 
 print("\\n--- All Saved Notes ---")
 print(view_all_notes())
@@ -796,16 +740,16 @@ for note in search_notes("Python"):
     print("•", note)`,
         codeTitle: 'Project 1: Persistent Timestamped Notes Engine',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Architectural Features:</strong>
+          <strong style="color:#10b981;">🔍 గమనించారా?:</strong>
           <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li>Uses append mode (<code>"a"</code>) to safely preserve all historical entries.</li>
-            <li>Case-insensitive streaming search using <code>keyword.lower() in line.lower()</code> without loading unnecessary memory.</li>
+            <li>పాతవి ఎరేజ్ అవ్వకుండా ఉండటానికి <code>"a"</code> (append) వాడాం.</li>
+            <li>కేస్ తో సంబంధం లేకుండా వెతకడానికి <code>lower()</code> వాడాం.</li>
           </ul>
         </div>`
       },
       {
-        title: '2. Project 2: Interactive Contact Book Manager',
-        body: `<p>A file-backed Contact Book manager supporting contact addition, search by name or phone, and listing contacts alphabetically:</p>`,
+        title: '2. Project 2: కాంటాక్ట్ బుక్ (JSON తో)',
+        body: `<p>యూజర్ డీటెయిల్స్ ని ఫోన్ బుక్ లాగా ఒక JSON ఫైల్ లో సేవ్ చేసుకుని, పేరుతో వెతుక్కునే అప్లికేషన్:</p>`,
         code: `# =========================================================================
 # PROJECT 2: FILE-BACKED CONTACT BOOK APPLICATION
 # =========================================================================
@@ -815,7 +759,7 @@ from pathlib import Path
 CONTACTS_FILE = Path("contacts_db.json")
 
 def load_contacts():
-    """Load contacts from JSON file safely."""
+    """JSON ఫైల్ నుంచి డేటా తెచ్చుకోవడం."""
     if not CONTACTS_FILE.exists():
         return {}
     try:
@@ -825,12 +769,12 @@ def load_contacts():
         return {}
 
 def save_contacts(contacts_dict):
-    """Save contacts dictionary to JSON file."""
+    """కొత్త డేటాని ఫైల్ లోకి పంపడం."""
     with open(CONTACTS_FILE, "w", encoding="utf-8") as f:
         json.dump(contacts_dict, f, indent=4)
 
 def add_contact(name, phone, email, category="Personal"):
-    """Add or update a contact record."""
+    """కాంటాక్ట్ యాడ్ చేయడం."""
     contacts = load_contacts()
     contacts[name.strip().title()] = {
         "phone": phone.strip(),
@@ -841,7 +785,7 @@ def add_contact(name, phone, email, category="Personal"):
     return f"✅ Contact '{name}' saved successfully!"
 
 def search_contact(search_term):
-    """Find contact by name substring or phone."""
+    """పేరు లేదా నెంబర్ తో వెతకడం."""
     contacts = load_contacts()
     results = {}
     for name, details in contacts.items():
@@ -849,23 +793,22 @@ def search_contact(search_term):
             results[name] = details
     return results
 
-# Run Contact Book Demonstration:
+# డెమో రన్:
 print("--- 📱 Contact Book Manager Demo ---")
 add_contact("Balaji Dev", "+91 98765 43210", "balaji@example.com", "Work")
 add_contact("Alex Smith", "+1 555 123 4567", "alex@example.com", "Friends")
-add_contact("Chloe Davis", "+44 20 7946 0991", "chloe@techcorp.com", "Work")
 
 print("\\n--- Search Results for 'balaji' ---")
 print(json.dumps(search_contact("balaji"), indent=2))`,
         codeTitle: 'Project 2: JSON Contact Book Manager Engine',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Resilience Features:</strong>
-          <p style="margin-top:6px;">Handles missing database files gracefully by returning an empty dictionary (<code>{}</code>) and catching corrupted JSON with <code>json.JSONDecodeError</code>.</p>
+          <strong style="color:#10b981;">🔍 సేఫ్టీ ఫీచర్స్:</strong>
+          <p style="margin-top:6px;">ఒకవేళ మన JSON ఫైల్ పాడైపోతే (Syntax తప్పు ఉంటే) క్రాష్ అవ్వకుండా <code>JSONDecodeError</code> క్యాచ్ చేసి ఖాళీ డిక్షనరీ (<code>{}</code>) ఇస్తున్నాం.</p>
         </div>`
       },
       {
-        title: '3. Project 3: Production Expense Tracker Using CSV',
-        body: `<p>A complete financial expense tracking system that logs transactions to CSV, calculates total expenditures, and aggregates category summaries:</p>`,
+        title: '3. Project 3: ఖర్చుల ట్రాకర్ (CSV తో)',
+        body: `<p>మనం ఏ కేటగిరీ లో ఎంత ఖర్చు పెట్టామో CSV లో టేబుల్ లాగా సేవ్ చేసి, దానికి Analytics చూపించే యాప్:</p>`,
         code: `# =========================================================================
 # PROJECT 3: FINANCIAL EXPENSE TRACKER USING CSV
 # =========================================================================
@@ -877,14 +820,14 @@ EXPENSES_FILE = Path("monthly_expenses.csv")
 FIELDNAMES = ["date", "category", "description", "amount"]
 
 def initialize_expense_file():
-    """Ensure CSV file exists with proper headers."""
+    """CSV ఫైల్ లేకపోతే హెడ్డింగ్స్ తో క్రియేట్ చేయడం."""
     if not EXPENSES_FILE.exists():
         with open(EXPENSES_FILE, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
             writer.writeheader()
 
 def log_expense(category, description, amount):
-    """Log an expense entry to CSV."""
+    """కొత్త ఖర్చు ని ఎంటర్ చేయడం."""
     initialize_expense_file()
     entry = {
         "date": dt.date.today().isoformat(),
@@ -898,7 +841,7 @@ def log_expense(category, description, amount):
     return f"✅ Logged Rs.{float(amount):.2f} for '{description}'"
 
 def generate_expense_analytics():
-    """Calculate total spending and category breakdown."""
+    """మొత్తం ఎంత ఖర్చు అయింది, ఏ కేటగిరీ కి ఎంత అని అనాలిసిస్."""
     if not EXPENSES_FILE.exists():
         return 0.0, {}
         
@@ -915,12 +858,11 @@ def generate_expense_analytics():
             
     return round(total_spent, 2), category_totals
 
-# Run Expense Tracker Demonstration:
+# డెమో రన్:
 print("--- 💰 Financial Expense Tracker Demo ---")
-log_expense("Food", "Grocery Supermart Shopping", 1250.00)
-log_expense("Utilities", "High-Speed Internet Bill", 999.00)
-log_expense("Food", "Team Coffee & Snacks", 350.00)
-log_expense("Education", "Python Masterclass Subscription", 1499.00)
+log_expense("Food", "Grocery Shopping", 1250.00)
+log_expense("Utilities", "Internet Bill", 999.00)
+log_expense("Food", "Coffee & Snacks", 350.00)
 
 total, breakdown = generate_expense_analytics()
 print(f"\\n📊 Total Monthly Expenditure: Rs.{total:,.2f}")
@@ -930,13 +872,13 @@ for cat, amt in breakdown.items():
     print(f"• {cat:12}: Rs.{amt:,.2f} ({pct:.1f}%)")`,
         codeTitle: 'Project 3: CSV Expense Tracker and Analytics Engine',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Analytics Breakdown:</strong>
-          <p style="margin-top:6px;">Uses <code>csv.DictReader</code> to stream expense rows and computes aggregate percentage breakdowns per category dynamically.</p>
+          <strong style="color:#10b981;">🔍 లాజిక్:</strong>
+          <p style="margin-top:6px;">ఫైల్ చదివేటప్పుడు <code>DictReader</code> వాడి, కేటగిరీ వైజ్ గా ఎంత ఖర్చు అయిందో డిక్షనరీలో ప్లస్ (+) చేసుకుంటూ వస్తున్నాం.</p>
         </div>`
       },
       {
-        title: '4. Project 4: JSON Student Academic Records Management System',
-        body: `<p>A comprehensive academic records CRUD engine managing student enrollments, subject mark sheets, GPA calculations, and student record exports:</p>`,
+        title: '4. Project 4: స్టూడెంట్ రికార్డ్స్ యాప్ (JSON తో)',
+        body: `<p>స్టూడెంట్స్ మార్క్స్ ఎంటర్ చేయడం, వాటినుంచి పర్సంటేజ్ (GPA) ఆటోమాటిక్ గా లెక్కేసి రిపోర్ట్ కార్డ్ ప్రింట్ చేసే యాప్:</p>`,
         code: `# =========================================================================
 # PROJECT 4: JSON STUDENT ACADEMIC RECORDS SYSTEM
 # =========================================================================
@@ -955,7 +897,7 @@ def save_db(data):
         json.dump(data, f, indent=4)
 
 def register_student(student_id, name, branch):
-    """Create a new student profile."""
+    """కొత్త స్టూడెంట్ ని రిజిస్టర్ చేయడం."""
     db = load_db()
     if student_id in db["students"]:
         return f"❌ Student ID {student_id} already exists!"
@@ -970,7 +912,7 @@ def register_student(student_id, name, branch):
     return f"🎓 Student '{name}' registered successfully under ID: {student_id}"
 
 def record_marks(student_id, subject, score):
-    """Add subject score and recalculate GPA."""
+    """మార్క్స్ వేసి ఆటోమేటిక్ గా GPA అప్డేట్ చేయడం."""
     db = load_db()
     student = db["students"].get(student_id)
     if not student:
@@ -983,7 +925,7 @@ def record_marks(student_id, subject, score):
     return f"✅ Recorded {subject}: {score}/100 | New GPA: {student['gpa']}"
 
 def get_student_report_card(student_id):
-    """Generate a clean formatted report card."""
+    """క్లీన్ గా రిపోర్ట్ కార్డ్ జనరేట్ చేయడం."""
     db = load_db()
     student = db["students"].get(student_id)
     if not student: return "Student not found!"
@@ -1000,7 +942,7 @@ def get_student_report_card(student_id):
     lines.append("=" * 45)
     return "\\n".join(lines)
 
-# Run Student Records Demonstration:
+# డెమో రన్:
 print("--- 🎓 Student Records Management System ---")
 register_student("STU101", "Balaji", "Computer Science")
 record_marks("STU101", "Python Programming", 98)
@@ -1010,21 +952,20 @@ record_marks("STU101", "Database Systems", 95)
 print(get_student_report_card("STU101"))`,
         codeTitle: 'Project 4: JSON Student Records CRUD System',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Production Quality Features:</strong>
+          <strong style="color:#10b981;">🔍 ప్రొడక్షన్ క్వాలిటీ కోడ్:</strong>
           <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li>Full CRUD persistence in structured JSON.</li>
-            <li>Automatic re-calculation of dynamic metrics (GPA).</li>
-            <li>Modular functions with input validation and clean error returns.</li>
+            <li>JSON లో సబ్జెక్ట్స్ ని ఒకదాని లోపల ఒకటి (Nested) పెట్టుకున్నాం.</li>
+            <li>మార్క్స్ మారగానే GPA అదే క్యాలిక్యులేట్ అవుతుంది.</li>
           </ul>
         </div>`
       }
     ],
     mistake: {
-      title: 'Failing to Handle Missing or Corrupted JSON Database Files',
-      text: 'If your JSON file is empty or contains invalid syntax, json.load() raises json.JSONDecodeError: Expecting value. Always wrap file loading in a try-except block and provide an empty dictionary fallback.'
+      title: 'JSON ఫైల్ ఖాళీగా ఉంటే వదిలేయడం',
+      text: 'ఒకవేళ మీ JSON ఫైల్ క్రియేట్ అయ్యి ఎంప్టీగా ఉంటే, json.load() క్రాష్ అయిపోతుంది. ఎప్పుడైనా JSON ఓపెన్ చేస్తే try-except కచ్చితంగా పెట్టి, ఎర్రర్ వస్తే ఒక ఖాళీ డిక్షనరీ ( {} ) ని రిటర్న్ చేయాలి.'
     },
     tryIt: {
-      desc: 'Create a mini bookmark manager that stores website URLs with categories in a JSON file "bookmarks.json" and prints all bookmarked sites.',
+      desc: 'ఒక చిన్న బుక్ మార్క్ యాప్ రాయండి. వెబ్సైట్ లింక్స్ ని వాళ్ల కేటగిరీస్ బట్టి ఒక JSON ఫైల్ లో సేవ్ చేసి ప్రింట్ చేయండి.',
       code: `import json
 from pathlib import Path
 
@@ -1049,16 +990,12 @@ with open(bookmarks_file, "r", encoding="utf-8") as f:
     },
     faqs: [
       {
-        q: 'How do I choose between saving data in Text, CSV, or JSON?',
-        a: 'Use Text (.txt) for unformatted logs and timestamped notes. Use CSV (.csv) for flat tabular rows and spreadsheets. Use JSON (.json) for nested objects, configuration files, and REST API data interchange.'
+        q: 'టెక్స్ట్, CSV, JSON... వీటిలో ఏది ఎప్పుడు వాడాలి?',
+        a: 'మామూలు నోట్స్ రాసుకోవడానికి Text (.txt), టేబుల్స్ లాంటి వాటికి CSV (.csv), వెబ్సైట్స్ లో వాడే యూజర్ అకౌంట్స్, సెట్టింగ్స్ కి JSON (.json) వాడాలి.'
       },
       {
-        q: 'How can I ensure atomic writes to prevent data corruption during crashes?',
-        a: 'Write data to a temporary file (e.g. "data.json.tmp") first, and then atomically rename it to "data.json" using Path.rename(). Renames are atomic on modern operating systems.'
-      },
-      {
-        q: 'When should I migrate from JSON files to a database like SQLite or PostgreSQL?',
-        a: 'Migrate to a database when: (1) multiple concurrent threads/users write simultaneously, (2) dataset exceeds tens of megabytes, or (3) you need complex relational SQL joins and indexing.'
+        q: 'క్రాష్ అయినా నా డేటా పోకుండా సేవ్ అవ్వాలంటే?',
+        a: 'ముందు డేటాని "temp.json" అనే ఫైల్ లో సేవ్ చేయండి. మొత్తం కంప్లీట్ అయ్యాక అప్పుడు పాత ఫైల్ మీదకి rename చేయండి. దీన్ని Atomic writes అంటారు.'
       }
     ]
   }

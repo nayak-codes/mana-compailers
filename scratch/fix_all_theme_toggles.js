@@ -6,7 +6,7 @@ const publicDir = path.join(__dirname, '..', 'public');
 const universalThemeScript = `
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

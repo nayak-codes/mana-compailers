@@ -9,155 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
+    title: 'Object-Oriented Programming (OOP)',
+    icon: '🏗️',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions Mastery',
-    icon: '🧩',
-    desc: 'Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions, Closures & this (Masterclass)', subtopics: 'Declaration vs Expression · Arrow Syntax · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'DOM Manipulation',
-    icon: '🌐',
-    desc: 'DOM ante enti?, Selecting elements (getElementById, querySelector, querySelectorAll), textContent vs innerHTML, changing styles, classList (add, remove, toggle), reading input values, creating & appending elements, removing elements, data attributes, DOM traversal (parent, children, closest), dynamic lists, and 4 interactive projects.',
-    lessons: [
-      { num: 14, file: 'dom.html', title: '14. DOM Manipulation & Web Interactivity', subtopics: 'DOM ante enti? · Selecting Elements · textContent vs innerHTML · Styles & classList · createElement & append · Data Attributes · DOM Traversal & closest · 4 Interactive Projects' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Events & Forms',
-    icon: '🎯',
-    desc: 'Browser events, addEventListener, click, dblclick, mouse events, keyboard events, input & change, submit event, focus & blur, event object, event bubbling vs capturing, event delegation, preventDefault, form validation, error messages, and 6 full projects.',
-    lessons: [
-      { num: 15, file: 'events-and-forms.html', title: '15. Browser Events, Forms & Event Delegation', subtopics: 'addEventListener · Click, Mouse & Keyboard · Input vs Change · Submit & preventDefault() · Bubbling & Delegation · Form Validation · 6 Complete Projects' }
-    ]
-  },
-  {
-    id: 'phase13',
-    tag: 'Phase 13',
-    title: 'Browser APIs & Storage',
-    icon: '💾',
-    desc: 'window, document, console utilities, setTimeout, setInterval, clearTimeout, clearInterval, localStorage, sessionStorage, Cookies, URL & URLSearchParams, History API, Clipboard API, Geolocation API, Notifications, and Permissions.',
-    lessons: [
-      { num: 16, file: 'browser-apis-and-storage.html', title: '16. Browser APIs, Storage & Timers', subtopics: 'window & document · Timers (setTimeout/setInterval) · localStorage vs sessionStorage vs Cookies · URL API · History · Clipboard · Geolocation · Notifications' }
-    ]
-  },
-  {
-    id: 'phase14',
-    tag: 'Phase 14',
-    title: 'JSON & Fetch API',
-    icon: '🌐',
-    desc: 'What is JSON?, Objects & Arrays, JSON.stringify & parse, HTTP basics (GET, POST, PUT, DELETE), Headers, Body, response.ok, Status codes, Error handling, Loading states, Query params, Authentication, and 5 full projects.',
-    lessons: [
-      { num: 17, file: 'json-and-fetch-api.html', title: '17. JSON, Fetch API & REST Integration', subtopics: 'JSON.stringify & parse · HTTP GET/POST/PUT/DELETE · Headers & Body · response.ok & Status · Loading States · Auth & Tokens · 5 Projects' }
-    ]
-  },
-  {
-    id: 'phase15',
-    tag: 'Phase 15',
-    title: 'Asynchronous JavaScript & Promises',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, and Error Handling with try-catch-finally.',
-    lessons: [
-      { num: 18, file: 'promises.html', title: '18. Promises & Async/Await (Masterclass)', subtopics: 'Event Loop · Call Stack · Promises · async/await · Microtasks' },
-      { num: 19, file: 'exceptions.html', title: '19. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -273,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -462,343 +400,97 @@ function buildLesson17() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 14: JSON and Fetch API</strong>! The <strong>Fetch API</strong> provides a modern, Promise-based interface for requesting network resources across the web. Almost every production web application interacts with backend servers and 3rd-party microservices by exchanging data in <strong>JSON (JavaScript Object Notation)</strong> format. In this comprehensive masterclass guide, you will learn JSON serialization/deserialization, HTTP REST request methods (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>), Request Headers, Request Body payloads, status code handling, <code>response.ok</code> verification, managing UI Loading States, query string construction, API authentication tokens, and build 5 complete production-grade network applications.</p>
+      <p>సర్వర్ ల నుండి డేటాను పొందడానికి (Fetch Data from External APIs) మరియు క్లయింట్-సర్వర్ మధ్య డేటాని మార్పిడి చేసుకోవడానికి <strong>JSON (JavaScript Object Notation)</strong> మరియు <strong>Fetch API</strong> వాడతాం. వాతావరణ సమాచారం (Weather Data), బ్యాంక్ వివరాలు, లేదా ఇ-కామర్స్ ప్రొడక్ట్స్ డిస్ప్లే చేయడానికి ఇవే కీలకం! ఈ చాప్టర్ లో JSON Rules, HTTP Methods, Fetch API, మరియు async/await లతో API Integration క్లియర్ గా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. JSON Ante Enti? -->
-    <div class="section-title"><span class="num">1</span>JSON Ante Enti? (Syntax Rules & Serialization)</div>
-    <div class="section-body">
-      <p><strong>JSON (JavaScript Object Notation)</strong> ante servers mariyu clients madhya data exchange cheyyadaniki standard lightweight text format. JSON language-independent (Python, Java, Node.js, Go anni languages JSON ni parse cheyyagalavu):</p>
-
-      <table class="tbl">
-        <tr><th>JSON Rule</th><th>Valid JSON Syntax</th><th>Invalid Syntax ❌</th></tr>
-        <tr><td><strong>Keys must be double-quoted</strong></td><td><code>{ "username": "Ravi" }</code></td><td><code>{ username: 'Ravi' }</code> (Single quotes or unquoted keys fail!)</td></tr>
-        <tr><td><strong>Supported Data Types</strong></td><td>String, Number, Boolean, Array, Object, <code>null</code></td><td>Functions, <code>undefined</code>, Symbols are NOT allowed!</td></tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — JSON.stringify & JSON.parse</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const studentObj = {
-    id: 101,
-    name: "Ravi",
-    skills: ["JavaScript", "React"],
-    active: true
-};
-
-// 1. Convert JS Object to JSON String (Serialization)
-const jsonString = JSON.stringify(studentObj, null, 2);
-console.log("JSON String Output:\\n", jsonString);
-
-// 2. Convert JSON String back to JS Object (Deserialization)
-const parsedObj = JSON.parse(jsonString);
-console.log("Parsed Name:", parsedObj.name); // "Ravi"</code></pre>
-      </div>
+    <div class="callout">
+      <div class="callout-title">🍽️ రియల్ లైఫ్ అనలాజీ: హోటల్ వెయిటర్ (Hotel Waiter & Kitchen)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">మీరు ఒక రెస్టారెంట్ కి వెళ్ళారు:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>Client (మీరు):</strong> ఆర్డర్ ఇవ్వాలనుకుంటున్న యూజర్ / బ్రౌజర్.</li>
+        <li><strong>Server (కిచెన్):</strong> ఆహారం (డేటా) సిద్ధంగా ఉన్న సర్వర్.</li>
+        <li><strong>API (వెయిటర్):</strong> మీ ఆర్డర్ ని కిచెన్ కి తీసుకెళ్ళి, తయారైన వంటకాన్ని (JSON Response) మీ టేబుల్ కి తెచ్చిచ్చే మధ్యవర్తి!</li>
+      </ul>
     </div>
 
-    <!-- 2. HTTP REST Request Methods -->
-    <div class="section-title"><span class="num">2</span>HTTP REST Request Methods (GET, POST, PUT, DELETE)</div>
+    <div class="section-title"><span class="num">1</span>JSON Rules & Parsing Methods</div>
     <div class="section-body">
+      <p>JSON అనేది లైట్-వెయిట్ డేటా ఫార్మాట్. ఇందులో Keys ని విధిగా <strong>Double Quotes <code>"key"</code></strong> లోనే రాయాలి.</p>
+
       <table class="tbl">
-        <tr><th>HTTP Method</th><th>Purpose</th><th>Has Request Body?</th><th>CRUD Operation</th></tr>
-        <tr><td><strong><code>GET</code></strong></td><td>Read data from server</td><td>❌ No</td><td>Read</td></tr>
-        <tr><td><strong><code>POST</code></strong></td><td>Create a brand new record</td><td>✅ Yes (JSON payload)</td><td>Create</td></tr>
-        <tr><td><strong><code>PUT / PATCH</code></strong></td><td>Update existing record (Full / Partial)</td><td>✅ Yes</td><td>Update</td></tr>
-        <tr><td><strong><code>DELETE</code></strong></td><td>Remove resource from database</td><td>❌ Usually No</td><td>Delete</td></tr>
+        <tr><th>JSON Function</th><th>పని (Purpose)</th><th>ఉదాహరణ (Example)</th></tr>
+        <tr><td><code>JSON.stringify(obj)</code></td><td>JavaScript Object ని JSON Text String గా మారుస్తుంది</td><td><code>JSON.stringify({ a: 1 })</code> -> <code>'{"a":1}'</code></td></tr>
+        <tr><td><code>JSON.parse(jsonStr)</code></td><td>JSON Text String ని తిరిగి JavaScript Object గా మారుస్తుంది</td><td><code>JSON.parse('{"a":1}')</code> -> <code>{ a: 1 }</code></td></tr>
       </table>
     </div>
 
-    <!-- 3. fetch() Mechanics & The response.ok Gotcha -->
-    <div class="section-title"><span class="num">3</span>The fetch() API & The response.ok Gotcha ⚠️</div>
+    <div class="section-title"><span class="num">2</span>Fetching API Data with async/await</div>
     <div class="section-body">
-      <div class="callout">
-        <div class="callout-title">⚠️ Crucial fetch() Interview Trap!</div>
-        <p><code>fetch()</code> returns a Promise that <strong>only rejects on network failure</strong> (e.g. user offline or DNS failure). Server <code>404 Not Found</code> or <code>500 Internal Server Error</code> return chesina kooda Promise resolve avthundhi! Developer eppudu <strong><code>if (!response.ok) throw new Error(...)</code></strong> check cheyyali!</p>
-      </div>
+      <p>ఆధునిక JavaScript లో API నుండి డేటా తెచ్చుకోవడానికి <code>fetch()</code> తో పాటు <code>async/await</code> వాడతాం:</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Production Fetch Pattern</span>
+          <span class="lang-tag">JavaScript — Fetch API Integration</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
-
-async function loadUsers() {
+        <pre><code>// 1. API నుండి డేటా తెచ్చే అసింక్ ఫంక్షన్
+async function fetchUserData() {
     try {
-        // Fetch API network call
-        const response = await fetch("https://jsonplaceholder.typicode.com/users");
-
-        // Validate response status (200-299)
+        console.log("⏳ Loading User Data...");
+        let response = await fetch("https://jsonplaceholder.typicode.com/users/1");
+        
+        // HTTP సంకేతం సరిగ్గా ఉందో లేదో తనిఖీ చేయడం
         if (!response.ok) {
-            throw new Error("HTTP Error! Status: " + response.status);
+            throw new Error("HTTP Error Status: " + response.status);
         }
 
-        // Parse JSON stream
-        const users = await response.json();
-        console.log("Retrieved Users Count:", users.length);
-        console.log("First User Name:", users[0]?.name);
+        let user = await response.json(); // JSON ని Object గా మార్చడం
+        console.log("✅ User Loaded:", user.name);
+        console.log("📧 Email:", user.email);
+        console.log("🏙️ City:", user.address.city);
     } catch (error) {
-        console.error("Fetch Failed:", error.message);
+        console.log("❌ Error Fetching Data:", error.message);
     }
 }
 
-loadUsers();</code></pre>
+fetchUserData();</code></pre>
       </div>
     </div>
 
-    <!-- 4. POST Requests with Headers & Body -->
-    <div class="section-title"><span class="num">4</span>Sending Data: POST Request with Headers & Body</div>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li><code>response.json()</code> కి ముందు <code>await</code> రాయడం మర్చిపోవడం. <code>let data = response.json();</code> అని రాస్తే అది డేటా కి బదులు ఒక తులసి ప్లాంట్ లాంటి విఫలమైన Promise ని ఇస్తుంది. <code>await response.json()</code> అని రాయాలి.</li>
+        <li><code>fetch()</code> కి HTTP 404 (Not Found) లేదా 500 (Server Error) వచ్చినా నాచురల్ గా Promise Reject అవ్వదు! <code>response.ok === false</code> ని మ్యాన్యువల్ గా చెక్ చేయాలి.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <p>Server ki kottha data pampincheppudu <code>method: "POST"</code>, <code>headers: { "Content-Type": "application/json" }</code>, mariyu <code>body: JSON.stringify(data)</code> include cheyyali:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — POST Request Example</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+      <details>
+        <summary>Q1. HTTP GET మరియు POST ల తేడా ఏమిటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>GET</code> సర్వర్ నుండి డేటాను చదవడానికి (Read Data) వాడతాం. <code>POST</code> కొత్త డేటాను సర్వర్ కి పంపడానికి (Create Data) వాడతాం.</p>
         </div>
-        <pre><code>"use strict";
+      </details>
 
-async function createPost(title, body) {
-    try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=UTF-8",
-                "Authorization": "Bearer sample_jwt_token_123"
-            },
-            body: JSON.stringify({
-                title: title,
-                body: body,
-                userId: 1
-            })
-        });
-
-        if (!response.ok) throw new Error("Failed to create post!");
-        const newRecord = await response.json();
-        console.log("✅ Post Created with ID:", newRecord.id);
-    } catch (err) {
-        console.error("Error creating post:", err.message);
-    }
-}
-
-createPost("Mastering JavaScript 2026", "In-depth Fetch API and JSON tutorial.");</code></pre>
-      </div>
+      <details>
+        <summary>Q2. <code>JSON.parse()</code> లో చెల్లని JSON ఇస్తే ఏమవుతుంది?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>SyntaxError</code> వస్తుంది. కాబట్టి <code>JSON.parse()</code> ని ఎప్పుడూ <code>try...catch</code> లోపల వాడటం మంచిది.</p>
+        </div>
+      </details>
     </div>
 
-    <!-- 5. Loading States & Error State UI Pattern -->
-    <div class="section-title"><span class="num">5</span>The Loading State & Error UI Pattern</div>
-    <div class="section-body">
-      <p>Professional frontend applications 3 visual states ni manage chesthayi: <strong>Loading Spinner $\rightarrow$ Success Data $\rightarrow$ Error Message</strong>:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Complete Loading State Pattern</span>
-        </div>
-        <pre><code>async function fetchWithUIState() {
-    const spinner = document.querySelector("#loadingSpinner");
-    const container = document.querySelector("#dataContainer");
-    const errorBox = document.querySelector("#errorBox");
-
-    try {
-        spinner.style.display = "block"; // 1. Start Loading
-        errorBox.textContent = "";
-
-        const res = await fetch("https://jsonplaceholder.typicode.com/posts/1");
-        if (!res.ok) throw new Error("Data not available!");
-
-        const data = await res.json();
-        container.textContent = data.title; // 2. Render Success
-    } catch (err) {
-        errorBox.textContent = "⚠️ " + err.message; // 3. Render Error
-    } finally {
-        spinner.style.display = "none"; // 4. Always Stop Loading!
-    }
-}</code></pre>
-      </div>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>డేటా మార్పిడికి JSON వాడతాం (<code>stringify</code> / <code>parse</code>).</li>
+        <li>API Requests కోసం <code>fetch()</code> తో <code>async/await</code> వాడండి.</li>
+        <li>Errors ని క్యాచ్ చేయడానికి <code>try...catch</code> ఉపయోగించండి.</li>
+      </ul>
     </div>
-
-    <!-- 5 COMPLETE REAL-WORLD PROJECTS -->
-    <div class="section-title"><span class="num">6</span>5 Complete Real-World Network Applications</div>
-    <div class="section-body">
-      <p>Mastering Fetch API and JSON through 5 complete production projects:</p>
-
-      <!-- Project 1: Weather App -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: Live Weather Dashboard</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Weather Engine</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function fetchCityWeather(city) {
-    try {
-        console.log("Fetching weather for: " + city + "...");
-        // Mocking weather API response structure
-        const mockApiUrl = "https://jsonplaceholder.typicode.com/posts/1";
-        const response = await fetch(mockApiUrl);
-        if (!response.ok) throw new Error("City not found!");
-
-        const data = {
-            city: city,
-            temperature: "28°C",
-            condition: "Sunny",
-            humidity: "65%"
-        };
-        console.log("✅ Weather in " + data.city + ": " + data.temperature + " (" + data.condition + ")");
-    } catch (err) {
-        console.error("Weather error:", err.message);
-    }
-}
-
-fetchCityWeather("Hyderabad");</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: Movie Search App -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Movie Search Engine</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Movie Search</span>
-          </div>
-          <pre><code>async function searchMovies(query) {
-    try {
-        const encoded = encodeURIComponent(query);
-        const url = "https://jsonplaceholder.typicode.com/photos?albumId=1";
-        const res = await fetch(url);
-        const results = await res.json();
-        console.log("Found " + results.length + " movies for query: " + query);
-    } catch (err) {
-        console.error("Movie search error:", err.message);
-    }
-}
-
-searchMovies("Inception");</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: GitHub Profile Finder -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: GitHub Profile Finder</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — GitHub API</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function getGitHubUser(username) {
-    try {
-        const res = await fetch("https://api.github.com/users/" + username);
-        if (!res.ok) throw new Error("User " + username + " not found on GitHub!");
-
-        const user = await res.json();
-        console.log("GitHub Profile:", user.name || user.login);
-        console.log("Public Repos:", user.public_repos);
-        console.log("Followers:", user.followers);
-    } catch (err) {
-        console.error("GitHub API Error:", err.message);
-    }
-}
-
-getGitHubUser("torvalds");</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: News Application -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Category-Based News Feed</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — News Feed</span>
-          </div>
-          <pre><code>async function loadNewsCategory(category = "technology") {
-    try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
-        const articles = await res.json();
-        console.log("Top 5 " + category.toUpperCase() + " Headlines:");
-        articles.forEach((art, idx) => console.log((idx + 1) + ". " + art.title));
-    } catch (err) {
-        console.error("Failed to load news:", err.message);
-    }
-}
-
-loadNewsCategory("tech");</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 5: Currency Converter -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 5: Real-Time Currency Converter</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Currency Engine</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function convertCurrency(amountUSD, targetCurrency = "INR") {
-    try {
-        // Exchange Rate calculation
-        const rates = { INR: 86.5, EUR: 0.92, GBP: 0.79 };
-        const converted = amountUSD * (rates[targetCurrency] || 1);
-        console.log("$" + amountUSD + " USD = " + converted.toFixed(2) + " " + targetCurrency);
-    } catch (err) {
-        console.error("Conversion error:", err.message);
-    }
-}
-
-convertCurrency(100, "INR");
-convertCurrency(250, "EUR");</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this async Fetch API user loader in our live Node.js / JavaScript compiler:</p>
-      
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript Fetch</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-async function loadUsers() {
-    try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/users");
-
-        if (!response.ok) {
-            throw new Error("Request failed");
-        }
-
-        const users = await response.json();
-        console.log("Loaded " + users.length + " users successfully!");
-        console.log("First User:", users[0]?.name);
-    } catch (error) {
-        console.error(error.message);
-    }
-}
-
-loadUsers();</code></pre>
-      </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
-    </div>
-
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 17, subtopics, contentBody, 'browser-apis-and-storage.html', '16. Browser APIs & Storage', 'promises.html', 'Phase 15: Promises & Async');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -895,7 +587,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

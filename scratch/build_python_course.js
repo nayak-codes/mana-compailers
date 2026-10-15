@@ -1102,7 +1102,7 @@ ${faqSchemaJson}
   <!-- Code Preload & Theme Script -->
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -1373,7 +1373,7 @@ const hubHtml = `<!DOCTYPE html>
   <!-- Theme Script & Code Preload -->
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

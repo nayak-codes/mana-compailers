@@ -162,15 +162,15 @@ function wrapCppPage(title, desc, filename, currentNum, phaseTag, phaseTitle, su
 '  <link rel="stylesheet" href="/site-nav.css" />\n' +
 '  <style>\n' +
 '    .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }\n' +
-'    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }\n' +
+'    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }\n' +
 '    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }\n' +
-'    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }\n' +
-'    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }\n' +
-'    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }\n' +
-'    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }\n' +
+'    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }\n' +
+'    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }\n' +
+'    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }\n' +
+'    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }\n' +
 '    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }\n' +
 '    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }\n' +
-'    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }\n' +
+'    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }\n' +
 '    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }\n' +
 '    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }\n' +
 '  </style>\n' +
@@ -213,6 +213,17 @@ function wrapCppPage(title, desc, filename, currentNum, phaseTag, phaseTitle, su
 '        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);\n' +
 '      });\n' +
 '    });\n' +
+'  </script>\n' +
+'  <script>\n' +
+'    (function() {\n' +
+'      const currentTheme = localStorage.getItem(\'theme\') || \'light\';\n' +
+'      if (currentTheme === \'light\') {\n' +
+'        document.documentElement.classList.add(\'light-theme\');\n' +
+'        window.addEventListener(\'DOMContentLoaded\', () => {\n' +
+'          document.body.classList.add(\'light-theme\');\n' +
+'        });\n' +
+'      }\n' +
+'    })();\n' +
 '  </script>\n' +
 '</head>\n' +
 '<body class="lang-cpp">\n' +

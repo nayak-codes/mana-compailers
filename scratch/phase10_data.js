@@ -8,163 +8,143 @@ module.exports = [
     phaseId: 'phase10',
     phaseTitle: 'Phase 10: Web Development',
     slug: '48-python-flask-fundamentals-and-routing',
-    title: 'Flask Fundamentals & Routing',
+    title: 'Flask Fundamentals & Routing (తెలుగులో)',
     badge: '48. Flask Basics & Routing',
     subtopics: 'Microframeworks vs Full-Stack · Flask(__name__) · WSGI Request Lifecycle · Dynamic Routing (<int:id>) · HTTP Methods · Request Parsing (args vs form)',
-    desc: 'Master microframework web development with Flask: understanding the WSGI web protocol, the Flask application instance, dynamic URL converters (<int:id>, <string:slug>), handling GET/POST request bodies, query parameters, and building clean RESTful route handlers.',
+    desc: 'పైథాన్ తో వెబ్సైట్స్ ఎలా తయారు చేస్తారు? Flask అనే లైట్ వెయిట్ ఫ్రేమ్ వర్క్ తో ఫస్ట్ వెబ్ సర్వర్ ని స్టార్ట్ చేద్దాం. బ్రౌజర్ నుంచి వచ్చే లింక్స్ ని (Routing) మన పైథాన్ కోడ్ ఎలా అర్థం చేసుకుంటుందో చూద్దాం.',
     sections: [
       {
-        title: '1. What is Flask? Microframeworks vs Full-Stack Frameworks',
-        body: `<p>When building web backends in Python, frameworks fall into two main architectural philosophies:</p>
+        title: '1. Flask అంటే ఏంటి? (Microframework vs Full-Stack)',
+        body: `<p>పైథాన్ లో వెబ్ బ్యాకెండ్ రాయడానికి మెయిన్ గా రెండు రకాల ఫ్రేమ్ వర్క్స్ ఉంటాయి:</p>
         
         <table class="tbl" style="margin-top:8px; font-size:12.5px;">
-          <tr><th>Feature</th><th>Microframework (Flask / FastAPI)</th><th>Full-Stack (Django)</th></tr>
-          <tr><td><strong>Philosophy</strong></td><td><strong>Minimalist & Unopinionated:</strong> Provides only routing and template rendering; you choose your own ORM, auth, and database.</td><td><strong>"Batteries-Included":</strong> Bundles built-in ORM, admin panel, auth system, migrations, and forms out of the box.</td></tr>
-          <tr><td><strong>Learning Curve</strong></td><td>Gentle; start with a single 5-line Python file.</td><td>Steeper; requires understanding project/app structure and configuration settings.</td></tr>
-          <tr><td><strong>Best Used For</strong></td><td>Microservices, lightweight REST APIs, single-page web apps, prototyping.</td><td>Large enterprise web portals, SaaS platforms, content management systems (CMS).</td></tr>
+          <tr><th>ఫీచర్</th><th>Microframework (Flask / FastAPI)</th><th>Full-Stack (Django)</th></tr>
+          <tr><td><strong>ఫిలాసఫీ</strong></td><td><strong>చాలా సింపుల్:</strong> ఇది కేవలం బేసిక్ కనెక్షన్ (Routing) మాత్రమే ఇస్తుంది. డేటాబేస్, లాగిన్స్ అన్నీ మనమే సెట్ చేసుకోవాలి.</td><td><strong>అన్నీ వాళ్లే ఇస్తారు (Batteries-Included):</strong> డేటాబేస్ లింక్, అడ్మిన్ ప్యానెల్, లాగిన్స్ అన్నీ డీఫాల్ట్ గా వచ్చేస్తాయి.</td></tr>
+          <tr><td><strong>నేర్చుకోవడం</strong></td><td>చాలా ఈజీ; ఒకే ఒక చిన్న ఫైల్ తో స్టార్ట్ చేయొచ్చు.</td><td>కొంచెం కష్టం; ఫోల్డర్స్ ఎక్కడున్నాయి, సెట్టింగ్స్ ఎలా అని తెలుసుకోవాలి.</td></tr>
+          <tr><td><strong>ఎక్కడ వాడతారు?</strong></td><td>చిన్న చిన్న API లు, మైక్రో సర్వీసెస్, సింపుల్ వెబ్ యాప్స్ చేయడానికి.</td><td>పెద్ద పెద్ద ప్రాజెక్ట్స్ (కంపెనీ పోర్టల్స్, E-Commerce యాప్స్) చేయడానికి.</td></tr>
         </table>
 
-        <h4 style="color:#10b981; margin:16px 0 8px;">The WSGI (Web Server Gateway Interface) Lifecycle:</h4>
-        <p><strong>WSGI (PEP 3333)</strong> is the standard specification that allows Python web applications to communicate with production web servers (like Nginx, Apache, or Gunicorn).</p>
-
-        <div class="diagram-box">┌────────────────────────────────────────────────────────────────────────┐
-│                        THE FLASK WSGI REQUEST CYCLE                    │
-├────────────────────────────────────────────────────────────────────────┤
-│  Client Browser ───(HTTP GET /products/42)───> Web Server (Nginx)      │
-│                                                       │                │
-│                                                (WSGI Protocol)         │
-│                                                       ▼                │
-│  Flask Application Instance (app = Flask(__name__))                    │
-│  ├── 1. URL Routing Table Match -> @app.route('/products/<int:id>')    │
-│  ├── 2. Creates Request Context (request.args, request.headers)        │
-│  ├── 3. Executes View Function -> get_product(42)                      │
-│  └── 4. Returns WSGI Response -> HTTP 200 OK + JSON / HTML            │
-└────────────────────────────────────────────────────────────────────────┘</div>`,
-        code: `# Minimal Single-File Flask Web Server Application:
+        <h4 style="color:#10b981; margin:16px 0 8px;">WSGI అంటే ఏంటి?</h4>
+        <p><strong>WSGI (Web Server Gateway Interface)</strong> అంటే... మన పైథాన్ కోడ్ కి, ఇంటర్నెట్ లోని బ్రౌజర్ కి మధ్యలో ఉండే ఒక ట్రాన్స్లేటర్ లాంటిది. ఇది బ్రౌజర్ నుంచి వచ్చే రిక్వెస్ట్ ని పైథాన్ కి అర్థమయ్యేలా చెప్తుంది.</p>`,
+        code: `# Flask తో ఒక సింపుల్ వెబ్ సర్వర్:
 from flask import Flask, jsonify, request
 
-# 1. Instantiate the WSGI Application:
-# __name__ informs Flask where to locate templates and static files:
+# 1. Flask యాప్ ని స్టార్ట్ చేద్దాం:
 app = Flask(__name__)
 
-# 2. Define the Root Endpoint Route:
+# 2. ఎవరైనా మెయిన్ పేజీ (/) ఓపెన్ చేస్తే ఏం జరగాలో రాద్దాం:
 @app.route("/", methods=["GET"])
 def home():
-    """Returns a welcome message."""
-    return "<h1>🚀 Welcome to Our Compiler Flask Web Server!</h1><p>Status: Healthy & Online.</p>"
+    return "<h1>🚀 మన కంపైలర్ కి స్వాగతం!</h1><p>సర్వర్ ఆన్ లో ఉంది.</p>"
 
-# 3. Dynamic URL Route with Integer Type Converter (<int:user_id>):
+# 3. Dynamic Route: ఎవరైనా /users/42 అని ఇస్తే 42 ని పైథాన్ కి పంపుతుంది:
 @app.route("/users/<int:user_id>", methods=["GET"])
 def get_user_by_id(user_id):
-    """Dynamic route matching /users/1, /users/42, etc."""
+    # డేటాని JSON (డిక్షనరీ) ఫార్మాట్ లో బ్రౌజర్ కి పంపుదాం:
     return jsonify({
         "user_id": user_id,
         "name": f"Developer #{user_id}",
-        "status": "Active",
-        "query_params_received": dict(request.args)
+        "status": "Active"
     })
 
-# 4. Entry point check:
+# 4. సర్వర్ ని రన్ చేద్దాం:
 if __name__ == "__main__":
-    # debug=True auto-reloads server when Python files are modified:
-    print("⚡ Starting local Flask development server on http://127.0.0.1:5000")
+    print("⚡ లోకల్ సర్వర్ http://127.0.0.1:5000 మీద స్టార్ట్ అయ్యింది")
     # app.run(debug=True, port=5000)`,
         codeTitle: 'Example 1: Minimal Flask Web Server with Dynamic Routing',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Step-by-Step Code Walkthrough:</strong>
-          <ol style="margin:8px 0 0 18px; line-height:1.7;">
-            <li><code>app = Flask(__name__)</code>: Creates the central WSGI application object.</li>
-            <li><code>@app.route(...)</code>: Decorator registering the URL path pattern and allowed HTTP methods in Flask's internal URL routing table.</li>
-            <li><code>&lt;int:user_id&gt;</code>: Built-in URL converter that rejects non-integer strings (e.g. <code>/users/abc</code> returns 404 automatically) and casts the value to a Python <code>int</code> before passing it as a function argument.</li>
-            <li><code>jsonify(...)</code>: Converts Python dictionaries into JSON responses with the appropriate <code>Content-Type: application/json</code> HTTP header.</li>
-          </ol>
+          <strong style="color:#10b981;">🔍 ఈ కోడ్ ఏం చేస్తుంది?:</strong>
+          <ul style="margin:8px 0 0 18px; line-height:1.7;">
+            <li><code>@app.route("/")</code>: ఎవరైనా మన లింక్ ని ఓపెన్ చేయగానే, ఈ ఫంక్షన్ ఆటోమాటిక్ గా రన్ అవ్వాలని చెప్తుంది.</li>
+            <li><code>&lt;int:user_id&gt;</code>: ఎవరైనా <code>/users/abc</code> అని టైప్ చేస్తే ముందే ఆపేస్తుంది, నెంబర్స్ ఇస్తేనే లోపలికి పంపుతుంది.</li>
+          </ul>
         </div>`
       },
       {
-        title: '2. Request Data Extraction: Query Strings (request.args) vs Form/JSON Payloads',
-        body: `<p>In Flask, incoming client data is accessed through the global <strong><code>request</code> context proxy</strong>:</p>
+        title: '2. బ్రౌజర్ పంపే డేటాని పైథాన్ లో ఎలా చదవాలి? (Query Params & JSON)',
+        body: `<p>బ్రౌజర్ నుంచి మనకి డేటా వస్తున్నప్పుడు, Flask లో దాన్ని <strong><code>request</code></strong> అనే ఆబ్జెక్ట్ ద్వారా చదువుతాం:</p>
         <ul>
-          <li><strong><code>request.args</code> (Query Parameters):</strong> Immutable multidict containing parameters from the URL query string (e.g. <code>/search?q=python&page=2</code> -> <code>request.args.get('q')</code>).</li>
-          <li><strong><code>request.form</code> (Form POST Data):</strong> Contains key-value pairs submitted by HTML <code>&lt;form method="POST"&gt;</code> elements.</li>
-          <li><strong><code>request.json</code> (REST JSON Payload):</strong> Contains deserialized JSON dictionaries submitted in POST/PUT API calls.</li>
-          <li><strong><code>request.headers</code>:</strong> Dictionary containing client HTTP headers (like <code>User-Agent</code> or <code>Authorization</code>).</li>
+          <li><strong><code>request.args</code> (Query Params):</strong> URL చివరలో <code>?q=python</code> లాగా వచ్చే డేటాని చదవడానికి.</li>
+          <li><strong><code>request.form</code>:</strong> HTML లో ఫారమ్ (Forms) ఫిల్ చేసి సబ్మిట్ చేస్తే ఆ డేటా ఇక్కడికి వస్తుంది.</li>
+          <li><strong><code>request.get_json()</code>:</strong> వేరే యాప్స్ నుంచి JSON డేటా వస్తే చదవడానికి.</li>
         </ul>`,
         code: `from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Sample in-memory catalog:
+# మన దగ్గర ఉన్న చిన్న డేటాబేస్ (మెమరీలో):
 PRODUCTS_DB = [
     {"id": 1, "name": "Mechanical Keyboard", "price": 2499.00},
-    {"id": 2, "name": "Wireless Mouse", "price": 799.00},
-    {"id": 3, "name": "USB-C Hub", "price": 1299.00}
+    {"id": 2, "name": "Wireless Mouse", "price": 799.00}
 ]
 
 @app.route("/api/products", methods=["GET", "POST"])
 def handle_products():
     if request.method == "GET":
-        # Extract optional max_price query filter: /api/products?max_price=1500
+        # ఎవరైనా /api/products?max_price=1000 అని పంపితే:
         max_price = request.args.get("max_price", type=float)
+        
         if max_price is not None:
+            # ఫిల్టర్ చేసి ఇద్దాం:
             filtered = [p for p in PRODUCTS_DB if p["price"] <= max_price]
             return jsonify(filtered)
+        
+        # ఏమీ ఇవ్వకపోతే అన్నీ ఇచ్చేద్దాం:
         return jsonify(PRODUCTS_DB)
 
     elif request.method == "POST":
-        # Extract JSON payload from incoming POST request body:
+        # కొత్త ప్రోడక్ట్ ని క్రియేట్ చేయడానికి డేటా వస్తే:
         payload = request.get_json()
-        if not payload or "name" not in payload or "price" not in payload:
-            return jsonify({"error": "Missing required fields: 'name' and 'price'"}), 400
+        
+        if not payload or "name" not in payload:
+            return jsonify({"error": "పేరు (name) ఇవ్వడం మర్చిపోయారు"}), 400
 
         new_item = {
             "id": len(PRODUCTS_DB) + 1,
             "name": payload["name"],
-            "price": float(payload["price"])
+            "price": float(payload.get("price", 0))
         }
         PRODUCTS_DB.append(new_item)
-        return jsonify({"message": "Product created successfully", "product": new_item}), 201`,
+        return jsonify({"message": "ప్రోడక్ట్ యాడ్ అయ్యింది!", "product": new_item}), 201`,
         codeTitle: 'Example 2: Handling Query Filters (GET) and JSON Payloads (POST)',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Safe Parameter Extraction:</strong>
-          <p style="margin-top:6px;">Always use <code>request.args.get('param', default_val, type=int)</code> instead of direct dictionary indexing <code>request.args['param']</code>. The <code>.get()</code> method avoids <code>KeyError</code> crashes if the user omits the query parameter.</p>
+          <strong style="color:#10b981;">🔍 సేఫ్ గా చదవడం:</strong>
+          <p style="margin-top:6px;">డేటాని చదివేటప్పుడు <code>request.args['max_price']</code> అని డైరెక్ట్ గా అడగకూడదు (ఒకవేళ వాళ్ళు ఆ డేటా పంపకపోతే యాప్ క్రాష్ అవుతుంది). దానికి బదులు <code>.get('max_price')</code> వాడితే సేఫ్ గా వస్తుంది.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Running app.run(debug=True) in Production',
-      text: 'Enabling debug=True starts Werkzeug\'s interactive in-browser debugger. In production, this allows anyone who triggers an error to execute arbitrary Python commands directly on your server terminal! Always disable debug mode and use a production WSGI server like Gunicorn in production.'
+      title: 'Production లో debug=True పెట్టి రన్ చేయడం',
+      text: 'లోకల్ గా మనం కోడ్ రాసుకునేటప్పుడు debug=True ఉంటే, ఎర్రర్ రాగానే బ్రౌజర్ లోనే కన్సోల్ వస్తుంది. కానీ లైవ్ లో ఇది ఆన్ చేసి పెడితే... హ్యాకర్స్ మన సర్వర్ లోకి దూరి మన కంప్యూటర్ నే కంట్రోల్ చేసేస్తారు! పబ్లిక్ గా రిలీజ్ చేసే ముందు దాన్ని తీసేయాలి.'
     },
     tryIt: {
-      desc: 'Define a Flask route /calculator/<operation> that accepts num1 and num2 as query parameters (e.g. /calculator/add?num1=10&num2=5) and returns a JSON result.',
+      desc: 'ఒక /calculator/<operation> క్రియేట్ చేయండి. num1, num2 ని query parameters లా తీసుకుని కూడిక/తీసివేత చేసి JSON ఇవ్వాలి.',
       code: `from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
 @app.route("/calculator/<operation>")
 def calculate(operation):
+    # num1, num2 తీసుకుంటున్నాం, లేకపోతే డీఫాల్ట్ గా 0
     n1 = request.args.get("num1", 0, type=float)
     n2 = request.args.get("num2", 0, type=float)
 
     if operation == "add": res = n1 + n2
     elif operation == "sub": res = n1 - n2
     elif operation == "mul": res = n1 * n2
-    elif operation == "div": res = n1 / n2 if n2 != 0 else "Error: Div by Zero"
-    else: return jsonify({"error": "Unknown operation"}), 400
+    elif operation == "div": res = n1 / n2 if n2 != 0 else "ఎర్రర్: జీరో తో భాగించలేం"
+    else: return jsonify({"error": "ఆపరేషన్ తప్పు"}), 400
 
     return jsonify({"operation": operation, "num1": n1, "num2": n2, "result": res})`
     },
     faqs: [
       {
-        q: 'What is the difference between Flask and FastAPI?',
-        a: 'Flask is a synchronous WSGI microframework primarily designed for HTML templating and REST APIs. FastAPI is a modern, asynchronous ASGI framework built on top of Pydantic and Starlette, providing automatic OpenAPI documentation and high-concurrency async performance.'
+        q: 'Flask కీ, FastAPI కీ తేడా ఏంటి?',
+        a: 'Flask పాతది, నమ్మకమైనది, HTML టెంప్లేట్స్ కి బాగా పనికొస్తుంది. FastAPI కొత్తది, చాలా స్పీడ్ గా ఉంటుంది, ఆటోమాటిక్ గా డాక్యుమెంటేషన్ తయారు చేస్తుంది.'
       },
       {
-        q: 'What are Flask URL Converters?',
-        a: 'URL converters match and cast dynamic parts of URLs: <string:name> (default string without slashes), <int:id> (positive integers), <float:price> (floating point numbers), and <path:subpath> (strings containing forward slashes).'
-      },
-      {
-        q: 'What is the purpose of url_for() in Flask?',
-        a: 'url_for(endpoint, **values) dynamically generates URLs based on view function names. If you change a route URL from "/user-login" to "/signin", url_for("login") updates all template links automatically without hardcoded URL breakage.'
+        q: 'url_for() అంటే ఏంటి?',
+        a: 'బ్రౌజర్ కి లింక్స్ ఇచ్చేటప్పుడు డైరెక్ట్ గా "/login" అని ఇవ్వకుండా url_for("login") అని ఇస్తాం. అప్పుడు రేపు మన లింక్ పేరు "/signin" కి మార్చినా, కోడ్ అంతా వెతుక్కుని మార్చుకోవాల్సిన అవసరం ఉండదు.'
       }
     ]
   },
@@ -177,107 +157,100 @@ def calculate(operation):
     phaseId: 'phase10',
     phaseTitle: 'Phase 10: Web Development',
     slug: '49-python-flask-templates-forms-and-auth',
-    title: 'Flask Jinja2, Forms & Auth',
+    title: 'Flask Jinja2, Forms & Auth (తెలుగులో)',
     badge: '49. Flask Templates & Auth',
     subtopics: 'Jinja2 Template Engine · Template Inheritance ({% extends %}) · Static Assets · Client Sessions (session) · Password Hashing (werkzeug.security) · Custom Error Pages (404)',
-    desc: 'Master server-side rendering and user authentication in Flask: the Jinja2 template engine, template inheritance with base layouts, managing user sessions with signed cryptographic cookies, hashing passwords with werkzeug.security, and handling 404/500 error pages.',
+    desc: 'పైథాన్ నుంచి HTML పేజీలని ఎలా పంపించాలి (Jinja2 Templates)? ప్రతి పేజీలో నవబార్ లాంటివి కామన్ గా ఎలా ఉంచాలి? యూజర్ లాగిన్ అవ్వగానే వాళ్ళని ఎలా గుర్తుపెట్టుకోవాలి (Sessions)? పాస్వర్డ్స్ ని సెక్యూర్ గా ఎలా సేవ్ చేయాలో నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. Server-Side Rendering with Jinja2 & Template Inheritance',
-        body: `<p>Instead of hardcoding HTML strings inside Python functions, Flask uses the <strong>Jinja2 Template Engine</strong>. HTML templates are stored in a <code>templates/</code> directory and rendered via <code>render_template('page.html', var=value)</code>.</p>
+        title: '1. Jinja2 Templates (HTML లో పైథాన్ వేరియబుల్స్ కలపడం)',
+        body: `<p>పైథాన్ ఫంక్షన్ లోనే పదుల కొద్దీ HTML లైన్స్ రాయడం కష్టం కాబట్టి, Flask లో <strong>Jinja2</strong> అనే ఇంజిన్ వాడుతారు. HTML ఫైల్స్ ని <code>templates/</code> ఫోల్డర్ లో పెట్టి, <code>render_template('page.html', name='Balaji')</code> ద్వారా డేటాని పంపుతాం.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The 3 Core Jinja2 Delimiter Syntax Rules:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Jinja2 రాసే విధానం:</h4>
         <ul>
-          <li><strong><code>{{ expression }}</code>:</strong> Prints the value of a Python variable or expression into the HTML (auto-escapes HTML tags to prevent XSS attacks).</li>
-          <li><strong><code>{% statement %}</code>:</strong> Controls program logic (e.g. <code>{% if user %}</code>, <code>{% for item in items %}</code>, <code>{% extends 'base.html' %}</code>).</li>
-          <li><strong><code>{# comment #}</code>:</strong> Server-side comments ignored during HTML rendering.</li>
+          <li><strong><code>{{ వేరియబుల్ }}</code>:</strong> పైథాన్ వేరియబుల్ ని HTML లో ప్రింట్ చేయడానికి (ఉదా: <code>{{ name }}</code>).</li>
+          <li><strong><code>{% లాజిక్ %}</code>:</strong> if కండిషన్స్, for లూప్స్ వాడటానికి (ఉదా: <code>{% if is_admin %} ... {% endif %}</code>).</li>
         </ul>
 
-        <h4 style="color:#10b981; margin:16px 0 8px;">Template Inheritance Architecture (DRY Principle):</h4>
-        <p>Instead of duplicating the HTML <code>&lt;head&gt;</code>, navbar, and footer across dozens of pages, you define a single <strong><code>base.html</code></strong> layout with <code>{% block content %}{% endblock %}</code> placeholders that child templates fill in!</p>`,
-        code: `<!-- 1. BASE TEMPLATE: templates/base.html -->
+        <h4 style="color:#10b981; margin:16px 0 8px;">Template Inheritance (DRY కోడింగ్):</h4>
+        <p>ప్రతి పేజీలో పైన మెనూ (Navbar), కింద ఫూటర్ రాయాలంటే విసుగొస్తుంది. అందుకే ఒక <strong><code>base.html</code></strong> క్రియేట్ చేసి అందులో మెనూ రాసి, కింద పేజీల్లో దాన్ని వాడుకుంటాం (Inherit).</p>`,
+        code: `<!-- 1. BASE TEMPLATE: templates/base.html (మెయిన్ పేజీ లేఅవుట్) -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}My Flask Portal{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>{% block title %}మై వెబ్సైట్{% endblock %}</title>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="{{ url_for('home') }}">🏠 Home</a>
-    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+  <nav>
+    <a href="/">హోమ్</a> | <a href="/dashboard">డ్యాష్ బోర్డు</a>
   </nav>
 
-  <main class="container">
+  <!-- ఇక్కడ ఏ పేజీ వస్తే ఆ పేజీ కంటెంట్ వస్తుంది -->
+  <main>
     {% block content %}
-    <!-- Child page HTML injected here -->
     {% endblock %}
   </main>
 </body>
 </html>
 
-<!-- 2. CHILD TEMPLATE: templates/dashboard.html -->
-{% extends "base.html" %}
+<!-- 2. CHILD TEMPLATE: templates/dashboard.html (డ్యాష్ బోర్డు పేజీ) -->
+{% extends "base.html" %} <!-- పైన ఉన్న base.html ని వాడమని చెప్తున్నాం -->
 
-{% block title %}User Dashboard{% endblock %}
+{% block title %}యూజర్ డ్యాష్ బోర్డు{% endblock %}
 
 {% block content %}
-  <h2>Welcome back, {{ username }}! 👋</h2>
-  <h3>Your Enrolled Courses ({{ courses|length }}):</h3>
+  <h2>వెల్కమ్ బ్యాక్, {{ username }}! 👋</h2>
+  <h3>మీ కోర్సులు:</h3>
   <ul>
     {% for course in courses %}
-      <li><strong>{{ course.title }}</strong> - Instructor: {{ course.instructor }}</li>
+      <li>{{ course.title }} - Instructor: {{ course.instructor }}</li>
     {% else %}
-      <li>No courses enrolled yet.</li>
+      <li>ఇంకా ఏ కోర్సుల్లో చేరలేదు.</li>
     {% endfor %}
   </ul>
 {% endblock %}`,
         codeTitle: 'Jinja2 Blueprint: Base Layout and Child Template Inheritance',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Template Filters:</strong>
-          <p style="margin-top:6px;">Jinja2 includes powerful pipe filters like <code>{{ username|upper }}</code> (capitalizes string), <code>{{ courses|length }}</code> (counts items), and <code>{{ post.date|format_date }}</code>.</p>
+          <strong style="color:#10b981;">🔍 Template Filters (మ్యాజిక్):</strong>
+          <p style="margin-top:6px;">Jinja2 లో <code>{{ username|upper }}</code> అని రాస్తే ఆటోమాటిక్ గా క్యాపిటల్ లెటర్స్ లో వస్తుంది. <code>{{ courses|length }}</code> అంటే ఎన్ని కోర్సులు ఉన్నాయో కౌంట్ వస్తుంది.</p>
         </div>`
       },
       {
-        title: '2. User Sessions & Secure Password Hashing with werkzeug.security',
-        body: `<p>HTTP is a stateless protocol. To remember that a user has successfully logged in across multiple page clicks, Flask provides the <strong><code>session</code> dictionary</strong>.</p>
+        title: '2. లాగిన్స్ & సెక్యూర్ పాస్వర్డ్స్ (Sessions & Hashing)',
+        body: `<p>HTTP అనేది "స్టేట్ లెస్"... అంటే ఎవరొచ్చారో దానికి గుర్తుండదు. అందుకే లాగిన్ అయిన తర్వాత ఆ యూజర్ ని గుర్తుపెట్టుకోవడానికి Flask లో <strong><code>session</code></strong> వాడతాం. (ఇది బ్రౌజర్ కుకీస్ లో సేవ్ అవుతుంది).</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">How Flask Sessions Work:</h4>
-        <p>Flask serializes the session dictionary into a <strong>Cryptographically Signed Cookie</strong> stored in the user's browser. The user can view the cookie, but cannot tamper with or modify its values without invalidating the cryptographic signature (calculated using <code>app.secret_key</code>).</p>
-
-        <h4 style="color:#ef4444; margin:16px 0 8px;">Security Rule: NEVER Store Plaintext Passwords!</h4>
-        <p>Always hash user passwords using <strong>one-way cryptographic hash functions</strong> (like PBKDF2 with SHA-256 and salted hashes) via <code>werkzeug.security</code>:</p>`,
-        code: `from flask import Flask, render_template_string, request, session, redirect, url_for
+        <h4 style="color:#ef4444; margin:16px 0 8px;">ముఖ్యమైన రూల్: పాస్వర్డ్స్ డైరెక్ట్ గా సేవ్ చేయకూడదు!</h4>
+        <p>ఒకవేళ హ్యాకర్ డేటాబేస్ ఓపెన్ చేసినా కూడా పాస్వర్డ్స్ తెలియకుండా ఉండాలంటే, వాటిని <strong>Hash (జిబరిష్ లాగా)</strong> చేసి సేవ్ చేయాలి.</p>`,
+        code: `from flask import Flask, request, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-# Cryptographic secret key used to sign session cookies:
-app.secret_key = "super_secret_production_key_change_in_env"
+# కుకీస్ ని హ్యాక్ చేయకుండా ఉండటానికి ఇచ్చే సీక్రెట్ కీ:
+app.secret_key = "super_secret_key_123"
 
-# Simulated User Database with Hashed Passwords:
+# సిమ్యులేట్ చేసిన డేటాబేస్ (పాస్వర్డ్ హ్యాష్ చేసి ఉంది):
 USERS_DB = {
-    "balaji": generate_password_hash("SuperSecret2026!") # Stored as salted hash!
+    "balaji": generate_password_hash("Secret2026") # ఇది చూడటానికి pbkdf2:sha256.. లాగా ఉంటుంది
 }
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        user = request.form.get("username")
+        pwd = request.form.get("password")
 
-        # 1. Verify user exists and check password hash:
-        stored_hash = USERS_DB.get(username)
-        if stored_hash and check_password_hash(stored_hash, password):
-            # 2. Store user in session cookie:
-            session["user"] = username
+        # 1. యూజర్ ఉన్నాడా? పాస్వర్డ్ కరెక్టేనా చెక్ చేద్దాం:
+        stored_hash = USERS_DB.get(user)
+        if stored_hash and check_password_hash(stored_hash, pwd):
+            # 2. పాస్వర్డ్ కరెక్ట్! కాబట్టి సెషన్ లో పెట్టుకుందాం:
+            session["user"] = user
             return redirect(url_for("profile"))
         
-        return "<h3>❌ Invalid Username or Password</h3><a href='/login'>Try again</a>", 401
+        return "<h3>❌ లాగిన్ ఫెయిల్!</h3><a href='/login'>మళ్ళీ ట్రై చేయండి</a>", 401
 
-    # Render simple login form:
+    # లాగిన్ ఫారమ్ చూపిద్దాం:
     return '''
-    <h2>🔐 User Login</h2>
+    <h2>🔐 లాగిన్</h2>
     <form method="POST">
         <input type="text" name="username" placeholder="Username" required><br><br>
         <input type="password" name="password" placeholder="Password" required><br><br>
@@ -287,57 +260,46 @@ def login():
 
 @app.route("/profile")
 def profile():
-    # 3. Check if user session exists:
+    # 3. లాగిన్ అవ్వకపోతే ప్రొఫైల్ చూపించకూడదు:
     if "user" not in session:
         return redirect(url_for("login"))
-    return f"<h2>🎉 Welcome to your private profile, {session['user']}!</h2><a href='/logout'>Log Out</a>"
+    return f"<h2>🎉 హలో, {session['user']}! మీ ప్రొఫైల్ లోకి వచ్చారు.</h2><a href='/logout'>లాగ్ ఔట్</a>"
 
 @app.route("/logout")
 def logout():
-    session.pop("user", None) # Clear session
-    return redirect(url_for("login"))
-
-# Custom 404 Error Handler:
-@app.errorhandler(404)
-def page_not_found(error):
-    return "<h2>404 - Oops! The requested page does not exist.</h2><a href='/login'>Go Home</a>", 404`,
+    session.pop("user", None) # సెషన్ డిలీట్ చేద్దాం
+    return redirect(url_for("login"))`,
         codeTitle: 'Example 2: Complete User Authentication Flow with Password Hashing & Sessions',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Security Breakdown:</strong>
-          <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li><code>generate_password_hash("pass")</code> creates a random salt and hashes it (e.g. <code>pbkdf2:sha256:600000$...</code>). Even if two users have the same password, their hashes are completely different.</li>
-            <li><code>check_password_hash(hash, pass)</code> safely compares the input password against the salt in constant time to prevent timing attacks.</li>
-          </ul>
+          <strong style="color:#10b981;">🔍 హ్యాషింగ్ ఎందుకు?:</strong>
+          <p style="margin-top:6px;"><code>generate_password_hash()</code> వాడితే పాస్వర్డ్ ఒక కోడ్ లాగా మారుతుంది. ఆ కోడ్ ని చూసి ఒరిజినల్ పాస్వర్డ్ ఏంటో ఎవరూ (కనీసం వెబ్సైట్ ఓనర్ కూడా) కనిపెట్టలేరు.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Storing Sensitive Confidential Data (like Credit Card numbers) in Flask Sessions',
-      text: 'By default, Flask sessions are client-side signed cookies. While the user cannot tamper with the cookie, the payload is NOT encrypted and can be easily decoded by anyone inspecting browser cookies! Only store non-sensitive identifiers like user_id in the session.'
+      title: 'Session లో క్రెడిట్ కార్డ్స్ / పాస్వర్డ్స్ సేవ్ చేయడం',
+      text: 'Session అనేది బ్రౌజర్ కుకీ లో సేవ్ అవుతుంది. యూజర్ దాన్ని మార్చలేడు కానీ, దాన్ని ఓపెన్ చేసి చదవగలడు (అది జస్ట్ Base64 లో ఉంటుంది). అందుకే సెషన్ లో కేవలం యూజర్ ఐడీ లాంటివి మాత్రమే పెట్టుకోవాలి, పాస్వర్డ్స్ లాంటి సెన్సిటివ్ డేటా అస్సలు పెట్టకూడదు.'
     },
     tryIt: {
-      desc: 'Create a password validator helper that generates a hash for a new user and validates whether a submitted login password matches.',
+      desc: 'ఒక పాస్వర్డ్ ఇచ్చి దాన్ని హ్యాష్ చేసి ప్రింట్ చేయండి. ఆ తర్వాత మళ్ళీ కరెక్ట్ పాస్వర్డ్, రాంగ్ పాస్వర్డ్ ఇచ్చి మ్యాచ్ అవుతుందో లేదో చెక్ చేయండి.',
       code: `from werkzeug.security import generate_password_hash, check_password_hash
 
 raw_pass = "PythonRocks2026"
+# కొత్త యూజర్ వచ్చినప్పుడు ఇలా హ్యాష్ చేసి డేటాబేస్ లో సేవ్ చేస్తాం:
 hashed_pass = generate_password_hash(raw_pass)
 
-print("Generated Salted Hash:", hashed_pass)
-print("Correct Password Match:  ", check_password_hash(hashed_pass, "PythonRocks2026")) # True
-print("Incorrect Password Match:", check_password_hash(hashed_pass, "WrongPassword"))    # False`
+print("హ్యాష్ చేసిన పాస్వర్డ్:", hashed_pass)
+print("కరెక్ట్ పాస్వర్డ్ తో మ్యాచ్: ", check_password_hash(hashed_pass, "PythonRocks2026")) # True వస్తుంది
+print("రాంగ్ పాస్వర్డ్ తో మ్యాచ్:  ", check_password_hash(hashed_pass, "WrongPass"))      # False వస్తుంది`
     },
     faqs: [
       {
-        q: 'What is CSRF (Cross-Site Request Forgery) in web forms?',
-        a: 'CSRF is an exploit where a malicious website tricks a user\'s browser into performing an unauthorized action on a site where they are logged in. Prevent it using Flask-WTF CSRF tokens in all POST forms.'
+        q: 'CSRF (Cross-Site Request Forgery) అంటే ఏంటి?',
+        a: 'ఇది ఒక హ్యాకింగ్ టెక్నిక్. మీరు ఫేస్బుక్ లో లాగిన్ అయి ఉన్నప్పుడు, హ్యాకర్ ఒక లింక్ ఇచ్చి దాన్ని క్లిక్ చేయిస్తే... మీ అకౌంట్ నుంచి పోస్ట్ వెళ్లిపోతుంది. దీన్ని ఆపడానికే ఫారమ్స్ లో "CSRF టోకెన్" వాడతాం.'
       },
       {
-        q: 'What is the difference between client-side sessions and server-side sessions?',
-        a: 'Flask\'s default session stores signed data in browser cookies. Server-side session extensions (like Flask-Session) store session data in Redis or a database, sending only an opaque session UUID to the browser cookie.'
-      },
-      {
-        q: 'How do custom error handlers work in Flask?',
-        a: 'Decorating a function with @app.errorhandler(404) or @app.errorhandler(500) intercepts HTTP error codes across the entire application and returns a custom-styled error template.'
+        q: 'నేను 404 పేజీని నాకు నచ్చినట్టు డిజైన్ చేయొచ్చా?',
+        a: 'చేయొచ్చు! @app.errorhandler(404) అని ఒక ఫంక్షన్ రాసి, అందులో మీకు నచ్చిన HTML (లేదా జోక్) పెట్టి పంపొచ్చు.'
       }
     ]
   },
@@ -350,122 +312,106 @@ print("Incorrect Password Match:", check_password_hash(hashed_pass, "WrongPasswo
     phaseId: 'phase10',
     phaseTitle: 'Phase 10: Web Development',
     slug: '50-python-django-architecture-models-and-admin',
-    title: 'Django Architecture & ORM',
+    title: 'Django Architecture & ORM (తెలుగులో)',
     badge: '50. Django Architecture & ORM',
     subtopics: 'The "Batteries-Included" Philosophy · Projects vs Apps · MTV (Model-Template-View) Pattern · Django ORM Models · Migrations · Auto-Generated Admin Panel',
-    desc: 'Master enterprise web development with Django: understanding the MTV design pattern, project vs app modular structure, defining relational database models with Django ORM, the database migrations lifecycle (makemigrations & migrate), and the production admin dashboard.',
+    desc: 'పెద్ద పెద్ద ప్రాజెక్ట్స్ కి వాడే Django ఫ్రేమ్ వర్క్ లోకి ఎంటర్ అవుదాం. Django లో Projects, Apps అంటే ఏంటి? మోడల్స్ వాడి డేటాబేస్ ని ఎలా క్రియేట్ చేయాలి? ఆటోమాటిక్ గా వచ్చే Admin Panel గురించి నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. Django\'s "Batteries-Included" Philosophy & MTV Pattern',
-        body: `<p><strong>Django</strong> is the world's leading high-level Python web framework, designed to help developers build secure, scalable applications in hours instead of months.</p>
+        title: '1. జాంగో ఫిలాసఫీ (Batteries-Included) & MTV ఆర్కిటెక్చర్',
+        body: `<p><strong>Django</strong> అనేది పైథాన్ లో మోస్ట్ పవర్ఫుల్ వెబ్ ఫ్రేమ్ వర్క్. ఇన్స్టాగ్రామ్, పింట్రెస్ట్ లాంటి పెద్ద యాప్స్ దీని మీదే రన్ అవుతున్నాయి.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The "Batteries-Included" Concept:</h4>
-        <p>Unlike Flask where you must manually choose and configure dozens of third-party libraries for databases, authentication, admin interfaces, and migrations, <strong>Django bundles all of them into the core framework</strong> with unified, battle-tested security standards.</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">"Batteries-Included" అంటే ఏంటి?:</h4>
+        <p>ఫ్లాస్క్ లో లాగిన్ సిస్టమ్, డేటాబేస్, ఫారమ్స్ అన్నీ మనమే వెతుక్కుని యాడ్ చేసుకోవాలి. కానీ జాంగో లో <strong>అన్నీ వాళ్లే ఇచ్చేస్తారు</strong>. జస్ట్ సెటప్ చేసుకుని కోడ్ రాయడమే.</p>
 
-        <h4 style="color:#10b981; margin:16px 0 8px;">The MTV (Model-Template-View) Architecture:</h4>
-        <p>While traditional frameworks refer to <em>MVC (Model-View-Controller)</em>, Django uses the <strong>MTV</strong> terminology:</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">MTV (Model-Template-View) ప్యాట్రన్:</h4>
+        <p>జాంగో లో కోడ్ ని మూడు ముక్కలుగా విడదీసి రాస్తారు (కన్ఫ్యూజన్ లేకుండా):</p>
         <ul>
-          <li><strong>Model (M):</strong> The data layer (Python classes defining database tables and business logic via Django ORM).</li>
-          <li><strong>Template (T):</strong> The presentation layer (HTML files rendered with the Django Template Language / DTL).</li>
-          <li><strong>View (V):</strong> The controller/logic layer (Python functions or classes that process requests, query Models, and return Templates or JSON).</li>
-        </ul>
-
-        <div class="diagram-box">┌────────────────────────────────────────────────────────────────────────┐
-│                   THE DJANGO MTV (MODEL-TEMPLATE-VIEW) FLOW            │
-├────────────────────────────────────────────────────────────────────────┤
-│  Client Request ───> urls.py (URL Dispatcher matches path)             │
-│                           │                                            │
-│                           ▼                                            │
-│                      views.py (View Logic Controller)                  │
-│                     ┌─────┴──────────────────┐                         │
-│                     ▼                        ▼                         │
-│                 models.py               templates/                     │
-│           (Queries Database ORM)   (Renders HTML Template)             │
-│                     └─────┬──────────────────┘                         │
-│                           ▼                                            │
-│               Client Response (HTTP 200 HTML)                          │
-└────────────────────────────────────────────────────────────────────────┘</div>`,
-        code: `# Django Project Structure Overview (Created via django-admin startproject):
+          <li><strong>Model (M):</strong> ఇది డేటాబేస్ కి సంబంధించింది. మన టేబుల్స్ ఎలా ఉండాలి (ఉదా: యూజర్స్ టేబుల్) అనేది ఇక్కడే రాస్తాం.</li>
+          <li><strong>Template (T):</strong> ఇది ఫ్రంట్-ఎండ్ కి సంబంధించింది (HTML). యూజర్ కి పేజీ ఎలా కనిపించాలి అనేది రాస్తాం.</li>
+          <li><strong>View (V):</strong> ఇది మెదడు లాంటిది (లాజిక్). బ్రౌజర్ నుంచి రిక్వెస్ట్ రాగానే డేటాబేస్ కి (Model) వెళ్లి డేటా తెచ్చుకుని, దాన్ని HTML (Template) కి ఇచ్చి పంపుతుంది.</li>
+        </ul>`,
+        code: `# జాంగో ప్రాజెక్ట్ ఫైల్స్ ఎలా ఉంటాయో చూద్దాం:
 """
-my_ecommerce_project/
-├── manage.py               <-- CLI utility for running server, migrations, tests
-├── my_ecommerce_project/   <-- Project root configuration package
-│   ├── __init__.py
-│   ├── settings.py         <-- Central configuration (DB, installed apps, middleware)
-│   ├── urls.py             <-- Master URL routing dispatcher
-│   ├── asgi.py             <-- Asynchronous server entry point
-│   └── wsgi.py             <-- WSGI production deployment entry point
-└── store_app/              <-- Modular Django Application (python manage.py startapp store_app)
-    ├── models.py           <-- Database ORM Models
-    ├── views.py            <-- Request Handler Views
-    ├── urls.py             <-- App-specific URL routes
-    ├── admin.py            <-- Admin Dashboard Configuration
-    └── migrations/         <-- Version-controlled DB schema migration scripts
-"""
-print("Django Project vs App Modular Architecture Loaded.")`,
+my_ecommerce_project/       <-- ఇది మెయిన్ ప్రాజెక్ట్
+├── manage.py               <-- సర్వర్ స్టార్ట్ చేయడానికి, కమాండ్స్ రన్ చేయడానికి టూల్
+├── my_ecommerce_project/   <-- ప్రాజెక్ట్ సెట్టింగ్స్ ఫోల్డర్
+│   ├── settings.py         <-- పాస్వర్డ్స్, డేటాబేస్ సెట్టింగ్స్ అన్నీ ఇక్కడే ఉంటాయి
+│   ├── urls.py             <-- మెయిన్ రూట్స్ (లింక్స్ ఎటు వెళ్లాలో చెప్పే మ్యాప్)
+└── store_app/              <-- ప్రాజెక్ట్ లోపల ఒక చిన్న యాప్ (ఉదా: స్టోర్ కోసం)
+    ├── models.py           <-- డేటాబేస్ టేబుల్స్ క్రియేట్ చేసే ఫైల్
+    ├── views.py            <-- బ్రౌజర్ రిక్వెస్ట్ వస్తే ఏం చేయాలో రాసే ఫైల్ (లాజిక్)
+    ├── urls.py             <-- ఈ స్టోర్ యాప్ కి సంబంధించిన లింక్స్ మ్యాప్
+    ├── admin.py            <-- అడ్మిన్ ప్యానెల్ లో ఏమేం కనపడాలో రాసే ఫైల్
+    └── migrations/         <-- మనం డేటాబేస్ లో చేసిన మార్పుల హిస్టరీ ఫైల్స్
+"""`,
         codeTitle: 'Architecture Blueprint: Django Project vs Modular App Directory Tree',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">💡 Project vs App Concept:</strong>
-          <p style="margin-top:6px;">A <strong>Project</strong> is the entire website configuration (settings, database connection, URLs). An <strong>App</strong> is a self-contained, reusable module (e.g. <code>blog_app</code>, <code>payment_app</code>, <code>user_auth_app</code>) that can be plugged into multiple different Django projects.</p>
+          <strong style="color:#10b981;">💡 Project vs App డిఫరెన్స్:</strong>
+          <p style="margin-top:6px;"><strong>Project</strong> అంటే మీ వెబ్సైట్ మొత్తం. <strong>App</strong> అంటే అందులో ఒక చిన్న ముక్క (ఉదాహరణకు: <code>blog_app</code>, <code>payment_app</code>). ఒక యాప్ ని తీసి వేరే ప్రాజెక్ట్ లో కూడా వాడుకోవచ్చు.</p>
         </div>`
       },
       {
-        title: '2. Django ORM Models, Migrations & The Built-in Admin Dashboard',
-        body: `<p>In Django, you define your database schema as Python classes inheriting from <code>models.Model</code>. Django ORM handles table creation, column types, validations, and SQL generation.</p>
+        title: '2. Models, Migrations & ఆటోమాటిక్ Admin Dashboard',
+        body: `<p>జాంగో లో డేటాబేస్ క్రియేట్ చేయడానికి SQL కోడ్ రాయక్కర్లేదు. పైథాన్ లో <code>models.Model</code> వాడి క్లాస్ రాస్తే చాలు.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The 2-Step Migrations Lifecycle:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Migrations (మైగ్రేషన్స్):</h4>
+        <p>మనం క్లాస్ రాశాక అది డేటాబేస్ కి ఎక్కడానికి 2 కమాండ్స్ వాడతాం:</p>
         <ol style="line-height:1.8; margin-left:20px;">
-          <li><strong><code>python manage.py makemigrations</code>:</strong> Scans your <code>models.py</code> files, detects any added/changed/deleted fields, and writes a version-controlled migration blueprint script in <code>migrations/0001_initial.py</code>.</li>
-          <li><strong><code>python manage.py migrate</code>:</strong> Executes the pending migration blueprints and updates the physical SQL tables on PostgreSQL/MySQL/SQLite.</li>
+          <li><strong><code>python manage.py makemigrations</code>:</strong> మనం రాసిన క్లాస్ లో ఏమేం మార్పులు ఉన్నాయో చూసుకుని ఒక "బ్లూప్రింట్" ఫైల్ తయారు చేస్తుంది.</li>
+          <li><strong><code>python manage.py migrate</code>:</strong> ఆ బ్లూప్రింట్ ని తీసుకువెళ్లి డేటాబేస్ లో టేబుల్స్ క్రియేట్ చేస్తుంది.</li>
         </ol>`,
-        code: `# 1. Defining Models: store_app/models.py
+        code: `# 1. డేటాబేస్ టేబుల్స్ రాద్దాం (store_app/models.py):
 from django.db import models
-from django.contrib.auth.models import User
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=50, unique=True)
-
-    class Meta:
-        verbose_name_plural = "Categories"
+    name = models.CharField(max_length=50) # 50 క్యారెక్టర్స్ లోపు పేరు
 
     def __str__(self):
         return self.name
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
+    # Foreign Key వాడి Category కి లింక్ చేద్దాం:
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
-    description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.title} (₹{self.price})"
 
-# 2. Registering with Admin: store_app/admin.py
+# 2. అడ్మిన్ ప్యానెల్ కి రిజిస్టర్ చేద్దాం (store_app/admin.py):
 from django.contrib import admin
+from .models import Category, Product
 
+# కేటగిరీ ని సింపుల్ గా యాడ్ చేస్తున్నాం
+admin.site.register(Category)
+
+# ప్రోడక్ట్ ని కొంచెం కస్టమైజ్ చేసి యాడ్ చేద్దాం:
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    # అడ్మిన్ లో ఏమేం కాలమ్స్ కనపడాలో చెప్తున్నాం
     list_display = ("title", "category", "price", "stock", "is_active")
+    # రైట్ సైడ్ ఫిల్టర్ చేయడానికి
     list_filter = ("is_active", "category")
-    search_fields = ("title", "description")
+    # సెర్చ్ బార్ కోసం
+    search_fields = ("title",)
+    # అక్కడికక్కడే ప్రైస్ మార్చుకోవడానికి
     list_editable = ("price", "stock", "is_active")`,
         codeTitle: 'Example 2: Django ORM Relational Models & Custom Admin Configuration',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Django Admin Power:</strong>
-          <p style="margin-top:6px;">By writing just 8 lines in <code>admin.py</code>, Django automatically generates a complete web admin interface with search bars, filters, pagination, and bulk editing capabilities!</p>
+          <strong style="color:#10b981;">🔍 Django Admin పవర్:</strong>
+          <p style="margin-top:6px;">జస్ట్ <code>admin.py</code> లో ఒక 8 లైన్స్ కోడ్ రాస్తే చాలు... జాంగో మనకు ఒక కంప్లీట్ అడ్మిన్ డ్యాష్ బోర్డు (సెర్చ్ బార్స్, ఫిల్టర్స్ తో సహా) ఇచ్చేస్తుంది! (అదే ఫ్లాస్క్ లో అయితే ఇదంతా స్క్రాచ్ నుంచి మనమే రాయాలి).</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Manually Editing SQL Database Tables Instead of Using Django Migrations',
-      text: 'Never manually add or alter columns directly in your SQL database when using Django! Doing so causes Django\'s internal django_migrations history table to fall out of sync, causing future "makemigrations" and "migrate" commands to fail.'
+      title: 'డైరెక్ట్ గా SQL లోకి వెళ్లి టేబుల్స్ మార్చడం',
+      text: 'జాంగో వాడుతున్నప్పుడు, ఎప్పుడూ డేటాబేస్ (PhpMyAdmin లాంటివి) ఓపెన్ చేసి అక్కడ కొత్త కాలమ్స్ యాడ్ చేయడం లాంటివి చేయకూడదు. జాంగో మైగ్రేషన్స్ కన్ఫ్యూజ్ అయ్యి, నెక్స్ట్ టైమ్ ఎర్రర్స్ వస్తాయి. ఏదైనా మార్చాలంటే models.py లోనే మార్చాలి.'
     },
     tryIt: {
-      desc: 'Simulate a Django ORM query: Write a Python list filter to get all active products in the "Electronics" category with price < 5000.',
+      desc: 'జాంగో ORM ఫిల్టర్ ని సిమ్యులేట్ చేద్దాం: "Electronics" కేటగిరీలో ఉన్న, యాక్టివ్ గా ఉన్న ప్రోడక్ట్స్ ని ఫిల్టర్ చేసి ప్రింట్ చేయండి.',
       code: `products = [
     {"title": "Earphones", "cat": "Electronics", "price": 1499.0, "is_active": True},
     {"title": "Laptop", "cat": "Electronics", "price": 65000.0, "is_active": True},
@@ -473,22 +419,22 @@ class ProductAdmin(admin.ModelAdmin):
     {"title": "USB Cable", "cat": "Electronics", "price": 299.0, "is_active": False}
 ]
 
-# Django ORM equivalent: Product.objects.filter(is_active=True, category__name="Electronics", price__lt=5000)
-matched = [p for p in products if p["is_active"] and p["cat"] == "Electronics" and p["price"] < 5000]
-print("Matched Products:", matched)`
+# జాంగో లో అయితే ఇలా రాస్తాం: Product.objects.filter(is_active=True, category="Electronics")
+matched = [p for p in products if p["is_active"] and p["cat"] == "Electronics"]
+print("మ్యాచ్ అయిన ప్రోడక్ట్స్:", matched)`
     },
     faqs: [
       {
-        q: 'What does on_delete=models.CASCADE do in Django ForeignKeys?',
-        a: 'models.CASCADE specifies that if a parent record is deleted (e.g. Category), all related child records (all Products in that category) are automatically deleted from the database. Other options include models.PROTECT and models.SET_NULL.'
+        q: 'on_delete=models.CASCADE అంటే ఏంటి?',
+        a: 'ఒకవేళ మీరు అడ్మిన్ లో ఒక Category ని డిలీట్ చేస్తే, దానికి సంబంధించిన ప్రోడక్ట్స్ అన్నీ కూడా ఆటోమాటిక్ గా డిలీట్ అయిపోతాయి (డేటా కరప్ట్ అవ్వకుండా).'
       },
       {
-        q: 'How do I create a superuser for the Django admin panel?',
-        a: 'Run "python manage.py createsuperuser" in your terminal and follow the interactive prompts to enter a username, email, and secure password.'
+        q: 'అడ్మిన్ ప్యానెల్ లోకి లాగిన్ అవ్వాలంటే యూజర్ నేమ్ ఎలా క్రియేట్ చేయాలి?',
+        a: 'టెర్మినల్ లో "python manage.py createsuperuser" అని రన్ చేసి మీ పేరు, పాస్వర్డ్ ఇస్తే సూపర్ యూజర్ అకౌంట్ క్రియేట్ అవుతుంది.'
       },
       {
-        q: 'What is the purpose of the __str__() method in Django models?',
-        a: 'The __str__() method defines the human-readable string representation of a model instance displayed in the Django Admin portal, dropdown menus, and console logs.'
+        q: '__str__() ఫంక్షన్ మోడల్స్ లో ఎందుకు రాస్తాం?',
+        a: 'ఇది రాయకపోతే అడ్మిన్ ప్యానెల్ లో "Product object (1)" అని కనిపిస్తుంది. రాస్తే మనం చెప్పిన పేరు "Laptop (₹65000)" లాగా నీట్ గా కనిపిస్తుంది.'
       }
     ]
   },
@@ -501,68 +447,69 @@ print("Matched Products:", matched)`
     phaseId: 'phase10',
     phaseTitle: 'Phase 10: Web Development',
     slug: '51-python-django-views-templates-and-auth',
-    title: 'Django Views, Forms & Auth',
+    title: 'Django Views, Forms & Auth (తెలుగులో)',
     badge: '51. Django Views & Auth',
     subtopics: 'URL Dispatcher (path, include) · FBVs vs CBVs · Django Template Language (DTL) · ModelForms · django.contrib.auth · @login_required Decorator',
-    desc: 'Master request processing and security in Django: function-based views (FBVs) vs class-based views (CBVs), dynamic URL routing with path(), building forms with automated ModelForms validation, and implementing complete user authentication with django.contrib.auth.',
+    desc: 'బ్రౌజర్ నుంచి వచ్చే లింక్స్ ని (URLs) జాంగో ఎలా కంట్రోల్ చేస్తుంది? ఫారమ్స్ ని ఆటోమాటిక్ గా ఎలా తయారు చేస్తుంది? జాంగో లో డీఫాల్ట్ గా వచ్చే సేఫ్ లాగిన్ సిస్టమ్ ని ఎలా వాడాలో నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. URL Dispatcher, Function-Based Views (FBVs) & Class-Based Views (CBVs)',
-        body: `<p>In Django, incoming HTTP requests hit <code>urls.py</code>, which matches the URL path and routes execution to the appropriate <strong>View</strong> function or class in <code>views.py</code>.</p>
+        title: '1. URLs మరియు Views (లాజిక్ ఎక్కడ రాయాలి?)',
+        body: `<p>జాంగో లో ఎవరైనా ఒక లింక్ ని ఓపెన్ చేస్తే, ఫస్ట్ అది <code>urls.py</code> కి వెళుతుంది. అక్కడ ఆ లింక్ కి ఏ ఫంక్షన్ రన్ అవ్వాలో రాసి ఉంటుంది. ఆ ఫంక్షన్ నే <strong>View</strong> అంటారు (దీన్ని <code>views.py</code> లో రాస్తాం).</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">Function-Based Views (FBVs) vs Class-Based Views (CBVs):</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">Views లో రెండు రకాలు:</h4>
         <ul>
-          <li><strong>Function-Based Views (FBVs):</strong> Simple, explicit, and easy to read. You handle HTTP methods manually using <code>if request.method == "POST":</code>.</li>
-          <li><strong>Class-Based Views (CBVs):</strong> Object-oriented views that promote code reuse via inheritance and mixins (e.g. <code>ListView</code>, <code>DetailView</code>, <code>CreateView</code>).</li>
+          <li><strong>Function-Based Views (FBVs):</strong> ఇవి నార్మల్ పైథాన్ ఫంక్షన్స్ లాగా ఉంటాయి. చూడ్డానికి ఈజీగా అర్థమవుతాయి.</li>
+          <li><strong>Class-Based Views (CBVs):</strong> ఫంక్షన్ బదులు క్లాస్ రాస్తాం. ఒకే కోడ్ ని మళ్ళీ మళ్ళీ రాయకుండా (Inheritance) జాంగో మనకు ముందే కొన్ని రెడీమేడ్ క్లాసెస్ (ListView, DetailView) ఇస్తుంది.</li>
         </ul>`,
-        code: `# 1. URL Dispatcher: store_app/urls.py
+        code: `# 1. లింక్స్ ఎక్కడికి వెళ్లాలో చెప్దాం (store_app/urls.py):
 from django.urls import path
 from . import views
 
 urlpatterns = [
+    # మెయిన్ పేజీ (Products List)
     path("", views.product_list_view, name="product_list"),
+    # ఒక ప్రోడక్ట్ డీటెయిల్స్ పేజీ (ఉదా: /5/ ఓపెన్ చేస్తే)
     path("<int:product_id>/", views.product_detail_view, name="product_detail"),
+    # కొత్త ప్రోడక్ట్ యాడ్ చేయడానికి (CBV)
     path("create/", views.ProductCreateView.as_view(), name="product_create"),
 ]
 
-# 2. View Handlers: store_app/views.py
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+# 2. లాజిక్ రాద్దాం (store_app/views.py):
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView
 from .models import Product
 
-# Function-Based View (FBV):
+# FBV - ఫంక్షన్ బేస్డ్ వ్యూ (అన్ని ప్రోడక్ట్స్ చూపించడానికి):
 def product_list_view(request):
-    """Fetches and displays all active products."""
-    products = Product.objects.filter(is_active=True).order_by("-created_at")
-    context = {"products": products, "page_title": "Product Catalog"}
+    products = Product.objects.filter(is_active=True)
+    context = {"products": products, "page_title": "మన ప్రోడక్ట్స్"}
     return render(request, "store/product_list.html", context)
 
-# FBV with 404 Guard:
+# FBV - ఒక్క ప్రోడక్ట్ చూపించడానికి:
 def product_detail_view(request, product_id):
-    """Fetches single product or returns 404 automatically."""
-    product = get_object_or_404(Product, id=product_id, is_active=True)
+    # ఒకవేళ తప్పు ఐడీ ఇస్తే, ఆటోమాటిక్ గా 404 ఎర్రర్ చూపిస్తుంది!
+    product = get_object_or_404(Product, id=product_id)
     return render(request, "store/product_detail.html", {"product": product})
 
-# Class-Based View (CBV):
+# CBV - క్లాస్ బేస్డ్ వ్యూ (కొత్త ప్రోడక్ట్ క్రియేట్ చేయడానికి):
 class ProductCreateView(CreateView):
     model = Product
     fields = ["title", "category", "price", "stock"]
     template_name = "store/product_form.html"
-    success_url = "/products/"`,
+    success_url = "/"  # అయిపోయాక హోమ్ కి వెళ్ళిపోవాలి`,
         codeTitle: 'Example 1: Django URL Routing, FBVs and Generic CBVs',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 get_object_or_404 Utility:</strong>
-          <p style="margin-top:6px;"><code>get_object_or_404(Model, id=...)</code> queries the database and automatically raises an <code>Http404</code> exception if no record exists, eliminating manual try-except <code>Model.DoesNotExist</code> blocks.</p>
+          <strong style="color:#10b981;">🔍 get_object_or_404 సూపర్ పవర్:</strong>
+          <p style="margin-top:6px;">డేటాబేస్ లో లేని ఐడీ ని వెతికితే కోడ్ క్రాష్ అవుతుంది. అలా అవ్వకుండా, <code>get_object_or_404</code> వాడితే... ఐడీ లేకపోతే యూజర్ కి నీట్ గా "404 Not Found" పేజీ చూపిస్తుంది.</p>
         </div>`
       },
       {
-        title: '2. Django ModelForms & Built-in User Authentication (django.contrib.auth)',
-        body: `<p>Django includes an enterprise-grade authentication system in <strong><code>django.contrib.auth</code></strong>, providing secure User models, password hashing, session management, and access decorators.</p>
+        title: '2. ModelForms & యూజర్ లాగిన్ (Authentication)',
+        body: `<p>జాంగో లో మనకు యూజర్స్ ని మేనేజ్ చేయడానికి <strong><code>django.contrib.auth</code></strong> అనే సూపర్ సిస్టమ్ డీఫాల్ట్ గా వస్తుంది (పాస్వర్డ్ హ్యాషింగ్, లాగిన్, లాగ్ ఔట్ అన్నీ ఉంటాయి).</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The Power of ModelForms:</h4>
-        <p>A <strong>ModelForm</strong> automatically inspects your Django Model and generates corresponding HTML form widgets with automatic server-side validation, error messages, and direct <code>form.save()</code> database persistence!</p>`,
-        code: `# 1. Defining a ModelForm: store_app/forms.py
+        <h4 style="color:#10b981; margin:16px 0 8px;">ModelForms మ్యాజిక్:</h4>
+        <p>HTML లో ఫారమ్ రాయాలంటే ప్రతి బాక్స్ కి కోడ్ రాయాలి (input type text...). కానీ జాంగో లో <strong>ModelForm</strong> వాడితే, మన డేటాబేస్ టేబుల్ ని బట్టి అదే ఆటోమాటిక్ గా ఫారమ్ ని, ఎర్రర్ మెసేజెస్ ని తయారు చేసేస్తుంది!</p>`,
+        code: `# 1. ఫారమ్ క్రియేట్ చేద్దాం (store_app/forms.py):
 from django import forms
 from .models import Product
 
@@ -570,66 +517,62 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["title", "category", "price", "stock"]
-        widgets = {
-            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter product title"}),
-            "price": forms.NumberInput(attrs={"class": "form-control", "min": "0"}),
-        }
 
-# 2. Authenticated View Protected with @login_required: store_app/views.py
+# 2. వ్యూ లో లాగిన్ చెకింగ్ అండ్ ఫారమ్ వాడటం (store_app/views.py):
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.shortcuts import redirect, render
+from .forms import ProductForm
 
+# ఈ పేజీ ఓపెన్ చేయాలంటే లాగిన్ అయి ఉండాలి అని చెప్తున్నాం:
 @login_required(login_url="/accounts/login/")
 def create_product_view(request):
-    """Only logged-in users can access this page."""
     if request.method == "POST":
+        # సబ్మిట్ చేసిన డేటాని ఫారమ్ కి ఇస్తున్నాం
         form = ProductForm(request.POST)
-        if form.is_valid(): # Validates data types, lengths, and constraints!
-            product = form.save() # Automatically inserts row into DB!
+        
+        # డేటా కరెక్ట్ గా ఉందా లేదా చెక్ చేస్తుంది (Validates)
+        if form.is_valid(): 
+            product = form.save() # ఆటోమాటిక్ గా డేటాబేస్ లో సేవ్ చేసేస్తుంది!
             return redirect("product_detail", product_id=product.id)
     else:
+        # ఫస్ట్ టైమ్ ఓపెన్ చేసినప్పుడు ఖాళీ ఫారమ్ చూపిస్తాం
         form = ProductForm()
 
     return render(request, "store/product_form.html", {"form": form})`,
         codeTitle: 'Example 2: Django ModelForms & @login_required Protected View',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 form.is_valid() & Automatic CSRF:</strong>
-          <p style="margin-top:6px;">When rendering forms in templates, always include <code>{% csrf_token %}</code> inside the <code>&lt;form&gt;</code>. <code>form.is_valid()</code> validates clean data, checks constraints, and populates <code>form.errors</code> if validation fails.</p>
+          <strong style="color:#10b981;">🔍 form.is_valid() సేఫ్టీ:</strong>
+          <p style="margin-top:6px;">యూజర్ ప్రైస్ దగ్గర "Free" అని అక్షరాలు ఇస్తే, <code>is_valid()</code> దాన్ని పసిగట్టి డేటాబేస్ లో సేవ్ చేయనివ్వదు. ఆటోమాటిక్ గా "దయచేసి నెంబర్ మాత్రమే ఇవ్వండి" అని ఎర్రర్ చూపిస్తుంది.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Forgetting the {% csrf_token %} Tag in Django Forms',
-      text: 'Every POST form in a Django template must include the {% csrf_token %} template tag. If omitted, Django\'s CSRF middleware will immediately reject the submission with an HTTP 403 Forbidden error.'
+      title: 'HTML ఫారమ్ లో {% csrf_token %} మర్చిపోవడం',
+      text: 'జాంగో లో ఏ ఫారమ్ సబ్మిట్ చేయాలన్నా, కచ్చితంగా ఆ ఫారమ్ లోపల {% csrf_token %} అని రాయాలి. లేకపోతే సబ్మిట్ నొక్కగానే "403 Forbidden" ఎర్రర్ వస్తుంది. ఇది హ్యాకర్స్ మన ఫారమ్స్ ని వాడకుండా ఆపడానికి వాడే ఒక సెక్యూరిటీ టోకెన్.'
     },
     tryIt: {
-      desc: 'Simulate Django\'s authentication check: write a function check_login_status(user) that returns "Access Granted" if user.is_authenticated is True, else "Redirecting to /login/".',
-      code: `class MockUser:
-    def __init__(self, name, is_auth):
-        self.username = name
-        self.is_authenticated = is_auth
+      desc: '@login_required ఎలా పనిచేస్తుందో సిమ్యులేట్ చేద్దాం. యూజర్ ఆబ్జెక్ట్ లో is_authenticated ట్రూ ఉంటేనే లోపలికి పంపే ఫంక్షన్ రాయండి.',
+      code: `class User:
+    def __init__(self, name, logged_in):
+        self.name = name
+        self.is_authenticated = logged_in
 
 def protect_dashboard(user):
     if not user.is_authenticated:
-        return "🛑 HTTP 302: Redirecting to /accounts/login/?next=/dashboard/"
-    return f"✅ Access Granted: Welcome to Dashboard, {user.username}!"
+        return "🛑 ఆపండి: ముందు లాగిన్ పేజీకి వెళ్ళండి (/login)"
+    return f"✅ వెల్కమ్! మీ డ్యాష్ బోర్డు ఓపెన్ అయ్యింది, {user.name}."
 
-print(protect_dashboard(MockUser("Anonymous", False)))
-print(protect_dashboard(MockUser("Balaji", True)))`
+print(protect_dashboard(User("Guest", False)))
+print(protect_dashboard(User("Balaji", True)))`
     },
     faqs: [
       {
-        q: 'What is the difference between authenticate() and login() in Django?',
-        a: 'authenticate(request, username=..., password=...) verifies credentials and returns a User object (or None). login(request, user) attaches the authenticated user to the current session cookie.'
+        q: 'authenticate() కి, login() కి డిఫరెన్స్ ఏంటి?',
+        a: 'authenticate(user, pass) అనేది యూజర్ నేమ్, పాస్వర్డ్ కరెక్టో కాదో చెక్ చేస్తుంది అంతే. లాగిన్ అవ్వరు. login(request, user) అనేది ఆ యూజర్ ని సెషన్ లోకి యాడ్ చేసి లాగిన్ చేస్తుంది.'
       },
       {
-        q: 'What are Django Context Processors?',
-        a: 'Context processors are functions that automatically inject variables into the context of every rendered template across the entire site (e.g. {{ user }}, {{ request }}, {{ messages }}).'
-      },
-      {
-        q: 'How do I extend the default User model in Django?',
-        a: 'The recommended practice is to create a CustomUser model inheriting from AbstractUser, configured via AUTH_USER_MODEL = "users.CustomUser" in settings.py.'
+        q: 'నేను డీఫాల్ట్ User టేబుల్ ని మార్చొచ్చా?',
+        a: 'మార్చొచ్చు! మీ ప్రాజెక్ట్ స్టార్ట్ చేసినప్పుడే AbstractUser ని వాడి మీకు నచ్చిన CustomUser (ఉదా: phone_number కాలమ్ యాడ్ చేసి) తయారు చేసుకోవడం చాలా బెస్ట్ ప్రాక్టీస్.'
       }
     ]
   },
@@ -642,155 +585,129 @@ print(protect_dashboard(MockUser("Balaji", True)))`
     phaseId: 'phase10',
     phaseTitle: 'Phase 10: Web Development',
     slug: '52-python-django-rest-framework-and-deployment',
-    title: 'Django REST Framework & Deploy',
+    title: 'Django REST Framework (DRF) & Deploy (తెలుగులో)',
     badge: '52. DRF & Deployment',
     subtopics: 'What is DRF? · Serializers & ModelSerializers · ViewSets & Routers · Token Authentication · Production Stack (Gunicorn, Nginx, WhiteNoise, Environment Variables)',
-    desc: 'Master building enterprise web APIs and production deployment in Python: the Django REST Framework (DRF) architecture, Serializers, ModelViewSets, Routers, token authentication, and deploying with Gunicorn, Nginx, and WhiteNoise.',
+    desc: 'జాంగో తో మొబైల్ యాప్స్ కి, రియాక్ట్ యాప్స్ కి API ని (JSON డేటా) ఎలా పంపించాలి? (DRF గురించి). అలాగే మనం చేసిన వెబ్సైట్ ని పబ్లిక్ గా ఇంటర్నెట్ లో (Production) ఎలా డిప్లాయ్ చేయాలో నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. What is Django REST Framework (DRF)? Serializers & ViewSets',
-        body: `<p><strong>Django REST Framework (DRF)</strong> is a powerful, flexible toolkit for building production-grade Web APIs on top of Django.</p>
+        title: '1. Django REST Framework (DRF) అంటే ఏంటి? (Serializers & ViewSets)',
+        body: `<p>జాంగో మామూలుగా HTML పేజీలని ఇస్తుంది. కానీ మనకు రియాక్ట్ (React) యాప్ లేదా మొబైల్ యాప్ కి కేవలం డేటా (JSON) మాత్రమే కావాలి. దానికోసం వాడే ఒక పవర్ఫుల్ టూల్ పేరే <strong>Django REST Framework (DRF)</strong>.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The 3 Core Building Blocks of DRF:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">DRF లో 3 ముఖ్యమైన కాన్సెప్ట్స్:</h4>
         <ol style="line-height:1.8; margin-left:20px;">
-          <li><strong>Serializers (<code>ModelSerializer</code>):</strong> Converts complex Django ORM model instances to native Python datatypes that can be rendered into JSON (and validates incoming JSON payloads back into models).</li>
-          <li><strong>ViewSets (<code>ModelViewSet</code>):</strong> Combines standard REST CRUD operations (list, create, retrieve, update, destroy) into a single unified class.</li>
-          <li><strong>Routers (<code>DefaultRouter</code>):</strong> Automatically generates all RESTful URL patterns (<code>/api/products/</code>, <code>/api/products/1/</code>) without writing manual path declarations!</li>
+          <li><strong>Serializers (సీరియలైజర్స్):</strong> ఇవి మన డేటాబేస్ ఆబ్జెక్ట్స్ ని JSON ఫార్మాట్ లోకి మారుస్తాయి. (అలాగే బయటినుంచి వచ్చే JSON డేటాని మళ్ళీ డేటాబేస్ లోకి మారుస్తాయి).</li>
+          <li><strong>ViewSets (వ్యూసెట్స్):</strong> ఒక్క క్లాస్ రాస్తే చాలు.. క్రియేట్, అప్డేట్, డిలీట్, లిస్ట్ ఇలా 5 పనులు అదే చేసేస్తుంది.</li>
+          <li><strong>Routers (రౌటర్స్):</strong> మనం urls.py లో లింక్స్ అన్నీ మాన్యువల్ గా రాయక్కర్లేదు, రౌటర్ దానంతట అదే లింక్స్ ని క్రియేట్ చేస్తుంది!</li>
         </ol>`,
-        code: `# 1. Defining DRF Serializer: api/serializers.py
+        code: `# 1. Serializer రాద్దాం (api/serializers.py):
 from rest_framework import serializers
-from store_app.models import Product, Category
+from store_app.models import Product
 
 class ProductSerializer(serializers.ModelSerializer):
+    # కేటగిరీ పేరుని బయటనుంచి చదవడానికి (ReadOnlyField)
     category_name = serializers.ReadOnlyField(source="category.name")
 
     class Meta:
         model = Product
-        fields = ["id", "title", "category", "category_name", "price", "stock", "is_active"]
+        fields = ["id", "title", "category_name", "price", "stock", "is_active"]
 
-# 2. Defining DRF ModelViewSet: api/views.py
-from rest_framework import viewsets, permissions
-from rest_framework.authentication import TokenAuthentication
+# 2. ViewSet రాద్దాం (api/views.py):
+from rest_framework import viewsets
+from .serializers import ProductSerializer
 
 class ProductViewSet(viewsets.ModelViewSet):
-    """Provides complete CRUD REST endpoints automatically."""
-    queryset = Product.objects.filter(is_active=True).order_by("-created_at")
+    """ఇది ఆటోమాటిక్ గా CRUD ఆపరేషన్స్ అన్నీ ఇస్తుంది!"""
+    queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-# 3. Automatic REST URL Routing: api/urls.py
+# 3. ఆటోమాటిక్ లింక్స్ కోసం Router వాడదాం (api/urls.py):
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
+# /api/products/ అనే లింక్ కి మన వ్యూ ని అటాచ్ చేస్తున్నాం
 router.register(r"products", ProductViewSet, basename="product")
+
 urlpatterns = router.urls`,
         codeTitle: 'Example 1: Complete DRF ModelSerializer, ModelViewSet, and DefaultRouter',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 What DefaultRouter Generates in 3 Lines:</strong>
-          <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li><code>GET /api/products/</code> -> List all products</li>
-            <li><code>POST /api/products/</code> -> Create product</li>
-            <li><code>GET /api/products/42/</code> -> Retrieve product #42</li>
-            <li><code>PUT / PATCH /api/products/42/</code> -> Update product #42</li>
-            <li><code>DELETE /api/products/42/</code> -> Delete product #42</li>
-          </ul>
+          <strong style="color:#10b981;">🔍 DefaultRouter మ్యాజిక్:</strong>
+          <p style="margin-top:6px;">జస్ట్ పైనున్న 3 లైన్స్ రౌటర్ కోడ్ తో... <code>GET /api/products/</code>, <code>POST /api/products/</code>, <code>DELETE /api/products/42/</code> లాంటి లింక్స్ అన్నీ దానంతట అవే ఆటోమాటిక్ గా తయారైపోతాయి!</p>
         </div>`
       },
       {
-        title: '2. Production Web Architecture & Deployment Best Practices',
-        body: `<p>Never use the built-in <code>python manage.py runserver</code> in production (it is single-threaded and not hardened for security). A production deployment uses a robust multi-tier architecture:</p>
+        title: '2. యాప్ ని లైవ్ లో పెట్టడం (Production Deployment & Security)',
+        body: `<p>లోకల్ గా వాడే <code>python manage.py runserver</code> ని <strong>ఎట్టి పరిస్థితుల్లోనూ పబ్లిక్ లైవ్ సర్వర్ లో వాడకూడదు</strong>. అది చాలా స్లో అండ్ హ్యాక్ చేయడం ఈజీ.</p>
         
-        <div class="diagram-box">┌────────────────────────────────────────────────────────────────────────┐
-│                     PRODUCTION PYTHON WEB ARCHITECTURE                 │
-├────────────────────────────────────────────────────────────────────────┤
-│  Client Traffic ───> Cloudflare (DDoS / SSL / CDN)                     │
-│                            │                                           │
-│                            ▼                                           │
-│                      Nginx Reverse Proxy                               │
-│                     ┌──────┴─────────────────────┐                     │
-│                     ▼                            ▼                     │
-│          Static Files (/static/)        WSGI Application Server        │
-│          (Served via WhiteNoise)          (Gunicorn / Uvicorn)         │
-│                                                  │                     │
-│                                                  ▼                     │
-│                                        Django / Flask Backend          │
-│                                                  │                     │
-│                                                  ▼                     │
-│                                        PostgreSQL Database             │
-└────────────────────────────────────────────────────────────────────────┘</div>
-
-        <h4 style="color:#10b981; margin:16px 0 8px;">Production Deployment Checklist:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">లైవ్ సర్వర్ ఆర్కిటెక్చర్ (ఎలా ఉండాలి?):</h4>
         <ul>
-          <li><strong><code>DEBUG = False</code>:</strong> Never expose error traces in production.</li>
-          <li><strong><code>ALLOWED_HOSTS = ['yourdomain.com']</code>:</strong> Prevents HTTP Host header attacks.</li>
-          <li><strong>Environment Secrets (<code>.env</code>):</strong> Store <code>SECRET_KEY</code> and <code>DATABASE_URL</code> in environment variables.</li>
-          <li><strong>Static Files with WhiteNoise:</strong> Enables Django to serve its own static files efficiently without separate storage servers.</li>
+          <li><strong>Gunicorn:</strong> ఇది ప్రొడక్షన్ పైథాన్ సర్వర్. ఒకేసారి వందల మంది వచ్చినా హ్యాండిల్ చేస్తుంది.</li>
+          <li><strong>Nginx:</strong> ఇది ఫ్రంట్ లో గార్డ్ లాగా ఉండి గూనికోర్న్ కి ట్రాఫిక్ ని పంపుతుంది.</li>
+          <li><strong>WhiteNoise:</strong> జాంగో లోని CSS/JS ఫైల్స్ ని చాలా ఫాస్ట్ గా ఇవ్వడానికి దీన్ని వాడతాం.</li>
+        </ul>
+
+        <h4 style="color:#10b981; margin:16px 0 8px;">లైవ్ కి వెళ్ళే ముందు చెక్ లిస్ట్ (settings.py):</h4>
+        <ul>
+          <li><strong><code>DEBUG = False</code>:</strong> కచ్చితంగా ఇది ఆఫ్ చేయాలి, లేకపోతే ఎర్రర్ వచ్చినప్పుడు మీ సీక్రెట్ కోడ్ బయట పడిపోతుంది.</li>
+          <li><strong>Environment Variables (.env):</strong> పాస్వర్డ్స్ ని, డేటాబేస్ లింక్స్ ని <code>settings.py</code> లో డైరెక్ట్ గా రాయకుండా <code>.env</code> ఫైల్ లో దాచిపెట్టి చదవాలి.</li>
         </ul>`,
-        code: `# Production Settings Configuration (settings.py):
+        code: `# ప్రొడక్షన్ సెట్టింగ్స్ ఎలా ఉండాలో శాంపిల్ (settings.py):
 import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 1. Load Secrets from Environment:
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback_local_key_not_for_prod")
+# 1. సీక్రెట్స్ ని ఎన్విరాన్మెంట్ నుంచి చదువుతున్నాం (కోడ్ లో రాయట్లేదు):
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "default-key-not-safe")
+
+# లైవ్ లో DEBUG ఎప్పుడూ False ఉండాలి:
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "ourcompiler.com,127.0.0.1").split(",")
 
-# 2. Production Security Headers:
-SECURE_SSL_REDIRECT = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
+# మన వెబ్సైట్ డొమైన్ పేరు ఇక్కడ ఇవ్వాలి (Security కోసం)
+ALLOWED_HOSTS = ["mywebsite.com", "127.0.0.1"]
 
-# 3. WhiteNoise Static Files Configuration:
+# 2. WhiteNoise యాడ్ చేస్తున్నాం (CSS/JS ఫైల్స్ ఫాస్ట్ గా లోడ్ అవ్వడానికి):
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware", # Serves compressed static assets!
-    # ... standard middlewares ...
+    "whitenoise.middleware.WhiteNoiseMiddleware", # ఇది సెకండ్ లైన్ లో ఉండాలి
+    # మిగతావన్నీ...
 ]
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-print("Production Settings Blueprint Configured.")`,
+# ఫైల్స్ ఎక్కడ సేవ్ అవ్వాలో చెప్తున్నాం
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"`,
         codeTitle: 'Reference: Production Deployment Security & WhiteNoise Configuration',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Gunicorn Execution Command:</strong>
-          <p style="margin-top:6px;">In production, start your app using: <code>gunicorn my_project.wsgi:application --workers 4 --bind 0.0.0.0:8000</code>. A general rule for worker count is <code>(2 x CPU_Cores) + 1</code>.</p>
+          <strong style="color:#10b981;">🔍 Gunicorn ఎలా రన్ చేయాలి?:</strong>
+          <p style="margin-top:6px;">లైవ్ సర్వర్ లోకి వెళ్ళాక రన్ సర్వర్ బదులు.. <code>gunicorn my_project.wsgi:application --workers 4</code> అని రన్ చేయాలి. (workers అంటే 4 గురు వెయిటర్స్ కింద పని చేస్తున్నట్టు, స్పీడ్ పెరుగుతుంది).</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Hardcoding SECRET_KEY in Public GitHub Repositories',
-      text: 'Hardcoding Django\'s SECRET_KEY exposes your application to session tampering and remote code execution vulnerabilities. Always use python-decouple or os.getenv() to load secrets from environment variables.'
+      title: 'GitHub లో SECRET_KEY ని కమిట్ చేయడం',
+      text: 'మీ settings.py లో ఉన్న SECRET_KEY ని మార్చకుండా అలాగే గిట్ హబ్ పబ్లిక్ లో పెడితే, ఎవరైనా మీ సైట్ లోకి అడ్మిన్ లాగా దూరిపోయి మొత్తం హ్యాక్ చేయగలరు! సీక్రెట్స్ ఎప్పుడూ .env ఫైల్ లో పెట్టి, ఆ ఫైల్ ని .gitignore లో యాడ్ చేయాలి.'
     },
     tryIt: {
-      desc: 'Write a simulated DRF serializer validate_price method that raises a ValidationError if price is less than or equal to zero.',
+      desc: 'ఒక కస్టమ్ వాలిడేషన్ ఫంక్షన్ ని సిమ్యులేట్ చేద్దాం. ప్రైస్ 0 కంటే తక్కువ ఉంటే ValueError ఇచ్చేలా ఒక ఫంక్షన్ రాయండి.',
       code: `def validate_price(price):
     if price <= 0:
-        raise ValueError("Price must be a positive value greater than zero!")
+        raise ValueError("ఎర్రర్: ప్రైస్ కచ్చితంగా 0 కంటే ఎక్కువే ఉండాలి!")
     return price
 
 try:
-    print("Valid Price:  ", validate_price(499.0))
-    print("Invalid Price:", validate_price(-10.0))
+    print("కరెక్ట్ ప్రైస్:  ", validate_price(499.0))
+    print("రాంగ్ ప్రైస్: ", validate_price(-10.0))
 except ValueError as err:
-    print(f"Validation Error Caught: {err}")`
+    print(err)`
     },
     faqs: [
       {
-        q: 'What is the difference between Gunicorn and Uvicorn?',
-        a: 'Gunicorn is a WSGI HTTP server for synchronous Python frameworks (Flask, standard Django). Uvicorn is an ASGI server for asynchronous Python frameworks (FastAPI, Django Channels).'
+        q: 'JWT (JSON Web Token) ఆథెంటికేషన్ అంటే ఏంటి?',
+        a: 'యాప్స్ లో లాగిన్ అయినప్పుడు కుకీస్ కి బదులు ఒక టోకెన్ (కోడ్) ఇస్తారు. ఈ టోకెన్ తోనే యాప్స్ సర్వర్ తో మాట్లాడతాయి. ఇది చాలా ఫాస్ట్ గా ఉంటుంది, సర్వర్ ప్రతిసారీ డేటాబేస్ ని చెక్ చేయక్కర్లేదు.'
       },
       {
-        q: 'What is JWT (JSON Web Token) authentication in DRF?',
-        a: 'JWT is a stateless token format containing encrypted user claims. Unlike session cookies, the server does not need to query a database to verify JWT validity, making it ideal for distributed microservices.'
-      },
-      {
-        q: 'What is WhiteNoise in Django?',
-        a: 'WhiteNoise is a Python package that allows Django to serve its own static files (CSS, JS, images) with caching and Gzip/Brotli compression directly from the application server, without needing separate S3 buckets for small-to-medium deployments.'
+        q: 'Gunicorn కీ, Uvicorn కీ తేడా ఏంటి?',
+        a: 'Gunicorn అనేది ఫ్లాస్క్, జాంగో లాంటి మామూలు (Sync) యాప్స్ కి వాడతారు. Uvicorn అనేది ఫాస్ట్ గా రన్ అయ్యే FastAPI లాంటి (Async) యాప్స్ కి వాడతారు.'
       }
     ]
   },
@@ -803,427 +720,230 @@ except ValueError as err:
     phaseId: 'phase10',
     phaseTitle: 'Phase 10: Web Development',
     slug: '53-python-web-development-capstone-projects',
-    title: 'Web Development Capstone Projects',
+    title: 'Web Dev ప్రాజెక్ట్స్ (తెలుగులో)',
     badge: '53. Web Capstone Projects',
     subtopics: '6 Full Projects · 1. Multi-Author Blog · 2. Secure Auth System · 3. Task Manager · 4. E-Commerce Backend · 5. Student Portal · 6. DRF REST API',
-    desc: 'Build six complete real-world web applications in Python: a Full-Featured Multi-Author Blog Engine, a Secure User Authentication & Session System, a Task & Project Management App, an E-Commerce Backend Engine with inventory orders, a Student Academic Portal with grade cards, and a Production-Grade DRF REST API.',
+    desc: 'ఇంతవరకు నేర్చుకున్న వెబ్ డెవలప్మెంట్, లాగిన్ సిస్టమ్స్, API కాన్సెప్ట్స్ తో 6 రియల్ వరల్డ్ ప్రాజెక్ట్స్ (బ్లాగ్, టాస్క్ మేనేజర్, ఈ-కామర్స్, స్టూడెంట్ పోర్టల్) పైథాన్ లో లాజిక్ గా ఎలా క్రియేట్ చేయాలో చూద్దాం.',
     sections: [
       {
-        title: '1. Project 1: Full-Featured Multi-Author Blog Application',
-        body: `<p>A complete blog application featuring Post creation, dynamic slug generation, author relationships, tag filtering, and publication status management:</p>`,
-        code: `# =========================================================================
-# PROJECT 1: MULTI-AUTHOR BLOG APPLICATION ENGINE
-# =========================================================================
-import datetime
+        title: '1. ప్రాజెక్ట్ 1: Multi-Author బ్లాగ్ సిస్టమ్ (Tags తో)',
+        body: `<p>చాలా మంది ఆథర్స్ వచ్చి పోస్ట్లు రాయగలిగే, ఆటోమాటిక్ గా లింక్స్ (slugs) క్రియేట్ అయ్యే ఒక బ్లాగ్ ఇంజిన్ లాజిక్ ని రాద్దాం.</p>`,
+        code: `# ప్రాజెక్ట్ 1: మల్టీ-ఆథర్ బ్లాగ్ ఇంజిన్
 
 class BlogPost:
-    """Models an individual blog article."""
-    def __init__(self, post_id, title, content, author, tags=None):
+    def __init__(self, post_id, title, author, tags=None):
         self.id = post_id
         self.title = title
+        # ఆటోమాటిక్ గా స్లగ్ క్రియేట్ చేయడం (స్పేస్ బదులు డాష్):
         self.slug = title.lower().replace(" ", "-")
-        self.content = content
         self.author = author
         self.tags = tags or []
-        self.created_at = datetime.datetime.now()
-        self.is_published = True
         self.views = 0
 
     def record_view(self):
         self.views += 1
 
     def __repr__(self):
-        return f"<Post #{self.id}: '{self.title}' by {self.author} ({self.views} views)>"
+        return f"📝 '{self.title}' by {self.author} ({self.views} views)"
 
 class BlogEngine:
-    """Manages publishing, querying, and filtering blog articles."""
     def __init__(self):
         self.posts = []
         self._next_id = 1
 
-    def publish_post(self, title, content, author, tags=None):
-        post = BlogPost(self._next_id, title, content, author, tags)
+    def publish(self, title, author, tags=None):
+        post = BlogPost(self._next_id, title, author, tags)
         self.posts.append(post)
         self._next_id += 1
-        print(f"📝 Published: '{post.title}' by {author}")
         return post
 
-    def get_by_slug(self, slug):
+    def get_post(self, slug):
         for p in self.posts:
-            if p.slug == slug and p.is_published:
-                p.record_view()
+            if p.slug == slug:
+                p.record_view() # చదివినప్పుడల్లా వ్యూస్ పెరుగుతాయి
                 return p
         return None
 
     def filter_by_tag(self, tag):
-        return [p for p in self.posts if tag.lower() in [t.lower() for t in p.tags] and p.is_published]
+        return [p for p in self.posts if tag.lower() in [t.lower() for t in p.tags]]
 
-# Run Project 1 Demonstration:
 blog = BlogEngine()
-p1 = blog.publish_post("Mastering Python 3 in 2026", "Comprehensive guide to Python...", "Balaji", ["Python", "Tutorial"])
-p2 = blog.publish_post("Building Web Backends with Django", "Learn MTV architecture...", "Alex", ["Django", "Web"])
-p3 = blog.publish_post("Flask REST API Microservices", "Fast and lightweight APIs...", "Balaji", ["Flask", "Python", "API"])
+blog.publish("Python For Beginners", "Balaji", ["Python", "Tutorial"])
+blog.publish("Django Backend", "Alex", ["Python", "Web"])
 
-# Query by tag:
-print("\\n--- 🏷️ Posts Tagged 'Python' ---")
+print("--- 'Python' ట్యాగ్ ఉన్న పోస్ట్లు ---")
 for p in blog.filter_by_tag("Python"):
-    print("•", p)
+    print(p)
 
-# Read post:
-read_post = blog.get_by_slug("mastering-python-3-in-2026")
-print(f"\\n📖 Read Post: {read_post.title} | Views: {read_post.views}")`,
+# ఒక పోస్ట్ ని చదువుదాం:
+read_post = blog.get_post("python-for-beginners")
+print(f"\\n📖 ఓపెన్ చేసిన పోస్ట్: {read_post.title} | వ్యూస్: {read_post.views}")`,
         codeTitle: 'Project 1: Multi-Author Blog Engine',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Key Features:</strong>
-          <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li>Automatic slugification of titles for SEO-friendly URLs (<code>/posts/mastering-python-3-in-2026</code>).</li>
-            <li>Tag-based multi-category filtering and view counter tracking.</li>
-          </ul>
+          <strong style="color:#10b981;">🔍 Slug ఎందుకు?:</strong>
+          <p style="margin-top:6px;">యూజర్స్ కి <code>/post/24</code> అని ఇస్తే దేని గురించో అర్థం కాదు, అదే <code>/post/python-for-beginners</code> అని ఇస్తే గూగుల్ సెర్చ్ కి (SEO), చూసే వాళ్ళకి చాలా మంచిది.</p>
         </div>`
       },
       {
-        title: '2. Project 2: Secure User Authentication & Session System',
-        body: `<p>A complete authentication service implementing salted password hashing, credential verification, session management, and login throttling:</p>`,
-        code: `# =========================================================================
-# PROJECT 2: SECURE USER AUTHENTICATION & SESSION SYSTEM
-# =========================================================================
+        title: '2. ప్రాజెక్ట్ 2: సెక్యూర్ ఆథెంటికేషన్ & సెషన్ సిస్టమ్',
+        body: `<p>యూజర్స్ పాస్వర్డ్స్ ని సాల్టింగ్ (Salting) చేసి సేఫ్ గా హ్యాష్ చేయడం, లాగిన్ అవ్వగానే ఒక సెషన్ టోకెన్ ఇచ్చే సిస్టమ్ ని రాద్దాం.</p>`,
+        code: `# ప్రాజెక్ట్ 2: సెక్యూర్ లాగిన్ & సెషన్ సిస్టమ్
 import hashlib
 import secrets
-import time
 
 class SecureAuthService:
-    """Production authentication service with salted hashing & session tokens."""
-    
     def __init__(self):
-        self.user_database = {}  # {username: {"salt": salt, "hash": hash, "role": role}}
-        self.active_sessions = {} # {session_token: {"username": username, "expires": timestamp}}
+        self.db = {} # {username: {"salt": salt, "hash": hash}}
+        self.sessions = {} # {token: username}
 
-    def _hash_password(self, password, salt):
-        """Generates SHA-256 hash combined with random salt."""
-        return hashlib.sha256((password + salt).encode("utf-8")).hexdigest()
+    def _hash_pass(self, pwd, salt):
+        # పాస్వర్డ్ కి ఉప్పు (salt) కలిపి హ్యాష్ చేస్తున్నాం:
+        return hashlib.sha256((pwd + salt).encode()).hexdigest()
 
-    def register_user(self, username, password, role="User"):
-        if username in self.user_database:
-            raise ValueError(f"Username '{username}' is already taken!")
+    def register(self, user, pwd):
+        # 16 క్యారెక్టర్స్ రాండమ్ స్ట్రింగ్ ని క్రియేట్ చేస్తున్నాం:
+        salt = secrets.token_hex(16) 
+        hashed_pwd = self._hash_pass(pwd, salt)
+        self.db[user] = {"salt": salt, "hash": hashed_pwd}
+        print(f"✅ రిజిస్టర్ అయ్యారు: {user}")
+
+    def login(self, user, pwd):
+        record = self.db.get(user)
+        if not record: return print("❌ ఆ యూజర్ లేరు!")
         
-        salt = secrets.token_hex(16) # Cryptographically secure 32-char hex salt
-        pw_hash = self._hash_password(password, salt)
-        self.user_database[username] = {"salt": salt, "hash": pw_hash, "role": role}
-        print(f"✅ Registered user: {username} [{role}]")
-
-    def login(self, username, password):
-        user_record = self.user_database.get(username)
-        if not user_record:
-            print(f"❌ Login Failed: User '{username}' does not exist.")
-            return None
-        
-        input_hash = self._hash_password(password, user_record["salt"])
-        if secrets.compare_digest(input_hash, user_record["hash"]):
-            token = secrets.token_urlsafe(32) # Generate 43-character session token
-            self.active_sessions[token] = {"username": username, "role": user_record["role"], "login_time": time.time()}
-            print(f"🔓 Login Successful for '{username}'! Session Token: {token[:12]}...")
+        # ఇచ్చిన పాస్వర్డ్ ని పాత సాల్ట్ తో కలిపి చెక్ చేస్తున్నాం:
+        input_hash = self._hash_pass(pwd, record["salt"])
+        if secrets.compare_digest(input_hash, record["hash"]):
+            token = secrets.token_urlsafe(16) # సెషన్ టోకెన్ ఇస్తున్నాం
+            self.sessions[token] = user
+            print(f"🔓 లాగిన్ సక్సెస్! మీ టోకెన్: {token[:8]}...")
             return token
-        else:
-            print(f"❌ Login Failed: Invalid password for '{username}'.")
-            return None
+        print("❌ పాస్వర్డ్ తప్పు!")
+        return None
 
-    def validate_session(self, token):
-        session_info = self.active_sessions.get(token)
-        if session_info:
-            return True, session_info["username"], session_info["role"]
-        return False, None, None
-
-# Run Project 2 Demonstration:
 auth = SecureAuthService()
-auth.register_user("balaji_dev", "SecurePass#2026", role="Admin")
-auth.register_user("alex_smith", "SimplePass123", role="User")
+auth.register("balaji_dev", "SuperSecret123")
 
-# Attempt Login:
-token = auth.login("balaji_dev", "SecurePass#2026")
-is_valid, user, role = auth.validate_session(token)
-print(f"Session Valid: {is_valid} | Authenticated as: {user} ({role})")`,
+# లాగిన్ టెస్ట్:
+token = auth.login("balaji_dev", "SuperSecret123")
+if token in auth.sessions:
+    print(f"సెషన్ కరెక్టే! వెల్కమ్ {auth.sessions[token]}")`,
         codeTitle: 'Project 2: Secure User Authentication & Session System',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Security Best Practices:</strong>
-          <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li><code>secrets.token_hex(16)</code>: Generates true random cryptographic salts.</li>
-            <li><code>secrets.compare_digest()</code>: Prevents timing attacks during hash verification.</li>
-          </ul>
+          <strong style="color:#10b981;">🔍 Salt ఎందుకు కలుపుతాం?:</strong>
+          <p style="margin-top:6px;">ఇద్దరు యూజర్స్ "12345" అనే ఒకే పాస్వర్డ్ పెట్టినా, మనం సాల్ట్ (రాండమ్ కోడ్) కలపడం వల్ల హ్యాష్ అయిన తర్వాత రెండు పాస్వర్డ్స్ వేర్వేరుగా కనిపిస్తాయి. హ్యాకర్స్ కి కనిపెట్టడం అసాధ్యం.</p>
         </div>`
       },
       {
-        title: '3. Project 3: Collaborative Task & Project Management App',
-        body: `<p>A complete task management engine supporting projects, priority levels, status updates, and milestone tracking:</p>`,
-        code: `# =========================================================================
-# PROJECT 3: COLLABORATIVE TASK & PROJECT MANAGEMENT APP
-# =========================================================================
-from enum import Enum, auto
-
-class Priority(Enum):
-    LOW = auto()
-    MEDIUM = auto()
-    HIGH = auto()
-    CRITICAL = auto()
-
-class TaskItem:
-    def __init__(self, task_id, title, priority=Priority.MEDIUM, assignee="Unassigned"):
-        self.id = task_id
-        self.title = title
-        self.priority = priority
-        self.assignee = assignee
-        self.is_completed = False
-
-    def mark_complete(self):
-        self.is_completed = True
-
-    def __repr__(self):
-        status = "✅ Done" if self.is_completed else "⏳ In Progress"
-        return f"  • Task #{self.id}: {self.title:30} [{self.priority.name:8}] Assignee: {self.assignee:12} [{status}]"
-
-class ProjectBoard:
-    def __init__(self, project_name):
-        self.name = project_name
-        self.tasks = []
-        self._counter = 1
-
-    def add_task(self, title, priority=Priority.MEDIUM, assignee="Unassigned"):
-        task = TaskItem(self._counter, title, priority, assignee)
-        self.tasks.append(task)
-        self._counter += 1
-        return task
-
-    def get_progress_summary(self):
-        total = len(self.tasks)
-        completed = sum(1 for t in self.tasks if t.is_completed)
-        pct = (completed / total * 100) if total > 0 else 0
-        return f"📊 Project '{self.name}': {completed}/{total} Tasks Completed ({pct:.1f}%)"
-
-# Run Project 3 Demonstration:
-board = ProjectBoard("Python Masterclass 2026")
-t1 = board.add_task("Write Phase 10 Web Development", Priority.CRITICAL, "Balaji")
-t2 = board.add_task("Verify Code Examples in IDE", Priority.HIGH, "Alex")
-t3 = board.add_task("Deploy Sitemap to Production", Priority.MEDIUM, "Chloe")
-
-t1.mark_complete()
-print(board.get_progress_summary())
-print("\\n--- Current Task Board ---")
-for t in board.tasks:
-    print(t)`,
-        codeTitle: 'Project 3: Collaborative Task & Project Management App',
-        explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Enum State Typing:</strong>
-          <p style="margin-top:6px;">Using <code>Priority</code> enums guarantees that priority values cannot be corrupted by typos (like <code>"critcal"</code>).</p>
-        </div>`
-      },
-      {
-        title: '4. Project 4: Enterprise E-Commerce Backend Engine',
-        body: `<p>A complete e-commerce domain model featuring product catalogs, cart management, discounts, and inventory validation:</p>`,
-        code: `# =========================================================================
-# PROJECT 4: ENTERPRISE E-COMMERCE BACKEND ENGINE
-# =========================================================================
-
+        title: '3. ప్రాజెక్ట్ 3: E-Commerce బ్యాకెండ్ (స్టాక్ చెకింగ్ & కూపన్స్)',
+        body: `<p>యూజర్ బుట్టలో ఉన్న వస్తువులకి స్టాక్ ఉందా లేదా చూసి, కూపన్స్ అప్లై చేసి, బిల్ వేసే ఒక ఈ-కామర్స్ ఇంజిన్.</p>`,
+        code: `# ప్రాజెక్ట్ 3: E-Commerce కార్ట్ & చెకౌట్
 class ECommerceStore:
     def __init__(self):
         self.catalog = {
-            101: {"name": "MacBook Pro M3", "price": 169999.00, "stock": 5},
-            102: {"name": "Mechanical Keyboard", "price": 2499.00, "stock": 20},
-            103: {"name": "4K Ultra-Wide Monitor", "price": 34999.00, "stock": 4}
+            101: {"name": "Laptop", "price": 50000.0, "stock": 5},
+            102: {"name": "Mouse", "price": 500.0, "stock": 20}
         }
-        self.orders = []
 
-    def place_order(self, customer_name, items_dict, coupon_code=None):
-        """Processes order atomically: items_dict = {product_id: quantity}"""
-        print(f"\\n--- 🛍️ Processing Checkout for '{customer_name}' ---")
-        
-        # 1. Validate Stock:
+    def checkout(self, customer, items_dict, coupon=None):
+        print(f"\\n🛍️ {customer} చెకౌట్ చేస్తున్నారు...")
         subtotal = 0.0
+
+        # 1. స్టాక్ ఉందో లేదో చెక్ చేద్దాం:
         for pid, qty in items_dict.items():
             product = self.catalog.get(pid)
-            if not product:
-                raise ValueError(f"Product #{pid} does not exist!")
             if product["stock"] < qty:
-                raise ValueError(f"Insufficient stock for '{product['name']}'! Only {product['stock']} available.")
+                raise ValueError(f"ఎర్రర్: '{product['name']}' స్టాక్ అయిపోయింది!")
             subtotal += product["price"] * qty
 
-        # 2. Apply Coupon:
-        discount = 0.0
-        if coupon_code == "SUPER2026":
-            discount = subtotal * 0.10 # 10% discount
-            print("🏷️ Coupon 'SUPER2026' applied (-10% Discount)!")
-
+        # 2. కూపన్ ఉంటే 10% డిస్కౌంట్:
+        discount = subtotal * 0.10 if coupon == "SAVE10" else 0
         total = subtotal - discount
 
-        # 3. Deduct Stock:
+        # 3. సక్సెస్ అయ్యాక మాత్రమే స్టాక్ తగ్గిద్దాం:
         for pid, qty in items_dict.items():
             self.catalog[pid]["stock"] -= qty
 
-        order_record = {
-            "order_id": len(self.orders) + 1001,
-            "customer": customer_name,
-            "items": items_dict,
-            "total": total
-        }
-        self.orders.append(order_record)
-        print(f"✅ Order #{order_record['order_id']} Confirmed! Total Charged: ₹{total:,.2f}")
-        return order_record
+        print(f"✅ ఆర్డర్ కన్ఫర్మ్! టోటల్: ₹{total:,.2f} (డిస్కౌంట్: ₹{discount:,.2f})")
 
-# Run Project 4 Demonstration:
 store = ECommerceStore()
-store.place_order("Balaji", {101: 1, 102: 2}, coupon_code="SUPER2026")
-store.place_order("Alex", {103: 1})
+store.checkout("Balaji", {101: 1, 102: 2}, coupon="SAVE10")
 
-print("\\n--- Current Warehouse Inventory ---")
-for pid, p in store.catalog.items():
-    print(f"• #{pid}: {p['name']:25} | In Stock: {p['stock']} | Price: ₹{p['price']:,.2f}")`,
+print("\\n--- మిగిలిన స్టాక్ ---")
+for p in store.catalog.values():
+    print(f"• {p['name']} | స్టాక్: {p['stock']}")`,
         codeTitle: 'Project 4: Enterprise E-Commerce Backend Engine',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Inventory Integrity:</strong>
-          <p style="margin-top:6px;">Validating all stock quantities before deducting ensures orders never fail halfway through checkout.</p>
+          <strong style="color:#10b981;">🔍 సేఫ్టీ ఫస్ట్:</strong>
+          <p style="margin-top:6px;">అన్నీ చెక్ చేసి డబ్బులు లెక్కేసిన తర్వాతే స్టాక్ ని తగ్గించాలి. ముందు తగ్గిస్తే, ఏదైనా ఎర్రర్ వస్తే స్టాక్ వేస్ట్ అయిపోతుంది.</p>
         </div>`
       },
       {
-        title: '5. Project 5: Student Academic Portal & Grade Tracking System',
-        body: `<p>A complete educational management portal modeling Students, Courses, dynamic Grade calculation, and GPA computation:</p>`,
-        code: `# =========================================================================
-# PROJECT 5: STUDENT ACADEMIC PORTAL & GRADE TRACKING SYSTEM
-# =========================================================================
-
-class StudentPortal:
-    def __init__(self):
-        self.students = {} # {student_id: {"name": str, "grades": {course: score}}}
-
-    def enroll_student(self, student_id, name):
-        self.students[student_id] = {"name": name, "grades": {}}
-        print(f"🎓 Enrolled Student #{student_id}: {name}")
-
-    def record_grade(self, student_id, course_name, score):
-        if student_id not in self.students:
-            raise KeyError(f"Student #{student_id} not found!")
-        self.students[student_id]["grades"][course_name] = score
-
-    def generate_report_card(self, student_id):
-        student = self.students.get(student_id)
-        if not student:
-            return "Student record not found."
-        
-        grades = student["grades"]
-        if not grades:
-            return f"No grades recorded yet for {student['name']}."
-        
-        avg = sum(grades.values()) / len(grades)
-        gpa = round((avg / 100) * 10, 2)
-        
-        report = [
-            f"========================================",
-            f"🎓 ACADEMIC REPORT: {student['name']} (ID #{student_id})",
-            f"----------------------------------------"
-        ]
-        for course, score in grades.items():
-            letter = "A+" if score >= 90 else ("A" if score >= 80 else ("B" if score >= 70 else "C"))
-            report.append(f"  • {course:25}: {score}/100 [{letter}]")
-        report.append(f"----------------------------------------")
-        report.append(f"Average Score: {avg:.1f}% | GPA: {gpa}/10.0")
-        report.append(f"========================================")
-        return "\\n".join(report)
-
-# Run Project 5 Demonstration:
-portal = StudentPortal()
-portal.enroll_student(202601, "Balaji Dev")
-portal.record_grade(202601, "Python Programming", 98)
-portal.record_grade(202601, "Web Architecture", 94)
-portal.record_grade(202601, "Database Systems", 92)
-
-print(portal.generate_report_card(202601))`,
-        codeTitle: 'Project 5: Student Academic Portal & GPA Engine',
-        explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Academic Model:</strong>
-          <p style="margin-top:6px;">Calculates weighted GPAs and letter grades dynamically from raw scores.</p>
-        </div>`
-      },
-      {
-        title: '6. Project 6: Production-Grade REST API Client & Server Emulator',
-        body: `<p>A complete REST API system with structured JSON responses, validation, and token authentication:</p>`,
-        code: `# =========================================================================
-# PROJECT 6: PRODUCTION-GRADE REST API SERVICE
-# =========================================================================
+        title: '4. ప్రాజెక్ట్ 4: REST API సర్వర్ (DRF స్టైల్ లో సిమ్యులేషన్)',
+        body: `<p>GET, POST కమాండ్స్ తో, JSON ఫార్మాట్ లో అడిగిన డేటా మాత్రమే ఇచ్చే ఒక API సిస్టమ్ ని పైథాన్ లో రన్ చేసి చూద్దాం.</p>`,
+        code: `# ప్రాజెక్ట్ 4: API సర్వర్ సిమ్యులేషన్
 import json
 
 class RESTAPIService:
-    """Production REST API Router & Handler Service."""
-    
     def __init__(self):
-        self.articles = {
-            1: {"id": 1, "title": "Flask vs Django", "author": "Balaji"},
-            2: {"id": 2, "title": "SQLAlchemy 2.0 Deep Dive", "author": "Alex"}
-        }
+        self.articles = {1: {"title": "Python Tips", "author": "Balaji"}}
 
-    def dispatch(self, method, path, payload=None, auth_token=None):
-        """Unified API Dispatcher."""
-        # 1. Auth Guard for write operations:
-        if method in ["POST", "PUT", "DELETE"]:
-            if auth_token != "secret_token_2026":
-                return {"status_code": 401, "body": {"error": "Unauthorized: Invalid API Token"}}
+    def request(self, method, path, payload=None, token=None):
+        # సెక్యూరిటీ చెక్ (కొత్తవి రాయాలంటే టోకెన్ కావాలి):
+        if method == "POST" and token != "secret123":
+            return {"status": 401, "body": {"error": "పాస్వర్డ్ తప్పు!"}}
 
-        # 2. Route Matching:
-        if method == "GET" and path == "/api/v1/articles":
-            return {"status_code": 200, "body": list(self.articles.values())}
-        
-        elif method == "GET" and path.startswith("/api/v1/articles/"):
-            art_id = int(path.split("/")[-1])
-            article = self.articles.get(art_id)
-            if article:
-                return {"status_code": 200, "body": article}
-            return {"status_code": 404, "body": {"error": "Article not found"}}
+        if method == "GET" and path == "/api/articles":
+            return {"status": 200, "body": list(self.articles.values())}
 
-        elif method == "POST" and path == "/api/v1/articles":
-            if not payload or "title" not in payload:
-                return {"status_code": 400, "body": {"error": "Missing 'title' field"}}
+        if method == "POST" and path == "/api/articles":
             new_id = len(self.articles) + 1
-            new_art = {"id": new_id, "title": payload["title"], "author": payload.get("author", "Anonymous")}
-            self.articles[new_id] = new_art
-            return {"status_code": 201, "body": new_art}
+            self.articles[new_id] = payload
+            return {"status": 201, "body": {"message": "సేవ్ అయ్యింది", "data": payload}}
 
-        return {"status_code": 404, "body": {"error": "Endpoint not found"}}
+        return {"status": 404, "body": {"error": "లింక్ లేదు"}}
 
-# Run Project 6 Demonstration:
 api = RESTAPIService()
-print("1. GET /api/v1/articles:")
-print(json.dumps(api.dispatch("GET", "/api/v1/articles"), indent=2))
+print("1. GET కాల్ (అన్ని ఆర్టికల్స్ కావాలి):")
+print(json.dumps(api.request("GET", "/api/articles"), indent=2))
 
-print("\\n2. Unauthorized POST /api/v1/articles:")
-print(json.dumps(api.dispatch("POST", "/api/v1/articles", {"title": "New Post"}, auth_token="invalid"), indent=2))
+print("\\n2. POST కాల్ (రాంగ్ టోకెన్ తో యాడ్ చేద్దాం):")
+print(json.dumps(api.request("POST", "/api/articles", {"title": "Django"}, token="wrong"), indent=2))
 
-print("\\n3. Authorized POST /api/v1/articles:")
-print(json.dumps(api.dispatch("POST", "/api/v1/articles", {"title": "Asyncio in Python 3.12", "author": "Balaji"}, auth_token="secret_token_2026"), indent=2))`,
+print("\\n3. POST కాల్ (కరెక్ట్ టోకెన్ తో):")
+print(json.dumps(api.request("POST", "/api/articles", {"title": "FastAPI"}, token="secret123"), indent=2))`,
         codeTitle: 'Project 6: Production REST API Service',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 REST Specification:</strong>
-          <p style="margin-top:6px;">Implements HTTP status code compliance (200, 201, 400, 401, 404) and JSON payload formatting.</p>
+          <strong style="color:#10b981;">🔍 API రూల్స్:</strong>
+          <p style="margin-top:6px;">REST API ఎప్పుడూ కరెక్ట్ Status Codes నే ఇవ్వాలి (సక్సెస్ కి 200, క్రియేట్ అయితే 201, ఆథరైజేషన్ లేకపోతే 401).</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Deploying Without Database Connection Pooling',
-      text: 'Creating a new database connection on every single HTTP request will quickly overwhelm your database server under moderate load. Always use a connection pool (like SQLAlchemy QueuePool or PgBouncer for PostgreSQL).'
+      title: 'డేటాబేస్ లో Connection Pooling వాడకపోవడం',
+      text: 'ప్రతి ఒక్క యూజర్ సైట్ లోకి రాగానే ఒక కొత్త కనెక్షన్ ఓపెన్ చేస్తే, వంద మంది రాగానే సర్వర్ ఫుల్ అయిపోయి క్రాష్ అవుతుంది. అందుకే ప్రొడక్షన్ లో ఎప్పుడూ PgBouncer లాంటి పూలింగ్ సర్వీసెస్ వాడి 20-30 కనెక్షన్స్ నే మళ్ళీ మళ్ళీ వాడుకునేలా సెట్ చేయాలి.'
     },
     tryIt: {
-      desc: 'Instantiate the ECommerceStore from Project 4 and place an order for 2 Mechanical Keyboards and 1 MacBook Pro.',
-      code: `store = ECommerceStore()
-order = store.place_order("Kavya", {102: 2, 101: 1}, coupon_code="SUPER2026")
-print("Order Details:", order)`
+      desc: 'ఒక స్టూడెంట్ గ్రేడ్స్ పోర్టల్ సిమ్యులేట్ చేద్దాం. మార్క్స్ ని బట్టి A, B, C గ్రేడ్స్ ఇచ్చే ఫంక్షన్ రాయండి.',
+      code: `def get_grade(score):
+    if score >= 90: return "A+"
+    elif score >= 80: return "A"
+    elif score >= 70: return "B"
+    return "C"
+
+student_marks = {"Maths": 95, "Science": 82, "English": 65}
+print("స్టూడెంట్ గ్రేడ్స్:")
+for subject, marks in student_marks.items():
+    print(f"• {subject}: {marks}/100 [{get_grade(marks)}]")`
     },
     faqs: [
       {
-        q: 'How do I choose between Flask and Django for a new project?',
-        a: 'Choose Flask if you are building a small-to-medium microservice, lightweight REST API, or want total freedom over your database and ORM choice. Choose Django if you are building a full-featured web app needing user authentication, database migrations, and an admin dashboard immediately.'
+        q: 'నేను కొత్తగా యాప్ చేయాలంటే Flask వాడాలా? Django వాడాలా?',
+        a: 'చిన్న యాప్, లేదా వేరే టెక్నాలజీ (డేటాబేస్) వాడాలనుకుంటే ఫ్లాస్క్ తీసుకోండి. లాగిన్స్, అడ్మిన్ ప్యానెల్, పెద్ద కామర్స్ సైట్ లాంటివి త్వరగా చేయాలంటే జాంగో బెస్ట్.'
       },
       {
-        q: 'What is ASGI in modern Python web development?',
-        a: 'ASGI (Asynchronous Server Gateway Interface) is the successor to WSGI. It supports async/await concurrency, WebSockets, and long-polling HTTP connections.'
-      },
-      {
-        q: 'How should static files be handled in high-traffic production web apps?',
-        a: 'In high-scale production apps, static assets (CSS, JS, images, videos) should be offloaded to an Object Storage service (like AWS S3 or Cloudflare R2) fronted by a global Content Delivery Network (CDN).'
+        q: 'WhiteNoise ఎందుకు వాడతారు?',
+        a: 'లైవ్ సర్వర్ లో పైథాన్ కి ఇమేజెస్, CSS ఫైల్స్ ని యూజర్స్ కి ఇవ్వడం కష్టం (స్లో అవుతుంది). WhiteNoise వాడితే అది వాటన్నిటినీ కంప్రెస్ చేసి చాలా ఫాస్ట్ గా అందిస్తుంది.'
       }
     ]
   }

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reference Types, Strings, Constants & Variable Scopes — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Exploring Java reference types, the internal mechanics of the String pool and immutability, immutable constants with the final keyword, and the three fundamental variable scopes: Local variables, Instance fields, and Static class-level variables." />
-  <meta name="keywords" content="reference types, strings, constants & variable scopes, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Reference Types, Strings, Constants & Variable Scopes (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="బేసిక్ డేటా టైప్స్ (Primitive) కీ, రెఫరెన్స్ డేటా టైప్స్ (Reference) కీ తేడా ఏంటి? అసలు జావాలో String ని అంత స్పెషల్ గా ఎందుకు డిజైన్ చేశారు? ఎవరూ మార్చలేని వేరియబుల్స్ (Constants) ఎలా క్రియేట్ చేయాలి? లోకల్, ఇన్స్టాన్స్ వేరియబుల్స్ అంటే ఏంటో చూద్దాం." />
+  <meta name="keywords" content="reference types, strings, constants & variable scopes (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/08-java-reference-types-strings-and-scopes.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 8: 8. Reference Types & Scopes</span>
     </div>
 
-    <h1 class="page-title">Reference Types, Strings, Constants & Variable Scopes</h1>
+    <h1 class="page-title">Reference Types, Strings, Constants & Variable Scopes (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,61 +541,59 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Exploring Java reference types, the internal mechanics of the String pool and immutability, immutable constants with the final keyword, and the three fundamental variable scopes: Local variables, Instance fields, and Static class-level variables.</p>
+      <p>బేసిక్ డేటా టైప్స్ (Primitive) కీ, రెఫరెన్స్ డేటా టైప్స్ (Reference) కీ తేడా ఏంటి? అసలు జావాలో String ని అంత స్పెషల్ గా ఎందుకు డిజైన్ చేశారు? ఎవరూ మార్చలేని వేరియబుల్స్ (Constants) ఎలా క్రియేట్ చేయాలి? లోకల్, ఇన్స్టాన్స్ వేరియబుల్స్ అంటే ఏంటో చూద్దాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. Primitive Data Types vs Reference Data Types</h2>
+      <h2>1. Primitive కి Reference డేటా టైప్స్ కి తేడా ఏంటి?</h2>
       <div class="theory-text">
-        <p>In Java, all data types fall into two fundamental architectural categories:</p>
-<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>Feature</th><th>Primitive Types (`int`, `double`, etc.)</th><th>Reference Types (`String`, `Arrays`, `Classes`)</th></tr></thead><tbody><tr><td>**Storage Location**</td></tr></tbody></table></div>
- Value is stored directly in <strong>Stack Memory</strong>. | Reference address (pointer) in <strong>Stack</strong>, actual object in <strong>Heap</strong>. |
-| <strong>Memory Size</strong> | Fixed predefined byte size (1, 2, 4, or 8 bytes). | Variable size depending on object members and payload. |
-| <strong>Default Value</strong> | Numerical <code>0</code>, <code>false</code>, or <code>'\u0000'</code> (for fields). | <code>null</code> (meaning pointer points to nowhere). |
-| <strong>Method Calls</strong> | Cannot call methods (no <code>.</code> operator). | Can invoke member methods (e.g. <code>name.toUpperCase()</code>). |
-| <strong>Comparison</strong> | <code>==</code> compares direct binary mathematical values. | <code>==</code> compares memory addresses; <code>.equals()</code> compares actual content! |
+        <p>జావాలో మెయిన్ గా రెండు రకాల డేటా టైప్స్ ఉంటాయి:</p>
+<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>తేడా</th><th>Primitive Types (`int`, `double` వగైరా)</th><th>Reference Types (`String`, `Arrays`, `Classes`)</th></tr></thead><tbody><tr><td>**ఎక్కడ స్టోర్ అవుతాయి?**</td></tr></tbody></table></div>
+ డైరెక్ట్ గా వాల్యూ మొత్తం <strong>Stack Memory</strong> లోనే ఉంటుంది. | అసలు డేటా <strong>Heap Memory</strong> లో ఉంటే, దానికి సంబంధించిన అడ్రెస్ (లింక్) మాత్రం Stack లో ఉంటుంది. |
+| <strong>సైజు ఎంత?</strong> | ఇది ముందే ఫిక్స్ (1, 2, 4, 8 bytes). | అది తీసుకునే డేటాని బట్టి సైజు మారుతుంది. |
+| <strong>డీఫాల్ట్ వాల్యూ?</strong> | <code>0</code>, <code>false</code> లాంటివి ఉంటాయి. | <code>null</code> ఉంటుంది (అంటే ఏం లేదని). |
+| <strong>ఫంక్షన్స్ వాడొచ్చా?</strong> | వాడలేం (దాని పక్కన డాట్ (<code>.</code>) పెడితే ఏమీ రావు). | దానికి సంబంధించిన ఫంక్షన్స్ వాడుకోవచ్చు (ఉదా: <code>name.toUpperCase()</code>). |
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Introduction to `String` & The String Literal Pool</h2>
+      <h2>2. `String` మరియు String Pool స్టోరీ</h2>
       <div class="theory-text">
-        <p>A <strong><code>String</code></strong> in Java is a reference object representing a sequence of characters.</p>
-<p>Unlike C strings (null-terminated char arrays), Java Strings are <strong>Immutable</strong>: once created, their internal character contents can never be modified. Any method that appears to modify a String (like <code>.toUpperCase()</code> or <code>.replace()</code>) actually instantiates and returns a brand-new String object in Heap memory!</p>
-<h3>The String Constant Pool (SCP):</h3>To save memory, the JVM maintains a special cache area inside Heap memory called the <strong>String Pool</strong>:
-- When you write <code>String s1 = "Java";</code>, the JVM checks the String Pool. If <code>"Java"</code> exists, it reuses the existing memory address!
-- When you write <code>String s2 = "Java";</code>, <code>s1</code> and <code>s2</code> point to the exact same object in memory (<code>s1 == s2</code> evaluates to <code>true</code>).
-- If you use <code>new String("Java")</code>, it bypasses the pool and forces the creation of a separate object in normal heap memory.
+        <p>జావాలో <strong><code>String</code></strong> అనేది ఒక టెక్స్ట్ ని సేవ్ చేసుకునే ఒక ఆబ్జెక్ట్.<br>        <br>జావాలో స్ట్రింగ్స్ కి ఒక స్పెషాలిటీ ఉంది.. అవేంటంటే <strong>Immutable (మార్చలేనివి)</strong>. ఒకసారి క్రియేట్ చేశాక అందులో అక్షరాల్ని మనం మార్చలేం. ఒకవేళ మీరు ఆ టెక్స్ట్ కి ఇంకొంచెం టెక్స్ట్ ని యాడ్ చేసినా (లేదా మార్చినా), జావా ఏం చేస్తుందంటే.. పాతదాన్ని అలాగే వదిలేసి కొత్త పేరుతో ఇంకో ఆబ్జెక్ట్ ని క్రియేట్ చేస్తుంది.</p>
+<h3>String Pool అంటే ఏంటి?:</h3>మెమరీ వేస్ట్ అవ్వకుండా ఉండటానికి Heap Memory లోపల ఒక చిన్న ఏరియాని కేటాయించారు. దాన్నే <strong>String Pool</strong> అంటారు.
+- మీరు <code>String s1 = "Java";</code> అన్నారనుకోండి. పూల్ లో "Java" సేవ్ అవుతుంది.
+- మళ్లీ ఇంకోసారి <code>String s2 = "Java";</code> అన్నారనుకోండి. ఇప్పుడు కొత్తగా సేవ్ చేయకుండా, ఆల్రెడీ పూల్ లో ఉన్న దాన్నే <code>s2</code> కి కూడా ఇస్తుంది! అంటే <code>s1</code>, <code>s2</code> రెండూ ఒకే వాల్యూ ని పాయింట్ చేస్తుంటాయి.
+- అదే ఒకవేళ మీరు కావాలని <code>new String("Java")</code> అంటే మాత్రం.. పూల్ కి సంబంధం లేకుండా విడిగా ఇంకో ఆబ్జెక్ట్ క్రియేట్ అవుతుంది.
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Constants in Java using the `final` Keyword</h2>
+      <h2>3. `final` కీవర్డ్ తో Constants క్రియేట్ చేయడం</h2>
       <div class="theory-text">
-        <p>To create an unchangeable <strong>Constant</strong> in Java, use the <strong><code>final</code></strong> keyword.</p>
-<p>Once a <code>final</code> variable is initialized, its value is locked and cannot be re-assigned:</p>
-<div class="code-block"><pre><code>public static final double PI = 3.141592653589793;
-public static final int MAX_LOGIN_ATTEMPTS = 5;</code></pre></div>
-<h3>Industry Best Practices for Constants:</h3>1. Combine with <code>static</code> (<code>public static final</code>) so the constant is shared once across all instances without wasting heap memory.
-2. Format the identifier name in <strong><code>UPPER_SNAKE_CASE</code></strong>.
+        <p>ప్రోగ్రామ్ రన్ అవుతున్నంత సేపు ఒక వేరియబుల్ వాల్యూ ఎవరూ మార్చకూడదు అనుకుంటే, దాని ముందు <strong><code>final</code></strong> అనే కీవర్డ్ పెట్టాలి. వాటినే Constants అంటారు.</p>
+<p>ఒకసారి <code>final</code> వేరియబుల్ కి వాల్యూ ఇచ్చాక దాన్ని మళ్ళీ అసైన్ చేయలేం:</p>
+<div class="code-block"><pre><code>public static final double PI = 3.14159;
+public static final int MAX_USERS = 5;</code></pre></div>
+<h3>బెస్ట్ ప్రాక్టీసెస్:</h3>1. కాన్స్టంట్స్ కి ఎప్పుడూ <code>static final</code> రెండు కలిపి రాయడం మంచిది. ఎందుకంటే ఆ వాల్యూ అందరికీ ఒకటే కాబట్టి మెమరీ సేవ్ అవుతుంది.
+2. కాన్స్టంట్స్ పేర్లు ఎప్పుడూ క్యాపిటల్స్ లోనే <strong><code>UPPER_SNAKE_CASE</code></strong> ఉండాలి.
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. The 3 Variable Scopes in Java</h2>
+      <h2>4. మూడు రకాల Variable Scopes</h2>
       <div class="theory-text">
-        <p>A variable's <strong>Scope</strong> determines where in the program it is accessible and how long it lives in memory:</p>
+        <p>ఒక వేరియబుల్ ని ఎక్కడ డిక్లేర్ చేసాం అనేదాన్ని బట్టి, అది ఎంతసేపు బ్రతికుటుందో ఆధారపడి ఉంటుంది. దీన్నే Scope అంటారు.</p>
 <div class="code-block"><pre><code>+-----------------------------------------------------------------------------------+
 |                           JAVA VARIABLE SCOPES                                    |
 +-----------------------------------------------------------------------------------+
-<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>class BankAccount {</th></tr></thead><tbody><tr><td>// 1. STATIC VARIABLE (Class Scope - 1 copy shared by ALL instances)</td></tr><tr><td>public static String bankName = "State Bank of India";</td></tr><tr><td></td></tr><tr><td>// 2. INSTANCE VARIABLE (Object Scope - Unique copy per object in Heap)</td></tr><tr><td>private double balance = 1000.00;</td></tr><tr><td></td></tr><tr><td>public void deposit(double amount) {</td></tr><tr><td>// 3. LOCAL VARIABLE (Block/Method Scope - Exists ONLY during method run)</td></tr><tr><td>double fee = 10.0;</td></tr><tr><td>balance = balance + (amount - fee);</td></tr><tr><td>}</td></tr><tr><td>}</td></tr></tbody></table></div>
+<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>class Bank {</th></tr></thead><tbody><tr><td>// 1. STATIC VARIABLE (క్లాస్ లోపల, সবারకి ఒకటే)</td></tr><tr><td>public static String bankName = "SBI";</td></tr><tr><td></td></tr><tr><td>// 2. INSTANCE VARIABLE (క్లాస్ లోపల, కానీ ఒక్కో ఆబ్జెక్ట్ కి ఒక్కో కాపీ)</td></tr><tr><td>private double balance = 1000.00;</td></tr><tr><td></td></tr><tr><td>public void deposit(double amount) {</td></tr><tr><td>// 3. LOCAL VARIABLE (ఫంక్షన్ లోపల మాత్రమే బ్రతికుటుంది)</td></tr><tr><td>double fee = 10.0;</td></tr><tr><td>balance = balance + (amount - fee);</td></tr><tr><td>}</td></tr><tr><td>}</td></tr></tbody></table></div>
 +-----------------------------------------------------------------------------------+</code></pre></div>
-<p>1. <strong>Local Variables:</strong> Declared inside a method, constructor, or code block <code>{}</code>. They exist only while that block is executing and are destroyed when the block finishes. They have <strong>no default values</strong>.<br>2. <strong>Instance Variables (Fields):</strong> Declared inside a class but outside methods. Each object created from the class gets its own independent copy stored in Heap memory.<br>3. <strong>Static Variables (Class Variables):</strong> Declared with the <code>static</code> keyword. Only <strong>one single copy</strong> exists in the Method Area, shared across all instances of the class.</p>
+<p>1. <strong>Local Variables:</strong> ఒక బ్లాక్ <code>{}</code> లేదా ఫంక్షన్ లోపల రాసేవి. ఆ ఫంక్షన్ అవ్వగానే ఇవి మెమరీ నుంచి పోతాయి. వీటికి ముందే వాల్యూ ఇవ్వాలి.<br>2. <strong>Instance Variables:</strong> ఫంక్షన్స్ కి పైన క్లాస్ లో రాసేవి. మనం ఎన్ని ఆబ్జెక్ట్స్ క్రియేట్ చేస్తే అన్ని కాపీలు తయారవుతాయి.<br>3. <strong>Static Variables:</strong> క్లాస్ లో రాసి ముందు <code>static</code> అని పెట్టేవి. ఇవి ఎన్ని ఆబ్జెక్ట్స్ క్రియేట్ చేసినా సరే, క్లాస్ కి ఒకటే కాపీ ఉంటుంది. అందరూ దాన్నే వాడుకోవాలి.</p>
       </div>
     </section>
   
@@ -613,81 +611,82 @@ public static final int MAX_LOGIN_ATTEMPTS = 5;</code></pre></div>
         </div>
         <pre><code>public class Main {
     
-    // 1. Static Variable (Class-level scope, shared by everyone)
-    public static final String UNIVERSITY_NAME = "Osmania University";
-    public static int totalEnrolledStudents    = 0;
+    // 1. Static Variable (క్లాస్ లెవెల్, అందరికీ ఒకటే)
+    public static final String COLLEGE = "XYZ College";
+    public static int totalStudents    = 0;
 
-    // 2. Instance Variables (Object-level scope in Heap)
-    private String studentName;
+    // 2. Instance Variables (ఆబ్జెక్ట్ లెవెల్, ఎవరికీ వారికి విడిగా ఉంటుంది)
+    private String name;
     private double gpa;
 
-    // Constructor to initialize instance variables
-    public Main(String name, double gpa) {
-        this.studentName = name;
-        this.gpa = gpa;
-        totalEnrolledStudents++; // Increment shared class counter
+    // ఇది కన్స్ట్రక్టర్ (వాల్యూస్ సెట్ చేయడానికి)
+    public Main(String n, double g) {
+        this.name = n;
+        this.gpa = g;
+        totalStudents++; // ఆబ్జెక్ట్ క్రియేట్ అయిన ప్రతిసారీ స్టూడెంట్స్ కౌంట్ పెంచుతున్నాం
     }
 
-    public void displayStudent() {
-        // 3. Local Variable (Method-level scope in Stack)
-        String status = (this.gpa &gt;= 3.5) ? "Distinction" : "Standard Pass";
+    public void showData() {
+        // 3. Local Variable (ఈ ఫంక్షన్ లోపల మాత్రమే పనిచేస్తుంది)
+        String grade = (this.gpa &gt;= 3.5) ? "A Grade" : "B Grade";
 
-        System.out.println("University : " + UNIVERSITY_NAME);
-        System.out.println("Student    : " + this.studentName);
-        System.out.println("GPA        : " + this.gpa + " (" + status + ")");
-        System.out.println("----------------------------------------");
+        System.out.println("కాలేజ్  : " + COLLEGE);
+        System.out.println("పేరు   : " + this.name);
+        System.out.println("గ్రేడ్  : " + grade);
+        System.out.println("-------------------------");
     }
 
     public static void main(String[] args) {
-        // Creating student object instances
-        Main s1 = new Main("Balaji Nayak", 3.9);
-        Main s2 = new Main("Ravi Teja", 3.2);
+        // ఇద్దరు స్టూడెంట్స్ కి ఆబ్జెక్ట్స్ క్రియేట్ చేసాం
+        Main s1 = new Main("Balaji", 3.9);
+        Main s2 = new Main("Ravi", 3.2);
 
-        s1.displayStudent();
-        s2.displayStudent();
+        s1.showData();
+        s2.showData();
 
-        System.out.println("Total Students Enrolled: " + Main.totalEnrolledStudents);
+        // స్టాటిక్ వేరియబుల్ కావడంతో టోటల్ కౌంట్ 2 అయింది
+        System.out.println("మొత్తం స్టూడెంట్స్: " + Main.totalStudents);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">University : Osmania University
-Student    : Balaji Nayak
-GPA        : 3.9 (Distinction)
-----------------------------------------
-University : Osmania University
-Student    : Ravi Teja
-GPA        : 3.2 (Standard Pass)
-----------------------------------------
-Total Students Enrolled: 2</div>
+        <div class="output-content">కాలేజ్  : XYZ College
+పేరు   : Balaji
+గ్రేడ్  : A Grade
+-------------------------
+కాలేజ్  : XYZ College
+పేరు   : Ravi
+గ్రేడ్  : B Grade
+-------------------------
+మొత్తం స్టూడెంట్స్: 2</div>
       </div>
 
       <div class="explain-card">
         <h3>🔍 Line-by-Line Code Explanation</h3>
         
     <div class="explain-item">
-      <code class="code-token">public static final String UNIVERSITY_NAME</code>
-      <p>Constant class-level variable accessible across all instances without object instantiation.</p>
+      <code class="code-token">public static final String COLLEGE</code>
+      <p>ఎవరూ మార్చలేని స్టాటిక్ వేరియబుల్, ఇది అందరికీ ఒకటే ఉంటుంది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">public static int totalEnrolledStudents = 0;</code>
-      <p>Shared static variable that tracks the global count of created student instances.</p>
+      <code class="code-token">public static int totalStudents = 0;</code>
+      <p>స్టాటిక్ కాబట్టి ప్రతి ఆబ్జెక్ట్ లోనూ కౌంట్ అప్డేట్ అవుతూ వస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">private String studentName; private double gpa;</code>
-      <p>Instance fields stored inside individual object heap memory allocations.</p>
+      <code class="code-token">private String name; private double gpa;</code>
+      <p>ఇన్స్టాన్స్ వేరియబుల్స్. Balaji కి ఒక కాపీ, Ravi కి ఒక కాపీ ఉంటాయి.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">String status = ...</code>
-      <p>Local variable created inside displayStudent() stack frame, destroyed when method returns.</p>
+      <code class="code-token">String grade = ...</code>
+      <p>లోకల్ వేరియబుల్, కేవలం showData ఫంక్షన్ లో మాత్రమే ఉంటుంది.</p>
     </div>
   
       </div>
@@ -704,32 +703,33 @@ Total Students Enrolled: 2</div>
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>public class StringPoolInspection {
+        <pre><code>public class StringPoolTest {
     public static void main(String[] args) {
-        // String Literals (Stored in String Constant Pool)
-        String str1 = "Java2026";
-        String str2 = "Java2026";
+        // నార్మల్ గా స్ట్రింగ్స్ క్రియేట్ చేస్తే పూల్ లోకి వెళ్తాయి
+        String s1 = "Java";
+        String s2 = "Java";
 
-        // String Object using 'new' (Forces separate Heap allocation)
-        String str3 = new String("Java2026");
+        // న్యూ కీవర్డ్ తో క్రియేట్ చేస్తే సపరేట్ గా వెళ్తాయి
+        String s3 = new String("Java");
 
-        System.out.println("=== String Pool Memory Comparison ===");
-        // == compares memory reference pointers
-        System.out.println("str1 == str2 (Pool Memory Reference): " + (str1 == str2)); // true!
-        System.out.println("str1 == str3 (Heap Object Reference): " + (str1 == str3)); // false!
+        System.out.println("=== String Pool టెస్ట్ ===");
+        
+        // "==" అనేది కేవలం అడ్రెస్ (లింక్) ని మాత్రమే చెక్ చేస్తుంది
+        System.out.println("s1 == s2 : " + (s1 == s2)); // పూల్ లో ఒకటే లింక్ కాబట్టి true
+        System.out.println("s1 == s3 : " + (s1 == s3)); // s3 సపరేట్ కాబట్టి false
 
-        // .equals() compares actual character content
-        System.out.println("str1.equals(str3) (Content Check)   : " + str1.equals(str3)); // true!
+        // ".equals()" వాల్యూ ని చెక్ చేస్తుంది కాబట్టి రెండూ true వస్తాయి
+        System.out.println("s1.equals(s3) : " + s1.equals(s3)); 
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== String Pool Memory Comparison ===
-str1 == str2 (Pool Memory Reference): true
-str1 == str3 (Heap Object Reference): false
-str1.equals(str3) (Content Check)   : true</div>
+        <div class="output-content">=== String Pool టెస్ట్ ===
+s1 == s2 : true
+s1 == s3 : false
+s1.equals(s3) : true</div>
       </div>
     </section>
 
@@ -738,13 +738,13 @@ str1.equals(str3) (Content Check)   : true</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using == to compare String values: "name == "Ravi"" checks memory addresses, not character text. Always use "name.equals("Ravi")" or "name.equalsIgnoreCase("Ravi")".</li>
+    <li style="margin-bottom:8px; line-height:1.6;">స్ట్రింగ్స్ వాల్యూ సమానంగా ఉందో లేదో "==" తో చెక్ చేయడం: ఇది అస్సలు చేయకూడదు. జావాలో ఎప్పుడూ "str1.equals(str2)" అని మాత్రమే వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Attempting to reassign final variables: "final int x = 10; x = 20;" causes compile error: "cannot assign a value to final variable x".</li>
+    <li style="margin-bottom:8px; line-height:1.6;">final వేరియబుల్ ని మార్చాలని చూడటం: "final int x = 10; x = 20;" అంటే జావా ఒప్పుకోదు.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Accessing instance variables from static methods: Writing "studentName = "Ravi";" inside "public static void main" fails with "non-static variable cannot be referenced from a static context".</li>
+    <li style="margin-bottom:8px; line-height:1.6;">స్టాటిక్ ఫంక్షన్ లోపల ఇన్స్టాన్స్ వేరియబుల్ వాడటం: main అనేది స్టాటిక్ ఫంక్షన్. అందులో డైరెక్ట్ గా స్టాటిక్ కాని వేరియబుల్స్ వాడితే ఎర్రర్ వస్తుంది.</li>
   
       </ul>
     </div>
@@ -761,14 +761,14 @@ str1.equals(str3) (Content Check)   : true</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Create a class ConfigSettings containing:
-// 1. public static final String ENVIRONMENT = "PRODUCTION";
-// 2. public static final int MAX_CONNECTIONS = 100;
-// 3. Inside main(), verify that attempting to reassign MAX_CONNECTIONS throws a compiler error.
+// ఒక ఫైల్ లోపల ఈ కింద చెప్పిన విధంగా వేరియబుల్స్ వాడండి:
+// 1. public static final String ENV = "PRODUCTION";
+// 2. దాన్ని main ఫంక్షన్ లో ప్రింట్ చేయండి. 
+// 3. దాని వాల్యూ ని మార్చడానికి ట్రై చేసి చూడండి (ఎర్రర్ వస్తుందో లేదో చూడండి).
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: Print the constants from ConfigSettings
+        // TODO: ఇక్కడ రాయండి
         
     }
 }</code></pre>
@@ -780,20 +780,14 @@ public class Main {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why are Strings immutable in Java?</h4>
-      <p>1. Security: Strings are used for database URLs, passwords, and network sockets; immutability prevents unauthorized modification. 2. Thread Safety: Immutable objects are naturally thread-safe without locks. 3. String Pooling: Sharing strings in memory is only safe if characters cannot change.</p>
+      <h4>❓ స్ట్రింగ్స్ ని ఎందుకు Immutable (మార్చలేనివిగా) చేసారు?</h4>
+      <p>సెక్యూరిటీ కోసం! పాస్వర్డ్స్, డేటాబేస్ లింక్స్ అన్నీ స్ట్రింగ్స్ లోనే ఇస్తాం. ఎవరైనా హ్యాకర్ వాటిని మార్చాలని చూసినా మార్చలేరు. అలాగే పూల్ లో స్టోర్ చేసి మెమరీ సేవ్ చేయడానికి కూడా ఇది ఉపయోగపడుతుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the difference between static and final?</h4>
-      <p>"static" means only one shared copy exists per class rather than one per object. "final" means the value/reference cannot be reassigned once initialized.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ Can a final variable be initialized in a constructor?</h4>
-      <p>Yes! A "blank final" instance variable can be assigned once inside the class constructor.</p>
+      <h4>❓ static కీ, final కీ తేడా ఏంటి?</h4>
+      <p>"static" అంటే అందరికీ కలిపి ఒకటే కాపీ ఉందని అర్థం. "final" అంటే ఆ కాపీ వాల్యూ ఇంక మారదు అని అర్థం.</p>
     </div>
   
     </section>
@@ -803,16 +797,16 @@ public class Main {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Primitive types store raw values on the Stack; Reference types store heap memory pointers on the Stack.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Primitive టైప్స్ Stack లో ఉంటాయి, Reference టైప్స్ Heap లో ఉంటాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Strings are immutable objects cached in the String Constant Pool. Always compare strings with .equals().</li>
+    <li style="margin-bottom:6px; line-height:1.5;">జావాలో స్ట్రింగ్స్ ని ఒకసారి క్రియేట్ చేసాక వాటి వాల్యూ మార్చలేం. సేమ్ వాల్యూ ఉంటే పూల్ లోంచి తీసుకుంటాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">The final keyword creates immutable constants formatted in UPPER_SNAKE_CASE.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">final కీవర్డ్ పెడితే అది ఇంక కాన్స్టంట్ అయిపోతుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Variable scopes: Local (method stack), Instance (object heap), and Static (class method area).</li>
+    <li style="margin-bottom:6px; line-height:1.5;">లోకల్, ఇన్స్టాన్స్, స్టాటిక్ అని 3 రకాల స్కోప్స్ ఉంటాయి.</li>
   
       </ul>
     </div>

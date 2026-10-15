@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Static Members, Nested Classes & Enums Masterclass — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering class-level design patterns in Java: static fields and methods that belong to the class rather than instances, static initializer blocks for one-time class setup, inner and nested class architectures, and Java Enums for compile-time type-safe constant groups with rich behavior." />
-  <meta name="keywords" content="java static members, nested classes & enums masterclass, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Static Members, Nested Classes & Enums Masterclass (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="క్లాస్ మొత్తానికీ కలిపి ఒకే ఒక్క కామన్ డేటా ఉండాలంటే ఏం చేయాలి? ఒక క్లాస్ లోపల ఇంకో క్లాస్ ని ఎందుకు రాస్తారు? జావాలో మ్యాజిక్ లా పనిచేసే Enums (ఎనమ్స్) అంటే ఏంటి? ఈ చాప్టర్ లో `static` మాయాజాలం తో పాటు ఇవన్నీ క్లియర్ గా తెలుసుకుందాం." />
+  <meta name="keywords" content="java static members, nested classes & enums masterclass (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/40-java-static-members-nested-classes-and-enums.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 40: 40. Static, Nested Classes & Enums</span>
     </div>
 
-    <h1 class="page-title">Java Static Members, Nested Classes & Enums Masterclass</h1>
+    <h1 class="page-title">Java Static Members, Nested Classes & Enums Masterclass (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,21 +541,21 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering class-level design patterns in Java: static fields and methods that belong to the class rather than instances, static initializer blocks for one-time class setup, inner and nested class architectures, and Java Enums for compile-time type-safe constant groups with rich behavior.</p>
+      <p>క్లాస్ మొత్తానికీ కలిపి ఒకే ఒక్క కామన్ డేటా ఉండాలంటే ఏం చేయాలి? ఒక క్లాస్ లోపల ఇంకో క్లాస్ ని ఎందుకు రాస్తారు? జావాలో మ్యాజిక్ లా పనిచేసే Enums (ఎనమ్స్) అంటే ఏంటి? ఈ చాప్టర్ లో `static` మాయాజాలం తో పాటు ఇవన్నీ క్లియర్ గా తెలుసుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. Static Fields (Class Variables)</h2>
+      <h2>1. Static Fields (క్లాస్ వేరియబుల్స్)</h2>
       <div class="theory-text">
-        <p>A <strong>static field</strong> (also called a Class Variable) is a field decorated with the <code>static</code> keyword. Unlike instance fields, only <strong>one copy exists in the JVM Method Area</strong> and is <strong>shared across ALL objects</strong> of the class:</p>
+        <p><strong>static field</strong> (దీన్నే క్లాస్ వేరియబుల్ అంటారు) అంటే ఒక క్లాస్ కి సంబంధించిన డేటా. ఇది ఆబ్జెక్ట్స్ అన్నింటికీ కలిపి <strong>ఒకే ఒక్క కాపీ</strong> JVM మెథడ్ ఏరియాలో ఉంటుంది. దాన్ని అందరూ షేర్ చేసుకుంటారు:</p>
 <div class="code-block"><pre><code>class Student {
-    static int totalStudents = 0; // ONE shared copy for the entire class
-    String name;                  // Each object has its OWN copy
-<p>Student(String name) {<br>        this.name = name;<br>        Student.totalStudents++;  // Increments the shared counter<br>    }<br>}</p>
-<p>Student s1 = new Student("Ravi");<br>Student s2 = new Student("Priya");<br>System.out.println(Student.totalStudents); // 2 (Shared by all objects!)</code></pre></div></p>
-<p><strong>Memory Layout:</strong><br>- Instance field <code>name</code> → Lives in each individual Heap object.<br>- Static field <code>totalStudents</code> → Lives once in the JVM Method Area (Class Area).</p>
+    static int totalStudents = 0; // ఇది అందరికీ కామన్. ఒక్కటే కాపీ ఉంటుంది.
+    String name;                  // ఇది ఎవరి పేరు వాళ్ళకే ఉంటుంది (సపరేట్ కాపీ)
+<p>Student(String name) {<br>        this.name = name;<br>        Student.totalStudents++;  // కొత్త ఆబ్జెక్ట్ రాగానే కామన్ కౌంటర్ ని పెంచుతున్నాం<br>    }<br>}</p>
+<p>Student s1 = new Student("Ravi");<br>Student s2 = new Student("Priya");<br>System.out.println(Student.totalStudents); // 2 వస్తుంది (అందరూ షేర్ చేసుకున్నారు కాబట్టి!)</code></pre></div></p>
+<p><strong>మెమరీలో ఎక్కడ ఉంటాయి?</strong><br>- మామూలు వేరియబుల్స్ (Instance) → Heap లో ఒక్కో ఆబ్జెక్ట్ కి ఒక్కో కాపీ.<br>- <code>static</code> వేరియబుల్స్ → Class Area లో ఒకే ఒక్క కాపీ.</p>
       </div>
     </section>
   
@@ -563,38 +563,37 @@
     <section class="lesson-section">
       <h2>2. Static Initializer Blocks</h2>
       <div class="theory-text">
-        <p>A <strong>Static Initializer Block</strong> is a block of code that runs <strong>exactly once</strong> when the class is first loaded into the JVM, before any object is created or static method is called. It is used for complex static field initialization (e.g. loading config files, computing lookup tables):</p>
+        <p>క్లాస్ లోపల <code>static { ... }</code> అని ఒక బ్లాక్ రాయొచ్చు. దీన్ని <strong>Static Block</strong> అంటారు. JVM మొదటిసారి ఈ క్లాస్ ని లోడ్ చేసినప్పుడు, ఇది <strong>ఒకే ఒక్కసారి</strong> రన్ అవుతుంది. కాంప్లెక్స్ గా ఉండే సెటప్ పనులకి దీన్ని వాడతారు:</p>
 <div class="code-block"><pre><code>class DatabaseConfig {
     static String host;
     static int port;
-<p>static {<br>        // Runs once when class is loaded<br>        host = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : "localhost";<br>        port = 5432;<br>        System.out.println("[INIT] Database config loaded!");<br>    }<br>}</code></pre></div></p>
+<p>static {<br>        // క్లాస్ లోడ్ అయినప్పుడు ఒకేసారి రన్ అవుతుంది<br>        host = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : "localhost";<br>        port = 5432;<br>        System.out.println("[INIT] డేటాబేస్ సెటప్ రెడీ!");<br>    }<br>}</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Inner Classes (Non-static Nested Classes)</h2>
+      <h2>3. Inner Classes (క్లాస్ లోపల క్లాస్)</h2>
       <div class="theory-text">
-        <p>An <strong>Inner Class</strong> is a class defined inside another class body. A non-static inner class has implicit access to all members (including private ones) of the outer class:</p>
+        <p>ఒక క్లాస్ లోపల ఇంకో క్లాస్ ని రాయడాన్నే <strong>Inner Class</strong> అంటారు. లోపల ఉన్న క్లాస్ కి బయట క్లాస్ లో ఉన్న ప్రతిదీ (ప్రైవేట్ ఉన్నవి కూడా) యాక్సెస్ ఉంటుంది:</p>
 <div class="code-block"><pre><code>class Engine {
     private int horsepower = 400;
-<p>class TurboCharger {              // Inner class<br>        void boost() {<br>            System.out.println("Boosting " + horsepower + " HP engine!"); // Can access outer private!<br>        }<br>    }<br>}</p>
-<p>Engine engine = new Engine();<br>Engine.TurboCharger turbo = engine.new TurboCharger(); // Requires outer instance!<br>turbo.boost();</code></pre></div></p>
+<p>class TurboCharger {              // ఇది ఇన్నర్ క్లాస్<br>        void boost() {<br>            System.out.println("బూస్టింగ్ " + horsepower + " HP ఇంజిన్!"); // ప్రైవేట్ ది కూడా వాడుకుంది!<br>        }<br>    }<br>}</p>
+<p>Engine engine = new Engine();<br>// ఇన్నర్ క్లాస్ ఆబ్జెక్ట్ కావాలంటే బయటి ఆబ్జెక్ట్ ఉండి తీరాలి<br>Engine.TurboCharger turbo = engine.new TurboCharger(); <br>turbo.boost();</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Java Enums: Type-Safe Named Constants</h2>
+      <h2>4. Java Enums: తప్పులు చేయకుండా ఆపే సూపర్ పవర్</h2>
       <div class="theory-text">
-        <p>An <strong>Enum (Enumeration)</strong> is a special Java class that represents a <strong>fixed, predefined set of named constants</strong>. Enums provide compile-time type safety that prevents assigning invalid string values to constant-type fields:</p>
-<div class="code-block"><pre><code>// Without enum: Bug-prone, no type safety!
-String day = "MONDAI"; // Typo goes undetected!
-<p>// With enum: Compile-time safety!<br>enum Day { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY }<br>Day today = Day.MONDAY; // Compiler validates!</code></pre></div></p>
-<p><strong>Enums can have fields, constructors, and methods!</strong><br><div class="code-block"><pre><code>enum Planet {<br>    MERCURY(3.303e+23, 2.4397e6),<br>    EARTH  (5.976e+24, 6.37814e6);</p>
+        <p><strong>Enum</strong> అంటే కొన్ని ఫిక్స్డ్ వాల్యూస్ ని సేవ్ చేసుకోవడానికి వాడే ఒక స్పెషల్ క్లాస్. ఇది వాడితే మనం స్పెల్లింగ్ తప్పులు రాసి బగ్స్ తెచ్చుకునే బాధ తప్పుతుంది:</p>
+<div class="code-block"><pre><code>// Enum వాడకపోతే: ఎవరైనా ఇలా తప్పు స్పెల్లింగ్ రాసినా జావా పట్టుకోలేదు!
+String day = "MONDAI";
+<p>// Enum వాడితే: ఇవి తప్ప వేరేది రాయలేరు!<br>enum Day { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY }<br>Day today = Day.MONDAY; // జావా కంపైలర్ పర్ఫెక్ట్ గా చెక్ చేస్తుంది!</code></pre></div></p>
+<p><strong>Enums లో కూడా వేరియబుల్స్, కన్స్ట్రక్టర్స్ రాయొచ్చు తెలుసా!</strong><br><div class="code-block"><pre><code>enum Planet {<br>    MERCURY(3.303e+23, 2.4397e6),<br>    EARTH  (5.976e+24, 6.37814e6);</p>
 <p>private final double mass;<br>    private final double radius;</p>
-<p>Planet(double mass, double radius) {<br>        this.mass = mass;<br>        this.radius = radius;<br>    }</p>
-<p>double surfaceGravity() {<br>        final double G = 6.67300E-11;<br>        return G * mass / (radius * radius);<br>    }<br>}</code></pre></div></p>
+<p>Planet(double mass, double radius) {<br>        this.mass = mass;<br>        this.radius = radius;<br>    }<br>}</code></pre></div></p>
       </div>
     </section>
   
@@ -610,13 +609,13 @@ String day = "MONDAI"; // Typo goes undetected!
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>// Enum Definition
+        <pre><code>// Enum క్రియేట్ చేస్తున్నాం
 enum OrderStatus {
-    PENDING("Order received, awaiting processing"),
-    PROCESSING("Order is being prepared"),
-    SHIPPED("Order dispatched from warehouse"),
-    DELIVERED("Order successfully delivered"),
-    CANCELLED("Order cancelled by customer");
+    PENDING("ఆర్డర్ రిసీవ్ అయ్యింది, వెయిటింగ్"),
+    PROCESSING("ఆర్డర్ ప్యాక్ చేస్తున్నారు"),
+    SHIPPED("ఆర్డర్ బయలుదేరింది"),
+    DELIVERED("కస్టమర్ కి డెలివరీ అయిపొయింది"),
+    CANCELLED("ఆర్డర్ క్యాన్సిల్ చేసారు");
 
     private final String description;
 
@@ -630,13 +629,13 @@ enum OrderStatus {
 }
 
 class ShoppingCart {
-    // Static field: shared across all cart instances
+    // Static ఫీల్డ్: అందరికీ కామన్ కౌంటర్
     static int totalCartsCreated = 0;
-    static final double TAX_RATE  = 0.18; // 18% GST
+    static final double TAX_RATE  = 0.18; // 18% GST అందరికీ ఒకటే
 
-    // Static initializer block
+    // Static ఇనిషియలైజర్ బ్లాక్
     static {
-        System.out.println("  [CLASS LOADED] ShoppingCart initialized. Tax Rate: " + (TAX_RATE * 100) + "%");
+        System.out.println("  [క్లాస్ లోడ్ అయ్యింది] షాపింగ్ కార్ట్ రెడీ. టాక్స్ రేటు: " + (TAX_RATE * 100) + "%");
     }
 
     String customerId;
@@ -646,8 +645,8 @@ class ShoppingCart {
     ShoppingCart(String customerId, double subtotal) {
         this.customerId = customerId;
         this.subtotal   = subtotal;
-        this.status     = OrderStatus.PENDING;
-        ShoppingCart.totalCartsCreated++;
+        this.status     = OrderStatus.PENDING; // డిఫాల్ట్ గా వెయిటింగ్ లో పెడతాం
+        ShoppingCart.totalCartsCreated++; // కౌంటర్ పెంచుతున్నాం
     }
 
     double calculateTotalWithTax() {
@@ -659,12 +658,12 @@ class ShoppingCart {
     }
 
     void displayOrderSummary() {
-        System.out.printf("  Customer: %-10s | Subtotal: $%7.2f | Total+Tax: $%7.2f | Status: %s%n",
+        System.out.printf("  కస్టమర్: %-10s | సబ్-టోటల్: $%7.2f | టోటల్+టాక్స్: $%7.2f | స్టేటస్: %s%n",
                 customerId, subtotal, calculateTotalWithTax(), status.name());
         System.out.println("    -&gt; " + status.getDescription());
     }
 
-    // Static Nested Class (does not need outer instance)
+    // Static Nested Class (దీనికి బయటి ఆబ్జెక్ట్ తో పనిలేదు)
     static class TaxCalculator {
         static double computeGST(double amount) {
             return amount * TAX_RATE;
@@ -674,14 +673,14 @@ class ShoppingCart {
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1. Static Initializer & Object Creation ===");
+        System.out.println("=== 1. Static బ్లాక్ & ఆబ్జెక్ట్స్ ===");
         ShoppingCart cart1 = new ShoppingCart("CUST-001", 499.99);
         ShoppingCart cart2 = new ShoppingCart("CUST-002", 1200.00);
 
-        System.out.println("Total carts created: " + ShoppingCart.totalCartsCreated);
+        System.out.println("మొత్తం ఎన్ని కార్ట్స్ క్రియేట్ అయ్యాయి: " + ShoppingCart.totalCartsCreated);
 
         System.out.println("
-=== 2. Order Status Enum Lifecycle ===");
+=== 2. Order Status Enum ఎలా మారుతుందో చూద్దాం ===");
         cart1.displayOrderSummary();
         cart1.updateStatus(OrderStatus.PROCESSING);
         cart1.displayOrderSummary();
@@ -689,59 +688,59 @@ public class Main {
         cart1.displayOrderSummary();
 
         System.out.println("
-=== 3. Enum Iteration via values() ===");
-        System.out.println("All Order Statuses:");
+=== 3. Enum లో ఏమేమి ఉన్నాయో లిస్ట్ చేయడం (values() వాడి) ===");
+        System.out.println("అందుబాటులో ఉన్న స్టేటస్ లు:");
         for (OrderStatus s : OrderStatus.values()) {
             System.out.printf("  %-12s [#%d] -&gt; %s%n", s.name(), s.ordinal(), s.getDescription());
         }
 
         System.out.println("
-=== 4. Static Nested Class Usage ===");
+=== 4. Static Nested Class వాడుక ===");
         double gst = ShoppingCart.TaxCalculator.computeGST(cart2.subtotal);
-        System.out.printf("  GST on $%.2f = $%.2f%n", cart2.subtotal, gst);
+        System.out.printf("  $%.2f మీద GST ఎంతంటే = $%.2f%n", cart2.subtotal, gst);
 
         System.out.println("
-=== 5. Enum in switch expression ===");
+=== 5. Enum ని switch లో వాడటం ===");
         OrderStatus current = OrderStatus.DELIVERED;
         String message = switch (current) {
-            case PENDING    -&gt; "Your order is in queue.";
-            case PROCESSING -&gt; "We are packing your items!";
-            case SHIPPED    -&gt; "Out for delivery!";
-            case DELIVERED  -&gt; "Enjoy your purchase!";
-            case CANCELLED  -&gt; "Sorry to see you go.";
+            case PENDING    -&gt; "మీ ఆర్డర్ క్యూలో ఉంది.";
+            case PROCESSING -&gt; "మీ వస్తువులు ప్యాక్ అవుతున్నాయి!";
+            case SHIPPED    -&gt; "మీ ఆర్డర్ బయలుదేరింది!";
+            case DELIVERED  -&gt; "ఎంజాయ్ యార్!";
+            case CANCELLED  -&gt; "క్యాన్సిల్ అయిపొయింది కదరా.";
         };
-        System.out.println("  Status message: " + message);
+        System.out.println("  స్టేటస్ మెసేజ్: " + message);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. Static Initializer & Object Creation ===
-  [CLASS LOADED] ShoppingCart initialized. Tax Rate: 18.0%
-Total carts created: 2
+        <div class="output-content">=== 1. Static బ్లాక్ & ఆబ్జెక్ట్స్ ===
+  [క్లాస్ లోడ్ అయ్యింది] షాపింగ్ కార్ట్ రెడీ. టాక్స్ రేటు: 18.0%
+మొత్తం ఎన్ని కార్ట్స్ క్రియేట్ అయ్యాయి: 2
 
-=== 2. Order Status Enum Lifecycle ===
-  Customer: CUST-001   | Subtotal: $ 499.99 | Total+Tax: $ 589.99 | Status: PENDING
-    -&gt; Order received, awaiting processing
-  Customer: CUST-001   | Subtotal: $ 499.99 | Total+Tax: $ 589.99 | Status: PROCESSING
-    -&gt; Order is being prepared
-  Customer: CUST-001   | Subtotal: $ 499.99 | Total+Tax: $ 589.99 | Status: SHIPPED
-    -&gt; Order dispatched from warehouse
+=== 2. Order Status Enum ఎలా మారుతుందో చూద్దాం ===
+  కస్టమర్: CUST-001   | సబ్-టోటల్: $ 499.99 | టోటల్+టాక్స్: $ 589.99 | స్టేటస్: PENDING
+    -&gt; ఆర్డర్ రిసీవ్ అయ్యింది, వెయిటింగ్
+  కస్టమర్: CUST-001   | సబ్-టోటల్: $ 499.99 | టోటల్+టాక్స్: $ 589.99 | స్టేటస్: PROCESSING
+    -&gt; ఆర్డర్ ప్యాక్ చేస్తున్నారు
+  కస్టమర్: CUST-001   | సబ్-టోటల్: $ 499.99 | టోటల్+టాక్స్: $ 589.99 | స్టేటస్: SHIPPED
+    -&gt; ఆర్డర్ బయలుదేరింది
 
-=== 3. Enum Iteration via values() ===
-All Order Statuses:
-  PENDING      [#0] -&gt; Order received, awaiting processing
-  PROCESSING   [#1] -&gt; Order is being prepared
-  SHIPPED      [#2] -&gt; Order dispatched from warehouse
-  DELIVERED    [#3] -&gt; Order successfully delivered
-  CANCELLED    [#4] -&gt; Order cancelled by customer
+=== 3. Enum లో ఏమేమి ఉన్నాయో లిస్ట్ చేయడం (values() వాడి) ===
+అందుబాటులో ఉన్న స్టేటస్ లు:
+  PENDING      [#0] -&gt; ఆర్డర్ రిసీవ్ అయ్యింది, వెయిటింగ్
+  PROCESSING   [#1] -&gt; ఆర్డర్ ప్యాక్ చేస్తున్నారు
+  SHIPPED      [#2] -&gt; ఆర్డర్ బయలుదేరింది
+  DELIVERED    [#3] -&gt; కస్టమర్ కి డెలివరీ అయిపొయింది
+  CANCELLED    [#4] -&gt; ఆర్డర్ క్యాన్సిల్ చేసారు
 
-=== 4. Static Nested Class Usage ===
-  GST on $1200.00 = $216.00
+=== 4. Static Nested Class వాడుక ===
+  $1200.00 మీద GST ఎంతంటే = $216.00
 
-=== 5. Enum in switch expression ===
-  Status message: Enjoy your purchase!</div>
+=== 5. Enum ని switch లో వాడటం ===
+  స్టేటస్ మెసేజ్: ఎంజాయ్ యార్!</div>
       </div>
 
       <div class="explain-card">
@@ -749,31 +748,31 @@ All Order Statuses:
         
     <div class="explain-item">
       <code class="code-token">static int totalCartsCreated = 0;</code>
-      <p>Shared single copy in JVM Method Area, incremented every time any ShoppingCart constructor runs.</p>
+      <p>ఇది ఒక్కటే ఉంటుంది. ఏ ఆబ్జెక్ట్ క్రియేట్ అయినా ఈ కౌంటర్ నే పెంచుతాయి.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">static { System.out.println(...) }</code>
-      <p>Static initializer block executes once when the JVM first loads the ShoppingCart class.</p>
+      <p>క్లాస్ రన్ అయిన ఫస్ట్ సెకన్ లోనే ఇది రన్ అయ్యి ప్రింట్ అవుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">enum OrderStatus { PENDING(...), ... }</code>
-      <p>Enum constants are implicitly public static final fields pre-created in the Method Area at class load.</p>
+      <p>ఇవి ఫైనల్ గా ఉన్న ఫిక్స్డ్ వాల్యూస్. ఇవి తప్ప వేరేవేవీ ఈ వేరియబుల్ కి ఎసైన్ చేయలేము.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">OrderStatus.values()</code>
-      <p>Built-in method returning an array of all enum constants in declaration order.</p>
+      <p>జావా ఎనమ్స్ లోపల ఉన్న వాల్యూస్ అన్నీ ఒక అరే లాగా రిటర్న్ చేసే ఇన్-బిల్ట్ మెథడ్ ఇది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">static class TaxCalculator</code>
-      <p>Static nested class belongs to the outer class scope but does NOT hold a reference to an outer class instance.</p>
+      <p>ఇది Nested క్లాస్, పైగా స్టాటిక్. కాబట్టి దీన్ని బయట నుంచి పిలవడానికి ShoppingCart ఆబ్జెక్ట్ అవసరం లేదు.</p>
     </div>
   
       </div>
@@ -806,7 +805,7 @@ class Employee {
     }
 
     void displayInfo() {
-        System.out.printf("  %-14s | Role: %-8s | Salary: $%,.2f%n", name, role, salary);
+        System.out.printf("  %-14s | రోల్: %-8s | శాలరీ: $%,.2f%n", name, role, salary);
     }
 }
 
@@ -816,20 +815,20 @@ public class PracticalApplication {
         Employee e2 = new Employee("Priya Devi",   62000, UserRole.EMPLOYEE);
         Employee e3 = new Employee("Admin Singh", 110000, UserRole.ADMIN);
 
-        System.out.println("=== HR Portal — Employee Directory ===");
+        System.out.println("=== HR పోర్టల్ — ఎంప్లాయీ లిస్ట్ ===");
         e1.displayInfo(); e2.displayInfo(); e3.displayInfo();
-        System.out.println("Total Headcount : " + Employee.headcount);
+        System.out.println("మొత్తం ఎంప్లాయీస్ (Headcount) : " + Employee.headcount);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== HR Portal — Employee Directory ===
-  Ravi Kumar     | Role: MANAGER  | Salary: $85,000.00
-  Priya Devi     | Role: EMPLOYEE | Salary: $62,000.00
-  Admin Singh    | Role: ADMIN    | Salary: $110,000.00
-Total Headcount : 3</div>
+        <div class="output-content">=== HR పోర్టల్ — ఎంప్లాయీ లిస్ట్ ===
+  Ravi Kumar     | రోల్: MANAGER  | శాలరీ: $85,000.00
+  Priya Devi     | రోల్: EMPLOYEE | శాలరీ: $62,000.00
+  Admin Singh    | రోల్: ADMIN    | శాలరీ: $110,000.00
+మొత్తం ఎంప్లాయీస్ (Headcount) : 3</div>
       </div>
     </section>
 
@@ -838,16 +837,13 @@ Total Headcount : 3</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Accessing a static field via an object reference (<code>s1.totalCount</code>) instead of the class name (<code>Student.totalCount</code>). Works, but misleading!</li>
+    <li style="margin-bottom:8px; line-height:1.6;">స్టాటిక్ వేరియబుల్ ని ఆబ్జెక్ట్ పేరుతో పిలవడం (<code>s1.totalCount</code>). ఇది రన్ అవుతుంది కానీ చూడటానికి తప్పుగా ఉంటుంది, క్లాస్ పేరుతోనే (<code>Student.totalCount</code>) పిలవాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Trying to use <code>this</code> inside a static method or static initializer block, causing compile error.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">స్టాటిక్ మెథడ్ లోపల <code>this</code> వాడదామని ట్రై చేయడం. (స్టాటిక్ కి ఆబ్జెక్ట్ తో సంబంధం లేదు కాబట్టి ఎర్రర్ వస్తుంది).</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Attempting to use a non-static field from within a static nested class (requires an outer class instance).</li>
-  
-
-    <li style="margin-bottom:8px; line-height:1.6;">Using String or int constants instead of Enums for status/category fields, making the code error-prone and unreadable.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">Enums వాడకుండా డేంజర్ గా ఉండే స్ట్రింగ్స్ ని వాడి స్టేటస్ మెయింటైన్ చేయడం (<code>status = "Pendin"</code> అని స్పెల్లింగ్ తప్పు రాస్తే గోవిందా!).</li>
   
       </ul>
     </div>
@@ -864,15 +860,15 @@ Total Headcount : 3</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Create an enum Season with values: SPRING, SUMMER, MONSOON, WINTER.
-// Each enum should have a String activity and a method getRecommendation().
-// Print all seasons and their recommended activities.
+// Season అనే ఒక ఎనమ్ (Enum) క్రియేట్ చేయండి. అందులో SPRING, SUMMER, MONSOON, WINTER ఉండాలి.
+// ప్రతి ఎనమ్ కి ఒక String activity (ఉదా: SUMMER కి "స్విమ్మింగ్"), getRecommendation() మెథడ్ ఉండాలి.
+// వాటన్నింటినీ ఒక లూప్ లో ప్రింట్ చేయండి.
 
 enum Season {
-    SPRING("Cycling and picnics"),
-    SUMMER("Swimming and water sports"),
-    MONSOON("Trekking and hiking"),
-    WINTER("Skiing and hot beverages");
+    SPRING("సైక్లింగ్ అండ్ పిక్నిక్"),
+    SUMMER("స్విమ్మింగ్ అండ్ వాటర్ స్పోర్ట్స్"),
+    MONSOON("ట్రెక్కింగ్ అండ్ వేడి బజ్జీలు"),
+    WINTER("స్కీయింగ్ అండ్ కాఫీ");
 
     private final String activity;
     Season(String activity) { this.activity = activity; }
@@ -897,20 +893,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ When should I use static fields vs instance fields?</h4>
-      <p>Use `static` for data that is shared and constant across all instances: counters, configuration constants, lookup tables. Use instance fields for data that is unique per object: a user's name, email, or balance.</p>
+      <h4>❓ స్టాటిక్ ఎప్పుడు వాడాలి, మామూలు (ఇన్స్టాన్స్) ఎప్పుడు వాడాలి?</h4>
+      <p>అందరికీ కామన్ గా ఉండే డేటాకి (ఉదా: స్కూల్ పేరు, టోటల్ కౌంట్, టాక్స్ రేట్) `static` వాడాలి. ఎవరికీ వాళ్లకే సపరేట్ గా ఉండే వాటికి (పేరు, వయసు, బ్యాలెన్స్) మామూలువి వాడాలి.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the difference between a static nested class and an inner (non-static) class?</h4>
-      <p>A static nested class does NOT hold an implicit reference to the outer class instance. It behaves like a regular top-level class but is scoped inside another for namespace organization. An inner (non-static) class always requires an enclosing outer instance and can freely access outer private members.</p>
+      <h4>❓ Static Nested Class కి, మామూలు Inner Class కి తేడా ఏంటి?</h4>
+      <p>స్టాటిక్ క్లాస్ బయటి క్లాస్ ఆబ్జెక్ట్ మీద ఆధారపడదు, అది స్వతంత్రంగా బ్రతుకుతుంది. కానీ ఇన్నర్ క్లాస్ రన్ అవ్వాలంటే కచ్చితంగా బయట ఒక ఆబ్జెక్ట్ ఉండి తీరాలి. అది బయటి ప్రైవేట్ డేటాని కూడా యాక్సెస్ చేయగలదు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Can Enum constants have different constructors?</h4>
-      <p>No. All enum constants in an enum type must use the same constructor signature defined in the enum body.</p>
+      <h4>❓ Enum లో వేరు వేరు కన్స్ట్రక్టర్స్ వాడొచ్చా?</h4>
+      <p>లేదు, ఎనమ్ లో అన్నీ ఒకే టైప్ కన్స్ట్రక్టర్ ని ఫాలో అవ్వాలి (ఓవర్ లోడ్ చేయొచ్చు, కానీ అంత రిస్క్ అవసరం లేదు).</p>
     </div>
   
     </section>
@@ -920,19 +916,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Static fields live in the JVM Method Area — shared by all objects; instance fields live per-object in the Heap.</li>
+    <li style="margin-bottom:6px; line-height:1.5;"><code>static</code> అంటే అందరికీ షేర్ చేయబడే ఒకే కాపీ (క్లాస్ ఏరియాలో ఉంటుంది).</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Static initializer blocks run once at class load time, before any constructor or static method.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Static Block అనేది క్లాస్ లోడ్ అవ్వగానే ఒక్కసారే రన్ అయ్యి ఆగిపోతుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Inner (non-static) classes hold an implicit outer reference; static nested classes do not.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఒక క్లాస్ లోపల ఇంకో క్లాస్ రాయొచ్చు (Inner / Nested Classes).</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Enums represent fixed, compile-time type-safe sets of constants and can have fields, constructors, and methods.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">తప్పులు చేయకుండా ఫిక్స్డ్ ఆప్షన్స్ ని మాత్రమే వాడుకోవడానికి Enums అద్భుతంగా పనిచేస్తాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;"><code>Enum.values()</code> returns all constants; <code>ordinal()</code> returns 0-based position; <code>name()</code> returns the string name.</li>
+    <li style="margin-bottom:6px; line-height:1.5;"><code>Enum.values()</code> తో ఎనమ్స్ అన్నింటినీ అరే లాగా వాడుకోవచ్చు.</li>
   
       </ul>
     </div>

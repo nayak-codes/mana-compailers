@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sorting (Bubble, Selection, Insertion) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో నంబర్స్ ని ఒక ఆర్డర్ లో (చిన్న నుండి పెద్దకి) ఎలా సర్దుతారు? Sorting (సార్టింగ్) ప్రపంచంలో బేసిక్ టెక్నిక్స్ అయిన Bubble Sort, Selection Sort మరియు Insertion Sort ఎలా పనిచేస్తాయో కార్డ్స్ ఆట ఎగ్జాంపుల్ తో నేర్చుకుందాం." />
+  <meta name="keywords" content="c tutorial, sorting (bubble, selection, insertion) (తెలుగులో), hashing c, collision handling, graphs c, binary search c, sorting algorithms c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/61-c-sorting-1-bubble-selection-insertion.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html">59. Graphs (Matrix & List)</a>
+      </div>
+
+      <!-- Phase 20: Algorithms & Final -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Algorithms & Final</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/60-c-searching-linear-and-binary-search.html">60. Linear & Binary Search</a>
+        <a href="/blog-c/61-c-sorting-1-bubble-selection-insertion.html" class="active">61. Sorting (Bubble, Selection, Insertion)</a>
+        <a href="/blog-c/62-c-sorting-2-merge-sort-quick-sort.html">62. Sorting (Merge & Quick Sort)</a>
+        <a href="/blog-c/63-c-dynamic-programming-basics.html">63. Dynamic Programming Basics</a>
+        <a href="/blog-c/64-c-system-calls-basics-fork-exec-wait.html">64. System Calls (fork, exec, wait)</a>
+        <a href="/blog-c/65-c-building-a-mini-c-project.html">65. C Master Project & Conclusion</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 61: Sorting (Bubble, Selection, Insertion) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Sorting (Bubble, Selection, Insertion) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 61</span>
+      <span class="badge">📂 Phase 20: Algorithms & Final</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Sorting Algorithms · Bubble Sort Logic · Selection Sort · Insertion Sort · O(N^2) Time Complexity</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>లాస్ట్ లెసన్ లో బైనరీ సెర్చ్ వాడాలంటే డేటా ఒక ఆర్డర్ లో సార్ట్ (Sort) అయ్యి ఉండాలని నేర్చుకున్నాం కదా. మరి పిచ్చిపిచ్చిగా (Random) ఉన్న డేటాని అసలు ఎలా సార్ట్ చేస్తారు? అమెజాన్ లో మీరు "Price: Low to High" నొక్కగానే ప్రొడక్ట్స్ అన్నీ ఒక క్యూ లో ఎలా నిలబడతాయి? దానికి వాడే అల్గారిథమ్స్ ని <strong>Sorting Algorithms</strong> అంటారు. ఇందులో బేసిక్స్ అయిన Bubble, Selection మరియు Insertion అనే మూడు పద్ధతులు O(N²) టైమ్ తో ఎలా పనిచేస్తాయో ఈరోజు పేకముక్కల (Cards) ఆటతో డీప్ గా చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> 1. బబుల్ సార్ట్ (Bubble Sort) - పక్కోడితో పోరు</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>లాజిక్:</strong> అర్రే లో మొదటి నుండి వెళ్తూ, పక్కపక్కనే ఉన్న ఇద్దరినీ కంపేర్ చేస్తాం. పెద్దోడు లెఫ్ట్ లో ఉంటే, వాళ్ళిద్దరినీ స్వాప్ (Swap) చేస్తాం. ఇలా ఒక రౌండ్ అయ్యేసరికి క్లాస్ లో ఉన్న <strong>అతి పెద్దోడు (గాలి బుడగ లాగా) లాస్ట్ కి వెళ్లి సెటిల్ అయిపోతాడు!</strong> మళ్ళీ ఇంకో రౌండ్ వేస్తాం, సెకండ్ పెద్దోడు సెటిల్ అవుతాడు.
+      </p>
+      
+      <div class="memory-diagram">
+ఉదాహరణకు ( 5, 1, 4, 2 ):
+1. 5 > 1 కాబట్టి స్వాప్: ( 1, 5, 4, 2 )
+2. 5 > 4 కాబట్టి స్వాప్: ( 1, 4, 5, 2 )
+3. 5 > 2 కాబట్టి స్వాప్: ( 1, 4, 2, [5] ) -> 5 లాస్ట్ కి వెళ్లి ఫిక్స్ అయిపోయింది!</div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> 2. సెలెక్షన్ సార్ట్ (Selection Sort) - వెతుకులాట</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>లాజిక్:</strong> దీని స్టైల్ వేరు! ఇందులో క్లాస్ మొత్తం వెతికి (Scan చేసి) <strong>అతి చిన్న వాడిని (Minimum)</strong> పట్టుకుని తీసుకొచ్చి ఫస్ట్ ప్లేస్ లో కూర్చోపెడతాం! ఆ తర్వాత మిగిలిన వాళ్ళలో చిన్న వాడిని పట్టుకుని సెకండ్ ప్లేస్ లో కూర్చోపెడతాం.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> 3. ఇన్సర్షన్ సార్ట్ (Insertion Sort) - పేకముక్కలు</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>లాజిక్:</strong> మీరు రమ్మీ (Rummy) ఆడేటప్పుడు చేతిలో పేకముక్కలు ఎలా సర్దుకుంటారు? కింద నుండి ఒక ముక్క తీసి, మీ చేతిలో ఆల్రెడీ ఉన్న ముక్కలలో కరెక్ట్ ప్లేస్ చూసుకుని మధ్యలో దూరుస్తారు కదా! ఇది అచ్చం అలాగే పనిచేస్తుంది. చేతిలో ఉన్నవి ఎప్పుడూ సార్ట్ అయ్యే ఉంటాయి.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> ఒకే ఒక సింపుల్ కోడ్ (Bubble Sort in Action)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో బబుల్ సార్ట్ వాడి ఒక జంబుల్ అయిన అర్రే ని రెండు ఫర్-లూప్స్ (Nested loops) ద్వారా ఎలా సార్ట్ చేసామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Bubble Sort Algorithm</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// స్వాప్ (Swap) చేయడానికి సింపుల్ ఫంక్షన్ (పాయింటర్స్ వాడి)
+void swap(int* xp, int* yp) {
+    int temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+
+// బబుల్ సార్ట్ ఫంక్షన్
+void bubbleSort(int arr[], int n) {
+    // ఔటర్ లూప్: ఎన్ని రౌండ్స్ వేయాలి? (N-1 రౌండ్స్ వేస్తే చాలు)
+    for (int i = 0; i < n - 1; i++) {
+        
+        int swapped = 0; // ఈ రౌండ్ లో అసలు స్వాప్ జరిగిందా లేదా అని చెక్ చేయడానికి
+        
+        // ఇన్నర్ లూప్: పక్కపక్కనోళ్లని కంపేర్ చేస్తూ ముందుకు వెళ్లడం
+        // లాస్ట్ కి వెళ్ళిన పెద్దోళ్లని (i) మళ్ళీ చెక్ చేయక్కర్లేదు కాబట్టి 'n - i - 1' 
+        for (int j = 0; j < n - i - 1; j++) {
+            
+            // ఎడమ వాడి కన్నా కుడి వాడు చిన్న ఉంటే... ప్లేస్ మార్చు!
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+                swapped = 1; // స్వాప్ జరిగింది
+            }
+        }
+        
+        // ఒకవేళ ఈ రౌండ్ లో అసలు ఒక్క స్వాప్ కూడా జరగలేదంటే...
+        // దాని అర్థం డేటా అంతా సార్ట్ అయిపోయిందని! లూప్ ఆపేయొచ్చు.
+        if (swapped == 0) {
+            break; // (Optimized Bubble Sort)
+        }
+    }
+}
+
+// అర్రే ని ప్రింట్ చేసే ఫంక్షన్
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("--- Bubble Sort Demo ---\n\n");
+    
+    printf("Original Array : ");
+    printArray(arr, n);
+    
+    // సార్టింగ్ ఫంక్షన్ ని పిలుద్దాం
+    bubbleSort(arr, n);
+    
+    printf("Sorted Array   : ");
+    printArray(arr, n);
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>for(i=0... n-1)</code>: ఔటర్ లూప్ ఎప్పుడూ రౌండ్స్ కౌంట్ చేస్తుంది. 7 నంబర్స్ ఉంటే 6 రౌండ్స్ (లార్లు) వేస్తే చాలు, లాస్ట్ వాడు వాడికదే సెటిల్ అయిపోతాడు.</li>
+        <li><code>for(j=0... n-i-1)</code>: ఇన్నర్ లూప్ యాక్షన్ చేస్తుంది (కంపేర్ అండ్ స్వాప్). ఇక్కడ <code>-i</code> ఎందుకు రాశామంటే, ఫస్ట్ రౌండ్ (i=0) లో అతి పెద్దోడు లాస్ట్ కి వెళ్లి లాక్ అయిపోతాడు. సెకండ్ రౌండ్ (i=1) లో మళ్ళీ ఆ లాస్ట్ వాడి దగ్గరికి వెళ్లి చెక్ చేయడం టైమ్ వేస్ట్ కదా!</li>
+        <li><code>swapped = 0</code> ఫ్లాగ్ మ్యాజిక్ ఏంటంటే, ఒకవేళ మీకు ఇచ్చిన డేటా ఆల్రెడీ సార్ట్ అయ్యి (1,2,3,4,5) ఉంటే, ఫస్ట్ రౌండ్ లో ఒక్క స్వాప్ కూడా జరగదు. అప్పుడు పిచ్చోడిలాగా మళ్ళీ 6 రౌండ్స్ ఎందుకు వేయడం? డైరెక్ట్ గా <code>break</code> తో బయటికి వచ్చేసి CPU టైమ్ ని సేవ్ చేస్తుంది! (దీన్నే Optimized Bubble Sort అంటారు).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">6</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఈ మూడు సార్ట్స్ లో ఏది వాడాలి?</h4>
+          <p>రియల్ ప్రాజెక్ట్స్ లో ఎవరూ ఈ మూడూ వాడరు! ఎందుకంటే వీటికి రెండు <code>for</code> లూప్స్ (Nested) ఉంటాయి. 10 వేల రికార్డ్స్ ఇస్తే (10000 x 10000) అంటే పది కోట్ల సార్లు లూప్ తిరిగి మీ ప్రోగ్రామ్ ఫ్రీజ్ అయిపోతుంది (దీన్నే Time Complexity O(N²) అంటారు). ఇవి కేవలం కాలేజీలో నేర్చుకోవడానికి మాత్రమే.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Insertion Sort కి ఒక అడ్వాంటేజ్ ఉందట కదా?</h4>
+          <p>అవును! ఒకవేళ మీకు ఇచ్చిన డేటా దాదాపుగా సార్ట్ అయ్యి ఉండి, ఒకటో రెండో నంబర్స్ మాత్రమే తేడా ఉంటే, Insertion Sort చాలా అంటే చాలా ఫాస్ట్ గా (దాదాపు O(N) స్పీడ్ తో) పనిచేస్తుంది. అందుకే దీన్ని చిన్నచిన్న పనులకి వాడుతారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: స్థిరమైన (Stable) సార్ట్ అంటే ఏంటి?</h4>
+          <p>సపోజ్ ఇద్దరు స్టూడెంట్స్ కి 90 మార్క్స్ వచ్చాయి (A కన్నా B ముందు ఉన్నాడు). సార్ట్ చేసిన తర్వాత కూడా ఆ ఇద్దరి మార్క్స్ పక్కపక్కనే ఉండి, B ముందే ఉంటే దాన్ని Stable (స్థిరమైనది) అంటారు. బబుల్ మరియు ఇన్సర్షన్ సార్ట్స్ Stable. కానీ సెలెక్షన్ సార్ట్ అలా కాదు, అది జంప్స్ చేస్తుంది కాబట్టి Unstable అంటారు.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="60-c-searching-linear-and-binary-search.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">60. Linear & Binary Search</span>
+      </a>
+
+      
+      <a href="62-c-sorting-2-merge-sort-quick-sort.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">62. Sorting (Merge & Quick Sort)</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

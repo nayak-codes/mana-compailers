@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Getters, Setters, Data Validation & Controlled Access — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering controlled object access in Java: designing accessor (getter) and mutator (setter) methods with business validation rules, defensive copying for mutable fields, computed properties that derive values from existing state, and fluent method chaining for readable object construction APIs." />
-  <meta name="keywords" content="java getters, setters, data validation & controlled access, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Getters, Setters, Data Validation & Controlled Access (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="వేరియబుల్స్ కి `private` పెట్టగానే పని అయిపోలేదు. వాటిని సేఫ్ గా చదవడానికి Getters, సేఫ్ గా మార్చడానికి (వాలిడేషన్ తో) Setters కావాలి. ఈ చాప్టర్ లో గెట్టర్స్, సెట్టర్స్ ఎలా రాయాలి? Arrays లాంటి వాటిని రిటర్న్ చేసేటప్పుడు సెక్యూరిటీ బ్రేక్ అవ్వకుండా Defensive Copying ఎలా చేయాలి? చూద్దాం." />
+  <meta name="keywords" content="java getters, setters, data validation & controlled access (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/44-java-getters-setters-and-data-validation.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 44: 44. Getters, Setters & Validation</span>
     </div>
 
-    <h1 class="page-title">Java Getters, Setters, Data Validation & Controlled Access</h1>
+    <h1 class="page-title">Java Getters, Setters, Data Validation & Controlled Access (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,76 +541,76 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering controlled object access in Java: designing accessor (getter) and mutator (setter) methods with business validation rules, defensive copying for mutable fields, computed properties that derive values from existing state, and fluent method chaining for readable object construction APIs.</p>
+      <p>వేరియబుల్స్ కి `private` పెట్టగానే పని అయిపోలేదు. వాటిని సేఫ్ గా చదవడానికి Getters, సేఫ్ గా మార్చడానికి (వాలిడేషన్ తో) Setters కావాలి. ఈ చాప్టర్ లో గెట్టర్స్, సెట్టర్స్ ఎలా రాయాలి? Arrays లాంటి వాటిని రిటర్న్ చేసేటప్పుడు సెక్యూరిటీ బ్రేక్ అవ్వకుండా Defensive Copying ఎలా చేయాలి? చూద్దాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. Getter Methods (Accessors) — Controlled Read Access</h2>
+      <h2>1. Getter Methods (చదువుకో, కానీ మార్చకు)</h2>
       <div class="theory-text">
-        <p>A <strong>Getter</strong> provides controlled read-only access to a private field. The Java naming convention is:<br>- For non-boolean fields: <code>public ReturnType getFieldName()</code><br>- For boolean fields: <code>public boolean isFieldName()</code> (not <code>get</code>!)</p>
+        <p>ప్రైవేట్ లో పెట్టిన డేటాని బయటవాళ్ళు చూసుకోవడానికి ఇచ్చే ఒక విండో లాంటిదే <strong>Getter</strong> మెథడ్. దీన్ని ఎలా రాస్తారంటే:<br>- మామూలు వాటికి: <code>public ReturnType getFieldName()</code><br>- boolean (True/False) వాటికి: <code>public boolean isFieldName()</code> (<code>get</code> కాదు సుమా!)</p>
 <div class="code-block"><pre><code>class Employee {
     private String name;
     private double salary;
     private boolean active;
-<p>public String getName()    { return name; }<br>    public double getSalary()  { return salary; }<br>    public boolean isActive()  { return active; } // "is" prefix for booleans!<br>}</code></pre></div></p>
-<p><strong>Getter can transform before returning (Computed Property):</strong><br><div class="code-block"><pre><code>private String firstName;<br>private String lastName;</p>
-<p>public String getFullName() {<br>    return firstName + " " + lastName; // Derived/computed property<br>}</code></pre></div></p>
+<p>public String getName()    { return name; }<br>    public double getSalary()  { return salary; }<br>    public boolean isActive()  { return active; } // ఇక్కడ 'is' అని వాడాలి!<br>}</code></pre></div></p>
+<p><strong>డేటాని మార్చి (కలిపి) పంపొచ్చు (Computed Property):</strong><br><div class="code-block"><pre><code>private String firstName;<br>private String lastName;</p>
+<p>// ఈ మెథడ్ కోసం మనం అసలు వేరియబుల్ స్టోర్ చేయట్లేదు, అప్పటికప్పుడు కలిపి ఇస్తున్నాం<br>public String getFullName() {<br>    return firstName + " " + lastName; <br>}</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Setter Methods (Mutators) — Controlled Write Access with Validation</h2>
+      <h2>2. Setter Methods (చెకింగ్ చేసిన తర్వాతే అలో చెయ్)</h2>
       <div class="theory-text">
-        <p>A <strong>Setter</strong> provides controlled write access, allowing you to insert <strong>business rule validation</strong> before accepting a new value:</p>
+        <p><strong>Setter</strong> ద్వారా డేటాని అప్డేట్ చేస్తారు. కానీ ఇక్కడ మనం "వాలిడేషన్" (చేకింగ్స్) పెట్టి, తప్పు డేటా అయితే ఆపేయొచ్చు:</p>
 <div class="code-block"><pre><code>class Employee {
     private String name;
     private double salary;
-<p>public void setName(String name) {<br>        if (name == null || name.isBlank())<br>            throw new IllegalArgumentException("Employee name cannot be null or empty.");<br>        this.name = name.trim();<br>    }</p>
-<p>public void setSalary(double salary) {<br>        if (salary &lt; 0)<br>            throw new IllegalArgumentException("Salary cannot be negative: " + salary);<br>        if (salary &gt; 10_000_000)<br>            throw new IllegalArgumentException("Salary exceeds maximum policy limit.");<br>        this.salary = salary;<br>    }<br>}</code></pre></div></p>
+<p>public void setName(String name) {<br>        // పేరు ఖాళీగా పంపితే ఆపేస్తున్నాం<br>        if (name == null || name.isBlank())<br>            throw new IllegalArgumentException("పేరు ఖాళీగా ఉండకూడదు బాబు.");<br>        this.name = name.trim();<br>    }</p>
+<p>public void setSalary(double salary) {<br>        // మైనస్ లో శాలరీ ఇస్తే ఆపేస్తున్నాం<br>        if (salary &lt; 0)<br>            throw new IllegalArgumentException("శాలరీ మైనస్ లో ఉండదు!");<br>        if (salary &gt; 10_000_000)<br>            throw new IllegalArgumentException("మరీ అంత శాలరీ మన కంపెనీలో లేదులే.");<br>        this.salary = salary;<br>    }<br>}</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Defensive Copying for Mutable Fields</h2>
+      <h2>3. Defensive Copying (అసలైన దాన్ని కాపాడుకోవడం)</h2>
       <div class="theory-text">
-        <p>When a field is a <strong>mutable object</strong> (like an array or a <code>Date</code>), simply returning it from a getter exposes the internal state to external modification. <strong>Defensive copying</strong> prevents this:</p>
+        <p>ఒకవేళ మీ క్లాస్ లోపల Arrays గానీ, Dates గానీ ఉంటే.. మీరు డైరెక్ట్ గా గెట్టర్ ద్వారా ఆ అరే ని రిటర్న్ చేసేస్తే ప్రాబ్లెమ్ వస్తుంది. బయటవాడు ఆ అరే లోపల ఉన్న వాల్యూస్ ని మార్చేస్తాడు!<br>అలా జరగకుండా ఉండాలంటే జిరాక్స్ కాపీలు ఇవ్వాలి. దీన్నే <strong>Defensive copying</strong> అంటారు:</p>
 <div class="code-block"><pre><code>class Report {
-    private int[] scores; // Mutable array!
-<p>public Report(int[] scores) {<br>        this.scores = scores.clone(); // Copy in: don't trust caller's array!<br>    }</p>
-<p>public int[] getScores() {<br>        return scores.clone(); // Copy out: don't expose the internal array!<br>    }<br>}</code></pre></div></p>
-<p>Without defensive copying:<br><div class="code-block"><pre><code>int[] data = {90, 80, 70};<br>Report r = new Report(data);<br>data[0] = 0;         // Would corrupt r.scores if no defensive copy!<br>r.getScores()[1] = 0; // Would corrupt r.scores on return if no defensive copy!</code></pre></div></p>
+    private int[] scores; // ఇది మామూలు డేటా కాదు, డేంజర్ ముఠా!
+<p>public Report(int[] scores) {<br>        // బయటవాడు పంపించిన దానికి కాపీ (జిరాక్స్) తీసుకుని పెట్టుకుంటున్నాం<br>        this.scores = scores.clone(); <br>    }</p>
+<p>public int[] getScores() {<br>        // మన దగ్గరున్న దాన్ని డైరెక్ట్ గా ఇవ్వకుండా, జిరాక్స్ కాపీ ఇస్తున్నాం<br>        return scores.clone(); <br>    }<br>}</code></pre></div></p>
+<p>ఒకవేళ ఇలా చేయకపోతే ఏమవుతుంది?<br><div class="code-block"><pre><code>int[] data = {90, 80, 70};<br>Report r = new Report(data);<br>data[0] = 0;         // జిరాక్స్ తీయకపోతే, రిపోర్ట్ లోపల ఉన్న డేటా కూడా మారిపోతుంది!<br>r.getScores()[1] = 0; // గెట్టర్ కి జిరాక్స్ లేకపోతే, వాడు తీసుకున్నాక మారిస్తే మనదీ మారుతుంది!</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Fluent Setter Pattern (Method Chaining)</h2>
+      <h2>4. Fluent Setter (లైన్ గా కలుపుకుంటూ వెళ్ళడం)</h2>
       <div class="theory-text">
-        <p>Setters can return <code>this</code> to enable clean <strong>fluent method chaining</strong> syntax:</p>
+        <p>సెట్టర్స్ రాసేటప్పుడు <code>void</code> అని కాకుండా ఆ ఆబ్జెక్ట్ నే రిటర్న్ (<code>return this</code>) చేస్తే కోడ్ చదవడానికి చాలా బాగుంటుంది:</p>
 <div class="code-block"><pre><code>class QueryBuilder {
     private String table;
     private String condition;
     private int limit;
 <p>public QueryBuilder from(String table)    { this.table = table; return this; }<br>    public QueryBuilder where(String cond)    { this.condition = cond; return this; }<br>    public QueryBuilder limit(int n)          { this.limit = n; return this; }</p>
 <p>public String build() {<br>        return "SELECT * FROM " + table + " WHERE " + condition + " LIMIT " + limit;<br>    }<br>}</p>
-<p>// Fluent API reads like natural language:<br>String query = new QueryBuilder()<br>        .from("students")<br>        .where("gpa &gt; 3.5")<br>        .limit(10)<br>        .build();</code></pre></div></p>
+<p>// ఒకే లైన్ లో ఇంగ్లీష్ చదివినట్టు ఉందా!<br>String query = new QueryBuilder()<br>        .from("students")<br>        .where("gpa &gt; 3.5")<br>        .limit(10)<br>        .build();</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. When NOT to Provide Setters (Read-Only Properties)</h2>
+      <h2>5. Setters ఎప్పుడెప్పుడు రాయకూడదు?</h2>
       <div class="theory-text">
-        <p>Not every field needs a setter. Consider making fields effectively <strong>read-only</strong> (no setter) in these cases:</p>
-<p>1. <strong>Identity fields</strong> (ID, account number, creation timestamp) that should never change once set.<br>2. <strong>Derived fields</strong> computed from other fields (e.g. age derived from date of birth).<br>3. <strong>Immutable value classes</strong> (Money, Point, Color) where the entire object state is fixed.</p>
+        <p>ప్రతి వేరియబుల్ కి సెట్టర్ రాయాల్సిన అవసరం లేదు. కొన్ని ఎప్పటికీ మారకూడదు:</p>
+<p>1. <strong>ఐడెంటిటీస్ (IDs):</strong> కస్టమర్ ఐడీ, క్రియేట్ చేసిన టైమ్ లాంటివి ఒక్కసారే పడతాయి, మళ్ళీ మారవు.<br>2. <strong>ఫార్ములాతో వచ్చేవి:</strong> పుట్టిన తేదీ తెలిస్తే వయసు ఆటోమాటిక్ గా వస్తుంది, వయసుకి సెట్టర్ అక్కర్లేదు.<br>3. <strong>ఇమ్మ్యూటబుల్ క్లాసులు:</strong> అసలు క్లాస్ లో ఏదీ మారకూడదు అనుకున్నప్పుడు.</p>
 <div class="code-block"><pre><code>class Order {
-    private final String orderId;          // Never changes — NO setter!
-    private final long createdTimestamp;   // Created once — NO setter!
-    private int quantity;                  // Can change — has setter with validation
+    private final String orderId;          // మారకూడదు — సెట్టర్ రాయొద్దు!
+    private final long createdTimestamp;   // మారకూడదు — సెట్టర్ రాయొద్దు!
+    private int quantity;                  // మారొచ్చు — దీనికి సెట్టర్ రాసుకోవచ్చు
     
     Order(int quantity) {
         this.orderId           = "ORD-" + System.nanoTime();
@@ -619,13 +619,7 @@
     }
     
     public String getOrderId() { return orderId; }
-    public long getCreatedTimestamp() { return createdTimestamp; }
-    
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int q) {
-        if (q &lt;= 0) throw new IllegalArgumentException("Quantity must be positive!");
-        this.quantity = q;
-    }
+    // ... మిగిలిన గెట్టర్స్, సెట్టర్స్
 }</code></pre></div>
       </div>
     </section>
@@ -643,56 +637,56 @@
           </div>
         </div>
         <pre><code>class Employee {
-    // Private fields
-    private final String employeeId; // Read-only: no setter!
+    // సెక్యూరిటీ కోసం ప్రైవేట్ ఫీల్డ్స్
+    private final String employeeId; // ఫైనల్ - దీనికి సెట్టర్ ఉండదు
     private String name;
     private String email;
     private double salary;
     private boolean active;
-    private int[] projectIds;        // Mutable array field
+    private int[] projectIds;        // అరే - డేంజర్, కాపీస్ ఇవ్వాలి
 
     public Employee(String name, String email, double salary, int[] projectIds) {
         this.employeeId = "EMP-" + System.currentTimeMillis() % 100000;
-        setName(name);
+        setName(name); // డైరెక్ట్ వాల్యూ వేయకుండా సెట్టర్ పిలుస్తున్నాం (వాలిడేషన్ కోసం)
         setEmail(email);
         setSalary(salary);
+        // అరే కాబట్టి జిరాక్స్ కాపీ చేసుకుంటున్నాం
         this.projectIds = projectIds != null ? projectIds.clone() : new int[0];
         this.active = true;
     }
 
-    // GETTERS
+    // GETTERS (రీడ్ ఓన్లీ)
     public String getEmployeeId()  { return employeeId; }
     public String getName()        { return name; }
     public String getEmail()       { return email; }
     public double getSalary()      { return salary; }
-    public boolean isActive()      { return active; }
+    public boolean isActive()      { return active; } // is అని ఉండాలి!
 
-    // Defensive copy on getter for mutable array
+    // Defensive copy - గెట్టర్ లో కూడా జిరాక్స్ కాపీనే ఇస్తున్నాం
     public int[] getProjectIds()   { return projectIds.clone(); }
 
-    // Computed (derived) property — no backing field!
+    // Computed property — ఫార్ములాతో క్రియేట్ అయ్యేది
     public String getDisplayTitle() {
         return (active ? "[ACTIVE] " : "[INACTIVE] ") + name + " &lt;" + email + "&gt;";
     }
 
-    // SETTERS WITH VALIDATION
+    // SETTERS (వాలిడేషన్ తో)
     public void setName(String name) {
         if (name == null || name.isBlank())
-            throw new IllegalArgumentException("Name cannot be blank.");
+            throw new IllegalArgumentException("పేరు ఖాళీగా ఉండకూడదు.");
         this.name = name.trim();
     }
 
     public void setEmail(String email) {
+        // రెగ్యులర్ ఎక్స్ప్రెషన్ తో ఈమెయిల్ ఫార్మాట్ కరెక్ట్ ఉందో లేదో చెక్ చేస్తున్నాం
         if (email == null || !email.matches("^[\w.-]+@[\w.-]+\.\w{2,}$"))
-            throw new IllegalArgumentException("Invalid email format: " + email);
+            throw new IllegalArgumentException("ఈమెయిల్ ఫార్మాట్ తప్పు: " + email);
         this.email = email.toLowerCase().trim();
     }
 
     public void setSalary(double salary) {
         if (salary &lt; 15000)
-            throw new IllegalArgumentException("Salary below minimum wage: " + salary);
-        if (salary &gt; 5_000_000)
-            throw new IllegalArgumentException("Salary exceeds company maximum.");
+            throw new IllegalArgumentException("మరీ ఇంత తక్కువ శాలరీ ఏంటయ్యా: " + salary);
         this.salary = salary;
     }
 
@@ -703,72 +697,72 @@
 
     @Override
     public String toString() {
-        return String.format("[%s] %-18s | Salary: $%,9.2f | Active: %b",
+        return String.format("[%s] %-18s | శాలరీ: $%,9.2f | యాక్టివ్: %b",
                 employeeId, name, salary, active);
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1. User Requested BankAccount Pattern Applied to Employee ===");
+        System.out.println("=== 1. ఎంప్లాయీ ఆబ్జెక్ట్ క్రియేషన్ ===");
         Employee emp = new Employee("Ravi Kumar", "ravi.kumar@company.com",
                 85000.0, new int[]{101, 205, 312});
         System.out.println(emp);
-        System.out.println("Display Title : " + emp.getDisplayTitle());
+        System.out.println("డిస్ప్లే టైటిల్ : " + emp.getDisplayTitle());
 
         System.out.println("
-=== 2. Validated Setter Updates ===");
+=== 2. సెట్టర్ తో అప్డేట్ ===");
         emp.setSalary(92000.0);
-        System.out.println("After raise   : " + emp);
+        System.out.println("జీతం పెరిగాక  : " + emp);
 
         System.out.println("
-=== 3. Setter Validation Guards ===");
+=== 3. వాలిడేషన్స్ ఎలా ఆపుతున్నాయో చూద్దాం ===");
         try {
-            emp.setSalary(-500.0); // Invalid!
+            emp.setSalary(-500.0); // మైనస్ జీతం!
         } catch (IllegalArgumentException e) {
-            System.out.println("Salary error  : " + e.getMessage());
+            System.out.println("శాలరీ ఎర్రర్  : " + e.getMessage());
         }
 
         try {
-            emp.setEmail("not-an-email"); // Invalid!
+            emp.setEmail("not-an-email"); // తప్పు ఈమెయిల్!
         } catch (IllegalArgumentException e) {
-            System.out.println("Email error   : " + e.getMessage());
+            System.out.println("ఈమెయిల్ ఎర్రర్: " + e.getMessage());
         }
 
         System.out.println("
-=== 4. Defensive Copy Protection ===");
+=== 4. Defensive Copy పవర్ చూద్దాం ===");
         int[] returnedIds = emp.getProjectIds();
-        returnedIds[0] = 9999; // Attempt to corrupt internal array
-        System.out.println("Ext. modified [0] : " + returnedIds[0]);
-        System.out.println("Internal [0] safe : " + emp.getProjectIds()[0]); // Still 101!
+        returnedIds[0] = 9999; // బయటవాడు అరే ని కరప్ట్ చేస్తున్నాడు
+        System.out.println("బయట మార్చిన వాల్యూ  : " + returnedIds[0]);
+        System.out.println("మన ఆబ్జెక్ట్ లో వాల్యూ : " + emp.getProjectIds()[0]); // మనది సేఫ్! 101 ఏ ఉంటుంది
 
         System.out.println("
-=== 5. Computed Property ===");
+=== 5. ఫార్ములా ప్రాపర్టీ (Computed) ===");
         emp.setActive(false);
-        System.out.println("Inactive title : " + emp.getDisplayTitle());
+        System.out.println("ఇన్-యాక్టివ్ టైటిల్ : " + emp.getDisplayTitle());
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. User Requested BankAccount Pattern Applied to Employee ===
-[EMP-XXXXX] Ravi Kumar         | Salary: $   85,000.00 | Active: true
-Display Title : [ACTIVE] Ravi Kumar &lt;ravi.kumar@company.com&gt;
+        <div class="output-content">=== 1. ఎంప్లాయీ ఆబ్జెక్ట్ క్రియేషన్ ===
+[EMP-XXXXX] Ravi Kumar         | శాలరీ: $   85,000.00 | యాక్టివ్: true
+డిస్ప్లే టైటిల్ : [ACTIVE] Ravi Kumar &lt;ravi.kumar@company.com&gt;
 
-=== 2. Validated Setter Updates ===
-After raise   : [EMP-XXXXX] Ravi Kumar         | Salary: $   92,000.00 | Active: true
+=== 2. సెట్టర్ తో అప్డేట్ ===
+జీతం పెరిగాక  : [EMP-XXXXX] Ravi Kumar         | శాలరీ: $   92,000.00 | యాక్టివ్: true
 
-=== 3. Setter Validation Guards ===
-Salary error  : Salary below minimum wage: -500.0
-Email error   : Invalid email format: not-an-email
+=== 3. వాలిడేషన్స్ ఎలా ఆపుతున్నాయో చూద్దాం ===
+శాలరీ ఎర్రర్  : మరీ ఇంత తక్కువ శాలరీ ఏంటయ్యా: -500.0
+ఈమెయిల్ ఎర్రర్: ఈమెయిల్ ఫార్మాట్ తప్పు: not-an-email
 
-=== 4. Defensive Copy Protection ===
-Ext. modified [0] : 9999
-Internal [0] safe : 101
+=== 4. Defensive Copy పవర్ చూద్దాం ===
+బయట మార్చిన వాల్యూ  : 9999
+మన ఆబ్జెక్ట్ లో వాల్యూ : 101
 
-=== 5. Computed Property ===
-Inactive title : [INACTIVE] Ravi Kumar &lt;ravi.kumar@company.com&gt;</div>
+=== 5. ఫార్ములా ప్రాపర్టీ (Computed) ===
+ఇన్-యాక్టివ్ టైటిల్ : [INACTIVE] Ravi Kumar &lt;ravi.kumar@company.com&gt;</div>
       </div>
 
       <div class="explain-card">
@@ -776,25 +770,25 @@ Inactive title : [INACTIVE] Ravi Kumar &lt;ravi.kumar@company.com&gt;</div>
         
     <div class="explain-item">
       <code class="code-token">public boolean isActive()</code>
-      <p>Boolean getters use "is" prefix (not "get") per Java Beans convention, required by frameworks like Spring and Hibernate.</p>
+      <p>boolean వాటికి get అని కాకుండా is అని రాస్తారు (జావా బీన్స్ రూల్స్). దీన్ని బట్టి స్ప్రింగ్, హైబర్నెట్ లాంటి ఫ్రేమ్వర్క్స్ కి అర్థమవుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">this.projectIds = projectIds.clone();</code>
-      <p>Defensive copy on both construction and return prevents external code from mutating internal array state.</p>
+      <p>లోపలికి తీసుకునేటప్పుడు, బయటకి ఇచ్చేటప్పుడు అరే జిరాక్స్ తీసి ఇస్తే, మన ఒరిజినల్ డేటాకి ఎఫెక్ట్ అవ్వదు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">public String getDisplayTitle()</code>
-      <p>Computed property derives a formatted display value from multiple private fields without a backing field of its own.</p>
+      <p>దీనికోసం సపరేట్ గా వేరియబుల్ లేదు, ఉన్న వేరియబుల్స్ తో అప్పటికప్పుడు స్ట్రింగ్ తయారు చేసి ఇస్తున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">if (!email.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$"))</code>
-      <p>Regex validation in setter prevents invalid email strings from entering the object state.</p>
+      <p>రెగ్యులర్ ఎక్స్ప్రెషన్ (Regex) వాడి ఈమెయిల్ లో @, .కాం లాంటివి ఉన్నాయో లేదో కచ్చితంగా చెక్ చేసి వదులుతున్నాం.</p>
     </div>
   
       </div>
@@ -818,17 +812,17 @@ Inactive title : [INACTIVE] Ravi Kumar &lt;ravi.kumar@company.com&gt;</div>
         setCelsius(celsius);
     }
 
-    // Setter with physical validation
+    // సెట్టర్ విత్ వాలిడేషన్
     public void setCelsius(double celsius) {
         if (celsius &lt; -273.15)
-            throw new IllegalArgumentException("Temperature below absolute zero!");
+            throw new IllegalArgumentException("మరీ అంత చలి భూమ్మీద ఉండదు బ్రో (Absolute zero)!");
         this.celsius = celsius;
     }
 
-    // Getter for raw value
+    // రా వాల్యూ (సెల్సియస్)
     public double getCelsius() { return celsius; }
 
-    // Computed getters — derive other scales automatically
+    // ఫార్ములా గెట్టర్స్ (ఫారెన్ హీట్, కెల్విన్ కోసం వేరే వేరియబుల్స్ లేవు, ఫార్ములా అంతే)
     public double getFahrenheit() { return (celsius * 9.0 / 5.0) + 32; }
     public double getKelvin()     { return celsius + 273.15; }
 
@@ -841,16 +835,16 @@ Inactive title : [INACTIVE] Ravi Kumar &lt;ravi.kumar@company.com&gt;</div>
 public class PracticalApplication {
     public static void main(String[] args) {
         Temperature t1 = new Temperature(100.0);
-        Temperature t2 = new Temperature(37.0);  // Human body temp
+        Temperature t2 = new Temperature(37.0);  // హ్యూమన్ బాడీ టెంపరేచర్
 
-        System.out.println("=== Temperature Converter ===");
-        System.out.println("Boiling Point : " + t1);
-        System.out.println("Body Temp     : " + t2);
+        System.out.println("=== టెంపరేచర్ కన్వర్టర్ ===");
+        System.out.println("నీరు మరిగే ఉష్ణోగ్రత : " + t1);
+        System.out.println("మానవ శరీరం      : " + t2);
 
         try {
-            new Temperature(-300); // Below absolute zero!
+            new Temperature(-300); // లిమిట్ దాటింది!
         } catch (IllegalArgumentException e) {
-            System.out.println("Physical Error: " + e.getMessage());
+            System.out.println("ఎర్రర్: " + e.getMessage());
         }
     }
 }</code></pre>
@@ -858,10 +852,10 @@ public class PracticalApplication {
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== Temperature Converter ===
-Boiling Point : 100.00°C = 212.00°F = 373.15K
-Body Temp     : 37.00°C = 98.60°F = 310.15K
-Physical Error: Temperature below absolute zero!</div>
+        <div class="output-content">=== టెంపరేచర్ కన్వర్టర్ ===
+నీరు మరిగే ఉష్ణోగ్రత : 100.00°C = 212.00°F = 373.15K
+మానవ శరీరం      : 37.00°C = 98.60°F = 310.15K
+ఎర్రర్: మరీ అంత చలి భూమ్మీద ఉండదు బ్రో (Absolute zero)!</div>
       </div>
     </section>
 
@@ -870,16 +864,16 @@ Physical Error: Temperature below absolute zero!</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using <code>getIsActive()</code> instead of <code>isActive()</code> for boolean getters — frameworks like Spring/Hibernate will not recognize the wrong naming.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">boolean వేరియబుల్స్ కి <code>getIsActive()</code> అని రాయడం — అలా రాస్తే Spring/Hibernate లాంటి ఫ్రేమ్వర్క్స్ గుర్తు పట్టలేవు. <code>isActive()</code> అనే రాయాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Returning a mutable array or Date directly from a getter without defensive cloning, allowing external corruption.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">Arrays ని గానీ Date ఆబ్జెక్ట్స్ ని గానీ డైరెక్ట్ గా గెట్టర్ లో రిటర్న్ చేయడం (Defensive Copy చేయకుండా). ఎవడో ఒకడు బయటనుంచి మీ డేటా మార్చేస్తాడు.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Writing <code>this.name = this.name;</code> (assigning field to itself) due to missing <code>this.</code> prefix on one side.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>this.name = this.name;</code> అని రాసుకోవడం. (పారామీటర్ పేరు, వేరియబుల్ పేరు ఒకటే ఉన్నప్పుడు <code>this.name = name;</code> అని రాయాలి).</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Providing setters for every field without considering whether each field should truly be mutable.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">అన్నింటికీ బ్లైండ్ గా సెట్టర్స్ రాసేయడం. (క్రియేట్ అయిన డేట్ కి, ఐడీలకి కూడా సెట్టర్స్ రాస్తే ఎవరైనా మార్చేస్తారు, అవి ఫైనల్ గా ఉండాలి).</li>
   
       </ul>
     </div>
@@ -896,19 +890,19 @@ Physical Error: Temperature below absolute zero!</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Build a BankAccount class with:
-// 1. private double balance (no direct setter — only deposit/withdraw control it).
-// 2. private String accountHolder (immutable after construction).
-// 3. Getter getBalance() returns balance rounded to 2 decimal places.
-// 4. deposit(amount): validates amount &gt; 0, adds to balance.
-// 5. withdraw(amount): validates 0 &lt; amount &lt;= balance, subtracts from balance.
+// ఒక BankAccount క్లాస్ ని క్రియేట్ చేయండి:
+// 1. private double balance (దీనికి సెట్టర్ రాయొద్దు, కేవలం deposit, withdraw లే దీన్ని మార్చాలి).
+// 2. private String accountHolder (సెట్టర్ వద్దు, డిఫాల్ట్ గా final పెట్టండి).
+// 3. getBalance() ఎప్పుడూ 2 డెసిమల్స్ కే రౌండ్ చేసి పంపాలి.
+// 4. deposit(amount): పాజిటివ్ అయితేనే బ్యాలెన్స్ లో యాడ్ చేయాలి.
+// 5. withdraw(amount): అమౌంట్ &gt; 0 మరియు బ్యాలెన్స్ ఉంటేనే తీయాలి.
 
 class BankAccount {
     private final String accountHolder;
     private double balance;
 
     public BankAccount(String holder, double initialBalance) {
-        if (holder == null || holder.isBlank()) throw new IllegalArgumentException("Holder required");
+        if (holder == null || holder.isBlank()) throw new IllegalArgumentException("పేరు కచ్చితంగా ఉండాలి");
         this.accountHolder = holder.trim();
         this.balance = Math.max(0, initialBalance);
     }
@@ -920,13 +914,13 @@ class BankAccount {
     }
 
     public void deposit(double amount) {
-        if (amount &lt;= 0) throw new IllegalArgumentException("Deposit must be positive!");
+        if (amount &lt;= 0) throw new IllegalArgumentException("డిపాజిట్ మైనస్ లో ఉండదు!");
         balance += amount;
     }
 
     public void withdraw(double amount) {
         if (amount &lt;= 0 || amount &gt; balance)
-            throw new IllegalArgumentException("Invalid withdrawal: " + amount);
+            throw new IllegalArgumentException("బ్యాలెన్స్ లేదు బ్రో: " + amount);
         balance -= amount;
     }
 }
@@ -936,7 +930,7 @@ public class Challenge {
         BankAccount acc = new BankAccount("Priya", 1000.0);
         acc.deposit(500.0);
         acc.withdraw(200.0);
-        System.out.println(acc.getAccountHolder() + " Balance: $" + acc.getBalance());
+        System.out.println(acc.getAccountHolder() + " అకౌంట్ బ్యాలెన్స్: $" + acc.getBalance());
     }
 }</code></pre>
       </div>
@@ -947,20 +941,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Should I always generate getters and setters for every field?</h4>
-      <p>No. Only generate them when genuinely needed. Unnecessary setters make objects mutable when they should be immutable, and unnecessary getters expose internal implementation details.</p>
+      <h4>❓ ప్రతి వేరియబుల్ కి కచ్చితంగా గెట్టర్, సెట్టర్ రాయాల్సిందేనా?</h4>
+      <p>లేదు! అవసరమైతేనే రాయాలి. ఎప్పటికీ మారకూడని వాటికి సెట్టర్స్ ఇవ్వకూడదు. అసలు బయటవాళ్లకి తెలియకూడని సీక్రెట్స్ కి గెట్టర్స్ కూడా ఇవ్వకూడదు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the Java Beans convention for getters and setters?</h4>
-      <p>Non-boolean getters: `getFieldName()`. Boolean getters: `isFieldName()`. Setters: `setFieldName(value)`. This convention is required by frameworks like Spring, Hibernate, JSP EL, and serialization libraries.</p>
+      <h4>❓ జావా బీన్స్ (Java Beans) రూల్స్ అంటే ఏంటి?</h4>
+      <p>గెట్టర్స్ కి `get...`, బూలియన్ కి `is...`, సెట్టర్స్ కి `set...` అని పేరు పెట్టడాన్నే ఈ రూల్స్ అంటారు. ఈ ఫార్మాట్ లో రాస్తేనే Spring, Hibernate లాంటి పెద్ద లైబ్రరీలు మీ కోడ్ ని ఆటోమాటిక్ గా చదవగలవు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Can I have a getter without a matching setter (read-only field)?</h4>
-      <p>Absolutely, and it is encouraged for identity fields. Declare the field `final` in combination with only a getter — no setter — to create a clean, immutable public property.</p>
+      <h4>❓ ఒక వేరియబుల్ ని కేవలం గెట్టర్ తో వదిలేయొచ్చా (సెట్టర్ లేకుండా)?</h4>
+      <p>సూపర్ ఐడియా! దాన్నే రీడ్-ఓన్లీ (Read-only) అంటారు. ఐడీలు, డేట్ ఆఫ్ బర్త్ లాంటివి ఇలా చేస్తేనే సెక్యూర్ గా ఉంటాయి. ఆ వేరియబుల్స్ కి `final` కీవర్డ్ పెడితే ఇంక తిరుగుండదు.</p>
     </div>
   
     </section>
@@ -970,19 +964,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Getters provide controlled read access: <code>getField()</code> for objects, <code>isField()</code> for booleans.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">గెట్టర్స్ డేటాని సేఫ్ గా చదవడానికి వాడతారు. (boolean వాటికి <code>is</code> అని వాడాలి).</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Setters enforce business rules: validate before accepting new values.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">సెట్టర్స్ పనికిమాలిన డేటాని ఆపడానికి (వాలిడేషన్) వాడతారు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Defensive copying in constructors and getters protects mutable internal state.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Arrays, Date ఆబ్జెక్ట్స్ ని రిటర్న్ చేసేటప్పుడు కచ్చితంగా <code>.clone()</code> వాడి జిరాక్స్ కాపీ ఇవ్వాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Computed properties derive values from existing fields without extra backing storage.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">కొత్తగా వేరియబుల్స్ స్టోర్ చేసుకోకుండానే.. ఉన్నవాటితోనే ఫార్ములా వేసి ఇచ్చేవి Computed Properties.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Not every field needs a setter — prefer immutability for identity fields.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ప్రతి దానికీ బ్లైండ్ గా సెట్టర్స్ రాసేయకూడదు, మారకూడని వాటికి అస్సలు రాయొద్దు.</li>
   
       </ul>
     </div>

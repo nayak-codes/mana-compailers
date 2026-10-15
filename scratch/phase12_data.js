@@ -8,44 +8,24 @@ module.exports = [
     phaseId: 'phase12',
     phaseTitle: 'Phase 12: Automation and Professional Skills',
     slug: '60-python-web-scraping-and-browser-automation',
-    title: 'Web Scraping & Browser Automation',
+    title: 'Web Scraping & Browser Automation (తెలుగులో)',
     badge: '60. Web Scraping & Automation',
     subtopics: 'HTML DOM Structure · BeautifulSoup4 Parsing · CSS Selectors · Browser Automation (Selenium/Playwright) · Headless Chrome · Rate Limiting & Ethical Scraping',
-    desc: 'Master automated data extraction from the web in Python: understanding the HTML DOM tree, parsing web pages with BeautifulSoup4, navigating CSS selectors, automating browser interactions with Selenium/Playwright in headless mode, and respecting robots.txt guidelines.',
+    desc: 'ఇంటర్నెట్ లో ఉన్న డేటాని ఆటోమాటిక్ గా కాపీ చేసుకోవడం (Web Scraping) ఎలా? బ్రౌజర్ ని మనమే ఓపెన్ చేయకుండా కోడ్ ద్వారా ఎలా ఆపరేట్ చేయాలో (Selenium / Playwright) నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. What is Web Scraping & HTML DOM Parsing with BeautifulSoup4?',
-        body: `<p><strong>Web Scraping</strong> is the automated extraction of data from websites. While web APIs provide structured JSON endpoints, over 90% of the world's public internet data exists as raw HTML web pages.</p>
+        title: '1. Web Scraping అంటే ఏంటి? (BeautifulSoup4 వాడకం)',
+        body: `<p><strong>Web Scraping</strong> అంటే ఒక వెబ్ సైట్ కి వెళ్లి, అక్కడున్న ఇన్ఫర్మేషన్ ని కాపీ చేసుకుని మన ఎక్సెల్ షీట్ లోకి సేవ్ చేయడాన్ని ఆటోమేట్ చేయడం.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">Why is Web Scraping Useful?</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">ఎక్కడ వాడతారు?</h4>
         <ul>
-          <li><strong>Competitive Price Monitoring:</strong> Tracking e-commerce product prices and inventory across Amazon, Flipkart, and eBay.</li>
-          <li><strong>Financial & Stock Analysis:</strong> Extracting quarterly earnings reports, market news, and sentiment indicators.</li>
-          <li><strong>Lead Generation & Research:</strong> Aggregating job listings, real estate properties, and academic research papers.</li>
+          <li><strong>ప్రైస్ మానిటరింగ్:</strong> అమెజాన్, ఫ్లిప్కార్ట్ లో మనకు కావాల్సిన ప్రోడక్ట్ ధర ఎప్పుడు తగ్గుతుందో ఎప్పటికప్పుడు చెక్ చేయడానికి.</li>
+          <li><strong>న్యూస్ లేదా స్టాక్స్:</strong> స్టాక్ మార్కెట్ సైట్స్ నుంచి ఎప్పటికప్పుడు లేటెస్ట్ డేటాని లాగడానికి.</li>
         </ul>
 
-        <h4 style="color:#10b981; margin:16px 0 8px;">The HTML DOM Tree & CSS Selectors:</h4>
-        <p>A web page is structured as a hierarchical <strong>DOM (Document Object Model) Tree</strong>. <strong>BeautifulSoup4</strong> parses raw HTML text into a searchable Python object tree.</p>
-
-        <div class="diagram-box">┌────────────────────────────────────────────────────────────────────────┐
-│                     THE WEB SCRAPING PIPELINE                          │
-├────────────────────────────────────────────────────────────────────────┤
-│  1. HTTP Request (requests.get(url, headers=UserAgent))                │
-│         │                                                              │
-│         ▼                                                              │
-│  2. Raw HTML Response (response.text)                                  │
-│         │                                                              │
-│         ▼                                                              │
-│  3. BeautifulSoup DOM Parser (soup = BeautifulSoup(html, 'html.parser')│
-│         │                                                              │
-│         ├── soup.select('div.product-card')   <-- CSS Selector Match   │
-│         ├── soup.find('h2', class_='title')   <-- Tag Search           │
-│         └── tag.get_text(strip=True)          <-- Clean String Extract │
-│         │                                                              │
-│         ▼                                                              │
-│  4. Structured Data Output (Pandas DataFrame / CSV / SQLite)           │
-└────────────────────────────────────────────────────────────────────────┘</div>`,
-        code: `# Web Scraping & HTML DOM Parsing Simulation:
+        <h4 style="color:#10b981; margin:16px 0 8px;">దీని ప్రాసెస్ ఏంటి?:</h4>
+        <p>ఏ వెబ్ సైట్ అయినా HTML తోనే తయారవుతుంది. మనం ఆ HTML కోడ్ ని తెచ్చుకుని, అందులో మనకు కావాల్సిన పదాన్ని వెతుక్కుంటాం. ఇందుకు <strong>BeautifulSoup4</strong> అనే ప్యాకేజీ వాడతాం.</p>`,
+        code: `# Web Scraping సిమ్యులేషన్ (యాక్చువల్ వెబ్ సైట్ HTML డేటా):
 from html.parser import HTMLParser
 
 raw_html_mock = """
@@ -63,56 +43,51 @@ raw_html_mock = """
 </div>
 """
 
-class SimpleDOMScraper(HTMLParser):
-    """Parses HTML mock text into structured product dictionaries."""
+# ఈ కోడ్ HTML ని చదివి డేటాని బయటకు లాగుతుంది:
+class SimpleScraper(HTMLParser):
     def __init__(self):
         super().__init__()
         self.products = []
-        self.current_tag = None
-        self.current_item = {}
+        self.item = {}
+        self.tag = None
 
     def handle_starttag(self, tag, attrs):
-        self.current_tag = tag
+        self.tag = tag
         attr_dict = dict(attrs)
         if attr_dict.get("class") == "product-card":
-            self.current_item = {"id": attr_dict.get("data-id")}
+            self.item = {"id": attr_dict.get("data-id")}
 
     def handle_data(self, data):
         text = data.strip()
         if text:
-            if self.current_tag == "h2":
-                self.current_item["title"] = text
-            elif self.current_tag == "span" and "₹" in text:
-                self.current_item["price"] = text
-            elif self.current_tag == "span" and ("Stock" in text):
-                self.current_item["status"] = text
-                if "title" in self.current_item:
-                    self.products.append(self.current_item.copy())
+            if self.tag == "h2":
+                self.item["title"] = text
+            elif self.tag == "span" and "₹" in text:
+                self.item["price"] = text
+            elif self.tag == "span" and "Stock" in text:
+                self.item["status"] = text
+                if "title" in self.item:
+                    self.products.append(self.item.copy())
 
-# Execute Scraper:
-scraper = SimpleDOMScraper()
+scraper = SimpleScraper()
 scraper.feed(raw_html_mock)
 
-print("--- 🛒 Scraped Product Catalog Output ---")
+print("--- 🛒 వెబ్ సైట్ నుంచి కాపీ చేసిన డేటా ---")
 for p in scraper.products:
-    print(f"• ID #{p['id']}: {p['title']:22} | Price: {p['price']:>10} | Availability: {p['status']}")`,
+    print(f"• ID #{p['id']}: {p['title']:22} | Price: {p['price']:>10} | Status: {p['status']}")`,
         codeTitle: 'Example 1: HTML DOM Parsing and Text Extraction',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Line-by-Line Breakdown:</strong>
-          <ol style="margin:8px 0 0 18px; line-height:1.7;">
-            <li><code>requests.get(url, headers={'User-Agent': 'Mozilla/5.0...'})</code>: Fetches the raw HTML string over HTTPS, providing a realistic browser user-agent header.</li>
-            <li><code>soup.select('div.product-card')</code>: Uses standard CSS selector syntax (dot notation for classes, hash for IDs) to find all matching card containers.</li>
-            <li><code>item.get_text(strip=True)</code>: Extracts human-readable text while stripping out all surrounding whitespace and HTML tags.</li>
-          </ol>
+          <strong style="color:#10b981;">🔍 BeautifulSoup లాజిక్:</strong>
+          <p style="margin-top:6px;">రియల్ ప్రాజెక్ట్స్ లో మనం <code>soup.select('div.product-card h2')</code> అని ఇస్తే ఆ ట్యాగ్ లో ఉన్న టెక్స్ట్ ని లాగేస్తుంది.</p>
         </div>`
       },
       {
-        title: '2. Browser Automation with Selenium & Playwright (Dynamic JavaScript Sites)',
-        body: `<p>Static scrapers (like <code>requests + BeautifulSoup</code>) can only read the initial static HTML sent by the server. If a website is built with <strong>React, Vue, or Angular</strong> (where content loads dynamically via client-side JavaScript API calls or infinite scrolling), static scrapers see only an empty <code>&lt;div id="root"&gt;&lt;/div&gt;</code>!</p>
+        title: '2. Browser Automation (Selenium / Playwright)',
+        body: `<p>కొన్ని వెబ్ సైట్స్ (React, Angular తో చేసినవి) డైరెక్ట్ గా HTML లో డేటా ఇవ్వవు. సైట్ ఓపెన్ అయ్యాక లోపల జావాస్క్రిప్ట్ రన్ అయ్యి అప్పుడు డేటా వస్తుంది. వాటికి BeautifulSoup పనిచేయదు.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The Solution: Headless Browser Automation (Selenium / Playwright):</h4>
-        <p>Browser automation tools launch a real, automated Chrome/Firefox browser engine in the background (<strong>Headless Mode</strong> without a visible UI window), execute all client-side JavaScript, click buttons, fill login forms, and wait for elements to appear.</p>`,
-        code: `# Playwright & Selenium Headless Automation Pattern Reference:
+        <h4 style="color:#10b981; margin:16px 0 8px;">పరిష్కారం ఏంటి?:</h4>
+        <p><strong>Selenium</strong> లేదా <strong>Playwright</strong> వాడతాం. ఇవి స్క్రీన్ మీద కనబడకుండానే (Headless Mode) క్రోమ్ బ్రౌజర్ ని ఓపెన్ చేసి, జావాస్క్రిప్ట్ అంతా రన్ అయ్యేదాకా వెయిట్ చేసి, ఆ తర్వాత డేటాని లాగుతాయి. బటన్స్ ని క్లిక్ చేయడం, లాగిన్ ఫారమ్స్ నింపడం అన్నీ చేయగలవు.</p>`,
+        code: `# Playwright & Selenium కోడ్ బ్లూప్రింట్ (ఎలా రాస్తారో చూపించడానికి):
 """
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -120,77 +95,72 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# 1. Configure Headless Chrome Browser:
-chrome_options = Options()
-chrome_options.add_argument("--headless=new") # Run in background without window
-chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument("--no-sandbox")
+# 1. బ్రౌజర్ ని స్క్రీన్ మీద కనబడకుండా (Background) ఓపెన్ చేయడం:
+options = Options()
+options.add_argument("--headless=new") 
 
-# 2. Launch WebDriver:
-driver = webdriver.Chrome(options=chrome_options)
+driver = webdriver.Chrome(options=options)
 
 try:
-    # 3. Navigate to dynamic web page:
+    # 2. లాగిన్ పేజీకి వెళ్లడం:
     driver.get("https://example.com/login")
 
-    # 4. Explicit Wait: Wait up to 10 seconds for dynamic element to render:
-    username_input = WebDriverWait(driver, 10).until(
+    # 3. పేజీ లోడ్ అయ్యేదాకా (గరిష్టంగా 10 సెకన్లు) వెయిట్ చేయడం:
+    user_input = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.NAME, "username"))
     )
 
-    # 5. Type credentials and click login:
-    username_input.send_keys("balaji_dev")
-    driver.find_element(By.NAME, "password").send_keys("SecretPass2026")
+    # 4. యూజర్ నేమ్, పాస్ వర్డ్ నింపి బటన్ క్లిక్ చేయడం:
+    user_input.send_keys("balaji_dev")
+    driver.find_element(By.NAME, "password").send_keys("Secret123")
     driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
 
-    # 6. Capture full rendered page source or take screenshot:
-    driver.save_screenshot("dashboard_verified.png")
-    print("✅ Successfully logged in and captured screenshot!")
+    # 5. ప్రూఫ్ కోసం స్క్రీన్ షాట్ తీసుకోవడం:
+    driver.save_screenshot("login_success.png")
+    print("✅ లాగిన్ అయ్యి స్క్రీన్ షాట్ తీసుకుంది!")
 
 finally:
-    driver.quit() # Always close browser process to free RAM!
+    driver.quit() # పనైపోగానే కచ్చితంగా బ్రౌజర్ క్లోజ్ చేయాలి!
 """
-print("Browser Automation Blueprint Configured.")`,
+print("Browser Automation బ్లూప్రింట్ లోడ్ అయ్యింది.")`,
         codeTitle: 'Reference: Selenium Headless Browser Automation Architecture',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Explicit vs Implicit Waits:</strong>
-          <p style="margin-top:6px;">Never use hardcoded <code>time.sleep(5)</code> in automation scripts (it slows down execution). Always use <strong>Explicit Waits</strong> (<code>WebDriverWait</code>) which poll the DOM every 500ms and resume execution the exact millisecond the element appears.</p>
+          <strong style="color:#10b981;">🔍 time.sleep() వాడకండి:</strong>
+          <p style="margin-top:6px;">10 సెకన్లు ఆగు అని ఫిక్స్డ్ టైమ్ ఇవ్వకూడదు (నెట్ ఫాస్ట్ ఉంటే టైమ్ వేస్ట్). పై కోడ్ లో లాగా <strong>Explicit Waits</strong> వాడితే, పేజీ లోడ్ అవ్వగానే నెక్స్ట్ లైన్ కి వెళ్ళిపోతుంది.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Scraping Websites at Maximum Speed Without Rate Limiting (Getting IP Banned)',
-      text: 'Firing hundreds of requests per second will trigger Cloudflare/Akamai rate limiters and result in an instant 429 Too Many Requests status or permanent IP address ban. Always insert random delays (time.sleep(random.uniform(1.0, 3.0))) and check the site\'s robots.txt file.'
+      title: 'గ్యాప్ లేకుండా రిక్వెస్ట్స్ పంపడం (IP బ్లాక్ అవుతుంది)',
+      text: 'కోడ్ రాశాం కదా అని సెకనుకి 100 సార్లు వెబ్ సైట్ ని హిట్ చేస్తే వాళ్ల సర్వర్ డౌన్ అవుతుంది (లేదా వాళ్లు మనల్ని బాట్ అనుకుని బ్లాక్ చేస్తారు). ఎప్పుడూ లూప్ లో `time.sleep(3)` లాంటివి పెట్టి గ్యాప్ ఇచ్చి డేటాని లాగాలి.'
     },
     tryIt: {
-      desc: 'Write a regex or string extraction function parse_links(html_text) that extracts all href URLs from <a> tags.',
+      desc: 'ఒక HTML టెక్స్ట్ లో నుంచి లింక్స్ (href="") ని బయటకు తీసే కోడ్ రాయండి.',
       code: `import re
 
 sample_html = '''
 <nav>
   <a href="/home">Home</a>
   <a href="/courses">Courses</a>
-  <a href="https://github.com/balaji">GitHub Profile</a>
+  <a href="https://github.com/balaji">GitHub</a>
 </nav>
 '''
 
+# లింక్స్ ఫైండ్ చేయడానికి రెగ్యులర్ ఎక్స్ప్రెషన్ (Regex):
 links = re.findall(r'href="([^"]+)"', sample_html)
-print("Extracted Hyperlinks:")
+
+print("బయటకు తీసిన లింక్స్:")
 for link in links:
     print("•", link)`
     },
     faqs: [
       {
-        q: 'What is robots.txt in web scraping?',
-        a: 'robots.txt is a text file located at the root of a domain (e.g. example.com/robots.txt) specifying which directories crawlers and scrapers are permitted (Allow) or forbidden (Disallow) to scrape.'
+        q: 'robots.txt అంటే ఏంటి?',
+        a: 'ఏ వెబ్ సైట్ కైనా చివర /robots.txt అని ఇస్తే (ఉదా: google.com/robots.txt), మనం ఏ పేజీలని స్క్రాప్ చేయొచ్చు, ఏవి చేయకూడదు అని వాళ్లు ముందే చెప్తారు. దాన్ని గౌరవించాలి.'
       },
       {
-        q: 'How does Playwright compare to Selenium in 2026?',
-        a: 'Playwright (by Microsoft) is significantly faster, supports modern async/await syntax out of the box, handles automatic waiting natively, and can intercept network requests and mock API responses with ease.'
-      },
-      {
-        q: 'How do I bypass Cloudflare bot detection in web scraping?',
-        a: 'Use realistic browser headers (including User-Agent, Accept-Language, Sec-Ch-Ua), manage request delays, solve captchas using human-in-the-loop services, or use undetected-chromedriver / stealth plugins.'
+        q: 'Cloudflare లాంటివి ఎలా బైపాస్ చేయాలి?',
+        a: 'అది కొంచెం అడ్వాన్స్డ్. అప్పుడు నార్మల్ Selenium కాకుండా undetected-chromedriver లాంటివి వాడతాం, అలాగే మనుషుల్లాగా టైమ్ గ్యాప్స్ ఇస్తుంటాం.'
       }
     ]
   },
@@ -203,136 +173,114 @@ for link in links:
     phaseId: 'phase12',
     phaseTitle: 'Phase 12: Automation and Professional Skills',
     slug: '61-python-automation-excel-pdf-email-images',
-    title: 'File & Media Automation',
+    title: 'File & Media Automation (తెలుగులో)',
     badge: '61. File, PDF & Email Automation',
     subtopics: 'Excel Automation (openpyxl) · PDF Manipulation (pypdf) · Image Processing (Pillow/PIL) · Automated Email Dispatch (smtplib & MIME)',
-    desc: 'Master multi-format office and media automation in Python: manipulating Excel spreadsheets with openpyxl, extracting text and merging PDFs with pypdf, batch resizing and filtering images with Pillow (PIL), and sending automated rich HTML emails with attachments via smtplib.',
+    desc: 'ఆఫీస్ పనుల్లో రోజువారీ చేసేవి.. ఎక్సెల్ షీట్స్ తయారు చేయడం, PDFs ని కలపడం, ఫోటోలు కట్ చేయడం, 100 మందికి ఈమెయిల్స్ పంపడం. వీటన్నిటినీ పైథాన్ తో సింగిల్ క్లిక్ తో ఎలా ఆటోమేట్ చేయాలో చూద్దాం.',
     sections: [
       {
-        title: '1. Automated Excel Spreadsheet Processing with openpyxl',
-        body: `<p>Excel is the universal language of business. The <strong><code>openpyxl</code></strong> package allows Python scripts to read, modify, format, apply Excel formulas, and generate automated financial workbooks without installing Microsoft Office.</p>
-        
-        <h4 style="color:#10b981; margin:16px 0 8px;">The openpyxl Hierarchy:</h4>
-        <ul>
-          <li><strong>Workbook:</strong> The entire <code>.xlsx</code> file in memory.</li>
-          <li><strong>Worksheet (Sheet):</strong> A specific tab within the workbook (e.g. <code>wb['Q1_Sales']</code>).</li>
-          <li><strong>Cell:</strong> An individual coordinate (e.g. <code>sheet['B4']</code> or <code>sheet.cell(row=4, column=2)</code>) holding values, formulas (<code>=SUM(B2:B10)</code>), and font formatting.</li>
-        </ul>`,
-        code: `# Excel Automation Simulation: Generating an Automated Financial Report
-def generate_excel_financial_report(sales_data):
-    """Simulates openpyxl workbook creation and formula computation."""
-    workbook = {"title": "Q3_Financial_Summary.xlsx", "rows": []}
+        title: '1. ఎక్సెల్ ఆటోమేషన్ (openpyxl వాడి)',
+        body: `<p>సిస్టమ్ లో MS Excel సాఫ్ట్ వేర్ ఇన్స్టాల్ చేయకుండానే, పైథాన్ (<strong><code>openpyxl</code></strong>) వాడి కొత్త ఎక్సెల్ ఫైల్స్ క్రియేట్ చేయొచ్చు, డేటాని ఎంటర్ చేయొచ్చు, ఫార్ములాలు కూడా అప్లై చేయొచ్చు.</p>`,
+        code: `# ఎక్సెల్ బిల్స్ ఆటోమేట్ చేసే సిమ్యులేషన్:
+def create_excel_report(sales):
+    workbook = {"title": "Q3_Report.xlsx", "rows": []}
     
-    # 1. Header row:
-    headers = ["Transaction ID", "Client Name", "Product", "Gross Amount (INR)", "GST (18%)", "Total Payable"]
-    workbook["rows"].append(headers)
+    # 1. హెడ్డింగ్స్ (Column Names):
+    workbook["rows"].append(["బిల్ నెంబర్", "కంపెనీ పేరు", "ప్రోడక్ట్", "అమౌంట్ (INR)", "GST (18%)", "టోటల్"])
 
-    # 2. Populate transaction rows with automated formula calculation:
-    for idx, (client, product, gross) in enumerate(sales_data, start=1001):
-        gst = round(gross * 0.18, 2)
-        total = round(gross + gst, 2)
-        workbook["rows"].append([f"INV#{idx}", client, product, f"₹{gross:,.2f}", f"₹{gst:,.2f}", f"₹{total:,.2f}"])
-
+    # 2. ఫార్ములాలు క్యాలిక్యులేట్ చేసి ఎంటర్ చేయడం:
+    for idx, (client, prod, amt) in enumerate(sales, start=101):
+        gst = round(amt * 0.18, 2)
+        total = round(amt + gst, 2)
+        
+        workbook["rows"].append([
+            f"INV#{idx}", client, prod, f"₹{amt:,.2f}", f"₹{gst:,.2f}", f"₹{total:,.2f}"
+        ])
     return workbook
 
-sample_sales = [
-    ("TechCorp India", "Cloud Enterprise License", 150000.0),
-    ("Apex Dynamics",  "Cybersecurity Audit",       85000.0),
-    ("InnovateLabs",   "AI Training Platform",      220000.0)
+sample_data = [
+    ("TCS",        "Cloud Server",  150000.0),
+    ("Wipro",      "Security Audit", 85000.0),
+    ("Infosys",    "AI Training",    220000.0)
 ]
 
-report = generate_excel_financial_report(sample_sales)
-print(f"--- 📊 Automated Excel Workbook Generated: [{report['title']}] ---")
+report = create_excel_report(sample_data)
+print(f"--- 📊 ఎక్సెల్ ఫైల్ జనరేట్ అయ్యింది: [{report['title']}] ---")
 for r in report["rows"]:
-    print(f"{r[0]:<10} {r[1]:<18} {r[2]:<26} {r[3]:<16} {r[4]:<12} {r[5]:<14}")`,
+    print(f"{r[0]:<8} {r[1]:<12} {r[2]:<16} {r[3]:<12} {r[4]:<10} {r[5]:<12}")`,
         codeTitle: 'Example 1: Automated Financial Excel Spreadsheet Generation',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Real openpyxl Syntax:</strong>
-          <p style="margin-top:6px;">In openpyxl: <code>import openpyxl; wb = openpyxl.Workbook(); ws = wb.active; ws.append(['Name', 'Sales']); ws['B5'] = '=SUM(B2:B4)'; wb.save('report.xlsx')</code>.</p>
+          <strong style="color:#10b981;">🔍 రియల్ openpyxl కోడ్:</strong>
+          <p style="margin-top:6px;">అసలు లైబ్రరీలో <code>import openpyxl; wb = openpyxl.Workbook(); ws = wb.active; ws.append(['Name', 'Amt'])</code> ఇలా రాస్తాం.</p>
         </div>`
       },
       {
-        title: '2. PDF Manipulation, Image Processing (Pillow) & Automated Emailing',
-        body: `<p>Python provides mature standard libraries and third-party packages for complete media pipeline automation:</p>
+        title: '2. PDFs, ఇమేజెస్ & ఈమెయిల్ ఆటోమేషన్',
+        body: `<p>పైథాన్ లో ఈ టూల్స్ వాడి ఏ పనైనా ఆటోమేట్ చేయొచ్చు:</p>
         <ul>
-          <li><strong>PDF Processing (<code>pypdf</code> / <code>pdfplumber</code>):</strong> Extract text from contracts, merge multiple PDF files, rotate pages, and encrypt documents with passwords.</li>
-          <li><strong>Image Processing (<code>Pillow / PIL</code>):</strong> Batch resize photos, crop banners, apply watermarks, convert PNG to WebP/JPEG, and compress images for web publishing.</li>
-          <li><strong>Email Automation (<code>smtplib</code> & <code>email.mime</code>):</strong> Connects to SMTP servers (Gmail, SendGrid, Amazon SES) to send automated transactional HTML emails with PDF invoice attachments.</li>
+          <li><strong>PDF Processing (<code>pypdf</code>):</strong> రెండు మూడు PDFs ని కలిపి ఒకటిగా చేయడం, పాస్ వర్డ్స్ పెట్టడం.</li>
+          <li><strong>Image Processing (<code>Pillow</code>):</strong> ఒక ఫోల్డర్ లో ఉన్న 1000 ఫోటోల సైజుని ఒకేసారి తగ్గించడం, వాటిమీద వాటర్ మార్క్ వేయడం.</li>
+          <li><strong>Email (<code>smtplib</code>):</strong> కస్టమర్స్ కి వాళ్ళ పేరుతో ఇన్వాయిస్ PDF అటాచ్ చేసి ఆటోమాటిక్ గా మెయిల్ పంపడం.</li>
         </ul>`,
-        code: `# Automated Email Dispatch Pipeline Simulation:
+        code: `# ఆటోమాటిక్ గా ఈమెయిల్ (అటాచ్మెంట్ తో) పంపే సిమ్యులేషన్:
 import datetime
 
-class AutomatedEmailDispatcher:
-    """Simulates sending rich HTML emails with attachments via SMTP."""
-    
-    def __init__(self, smtp_server="smtp.gmail.com", port=587):
-        self.server = smtp_server
-        self.port = port
+class EmailSender:
+    def send_bill(self, email, name, invoice_no, amt, file_name):
+        # ఈమెయిల్ లోపల ఉండే HTML డిజైన్ (టెంప్లేట్):
+        html_body = f"""
+        <html>
+          <body>
+            <h2>హలో {name} గారూ,</h2>
+            <p>మీ పేమెంట్ <strong>₹{amt:,.2f}</strong> సక్సెస్ ఫుల్ గా రిసీవ్ అయ్యింది.</p>
+            <p>మీ బిల్ (<strong>{file_name}</strong>) ని ఈ మెయిల్ కి అటాచ్ చేశాము, చెక్ చేసుకోండి.</p>
+            <br>
+            <p>థాంక్యూ,<br><strong>మానా కంపైలర్ టీమ్</strong></p>
+          </body>
+        </html>
+        """
+        
+        print(f"📧 [SENT] ఈమెయిల్ డెలివర్ అయ్యింది -> {email}")
+        print(f"   సబ్జెక్ట్: Invoice #{invoice_no} Paid")
+        print(f"   అటాచ్మెంట్: '{file_name}' వెళ్ళింది.\\n")
 
-    def send_invoice_email(self, recipient_email, customer_name, invoice_id, amount, attachment_file):
-        """Constructs MIME multipart message and sends via SMTP."""
-        email_payload = {
-            "To": recipient_email,
-            "From": "billing@ourcompiler.com",
-            "Subject": f"Invoice #{invoice_id} from Our Compiler — Paid Successfully",
-            "Date": datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S"),
-            "Attachment": attachment_file,
-            "HTML_Body": f"""
-            <html>
-              <body>
-                <h2>Dear {customer_name},</h2>
-                <p>Thank you for your business! Your payment of <strong>₹{amount:,.2f}</strong> has been processed successfully.</p>
-                <p>Your official tax invoice <strong>{attachment_file}</strong> is attached to this email.</p>
-                <br>
-                <p>Best regards,<br><strong>Our Compiler Billing Team</strong></p>
-              </body>
-            </html>
-            """
-        }
-        print(f"📧 [SMTP DISPATCH] Sent Email to {recipient_email} with attachment: '{attachment_file}'")
-        return email_payload
-
-# Run Email Dispatcher Demo:
-dispatcher = AutomatedEmailDispatcher()
-res = dispatcher.send_invoice_email(
-    recipient_email="balaji.dev@example.com",
-    customer_name="Balaji",
-    invoice_id="INV-2026-894",
-    amount=1499.00,
-    attachment_file="Invoice_INV-2026-894.pdf"
+sender = EmailSender()
+sender.send_bill(
+    email="balaji@example.com",
+    name="Balaji",
+    invoice_no="INV-894",
+    amt=1499.00,
+    file_name="Invoice_894.pdf"
 )`,
         codeTitle: 'Example 2: Automated Transactional Email Dispatcher with PDF Attachment',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 SMTP Security with TLS:</strong>
-          <p style="margin-top:6px;">In production Python, use <code>server = smtplib.SMTP('smtp.gmail.com', 587); server.starttls()</code> to encrypt credentials with Transport Layer Security (TLS) before sending passwords.</p>
+          <strong style="color:#10b981;">🔍 సెక్యూరిటీ వార్నింగ్ (TLS):</strong>
+          <p style="margin-top:6px;">కోడ్ లో మన ఈమెయిల్ పాస్ వర్డ్ రాసినప్పుడు, అది సేఫ్ గా వెళ్ళడానికి <code>server.starttls()</code> (Transport Layer Security) వాడటం మర్చిపోకూడదు.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Hardcoding Email Passwords Directly in Scripts',
-      text: 'Never write raw email passwords in Python code. When using Gmail, generate an App Password from Google Security settings and load it via os.getenv("EMAIL_APP_PASSWORD").'
+      title: 'కోడ్ లో డైరెక్ట్ గా పాస్ వర్డ్స్ రాయడం',
+      text: 'మీ పర్సనల్ జిమెయిల్ పాస్ వర్డ్ ని కోడ్ లో రాయకూడదు. ఆ కోడ్ ఎవరికైనా ఇస్తే మీ అకౌంట్ హ్యాక్ అవుతుంది. దానికి బదులు గూగుల్ సెక్యూరిటీ సెట్టింగ్స్ లో "App Passwords" అని క్రియేట్ చేసుకుని ఆ పాస్ వర్డ్ నే వాడుకోవాలి.'
     },
     tryIt: {
-      desc: 'Write an image thumbnail calculator function get_thumbnail_size(width, height, max_size=300) that maintains the original aspect ratio.',
+      desc: 'ఒక పెద్ద ఫోటో ని చిన్న థంబ్ నైల్ (Thumbnail) సైజులోకి మార్చడానికి విడ్త్, హైట్ క్యాలిక్యులేట్ చేయండి.',
       code: `def get_thumbnail_size(width, height, max_size=300):
+    # ఫోటో సాగకుండా, ఒరిజినల్ రేషియో మెయింటైన్ చేయడానికి:
     ratio = min(max_size / width, max_size / height)
     return int(width * ratio), int(height * ratio)
 
-print("Original 1920x1080 -> Thumbnail:", get_thumbnail_size(1920, 1080))
-print("Original 800x1200  -> Thumbnail:", get_thumbnail_size(800, 1200))`
+print("ఒరిజినల్ 1920x1080 -> థంబ్ నైల్:", get_thumbnail_size(1920, 1080))
+print("ఒరిజినల్ 800x1200  -> థంబ్ నైల్:", get_thumbnail_size(800, 1200))`
     },
     faqs: [
       {
-        q: 'Which library is best for extracting tables from PDFs in Python?',
-        a: 'pdfplumber is the gold standard for extracting complex tabular data from PDF files, while pypdf is optimal for merging, splitting, and rotating PDF pages.'
+        q: 'PDF లోపల టేబుల్స్ ఉంటే ఎలా డేటా తీయాలి?',
+        a: 'pypdf కంటే, pdfplumber అనే ఇంకో లైబ్రరీ టేబుల్స్ ని చదవడంలో చాలా బాగా పనిచేస్తుంది.'
       },
       {
-        q: 'How do I convert an image format from PNG to WebP in Pillow?',
-        a: 'Open with img = Image.open("photo.png") and save with img.save("photo.webp", "WEBP", quality=85, optimize=True).'
-      },
-      {
-        q: 'What is the difference between openpyxl and Pandas for Excel files?',
-        a: 'Pandas (pd.read_excel) is optimized for loading tabular numeric data into DataFrames for analysis. openpyxl is designed for cell-level formatting, styling, charts, and formulas.'
+        q: 'పాండాస్ (Pandas) ఉండగా మళ్లీ openpyxl ఎందుకు?',
+        a: 'పాండాస్ వాడితే డేటా మొత్తం అనాలిసిస్ కి బాగా పనిచేస్తుంది. కానీ "ఈ సెల్ కి రెడ్ కలర్ వెయ్, ఆ సెల్ కి ఈ ఫార్ములా వెయ్" లాంటి ఎక్సెల్ ఫార్మాటింగ్ కి openpyxl బెస్ట్.'
       }
     ]
   },
@@ -345,119 +293,113 @@ print("Original 800x1200  -> Thumbnail:", get_thumbnail_size(800, 1200))`
     phaseId: 'phase12',
     phaseTitle: 'Phase 12: Automation and Professional Skills',
     slug: '62-python-os-automation-logging-and-config',
-    title: 'OS Automation & Logging',
+    title: 'OS Automation & Logging (తెలుగులో)',
     badge: '62. OS Automation & Logging',
     subtopics: 'Automated Directory Organizers · Task Scheduling (schedule) · Production Logging (logging module, RotatingFileHandler) · Config Files (TOML, YAML, .env)',
-    desc: 'Master operating system automation, task scheduling, and production-grade logging in Python: organizing cluttered directories automatically, scheduling recurring jobs, implementing the standard logging module with RotatingFileHandlers, and managing configuration files with TOML and .env.',
+    desc: 'కంప్యూటర్ లో ఫైల్స్ ని ఆటోమాటిక్ గా సర్దడం, ఒక ప్రోగ్రామ్ రోజుకి ఒకసారి ఆటోమాటిక్ గా రన్ అయ్యేలా షెడ్యూల్ చేయడం, ఎర్రర్స్ వస్తే ప్రింట్ చేయకుండా రియల్ ప్రాజెక్ట్స్ లో లాగ్ (Log) ఫైల్స్ లో రాయడం నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. Automated File System Cleanup & Directory Organization',
-        body: `<p>One of the most practical everyday automations in Python is an <strong>Intelligent File Organizer</strong> that monitors your Downloads or Desktop directory and automatically sorts files into dedicated subfolders based on extension type (Documents, Images, Archives, Code, Videos).</p>`,
-        code: `# Intelligent Directory Organizer Pipeline:
-import os
+        title: '1. ఫైల్స్ ని ఆటోమాటిక్ గా సర్దడం (Smart File Organizer)',
+        body: `<p>మన సిస్టమ్ లో Downloads ఫోల్డర్ ఎప్పుడూ గందరగోళంగా ఉంటుంది. ఏది పిడిఎఫ్, ఏది ఇమేజ్ వెతుక్కోవాలి. పైథాన్ వాడి ఆటోమాటిక్ గా ఆ ఫైల్స్ ని కేటగిరీల వారీగా ఫోల్డర్స్ లోకి మార్చేయొచ్చు!</p>`,
+        code: `# ఇంటెలిజెంట్ ఫైల్ ఆర్గనైజర్:
 from pathlib import Path
 
+# ఏ ఫైల్ ఏ ఫోల్డర్ లోకి వెళ్ళాలో రూల్స్:
 FILE_CATEGORIES = {
-    "Documents": [".pdf", ".docx", ".txt", ".xlsx", ".pptx"],
-    "Images":    [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"],
-    "Archives":  [".zip", ".tar", ".gz", ".rar", ".7z"],
-    "Code":      [".py", ".js", ".html", ".css", ".json", ".sql"],
-    "Videos":    [".mp4", ".mkv", ".mov", ".avi"]
+    "Documents (బుక్స్, పత్రాలు)": [".pdf", ".docx", ".txt", ".xlsx"],
+    "Images (ఫోటోలు)":           [".jpg", ".png", ".webp", ".svg"],
+    "Code (ప్రోగ్రామింగ్)":       [".py", ".js", ".html", ".css"],
+    "Videos (వీడియోలు)":         [".mp4", ".mkv"]
 }
 
-def classify_file(filename):
+def check_category(filename):
+    # ఫైల్ చివర ఏముందో చూస్తుంది (ఉదా: .pdf)
     ext = Path(filename).suffix.lower()
     for category, extensions in FILE_CATEGORIES.items():
         if ext in extensions:
             return category
-    return "Other"
+    return "Others"
 
-# Simulate sorting cluttered files:
-mock_download_folder = [
-    "Machine_Learning_Notes.pdf",
-    "avatar_profile.png",
-    "backup_2026_08_14.zip",
-    "main_script.py",
-    "tutorial_video.mp4",
-    "financial_budget.xlsx",
-    "random_unknown_file.xyz"
+downloads_folder = [
+    "Python_Notes.pdf",
+    "profile_pic.png",
+    "my_script.py",
+    "movie_clip.mp4",
+    "unknown_file.xyz"
 ]
 
-print("--- 🗂️ Automated File Sorting & Classification Output ---")
-for file in mock_download_folder:
-    dest_folder = classify_file(file)
-    print(f"• Moving: '{file:28}' ──► 📁 [{dest_folder}/]")`,
+print("--- 🗂️ ఆటోమాటిక్ గా ఫైల్స్ ని సర్దుతున్నాం... ---")
+for file in downloads_folder:
+    folder = check_category(file)
+    print(f"• తరలిస్తున్నాం: '{file:18}' ──► 📁 [{folder}/]")`,
         codeTitle: 'Example 1: Intelligent File Organizer by Extension Category',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 shutil.move() Integration:</strong>
-          <p style="margin-top:6px;">In real OS scripts, combine <code>Path(dest_dir).mkdir(exist_ok=True)</code> with <code>shutil.move(src_path, dest_path)</code> to create destination folders and move files on disk.</p>
+          <strong style="color:#10b981;">🔍 shutil.move() వాడకం:</strong>
+          <p style="margin-top:6px;">అసలు ఫైల్స్ మూవ్ చేయడానికి <code>shutil.move(src, dest)</code> వాడతారు, అంతకంటే ముందు ఆ ఫోల్డర్ ఉందో లేదో చెక్ చేసి క్రియేట్ చేయాలి.</p>
         </div>`
       },
       {
-        title: '2. Production Logging (logging module) vs print()',
-        body: `<p>In professional production systems, <strong>never use <code>print()</code> for application monitoring</strong>! <code>print()</code> lacks timestamps, severity levels, log file rotation, and cannot be filtered dynamically.</p>
+        title: '2. ప్రొడక్షన్ లో print() వాడకూడదు! (Logging Module వాడుక)',
+        body: `<p>చిన్న కోడ్ రాస్తున్నప్పుడు అవుట్పుట్ కోసం <code>print()</code> వాడతాం. కానీ పెద్ద పెద్ద యాప్స్ లో వాడకూడదు! ఎందుకంటే ప్రింట్ చేస్తే అది స్క్రీన్ మీద కనిపిస్తుంది కానీ సేవ్ అవ్వదు. ఎప్పుడో రాత్రి ఎర్రర్ వస్తే పొద్దున్న చూసుకుందామంటే దొరకదు.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The 5 Standard Python Logging Levels:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">అందుకే Logging వాడుతాం (5 లెవెల్స్):</h4>
         <table class="tbl" style="margin-top:8px; font-size:12.5px;">
-          <tr><th>Level</th><th>Numeric Value</th><th>When to Use</th></tr>
-          <tr><td><code>DEBUG</code></td><td>10</td><td>Detailed diagnostic information for developers during debugging.</td></tr>
-          <tr><td><code>INFO</code></td><td>20</td><td>Confirmation that normal operational milestones are proceeding as expected.</td></tr>
-          <tr><td><code>WARNING</code></td><td>30</td><td>Indication of something unexpected or a runtime warning (e.g. low disk space).</td></tr>
-          <tr><td><code>ERROR</code></td><td>40</td><td>A serious problem that prevented a specific operation from executing.</td></tr>
-          <tr><td><code>CRITICAL</code></td><td>50</td><td>A fatal error causing the entire program or service to terminate immediately.</td></tr>
+          <tr><th>లెవెల్</th><th>ఎప్పుడు వాడాలి?</th></tr>
+          <tr><td><code>DEBUG</code></td><td>మనం కోడ్ టెస్ట్ చేసుకుంటున్నప్పుడు.</td></tr>
+          <tr><td><code>INFO</code></td><td>ప్రతిదీ కరెక్ట్ గా పనిచేస్తుందని రికార్డ్ చేయడానికి.</td></tr>
+          <tr><td><code>WARNING</code></td><td>చిన్న ఇబ్బంది (ఉదా: హార్డ్ డిస్క్ ఫుల్ అవుతోంది) వచ్చినప్పుడు.</td></tr>
+          <tr><td><code>ERROR</code></td><td>ఏదైనా తప్పు జరిగినప్పుడు (లాగిన్ ఫెయిల్ అవ్వడం).</td></tr>
+          <tr><td><code>CRITICAL</code></td><td>సర్వర్ ఆగిపోయింది లాంటి డేంజర్ విషయాలకి.</td></tr>
         </table>`,
         code: `import logging
 import sys
 
-# 1. Configure production-standard Logger with Formatter:
-logger = logging.getLogger("OurCompilerApp")
+# 1. ప్రొఫెషనల్ లాగర్ ని సెటప్ చేయడం:
+logger = logging.getLogger("ManaCompilerApp")
 logger.setLevel(logging.DEBUG)
 
-# Create console handler with structured format:
+# లాగ్స్ ఎలా కనిపించాలి? (టైమ్, లెవెల్, మెసేజ్)
 console_handler = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter("[%(asctime)s] [%(levelname)-8s] [%(name)s]: %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+formatter = logging.Formatter("[%(asctime)s] [%(levelname)s]: %(message)s", datefmt="%H:%M:%S")
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
-# 2. Log events across all severity levels:
-logger.debug("Connecting to Redis cache on 127.0.0.1:6379...")
-logger.info("Database connection established successfully.")
-logger.warning("Memory usage exceeded 75% threshold.")
-logger.error("Failed to process payment for user #9412: Bank gateway timeout.")
-logger.critical("Primary database server unreachable! Failing over to replica...")`,
+# 2. రకరకాల సిట్యువేషన్స్ లో రికార్డ్ చేయడం:
+logger.debug("డేటాబేస్ కి కనెక్ట్ అవుతున్నాం...")
+logger.info("డేటాబేస్ కనెక్ట్ అయ్యింది.")
+logger.warning("కంప్యూటర్ మెమరీ 80% నిండిపోయింది, చెక్ చేయండి!")
+logger.error("యూజర్ పేమెంట్ ఫెయిల్ అయ్యింది (బ్యాంక్ సర్వర్ డౌన్).")
+logger.critical("మొత్తం యాప్ క్రాష్ అయ్యింది, వెంటనే రిస్టార్ట్ చేయండి!")`,
         codeTitle: 'Example 2: Production Structured Logging with Severity Levels',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 RotatingFileHandler Power:</strong>
-          <p style="margin-top:6px;">Use <code>logging.handlers.RotatingFileHandler("app.log", maxBytes=10*1024*1024, backupCount=5)</code> to ensure log files never grow infinitely and consume all disk space.</p>
+          <strong style="color:#10b981;">🔍 లాగ్ ఫైల్స్ ఎప్పటికీ పెరగకూడదు:</strong>
+          <p style="margin-top:6px;">లాగ్ ఫైల్స్ సేవ్ చేస్తూ పోతే హార్డ్ డిస్క్ ఫుల్ అయిపోతుంది. అందుకే <code>RotatingFileHandler(maxBytes=10MB, backupCount=5)</code> వాడతాం (అంటే 5 ఫైల్స్ కి మించదు, పాతవి ఆటోమాటిక్ గా డిలీట్ అవుతాయి).</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Leaving DEBUG Logging Active in High-Traffic Production Environments',
-      text: 'Writing verbose DEBUG logs on every single web request generates gigabytes of disk I/O, slowing down server response times. Always set logger.setLevel(logging.INFO) or logging.WARNING in production.'
+      title: 'రియల్ వెబ్ సైట్ లో DEBUG లెవెల్ ఉంచడం',
+      text: 'కోడ్ రాసేటప్పుడు డీబగ్ పెట్టుకుంటాం. కానీ సైట్ లైవ్ లోకి వెళ్ళాక దాన్ని INFO లేదా WARNING కి మార్చాలి. లేకపోతే సెకనుకి వందల లాగ్స్ సేవ్ అయ్యి వెబ్ సైట్ స్లో అయిపోతుంది.'
     },
     tryIt: {
-      desc: 'Build a configuration loader function load_app_config(env_mode) that returns production or development settings based on an input string.',
-      code: `def load_app_config(env_mode="development"):
+      desc: 'ఒక ఫంక్షన్ రాయండి: మనం "production" అని ఇస్తే ప్రొడక్షన్ సెట్టింగ్స్ ఇవ్వాలి, "dev" అని ఇస్తే డెవలప్మెంట్ సెట్టింగ్స్ ఇవ్వాలి.',
+      code: `def get_app_config(env_mode):
     if env_mode == "production":
-        return {"debug": False, "db": "postgresql://prod_db:5432", "log_level": "WARNING"}
-    return {"debug": True, "db": "sqlite:///:memory:", "log_level": "DEBUG"}
+        return {"db": "prod_db", "debug": False, "log": "WARNING"}
+    else:
+        return {"db": "test_db", "debug": True,  "log": "DEBUG"}
 
-print("Development Config:", load_app_config("development"))
-print("Production Config: ", load_app_config("production"))`
+print("డెవలపర్ సెట్టింగ్స్:", get_app_config("dev"))
+print("లైవ్ సర్వర్ సెట్టింగ్స్:", get_app_config("production"))`
     },
     faqs: [
       {
-        q: 'What is the schedule library in Python?',
-        a: 'The schedule library is a clean, human-readable job scheduling package: schedule.every().day.at("10:30").do(job) or schedule.every(10).minutes.do(backup).'
+        q: 'schedule లైబ్రరీ వల్ల లాభం ఏంటి?',
+        a: 'మనం ఏదైనా పైథాన్ కోడ్ ని "రోజూ ఉదయం 9 గంటలకి రన్ అవ్వు" అని ఈజీగా ఇంగ్లీష్ లాగా (schedule.every().day.at("09:00")) రాయొచ్చు.'
       },
       {
-        q: 'Why should I use TOML or YAML over JSON for configuration files?',
-        a: 'TOML and YAML support inline comments (# comment), multi-line strings, and clean human-friendly indentation, making them superior for developer configuration files.'
-      },
-      {
-        q: 'What does python-dotenv do?',
-        a: 'python-dotenv reads key-value pairs from a local .env file and automatically injects them into os.environ at application startup.'
+        q: '.env (dot env) ఫైల్స్ ఎందుకు వాడతారు?',
+        a: 'పాస్ వర్డ్స్, API కీస్ లాంటి సీక్రెట్స్ ని కోడ్ లో రాయకుండా, .env అనే సపరేట్ ఫైల్ లో పెడతారు. అది ఎప్పటికీ గిట్ హబ్ (GitHub) లోకి వెళ్ళకుండా ఆపుతారు.'
       }
     ]
   },
@@ -470,133 +412,125 @@ print("Production Config: ", load_app_config("production"))`
     phaseId: 'phase12',
     phaseTitle: 'Phase 12: Automation and Professional Skills',
     slug: '63-python-unit-testing-pytest-and-debugging',
-    title: 'Testing, Pytest & Debugging',
+    title: 'Testing, Pytest & Debugging (తెలుగులో)',
     badge: '63. Pytest & Debugging',
     subtopics: 'Unit vs Integration Testing · pytest Test Runner · Test Fixtures (@pytest.fixture) · Parametrization · Mocking Dependencies · Debugging with breakpoint()',
-    desc: 'Master automated software testing and debugging in Python: the difference between unit and integration tests, writing clean tests with pytest, leveraging reusable test fixtures, parameterized testing, mocking external network APIs, and interactive debugging with breakpoint().',
+    desc: 'మనం రాసిన కోడ్ కరెక్ట్ గా పనిచేస్తుందా లేదా? భవిష్యత్తులో ఎవరో ఒకరు కోడ్ ని మార్చినా బగ్స్ రాకుండా ముందే (Unit Testing) ఎలా చెక్ చేసుకోవాలో చూద్దాం.',
     sections: [
       {
-        title: '1. Unit Testing vs Integration Testing & The Pytest Framework',
-        body: `<p>Automated software testing guarantees that code changes and refactoring do not introduce regression bugs.</p>
+        title: '1. Unit Testing అంటే ఏంటి? (Pytest వాడకం)',
+        body: `<p>సాఫ్ట్ వేర్ లో ఏ చిన్న మార్పు చేసినా పాతవి పాడు కాకుండా ఆటోమాటిక్ గా చెక్ చేసే ప్రోగ్రామ్స్ రాస్తాం. దాన్ని టెస్టింగ్ అంటారు.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">Unit Tests vs Integration Tests:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">దీనిలో 2 రకాలు:</h4>
         <ul>
-          <li><strong>Unit Tests:</strong> Test a single isolated function or class in memory with all external dependencies (databases, APIs) mocked out. They execute in milliseconds.</li>
-          <li><strong>Integration Tests:</strong> Test how multiple components work together (e.g. testing whether a Flask route properly writes a record to a real PostgreSQL database).</li>
+          <li><strong>Unit Tests:</strong> ఒక చిన్న ఫంక్షన్ ని (మిగతా వేటితో సంబంధం లేకుండా) విడిగా టెస్ట్ చేయడం. ఇది మిల్లీ సెకన్లలో రన్ అవుతుంది.</li>
+          <li><strong>Integration Tests:</strong> డేటాబేస్ తో, వేరే ఏపీఐ తో మొత్తం కలిపి కరెక్ట్ గా పనిచేస్తుందా అని చెక్ చేయడం.</li>
         </ul>
 
-        <h4 style="color:#10b981; margin:16px 0 8px;">Why Pytest is the Industry Standard:</h4>
-        <p>Unlike Python\'s built-in <code>unittest</code> module which requires verbose classes and methods like <code>self.assertEqual(a, b)</code>, <strong>pytest</strong> uses standard Python functions and plain <code>assert</code> statements with rich, detailed error diffs!</p>`,
-        code: `# Production Pytest Test Suite Architecture Blueprint:
+        <h4 style="color:#10b981; margin:16px 0 8px;">Pytest ఎందుకు పాపులర్?:</h4>
+        <p>నార్మల్ పైథాన్ <code>unittest</code> కంటే ఇది చాలా సింపుల్. డైరెక్ట్ గా <code>assert (నిజం కాదా)</code> అని రాస్తే చాలు, తప్పు ఎక్కడుందో చాలా క్లియర్ గా చూపిస్తుంది.</p>`,
+        code: `# Pytest తో బ్యాంక్ అకౌంట్ ని టెస్ట్ చేసే బ్లూప్రింట్:
 """
 import pytest
-from banking import BankAccount
+from my_bank import BankAccount
 
-# 1. Reusable Test Fixture:
+# 1. Fixture: ప్రతి టెస్ట్ కి ముందు ఒక ఫ్రెష్ అకౌంట్ ని ఇస్తుంది 
+# (లేకపోతే ఒక టెస్ట్ డేటా ఇంకోదానికి అంటుకుంటుంది)
 @pytest.fixture
-def active_account():
-    # Setup: Create a fresh test account before each test
-    account = BankAccount(owner="Balaji", initial_balance=5000.0)
-    return account
+def account():
+    return BankAccount(name="Balaji", bal=5000)
 
-# 2. Unit Test using standard assert statements:
-def test_initial_balance(active_account):
-    assert active_account.balance == 5000.0
-    assert active_account.owner == "Balaji"
+# 2. టెస్ట్స్ (assert వాడి నిజం అవునో కాదో చెక్ చేయడం):
+def test_initial_balance(account):
+    assert account.bal == 5000
+    assert account.name == "Balaji"
 
-def test_deposit_funds(active_account):
-    active_account.deposit(2000.0)
-    assert active_account.balance == 7000.0
+def test_deposit(account):
+    account.deposit(2000)
+    assert account.bal == 7000
 
-def test_withdraw_insufficient_funds_raises_error(active_account):
-    with pytest.raises(ValueError, match="Insufficient funds"):
-        active_account.withdraw(10000.0) # Attempting to overdraft!
+def test_withdraw_error(account):
+    # ఉన్నదానికంటే ఎక్కువ తీస్తే ఎర్రర్ వస్తుందా లేదా? (రావాలి)
+    with pytest.raises(ValueError, match="బ్యాలెన్స్ లేదు"):
+        account.withdraw(10000)
 
-# 3. Parameterized Testing: Run multiple test cases with one function!
-@pytest.mark.parametrize("deposit_amount, expected_balance", [
-    (500.0, 5500.0),
-    (1500.0, 6500.0),
-    (10000.0, 15000.0)
+# 3. ఒకేసారి 3 రకాల నెంబర్స్ తో టెస్ట్ చేయడం (Parametrize):
+@pytest.mark.parametrize("add, total", [
+    (500, 5500),
+    (1500, 6500)
 ])
-def test_multiple_deposits(active_account, deposit_amount, expected_balance):
-    active_account.deposit(deposit_amount)
-    assert active_account.balance == expected_balance
+def test_multiple(account, add, total):
+    account.deposit(add)
+    assert account.bal == total
 """
-print("Pytest Test Suite Blueprint Configured.")`,
+print("Pytest టెస్టింగ్ బ్లూప్రింట్ లోడ్ అయ్యింది.")`,
         codeTitle: 'Blueprint: Pytest Fixtures, Assertions, and Parametrization',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why @pytest.fixture is Powerful:</strong>
-          <p style="margin-top:6px;">Fixtures ensure clean test isolation: each test function receives a freshly instantiated, pristine object, preventing state pollution between consecutive test runs.</p>
+          <strong style="color:#10b981;">🔍 @pytest.fixture పవర్:</strong>
+          <p style="margin-top:6px;">ఫిక్చర్స్ వాడటం వల్ల కోడ్ రిపీట్ చేయక్కర్లేదు. ప్రతి టెస్ట్ ఫంక్షన్ కి ఒక బ్రాండ్ న్యూ, ఫ్రెష్ బ్యాంక్ అకౌంట్ ఆబ్జెక్ట్ వస్తుంది.</p>
         </div>`
       },
       {
-        title: '2. Interactive Debugging with Python\'s Built-in breakpoint() & pdb',
-        body: `<p>Python 3.7+ introduced the built-in <strong><code>breakpoint()</code></strong> function. Calling <code>breakpoint()</code> anywhere in your code pauses execution and opens an interactive <strong>Python Debugger (PDB)</strong> shell right in your terminal!</p>
+        title: '2. కోడ్ ఎక్కడ ఆగిపోయిందో వెతకడం (breakpoint() / Debugging)',
+        body: `<p>కోడ్ ఎక్కడో తప్పు వస్తుంది కానీ అర్థం కావట్లేదు. అప్పుడు ప్రతి లైన్ కీ <code>print()</code> పెట్టుకుంటూ పోవద్దు. పైథాన్ లో <strong><code>breakpoint()</code></strong> అని రాస్తే కోడ్ అక్కడే ఫ్రీజ్ అయిపోతుంది!</p>
         
         <table class="tbl" style="margin-top:8px; font-size:12.5px;">
-          <tr><th>PDB Command</th><th>Short</th><th>Action / Meaning</th></tr>
-          <tr><td><code>next</code></td><td><code>n</code></td><td>Execute the current line and advance to the next line.</td></tr>
-          <tr><td><code>step</code></td><td><code>s</code></td><td>Step <em>into</em> the function call on the current line.</td></tr>
-          <tr><td><code>continue</code></td><td><code>c</code></td><td>Resume normal program execution until the next breakpoint.</td></tr>
-          <tr><td><code>print(var)</code></td><td><code>p var</code></td><td>Inspect the current runtime value of any variable.</td></tr>
-          <tr><td><code>quit</code></td><td><code>q</code></td><td>Terminate the debugging session and exit Python.</td></tr>
+          <tr><th>PDB కమాండ్</th><th>షార్ట్ కట్</th><th>ఏం చేస్తుంది?</th></tr>
+          <tr><td><code>next</code></td><td><code>n</code></td><td>ఒక్క లైన్ రన్ చేసి, నెక్స్ట్ లైన్ కి వెళ్తుంది.</td></tr>
+          <tr><td><code>step</code></td><td><code>s</code></td><td>ఆ లైన్ లో ఉన్న ఫంక్షన్ లోపలికి దూకుతుంది.</td></tr>
+          <tr><td><code>continue</code></td><td><code>c</code></td><td>మళ్లీ కోడ్ ని నార్మల్ గా రన్ చేసేస్తుంది.</td></tr>
+          <tr><td><code>print(x)</code></td><td><code>p x</code></td><td>ఆ టైమ్ లో ఆ వేరియబుల్ లో ఏముందో చూపిస్తుంది.</td></tr>
         </table>`,
-        code: `# Demonstrating Interactive Debugging Execution Flow:
-def compute_discounted_cart(items, discount_pct):
-    total = 0.0
+        code: `# డీబగ్గింగ్ ఎలా చేయాలో సిమ్యులేషన్:
+def apply_discount(items, discount):
+    total = 0
     for item in items:
-        price = item["price"]
-        qty = item["qty"]
-        # breakpoint()  <-- Un-commenting this pauses execution and drops into PDB shell!
-        subtotal = price * qty
+        # breakpoint() # <-- ఇక్కడ అన్-కామెంట్ చేస్తే కోడ్ ఆగిపోయి టెర్మినల్ లోకి వస్తుంది!
+        subtotal = item["price"] * item["qty"]
         total += subtotal
     
-    final_amount = total * (1 - (discount_pct / 100))
+    final_amount = total * (1 - (discount / 100))
     return final_amount
 
-sample_cart = [
-    {"name": "Python Book", "price": 899.0, "qty": 2},
-    {"name": "USB Hub",     "price": 1299.0, "qty": 1}
+cart = [
+    {"name": "Book", "price": 899, "qty": 2},
+    {"name": "Mouse", "price": 1299, "qty": 1}
 ]
 
-total_charge = compute_discounted_cart(sample_cart, 10)
-print(f"Final Discounted Cart Total: ₹{total_charge:,.2f}")`,
+amt = apply_discount(cart, 10)
+print(f"డిస్కౌంట్ పోను కట్టాల్సిన అమౌంట్: ₹{amt:,.2f}")`,
         codeTitle: 'Example 2: Interactive Debugging Flow with breakpoint()',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 PDB vs Print Debugging:</strong>
-          <p style="margin-top:6px;">With <code>breakpoint()</code>, you can dynamically modify variable values in memory, step through recursive calls line by line, and evaluate expressions without constantly restarting the script.</p>
+          <strong style="color:#10b981;">🔍 డీబగ్గింగ్ వల్ల లాభం?:</strong>
+          <p style="margin-top:6px;">కోడ్ ని పదే పదే స్టాప్ చేసి రన్ చేసే పనుండదు. అక్కడే ఉండి వేరియబుల్స్ వాల్యూస్ మారుస్తూ, లైన్ బై లైన్ చెక్ చేసుకోవచ్చు.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Writing Tests that Rely on External Live APIs (Flaky Tests)',
-      text: 'Unit tests that make live HTTP network calls will fail whenever the network is slow or third-party servers are down. Always use unittest.mock or pytest-mock to mock HTTP responses in unit tests.'
+      title: 'రియల్ ఏపీఐ (నెట్ వర్క్) ని టెస్ట్ చేయడం',
+      text: 'టెస్ట్ రన్ చేసినప్పుడు నిజంగా వెబ్ సైట్ కి కనెక్ట్ అవ్వకూడదు. నెట్ స్లో ఉంటే మన కోడ్ కరెక్ట్ అయినా టెస్ట్ ఫెయిల్ అవుతుంది. ఇలాంటి వాటికి mock వాడి ఆ వెబ్ సైట్ నుంచి డేటా వచ్చినట్టు అబద్ధం చెప్తాం (Fake API).'
     },
     tryIt: {
-      desc: 'Write a simple assertion test function test_email_validation() that tests whether an email validator returns True for "balaji@example.com" and False for "invalid_email".',
+      desc: 'ఒక ఈమెయిల్ లో "@", "." ఉన్నాయా లేవా అని చెక్ చేసే ఫంక్షన్ కి 3 చిన్న టెస్ట్స్ (asserts) రాయండి.',
       code: `def is_valid_email(email):
     return "@" in email and "." in email.split("@")[-1]
 
 def run_tests():
-    assert is_valid_email("balaji@example.com") == True, "Valid email failed!"
-    assert is_valid_email("invalid_email") == False, "Invalid email passed!"
-    assert is_valid_email("user@domain") == False, "Missing TLD passed!"
-    print("✅ All 3 Email Validation Tests Passed Successfully!")
+    assert is_valid_email("balaji@gmail.com") == True
+    assert is_valid_email("invalid_email") == False
+    assert is_valid_email("user@domain") == False
+    print("✅ 3 ఈమెయిల్ టెస్ట్స్ పాస్ అయ్యాయి!")
 
 run_tests()`
     },
     faqs: [
       {
-        q: 'What is Code Coverage in testing?',
-        a: 'Code Coverage (measured via pytest-cov) is the percentage of your application source code executed by your test suite, helping identify untested branches and edge cases.'
+        q: 'Code Coverage అంటే ఏంటి?',
+        a: 'మనం 100 లైన్ల కోడ్ రాస్తే, అందులో ఎన్ని లైన్స్ ని మన టెస్ట్స్ టచ్ చేశాయి అని పర్సంటేజ్ లో చెప్తుంది. (ఉదా: 80% కవరేజ్).'
       },
       {
-        q: 'What does unittest.mock.patch do?',
-        a: 'patch() temporarily replaces a real function or network class (like requests.get) with a Mock object that returns pre-configured fake data during test execution.'
-      },
-      {
-        q: 'What is TDD (Test-Driven Development)?',
-        a: 'TDD is a software development process where you write a failing test first (Red), write the minimal code to make the test pass (Green), and then clean up the code (Refactor).'
+        q: 'TDD (Test-Driven Development) అంటే ఏంటి?',
+        a: 'ముందు కరెక్ట్ కోడ్ రాసి టెస్ట్ చేయడం కాదు, ముందు ఫెయిల్ అయ్యేలా టెస్ట్ రాసి ఆ తర్వాత దాన్ని పాస్ చేయడానికి కోడ్ రాయడాన్ని TDD అంటారు.'
       }
     ]
   },
@@ -609,115 +543,107 @@ run_tests()`
     phaseId: 'phase12',
     phaseTitle: 'Phase 12: Automation and Professional Skills',
     slug: '64-python-git-clean-code-and-documentation',
-    title: 'Git, Clean Code & Docs',
+    title: 'Git, Clean Code & Docs (తెలుగులో)',
     badge: '64. Git & Clean Code',
     subtopics: 'Git Version Control Workflow · PEP 8 Style Guide · Formatting with Black & Ruff · Docstrings (Google/NumPy Style) · SOLID Principles',
-    desc: 'Master professional software engineering standards in Python: Git branch and pull-request workflows, adhering to the PEP 8 style guide, automated formatting with Black and Ruff, writing documentation with Google-style docstrings, and applying the SOLID design principles.',
+    desc: 'సీనియర్ సాఫ్ట్ వేర్ ఇంజనీర్స్ కోడ్ ఎలా రాస్తారు? Git వాడి టీమ్ లో ఎలా పనిచేస్తారు? కోడ్ ని అర్థమయ్యేలా (Clean Code గా) ఎలా ఉంచాలో నేర్చుకుందాం.',
     sections: [
       {
-        title: '1. Professional Git Version Control Workflow',
-        body: `<p><strong>Git</strong> is the universal distributed version control system used by software engineering teams across the globe.</p>
+        title: '1. గిట్ (Git) అంటే ఏంటి? ఎలా వాడతారు?',
+        body: `<p><strong>Git</strong> అంటే మనం రాసిన కోడ్ కి ఎప్పటికప్పుడు సేవ్ పాయింట్స్ పెట్టుకోవడం. 10 మంది కలిసి ఒకే ప్రాజెక్ట్ మీద పనిచేస్తున్నప్పుడు ఒకరి కోడ్ ఇంకొకరికి డిస్టర్బ్ కాకుండా ఇది చూసుకుంటుంది.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The Standard Feature Branch Git Workflow:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">ఆఫీస్ లో వాడే స్టాండర్డ్ గిట్ వర్క్ ఫ్లో:</h4>
         <ol style="line-height:1.8; margin-left:20px;">
-          <li><code>git checkout -b feature/user-authentication</code>: Create and switch to a dedicated feature branch.</li>
-          <li><code>git add .</code>: Stage modified and newly created files.</li>
-          <li><code>git commit -m "feat(auth): implement JWT token login"</code>: Commit changes with an informative Conventional Commit message.</li>
-          <li><code>git push origin feature/user-authentication</code>: Push branch to GitHub/GitLab.</li>
-          <li>Open a <strong>Pull Request (PR)</strong> for peer code review and automated CI/CD testing before merging into <code>main</code>!</li>
+          <li><code>git checkout -b feature/login</code>: మెయిన్ కోడ్ ని డిస్టర్బ్ చేయకుండా, లాగిన్ ఫీచర్ కోసం ఒక సపరేట్ కాపీ (Branch) క్రియేట్ చేసుకోవడం.</li>
+          <li><code>git add .</code>: మనం చేసిన మార్పులన్నిటినీ యాడ్ చేయడం.</li>
+          <li><code>git commit -m "added login page"</code>: ఈ మార్పులకి ఒక పేరు పెట్టి సేవ్ చేయడం.</li>
+          <li><code>git push origin feature/login</code>: మన కంప్యూటర్ నుంచి గిట్ హబ్ (GitHub) లాంటి సర్వర్ కి పంపించడం.</li>
+          <li><strong>Pull Request (PR):</strong> నా కోడ్ రెడీగా ఉంది, ఎవరైనా చెక్ చేసి మెయిన్ ప్రాజెక్ట్ లో కలపండి అని రిక్వెస్ట్ పెట్టడం.</li>
         </ol>`,
-        code: `# Git Command Reference Summary:
-git_commands = {
-    "git status":           "Inspect staged, unstaged, and untracked file changes",
-    "git diff":             "View exact line-by-line diff of unstaged modifications",
-    "git log --oneline -n 5":"Display concise history of the last 5 commits",
-    "git branch -a":        "List all local and remote tracking branches",
-    "git stash":            "Temporarily shelve uncommitted local changes without losing work"
+        code: `# ముఖ్యమైన Git కమాండ్స్:
+git_cmds = {
+    "git status":  "నేను ఏయే ఫైల్స్ మార్చానో చూడటానికి",
+    "git diff":    "ఫైల్ లో ఎక్సాక్ట్ గా ఏ లైన్ మార్చానో చూడటానికి",
+    "git log":     "ఇంతకు ముందు ఎవరెవరు ఏమేం మార్చారో హిస్టరీ",
+    "git branch":  "మన ప్రాజెక్ట్ లో ఉన్న బ్రాంచెస్ (కాపీలు) లిస్ట్",
+    "git stash":   "నేను చేసిన సగం పనిని టెంపరరీగా పక్కన పెట్టడానికి"
 }
 
-print("--- 🛠️ Core Professional Git Commands ---")
-for cmd, desc in git_commands.items():
-    print(f"• {cmd:25}: {desc}")`,
+print("--- 🛠️ కచ్చితంగా తెలియాల్సిన Git కమాండ్స్ ---")
+for cmd, desc in git_cmds.items():
+    print(f"• {cmd:15}: {desc}")`,
         codeTitle: 'Reference: Essential Professional Git Commands',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 What is a .gitignore file?</strong>
-          <p style="margin-top:6px;">Always include a <code>.gitignore</code> file at project root to prevent checking in virtual environments (<code>venv/</code>), compiled bytecode (<code>__pycache__/</code>), OS artifacts (<code>.DS_Store</code>), and secret files (<code>.env</code>).</p>
+          <strong style="color:#10b981;">🔍 .gitignore ఫైల్ అంటే?:</strong>
+          <p style="margin-top:6px;">పాస్ వర్డ్స్ ఉన్న ఫైల్స్ (.env) లేదా సిస్టమ్ క్రియేట్ చేసే వేస్ట్ ఫైల్స్ (.pyc) గిట్ హబ్ లోకి వెళ్ళకుండా ఆపడానికి ఈ ఫైల్ లో వాటి పేర్లు రాస్తాం.</p>
         </div>`
       },
       {
-        title: '2. Clean Code, PEP 8 Formatting & Google-Style Docstrings',
-        body: `<p>Code is read far more often than it is written. Writing clean, readable code is a core trait of senior software engineers.</p>
+        title: '2. క్లీన్ కోడ్, PEP 8 & డాక్యుమెంటేషన్ (Docstrings)',
+        body: `<p>మనం కోడ్ రాసే టైమ్ కంటే, వేరే వాళ్ళు దాన్ని చదివే టైమే ఎక్కువ ఉంటుంది. కాబట్టి కోడ్ నీట్ గా, అందరికీ అర్థమయ్యేలా రాయాలి.</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">The 4 Essential Clean Code Principles:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">క్లీన్ కోడ్ రూల్స్:</h4>
         <ul>
-          <li><strong>DRY (Don't Repeat Yourself):</strong> Consolidate duplicated logic into reusable functions.</li>
-          <li><strong>KISS (Keep It Simple, Stupid):</strong> Choose straightforward, transparent solutions over clever, obfuscated code.</li>
-          <li><strong>SOLID Principles:</strong> Single Responsibility (a function or class should do exactly one thing well).</li>
-          <li><strong>Automated Formatting (Black / Ruff):</strong> Use <code>black .</code> to automatically format code according to PEP 8 standards with zero arguments.</li>
+          <li><strong>DRY (Don't Repeat Yourself):</strong> ఒకే కోడ్ ని రెండు సార్లు కాపీ పేస్ట్ చేయకూడదు. దానికి ఒక ఫంక్షన్ రాయాలి.</li>
+          <li><strong>KISS (Keep It Simple):</strong> కాంప్లెక్స్ గా రాయడం కంటే సింపుల్ గా రాయడమే గ్రేట్.</li>
+          <li><strong>Black / Ruff:</strong> మనం కోడ్ ని ఎలా పడితే అలా రాసినా, ఈ టూల్స్ వాడితే ఆటోమాటిక్ గా ఇంటర్నేషనల్ స్టాండర్డ్స్ కి తగ్గట్టు స్పేస్ లు అడ్జస్ట్ అయిపోతాయి (PEP 8).</li>
         </ul>`,
-        code: `def calculate_employee_bonus(base_salary: float, performance_rating: float, years_at_company: int) -> float:
-    """Calculates annual performance bonus with tenure multiplier.
-
-    Adheres to Google Docstring Style standards.
+        code: `def get_bonus(salary: float, rating: float, years: int) -> float:
+    """ఎంప్లాయ్ కి యాన్యువల్ బోనస్ లెక్కించే ఫంక్షన్ (Google Style).
 
     Args:
-        base_salary (float): The annual base salary in INR.
-        performance_rating (float): Performance score from 1.0 (lowest) to 5.0 (highest).
-        years_at_company (int): Number of completed full years at the organization.
+        salary (float): సంవత్సర జీతం.
+        rating (float): పెర్ఫార్మన్స్ రేటింగ్ (1.0 నుంచి 5.0 మధ్యలో).
+        years (int): కంపెనీలో ఎన్ని ఏళ్ళుగా ఉన్నాడు.
 
     Returns:
-        float: Total bonus amount in INR rounded to 2 decimal places.
-
+        float: ఇవ్వాల్సిన బోనస్ అమౌంట్.
+        
     Raises:
-        ValueError: If performance_rating is outside the 1.0 to 5.0 range.
+        ValueError: రేటింగ్ 1-5 మధ్యలో లేకపోతే.
     """
-    if not (1.0 <= performance_rating <= 5.0):
-        raise ValueError("performance_rating must be between 1.0 and 5.0")
+    if not (1.0 <= rating <= 5.0):
+        raise ValueError("రేటింగ్ 1 నుంచి 5 మధ్యలోనే ఉండాలి!")
 
-    # Base bonus percentage:
-    bonus_percentage = (performance_rating / 5.0) * 0.15 # Up to 15%
+    # రేటింగ్ ని బట్టి 15% వరకు బోనస్
+    bonus_pct = (rating / 5.0) * 0.15 
     
-    # Seniority loyalty multiplier (+1% per year up to 5%):
-    loyalty_bonus = min(years_at_company * 0.01, 0.05)
+    # ఎక్సపీరియన్స్ ని బట్టి ఇంకో 5% వరకు ఎక్స్ట్రా
+    loyalty_pct = min(years * 0.01, 0.05)
     
-    total_bonus = base_salary * (bonus_percentage + loyalty_bonus)
-    return round(total_bonus, 2)
+    total = salary * (bonus_pct + loyalty_pct)
+    return round(total, 2)
 
-# Calculate bonus:
-bonus = calculate_employee_bonus(base_salary=1200000.0, performance_rating=4.8, years_at_company=3)
-print(f"Computed Annual Bonus: ₹{bonus:,.2f}")`,
+bonus = get_bonus(salary=1200000, rating=4.8, years=3)
+print(f"ఎంప్లాయ్ కి ఇవ్వాల్సిన బోనస్: ₹{bonus:,.2f}")`,
         codeTitle: 'Example 2: Clean Code with Type Hints and Google-Style Docstring',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Type Hints & Docstring Inspection:</strong>
-          <p style="margin-top:6px;">Combining PEP 484 type annotations (<code>base_salary: float</code>) with structured docstrings allows documentation generators (like Sphinx / MkDocs) to build interactive API documentation websites automatically.</p>
+          <strong style="color:#10b981;">🔍 టైప్ హింట్స్ (Type Hints):</strong>
+          <p style="margin-top:6px;">ఫంక్షన్ కి ఇచ్చేవి (salary) నెంబర్లా? టెక్స్టా? అని ముందే <code>: float</code> అని చెప్పడం వల్ల ఎడిటర్ లో తప్పులు ముందే తెలిసిపోతాయి.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Using Meaningless Variable Names (x, temp, data2, a1)',
-      text: 'Variables with names like "temp" or "data2" obscure business intent. Always use descriptive, intent-revealing names: "active_user_count", "monthly_revenue", "is_account_verified".'
+      title: 'అర్థం కాని పేర్లు పెట్టడం (x, a1, data2)',
+      text: 'వేరియబుల్స్ కి x, y, data2 లాంటి పేర్లు పెడితే అందులో ఏముందో రెండు రోజుల తర్వాత మనకే అర్థం కాదు. కచ్చితంగా `user_age`, `total_amount` లాంటి మీనింగ్ ఫుల్ పేర్లు పెట్టాలి.'
     },
     tryIt: {
-      desc: 'Refactor messy code: Write a clean function is_eligible_for_loan(credit_score, income, existing_debt) with type hints and boolean expression.',
-      code: `def is_eligible_for_loan(credit_score: int, annual_income: float, current_debt: float) -> bool:
-    debt_to_income_ratio = current_debt / annual_income if annual_income > 0 else 1.0
-    return credit_score >= 700 and debt_to_income_ratio <= 0.40
+      desc: 'ఒక లోన్ ఎలిజిబిలిటీ ఫంక్షన్ కి టైప్ హింట్స్ (int, float, bool) ఇచ్చి రాయండి.',
+      code: `def is_loan_approved(score: int, income: float, loan_amt: float) -> bool:
+    # స్కోర్ 700 పైన ఉండి, అడిగిన లోన్ జీతంలో సగం కంటే తక్కువ ఉంటేనే ఓకే:
+    return score >= 700 and loan_amt <= (income * 0.5)
 
-print("Candidate 1 Eligible:", is_eligible_for_loan(750, 1200000, 300000)) # True
-print("Candidate 2 Eligible:", is_eligible_for_loan(620, 1500000, 200000)) # False (Low score)`
+print("పర్సన్ 1 కి వస్తుందా?:", is_loan_approved(750, 100000, 40000)) # True
+print("పర్సన్ 2 కి వస్తుందా?:", is_loan_approved(650, 100000, 40000)) # False (స్కోర్ తక్కువ)`
     },
     faqs: [
       {
-        q: 'What is Ruff in the Python ecosystem?',
-        a: 'Ruff is an extremely fast Python linter and formatter written in Rust that replaces Flake8, isort, Black, and pydocstyle while running 10-100x faster.'
+        q: 'Ruff అంటే ఏంటి?',
+        a: 'ఇది పైథాన్ కోసం వచ్చిన కొత్త లైనర్/ఫార్మాటర్. పాత టూల్స్ అన్నింటికంటే ఇది 10-100 రెట్లు స్పీడ్ గా మన కోడ్ లోని తప్పులు వెతికి చెప్తుంది.'
       },
       {
-        q: 'What is the difference between git merge and git rebase?',
-        a: 'git merge combines branches by creating a new merge commit preserving full branch history. git rebase replays your commits on top of the target branch, creating a clean linear commit history.'
-      },
-      {
-        q: 'What is a pre-commit hook in Git?',
-        a: 'A pre-commit hook is an automated script that runs linters and formatters (like Black and Ruff) before every commit, automatically rejecting commits that violate style guidelines.'
+        q: 'git merge కీ, git rebase కీ తేడా ఏంటి?',
+        a: 'రెండు బ్రాంచెస్ ని కలపడానికే వాడతారు. merge చేస్తే కలిసినట్టు ఒక కొత్త సేవ్ పాయింట్ వస్తుంది. rebase చేస్తే మన కోడ్ ని తీసుకెళ్లి పక్కన పెట్టి, వాళ్లది తీసుకొచ్చి, దానిమీద మనది అప్లై చేస్తుంది (హిస్టరీ క్లీన్ గా ఉంటుంది).'
       }
     ]
   },
@@ -730,301 +656,204 @@ print("Candidate 2 Eligible:", is_eligible_for_loan(620, 1500000, 200000)) # Fal
     phaseId: 'phase12',
     phaseTitle: 'Phase 12: Automation and Professional Skills',
     slug: '65-python-automation-and-devops-capstone-projects',
-    title: 'Automation & DevOps Capstone Projects',
+    title: 'Automation & DevOps ప్రాజెక్ట్స్ (తెలుగులో)',
     badge: '65. Automation Capstone',
-    subtopics: '5 Full Projects · 1. Automated Web Price Scraper & Notifier · 2. Automated Invoice & Excel Generator · 3. Intelligent Desktop File Organizer · 4. Daily Email Dispatcher · 5. CI/CD & Docker Pipeline',
-    desc: 'Build five production-grade automation, scraping, and DevOps systems in Python: an E-Commerce Price Drop Alert Scraper, an Automated Multi-Client Invoice & Excel Financial Engine, an Intelligent File Organizer with audit logging, an Automated Daily Email Dispatcher, and a Production Docker & CI/CD Pipeline.',
+    subtopics: '5 Full Projects · 1. Automated Web Price Scraper · 2. Invoice Generator · 3. File Organizer · 4. Email Dispatcher · 5. Docker Pipeline',
+    desc: 'ఈ ఫేజ్ లో నేర్చుకున్న ఆటోమేషన్ స్కిల్స్ తో 5 పవర్ ఫుల్ ప్రాజెక్ట్స్: అమెజాన్ ప్రైస్ డ్రాప్ అయితే మెసేజ్ రావడం, ఆటోమాటిక్ గా పీడీఎఫ్ బిల్స్ జనరేట్ చేయడం, పడుకునేలోపు ఫోల్డర్స్ క్లీన్ అవ్వడం, ఈమెయిల్స్ పంపడం లాంటివి కోడ్ చేద్దాం.',
     sections: [
       {
-        title: '1. Project 1: Automated E-Commerce Price Drop Scraper & Alert Engine',
-        body: `<p>A complete price monitoring engine that parses product pages, compares current prices against user alert thresholds, and triggers notifications on price drops:</p>`,
-        code: `# =========================================================================
-# PROJECT 1: AUTOMATED PRICE DROP SCRAPER & ALERT ENGINE
-# =========================================================================
-
-class PriceDropMonitor:
-    """Monitors product prices and triggers alerts when price drops below threshold."""
-    
+        title: '1. ప్రాజెక్ట్ 1: ప్రోడక్ట్ ప్రైస్ తగ్గితే ఆటోమాటిక్ అలర్ట్',
+        body: `<p>మనం కొనాలి అనుకున్న లాప్ టాప్ లేదా ఫోన్ ప్రైస్ ని రోజు మానిటర్ చేస్తూ.. మనం అనుకున్న రేటుకి రాగానే "రేటు తగ్గింది!" అని మనకు అలర్ట్ ఇచ్చే ప్రోగ్రామ్:</p>`,
+        code: `# ప్రాజెక్ట్ 1: ప్రైస్ డ్రాప్ మానిటర్
+class PriceMonitor:
     def __init__(self):
-        self.watchlist = {} # {product_id: {"name": str, "target_price": float, "last_price": float}}
+        self.watchlist = {}
 
-    def add_to_watchlist(self, product_id, name, target_price, initial_price):
-        self.watchlist[product_id] = {
-            "name": name,
-            "target_price": target_price,
-            "last_price": initial_price
+    def add_item(self, prod_id, name, target_price, current_price):
+        self.watchlist[prod_id] = {
+            "name": name, 
+            "target": target_price, 
+            "last": current_price
         }
-        print(f"🎯 Watchlist Added: '{name}' | Target Alert Price: ₹{target_price:,.2f}")
+        print(f"🎯 వాచ్ లిస్ట్ లో యాడ్ చేశాం: '{name}' (టార్గెట్ ప్రైస్: ₹{target_price})")
 
-    def check_price_update(self, product_id, current_scraped_price):
-        item = self.watchlist.get(product_id)
-        if not item:
-            return "Product not found in watchlist."
+    def check_price(self, prod_id, new_price):
+        item = self.watchlist.get(prod_id)
+        if not item: return
         
-        old_price = item["last_price"]
-        item["last_price"] = current_scraped_price
+        old_price = item["last"]
+        item["last"] = new_price
 
-        if current_scraped_price <= item["target_price"]:
-            discount = old_price - current_scraped_price
-            return (
-                f"🚨 [PRICE DROP ALERT!] '{item['name']}' dropped to ₹{current_scraped_price:,.2f}! "
-                f"(Target: ₹{item['target_price']:,.2f} | Saved: ₹{discount:,.2f})"
-            )
-        return f"ℹ️ '{item['name']}' price is ₹{current_scraped_price:,.2f} (Above target ₹{item['target_price']:,.2f})"
+        if new_price <= item["target"]:
+            discount = old_price - new_price
+            return f"🚨 [రేటు తగ్గింది!] '{item['name']}' ₹{new_price} కి వచ్చింది! (సేవింగ్స్: ₹{discount})"
+        return f"ℹ️ '{item['name']}' ఇంకా ఎక్కువగానే ఉంది (₹{new_price})"
 
-# Run Project 1 Demonstration:
-monitor = PriceDropMonitor()
-monitor.add_to_watchlist("PROD-1", "Sony WH-1000XM5 Headphones", target_price=24999.0, initial_price=29999.0)
-monitor.add_to_watchlist("PROD-2", "MacBook Air M3", target_price=95000.0, initial_price=114900.0)
+monitor = PriceMonitor()
+monitor.add_item("P1", "MacBook Air", target_price=95000, current_price=105000)
 
-# Simulate Daily Price Scraping Checks:
-print("\\n--- 📡 Simulating Daily Automated Price Checks ---")
-print(monitor.check_price_update("PROD-1", 27999.0)) # Above target
-print(monitor.check_price_update("PROD-1", 23499.0)) # Drops below target! ALERTS!
-print(monitor.check_price_update("PROD-2", 94000.0)) # Drops below target! ALERTS!`,
+print("\\n--- 📡 రోజువారీ ప్రైస్ చెకింగ్ ---")
+print(monitor.check_price("P1", 99000)) # ఇంకా ఎక్కువగానే ఉంది
+print(monitor.check_price("P1", 94000)) # టార్గెట్ రీచ్ అయ్యింది! అలర్ట్!`,
         codeTitle: 'Project 1: Automated Price Drop Alert Engine',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Real-World Architecture:</strong>
-          <p style="margin-top:6px;">In production, combine this monitor with the <code>schedule</code> library to run every morning at 08:00 AM and send alerts via Telegram/WhatsApp APIs.</p>
+          <strong style="color:#10b981;">🔍 ఆటోమేషన్:</strong>
+          <p style="margin-top:6px;">ఈ కోడ్ ని <code>schedule</code> లైబ్రరీ కి కనెక్ట్ చేస్తే రోజూ ఉదయం 8 గంటలకి ఆటోమాటిక్ గా చెక్ చేసి మీ ఫోన్ కి మెసేజ్ పంపుతుంది.</p>
         </div>`
       },
       {
-        title: '2. Project 2: Automated Multi-Client Invoice & Excel Financial Engine',
-        body: `<p>An automated accounting engine generating structured invoices and financial summaries with tax computations:</p>`,
-        code: `# =========================================================================
-# PROJECT 2: AUTOMATED INVOICE & FINANCIAL REPORT ENGINE
-# =========================================================================
-
+        title: '2. ప్రాజెక్ట్ 2: ఆటోమేటెడ్ బిల్ (Invoice) జనరేటర్',
+        body: `<p>కంపెనీలో కస్టమర్స్ పేర్లు, వాళ్ళు కొన్న ఐటమ్స్ ఇస్తే.. GST క్యాలిక్యులేట్ చేసి ఆటోమాటిక్ గా ఒక అందమైన బిల్ ఫార్మాట్ ని క్రియేట్ చేసే ప్రోగ్రామ్:</p>`,
+        code: `# ప్రాజెక్ట్ 2: ఆటోమేటెడ్ ఇన్వాయిస్ జనరేటర్
 class InvoiceEngine:
-    def __init__(self, company_name="Our Compiler Tech Solutions"):
-        self.company = company_name
-
-    def generate_invoice(self, invoice_num, client_name, line_items):
-        """Generates detailed invoice breakdown: line_items = [(desc, qty, unit_price)]"""
-        subtotal = 0.0
+    def generate(self, inv_no, name, items):
+        subtotal = 0
         details = []
-        for desc, qty, price in line_items:
-            line_total = qty * price
-            subtotal += line_total
-            details.append(f"  • {desc:32} (Qty: {qty:>2} x ₹{price:>8,.2f}) = ₹{line_total:>10,.2f}")
+        for desc, qty, price in items:
+            line_tot = qty * price
+            subtotal += line_tot
+            details.append(f"  • {desc:20} (Qty: {qty} x ₹{price}) = ₹{line_tot:,.2f}")
         
-        gst = subtotal * 0.18 # 18% GST
-        grand_total = subtotal + gst
+        gst = subtotal * 0.18
+        grand = subtotal + gst
 
-        invoice_text = [
-            f"======================================================================",
-            f"  TAX INVOICE: {self.company.upper()}",
-            f"  Invoice Number: {invoice_num:<20} Date: 2026-08-14",
-            f"  Billed To:      {client_name}",
-            f"----------------------------------------------------------------------",
+        bill = [
+            f"==================================================",
+            f"  TAX INVOICE (మానా కంపైలర్)",
+            f"  Invoice: {inv_no} | Billed To: {name}",
+            f"--------------------------------------------------",
             *details,
-            f"----------------------------------------------------------------------",
-            f"  Subtotal:                                            ₹{subtotal:>10,.2f}",
-            f"  Applicable GST (18%):                                ₹{gst:>10,.2f}",
-            f"  GRAND TOTAL PAYABLE:                                 ₹{grand_total:>10,.2f}",
-            f"======================================================================"
+            f"--------------------------------------------------",
+            f"  Subtotal:                      ₹{subtotal:,.2f}",
+            f"  GST (18%):                     ₹{gst:,.2f}",
+            f"  GRAND TOTAL:                   ₹{grand:,.2f}",
+            f"=================================================="
         ]
-        return "\\n".join(invoice_text)
+        return "\\n".join(bill)
 
-# Run Project 2 Demonstration:
 engine = InvoiceEngine()
-inv = engine.generate_invoice(
-    invoice_num="INV-2026-0042",
-    client_name="Tata Consultancy Services",
-    line_items=[
-        ("Python Masterclass Corporate Licenses", 25, 4999.0),
-        ("FastAPI Backend Microservice Consulting", 10, 8500.0),
-        ("Dedicated Cloud Server Provisioning", 1, 15000.0)
-    ]
+bill_text = engine.generate(
+    inv_no="INV-101", name="Balaji (TechCorp)", 
+    items=[("Python Course", 5, 4999), ("Cloud Setup", 1, 15000)]
 )
-print(inv)`,
+print(bill_text)`,
         codeTitle: 'Project 2: Automated Tax Invoice Generation Engine',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Formatting Power:</strong>
-          <p style="margin-top:6px;">Formats currencies and itemized line items with dynamic tax calculations, ready for PDF export or email delivery.</p>
+          <strong style="color:#10b981;">🔍 PDF లా మార్చొచ్చు:</strong>
+          <p style="margin-top:6px;">దీని మీద <code>reportlab</code> లేదా <code>pdfkit</code> ప్యాకేజ్ వాడితే ఈ టెక్స్ట్ కాస్తా ఒరిజినల్ పీడీఎఫ్ లాగా సేవ్ అవుతుంది.</p>
         </div>`
       },
       {
-        title: '3. Project 3: Intelligent File Organizer with Audit Logging',
-        body: `<p>An automated file manager that scans directories, classifies file types, and records actions in an audit log:</p>`,
-        code: `# =========================================================================
-# PROJECT 3: INTELLIGENT FILE ORGANIZER WITH AUDIT LOGGING
-# =========================================================================
-
-class SmartFolderOrganizer:
-    CATEGORIES = {
-        "Documents": [".pdf", ".docx", ".xlsx", ".txt"],
-        "Images":    [".png", ".jpg", ".jpeg", ".svg"],
-        "Code":      [".py", ".js", ".html", ".css"],
-        "Archives":  [".zip", ".tar", ".gz"]
-    }
-
+        title: '3. ప్రాజెక్ట్ 3: స్మార్ట్ ఫోల్డర్ ఆర్గనైజర్ (విత్ లాగ్స్)',
+        body: `<p>ప్రాజెక్ట్ 62 లో లాగే ఫైల్స్ ని సర్దడంతో పాటు.. ఏ టైమ్ కి ఏ ఫైల్ ఎక్కడికి మూవ్ అయిందో రికార్డ్ (Audit Log) మెయింటైన్ చేసే ప్రోగ్రామ్:</p>`,
+        code: `# ప్రాజెక్ట్ 3: ఆడిట్ లాగ్ తో ఫైల్స్ ఆర్గనైజర్
+class SmartOrganizer:
     def __init__(self):
-        self.audit_log = []
+        self.logs = [] # ఏం జరిగిందో రికార్డ్ చేయడానికి
 
-    def organize_files(self, file_list):
-        for filename in file_list:
-            ext = "." + filename.split(".")[-1].lower() if "." in filename else ""
-            target_folder = "Others"
-            for folder, extensions in self.CATEGORIES.items():
-                if ext in extensions:
-                    target_folder = folder
-                    break
+    def organize(self, files):
+        for file in files:
+            ext = file.split(".")[-1].lower() if "." in file else ""
             
-            action_record = f"[SORTED] '{filename}' ──► 📁 [{target_folder}/]"
-            self.audit_log.append(action_record)
-            print(f"• {action_record}")
+            if ext in ["pdf", "txt"]: folder = "Documents"
+            elif ext in ["png", "jpg"]: folder = "Images"
+            elif ext in ["py", "js"]: folder = "Code"
+            else: folder = "Others"
+            
+            action = f"[SORTED] '{file}' ──► [{folder}/]"
+            self.logs.append(action)
+            print("•", action)
 
-# Run Project 3 Demonstration:
-organizer = SmartFolderOrganizer()
-print("--- 📂 Organizing Cluttered Downloads Directory ---")
-organizer.organize_files([
-    "Q3_Financial_Report.pdf",
-    "dashboard_mockup.png",
-    "api_backend_server.py",
-    "dataset_customers.xlsx",
-    "system_backup.zip"
-])
-print(f"\\n✅ Successfully organized {len(organizer.audit_log)} files with zero errors!")`,
+org = SmartOrganizer()
+print("--- 📂 ఫైల్స్ ని సర్దుతున్నాం ---")
+org.organize(["notes.pdf", "photo.png", "main.py", "unknown.xyz"])
+
+print(f"\\n✅ సక్సెస్! లాగ్స్ లో {len(org.logs)} యాక్షన్స్ రికార్డ్ అయ్యాయి.")`,
         codeTitle: 'Project 3: Intelligent File Organizer with Audit Logging',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Audit Trail:</strong>
-          <p style="margin-top:6px;">Maintains an internal log of every moved file to support audit checks and undo functionality.</p>
+          <strong style="color:#10b981;">🔍 లాగ్స్ ఎందుకు?:</strong>
+          <p style="margin-top:6px;">రేపు పొద్దున్న ఏదైనా ఇంపార్టెంట్ ఫైల్ ఎక్కడికి వెళ్ళిందో దొరకకపోతే.. ఈ లాగ్స్ ఓపెన్ చేసి చూస్తే తెలిసిపోతుంది.</p>
         </div>`
       },
       {
-        title: '4. Project 4: Automated Email Dispatcher with Rate Limiting',
-        body: `<p>A batch email sending engine with templating, personalized placeholders, and dispatch delays:</p>`,
-        code: `# =========================================================================
-# PROJECT 4: AUTOMATED BATCH EMAIL DISPATCHER
-# =========================================================================
+        title: '4. ప్రాజెక్ట్ 4: అందరికీ ఒకేసారి ఈమెయిల్స్ పంపడం',
+        body: `<p>కస్టమర్స్ లిస్ట్ ని చదివి, వాళ్ళ పేర్లు (టెంప్లేట్ లోపల) మార్చి, అందరికీ పర్సనలైజ్డ్ గా బల్క్ ఈమెయిల్స్ పంపే ప్రోగ్రామ్:</p>`,
+        code: `# ప్రాజెక్ట్ 4: బల్క్ ఈమెయిల్స్ పంపే ప్రోగ్రామ్
+class BatchEmail:
+    def send_mails(self, users, template):
+        print(f"--- 📧 {len(users)} మందికి మెయిల్స్ పంపుతున్నాం ---")
+        count = 0
+        for u in users:
+            # {{name}}, {{topic}} ప్లేస్ లో వాళ్ళ రియల్ డీటెయిల్స్ పెడుతున్నాం:
+            body = template.replace("{{name}}", u["name"]).replace("{{topic}}", u["topic"])
+            
+            print(f"📨 పంపాం -> {u['email']:18} | సబ్జెక్ట్: {u['topic']} అప్డేట్స్")
+            count += 1
+        print(f"✅ సక్సెస్! {count} మెయిల్స్ వెళ్ళాయి.")
 
-class BatchEmailDispatcher:
-    def __init__(self, sender="newsletter@ourcompiler.com"):
-        self.sender = sender
-        self.sent_count = 0
-
-    def send_newsletter(self, subscribers, template):
-        print(f"--- 📧 Starting Newsletter Dispatch to {len(subscribers)} Subscribers ---")
-        for sub in subscribers:
-            personalized_body = template.replace("{{name}}", sub["name"]).replace("{{topic}}", sub["interest"])
-            print(f"📨 Sent to: {sub['email']:26} | Subject: 'Weekly {sub['interest']} Digest'")
-            self.sent_count += 1
-        print(f"✅ Batch completed: {self.sent_count} emails delivered successfully.")
-
-# Run Project 4 Demonstration:
-dispatcher = BatchEmailDispatcher()
-subscribers_list = [
-    {"name": "Balaji", "email": "balaji@example.com", "interest": "Python & AI"},
-    {"name": "Alex",   "email": "alex@example.com",   "interest": "Cloud & DevOps"},
-    {"name": "Chloe",  "email": "chloe@example.com",  "interest": "Data Science"}
+mailer = BatchEmail()
+users_list = [
+    {"name": "Balaji", "email": "balaji@mail.com", "topic": "Python"},
+    {"name": "Alex",   "email": "alex@mail.com",   "topic": "DevOps"}
 ]
 
-email_template = "Hi {{name}}, here is your top curated {{topic}} tutorial of the week!"
-dispatcher.send_newsletter(subscribers_list, email_template)`,
+template = "హలో {{name}}, ఈ వారం {{topic}} లో కొత్త ఫీచర్స్ వచ్చాయి!"
+mailer.send_mails(users_list, template)`,
         codeTitle: 'Project 4: Automated Batch Email Dispatcher',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Template Substitution:</strong>
-          <p style="margin-top:6px;">Demonstrates dynamic token replacement for personalized email campaigns.</p>
+          <strong style="color:#10b981;">🔍 స్పామ్ కాకుండా..:</strong>
+          <p style="margin-top:6px;">అందరికీ ఒకేసారి కొడితే గూగుల్ వాళ్ళు స్పామ్ అనుకుంటారు. అందుకే లూప్ లోపల ఒక చిన్న డిలే (sleep) పెడితే సేఫ్.</p>
         </div>`
       },
       {
-        title: '5. Project 5: Production Dockerfile & CI/CD GitHub Actions Pipeline',
-        body: `<p>A complete production-ready Docker container and GitHub Actions continuous integration workflow:</p>`,
-        code: `# =========================================================================
-# PROJECT 5: PRODUCTION DOCKERFILE & CI/CD PIPELINE BLUEPRINT
-# =========================================================================
+        title: '5. ప్రాజెక్ట్ 5: డాకర్ (Docker) & CI/CD పైప్ లైన్ గ్లింప్స్',
+        body: `<p>మనం రాసిన కోడ్ నా లాప్ టాప్ లో పనిచేస్తుంది, సర్వర్ లో పనిచేయట్లేదు అనే ప్రాబ్లమ్ రాకుండా <strong>Docker</strong> వాడతారు.</p>`,
+        code: `# ప్రాజెక్ట్ 5: ప్రొడక్షన్ లో వాడే Dockerfile (బ్లూప్రింట్)
 
-dockerfile_content = """
-# 1. Multi-Stage Production Dockerfile for Python Web App:
-FROM python:3.12-slim AS builder
+dockerfile = """
+# 1. పైథాన్ సర్వర్ ఇమేజ్ ని తీసుకుంటున్నాం
+FROM python:3.12-slim
 
+# 2. యాప్ కి ఒక ఫోల్డర్ క్రియేట్ చేస్తున్నాం
 WORKDIR /app
+
+# 3. ప్యాకేజెస్ ఫైల్ ని కాపీ చేసి ఇన్స్టాల్ చేస్తున్నాం
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install -r requirements.txt
 
-# Final Lean Production Image:
-FROM python:3.12-slim AS runner
-WORKDIR /app
-
-# Copy installed wheels from builder:
-COPY --from=builder /root/.local /root/.local
+# 4. మన కోడ్ మొత్తాన్ని అందులోకి కాపీ చేస్తున్నాం
 COPY . .
 
-ENV PATH=/root/.local/bin:$PATH
-ENV PYTHONUNBUFFERED=1
-
+# 5. వెబ్ సర్వర్ ఓపెన్ చేసి రన్ చేస్తున్నాం
 EXPOSE 8000
-CMD ["gunicorn", "my_project.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8000"]
 """
 
-github_actions_ci = """
-# 2. GitHub Actions Automated Testing & Linting CI Workflow (.github/workflows/ci.yml)
-name: Python Application CI/CD
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Run Ruff Linter & Formatter Check
-        run: ruff check .
-
-      - name: Run Automated Pytest Suite
-        run: pytest --maxfail=1 --disable-warnings -q
-"""
-
-print("--- 🐳 Production Dockerfile Configuration ---")
-print(dockerfile_content.strip())
-print("\\n--- 🚀 GitHub Actions Automated CI Pipeline ---")
-print(github_actions_ci.strip())`,
+print("--- 🐳 డాకర్ (Dockerfile) కన్ఫిగరేషన్ ---")
+print(dockerfile.strip())`,
         codeTitle: 'Project 5: Production Dockerfile and GitHub Actions CI/CD Pipeline',
         explanation: `<div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Multi-Stage Docker Build:</strong>
-          <p style="margin-top:6px;">Using a multi-stage Docker build leaves compilers and temporary build artifacts behind, reducing container image size from ~800 MB to under <strong>95 MB</strong>!</p>
+          <strong style="color:#10b981;">🔍 డాకర్ ఎందుకు?:</strong>
+          <p style="margin-top:6px;">ఇది మన యాప్ కీ, దానికి కావాల్సిన సాఫ్ట్ వేర్స్ కీ ఒక బాక్స్ (కంటైనర్) లాంటిది. దాన్ని తీసుకెళ్లి ఏ కంప్యూటర్ లో వేసినా పర్ఫెక్ట్ గా రన్ అవుతుంది.</p>
         </div>`
       }
     ],
     mistake: {
-      title: 'Running Docker Containers as the Root User in Production',
-      text: 'Running application processes as root inside Docker creates severe container-breakout security vulnerabilities. Always define and switch to a non-root user (USER appuser) in your Dockerfile.'
+      title: 'డాకర్ లోపల రూట్ (Root) పర్మిషన్స్ తో రన్ చేయడం',
+      text: 'రియల్ ప్రాజెక్ట్స్ లో ఎప్పుడూ Docker కంటైనర్ ని అడ్మిన్ (Root) పర్మిషన్స్ తో రన్ చేయకూడదు. హ్యాకర్స్ కి ఈజీ అవుతుంది. యూజర్ ని క్రియేట్ చేసి (USER appuser) వాళ్ళతోనే రన్ చేయించాలి.'
     },
     tryIt: {
-      desc: 'Instantiate PriceDropMonitor from Project 1 and check if a price update to ₹89,999 triggers an alert for a product with target ₹90,000.',
-      code: `monitor = PriceDropMonitor()
-monitor.add_to_watchlist("P1", "Gaming Laptop", target_price=90000, initial_price=105000)
-alert = monitor.check_price_update("P1", 89999)
+      desc: 'ప్రాజెక్ట్ 1 లో ఉన్న PriceMonitor కి కొత్త లాప్ టాప్ యాడ్ చేసి, ప్రైస్ తగ్గితే మెసేజ్ వచ్చేలా కోడ్ రాయండి.',
+      code: `monitor = PriceMonitor()
+monitor.add_item("P1", "Gaming Laptop", target_price=90000, current_price=105000)
+
+alert = monitor.check_price("P1", 89999)
 print(alert)`
     },
     faqs: [
       {
-        q: 'What is CI/CD in modern software engineering?',
-        a: 'CI (Continuous Integration) automatically runs tests and linters whenever developers push code. CD (Continuous Deployment) automatically packages and deploys passing code to production servers.'
-      },
-      {
-        q: 'Why should I use Gunicorn inside Docker instead of running Python directly?',
-        a: 'Gunicorn manages a master process with multiple worker processes, handling concurrency, automatic worker recycling on memory leaks, and high-throughput network connections.'
-      },
-      {
-        q: 'What is the purpose of PYTHONUNBUFFERED=1 in Docker containers?',
-        a: 'PYTHONUNBUFFERED=1 ensures Python output (logs and stdout) is sent directly to terminal streams without buffer delays, allowing real-time log monitoring in Docker and Kubernetes.'
+        q: 'CI/CD అంటే ఏంటి?',
+        a: 'కోడ్ రాసి పుష్ చేయగానే ఆటోమాటిక్ గా టెస్ట్స్ రన్ అవ్వడాన్ని CI (Continuous Integration) అంటారు. అవి పాస్ అయితే ఆటోమాటిక్ గా సర్వర్ లోకి వెళ్లి లైవ్ అవ్వడాన్ని CD అంటారు.'
       }
     ]
   }

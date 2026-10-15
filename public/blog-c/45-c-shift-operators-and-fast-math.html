@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shift Operators (<<, >>) & Fast Math (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ లో క్యాలిక్యులేటర్ లేకుండా 2 తో గుణకారం (Multiply) లేదా భాగారం (Divide) 100 రెట్లు ఫాస్ట్ గా ఎలా చేయాలి? Left Shift (<<) మరియు Right Shift (>>) ఆపరేటర్స్ ఎలా పనిచేస్తాయో యానిమేషన్ లెవెల్ ఎక్స్‌ప్లనేషన్ తో చూద్దాం." />
+  <meta name="keywords" content="c tutorial, shift operators (<<, >>) & fast math (తెలుగులో), void pointers, bitwise operators c, left shift right shift, bit masking c, bit fields c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/45-c-shift-operators-and-fast-math.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 15: Advanced Pointers -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Advanced Pointers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/41-c-double-pointers-and-memory-addresses.html">41. Double Pointers (**) & Memory Addresses</a>
+        <a href="/blog-c/42-c-function-pointers-and-callbacks.html">42. Function Pointers & Callbacks</a>
+        <a href="/blog-c/43-c-void-pointers-and-generic-programming.html">43. Void Pointers & Generic Programming</a>
+      </div>
+
+      <!-- Phase 16: Bitwise & Low-Level -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Bitwise & Low-Level</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/44-c-bitwise-and-or-xor-not-operators.html">44. Bitwise AND, OR, XOR, NOT</a>
+        <a href="/blog-c/45-c-shift-operators-and-fast-math.html" class="active">45. Shift Operators (<<, >>) & Fast Math</a>
+        <a href="/blog-c/46-c-bit-masking-flags-and-hardware-registers.html">46. Bit Masking, Flags & Hardware Registers</a>
+        <a href="/blog-c/47-c-bit-fields-and-struct-packing.html">47. Bit Fields & Struct Packing</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 45: Shift Operators (<<, >>) & Fast Math (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Shift Operators (<<, >>) & Fast Math (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 45</span>
+      <span class="badge">📂 Phase 16: Bitwise & Low-Level</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Left Shift (<<) · Right Shift (>>) · Fast Multiplication · Fast Division · Bit Overflow</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>కంప్యూటర్ సీపీయూ (CPU) కి కూడిక (Addition) చేయడం చాలా ఈజీ. కానీ గుణకారం (Multiplication) మరియు భాగహారం (Division) చేయాలంటే దానికి చాలా టైమ్ (CPU Cycles) పడుతుంది. మీరు ఒక 3D గేమ్ ఆడుతున్నప్పుడు ఫ్రేమ్-రేట్ (FPS) పడిపోకుండా ఉండాలంటే, అందులో వాడే మ్యాథ్స్ సూపర్ ఫాస్ట్ గా జరగాలి. అప్పుడు ప్రోగ్రామర్స్ నార్మల్ <code>*</code> లేదా <code>/</code> వాడకుండా, <strong>Shift Operators (<code>&lt;&lt;</code>, <code>&gt;&gt;</code>)</strong> ని ఆయుధాలుగా వాడతారు. ఇవి అసలు క్యాలిక్యులేషన్ చేయకుండానే, కేవలం బిట్స్ ని జరపడం ద్వారా మ్యాథ్స్ ఎలా చేస్తాయో ఈరోజు అద్భుతంగా తెలుసుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> Left Shift (<code>&lt;&lt;</code>) అంటే ఏంటి? (Fast Multiply)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        డెసిమల్ (నార్మల్ నంబర్స్) లో ఒక నంబర్ పక్కన సున్నా (0) యాడ్ చేస్తే ఏమవుతుంది? 5 కాస్తా 50 అవుతుంది (అంటే 10 తో గుణించినట్లు). అలాగే బైనరీ సిస్టమ్ లో ఒక నంబర్ పక్కన సున్నా యాడ్ చేస్తే, అది <strong>2 తో గుణించినట్లు (Multiplied by 2)!</strong>
+      </p>
+      
+      <div class="memory-diagram">
+ఒక బైనరీ నంబర్ ని పక్కకి జరుపుదాం (Left Shift):
+
+నార్మల్ 5        -> 0000 0101
+Left Shift (5 << 1) -> 0000 1010  (ఇది బైనరీ లో 10 కి సమానం)
+Left Shift (5 << 2) -> 0001 0100  (ఇది బైనరీ లో 20 కి సమానం)</div>
+      
+      <p class="text-prose">
+        <strong>రూల్:</strong> <code>x &lt;&lt; n</code> అంటే ఆ నంబర్ ని (2 పవర్ n) తో గుణించడం. (ఉదా: <code>x &lt;&lt; 3</code> అంటే <code>x * 8</code> అన్నమాట). ఇది CPU లో ఒకే ఒక క్లాక్ సైకిల్ లో అయిపోయే అత్యంత ఫాస్ట్ క్యాలిక్యులేషన్!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Right Shift (<code>&gt;&gt;</code>) అంటే ఏంటి? (Fast Divide)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఇది లెఫ్ట్ షిఫ్ట్ కి రివర్స్. ఒక నంబర్ కి కుడి వైపున (Right side) ఉన్న లాస్ట్ బిట్ ని చెరిపేసి (కట్ చేసి), నంబర్ ని కిందకు జరుపుతుంది. ఇది <strong>2 తో భాగాహారం (Divided by 2)</strong> చేసినట్లు రిజల్ట్ ఇస్తుంది.
+      </p>
+      <p class="text-prose">
+        <strong>రూల్:</strong> <code>20 &gt;&gt; 1</code> చేస్తే లాస్ట్ లో ఉన్న ఒక బిట్ పోయి అది 10 అవుతుంది. <code>20 &gt;&gt; 2</code> చేస్తే (4 తో డివైడ్ అయ్యి) 5 వస్తుంది.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Shift Math Magic)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో నార్మల్ ఆపరేటర్స్ బదులు, షిఫ్ట్ ఆపరేటర్స్ వాడి ఒక నంబర్ ని పెంచడం (Multiply) మరియు తగ్గించడం (Divide) ఎలా చేసామో చూద్దాం.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Shift Operators</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int num = 10;
+    
+    printf("--- Fast Math with Shifts ---\n");
+    printf("Original Number : %d\n\n", num);
+    
+    // ------------------------------------
+    // Left Shift (<<) - Multiplication
+    // ------------------------------------
+    // 10 ని లెఫ్ట్ వైపుకి 1 స్టెప్ జరుపుతాం (అంటే 10 * 2^1)
+    int mul2 = num << 1; 
+    printf("num << 1 (x 2)  : %d\n", mul2);
+    
+    // 10 ని లెఫ్ట్ వైపుకి 3 స్టెప్స్ జరుపుతాం (అంటే 10 * 2^3 = 10 * 8)
+    int mul8 = num << 3;
+    printf("num << 3 (x 8)  : %d\n\n", mul8);
+    
+    // ------------------------------------
+    // Right Shift (>>) - Division
+    // ------------------------------------
+    int highNum = 40;
+    printf("High Number     : %d\n", highNum);
+    
+    // 40 ని రైట్ వైపుకి 1 స్టెప్ జరుపుతాం (అంటే 40 / 2^1)
+    int div2 = highNum >> 1;
+    printf("highNum >> 1 (/ 2): %d\n", div2);
+    
+    // 40 ని రైట్ వైపుకి 2 స్టెప్స్ జరుపుతాం (అంటే 40 / 2^2 = 40 / 4)
+    int div4 = highNum >> 2;
+    printf("highNum >> 2 (/ 4): %d\n", div4);
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>num &lt;&lt; 1</code>: 10 యొక్క బైనరీ <code>0000 1010</code>. దాన్ని ఒక అడుగు ఎడమకు (Left) జరిపితే, కుడివైపు ఖాళీ అయిన ప్లేస్ లో <code>0</code> వస్తుంది. అప్పుడు అది <code>0001 0100</code> అవుతుంది. దీని డెసిమల్ వాల్యూ 20!</li>
+        <li><code>highNum &gt;&gt; 2</code>: 40 యొక్క బైనరీ <code>0010 1000</code>. దాన్ని రెండు అడుగులు కుడికి (Right) జరిపితే, లాస్ట్ ఉన్న రెండు సున్నాలు బయటకి పడిపోయి డిలీట్ అవుతాయి. అప్పుడు <code>0000 1010</code> (అంటే 10) మిగులుతుంది.</li>
+        <li><strong>గమనిక:</strong> ఇవి కేవలం పవర్ ఆఫ్ 2 (2, 4, 8, 16) తో గుణించడానికి లేదా భాగించడానికి మాత్రమే పనికొస్తాయి. మీరు 3 తో గుణించాలంటే ఇది పనిచేయదు.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: పెద్ద నంబర్ (ఉదా: 250) ని <code>&lt;&lt;</code> చేస్తే ఏమవుతుంది?</h4>
+          <p>C లాంగ్వేజ్ లో ఒక <code>char</code> సైజు 8 బిట్స్ (గరిష్టంగా 255). మీరు 250 ని షిఫ్ట్ చేస్తే ఆ బిట్స్ కింద పడిపోయి (Overflow అయ్యి) మీకు గార్బేజ్ రిజల్ట్ లేదా రాంగ్ వాల్యూస్ వస్తాయి. దీన్నే <strong>Bit Overflow</strong> అంటారు. డేటా టైప్ లిమిట్ దాటకుండా జాగ్రత్త పడాలి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: నెగటివ్ నంబర్స్ (ఉదా: -10) ని రైట్ షిఫ్ట్ (<code>&gt;&gt;</code>) చేస్తే ఏమవుతుంది?</h4>
+          <p>ఇది కంపైలర్ మీద ఆధారపడి ఉంటుంది. నెగటివ్ నంబర్స్ ని షిఫ్ట్ చేసినప్పుడు, ఖాళీ అయిన ప్లేస్ లో 1 యాడ్ అవుతుందా లేక 0 యాడ్ అవుతుందా (Arithmetic Shift vs Logical Shift) అనేది ఆపరేటింగ్ సిస్టమ్ ని బట్టి మారుతుంది. అందుకే ప్రొఫెషనల్స్ ఎప్పుడూ <code>unsigned int</code> వాడినప్పుడే షిఫ్ట్ ఆపరేటర్స్ వాడుతారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: <code>1 &lt;&lt; n</code> అంటే ఏంటి? ఎందుకు ఎక్కువగా వాడతారు?</h4>
+          <p>దీన్ని <strong>Setting a Bit</strong> అంటారు! మీరు <code>1 &lt;&lt; 3</code> అని రాస్తే బైనరీ లో <code>0000 1000</code> వస్తుంది. హార్డ్వేర్ లో (ఉదా: LED లైట్ లేదా మోటార్) 3వ పిన్ ని మాత్రమే ఆన్ చేయడానికి సిస్టమ్ ప్రోగ్రామర్స్ ఈ ట్రిక్ ని విపరీతంగా వాడతారు. దీన్నే Bit Masking అంటారు (తర్వాతి లెసన్ లో నేర్చుకుందాం).</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="44-c-bitwise-and-or-xor-not-operators.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">44. Bitwise Operators</span>
+      </a>
+
+      
+      <a href="46-c-bit-masking-flags-and-hardware-registers.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">46. Bit Masking & Hardware</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

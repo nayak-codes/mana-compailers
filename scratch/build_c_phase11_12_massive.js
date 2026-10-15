@@ -274,7 +274,7 @@ function wrapCPage(title, desc, filename, currentNum, phaseTag, phaseTitle, subt
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -447,18 +447,18 @@ ${contentBody}
 
 // ── BUILD LESSON 27: Structures, RAM Memory Model & Padding Holes ──────────
 function buildLesson27() {
-  const title = "C Structures: RAM Memory Layout, Member Access & Structure Padding Holes";
-  const desc = "Comprehensive textbook-grade masterclass on C Structures (Phase 11 Part 1): Heterogeneous data grouping, struct declaration and designated initialization, dot operator (.), physical RAM alignment, CPU word boundary padding holes, #pragma pack(1), and why direct struct == comparison fails.";
+  const title = "C Structures: RAM Memory Layout & Padding Holes (తెలుగులో)";
+  const desc = "C Structures (Phase 11 Part 1): C లో వేరు వేరు టైప్స్ ని ఒకే వేరియబుల్ లో ఎలా స్టోర్ చేయాలి (struct), డాట్ ఆపరేటర్ తో వాటిని ఎలా వాడాలి, మరియు Structure Padding వల్ల మన RAM ఎలా వేస్ట్ అవుతుందో, దాన్ని #pragma pack(1) వాడి ఎలా ఆపాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "27-c-structures-declaration-memory-model-and-padding.html";
   const subtopics = "struct ante enti? · Declaration & Initialization · Dot Operator (.) · RAM Memory Alignment & Padding Holes · #pragma pack(1) · Structure Comparison";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 11 (Chapter 27): C Structures — RAM Memory Architecture, Member Access & Structure Padding Holes Masterclass</strong>! Arrays allow grouping multiple elements of the <em>same data type</em>. However, real-world entities—such as a Student (Name string, Age integer, Marks float) or a Bank Account (Account Number, Balance, Owner Name)—require grouping multiple <strong>heterogeneous data types into a single unified programmer-defined type</strong>. In C, this is accomplished using the <strong><code>struct</code></strong> keyword. In this exhaustive textbook-grade guide, you will master structure declarations, member access using the dot operator (<code>.</code>), designated initializers, explore the complex physical RAM architecture of <strong>Structure Padding &amp; Data Alignment</strong>, learn how <code>#pragma pack(1)</code> eliminates byte holes, and understand why comparing structs using <code>==</code> is illegal in standard C.</p>
+      <p><strong>Phase 11 (Chapter 27): C Structures & Memory Padding Masterclass</strong> కు స్వాగతం! Arrays లో కేవలం ఒకే టైప్ కి చెందిన (అన్ని ఇంటీజర్స్ లేదా అన్ని ఫ్లోట్స్) డేటాని మాత్రమే స్టోర్ చేయగలం. కానీ ఒక స్టూడెంట్ రికార్డ్ తీసుకోవాలంటే.. పేరు (string), వయసు (int), మార్క్స్ (float) అన్నీ కలిపి ఒకేచోట ఉండాలి కదా? ఇలా వేర్వేరు టైప్స్ ని కలిపి ఒకే కొత్త డేటా టైప్ గా క్రియేట్ చేయడానికి వాడేదే <strong><code>struct</code></strong>. ఈ గైడ్ లో, స్ట్రక్చర్స్ ని ఎలా తయారు చేయాలి, వాటి లోపల డేటాని ఎలా మార్చాలి, మరియు కంపైలర్ స్పీడ్ కోసం మనకు తెలియకుండానే మధ్యలో కొన్ని ఖాళీ బైట్స్ (Padding Holes) ని ఎలా వదిలేస్తుందో, దాన్ని మనం ఎలా కంట్రోల్ చేయాలో తెలుగులో డీటెయిల్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. What is a Structure? Architecture & Definition -->
-    <div class="section-title"><span class="num">1</span>struct Ante Enti? Heterogeneous Data Grouping Architecture</div>
+    <div class="section-title"><span class="num">1</span>struct అంటే ఏంటి? అది ఎందుకు అవసరం?</div>
     <div class="section-body">
       <p class="text-prose">
         C language lo <code>struct</code> anedhi <strong>User-Defined Composite Data Type</strong>. 
@@ -506,7 +506,7 @@ int main(void) {
     </div>
 
     <!-- 2. Structure Padding & Physical RAM Data Alignment -->
-    <div class="section-title"><span class="num">2</span>Structure Padding &amp; Physical RAM Alignment Holes ⭐</div>
+    <div class="section-title"><span class="num">2</span>Structure Padding: మన RAM ఎందుకు వేస్ట్ అవుతుంది? ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         Consider this structure declaration:
@@ -544,7 +544,7 @@ int main(void) {
     </div>
 
     <!-- 3. Structure Comparison: Why s1 == s2 Fails -->
-    <div class="section-title"><span class="num">3</span>Structure Comparison: Why struct1 == struct2 is Illegal in C</div>
+    <div class="section-title"><span class="num">3</span>రెండు స్ట్రక్చర్స్ ని డైరెక్ట్ గా == తో ఎందుకు పోల్చకూడదు?</div>
     <div class="section-body">
       <p class="text-prose">
         In C, attempting to write <code>if (student1 == student2)</code> results in a compile error. 
@@ -604,18 +604,18 @@ int main(void) {
 
 // ── BUILD LESSON 28: Structure Arrays, Pointers & Arrow Operator ─────────
 function buildLesson28() {
-  const title = "C Structure Arrays, Pointers & The Arrow Operator (->) Masterclass";
-  const desc = "Comprehensive textbook-grade masterclass on Advanced C Structure Operations (Phase 11 Part 2): Structure arrays, nested structures, passing structures to functions, pointer to struct, the arrow operator (->), typedef struct, and anonymous structures.";
+  const title = "C Structure Arrays, Pointers & Arrow Operator (->) (తెలుగులో)";
+  const desc = "C Structure Arrays & Pointers (Phase 11 Part 2): వందలాది స్టూడెంట్స్ కి ఒకేసారి స్ట్రక్చర్ అరేస్ ఎలా రాయాలి, స్ట్రక్చర్ లోపల ఇంకో స్ట్రక్చర్ (Nested), ఫంక్షన్స్ కి పాయింటర్స్ పంపించి Arrow ఆపరేటర్ (->) తో డేటాని ఎలా మార్చాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "28-c-structure-arrays-pointers-and-arrow-operator.html";
   const subtopics = "Structure Arrays · Nested Structures · Passing Structs to Functions · Pointer to Struct & Arrow Operator (->) · typedef struct · Anonymous Structs";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 11 (Chapter 28): C Structure Arrays, Pointers &amp; The Arrow Operator (-&gt;) Masterclass</strong>! Managing single structure variables is only the beginning. Professional applications manage collections of thousands of records using <strong>Structure Arrays</strong>, model hierarchical real-world relationships using <strong>Nested Structures</strong>, and eliminate high-cost memory copying when passing structures to functions using <strong>Pointers to Structures and the Arrow Operator (<code>-&gt;</code>)</strong>. In this exhaustive textbook-grade guide, you will master multi-record array manipulation, analyze pointer dereferencing syntax shortcuts, explore <code>typedef struct</code> aliases, and understand anonymous structures.</p>
+      <p><strong>Phase 11 (Chapter 28): Structure Arrays & Arrow Operator (->) Masterclass</strong> కు స్వాగతం! కేవలం ఒక స్టూడెంట్ కి స్ట్రక్చర్ రాస్తే సరిపోదు, ఒక క్లాస్ లోని 100 మందికీ రాయాలంటే <strong>Structure Arrays</strong> వాడాలి. అలాగే ఒక ఎంప్లాయ్ అడ్రస్ కోసం స్ట్రక్చర్ లోపల ఇంకో స్ట్రక్చర్ రాయాల్సి ఉంటుంది (Nested Structures). అన్నిటికంటే ముఖ్యంగా, పెద్ద స్ట్రక్చర్స్ ని ఫంక్షన్స్ కి పంపించేటప్పుడు మామూలుగా పంపిస్తే మొత్తం కాపీ అవుతుంది, దానివల్ల టైం వేస్ట్! అందుకే పాయింటర్స్ వాడి పంపిస్తాం. అప్పుడు డాట్ (<code>.</code>) బదులు <strong>Arrow ఆపరేటర్ (<code>-&gt;</code>)</strong> వాడి ఆ డేటాని ఎలా చదవాలో ఈ గైడ్ లో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. Structure Arrays & Nested Structures -->
-    <div class="section-title"><span class="num">1</span>Structure Arrays &amp; Nested Structure Architecture</div>
+    <div class="section-title"><span class="num">1</span>Structure Arrays & Nested Structures అంటే ఏంటి?</div>
     <div class="section-body">
       <p class="text-prose">
         <strong>Structure Array:</strong> Contiguous sequence of structure instances stored back-to-back in RAM (e.g. <code>struct Student database[100];</code>).<br>
@@ -657,7 +657,7 @@ int main(void) {
     </div>
 
     <!-- 2. Pointers to Structures & The Arrow Operator (->) -->
-    <div class="section-title"><span class="num">2</span>Pointers to Structures &amp; The Arrow Operator (-&gt;) ⭐</div>
+    <div class="section-title"><span class="num">2</span>Structures కి Pointers పంపడం మరియు Arrow (->) ఆపరేటర్ ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         Passing a large structure (e.g. 200 bytes) by value into a function forces the CPU to copy all 200 bytes onto the stack frame. 
@@ -673,7 +673,7 @@ int main(void) {
     </div>
 
     <!-- 3. typedef struct & Anonymous Structures -->
-    <div class="section-title"><span class="num">3</span>typedef struct &amp; Anonymous Structures</div>
+    <div class="section-title"><span class="num">3</span>typedef struct వాడి సింపుల్ గా ఎలా రాయాలి?</div>
     <div class="section-body">
       <p class="text-prose">
         Without <code>typedef</code>, every variable declaration requires repeating the <code>struct</code> keyword: <code>struct Student s1;</code>.<br>
@@ -741,18 +741,18 @@ int main(void) {
 
 // ── BUILD LESSON 29: Self-Referential Structs, Binary I/O & 5 Projects ─────
 function buildLesson29() {
-  const title = "C Self-Referential Structures, Binary File I/O & 5 Production Projects";
-  const desc = "Comprehensive textbook-grade masterclass on Advanced Structure Architecture (Phase 11 Part 3): Self-referential structures (Linked List Nodes), binary structure serialization using fwrite() and fread(), and 5 full production projects (Student Management, Employee Records, Inventory, Library & Contact Book).";
+  const title = "C Self-Referential Structs, Binary File I/O & Projects (తెలుగులో)";
+  const desc = "C Advanced Structures (Phase 11 Part 3): Self-referential స్ట్రక్చర్స్ (Linked Lists) అంటే ఏంటి, మన డేటాని హార్డ్ డిస్క్ లో పర్మనెంట్ గా సేవ్ చేయడానికి fwrite, fread వాడి బైనరీ ఫైల్స్ లోకి ఎలా రాయాలో 5 ప్రాజెక్ట్స్ తో తెలుగులో నేర్చుకుందాం.";
   const filename = "29-c-self-referential-structures-file-io-and-5-projects.html";
   const subtopics = "Self-Referential Structs (Node*) · Binary File Serialization (fwrite/fread) · 5 Projects (Student, Employee, Inventory, Library, Contacts)";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 11 (Chapter 29): C Self-Referential Structures, Binary File I/O &amp; 5 Production Projects Masterclass</strong>! Beyond basic data grouping, structures are the foundation for complex dynamic data structures (Linked Lists, Binary Trees, Graphs) and persistent file databases. In this exhaustive textbook-grade guide, you will master <strong>Self-Referential Structures</strong> containing pointers to their own type, learn how to serialize entire structure records directly to disk using <strong>Binary File I/O (<code>fwrite</code> / <code>fread</code>)</strong>, and build <strong>5 complete production-ready software systems</strong>.</p>
+      <p><strong>Phase 11 (Chapter 29): Self-Referential Structs & Binary I/O Masterclass</strong> కు స్వాగతం! బేసిక్ గ్రూపింగ్ కే కాకుండా, Linked Lists, Trees లాంటి కాంప్లెక్స్ డేటా స్ట్రక్చర్స్ కి పునాది ఈ Structures యే! ఒక స్ట్రక్చర్ లోపల అదే టైప్ కి చెందిన పాయింటర్ ఉంటే దాన్ని <strong>Self-Referential Structure</strong> అంటారు. అలాగే మనం ప్రోగ్రామ్ క్లోజ్ చేయగానే డేటా మొత్తం ఎరేజ్ అయిపోతుంది కదా? అలా కాకుండా మన స్ట్రక్చర్స్ మొత్తాన్ని ఒకేసారి బైనరీ ఫైల్ (<code>.dat</code>) లోకి సేవ్ చేసి (<code>fwrite</code>), మళ్లీ ఎప్పుడు కావాలంటే అప్పుడు చదివే (<code>fread</code>) టెక్నిక్ ని 5 మంచి ప్రాజెక్ట్స్ వాడి తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. Self-Referential Structures (Gateway to Data Structures) -->
-    <div class="section-title"><span class="num">1</span>Self-Referential Structures (Gateway to Linked Lists) ⭐</div>
+    <div class="section-title"><span class="num">1</span>Self-Referential Structures (Linked Lists కి బేసిక్స్) ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         A <strong>Self-Referential Structure</strong> contains a pointer member that points to an instance of the <em>same structure type</em>:
@@ -780,7 +780,7 @@ function buildLesson29() {
     </div>
 
     <!-- 2. Binary File I/O with Structures (fwrite / fread) -->
-    <div class="section-title"><span class="num">2</span>Binary File Serialization: Writing &amp; Reading Structs directly to Disk</div>
+    <div class="section-title"><span class="num">2</span>Binary File I/O: మన స్ట్రక్చర్స్ ని హార్డ్ డిస్క్ లో సేవ్ చేద్దాం</div>
     <div class="section-body">
       <p class="text-prose">
         Instead of formatting structures into text using <code>fprintf</code>, C allows writing raw RAM memory bytes of a structure directly to a binary file (<code>.dat</code>) using <code>fwrite()</code> and reading them back instantly using <code>fread()</code>:
@@ -794,7 +794,7 @@ function buildLesson29() {
     </div>
 
     <!-- 3. 5 Production Software Projects -->
-    <div class="section-title"><span class="num">3</span>5 Full Software Projects Architecture</div>
+    <div class="section-title"><span class="num">3</span>5 రియల్ టైం సాఫ్ట్ వేర్ ప్రాజెక్ట్స్</div>
     <div class="section-body">
       <div class="deep-dive-card">
         <h3>📂 Overview of Included Production Systems:</h3>
@@ -890,18 +890,18 @@ int main(void) {
 
 // ── BUILD LESSON 30: Unions, Shared Memory & Variant Data Types ────────────
 function buildLesson30() {
-  const title = "C Unions: Shared Memory Architecture, Overlapping Layouts & Variant Types";
-  const desc = "Comprehensive textbook-grade masterclass on C Unions (Phase 12 Part 1): Shared overlapping RAM memory architecture, union declaration, member access, side-by-side Struct vs Union memory matrix, Tagged Unions, hardware register bitfields, and pointers to unions.";
+  const title = "C Unions: Shared Memory, Struct vs Union Differences (తెలుగులో)";
+  const desc = "C Unions (Phase 12 Part 1): C లో యూనియన్ (union) అంటే ఏంటి, స్ట్రక్చర్ కి దానికి తేడా ఏంటి, అందరూ కలిపి ఒకే మెమరీ రూమ్ ని ఎలా షేర్ చేసుకుంటారు, మరియు దీన్ని రియల్ టైం లో ఎక్కడ వాడతారో తెలుగులో నేర్చుకుందాం.";
   const filename = "30-c-unions-shared-memory-and-variant-types.html";
   const subtopics = "union ante enti? · Shared Overlapping RAM Layout · Struct vs Union Memory Matrix · Tagged Unions · Hardware Register Bitfields · Pointers to Unions";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 12 (Chapter 30): C Unions — Shared Memory Architecture, Overlapping Layouts &amp; Variant Types Masterclass</strong>! While a <code>struct</code> allocates separate, independent memory locations for every member, a <strong><code>union</code> forces all its members to share the exact same physical RAM memory location</strong>. The total size of a union is determined solely by its single largest member. In this exhaustive textbook-grade guide, you will master the mechanics of shared memory overlapping, analyze a side-by-side visual memory breakdown of Structs vs Unions, discover how <strong>Tagged Unions</strong> implement type-safe variant variables, explore low-level hardware register bitfields, and master pointer access to unions.</p>
+      <p><strong>Phase 12 (Chapter 30): C Unions & Shared Memory Masterclass</strong> కు స్వాగతం! <code>struct</code> లో అందులో ఉన్న ప్రతి ఒక్క వేరియబుల్ కి దాని సొంత మెమరీ స్పేస్ ఉంటుంది (ఎవరి రూమ్ వాళ్లకి). కానీ <strong><code>union</code> లో అందరూ కలిపి ఒకే పెద్ద రూమ్ ని (Shared Memory) వాడుకోవాలి!</strong> ఒక సమయంలో కేవలం ఒకరు మాత్రమే ఆ రూమ్ లో ఉండగలరు. ఒక యూనియన్ లో అత్యంత పెద్ద వేరియబుల్ కి ఎంత మెమరీ అవసరమో.. మొత్తం యూనియన్ కి అంతే మెమరీ సరిపోతుంది. అసలు ఈ షేర్డ్ మెమరీ కాన్సెప్ట్ ఏంటి, Struct కి Union కి ఉన్న తేడా ఏంటి, మరియు సిస్టమ్ డెవలప్మెంట్ లో దీన్ని ఎలా వాడతారో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. What is a Union? Shared Memory Architecture -->
-    <div class="section-title"><span class="num">1</span>union Ante Enti? Shared Memory Overlapping Architecture</div>
+    <div class="section-title"><span class="num">1</span>union అంటే ఏంటి? Memory ఎలా షేర్ అవుతుంది?</div>
     <div class="section-body">
       <p class="text-prose">
         A <strong>Union</strong> is a user-defined data type in C where <strong>All members share the starting RAM address (Offset 0x0)</strong>. 
@@ -928,7 +928,7 @@ function buildLesson30() {
     </div>
 
     <!-- 2. Code Demonstration & Tagged Union Pattern -->
-    <div class="section-title"><span class="num">2</span>Code Demonstration &amp; The Tagged Union Pattern ⭐</div>
+    <div class="section-title"><span class="num">2</span>రియల్ టైం ఎగ్జాంపుల్: Tagged Union ప్యాటర్న్ ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         To safely know which union member currently holds a valid value, C engineers combine an <code>enum</code> tag with a <code>union</code> inside a structure (<strong>Tagged Union / Variant Type</strong>):
@@ -1035,18 +1035,18 @@ int main(void) {
 
 // ── BUILD LESSON 31: Enumerations (enum), Custom Values & Switch ───────────
 function buildLesson31() {
-  const title = "C Enumerations (enum): Custom Values, Type Safety & Switch State Machines";
-  const desc = "Comprehensive textbook-grade masterclass on C Enumerations (Phase 12 Part 2): Named integer constants, auto-increment mechanics, custom enum values (HTTP status codes), enum state machines with switch-case, and professional enum naming conventions.";
+  const title = "C Enumerations (enum): Custom Values & Switch (తెలుగులో)";
+  const desc = "C Enumerations (Phase 12 Part 2): 0, 1, 2 లాంటి మ్యాజిక్ నంబర్స్ వాడకుండా పేర్లతో వేరియబుల్స్ ని (enum) ఎలా క్రియేట్ చేయాలి, HTTP 404 లాంటి కస్టమ్ వాల్యూస్ ఎలా ఇవ్వాలి, switch-case లో enum ఎలా వాడాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "31-c-enumerations-custom-values-and-switch-dispatch.html";
   const subtopics = "enum ante enti? · Auto-Increment Constants · Custom Enum Values (HTTP Statuses) · Enum State Machines with switch · Naming Conventions";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 12 (Chapter 31): C Enumerations (enum) — Custom Values, Type Safety &amp; Switch State Machines Masterclass</strong>! Writing raw numbers like <code>0, 1, 2, 3</code> in code to represent states (e.g. PENDING, PROCESSING, COMPLETED, FAILED) leads to cryptic, unreadable, and error-prone code ("Magic Numbers"). In C, <strong>Enumerations (<code>enum</code>) allow creating human-readable named integer constants that improve code clarity and type safety</strong>. In this exhaustive textbook-grade guide, you will master enum declarations, auto-increment rules, custom explicit integer values (like HTTP status codes <code>200, 404, 500</code>), enum state machine dispatchers using <code>switch-case</code>, and industry-standard naming conventions.</p>
+      <p><strong>Phase 12 (Chapter 31): Enumerations (enum) Masterclass</strong> కు స్వాగతం! ఒక ప్రాజెక్ట్ లో ఆర్డర్ స్టేటస్ ని 0, 1, 2 అని రాసుకుంటే.. 0 అంటే ఏంటి, 1 అంటే ఏంటో కొన్నాళ్లకి మనకే అర్థం కాదు. ఇలాంటి "మ్యాజిక్ నంబర్స్" ని తీసేసి, వాటి ప్లేస్ లో PENDING, SHIPPED, DELIVERED అని పేర్లు పెట్టుకోవడానికి C లో <strong><code>enum</code></strong> (Enumeration) వాడతారు. ఈ గైడ్ లో enum ఎలా డిక్లేర్ చేయాలి, కంపైలర్ ఆటోమేటిక్ గా 0, 1 ఎందుకు ఇస్తుంది, మనకి నచ్చినట్లు HTTP కోడ్స్ (404, 200) లాగా ఎలా మార్చుకోవాలి, మరియు switch-case లో దీన్ని ఎలా వాడాలో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. What is an Enumeration? Architecture -->
-    <div class="section-title"><span class="num">1</span>enum Ante Enti? Named Integer Constants Architecture</div>
+    <div class="section-title"><span class="num">1</span>enum అంటే ఏంటి? ఆటోమేటిక్ గా నంబర్స్ ఎలా వస్తాయి?</div>
     <div class="section-body">
       <p class="text-prose">
         An <strong>Enumeration</strong> is a user-defined type consisting of a set of named integer constants. 
@@ -1061,7 +1061,7 @@ function buildLesson31() {
     </div>
 
     <!-- 2. Custom Explicit Values & Switch State Machines -->
-    <div class="section-title"><span class="num">2</span>Custom Explicit Enum Values &amp; Switch State Machine ⭐</div>
+    <div class="section-title"><span class="num">2</span>మనకి నచ్చిన నంబర్స్ ఇద్దాం & Switch తో వాడదాం ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         You can assign custom integer values to enum constants (e.g. HTTP status codes or hardware error flags):
@@ -1166,18 +1166,18 @@ int main(void) {
 
 // ── BUILD LESSON 32: typedef, Type Aliases & Expressive Architecture ──────
 function buildLesson32() {
-  const title = "C typedef: Type Aliases, Function Pointer Aliasing & Clean API Design";
-  const desc = "Comprehensive textbook-grade masterclass on C typedef (Phase 12 Part 3): Creating expressive domain-specific type aliases, typedef struct and typedef union idioms, aliasing complex function pointers, clean API design, and comprehensive technical FAQs.";
+  const title = "C typedef: Type Aliases & Clean Code Architecture (తెలుగులో)";
+  const desc = "C typedef (Phase 12 Part 3): పెద్ద పెద్ద డేటా టైప్స్ కి (ఉదా: unsigned long long int) షార్ట్ కట్స్ లాంటి ముద్దు పేర్లు (Aliases) ఎలా పెట్టుకోవాలి, దీనివల్ల మన కోడ్ ని ఎవరైనా చదవగలిగేలా (Clean Architecture) ఎలా మార్చాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "32-c-typedef-type-aliases-and-readable-architecture.html";
   const subtopics = "typedef ante enti? · Expressive Type Aliases · typedef struct & union · typedef with Function Pointers · Clean API Design · Technical FAQs";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 12 (Chapter 32): C typedef — Type Aliases, Function Pointer Aliasing &amp; Clean API Design Masterclass</strong>! As C software codebases scale to hundreds of thousands of lines (such as Linux, Redis, or SQLite), repeating long complex types like <code>unsigned long long int</code> or <code>struct NetworkHeaderNode*</code> degrades readability and creates maintenance headaches. The <strong><code>typedef</code></strong> keyword allows software engineers to define **expressive, domain-specific type aliases** that make code self-documenting, portable across 32-bit/64-bit architectures, and elegant. In this final exhaustive textbook-grade guide of Phase 12, you will master primitive aliasing, struct/union aliasing, function pointer simplification, and clean API design.</p>
+      <p><strong>Phase 12 (Chapter 32): typedef & Clean API Design Masterclass</strong> కు స్వాగతం! C కోడ్ లో ప్రతిసారి <code>unsigned long long int</code> అని రాయాలన్నా, లేదా పెద్ద పెద్ద స్ట్రక్చర్ పాయింటర్స్ రాయాలన్నా కోడ్ చూడటానికి గందరగోళంగా ఉంటుంది. ఇలాంటి వాటిని సింపుల్ గా షార్ట్ కట్ పేరు (ఉదా: uint64) తో పిలవడానికి వాడేదే <strong><code>typedef</code></strong>. ఇది కొత్త డేటా టైప్ ని క్రియేట్ చేయదు, కానీ ఉన్న దానికి ఒక ముద్దు పేరు (Alias) పెడుతుంది. ఈ కోర్సు చివరి గైడ్ లో, ఈ typedef ని వాడి మన C కోడ్ ని ప్రొఫెషనల్ గా, చూడగానే ఎవరికైనా అర్థమయ్యేలా (Clean Architecture) ఎలా మార్చాలో తెలుగులో డీటెయిల్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. What is typedef? Architecture -->
-    <div class="section-title"><span class="num">1</span>typedef Ante Enti? Type Aliasing Architecture</div>
+    <div class="section-title"><span class="num">1</span>typedef అంటే ఏంటి? దీనివల్ల ఉపయోగాలు?</div>
     <div class="section-body">
       <p class="text-prose">
         <code>typedef</code> does NOT create a new data type—it creates a <strong>New Name (Alias) for an Existing Data Type</strong>.
@@ -1219,7 +1219,7 @@ int main(void) {
     </div>
 
     <!-- 2. Comprehensive FAQ & Interview Section Across Phases 11 & 12 -->
-    <div class="section-title"><span class="num">2</span>Comprehensive Technical Interview FAQs (Phases 11 &amp; 12)</div>
+    <div class="section-title"><span class="num">2</span>ప్రాక్టికల్ ఇంటర్వ్యూ ప్రశ్నలు (Phases 11 &amp; 12)</div>
     <div class="section-body">
       <div class="faq-grid">
         <div class="faq-item">
@@ -1418,7 +1418,7 @@ function buildBlogCHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

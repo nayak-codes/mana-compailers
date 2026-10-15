@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Array Fundamentals, Memory Architecture & Traversal — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Comprehensive masterclass on Java Arrays: understanding why arrays are foundational to data structures, how arrays allocate contiguous memory in the JVM Heap, the 3 styles of array initialization, default value rules, accessing and modifying elements via 0-based indexes, and safe traversal using standard and enhanced for-each loops." />
-  <meta name="keywords" content="java array fundamentals, memory architecture & traversal, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Array Fundamentals, Memory Architecture & Traversal (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="ఒకటి రెండు కాకుండా, 100 మంది స్టూడెంట్స్ మార్కులు స్టోర్ చేయాలంటే 100 వేరియబుల్స్ క్రియేట్ చేస్తామా? చేయం! దానికి బదులు వాడేదే **Arrays**. జావాలో Arrays అంటే ఏంటి? అవి మెమరీలో (Stack & Heap) ఎలా సేవ్ అవుతాయి? వాటిని క్రియేట్ చేయడానికి ఉన్న 3 పద్ధతులు, 0-based indexing మరియు లూప్స్ వాడి డేటాని ఎలా ప్రాసెస్ చేయాలో డీటెయిల్డ్ గా నేర్చుకుందాం." />
+  <meta name="keywords" content="java array fundamentals, memory architecture & traversal (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/28-java-array-fundamentals-and-memory-model.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 28: 28. Array Fundamentals & Memory</span>
     </div>
 
-    <h1 class="page-title">Java Array Fundamentals, Memory Architecture & Traversal</h1>
+    <h1 class="page-title">Java Array Fundamentals, Memory Architecture & Traversal (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,29 +541,29 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Comprehensive masterclass on Java Arrays: understanding why arrays are foundational to data structures, how arrays allocate contiguous memory in the JVM Heap, the 3 styles of array initialization, default value rules, accessing and modifying elements via 0-based indexes, and safe traversal using standard and enhanced for-each loops.</p>
+      <p>ఒకటి రెండు కాకుండా, 100 మంది స్టూడెంట్స్ మార్కులు స్టోర్ చేయాలంటే 100 వేరియబుల్స్ క్రియేట్ చేస్తామా? చేయం! దానికి బదులు వాడేదే **Arrays**. జావాలో Arrays అంటే ఏంటి? అవి మెమరీలో (Stack & Heap) ఎలా సేవ్ అవుతాయి? వాటిని క్రియేట్ చేయడానికి ఉన్న 3 పద్ధతులు, 0-based indexing మరియు లూప్స్ వాడి డేటాని ఎలా ప్రాసెస్ చేయాలో డీటెయిల్డ్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. Array Ante Enti? (What is an Array in Java?)</h2>
+      <h2>1. Array అంటే ఏంటి? అసలు ఇవి ఎందుకు కావాలి?</h2>
       <div class="theory-text">
-        <p>In computer programming, an <strong>Array</strong> is a fixed-size, indexed collection of elements belonging to the <strong>same data type (homogeneous)</strong> stored in <strong>contiguous (continuous) memory locations</strong> in the JVM Heap.</p>
-<p><strong>Why are Arrays Needed? (The 100-Variable Problem):</strong><br>Suppose a college professor needs to store the exam marks of 100 students:<br>- Without arrays, you would have to declare 100 individual variables: <code>int mark1, mark2, mark3, ... mark100;</code>. Calculating the average would require writing a 100-variable sum expression!<br>- With an array, you declare a <strong>single reference variable</strong> holding all 100 values: <code>int[] marks = new int[100];</code> and process them with a 3-line loop!</p>
-<div class="code-block"><pre><code>Individual Variables (Scattered in Memory):
+        <p>ప్రోగ్రామింగ్ లో <strong>Array</strong> అంటే ఒకే రకమైన డేటాని (ఉదాహరణకి అన్నీ <code>int</code> లేదా అన్నీ <code>String</code>) ఒకే చోట వరుసగా (Contiguous memory) స్టోర్ చేసుకునే ఒక బాక్స్ లాంటిది.</p>
+<p><strong>100-వేరియబుల్స్ ప్రాబ్లమ్ (ఎందుకు కావాలి?):</strong><br>ఒక ప్రొఫెసర్ 100 మంది స్టూడెంట్స్ మార్కులు సేవ్ చేయాలి అనుకోండి:<br>- అరేస్ లేకపోతే: <code>int mark1, mark2, mark3, ... mark100;</code> అని 100 వేరియబుల్స్ రాయాలి. వాటి యావరేజ్ కనుక్కోవాలంటే 100 పేర్లూ టైప్ చేయాలి!<br>- అరేస్ ఉంటే: <code>int[] marks = new int[100];</code> అని ఒక్క లైన్ లో రాసేయొచ్చు. 3 లైన్ల లూప్ తో 100 మంది డేటా ప్రాసెస్ చేయొచ్చు!</p>
+<div class="code-block"><pre><code>విడివిడి వేరియబుల్స్ (మెమరీలో ఎక్కడెక్కడో ఉంటాయి):
   [mark1: 85]      [mark2: 90]      [mark3: 78]      [mark4: 92]
   (Address 0x10)   (Address 0x44)   (Address 0x8A)   (Address 0x9F)
-<p>Array Object (Contiguous Block in Heap):<br>  Index:     [ 0 ]   [ 1 ]   [ 2 ]   [ 3 ]<br>  Value:    |  85  |  90  |  78  |  92  |  (Single continuous block: Address 0x5000)</code></pre></div></p>
+<p>Array ఆబ్జెక్ట్ (అన్నీ ఒకే చోట వరుసగా ఉంటాయి):<br>  ఇండెక్స్:    [ 0 ]   [ 1 ]   [ 2 ]   [ 3 ]<br>  డేటా:      |  85  |  90  |  78  |  92  |  (అడ్రెస్ 0x5000 దగ్గర వరుసగా)</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. JVM Memory Architecture: How Arrays Live in Stack and Heap</h2>
+      <h2>2. JVM మెమరీ ఆర్కిటెక్చర్: Arrays ఎక్కడ ఉంటాయి?</h2>
       <div class="theory-text">
-        <p>In Java, arrays are <strong>first-class Objects</strong> (instances of an internal dynamic class like <code>[I</code> for <code>int[]</code> or <code>[Ljava.lang.String;</code> for <code>String[]</code>):</p>
-<p>1. <strong>Stack Memory:</strong> Stores the reference variable (e.g. <code>marks</code>) which holds the 64-bit or 32-bit memory address of the Heap object.<br>2. <strong>Heap Memory:</strong> Allocates the actual array container, consisting of:<br>   - <strong>Object Header (12–16 bytes):</strong> Mark Word (hash, GC metadata) + Klass Pointer.<br>   - <strong>Length Field (4 bytes):</strong> Stores the immutable size of the array (<code>.length</code>).<br>   - <strong>Payload Data:</strong> Contiguous block storing the elements.</p>
+        <p>C, C++ లో అరేస్ అంటే కేవలం మెమరీ బ్లాక్స్. కానీ జావాలో అరేస్ అన్నీ <strong>ఆబ్జెక్ట్స్</strong>! కాబట్టి ఇవి మెమరీలో ఎలా ఉంటాయంటే:</p>
+<p>1. <strong>Stack Memory:</strong> ఇక్కడ కేవలం మనం ఇచ్చిన పేరు (<code>marks</code>) మరియు ఆ అరే ఎక్కడుందో చెప్పే మెమరీ అడ్రెస్ (Reference) మాత్రమే ఉంటాయి.<br>2. <strong>Heap Memory:</strong> అసలైన అరే డేటా మొత్తం ఇక్కడే ఉంటుంది. దీంట్లో 3 భాగాలు ఉంటాయి:<br>   - <strong>Object Header (12-16 bytes):</strong> ఇది ఆబ్జెక్ట్ అని గుర్తుపట్టడానికి జావా వాడుకునే సెక్యూరిటీ డేటా.<br>   - <strong>Length Field (4 bytes):</strong> అరే సైజు ఎంత అని చెప్పే ఒక ఫీల్డ్ (<code>.length</code>). ఇది ఎప్పటికీ మారదు.<br>   - <strong>Payload Data:</strong> మనం ఇచ్చిన డేటా అంతా ఇక్కడే వరుసగా స్టోర్ అవుతుంది.</p>
 <div class="code-block"><pre><code>STACK MEMORY                              HEAP MEMORY
   +--------------------+             +-----------------------------------+
   | marks = 0x5A2000   | ----------&gt; | Object Header (12B) | Length = 4  |
@@ -575,28 +575,28 @@
   
 
     <section class="lesson-section">
-      <h2>3. Array Declaration & 3 Styles of Initialization</h2>
+      <h2>3. Arrays ని క్రియేట్ చేసే 3 పద్ధతులు</h2>
       <div class="theory-text">
-        <p>Java offers flexible syntax for creating arrays:</p>
-<p>1. <strong>Declaration:</strong><br><div class="code-block"><pre><code>int[] numbers; // Preferred Java convention (Type is clearly "int array")<br>int numbers[]; // Valid C/C++ legacy syntax (Discouraged in modern Java)</code></pre></div></p>
-<p>2. <strong>Style 1: Dynamic Allocation with Size (Default Values Filled):</strong><br><div class="code-block"><pre><code>int[] scores = new int[5]; // Allocates space for 5 ints, initialized to 0</code></pre></div></p>
-<p>3. <strong>Style 2: Inline Initialization with Literal Values (Shortcut):</strong><br><div class="code-block"><pre><code>int[] marks = {85, 90, 78, 92}; // Compiler infers size = 4</code></pre></div></p>
-<p>4. <strong>Style 3: Explicit new with Element Literals (Anonymous Array):</strong><br><div class="code-block"><pre><code>int[] prices = new int[]{199, 299, 499}; // Useful when passing array directly to a method</code></pre></div></p>
+        <p>జావాలో అరేస్ ని క్రియేట్ చేయడానికి 3 స్టైల్స్ ఉన్నాయి:</p>
+<p>1. <strong>Declaration (ముందు వేరియబుల్ రాయడం):</strong><br><div class="code-block"><pre><code>int[] numbers; // ఇదే బెస్ట్ పద్ధతి (చూడగానే ఇది int array అని అర్థం అవుతుంది)<br>int numbers[]; // ఇది C, C++ వాళ్ళు రాసే పాత పద్ధతి (దీన్ని జావాలో వాడకండి)</code></pre></div></p>
+<p>2. <strong>స్టైల్ 1: ముందే సైజు చెప్పడం (Dynamic Allocation):</strong><br><div class="code-block"><pre><code>int[] scores = new int[5]; // 5 గదులతో ఒక అరే రెడీ అవుతుంది (అన్నింట్లో 0 ఉంటుంది)</code></pre></div></p>
+<p>3. <strong>స్టైల్ 2: డైరెక్ట్ గా వాల్యూస్ ఇవ్వడం (Shortcut):</strong><br><div class="code-block"><pre><code>int[] marks = {85, 90, 78, 92}; // బ్రాకెట్స్ లో వాల్యూస్ ఇస్తే, సైజు ఆటోమాటిక్ గా 4 అని తీసుకుంటుంది</code></pre></div></p>
+<p>4. <strong>స్టైల్ 3: మెథడ్స్ కి పంపించేటప్పుడు (Anonymous Array):</strong><br><div class="code-block"><pre><code>int[] prices = new int[]{199, 299, 499}; // వేరియబుల్ లేకుండా డైరెక్ట్ గా వేరే మెథడ్ కి పంపడానికి ఇది వాడతారు</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Default Initialization Values in Java Arrays</h2>
+      <h2>4. డీఫాల్ట్ వాల్యూస్ (అరేస్ లో ఏమీ ఇవ్వకపోతే ఏముంటుంది?)</h2>
       <div class="theory-text">
-        <p>When an array is allocated using <code>new Type[size]</code>, the JVM automatically initializes every slot to its data type's default zero-value:</p>
+        <p>మీరు <code>new Type[size]</code> వాడి అరే క్రియేట్ చేసి వదిలేస్తే, జావా అందులో ఆటోమాటిక్ గా కొన్ని డీఫాల్ట్ వాల్యూస్ నింపేస్తుంది:</p>
 <div class="ref-table-wrap">
   <table class="ref-table">
     <thead>
       <tr>
-        <th>Data Type</th>
-        <th>Default Initial Value</th>
-        <th>Example for <code>new Type[3]</code></th>
+        <th>డేటా టైప్</th>
+        <th>డీఫాల్ట్ వాల్యూ</th>
+        <th>ఉదాహరణకు <code>new Type[3]</code> ఇస్తే..</th>
       </tr>
     </thead>
     <tbody>
@@ -617,11 +617,11 @@
       </tr>
       <tr>
         <td><code>char</code></td>
-        <td><code>'\u0000'</code> (Null character, int value 0)</td>
+        <td><code>'\u0000'</code> (కనిపించని Null క్యారెక్టర్)</td>
         <td><code>['\0', '\0', '\0']</code></td>
       </tr>
       <tr>
-        <td><strong>Reference Types</strong> (<code>String</code>, <code>Object[]</code>)</td>
+        <td><strong>Reference Types</strong> (<code>String</code>, <code>Object</code>)</td>
         <td><code>null</code></td>
         <td><code>[null, null, null]</code></td>
       </tr>
@@ -633,21 +633,21 @@
   
 
     <section class="lesson-section">
-      <h2>5. Array Indexing, Updating & The .length Property</h2>
+      <h2>5. Indexing: అరేస్ లో డేటా లాగడం & మార్చడం (.length)</h2>
       <div class="theory-text">
-        <p>Every array in Java uses <strong>0-based indexing</strong>:<br>- <strong>First Element:</strong> <code>arr[0]</code><br>- <strong>Last Element:</strong> <code>arr[arr.length - 1]</code><br>- <strong>Updating Value:</strong> <code>arr[2] = 95;</code> replaces the value at index 2 in O(1) constant time.</p>
-<p><strong>The <code>.length</code> Property:</strong><br>- The total capacity of an array is accessed via the read-only field <code>.length</code> (e.g. <code>marks.length</code>).<br>- <strong>Rule:</strong> Notice there are <strong>NO parentheses</strong> <code>()</code> on array length, unlike <code>String.length()</code> which is a method call!</p>
-<p><strong>ArrayIndexOutOfBoundsException:</strong><br>If you attempt to access an index <code>&lt; 0</code> or <code>&gt;= arr.length</code>, the JVM halts execution with an <code>ArrayIndexOutOfBoundsException</code> to protect system memory safety.</p>
+        <p>స్ట్రింగ్స్ లాగానే అరేస్ లో కూడా కౌంటింగ్ <strong>0 నుంచే స్టార్ట్ అవుతుంది (0-based indexing)</strong>:<br>- <strong>మొదటి వాల్యూ కావాలంటే:</strong> <code>arr[0]</code><br>- <strong>చివరి వాల్యూ కావాలంటే:</strong> <code>arr[arr.length - 1]</code><br>- <strong>వాల్యూ మార్చాలంటే:</strong> <code>arr[2] = 95;</code> (ఇలా రాస్తే 3వ ప్లేస్ లో ఉన్న పాత వాల్యూ పోయి 95 సేవ్ అవుతుంది).</p>
+<p><strong>The <code>.length</code> ప్రాపర్టీ:</strong><br>- అరే సైజు తెలుసుకోవాలంటే <code>.length</code> వాడాలి (ఉదా: <code>marks.length</code>).<br>- <strong>రూల్:</strong> ఇక్కడ <code>()</code> బ్రాకెట్స్ వాడకూడదు! (స్ట్రింగ్స్ కి <code>String.length()</code> వస్తుంది, అరేస్ కి <code>arr.length</code> వస్తుంది).</p>
+<p><strong>ArrayIndexOutOfBoundsException ఎర్రర్:</strong><br>ఒకవేళ మీ అరే సైజు 5 ఉండి, మీరు <code>arr[10]</code> అని అడిగితే.. జావా వెంటనే మీ ప్రోగ్రామ్ ని ఆపేసి <strong><code>ArrayIndexOutOfBoundsException</code></strong> అనే ఎర్రర్ ఇచ్చి క్రాష్ చేస్తుంది. ఇది సెక్యూరిటీ కోసం అన్నమాట.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>6. Looping Through Arrays: Classic for vs Enhanced for-each</h2>
+      <h2>6. అరేస్ మీద లూప్స్ వాడటం (for vs for-each)</h2>
       <div class="theory-text">
-        <p>Java provides two primary loop patterns for iterating through arrays:</p>
-<p>1. <strong>Classic Indexed for Loop (Full Control):</strong><br>Allows you to read, modify elements, traverse backwards, or skip steps.<br><div class="code-block"><pre><code>for (int i = 0; i &lt; marks.length; i++) {<br>    System.out.println("Student " + i + ": " + marks[i]);<br>}</code></pre></div></p>
-<p>2. <strong>Enhanced for Loop (for-each) (Read-Only / Clean):</strong><br>Introduced in Java 5 to eliminate index tracking and boundary off-by-one errors.<br><div class="code-block"><pre><code>for (int mark : marks) {<br>    System.out.println("Mark: " + mark); // Cannot modify array elements directly!<br>}</code></pre></div></p>
+        <p>అరే లో ఉన్న వాల్యూస్ అన్నింటినీ ఒక్కొక్కటిగా ప్రాసెస్ చేయడానికి మనం లూప్స్ వాడతాం:</p>
+<p>1. <strong>నార్మల్ <code>for</code> లూప్ (ఫుల్ కంట్రోల్ ఉంటుంది):</strong><br>వాల్యూస్ ని మార్చాలన్నా, రివర్స్ లో ప్రింట్ చేయాలన్నా, ఒకదాని తర్వాత ఒకటి వదిలేసి ప్రింట్ చేయాలన్నా ఇది వాడాలి.<br><div class="code-block"><pre><code>for (int i = 0; i &lt; marks.length; i++) {<br>    System.out.println("స్టూడెంట్ " + i + ": " + marks[i]);<br>}</code></pre></div></p>
+<p>2. <strong>ఎన్హాన్స్డ్ <code>for-each</code> లూప్ (చాలా క్లీన్ గా ఉంటుంది):</strong><br>ఇండెక్స్ లు (i), బౌండరీలు పట్టించుకోకుండా, మొదటి నుంచి చివరి దాకా ఉన్నవి ఉన్నట్టు ప్రింట్ చేయడానికి బెస్ట్.<br><div class="code-block"><pre><code>for (int mark : marks) {<br>    System.out.println("మార్కు: " + mark);<br>    // కానీ దీనితో మీరు అరే లోపల ఉన్న ఒరిజినల్ వాల్యూస్ ని మార్చలేరు!<br>}</code></pre></div></p>
       </div>
     </section>
   
@@ -667,43 +667,43 @@
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1. Array Declaration & Initialization ===");
-        // Primary user requested snippet
+        System.out.println("=== 1. Array ని క్రియేట్ చేయడం ===");
         int[] marks = {85, 90, 78, 92};
 
-        System.out.println("Array Length          : " + marks.length);
-        System.out.println("First Element [0]     : " + marks[0]);
-        System.out.println("Last Element [3]      : " + marks[marks.length - 1]);
+        System.out.println("అరే సైజు (Length)     : " + marks.length);
+        System.out.println("మొదటి ఎలిమెంట్ [0]      : " + marks[0]);
+        System.out.println("చివరి ఎలిమెంట్ [3]       : " + marks[marks.length - 1]);
 
         System.out.println("
-=== 2. Updating Array Elements ===");
-        System.out.println("Original marks[2]     : " + marks[2]);
-        marks[2] = 88; // Updating index 2
-        System.out.println("Updated marks[2]      : " + marks[2]);
+=== 2. వాల్యూస్ ని అప్డేట్ చేయడం ===");
+        System.out.println("ముందు marks[2] లో ఉన్నది : " + marks[2]);
+        marks[2] = 88; // 3వ ప్లేస్ లో 88 ని సేవ్ చేస్తున్నాం
+        System.out.println("అప్డేట్ తర్వాత marks[2]   : " + marks[2]);
 
         System.out.println("
-=== 3. Sorting with Arrays.sort() ===");
-        Arrays.sort(marks); // In-place ascending sort
+=== 3. అరేస్ ని సార్టింగ్ చేయడం ===");
+        Arrays.sort(marks); // చిన్న నంబర్ నుంచి పెద్ద నంబర్ కి ఆర్డర్ లో పెడుతుంది
 
         System.out.println("
-=== 4. Enhanced for-each Traversal ===");
+=== 4. Enhanced for-each లూప్ తో ప్రింట్ ===");
         for (int mark : marks) {
-            System.out.println("Mark: " + mark);
+            System.out.println("మార్కు: " + mark);
         }
 
         System.out.println("
-=== 5. Default Initialization Demonstration ===");
+=== 5. డీఫాల్ట్ వాల్యూస్ డెమో ===");
         int[] defaultInts = new int[3];
         boolean[] defaultBools = new boolean[3];
         String[] defaultStrings = new String[3];
 
-        System.out.println("Default int[]         : " + Arrays.toString(defaultInts));
-        System.out.println("Default boolean[]     : " + Arrays.toString(defaultBools));
-        System.out.println("Default String[]      : " + Arrays.toString(defaultStrings));
+        System.out.println("int[] లో డీఫాల్ట్         : " + Arrays.toString(defaultInts));
+        System.out.println("boolean[] లో డీఫాల్ట్     : " + Arrays.toString(defaultBools));
+        System.out.println("String[] లో డీఫాల్ట్      : " + Arrays.toString(defaultStrings));
 
         System.out.println("
-=== 6. Reverse Traversal via Classic for Loop ===");
-        System.out.print("Marks in Descending   : ");
+=== 6. రివర్స్ లో ప్రింట్ చేయడం (నార్మల్ ఫర్ లూప్) ===");
+        System.out.print("రివర్స్ ఆర్డర్ లో మార్కులు  : ");
+        // రివర్స్ కావాలి కాబట్టి లాస్ట్ ఇండెక్స్ (length - 1) నుంచి 0 దాకా వచ్చాం
         for (int i = marks.length - 1; i &gt;= 0; i--) {
             System.out.print(marks[i] + " ");
         }
@@ -714,30 +714,30 @@ public class Main {
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. Array Declaration & Initialization ===
-Array Length          : 4
-First Element [0]     : 85
-Last Element [3]      : 92
+        <div class="output-content">=== 1. Array ని క్రియేట్ చేయడం ===
+అరే సైజు (Length)     : 4
+మొదటి ఎలిమెంట్ [0]      : 85
+చివరి ఎలిమెంట్ [3]       : 92
 
-=== 2. Updating Array Elements ===
-Original marks[2]     : 78
-Updated marks[2]      : 88
+=== 2. వాల్యూస్ ని అప్డేట్ చేయడం ===
+ముందు marks[2] లో ఉన్నది : 78
+అప్డేట్ తర్వాత marks[2]   : 88
 
-=== 3. Sorting with Arrays.sort() ===
+=== 3. అరేస్ ని సార్టింగ్ చేయడం ===
 
-=== 4. Enhanced for-each Traversal ===
-Mark: 85
-Mark: 88
-Mark: 90
-Mark: 92
+=== 4. Enhanced for-each లూప్ తో ప్రింట్ ===
+మార్కు: 85
+మార్కు: 88
+మార్కు: 90
+మార్కు: 92
 
-=== 5. Default Initialization Demonstration ===
-Default int[]         : [0, 0, 0]
-Default boolean[]     : [false, false, false]
-Default String[]      : [null, null, null]
+=== 5. డీఫాల్ట్ వాల్యూస్ డెమో ===
+int[] లో డీఫాల్ట్         : [0, 0, 0]
+boolean[] లో డీఫాల్ట్     : [false, false, false]
+String[] లో డీఫాల్ట్      : [null, null, null]
 
-=== 6. Reverse Traversal via Classic for Loop ===
-Marks in Descending   : 92 90 88 85</div>
+=== 6. రివర్స్ లో ప్రింట్ చేయడం (నార్మల్ ఫర్ లూప్) ===
+రివర్స్ ఆర్డర్ లో మార్కులు  : 92 90 88 85</div>
       </div>
 
       <div class="explain-card">
@@ -745,31 +745,31 @@ Marks in Descending   : 92 90 88 85</div>
         
     <div class="explain-item">
       <code class="code-token">int[] marks = {85, 90, 78, 92};</code>
-      <p>Declares an integer array reference "marks" on the Stack and initializes a contiguous 4-element integer array in the Heap.</p>
+      <p>marks అనే వేరియబుల్ ని Stack లో పెట్టి, 4 నంబర్స్ కి సరిపడా మెమరీని Heap లో వరుసగా క్రియేట్ చేసింది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">marks[2] = 88;</code>
-      <p>Directly writes value 88 to the 3rd slot (index 2) via direct O(1) memory offset calculation.</p>
+      <p>ఇండెక్స్ ఎప్పుడూ 0 తో స్టార్ట్ అవుతుంది కాబట్టి.. marks[2] అంటే మూడవ ప్లేస్ లోకి వెళ్లి డైరెక్ట్ గా 88 రాసేసింది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">Arrays.sort(marks);</code>
-      <p>Sorts the primitive array in ascending order using Java's highly optimized Dual-Pivot Quicksort.</p>
+      <p>ఇది జావా వాళ్ళు రాసిపెట్టిన ఒక పవర్ఫుల్ మెథడ్ (Dual-Pivot Quicksort). ఇది అరే లో ఉన్న నంబర్స్ ని చిన్న నుంచి పెద్దకి ఆర్డర్ లో పెడుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">for (int mark : marks)</code>
-      <p>Iterates through each element sequentially from index 0 to length - 1 without manual index counter variables.</p>
+      <p>marks అరే లో ఒక్కో నంబర్ ని బయటికి తీసి mark అనే వేరియబుల్ లో పెడుతుంది. ఇండెక్స్ లు పదే పదే రాయాల్సిన పని ఉండదు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">int[] defaultInts = new int[3];</code>
-      <p>Allocates a 3-element heap array where all integer elements are automatically initialized to default 0 by the JVM.</p>
+      <p>3 గదులతో అరే క్రియేట్ చేసి వదిలేస్తే.. జావా వెంటనే అందులో మూడింట్లో 0, 0, 0 వేసేసి రెడీగా పెడుతుంది.</p>
     </div>
   
       </div>
@@ -788,14 +788,15 @@ Marks in Descending   : 92 90 88 85</div>
         </div>
         <pre><code>public class PracticalApplication {
     public static void main(String[] args) {
-        // Industry Simulation: Employee Daily Attendance & Performance Metrics
+        // రియల్ టైమ్ సినారియో: ఆఫీస్ లో ఎంప్లాయీస్ పని చేసిన గంటలు చెక్ చేయడం
         String[] employees = {"Priya Sharma", "Ravi Teja", "Ananya Reddy", "Kiran Kumar"};
         double[] weeklyHours = {42.5, 38.0, 45.0, 40.0};
 
-        System.out.println("=== Weekly Payroll Hours Audit ===");
+        System.out.println("=== వీక్లీ పెరోల్ ఓవర్ టైమ్ రిపోర్ట్ ===");
         for (int i = 0; i &lt; employees.length; i++) {
+            // 40 గంటల కన్నా ఎక్కువ పనిచేస్తే ఓవర్ టైమ్ చేసినట్టు
             boolean isOvertime = weeklyHours[i] &gt; 40.0;
-            System.out.printf("Employee: %-15s | Hours: %4.1f hrs | Overtime: %b%n",
+            System.out.printf("ఎంప్లాయీ: %-15s | టైమ్: %4.1f hrs | ఓవర్ టైమా?: %b%n",
                     employees[i], weeklyHours[i], isOvertime);
         }
     }
@@ -804,11 +805,11 @@ Marks in Descending   : 92 90 88 85</div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== Weekly Payroll Hours Audit ===
-Employee: Priya Sharma    | Hours: 42.5 hrs | Overtime: true
-Employee: Ravi Teja       | Hours: 38.0 hrs | Overtime: false
-Employee: Ananya Reddy    | Hours: 45.0 hrs | Overtime: true
-Employee: Kiran Kumar     | Hours: 40.0 hrs | Overtime: false</div>
+        <div class="output-content">=== వీక్లీ పెరోల్ ఓవర్ టైమ్ రిపోర్ట్ ===
+ఎంప్లాయీ: Priya Sharma    | టైమ్: 42.5 hrs | ఓవర్ టైమా?: true
+ఎంప్లాయీ: Ravi Teja       | టైమ్: 38.0 hrs | ఓవర్ టైమా?: false
+ఎంప్లాయీ: Ananya Reddy    | టైమ్: 45.0 hrs | ఓవర్ టైమా?: true
+ఎంప్లాయీ: Kiran Kumar     | టైమ్: 40.0 hrs | ఓవర్ టైమా?: false</div>
       </div>
     </section>
 
@@ -817,16 +818,13 @@ Employee: Kiran Kumar     | Hours: 40.0 hrs | Overtime: false</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Accessing <code>arr[arr.length]</code> instead of <code>arr[arr.length - 1]</code>, throwing <code>ArrayIndexOutOfBoundsException</code>.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">లాస్ట్ ఎలిమెంట్ కావాలని <code>arr[arr.length]</code> అనడం. ఇండెక్స్ లు 0 తో స్టార్ట్ అవుతాయి కాబట్టి లాస్ట్ ఎలిమెంట్ ఎప్పుడూ <code>arr.length - 1</code> దగ్గరే ఉంటుంది. లేకపోతే <code>ArrayIndexOutOfBoundsException</code> వస్తుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Writing <code>arr.length()</code> with parentheses instead of <code>arr.length</code>. (Arrays have a <code>.length</code> field; Strings have a <code>.length()</code> method).</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>arr.length()</code> అని బ్రాకెట్స్ వాడటం. స్ట్రింగ్స్ కి <code>length()</code> వస్తుంది కానీ, అరేస్ కి కేవలం <code>.length</code> అనే ఫీల్డ్ మాత్రమే ఉంటుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Attempting to modify the original array elements inside an enhanced for loop (e.g. <code>for(int x : arr) x = 0;</code> does NOT change <code>arr</code>).</li>
-  
-
-    <li style="margin-bottom:8px; line-height:1.6;">Assuming <code>new int[5]</code> creates uninitialized garbage memory like in C/C++. Java guarantees default zero values.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>for-each</code> లూప్ వాడి ఒరిజినల్ అరే ని మారుద్దాం అనుకోవడం. <code>for(int x : arr) x = 0;</code> అని రాస్తే కేవలం టెంపరరీ కాపీ మాత్రమే మారుతుంది తప్ప, అరే లోపల ఉన్న అసలు వాల్యూస్ మారవు. మార్చాలంటే <code>arr[i] = 0</code> అని కచ్చితంగా నార్మల్ లూప్ వాడాలి.</li>
   
       </ul>
     </div>
@@ -843,9 +841,9 @@ Employee: Kiran Kumar     | Hours: 40.0 hrs | Overtime: false</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Given an array of monthly temperatures: double[] temps = {32.5, 34.0, 36.5, 31.0, 29.5};
-// 1. Double the temperature of any month below 30.0 (simulating heat wave).
-// 2. Print all temperatures using an enhanced for loop formatted to 1 decimal place.
+// ఐదు నెలల టెంపరేచర్స్ ఉన్నాయి అనుకోండి: double[] temps = {32.5, 34.0, 36.5, 31.0, 29.5};
+// 1. నార్మల్ ఫర్ లూప్ వేసి, ఎక్కడైతే 30.0 కన్నా తక్కువ ఉందో ఆ వాల్యూని డబుల్ (x2) చేయండి.
+// 2. ఆ తర్వాత for-each లూప్ వేసి అన్నింటినీ పాయింట్ తర్వాత ఒక డిజిట్ వచ్చేలా ప్రింట్ చేయండి.
 
 public class Challenge {
     public static void main(String[] args) {
@@ -853,11 +851,11 @@ public class Challenge {
         
         for (int i = 0; i &lt; temps.length; i++) {
             if (temps[i] &lt; 30.0) {
-                temps[i] *= 2;
+                temps[i] *= 2; // వాల్యూ ని డబుల్ చేసాం
             }
         }
         
-        System.out.print("Adjusted Temperatures: ");
+        System.out.print("అప్డేట్ అయిన టెంపరేచర్స్: ");
         for (double t : temps) {
             System.out.printf("%.1f°C ", t);
         }
@@ -872,20 +870,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why are arrays 0-indexed in Java and computer science?</h4>
-      <p>The index represents the exact memory offset from the starting memory address of the array. The address of element i is calculated as: `Address = BaseAddress + (i * elementSize)`. For the first element, offset is 0, so `BaseAddress + (0 * size) = BaseAddress`.</p>
+      <h4>❓ అరేస్ లో కౌంటింగ్ 1 తో కాకుండా 0 తో ఎందుకు స్టార్ట్ అవుతుంది?</h4>
+      <p>ఇండెక్స్ అనేది వాల్యూ కాదు.. ఆ అరే స్టార్టింగ్ అడ్రెస్ నుంచి ఎంత దూరం (Offset) జరగాలి అని చెప్పే నంబర్. ఫస్ట్ ఎలిమెంట్ కి ఎటూ జరగాల్సిన పనిలేదు కదా, అందుకే దాని దూరం 0 అన్నమాట.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Can an array change its size after creation in Java?</h4>
-      <p>No. Java arrays are strictly fixed in size. Once created in Heap memory, an array cannot grow or shrink. To resize, you must allocate a new array of the larger size and copy elements over (which is how `ArrayList` works internally).</p>
+      <h4>❓ అరే ని క్రియేట్ చేశాక సైజు పెంచడం కుదురుతుందా?</h4>
+      <p>కుదరదు. అరేస్ ఒకసారి క్రియేట్ అయ్యాక వాటి సైజు ఫ్రీజ్ అయిపోతుంది (Fixed size). ఒకవేళ సైజు పెంచాలంటే, పెద్ద సైజు తో ఇంకో కొత్త అరే క్రియేట్ చేసి పాత డేటా అంతా కాపీ చేయాలి (ArrayList ఇంటర్నల్ గా చేసేది ఇదే).</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the difference between int[] arr and int arr[]?</h4>
-      <p>Both are valid syntaxes in Java. However, `int[] arr` is the preferred Java standard because it clearly separates the type (`int[]`) from the variable name (`arr`). `int arr[]` exists only for backward compatibility with C/C++ programmers.</p>
+      <h4>❓ int[] arr కీ, int arr[] కీ డిఫరెన్స్ ఏంటి?</h4>
+      <p>రెండూ ఒకటే పనిచేస్తాయి. కానీ `int[]` అనేది జావా స్టాండర్డ్ పద్ధతి (టైప్ ని వేరియబుల్ ని క్లియర్ గా డివైడ్ చేస్తుంది). C, C++ నుంచి వచ్చే ప్రోగ్రామర్స్ కన్ఫ్యూజ్ కాకుండా ఉండటానికి జావా `int arr[]` ని కూడా యాక్సెప్ట్ చేస్తుంది.</p>
     </div>
   
     </section>
@@ -895,19 +893,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">An array is a fixed-size, contiguous collection of homogeneous elements stored in the JVM Heap.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Array అంటే ఒకే డేటా టైప్ కి సంబంధించిన మల్టిపుల్ వాల్యూస్ ని వరుసగా ఒకే చోట స్టోర్ చేసుకునే కంటైనర్.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Arrays are 0-indexed; the first element is at <code>arr[0]</code> and the last is at <code>arr[arr.length - 1]</code>.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఇవి Heap మెమరీలో క్రియేట్ అవుతాయి. ఇండెక్సింగ్ 0 నుంచి స్టార్ట్ అవుతుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">The <code>.length</code> property returns the capacity of the array and has no parentheses.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">అరే సైజు ఎంతుందో తెలుసుకోవడానికి <code>.length</code> అనే ప్రాపర్టీ వాడతాం.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">All array elements are automatically initialized to default zero values by the JVM upon allocation.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఏమీ వాల్యూస్ ఇవ్వకుండా అరే క్రియేట్ చేస్తే, జావా అందులో 0, 0.0, false, null లాంటి డీఫాల్ట్ వాల్యూస్ నింపుతుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Use classic <code>for</code> loops when index manipulation is needed; use enhanced <code>for-each</code> for clean read-only traversal.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ప్రాసెస్ చేయాలంటే నార్మల్ <code>for</code> లూప్ గానీ, చాలా క్లీన్ గా ఉండే <code>for-each</code> లూప్ గానీ వాడాలి.</li>
   
       </ul>
     </div>

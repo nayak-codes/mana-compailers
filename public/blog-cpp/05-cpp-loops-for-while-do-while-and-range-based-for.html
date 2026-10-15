@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Loops — for, while, do-while & Range-Based for Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on C++ Iteration (Phase 5): for, while, do-while, Modern range-based for, break, continue, and 9 complete practice programs." />
-  <meta name="keywords" content="c++ tutorial, c++ loops — for, while, do-while & range-based for masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>for, while, Range-for & Practice (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో ఒకే పనిని వంద సార్లు ఎలా చేయాలి? Loops (for, while, do-while) అంటే ఏంటి? C++11 లో వచ్చిన Range-based for loop ని డీప్ ఎక్స్‌ప్లనేషన్ తో నేర్చుకుందాం." />
+  <meta name="keywords" content="c++ tutorial, for, while, range-for & practice (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/05-cpp-loops-for-while-do-while-and-range-based-for.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -293,6 +270,193 @@
         <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
       </div>
 
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
     </div>
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
@@ -303,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 5: C++ Loops — for, while, do-while & Range-Based for Masterclass</span>
+      <span class="current">Lesson 5: for, while, Range-for & Practice (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Loops — for, while, do-while & Range-Based for Masterclass</h1>
+    <h1 class="page-title">for, while, Range-for & Practice (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 5</span>
@@ -314,59 +478,108 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Standard for & while · Modern Range-Based for · break & continue · Star & Number Patterns · Vector Iteration · 9 Practice Programs</span>
+      <span>Iteration · for Loop · while Loop · Range-based for (C++11) · break & continue</span>
     </div>
-<div class="intro-box">  <p>Welcome to <strong>Phase 5 (Chapter 5): C++ Loops — for, while, do-while &amp; Range-Based for Masterclass</strong>! Iteration structures execute code repeatedly. In Modern C++, range-based <code>for (const auto &amp;item : collection)</code> provides safe, clean traversal of strings, vectors, and arrays.</p></div><div class="section-title"><span class="num">1</span>Loop Types Comparison Matrix</div><div class="section-body">  <table class="tbl spec-table">    <thead><tr><th>Loop Construct</th><th>Syntax</th><th>Best Use Case</th></tr></thead>    <tbody>      <tr><td>Standard <code>for</code></td><td><code>for (int i=0; i&lt;n; i++)</code></td><td>Known iteration count, index access needed</td></tr>      <tr><td>Range-Based <code>for</code></td><td><code>for (const auto &amp;x : vec)</code></td><td>Modern traversal of containers without manual index counters</td></tr>      <tr><td><code>while</code></td><td><code>while (condition)</code></td><td>Event-driven iteration where end condition is dynamic</td></tr>      <tr><td><code>do-while</code></td><td><code>do { ... } while(cond);</code></td><td>Guaranteed at least 1 execution (e.g. Menu loops)</td></tr>    </tbody>  </table></div><div class="section-title"><span class="num">2</span>9 Practice Programs Code Demonstration</div><div class="section-body">  <div class="code-block">    <div class="code-block-header"><span class="lang-tag">C++ — Prime, Fibonacci & Range-Based Loop</span><a class="try-btn" href="/?lang=cpp17">▶ Run Code in C++ Compiler</a></div><pre><code>#include &lt;iostream&gt;
-#include &lt;vector&gt;
-#include &lt;string&gt;
 
-bool isPrime(int n) {
-    if (n &lt;= 1) return false;
-    for (int i = 2; i * i &lt;= n; i++) {
-        if (n % i == 0) return false;
-    }
-    return true;
-}
+    <div class="intro-box">
+      <p>కంప్యూటర్లకు ఉన్న అతిపెద్ద పవర్ ఏంటంటే అలసిపోకుండా ఒకే పనిని కోట్లాది సార్లు సెకన్ల వ్యవధిలో చేయడం! మీరు ఒక లైన్ ని 10 సార్లు ప్రింట్ చేయాలంటే 10 సార్లు <code>cout</code> రాయొచ్చు. కానీ లక్ష సార్లు ప్రింట్ చేయాలంటే? అలా కోడ్ రాసుకుంటూ పోవడం సాధ్యం కాదు. ఇక్కడే మనకు <strong>Loops (లూప్స్)</strong> అనే బ్రహ్మాస్త్రం ఉపయోగపడుతుంది. ఒక కండిషన్ నిజం అయ్యేంతవరకు ఒకే కోడ్ ని పదే పదే తిప్పడాన్నే లూప్స్ అంటారు. పాత లూప్స్ తో పాటు మోడరన్ C++ లో వచ్చిన <strong>Range-based for loop</strong> అనే అద్భుతమైన ఫీచర్ గురించి ఇక్కడ డీప్ గా నేర్చుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> లూప్స్ లో రకాలు (Types of Loops)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మనకి మూడు ప్రధానమైన లూప్స్ ఉన్నాయి. అవసరాలను బట్టి ప్రోగ్రామర్ సరైన లూప్ ని ఎంచుకోవాలి.
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>for Loop:</strong> మీకు "ఎన్నిసార్లు" తిప్పాలో ముందే ఖచ్చితంగా తెలిస్తే (ఉదా: 1 నుండి 100 వరకు) ఇది బెస్ట్.</li>
+        <li><strong>while Loop:</strong> ఎన్నిసార్లు తిరగాలో తెలీదు, కానీ ఒక కండిషన్ బ్రేక్ అయ్యేవరకు తిరుగుతూనే ఉండాలి అంటే (ఉదా: యూజర్ 0 నొక్కేదాకా గేమ్ ఆడాలి) ఇది బెస్ట్.</li>
+        <li><strong>do-while Loop:</strong> కండిషన్ చెక్ చేయకుండా కనీసం ఒక్కసారి అయినా కోడ్ రన్ అవ్వాలి, ఆ తర్వాతే చెక్ చేయాలి అనుకుంటే ఇది వాడాలి.</li>
+      </ul>
+
+      <div class="deep-dive-card">
+        <h3>🎧 రియల్ లైఫ్ స్టోరీ: మ్యూజిక్ ప్లేయర్ లో "Repeat" బటన్</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          మీరు ఒక పాట వింటున్నారు, అది చాలా నచ్చింది. మీరు ఆ పాటను 5 సార్లు వినాలనుకుంటే మీరు ప్లేయర్ లో కౌంట్ పెట్టుకుంటారు. (ఇదే <code>for</code> లూప్).<br><br>
+          కానీ, మీరు పని చేసుకుంటున్నంత సేపు ఆ పాట ప్లే అవుతూనే ఉండాలి, పని అవ్వగానే మీరే ఆపేస్తారు. ఇది <code>while</code> లూప్ లాంటిది (పని జరుగుతున్నంత సేపు సాంగ్ లూప్ అవుతూనే ఉంటుంది). కంప్యూటర్లు ఈ సైక్లింగ్ ని ఉపయోగించే ప్రపంచంలో ఎన్నో అద్భుతాలు చేస్తాయి.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Modern C++ లో Range-based for loop</div>
+    <div class="section-body">
+      <p class="text-prose">
+        పాత స్టైల్ <code>for(int i=0; i<10; i++)</code> రాయాలంటే చాలా మంది తప్పులు చేస్తారు (ఉదాహరణకు <code><=</code> పెట్టాల్నా వద్దా అని). ఈ కన్ఫ్యూజన్ పోగొట్టడానికి C++11 లో పైథాన్ లాంటి ఒక సింపుల్ సింటాక్స్ తెచ్చారు. అదే <strong>Range-based for loop</strong>. మీ దగ్గర ఒక డేటా బాక్స్ (Array/Vector) ఉంటే, ఆ బాక్స్ లో ఉన్న ప్రతి వస్తువు (Item) దగ్గరికి అది ఆటోమేటిక్ గా వెళ్లి డేటాని తెస్తుంది, మనమేమీ కౌంట్ చేయక్కర్లేదు!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Range-based for)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో పాత స్టైల్ కౌంటింగ్ లేకుండా, C++11 వాడి ఎంత క్లీన్ గా లూప్ రాశామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++11 — Range-based for Loop</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    // 1. Fibonacci Series Generation
-    int n = 7, t1 = 0, t2 = 1, nextTerm;
-    std::cout &lt;&lt; "Fibonacci Series (7 terms): ";
-    for (int i = 1; i &lt;= n; ++i) {
-        std::cout &lt;&lt; t1 &lt;&lt; " ";
-        nextTerm = t1 + t2;
-        t1 = t2;
-        t2 = nextTerm;
+    // ఒక అర్రే (బాక్స్) లో 5 మార్కులు ఉన్నాయి
+    int marks[] = {85, 90, 75, 92, 88};
+    
+    std::cout << "Marks List:" << std::endl;
+    
+    // C++11 మ్యాజిక్: అర్రే లో ఉన్న ప్రతి మార్కు 'm' లోకి వస్తుంది
+    for (int m : marks) {
+        std::cout << "=> " << m << std::endl;
     }
-    std::cout &lt;&lt; "\n";
-
-    // 2. Prime Number Check
-    int num = 29;
-    std::cout &lt;&lt; num &lt;&lt; " is " &lt;&lt; (isPrime(num) ? "PRIME" : "NOT PRIME") &lt;&lt; "\n";
-
-    // 3. Modern Range-Based For Loop Over Vector
-    std::vector&lt;std::string&gt; fruits{"Apple", "Banana", "Cherry"};
-    std::cout &lt;&lt; "Fruits: ";
-    for (const auto &amp;fruit : fruits) {
-        std::cout &lt;&lt; fruit &lt;&lt; " ";
-    }
-    std::cout &lt;&lt; "\n";
-
+    
     return 0;
-}</code></pre>  </div></div><div class="section-title"><span class="num">3</span>Technical FAQs</div><div class="section-body">  <div class="faq-grid">    <div class="faq-item"><h4>Q1: Why pass by const auto &amp; in range-based for loops?</h4><p>Passing by <code>const auto &amp;</code> avoids making expensive copies of objects while guaranteeing the loop cannot modify elements.</p></div>    <div class="faq-item"><h4>Q2: What happens if you modify a vector inside a range-based for loop?</h4><p>Adding/removing elements invalidates iterators, leading to <strong>Undefined Behavior</strong> crashes!</p></div>    <div class="faq-item"><h4>Q3: What is the difference between break and continue?</h4><p><code>break</code> exits the loop immediately. <code>continue</code> skips the rest of the current iteration and advances to the next loop step.</p></div>    <div class="faq-item"><h4>Q4: How do nested loops affect Big-O time complexity?</h4><p>Two nested loops of size N yield O(N²) quadratic time complexity. Avoid deep nesting for large datasets.</p></div>    <div class="faq-item"><h4>Q5: Can do-while loops be infinite?</h4><p>Yes, if the condition expression remains true continuously (e.g. `do { ... } while(true);`).</p></div>  </div></div>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>int marks[]</code>: ఇక్కడ 5 నంబర్స్ ని ఒక గ్రూప్ గా పెట్టుకున్నాం.</li>
+        <li><code>for (int m : marks)</code>: దీని అర్థం "marks అనే గ్రూప్ లో ఉన్న ప్రతి ఒక్క ఐటమ్ ని తీసుకుని, దానికి <code>m</code> అని పేరు పెట్టు" అని.</li>
+        <li>మొదటి సారి లూప్ తిరిగినప్పుడు m వాల్యూ 85 అవుతుంది, రెండోసారి 90 అవుతుంది... ఇలా ఆ బాక్స్ లో ఐటమ్స్ అయిపోయేదాకా అది దానంతట అదే తిరుగుతుంది. ఇండెక్స్ లు (i=0) కౌంట్ చేయాల్సిన పని లేదు!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: <code>break</code> మరియు <code>continue</code> కి తేడా ఏంటి?</h4>
+          <p>లూప్ నడుస్తున్నప్పుడు మధ్యలో ఆగిపోయి <strong>మొత్తం లూప్ లోనుండి బయటకి</strong> పారిపోవాలంటే <code>break</code> వాడతారు. కానీ కేవలం ఆ ఒక్క రౌండ్ ని స్కిప్ చేసి (దూకేసి) <strong>నెక్స్ట్ రౌండ్ ని కంటిన్యూ</strong> చేయాలంటే <code>continue</code> వాడతారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ఇన్ఫినిట్ లూప్ (Infinite Loop) అంటే ఏంటి? అది మంచిదేనా?</h4>
+          <p>కండిషన్ ఎప్పటికీ అబద్ధం కాకపోతే లూప్ ఆగదు, జీవితాంతం తిరుగుతూనే ఉంటుంది. పొరపాటున పడితే ప్రోగ్రామ్ క్రాష్ అవుతుంది (బ్రౌజర్ హ్యాంగ్ అయినట్లు). కానీ గేమ్స్ లో (గేమ్ ఇంజిన్ లూప్) మరియు సర్వర్స్ లో ఉద్దేశపూర్వకంగా <code>while(true)</code> అని రాసి ఇన్ఫినిట్ లూప్స్ వాడుతారు, ఎందుకంటే అవి ఎప్పటికీ ఆఫ్ అవ్వకూడదు కాబట్టి!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: Range-based for loop లో <code>int m</code> బదులు <code>auto m</code> రాయొచ్చా?</h4>
+          <p>ఖచ్చితంగా రాయొచ్చు! అదొక్కటే కాదు, మోడరన్ C++ లో మెమరీ వేస్ట్ కాకుండా ఉండటానికి <code>auto& m</code> అని పాయింటర్స్ రిఫరెన్స్ లాగా రాస్తారు. ఇది డేటాని కాపీ చేయకుండా డైరెక్ట్ గా అసలు డేటాని వాడుకుంటుంది, దీని వల్ల స్పీడ్ అమాంతం పెరుగుతుంది.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="04-cpp-conditional-branching-if-else-and-switch-case.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">4. if-else Ladders, Logical Logic & switch-case</span>
+    <span class="title">4. if-else & switch-case</span>
   </a>
   <a href="06-cpp-functions-prototypes-overloading-and-lambdas.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">6. Functions, Overloading, References & Lambdas</span>
+    <span class="title">6. Functions & Modular Code</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

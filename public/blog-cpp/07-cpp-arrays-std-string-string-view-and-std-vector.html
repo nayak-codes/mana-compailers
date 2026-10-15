@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Arrays, std::string, string_view & std::vector Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on C++ Sequences (Phase 7): Fixed arrays vs std::array, std::string API, zero-allocation std::string_view, and std::vector operations." />
-  <meta name="keywords" content="c++ tutorial, c++ arrays, std::string, string_view & std::vector masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Arrays, std::string & std::vector (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో Arrays కంటే std::vector ఎందుకు పవర్ ఫుల్? డైనమిక్ గా సైజు పెరిగే వెక్టార్స్ ఎలా పనిచేస్తాయి? std::string యొక్క అద్భుతమైన ఫీచర్స్ ఏంటో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c++ tutorial, arrays, std::string & std::vector (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/07-cpp-arrays-std-string-string-view-and-std-vector.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -293,6 +270,193 @@
         <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
       </div>
 
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
     </div>
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
@@ -303,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 7: C++ Arrays, std::string, string_view & std::vector Masterclass</span>
+      <span class="current">Lesson 7: Arrays, std::string & std::vector (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Arrays, std::string, string_view & std::vector Masterclass</h1>
+    <h1 class="page-title">Arrays, std::string & std::vector (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 7</span>
@@ -314,50 +478,113 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Fixed Arrays vs std::array · std::string API · std::string_view (C++17) · std::vector push_back/reserve · Range-for Traversal</span>
+      <span>Raw Arrays vs Vector · std::vector · Dynamic Size · std::string · Memory Reallocation</span>
     </div>
-<div class="intro-box">  <p>Welcome to <strong>Phase 7 (Chapter 7): C++ Arrays, std::string, string_view &amp; std::vector Masterclass</strong>! Dynamic sequence containers form the backbone of modern software. In this guide, you will master C-style arrays vs <code>std::array</code>, <code>std::string</code> API manipulation, zero-allocation <code>std::string_view</code> (C++17), and dynamic <code>std::vector</code> operations.</p></div><div class="section-title"><span class="num">1</span>Container Comparison Matrix</div><div class="section-body">  <table class="tbl spec-table">    <thead><tr><th>Container</th><th>Memory Allocation</th><th>Size Fixed or Dynamic?</th><th>Bounds Checked (.at())?</th></tr></thead>    <tbody>      <tr><td>C Array (<code>int arr[5]</code>)</td><td>Stack / Contiguous</td><td>Fixed at compile time</td><td>No (Danger of out-of-bounds!)</td></tr>      <tr><td><code>std::array&lt;T, N&gt;</code></td><td>Stack / Contiguous</td><td>Fixed at compile time</td><td>Yes (via <code>.at(i)</code>)</td></tr>      <tr><td><code>std::string</code></td><td>Heap (Small String Opt)</td><td>Dynamic sizing</td><td>Yes (via <code>.at(i)</code>)</td></tr>      <tr><td><code>std::string_view</code></td><td>Non-owning Pointer+Len</td><td>Fixed slice view</td><td>Yes</td></tr>      <tr><td><code>std::vector&lt;T&gt;</code></td><td>Heap / Dynamic RAM</td><td><strong>Resizable Dynamic Array</strong></td><td>Yes (via <code>.at(i)</code>)</td></tr>    </tbody>  </table></div><div class="section-title"><span class="num">2</span>std::vector &amp; std::string_view Code Demonstration</div><div class="section-body">  <div class="code-block">    <div class="code-block-header"><span class="lang-tag">C++ — std::vector, std::string & string_view</span><a class="try-btn" href="/?lang=cpp17">▶ Run Code in C++ Compiler</a></div><pre><code>#include &lt;iostream&gt;
+
+    <div class="intro-box">
+      <p>ఒక స్టూడెంట్ మార్కు అయితే ఒక వేరియబుల్ సరిపోతుంది, అదే 100 మంది స్టూడెంట్స్ మార్కులు స్టోర్ చేయాలంటే 100 వేరియబుల్స్ రాయలేము కదా! అందుకే ప్రోగ్రామింగ్ లో <strong>Arrays (అర్రేస్)</strong> వచ్చాయి. కానీ మామూలు అర్రేస్ లో ఉన్న అతి పెద్ద ప్రాబ్లెమ్ ఏంటంటే, ఒకసారి సైజు ఫిక్స్ చేసాక (ఉదాహరణకు 100), రేపు కొత్త స్టూడెంట్ వస్తే (101 వ వాడు) వాడికి అందులో ప్లేస్ ఉండదు. దీనికి C++ ఇచ్చిన అల్టిమేట్ సొల్యూషన్ <strong><code>std::vector</code></strong>. అలాగే అక్షరాలతో ఆడుకోవడానికి పాత C లాంటి క్యారెక్టర్ అర్రేస్ కాకుండా, సూపర్ పవర్ ఫుల్ అయిన <strong><code>std::string</code></strong> ని C++ లో ఎలా వాడాలో ఈ డీప్ గైడ్ లో చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> Raw Arrays కి మరియు std::vector కి ఉన్న తేడా?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        పాత కాలం అర్రేస్ (Raw Arrays) లో మనం ముందే కంపైలర్ కి సైజు చెప్పాలి. ఒకవేళ మీరు ఆ సైజు దాటి డేటా పెడితే ప్రోగ్రామ్ క్రాష్ అయిపోయి <strong>Segmentation Fault</strong> వస్తుంది. కానీ <strong>Vector (వెక్టార్)</strong> అనేది చాలా మ్యాజికల్ బాక్స్. మీరు అందులో వస్తువులు వేస్తున్న కొద్దీ దానంతట అదే దాని సైజుని డబుల్ (Double) చేసుకుంటూ పోతుంది.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>📦 రియల్ లైఫ్ స్టోరీ: ఐరన్ బాక్స్ vs రబ్బర్ బ్యాగ్</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          ఒక ఇనుప పెట్టె (Raw Array) తీసుకున్నారు అనుకోండి. దాని సైజు ఫిక్స్డ్. అందులో 10 ఆపిల్స్ మాత్రమే పడతాయి. మీరు 11వ ఆపిల్ ని అందులో బలవంతంగా కుక్కితే ఆపిల్ నలిగిపోతుంది లేదా బాక్స్ పగిలిపోతుంది.<br><br>
+          కానీ <strong>std::vector</strong> అనేది ఒక స్ట్రెచబుల్ రబ్బర్ బ్యాగ్ (Stretchy Bag) లాంటిది. మీరు అందులో ఆపిల్స్ వేస్తున్న కొద్దీ అది సాగుతూ (Expand) వెళ్తుంది. ఎంత డేటా అయినా పెట్టుకోవచ్చు. ఒకవేళ బ్యాగ్ ఫుల్ అయితే, బ్యాక్ గ్రౌండ్ లో C++ దానంతట అదే ఇంకో పెద్ద బ్యాగ్ కొనుక్కొని అందులోకి షిఫ్ట్ చేస్తుంది. ప్రోగ్రామర్ కి ఎలాంటి టెన్షన్ ఉండదు!
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> C++ లో std::string పవర్</div>
+    <div class="section-body">
+      <p class="text-prose">
+        C లాంగ్వేజ్ లో స్ట్రింగ్స్ అంటే కేవలం క్యారెక్టర్స్ పక్క పక్కన ఉండటం మాత్రమే (<code>char name[10];</code>). రెండు పేర్లు కలపాలి అంటే <code>strcat()</code> లాంటివి వాడాలి, అది చాలా కష్టం. కానీ C++ లో <code>std::string</code> వాడితే, రెండు స్ట్రింగ్స్ ని మీరు <code>+</code> సింబల్ తో (ఉదా: "Hello" + "World") డైరెక్ట్ గా కలిపేయొచ్చు. ఇదొక పెద్ద రిలీఫ్!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Vector & String Demo)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో ఒక <code>std::vector</code> తీసుకుని, దానికి మధ్యలో (Run Time లో) డేటా ఎలా పుష్ (push_back) చేస్తున్నామో గమనించండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — std::vector & std::string</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 #include &lt;vector&gt;
 #include &lt;string&gt;
-#include &lt;string_view&gt;
-
-void printView(std::string_view sv) {
-    std::cout &lt;&lt; "StringView: " &lt;&lt; sv &lt;&lt; " (length: " &lt;&lt; sv.length() &lt;&lt; ")\n";
-}
 
 int main() {
-    // std::vector Operations
-    std::vector&lt;int&gt; marks{85, 90, 78, 92};
-    marks.push_back(88);
-    marks.push_back(95);
-
-    std::cout &lt;&lt; "Vector size: " &lt;&lt; marks.size() &lt;&lt; ", capacity: " &lt;&lt; marks.capacity() &lt;&lt; "\n";
-    std::cout &lt;&lt; "Marks: ";
-    for (int m : marks) {
-        std::cout &lt;&lt; m &lt;&lt; " ";
+    // ఒక రబ్బర్ బ్యాగ్ (Vector) ని క్రియేట్ చేసాం
+    std::vector&lt;std::string&gt; names;
+    
+    // బ్యాగ్ లోకి వస్తువులు వేస్తున్నాం (push_back)
+    names.push_back("Apple");
+    names.push_back("Banana");
+    names.push_back("Cherry");
+    
+    // రేంజ్ బేస్డ్ లూప్ తో బయటకి తీస్తున్నాం
+    std::cout << "Fruits in Vector:" << std::endl;
+    for (std::string fruit : names) {
+        std::cout << "- " << fruit << std::endl;
     }
-    std::cout &lt;&lt; "\n";
-
-    // std::string & std::string_view
-    std::string text{"Modern C++ High-Performance Computing"};
-    std::string_view slice{text.c_str() + 7, 3}; // Zero-allocation view of "C++"
-    printView(slice);
-
+    
+    // వెక్టార్ సైజు ఎంత ఉందో డైరెక్ట్ గా అడగొచ్చు!
+    std::cout << "Total Fruits: " << names.size() << std::endl;
+    
     return 0;
-}</code></pre>  </div></div><div class="section-title"><span class="num">3</span>Technical FAQs</div><div class="section-body">  <div class="faq-grid">    <div class="faq-item"><h4>Q1: What is the difference between vector size() and capacity()?</h4><p><code>size()</code> is the number of elements currently stored. <code>capacity()</code> is the total memory allocated before requiring reallocation.</p></div>    <div class="faq-item"><h4>Q2: Why use vector.reserve(n)?</h4><p>Calling <code>reserve(n)</code> pre-allocates memory for n elements, avoiding repeated memory reallocation and element copying during <code>push_back()</code>.</p></div>    <div class="faq-item"><h4>Q3: Why is std::string_view faster than const std::string&?</h4><p><code>std::string_view</code> does NOT allocate memory or copy string data — it simply wraps a pointer and length, enabling zero-allocation substrings.</p></div>    <div class="faq-item"><h4>Q4: What is Small String Optimization (SSO)?</h4><p>Most C++ compilers store short strings (up to 15-23 characters) directly inside the <code>std::string</code> object on the stack without heap allocation.</p></div>    <div class="faq-item"><h4>Q5: Difference between [] indexing and .at() method?</h4><p><code>arr[i]</code> does zero bounds checking for speed. <code>arr.at(i)</code> throws <code>std::out_of_range</code> exception if index is invalid.</p></div>  </div></div>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>#include &lt;vector&gt;</code>: వెక్టార్ పవర్ వాడాలంటే ఈ ఫైల్ ని పైన ఇన్‌క్లూడ్ చేయాలి.</li>
+        <li><code>std::vector&lt;std::string&gt; names;</code>: ఇక్కడ కంపైలర్ కి "నాకు స్ట్రింగ్స్ ని స్టోర్ చేసుకునే ఒక ఎంప్టీ బ్యాగ్ ఇవ్వు" అని చెప్తున్నాం. మొదట్లో దీని సైజు 0 ఉంటుంది.</li>
+        <li><code>push_back("Apple")</code>: ఈ ఫంక్షన్ కాల్ చేయగానే బ్యాగ్ సైజు దానంతట అదే పెరిగి, యాపిల్ అందులో కూర్చుంటుంది.</li>
+        <li><code>size()</code> వాడి అందులో ఎన్ని ఉన్నాయో ఈజీగా చెక్ చేసాం. (ఇది మామూలు అర్రేస్ లో చేయలేము).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: వెక్టార్ సైజు ఆటోమేటిక్ గా ఎలా పెరుగుతుంది? (Capacity vs Size)</h4>
+          <p>వెక్టార్ ఫుల్ అయిన ప్రతిసారీ దాని కెపాసిటీని డబుల్ (Double) చేసుకుంటుంది. ఉదాహరణకు 4 వస్తువులు పడితే, 5వ వస్తువు వేసినప్పుడు దానంతట అదే 8 సైజు ఉన్న కొత్త మెమరీ తీసుకుని, పాత డేటాని కాపీ చేసి, పాత దాన్ని డిలీట్ చేస్తుంది. అందుకే దీన్ని డైనమిక్ అర్రే (Dynamic Array) అంటారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ప్రతిసారి డబుల్ అయితే మెమరీ వేస్ట్ అవ్వదా?</h4>
+          <p>కాస్త వేస్ట్ అవుతుంది. మీ దగ్గర 10 లక్షల ఐటమ్స్ ఉంటే, దానికి డబుల్ అవుతుంది. దాన్ని ఆపడానికి మీరు ముందే <code>names.reserve(100);</code> అని చెప్తే, మెమరీ ముందే అలోకేట్ అవుతుంది, డబుల్ అయ్యే రీ-లొకేషన్ ప్రాసెస్ తగ్గిపోయి స్పీడ్ పెరుగుతుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: C++17 లో వచ్చిన <code>std::string_view</code> అంటే ఏంటి?</h4>
+          <p>మనం ఒక ఫంక్షన్ కి <code>std::string</code> పంపిస్తే అది చాలాసార్లు ఆ స్ట్రింగ్ ని జిరాక్స్ (Copy) తీసుకుని పంపుతుంది. దానివల్ల మెమరీ టైమ్ వేస్ట్ అవుతుంది. <code>std::string_view</code> వాడితే, అది కేవలం అసలు స్ట్రింగ్ ని చూస్తుంది (View) మాత్రమే, కాపీ చేయదు. దీనివల్ల రీడ్-ఓన్లీ ఆపరేషన్స్ కి స్పీడ్ సూపర్ ఫాస్ట్ గా ఉంటుంది!</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="06-cpp-functions-prototypes-overloading-and-lambdas.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">6. Functions, Overloading, References & Lambdas</span>
+    <span class="title">6. Functions & Overloading</span>
   </a>
   <a href="08-cpp-pointers-references-nullptr-and-memory-safety.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">8. Pointers, References, nullptr & Memory Safety</span>
+    <span class="title">8. Pointers, References & nullptr</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

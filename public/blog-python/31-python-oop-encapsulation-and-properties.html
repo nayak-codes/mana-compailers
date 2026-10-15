@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Encapsulation & Properties — Python 3 Tutorial | Our Compiler</title>
-  <meta name="description" content="Master data protection and encapsulation in Python: public attributes, protected conventions with single underscore (_), private attributes with double underscore (__), name mangling internals, and Pythonic getters/setters with the @property decorator." />
-  <meta name="keywords" content="python tutorial, learn python, python encapsulation & properties, python online compiler, python automation, web scraping, python testing" />
+  <title>Python Encapsulation & Properties (తెలుగులో) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="మన డేటాని ఎవరైనా బయటనుండి మార్చకుండా పైథాన్ లో ఎలా హైడ్ చేయాలి? Public, Protected, Private వేరియబుల్స్ అంటే ఏంటి? @property ఎందుకు వాడాలో చూద్దాం." />
+  <meta name="keywords" content="python tutorial, learn python, python encapsulation & properties (తెలుగులో), python online compiler, python automation, web scraping, python testing" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-python/31-python-oop-encapsulation-and-properties.html" />
@@ -20,8 +20,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Python Encapsulation & Properties — Python 3 Master Tutorial",
-  "description": "Master data protection and encapsulation in Python: public attributes, protected conventions with single underscore (_), private attributes with double underscore (__), name mangling internals, and Pythonic getters/setters with the @property decorator.",
+  "headline": "Python Encapsulation & Properties (తెలుగులో) — Python 3 Master Tutorial",
+  "description": "మన డేటాని ఎవరైనా బయటనుండి మార్చకుండా పైథాన్ లో ఎలా హైడ్ చేయాలి? Public, Protected, Private వేరియబుల్స్ అంటే ఏంటి? @property ఎందుకు వాడాలో చూద్దాం.",
   "articleSection": "Phase 7: Object-Oriented Programming",
   "author": {
     "@type": "Organization",
@@ -44,26 +44,10 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Is there true private data in Python like private in Java/C++?",
+      "name": "ఒక వేరియబుల్ ని రీడ్-ఓన్లీ (ReadOnly) గా మార్చడం ఎలా?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Python uses name mangling (_ClassName__var) to protect private attributes. It prevents accidental collisions and warns developers, but does not provide hard memory-level access barriers."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the @deleter decorator in Python properties?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "@property_name.deleter allows you to customize what happens when someone executes \"del obj.property_name\", such as resetting a cached value or cleaning up related resources."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Can a property be read-only in Python?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes! Simply define the @property getter without defining a corresponding @setter. Any attempt to assign to the attribute will raise an AttributeError: property has no setter."
+        "text": "జస్ట్ దానికి @property అని పెట్టి ఫంక్షన్ రాయండి, కానీ @setter రాయకండి. అప్పుడు ఎవరైనా దాన్ని మార్చడానికి ట్రై చేస్తే AttributeError వస్తుంది."
       }
     }
   ]
@@ -205,8 +189,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-python">
 
@@ -548,7 +530,7 @@
       <span class="current">Chapter 31: 31. Encapsulation & Properties</span>
     </div>
 
-    <h1 class="page-title">Python Encapsulation & Properties</h1>
+    <h1 class="page-title">Python Encapsulation & Properties (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">🐍 Python 3.12+</span>
@@ -564,19 +546,19 @@
     </div>
 
     <div class="intro-box">
-      Master data protection and encapsulation in Python: public attributes, protected conventions with single underscore (_), private attributes with double underscore (__), name mangling internals, and Pythonic getters/setters with the @property decorator.
+      మన డేటాని ఎవరైనా బయటనుండి మార్చకుండా పైథాన్ లో ఎలా హైడ్ చేయాలి? Public, Protected, Private వేరియబుల్స్ అంటే ఏంటి? @property ఎందుకు వాడాలో చూద్దాం.
     </div>
 
 
-    <div class="section-title"><span class="num">1</span>What is Encapsulation? Data Hiding and Access Control</div>
+    <div class="section-title"><span class="num">1</span>Encapsulation అంటే ఏంటి? (Public, Protected, Private)</div>
     <div class="section-body">
-      <p><strong>Encapsulation</strong> is the bundling of data (attributes) and the methods that operate on that data into a single unit, while restricting direct outside access to internal implementation details.</p>
-        <p>In Python, access modifiers are governed by naming conventions rather than strict language keywords (like <code>private</code> in Java/C++):</p>
+      <p><strong>Encapsulation</strong> అంటే మన డేటాని (వేరియబుల్స్) ఒక క్యాప్స్యూల్ లాగా ప్యాక్ చేసి, వేరే ఫైల్స్ నుంచి ఎవరు పడితే వాళ్ళు డైరెక్ట్ గా మార్చకుండా లాక్ చేయడం.</p>
+        <p>పైథాన్ లో జావా లాగా <code>private</code>, <code>public</code> అనే కీవర్డ్స్ ఉండవు. దానికి బదులు వేరియబుల్ పేర్లతో (Underscores) అడ్జస్ట్ చేస్తాం:</p>
         <table class="tbl" style="margin-top:8px; font-size:12.5px;">
-          <tr><th>Modifier</th><th>Naming Syntax</th><th>Accessibility / Convention</th></tr>
-          <tr><td><strong>Public</strong></td><td><code>self.name</code></td><td>Accessible freely from anywhere (inside and outside the class).</td></tr>
-          <tr><td><strong>Protected</strong></td><td><code>self._balance</code></td><td><strong>Convention only:</strong> Signals to other developers that this is internal and should only be accessed by this class and its subclasses.</td></tr>
-          <tr><td><strong>Private</strong></td><td><code>self.__pin</code></td><td><strong>Enforced by Python:</strong> Triggers <strong>Name Mangling</strong> to prevent accidental outside access or subclass overriding.</td></tr>
+          <tr><th>రకం</th><th>సింటాక్స్ (పేరు)</th><th>అర్థం</th></tr>
+          <tr><td><strong>Public</strong></td><td><code>self.name</code></td><td>ఎవరైనా, ఎక్కడినుంచైనా డైరెక్ట్ గా రీడ్ / రైట్ చేయొచ్చు.</td></tr>
+          <tr><td><strong>Protected</strong></td><td><code>self._email</code></td><td><strong>రూల్ మాత్రమే:</strong> బయటనుండి వాడొద్దు, ఇది ఇంటర్నల్ అని చెప్తున్నాం. (పైథాన్ దీన్ని ఆపదు).</td></tr>
+          <tr><td><strong>Private</strong></td><td><code>self.__pin</code></td><td><strong>కఠినమైన రూల్:</strong> పైథాన్ దీని పేరు మార్చేస్తుంది (మ్యాంగ్లింగ్), కాబట్టి బయటనుండి పిలవడం కుదరదు!</td></tr>
         </table>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
@@ -588,22 +570,22 @@
           </div>
           <pre><code>class UserAccount:
     def __init__(self, username, email, pin):
-        self.username = username      # Public (Freely accessible)
-        self._email = email          # Protected (Convention: internal use)
-        self.__pin = pin             # Private (Name mangled!)
+        self.username = username      # Public (ఫుల్ యాక్సెస్)
+        self._email = email          # Protected (చూసి వదిలేయాలి)
+        self.__pin = pin             # Private (పేరు మారిపోతుంది!)
 
     def verify_pin(self, entered_pin):
         return self.__pin == entered_pin
 
 user = UserAccount("balaji_dev", "balaji@test.com", 1234)
 
-# 1. Accessing Public attribute:
+# 1. Public ది యాక్సెస్ చేద్దాం (వస్తుంది):
 print("Public Username:", user.username)
 
-# 2. Accessing Protected attribute (Works, but discouraged by convention):
+# 2. Protected ది యాక్సెస్ చేద్దాం (వస్తుంది, కానీ చేయకూడదు):
 print("Protected Email:", user._email)
 
-# 3. Attempting to access Private attribute directly raises AttributeError:
+# 3. Private దాన్ని డైరెక్ట్ గా అడిగితే (AttributeError వస్తుంది):
 try:
     print(user.__pin)
 except AttributeError as err:
@@ -611,16 +593,16 @@ except AttributeError as err:
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why user.__pin failed:</strong>
-          <p style="margin-top:6px;">Python actively protects private variables by rewriting their names in memory so external callers cannot accidentally read or corrupt them.</p>
+          <strong style="color:#10b981;">🔍 user.__pin ఎందుకు రాలేదు?:</strong>
+          <p style="margin-top:6px;">పైథాన్ ప్రైవేట్ వేరియబుల్స్ కి ముందు క్లాస్ పేరు తగిలిస్తుంది, తద్వారా బయటనుండి పిలిచినప్పుడు ఆ పేరుతో వేరియబుల్ లేదని ఎర్రర్ ఇస్తుంది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">2</span>Name Mangling Internals (_ClassName__attribute)</div>
+    <div class="section-title"><span class="num">2</span>Name Mangling (లోపల ఏం జరుగుతుంది?)</div>
     <div class="section-body">
-      <p>When Python encounters an identifier starting with two or more leading underscores (<code>__pin</code>), it automatically rewrites the variable name internally to <strong><code>_ClassName__attribute</code></strong> (e.g. <code>_UserAccount__pin</code>).</p>
-        <p>This mechanism is known as <strong>Name Mangling</strong>. Its primary purpose is not cryptography, but to <strong>prevent accidental name collisions in inheritance hierarchies</strong> when subclasses define attributes with identical names.</p>
+      <p>మీరు ఒక వేరియబుల్ కి ముందు రెండు అండర్ స్కోర్స్ (<code>__pin</code>) ఇస్తే, పైథాన్ ఆటోమాటిక్ గా దాన్ని <strong><code>_ClassName__attribute</code></strong> (ఉదా: <code>_UserAccount__pin</code>) గా పేరు మార్చేస్తుంది. దీన్నే <strong>Name Mangling</strong> అంటారు.</p>
+        <p>ఇది హ్యాకర్స్ నుండి కాపాడటానికి కాదు, వేరే క్లాస్ లో అదే పేరుతో వేరియబుల్ ఉంటే రెండూ ఓవర్ రైడ్ అవ్వకుండా కాపాడటానికి.</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Inspecting Name Mangling in Python Memory</div>
@@ -629,27 +611,27 @@ except AttributeError as err:
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Inspecting the internal __dict__ table of the instance:
+          <pre><code># మన ఆబ్జెక్ట్ లోపల అసలు వేరియబుల్స్ ఎలా స్టోర్ అయ్యున్నాయో చూద్దాం (__dict__ వాడి):
 user = UserAccount("ravi_k", "ravi@test.com", 9988)
 
-print("Instance Memory Dictionary (__dict__):")
+print("ఆబ్జెక్ట్ లోపల ఉన్న డేటా ఇదీ:")
 print(user.__dict__)
 
-# Accessing the mangled name directly (Proof of Name Mangling):
-print("\nAccessing via mangled name (_UserAccount__pin):", user._UserAccount__pin)</code></pre>
+# మార్చిన పేరుతో పిలిస్తే? (ఖచ్చితంగా వస్తుంది):
+print("\nమ్యాంగిల్ అయిన పేరుతో పిలిస్తే వస్తుంది:", user._UserAccount__pin)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Python Philosophy:</strong>
-          <p style="margin-top:6px;">As Python core developers famously say, <em>"We are all consenting adults here."</em> Name mangling discourages unsafe access while still leaving the door open for debugging tools and serializers.</p>
+          <strong style="color:#10b981;">🔍 పైథాన్ సిద్ధాంతం:</strong>
+          <p style="margin-top:6px;">"మనం అందరం పెద్దవాళ్ళం, బాధ్యతగా ఉందాం" అని పైథాన్ నమ్ముతుంది. అంటే హార్డ్ కోర్ గా ప్రైవేట్ చేయదు, మీరు కావాలంటే ఆ మ్యాంగిల్ అయిన పేరుతో యాక్సెస్ చేయొచ్చు, కానీ డెవలపర్స్ అలా చేయరు.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">3</span>Pythonic Getters, Setters & The @property Decorator</div>
+    <div class="section-title"><span class="num">3</span>అద్భుతమైన @property (Getters & Setters)</div>
     <div class="section-body">
-      <p>In languages like Java, developers are forced to write verbose boilerplate methods: <code>getBalance()</code> and <code>setBalance(val)</code>. In Python, you can expose methods as if they were simple attributes using the <strong><code>@property</code> decorator</strong>!</p>
-        <p>This allows you to add <strong>validation, type checking, and computed logic</strong> transparently without breaking existing code that accesses the attribute directly:</p>
+      <p>జావా లాంటి లాంగ్వేజెస్ లో బ్యాలెన్స్ మార్చాలంటే <code>setBalance(val)</code> అని రాయాలి. కానీ పైథాన్ లో మీరు <strong><code>@property</code></strong> డెకరేటర్ వాడితే, అది చూడటానికి మామూలు వేరియబుల్ లాగే ఉంటుంది, కానీ లోపల అది ఒక ఫంక్షన్ రన్ చేస్తుంది!</p>
+        <p>దీనివల్ల మనం యూజర్ మైనస్ బ్యాలెన్స్ ఎంటర్ చేస్తే చెక్ చేసి ఆపొచ్చు:</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Clean Data Validation with @property and @setter</div>
@@ -661,61 +643,61 @@ print("\nAccessing via mangled name (_UserAccount__pin):", user._UserAccount__pi
           <pre><code>class BankAccount:
     def __init__(self, owner, initial_balance):
         self.owner = owner
-        self._balance = 0.0          # Protected backing field
-        self.balance = initial_balance # Routes through @balance.setter for validation!
+        self._balance = 0.0          # ఇది రియల్ వాల్యూ స్టోర్ చేసే Protected వేరియబుల్
+        self.balance = initial_balance # ఇది కింద ఉన్న setter ని పిలుస్తుంది!
 
-    # 1. Getter property:
+    # 1. Getter (యూజర్ అడిగినప్పుడు):
     @property
     def balance(self):
-        """Getter: returns the current balance."""
+        """బ్యాలెన్స్ అడిగితే ఇస్తుంది."""
         return self._balance
 
-    # 2. Setter property with validation:
+    # 2. Setter (యూజర్ అప్డేట్ చేసినప్పుడు):
     @balance.setter
     def balance(self, value):
-        """Setter: enforces positive balance rule."""
+        """బ్యాలెన్స్ మార్చేటప్పుడు వాలిడేట్ చేస్తుంది."""
         if not isinstance(value, (int, float)):
-            raise TypeError("Balance must be a numeric value!")
+            raise TypeError("బ్యాలెన్స్ కి నెంబర్స్ మాత్రమే ఇవ్వాలి!")
         if value < 0:
-            raise ValueError(f"Balance cannot be negative! Attempted: ₹{value}")
+            raise ValueError(f"మైనస్ లో బ్యాలెన్స్ ఉండదు! మీరు ఇచ్చింది: ₹{value}")
         self._balance = float(value)
 
-    # 3. Read-Only computed property:
+    # 3. Read-Only (ఓన్లీ చదవడానికి మాత్రమే, సెట్టర్ లేదు):
     @property
     def formatted_balance(self):
         return f"₹{self._balance:,.2f}"
 
-# Test the property decorator:
+# టెస్టింగ్ చేద్దాం:
 acc = BankAccount("Balaji", 5000)
-print("Balance accessed as attribute:", acc.balance) # Calls getter!
+print("Balance accessed:", acc.balance) # getter కాల్ అవుతుంది!
 print("Formatted:", acc.formatted_balance)
 
-# Update balance cleanly (Calls setter validation):
+# సక్సెస్ గా అప్డేట్ చేయడం (setter కాల్ అయ్యి వాలిడేట్ చేస్తుంది):
 acc.balance = 7500
 print("Updated Balance:", acc.formatted_balance)
 
-# Attempt invalid negative update:
+# మైనస్ వాల్యూ ఇస్తే?
 try:
-    acc.balance = -1000 # Triggers ValueError!
+    acc.balance = -1000 # ఇక్కడ కోడ్ ఆగిపోయి, ValueError ఇస్తుంది!
 except ValueError as err:
     print("🚫 Validation Prevented Error:", err)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why @property is Superior:</strong>
-          <p style="margin-top:6px;">Callers use clean syntax <code>acc.balance = 7500</code> without ugly method calls like <code>acc.setBalance(7500)</code>, while your class retains 100% control over validation.</p>
+          <strong style="color:#10b981;">🔍 @property ఎందుకు బెస్ట్?:</strong>
+          <p style="margin-top:6px;">యూజర్ <code>acc.balance = 7500</code> అని నార్మల్ గానే రాస్తాడు (సెట్టర్ ఫంక్షన్ వాడాల్సిన పనిలేదు). కానీ బ్యాక్ గ్రౌండ్ లో ఫంక్షన్ రన్ అయ్యి వాలిడేషన్ జరుగుతుంది.</p>
         </div>
     </div>
   
 
     <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfall: Infinite Recursion Loop in @property Setter (RecursionError)</div>
-      <p>Inside the setter "def balance(self, value):", writing "self.balance = value" calls the setter again endlessly until RecursionError crashes Python! You must assign to the private backing variable: self._balance = value.</p>
+      <div class="callout-title">⚠️ Common Developer Pitfall: Setter లోపల మళ్ళీ ఆ వేరియబుల్ నే పిలవడం (RecursionError)</div>
+      <p>Setter లోపల "self.balance = value" అని రాస్తే, అది మళ్ళీ అదే setter ని పిలుస్తుంది. అలా తిరిగీ తిరిగీ క్రాష్ అవుతుంది! ఎప్పుడూ లోపల ప్రైవేట్ వేరియబుల్ నే వాడాలి: self._balance = value.</p>
     </div>
 
     <div class="try-box">
       <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p>Create a Temperature class with a celsius property. Add a getter and setter with a rule that temperature cannot be below absolute zero (-273.15°C).</p>
+      <p>ఒక Temperature క్లాస్ రాయండి. అందులో celsius అనే @property ఉండాలి, అది -273.15 కంటే కిందకి ఇస్తే (Absolute Zero) ఎర్రర్ త్రో చేయాలి.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">Python 3 Practice Challenge</span>
@@ -732,7 +714,7 @@ except ValueError as err:
     @celsius.setter
     def celsius(self, value):
         if value < -273.15:
-            raise ValueError("Temperature below absolute zero is impossible!")
+            raise ValueError("ఉష్ణోగ్రత అబ్సల్యూట్ జీరో కంటే తక్కువ ఉండదు!")
         self._celsius = value
 
 t = Temperature(25)
@@ -746,20 +728,8 @@ print(f"Updated: {t.celsius}°C")</code></pre>
     <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Is there true private data in Python like private in Java/C++?</h4>
-      <p>No. Python uses name mangling (_ClassName__var) to protect private attributes. It prevents accidental collisions and warns developers, but does not provide hard memory-level access barriers.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the @deleter decorator in Python properties?</h4>
-      <p>@property_name.deleter allows you to customize what happens when someone executes "del obj.property_name", such as resetting a cached value or cleaning up related resources.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Can a property be read-only in Python?</h4>
-      <p>Yes! Simply define the @property getter without defining a corresponding @setter. Any attempt to assign to the attribute will raise an AttributeError: property has no setter.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> ఒక వేరియబుల్ ని రీడ్-ఓన్లీ (ReadOnly) గా మార్చడం ఎలా?</h4>
+      <p>జస్ట్ దానికి @property అని పెట్టి ఫంక్షన్ రాయండి, కానీ @setter రాయకండి. అప్పుడు ఎవరైనా దాన్ని మార్చడానికి ట్రై చేస్తే AttributeError వస్తుంది.</p>
     </div>
   
 
@@ -788,6 +758,5 @@ print(f"Updated: {t.celsius}°C")</code></pre>
 </div>
 
 <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

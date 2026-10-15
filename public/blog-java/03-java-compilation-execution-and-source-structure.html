@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How Java Compiles & Runs & Source File Structure — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Deep exploration of the complete Java compilation and execution pipeline: from source code (.java) to bytecode (.class) and native machine code, why Java is hybrid compiled/interpreted, and the mandatory architectural structure of Java source files." />
-  <meta name="keywords" content="how java compiles & runs & source file structure, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>How Java Compiles & Runs & Source File Structure (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="మనం రాసిన కోడ్ కంప్యూటర్ కి ఎలా అర్థం అవుతుంది? అసలు కంపైలేషన్ అంటే ఏంటి? జావా కోడ్ కంపైల్ అయ్యి, రన్ అయ్యే లోపల ఏం ప్రాసెస్ జరుగుతుంది? ఒక ఫైల్ లో కోడ్ రాసేటప్పుడు పైన ఏముండాలి, కింద ఏముండాలి అనే స్ట్రక్చర్ రూల్స్ ఏంటో చూద్దాం." />
+  <meta name="keywords" content="how java compiles & runs & source file structure (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/03-java-compilation-execution-and-source-structure.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 3: 3. Compilation & File Structure</span>
     </div>
 
-    <h1 class="page-title">How Java Compiles & Runs & Source File Structure</h1>
+    <h1 class="page-title">How Java Compiles & Runs & Source File Structure (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,64 +541,62 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Deep exploration of the complete Java compilation and execution pipeline: from source code (.java) to bytecode (.class) and native machine code, why Java is hybrid compiled/interpreted, and the mandatory architectural structure of Java source files.</p>
+      <p>మనం రాసిన కోడ్ కంప్యూటర్ కి ఎలా అర్థం అవుతుంది? అసలు కంపైలేషన్ అంటే ఏంటి? జావా కోడ్ కంపైల్ అయ్యి, రన్ అయ్యే లోపల ఏం ప్రాసెస్ జరుగుతుంది? ఒక ఫైల్ లో కోడ్ రాసేటప్పుడు పైన ఏముండాలి, కింద ఏముండాలి అనే స్ట్రక్చర్ రూల్స్ ఏంటో చూద్దాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The 2-Step Java Compilation & Execution Lifecycle</h2>
+      <h2>1. కోడ్ రన్ అయ్యే 2-స్టెప్ ప్రాసెస్ (Compilation & Execution)</h2>
       <div class="theory-text">
-        <p>Java combines the speed of compiled languages with the flexibility of interpreted languages. Here is the step-by-step journey of your code:</p>
+        <p>జావా లో రాసిన కోడ్ డైరెక్ట్ గా కంప్యూటర్ కి అర్థం కాదు. మధ్యలో రెండు స్టెప్స్ ఉంటాయి:</p>
 <div class="code-block"><pre><code>+-----------------------------------------------------------------------------------+
 |                        JAVA CODE EXECUTION PIPELINE                               |
 +-----------------------------------------------------------------------------------+
 |  [ Step 1: Human Source Code ]                                                    |
-<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>File: Main.java (Plain text readable code written by developer)</th></tr></thead><tbody><tr><td>v</td></tr><tr><td>[ Step 2: Java Compiler (javac) ]</td></tr><tr><td>Command: javac Main.java</td></tr><tr><td>Action : Syntax validation, type checking, semantic analysis</td></tr><tr><td></td></tr></tbody></table></div>
+<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>ఫైల్: Main.java (మనం ఇంగ్లీష్ లాగా రాసే కోడ్)</th></tr></thead><tbody><tr><td>v</td></tr><tr><td>[ Step 2: Java Compiler (javac) ]</td></tr><tr><td>కమాండ్: javac Main.java</td></tr><tr><td>ఏం చేస్తుంది : మనం రాసిన కోడ్ లో తప్పులు ఏమైనా ఉన్నాయా అని చెక్ చేస్తుంది</td></tr><tr><td></td></tr></tbody></table></div>
                                                                        |
 |           v                                                                       |
 |  [ Step 3: Architecture-Neutral Bytecode ]                                        |
-<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>File: Main.class (Compact, platform-agnostic bytecode instructions)</th></tr></thead><tbody><tr><td>v</td></tr><tr><td>[ Step 4: Java Virtual Machine (JVM) ]</td></tr><tr><td>Command: java Main</td></tr><tr><td>Actions:</td></tr><tr><td>1. ClassLoader loads Main.class into memory</td></tr><tr><td>2. Bytecode Verifier checks security & memory safety</td></tr><tr><td>3. Execution Engine:</td></tr><tr><td>- Interpreter reads instructions immediately</td></tr><tr><td>- JIT Compiler compiles hot code paths into optimized machine code</td></tr><tr><td></td></tr></tbody></table></div>
+<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>ఫైల్: Main.class (తప్పులు లేకపోతే ఈ ఫైల్ క్రియేట్ అవుతుంది)</th></tr></thead><tbody><tr><td>v</td></tr><tr><td>[ Step 4: Java Virtual Machine (JVM) ]</td></tr><tr><td>కమాండ్: java Main</td></tr><tr><td>ఏం చేస్తుంది: ఆ .class ఫైల్ ని తీసుకుని విండోస్ అయితే విండోస్ కి, Mac అయితే Mac కి</td></tr><tr><td>అర్థమయ్యేలా మార్చి రన్ చేస్తుంది.</td></tr><tr><td></td></tr></tbody></table></div>
                                                                        |
 |           v                                                                       |
 |  [ Step 5: Native Machine Execution ]                                             |
-|    Binary CPU instructions executed directly on Host CPU (Intel / AMD / ARM)      |
+|    మన కంప్యూటర్ ప్రాసెసర్ కి (జీరోలు, వన్స్ లాగా) అర్థమై స్క్రీన్ మీద అవుట్పుట్ వస్తుంది!       |
 +-----------------------------------------------------------------------------------+</code></pre></div>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Why is Java both Compiled and Interpreted?</h2>
+      <h2>2. జావా Compiled లాంగ్వేజా? Interpreted లాంగ్వేజా?</h2>
       <div class="theory-text">
-        <p>Lower-level languages (like C and C++) are <strong>Purely Compiled</strong>: they translate source code directly into CPU machine binaries. If the CPU changes, the binary breaks.</p>
-<p>Higher-level scripting languages (like Python and JavaScript) are <strong>Purely Interpreted</strong>: the interpreter reads source code line-by-line during runtime, which can result in slower execution speeds for heavy computation.</p>
-<p><strong>Java combines the best of both worlds:</strong><br>1. <strong>Compilation Phase (<code>javac</code>):</strong> Pre-compiles source code into Bytecode once, catching syntax errors and type mismatches ahead of time.<br>2. <strong>Interpretation & JIT Phase (JVM):</strong> The JVM interprets Bytecode immediately on startup for quick response times, while the <strong>JIT (Just-In-Time) compiler</strong> converts repetitive loops into pure native machine code, achieving near-C++ speeds!</p>
+        <p>C, C++ లాంటి లాంగ్వేజెస్ <strong>Purely Compiled</strong>. అంటే మనం రాసిన కోడ్ డైరెక్ట్ గా సిస్టమ్ కి అర్థమయ్యే <code>.exe</code> ఫైల్ గా మారిపోతుంది. ఇవి చాలా స్పీడ్ గా ఉంటాయి.<br>        <br>Python, JavaScript లాంటివి <strong>Purely Interpreted</strong>. అంటే లైన్ బై లైన్ కోడ్ ని చదువుకుంటూ రన్ అవుతాయి. ఇవి కొంచెం స్లో.</p>
+<p><strong>కానీ జావా ఈ రెండింటి కాంబినేషన్:</strong><br>1. <strong>Compilation (<code>javac</code>):</strong> ముందు మనం రాసిన కోడ్ లో తప్పులు లేకుండా కంపైల్ చేసి ఒక ప్యాకెట్ (.class) లాగా మారుస్తుంది.<br>2. <strong>Interpretation (JVM):</strong> ఆ ప్యాకెట్ ని లైన్ బై లైన్ చదువుతూ రన్ చేస్తుంది. మధ్యలో ఏదైనా కోడ్ రిపీట్ అవుతుంటే <strong>JIT (Just-In-Time) కంపైలర్</strong> వాడి దాన్ని సూపర్ ఫాస్ట్ గా రన్ అయ్యేలా చేస్తుంది!</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Mandatory Java Source File Structure</h2>
+      <h2>3. జావా ఫైల్ స్ట్రక్చర్ రూల్స్ (ఏది ఎక్కడ రాయాలి?)</h2>
       <div class="theory-text">
-        <p>A single <code>.java</code> source file follows a strict top-to-bottom structural hierarchy:</p>
+        <p>ఒక <code>.java</code> ఫైల్ తీసుకుంటే, అందులో ఏ లైన్ తర్వాత ఏది రావాలో ఒక ఆర్డర్ ఉంటుంది. ఇష్టం వచ్చినట్టు రాయడానికి లేదు:</p>
 <div class="code-block"><pre><code>+-----------------------------------------------------------------------+
-| 1. Package Declaration (Optional, must be first line if present)       |
+| 1. Package Declaration (ఫైల్ ఏ ఫోల్డర్ లో ఉందో చెప్పాలి. ఉంటే ఇదే ఫస్ట్ లైన్ లో ఉండాలి) |
 |    package com.ourcompiler.tutorial;                                  |
 +-----------------------------------------------------------------------+
-| 2. Import Statements (Optional, imports external classes/libraries)   |
+| 2. Import Statements (బయట నుంచి వేరే టూల్స్ తెచ్చుకోవడానికి)                 |
 |    import java.util.Scanner;                                          |
-|    import java.time.LocalDateTime;                                    |
 +-----------------------------------------------------------------------+
-| 3. Main Public Class Declaration (Must match filename exactly)        |
-<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>public class Application {</th></tr></thead><tbody><tr><td>// 4. Class Variables & Fields (State)</td></tr><tr><td>private String appName = "OurCompiler Engine";</td></tr><tr><td>public static final int VERSION = 1;</td></tr><tr><td></td></tr><tr><td>// 5. Constructors (Object Initialization)</td></tr><tr><td>public Application() { ... }</td></tr><tr><td></td></tr><tr><td>// 6. Methods (Behavior)</td></tr><tr><td>public void start() { ... }</td></tr><tr><td></td></tr><tr><td>// 7. Main Entry Point Method</td></tr><tr><td>public static void main(String[] args) { ... }</td></tr><tr><td>}</td></tr></tbody></table></div>
+| 3. Main Public Class (ఫైల్ పేరు, ఈ పేరు ఒకటే ఉండాలి)                        |
+<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>public class Application {</th></tr></thead><tbody><tr><td>// 4. Variables (ప్రాపర్టీస్)</td></tr><tr><td>String appName = "OurCompiler";</td></tr><tr><td></td></tr><tr><td>// 5. Constructors (స్టార్ట్ అవ్వగానే రన్ అయ్యేవి)</td></tr><tr><td>public Application() { ... }</td></tr><tr><td></td></tr><tr><td>// 6. Methods (ఫంక్షన్స్ / పనులు)</td></tr><tr><td>public void start() { ... }</td></tr><tr><td></td></tr><tr><td>// 7. Main Entry Point (స్టార్టింగ్ పాయింట్)</td></tr><tr><td>public static void main(String[] args) { ... }</td></tr><tr><td>}</td></tr></tbody></table></div>
 +-----------------------------------------------------------------------+
-| 8. Non-Public Classes (Optional, package-private helper classes)      |
-|    class HelperUtil { ... }                                           |
+| 8. Non-Public Classes (అవసరమైతే ఎక్స్ట్రా క్లాసులు కింద రాసుకోవచ్చు)            |
+|    class Helper { ... }                                               |
 +-----------------------------------------------------------------------+</code></pre></div>
-<h3>Fundamental Source File Rules:</h3>1. <strong>Package Statement First:</strong> If a file belongs to a package (folder), the <code>package</code> statement must be the very first non-comment line.
-2. <strong>Single Public Class Rule:</strong> A <code>.java</code> file can have <strong>at most one</strong> <code>public</code> class.
-3. <strong>Filename Rule:</strong> The filename MUST match the name of the <code>public</code> class (e.g. <code>Application.java</code> for <code>public class Application</code>).
+<h3>మెయిన్ రూల్స్:</h3>1. <strong>Package ఫస్ట్:</strong> ప్యాకేజ్ పేరు ఇస్తుంటే కచ్చితంగా అదే ఫస్ట్ లైన్ లో ఉండాలి.
+2. <strong>ఒకే పబ్లిక్ క్లాస్:</strong> ఒక ఫైల్ లో ఎన్నైనా క్లాసులు రాయొచ్చు కానీ, పబ్లిక్ క్లాస్ మాత్రం ఒకటే ఉండాలి.
+3. <strong>ఫైల్ నేమ్:</strong> ఆ పబ్లిక్ క్లాస్ పేరే ఫైల్ కి పెట్టాలి.
       </div>
     </section>
   
@@ -614,44 +612,42 @@
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>// 1. Package statement (conceptual for tutorial demonstration)
+        <pre><code>// 1. Package (ఇది ఒక ఫోల్డర్ లో ఉంటే కచ్చితంగా రాయాలి)
 // package com.ourcompiler.demo;
 
-// 2. Import statements from standard class library
+// 2. Import (టైమ్ ని తెచ్చుకోవడానికి ఈ లైబ్రరీస్ వాడుతున్నాం)
 import java.util.Date;
 import java.time.LocalDate;
 
-// 3. Primary public class matching filename: SourceStructureDemo.java
+// 3. పబ్లిక్ క్లాస్ (దీని పేరు ఫైల్ పేరు ఒకటే ఉండాలి)
 public class Main {
     
-    // 4. Class-level constants & fields
-    public static final String COURSE_NAME = "Java Masterclass 2026";
+    // 4. క్లాస్ లోపల వేరియబుల్స్ 
+    public static final String COURSE = "Java Course 2026";
 
-    // 5. Main execution entry point
+    // 5. మెయిన్ ఫంక్షన్
     public static void main(String[] args) {
-        System.out.println("Course Title   : " + COURSE_NAME);
-        System.out.println("System Date    : " + new Date());
-        System.out.println("Current Year   : " + LocalDate.now().getYear());
+        System.out.println("కోర్సు పేరు: " + COURSE);
+        System.out.println("ఈరోజు డేట్: " + new Date());
+        System.out.println("సంవత్సరం : " + LocalDate.now().getYear());
         
-        // Calling a helper method
-        displaySystemArchitecture();
+        // మనమే రాసిన ఇంకో ఫంక్షన్ ని కాల్ చేయడం
+        showDetails();
     }
 
-    // 6. Custom member method
-    public static void displaySystemArchitecture() {
-        System.out.println("Architecture   : 2-Step JIT Bytecode Compilation Model");
-        System.out.println("Status         : Fully Compliant with Java 21 LTS Standard");
+    // 6. కస్టమ్ ఫంక్షన్
+    public static void showDetails() {
+        System.out.println("--- జావా ప్రోగ్రామ్ రన్ అవుతోంది ---");
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">Course Title   : Java Masterclass 2026
-System Date    : Sun Aug 16 13:45:00 IST 2026
-Current Year   : 2026
-Architecture   : 2-Step JIT Bytecode Compilation Model
-Status         : Fully Compliant with Java 21 LTS Standard</div>
+        <div class="output-content">కోర్సు పేరు: Java Course 2026
+ఈరోజు డేట్: Sun Aug 16 13:45:00 IST 2026
+సంవత్సరం : 2026
+--- జావా ప్రోగ్రామ్ రన్ అవుతోంది ---</div>
       </div>
 
       <div class="explain-card">
@@ -659,25 +655,25 @@ Status         : Fully Compliant with Java 21 LTS Standard</div>
         
     <div class="explain-item">
       <code class="code-token">import java.util.Date;</code>
-      <p>Imports the legacy Date class from the java.util standard library package.</p>
+      <p>జావా వాళ్ళు ముందే రాసిపెట్టిన Date క్లాస్ ని మన ఫైల్ లోకి తెచ్చుకుంటున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">public static final String COURSE_NAME</code>
-      <p>Declares a public, class-level, constant (final) String variable accessible everywhere.</p>
+      <code class="code-token">public static final String COURSE</code>
+      <p>ఎవరూ మార్చడానికి వీల్లేని (constant) వేరియబుల్ ని క్రియేట్ చేస్తున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">displaySystemArchitecture();</code>
-      <p>Invokes the static member method defined within the same class.</p>
+      <code class="code-token">showDetails();</code>
+      <p>కింద రాసిన కస్టమ్ ఫంక్షన్ ని ఇక్కడ కాల్ చేసి రన్ చేస్తున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">public static void displaySystemArchitecture()</code>
-      <p>Method definition containing modular, reusable application logic.</p>
+      <code class="code-token">public static void showDetails()</code>
+      <p>మనం ఓన్ గా రాసుకున్న కస్టమ్ ఫంక్షన్. దీంట్లో ఉన్న కోడ్ కాల్ చేసినప్పుడే రన్ అవుతుంది.</p>
     </div>
   
       </div>
@@ -694,31 +690,33 @@ Status         : Fully Compliant with Java 21 LTS Standard</div>
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>// Multi-class demonstration in a single compilation unit
-class DatabaseConnector {
+        <pre><code>// ఒకే ఫైల్ లో రెండు మూడు క్లాసులు రాస్తే ఎలా ఉంటుందో చూద్దాం
+class Database {
     void connect() {
-        System.out.println("[DatabaseConnector] Connected to PostgreSQL Database.");
+        System.out.println("[Database] డేటాబేస్ కి కనెక్ట్ అయ్యాం.");
     }
 }
 
-class SecurityGuard {
-    boolean authenticate(String token) {
-        return token.equals("AUTH_SECRET_2026");
+class Security {
+    boolean authenticate(String pwd) {
+        return pwd.equals("Secret123");
     }
 }
 
+// ఇది మెయిన్ పబ్లిక్ క్లాస్ (దీని పేరే ఫైల్ కి ఉండాలి)
 public class Main {
     public static void main(String[] args) {
-        System.out.println("--- Starting Enterprise Service Bootstrapping ---");
+        System.out.println("--- యాప్ స్టార్ట్ అవుతోంది ---");
         
-        SecurityGuard guard = new SecurityGuard();
-        boolean isAuth = guard.authenticate("AUTH_SECRET_2026");
-        System.out.println("Authentication Status: " + (isAuth ? "GRANTED" : "DENIED"));
-
-        if (isAuth) {
-            DatabaseConnector db = new DatabaseConnector();
+        Security sec = new Security();
+        boolean isOk = sec.authenticate("Secret123");
+        
+        if (isOk) {
+            System.out.println("పాస్ వర్డ్ కరెక్ట్!");
+            Database db = new Database();
             db.connect();
-            System.out.println("System Ready for Production Traffic.");
+        } else {
+            System.out.println("పాస్ వర్డ్ రాంగ్!");
         }
     }
 }</code></pre>
@@ -726,10 +724,9 @@ public class Main {
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">--- Starting Enterprise Service Bootstrapping ---
-Authentication Status: GRANTED
-[DatabaseConnector] Connected to PostgreSQL Database.
-System Ready for Production Traffic.</div>
+        <div class="output-content">--- యాప్ స్టార్ట్ అవుతోంది ---
+పాస్ వర్డ్ కరెక్ట్!
+[Database] డేటాబేస్ కి కనెక్ట్ అయ్యాం.</div>
       </div>
     </section>
 
@@ -738,13 +735,13 @@ System Ready for Production Traffic.</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Placing import statements before package declaration: Causes a compile error. The package statement must always be first.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">imports ని package కంటే పైన రాయడం: ప్యాకేజ్ ఉంటే అది కచ్చితంగా మొదటి లైన్ లోనే ఉండాలి, ఆ తర్వాతే ఇంపోర్ట్స్ ఉండాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Declaring two public classes in one file: Causes compilation failure: "class X is public, should be declared in a file named X.java".</li>
+    <li style="margin-bottom:8px; line-height:1.6;">ఒకే ఫైల్ లో రెండు పబ్లిక్ క్లాసులు రాయడం: అలా కుదరదు. ఒక ఫైల్ కి ఒక పబ్లిక్ క్లాస్ మాత్రమే ఉండాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Running "java Main.class": The java command takes the CLASS NAME ("java Main"), not the filename with extension.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">java Main.class అని టైప్ చేయడం: రన్ చేసేటప్పుడు "java Main" అని క్లాస్ పేరు మాత్రమే ఇవ్వాలి, చివర .class ఇవ్వకూడదు.</li>
   
       </ul>
     </div>
@@ -761,18 +758,18 @@ System Ready for Production Traffic.</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Create a program containing:
-// 1. A constant APP_NAME = "Enterprise Gateway"
-// 2. A method named verifySystemStatus() that prints "[Status] All microservices operational."
-// 3. Invoke verifySystemStatus() inside main().
+// ఒకే ఫైల్ లో కిందివి ట్రై చేయండి:
+// 1. APP_NAME = "My First App" అనే ఒక కాన్స్టంట్ వేరియబుల్ క్రియేట్ చేయండి.
+// 2. printStatus() అనే ఫంక్షన్ రాసి, అందులో "All good!" అని ప్రింట్ చేయండి.
+// 3. main() ఫంక్షన్ నుంచి దాన్ని కాల్ చేయండి.
 
 public class Main {
-    // TODO: Define APP_NAME constant here
+    // TODO: APP_NAME ని ఇక్కడ రాయండి
     
-    // TODO: Define verifySystemStatus() method here
+    // TODO: printStatus() ఫంక్షన్ రాయండి
 
     public static void main(String[] args) {
-        // TODO: Print APP_NAME and call verifySystemStatus()
+        // TODO: కాల్ చేయండి
         
     }
 }</code></pre>
@@ -784,20 +781,14 @@ public class Main {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ What is inside a .class file?</h4>
-      <p>A .class file contains binary Java Bytecode instructions, a constant pool (storing literal strings, numbers, and method references), class metadata, and stack/local variable allocations for the JVM.</p>
+      <h4>❓ .class ఫైల్ లో ఏముంటుంది?</h4>
+      <p>అందులో కంప్యూటర్ కి మాత్రమే అర్థమయ్యే బైనరీ బైట్ కోడ్ (Bytecode), వేరియబుల్స్ డీటెయిల్స్ లాంటివి ఉంటాయి.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Do I need to import java.lang classes like String or System?</h4>
-      <p>No! The java.lang package is automatically imported by the Java compiler into every single Java file by default.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ What is the command to view decompiled Bytecode?</h4>
-      <p>You can use the built-in JDK disassembler: "javap -c Main.class" to inspect the human-readable JVM assembly instructions.</p>
+      <h4>❓ మరి String, System లాంటి క్లాసులు మనం ఇంపోర్ట్ చేసుకోలేదు కదా?</h4>
+      <p>java.lang అనే ప్యాకేజ్ లో ఉండే ఈ బేసిక్ క్లాసుల్ని జావా కంపైలర్ ఆటోమాటిక్ గా ఇంపోర్ట్ చేసేస్తుంది. మనం రాయనక్కర్లేదు.</p>
     </div>
   
     </section>
@@ -807,13 +798,13 @@ public class Main {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Java uses a 2-step compilation lifecycle: javac (Source to Bytecode) -> JVM (Bytecode to Machine Code).</li>
+    <li style="margin-bottom:6px; line-height:1.5;">మనం రాసే జావా కోడ్ కంపైలర్ ద్వారా బైట్ కోడ్ గా మారి, ఆ తర్వాత JVM దాన్ని రన్ చేస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Java source order: 1. package, 2. imports, 3. public class, 4. fields, 5. methods.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">జావా ఫైల్ లో ఎప్పుడూ Package ఫస్ట్ ఉండాలి, తర్వాత Imports, తర్వాత Class ఉండాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Only one public class is allowed per .java file and its name must match the filename.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఒక ఫైల్ లో ఎన్ని క్లాసులు ఉన్నా సరే.. ఒకటే పబ్లిక్ క్లాస్ ఉండాలి. దాని పేరే ఫైల్ కి ఉండాలి.</li>
   
       </ul>
     </div>

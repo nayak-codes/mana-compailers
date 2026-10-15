@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Context Managers & contextlib — Python 3 Tutorial | Our Compiler</title>
-  <meta name="description" content="Master resource lifecycle management with Python Context Managers: building class-based context managers with __enter__ and __exit__, handling exceptions gracefully, and using the contextlib.contextmanager generator decorator for clean resource management." />
-  <meta name="keywords" content="python tutorial, learn python, python context managers & contextlib, python online compiler, python automation, web scraping, python testing" />
+  <title>Context Managers & contextlib (తెలుగులో) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="ఫైల్స్ ని, డేటాబేస్ కనెక్షన్స్ ని మర్చిపోకుండా ఎలా క్లోజ్ చేయాలి? Context Managers (__enter__, __exit__) మరియు contextlib వాడి `with` స్టేట్మెంట్ ని మనకు నచ్చినట్టు ఎలా వాడుకోవాలో చూద్దాం." />
+  <meta name="keywords" content="python tutorial, learn python, context managers & contextlib (తెలుగులో), python online compiler, python automation, web scraping, python testing" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-python/38-python-custom-context-managers-and-contextlib.html" />
@@ -20,8 +20,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Python Context Managers & contextlib — Python 3 Master Tutorial",
-  "description": "Master resource lifecycle management with Python Context Managers: building class-based context managers with __enter__ and __exit__, handling exceptions gracefully, and using the contextlib.contextmanager generator decorator for clean resource management.",
+  "headline": "Context Managers & contextlib (తెలుగులో) — Python 3 Master Tutorial",
+  "description": "ఫైల్స్ ని, డేటాబేస్ కనెక్షన్స్ ని మర్చిపోకుండా ఎలా క్లోజ్ చేయాలి? Context Managers (__enter__, __exit__) మరియు contextlib వాడి `with` స్టేట్మెంట్ ని మనకు నచ్చినట్టు ఎలా వాడుకోవాలో చూద్దాం.",
   "articleSection": "Phase 8: Advanced Python",
   "author": {
     "@type": "Organization",
@@ -44,26 +44,18 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How can a context manager suppress an exception?",
+      "name": "ఒకే with బ్లాక్ లో రెండు కాంటెక్స్ట్ మేనేజర్స్ వాడొచ్చా?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "In a class-based context manager, returning True from __exit__() informs Python that the exception has been handled and should not propagate."
+        "text": "వాడొచ్చు! కామాలతో వేరు చేసి రాయాలి: with open(\"in.txt\") as f_in, open(\"out.txt\", \"w\") as f_out:."
       }
     },
     {
       "@type": "Question",
-      "name": "Can multiple context managers be combined in a single with statement?",
+      "name": "contextlib.suppress అంటే ఏంటి?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! You can chain multiple context managers with commas: with open(\"in.txt\") as f_in, open(\"out.txt\", \"w\") as f_out:."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is contextlib.suppress in Python?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "contextlib.suppress(*exceptions) is a built-in context manager that silently suppresses specified exceptions: with contextlib.suppress(FileNotFoundError): os.remove(\"file.tmp\")."
+        "text": "ఇది ఒక చిన్న స్పెషల్ కాంటెక్స్ట్ మేనేజర్. మనం చెప్పిన ఎర్రర్ వస్తే, దాన్ని సైలెంట్ గా ఇగ్నోర్ చేసేస్తుంది. ఉదాహరణకు ఫైల్ డిలీట్ చేసేటప్పుడు (లేకపోయినా క్రాష్ అవ్వకుండా)."
       }
     }
   ]
@@ -205,8 +197,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-python">
 
@@ -548,7 +538,7 @@
       <span class="current">Chapter 38: 38. Context Managers</span>
     </div>
 
-    <h1 class="page-title">Python Context Managers & contextlib</h1>
+    <h1 class="page-title">Context Managers & contextlib (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">🐍 Python 3.12+</span>
@@ -564,24 +554,18 @@
     </div>
 
     <div class="intro-box">
-      Master resource lifecycle management with Python Context Managers: building class-based context managers with __enter__ and __exit__, handling exceptions gracefully, and using the contextlib.contextmanager generator decorator for clean resource management.
+      ఫైల్స్ ని, డేటాబేస్ కనెక్షన్స్ ని మర్చిపోకుండా ఎలా క్లోజ్ చేయాలి? Context Managers (__enter__, __exit__) మరియు contextlib వాడి `with` స్టేట్మెంట్ ని మనకు నచ్చినట్టు ఎలా వాడుకోవాలో చూద్దాం.
     </div>
 
 
-    <div class="section-title"><span class="num">1</span>The Context Manager Protocol (__enter__ and __exit__)</div>
+    <div class="section-title"><span class="num">1</span>Context Manager Protocol (__enter__ మరియు __exit__)</div>
     <div class="section-body">
-      <p>The Python <strong>Context Manager Protocol</strong> powers the <code>with</code> statement, guaranteeing deterministic resource acquisition and release.</p>
-        <p>A class implements the protocol by defining two methods:</p>
+      <p>పైథాన్ లో మనం <code>with open("file.txt") as f:</code> అని రాస్తాం కదా? ఇందులో ఫైల్ ఓపెన్ అయ్యాక, ఆటోమాటిక్ గా ఎలా క్లోజ్ అవుతుంది? దీనికోసం <strong>Context Manager Protocol</strong> వాడతారు.</p>
+        <p>ఒక క్లాస్ లో రెండు మెథడ్స్ రాస్తే అది కాంటెక్స్ట్ మేనేజర్ అవుతుంది:</p>
         <ol>
-          <li><strong><code>__enter__(self)</code>:</strong> Runs when entering the <code>with</code> block. Its return value is bound to the variable after <code>as</code>.</li>
-          <li><strong><code>__exit__(self, exc_type, exc_val, exc_tb)</code>:</strong> Runs when exiting the <code>with</code> block. If an exception occurred inside the block, its details are passed into these arguments. Returning <code>True</code> from <code>__exit__</code> <strong>suppresses the exception</strong>; returning <code>False</code> allows it to propagate!</li>
+          <li><strong><code>__enter__(self)</code>:</strong> ఇది <code>with</code> బ్లాక్ స్టార్ట్ అవ్వగానే రన్ అవుతుంది.</li>
+          <li><strong><code>__exit__(self, exc_type, exc_val, exc_tb)</code>:</strong> ఇది <code>with</code> బ్లాక్ అవ్వగానే రన్ అవుతుంది. లోపల ఏమైనా ఎర్రర్ వస్తే ఆ డీటెయిల్స్ ఇందులో ఉంటాయి. ఒకవేళ ఇక్కడ <code>True</code> రిటర్న్ చేస్తే, ఆ ఎర్రర్ బయటకి రాకుండా ఆగిపోతుంది!</li>
         </ol>
-        <div class="diagram-box">┌────────────────────────────────────────────────────────┐
-│  with ManagedResource() as res:                        │
-│      1. __enter__() is executed (Allocates resource)   │
-│      2. Body code executes                             │
-│      3. __exit__() is executed (Releases resource 100%)│
-└────────────────────────────────────────────────────────┘</div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Class-based Context Manager with __enter__ and __exit__</div>
@@ -590,7 +574,7 @@
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Class-based Custom File / Resource Context Manager:
+          <pre><code># మన ఓన్ ఫైల్ మేనేజర్ క్లాస్ ని రాద్దాం:
 class ManagedFile:
     def __init__(self, filename, mode):
         self.filename = filename
@@ -598,37 +582,37 @@ class ManagedFile:
         self.file = None
 
     def __enter__(self):
-        print(f"🔓 [__enter__] Opening file: {self.filename}")
+        print(f"🔓 [__enter__] ఫైల్ ఓపెన్ చేస్తున్నాను: {self.filename}")
         self.file = open(self.filename, self.mode, encoding="utf-8")
-        return self.file # Bound to 'as f'
+        return self.file # ఇది 'as f' లోకి వెళ్తుంది
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print(f"🔒 [__exit__] Closing file: {self.filename}")
+        print(f"🔒 [__exit__] ఫైల్ క్లోజ్ చేస్తున్నాను: {self.filename}")
         if self.file:
             self.file.close()
-        # Returning False allows any exception inside the block to propagate properly
+        # False రిటర్న్ చేస్తే ఎర్రర్స్ బయటకి మామూలుగానే వస్తాయి
         return False
 
-# Using custom context manager:
+# మన క్లాస్ ని 'with' వాడి టెస్ట్ చేద్దాం:
 with ManagedFile("demo_context.txt", "w") as f:
-    f.write("Hello from custom ManagedFile context manager! 🚀\n")
+    f.write("హలో! మన సొంత కాంటెక్స్ట్ మేనేజర్ నుండి రాస్తున్నాను! 🚀\n")
 
-print("Is file closed?", f.closed) # True!</code></pre>
+print("ఫైల్ క్లోజ్ అయ్యిందా?", f.closed) # True!</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Resource Safety:</strong>
-          <p style="margin-top:6px;">Even if a divide-by-zero or network error occurs inside the <code>with</code> block, <code>__exit__</code> is guaranteed to execute and close the file descriptor.</p>
+          <strong style="color:#10b981;">🔍 లాభం ఏంటి?:</strong>
+          <p style="margin-top:6px;">ఒకవేళ మీరు ఫైల్ లో రాసేటప్పుడు పవర్ కట్ అయ్యి ఎర్రర్ (ఉదా: 0 తో డివైడ్ చేయడం) వచ్చినా సరే, <code>__exit__</code> ఖచ్చితంగా రన్ అయ్యి ఫైల్ ని సేఫ్ గా క్లోజ్ చేస్తుంది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">2</span>The contextlib.contextmanager Generator Decorator</div>
+    <div class="section-title"><span class="num">2</span>contextlib.contextmanager (చిన్న షార్ట్ కట్)</div>
     <div class="section-body">
-      <p>Writing a full class with <code>__enter__</code> and <code>__exit__</code> for small tasks can feel verbose. The standard library <strong><code>@contextlib.contextmanager</code> decorator</strong> turns any Python generator with a single <code>yield</code> into a complete context manager!</p>
-        <div class="diagram-box">1. Code before yield  ==>  Runs during __enter__
-2. Value in yield     ==>  Bound to 'as variable'
-3. Code after yield   ==>  Runs during __exit__ (inside finally!)</div>
+      <p>ప్రతి చిన్నదానికీ ఇంత పెద్ద క్లాస్ రాయాలంటే చిరాకు కదా? అందుకే పైథాన్ లో <strong><code>@contextmanager</code></strong> అని ఒక డెకరేటర్ ఇచ్చారు. దీన్ని ఒక చిన్న జనరేటర్ ఫంక్షన్ (yield) పైన పెడితే, అదే కాంటెక్స్ట్ మేనేజర్ అయిపోతుంది!</p>
+        <div class="diagram-box">1. yield పైన ఉన్న కోడ్  ==>  __enter__ లో రన్ అవుతుంది
+2. yield లో ఇచ్చే వాల్యూ  ==>  'as x' లోకి వెళ్తుంది
+3. yield కింద ఉన్న కోడ్ ==>  __exit__ (finally లోపల) రన్ అవుతుంది</div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Elegant Generator Context Manager with contextlib</div>
@@ -640,40 +624,40 @@ print("Is file closed?", f.closed) # True!</code></pre>
           <pre><code>import time
 from contextlib import contextmanager
 
-# 1. Performance Stopwatch Context Manager in 8 lines:
+# 1. 8 లైన్స్ లో టైమర్ కాంటెక్స్ట్ మేనేజర్:
 @contextmanager
-def code_timer(label="Operation"):
+def code_timer(label="పని"):
     start = time.perf_counter()
-    print(f"⏳ [{label}] Started...")
+    print(f"⏳ [{label}] స్టార్ట్ అయ్యింది...")
     try:
-        yield # Body of with block executes here!
+        yield # with బ్లాక్ లోపల ఉన్న కోడ్ అంతా ఇక్కడ రన్ అవుతుంది!
     finally:
         end = time.perf_counter()
         duration_ms = (end - start) * 1000
-        print(f"⌛ [{label}] Finished in {duration_ms:.3f} ms")
+        print(f"⌛ [{label}] కంప్లీట్ అయ్యింది! ({duration_ms:.3f} ms పట్టింది)")
 
-# Using the generator context manager:
-with code_timer("Data Processing Pipeline"):
-    # Simulate data computation:
+# మన టైమర్ ని వాడదాం:
+with code_timer("డేటా ప్రాసెసింగ్"):
+    # ఇక్కడ పెద్ద ప్రాసెస్ ఏదైనా రన్ చేయొచ్చు
     results = [x ** 2 for x in range(300_000)]
     time.sleep(0.05)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Mandatory try-finally Rule:</strong>
-          <p style="margin-top:6px;">Always place the code after <code>yield</code> inside a <code>finally:</code> block to guarantee cleanup runs even if an exception occurs inside the <code>with</code> block.</p>
+          <strong style="color:#10b981;">🔍 try-finally రూల్:</strong>
+          <p style="margin-top:6px;">yield కింద రాసే క్లీన్-అప్ కోడ్ ఖచ్చితంగా <code>finally:</code> బ్లాక్ లోపలే రాయాలి. లేకపోతే లోపల ఎర్రర్ వస్తే క్లీన్-అప్ కోడ్ రన్ అవ్వదు.</p>
         </div>
     </div>
   
 
     <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfall: Omitting try-finally in @contextlib.contextmanager Generators</div>
-      <p>If you write code after yield without wrapping it in a try-finally block, an exception inside the caller's with block will prevent your cleanup code from executing at all!</p>
+      <div class="callout-title">⚠️ Common Developer Pitfall: Generator లో try-finally వాడకపోవడం</div>
+      <p>మీరు yield రాసి దాని కింద డైరెక్ట్ గా కోడ్ రాస్తే, with బ్లాక్ లో ఏమైనా ఎర్రర్ వస్తే ఆ కింద ఉన్న కోడ్ (క్లీన్-అప్) రన్ అవ్వకుండానే ఆగిపోతుంది. అందుకే ఎప్పుడూ yield ని try లో పెట్టి, క్లీన్-అప్ కోడ్ finally లో రాయాలి.</p>
     </div>
 
     <div class="try-box">
       <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p>Build a context manager temporary_state(data_dict, key, temp_val) that sets a key to a temporary value inside the block and automatically restores the original value upon exit.</p>
+      <p>ఒక కాంటెక్స్ట్ మేనేజర్ temporary_setting రాయండి. ఒక డిక్షనరీ లో ఒక కీ కి టెంపరరీగా ఒక వాల్యూ ఇచ్చి, with బ్లాక్ అవ్వగానే పాత వాల్యూ మళ్ళీ సెట్ అవ్వాలి.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">Python 3 Practice Challenge</span>
@@ -691,12 +675,12 @@ def temporary_setting(config_dict, key, temp_val):
         config_dict[key] = original_val
 
 settings = {"debug": False, "env": "production"}
-print("Initial Settings:", settings)
+print("స్టార్టింగ్ లో:", settings)
 
 with temporary_setting(settings, "debug", True):
-    print("Inside with block:", settings)
+    print("విత్ బ్లాక్ లోపల:", settings)
 
-print("Outside with block:", settings)</code></pre>
+print("విత్ బ్లాక్ అయ్యాక:", settings)</code></pre>
       </div>
       <a class="run-btn" href="/online-python-compiler.html">Run This Challenge in Online Python IDE →</a>
     </div>
@@ -704,20 +688,14 @@ print("Outside with block:", settings)</code></pre>
     <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How can a context manager suppress an exception?</h4>
-      <p>In a class-based context manager, returning True from __exit__() informs Python that the exception has been handled and should not propagate.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> ఒకే with బ్లాక్ లో రెండు కాంటెక్స్ట్ మేనేజర్స్ వాడొచ్చా?</h4>
+      <p>వాడొచ్చు! కామాలతో వేరు చేసి రాయాలి: with open("in.txt") as f_in, open("out.txt", "w") as f_out:.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Can multiple context managers be combined in a single with statement?</h4>
-      <p>Yes! You can chain multiple context managers with commas: with open("in.txt") as f_in, open("out.txt", "w") as f_out:.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is contextlib.suppress in Python?</h4>
-      <p>contextlib.suppress(*exceptions) is a built-in context manager that silently suppresses specified exceptions: with contextlib.suppress(FileNotFoundError): os.remove("file.tmp").</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> contextlib.suppress అంటే ఏంటి?</h4>
+      <p>ఇది ఒక చిన్న స్పెషల్ కాంటెక్స్ట్ మేనేజర్. మనం చెప్పిన ఎర్రర్ వస్తే, దాన్ని సైలెంట్ గా ఇగ్నోర్ చేసేస్తుంది. ఉదాహరణకు ఫైల్ డిలీట్ చేసేటప్పుడు (లేకపోయినా క్రాష్ అవ్వకుండా).</p>
     </div>
   
 
@@ -746,6 +724,5 @@ print("Outside with block:", settings)</code></pre>
 </div>
 
 <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

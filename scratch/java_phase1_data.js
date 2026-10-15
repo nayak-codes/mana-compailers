@@ -10,65 +10,65 @@ module.exports = [
     phaseId: 'phase1',
     phaseTitle: 'Phase 1: Java Basics',
     slug: '01-java-introduction-features-and-jvm-architecture',
-    title: 'Java Introduction, Features & JVM Architecture',
+    title: 'Java Introduction, Features & JVM Architecture (తెలుగులో)',
     badge: '1. Intro & JVM Architecture',
     subtopics: 'What is Java? · WORA Philosophy · Core Features · Industry Use Cases · JDK vs JRE vs JVM · JVM Internal Architecture',
     readTime: '15 min read',
-    intro: 'Comprehensive deep dive into the Java programming language: historical origins by James Gosling, the revolutionary Write Once, Run Anywhere (WORA) paradigm, core language features, real-world enterprise applications, and an exhaustive breakdown of the Java Virtual Machine (JVM) internals.',
+    intro: 'జావా (Java) అంటే ఏంటి? దీని హిస్టరీ ఏంటి? "Write Once, Run Anywhere (WORA)" అనే కాన్సెప్ట్ ఎలా పనిచేస్తుంది? రియల్ వరల్డ్ లో జావాని ఎక్కడెక్కడ వాడుతున్నారు? మరియు జావా ఇంటర్నల్ గా (JVM Architecture) ఎలా పనిచేస్తుందో ఈ చాప్టర్ లో డీటెయిల్డ్ గా నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. What is Java? History & The "WORA" Revolution',
-        content: `**Java** is a high-level, class-based, object-oriented, concurrent, and secure programming language originally developed by **James Gosling** and his team at **Sun Microsystems** (later acquired by **Oracle Corporation**) in 1995.
+        heading: '1. Java అంటే ఏంటి? హిస్టరీ & "WORA" పవర్',
+        content: `**Java** అనేది హై-లెవల్, ఆబ్జెక్ట్-ఓరియెంటెడ్, మరియు సెక్యూర్ ప్రోగ్రామింగ్ లాంగ్వేజ్. దీనిని 1995 లో **James Gosling** మరియు ఆయన టీమ్ కలిసి **Sun Microsystems** (ఇప్పుడు **Oracle Corporation** చేతిలో ఉంది) లో క్రియేట్ చేశారు.
 
-Before Java, programming languages like C and C++ were **platform-dependent**. When you compiled a C program on a Windows Intel x86 machine, it produced a binary machine code executable (\`.exe\`) tailored specifically for that processor and operating system. If you wanted to run that same program on a macOS ARM processor or a Linux server, you had to re-write platform-specific code and re-compile it on each target machine.
+జావా రాకముందు C, C++ లాంటి లాంగ్వేజెస్ **platform-dependent** గా ఉండేవి. అంటే, ఒక Windows కంప్యూటర్ లో C ప్రోగ్రామ్ రాసి కంపైల్ చేస్తే, అది కేవలం Windows లో మాత్రమే రన్ అయ్యే \`.exe\` ఫైల్ గా మారేది. అదే ప్రోగ్రామ్ ని Mac లో లేదా Linux లో రన్ చేయాలంటే, మళ్లీ ఆ కోడ్ ని మార్చి ఆ OS కి తగ్గట్టు కంపైల్ చేయాల్సి వచ్చేది.
 
-Java revolutionized the software industry by introducing the philosophy of **"Write Once, Run Anywhere" (WORA)**.
+ఈ ప్రాబ్లమ్ ని సాల్వ్ చేస్తూ జావా **"Write Once, Run Anywhere" (WORA)** (ఒకసారి కోడ్ రాస్తే ఏ డివైజ్ లో అయినా రన్ అవుతుంది) అనే కాన్సెప్ట్ ని తీసుకొచ్చింది.
 
-### The WORA Secret: Bytecode & Virtual Machine
-Instead of compiling source code directly into CPU-specific native machine instructions, the Java compiler (\`javac\`) translates human-readable \`.java\` source code into an intermediate, architecture-neutral format called **Bytecode** (stored in \`.class\` files).
+### WORA సీక్రెట్ ఏంటి?: Bytecode & JVM
+జావా లో రాసిన కోడ్ ని కంపైలర్ (\`javac\`) డైరెక్ట్ గా మెషిన్ కోడ్ (జీరోలు, వన్స్) లోకి మార్చదు. దానికి బదులు, దాన్ని ఒక సగం-కంపైల్డ్ ఫార్మాట్ లోకి మారుస్తుంది. దాన్నే **Bytecode** (\`.class\` ఫైల్స్) అంటారు.
 
-The Bytecode is not understood directly by physical CPU hardware; instead, it is executed by a software-based execution environment called the **Java Virtual Machine (JVM)**. Every operating system (Windows, macOS, Linux, Solaris) has its own customized JVM implementation. Because the JVM translates universal Bytecode into native machine instructions on the fly, any Java program compiled on one computer can run unmodified on any device that has a JVM installed!`
+ఈ Bytecode ని ఏ కంప్యూటర్ డైరెక్ట్ గా చదవలేదు. దాన్ని చదవాలంటే **Java Virtual Machine (JVM)** అనే సాఫ్ట్ వేర్ కావాలి. మన కోడ్ ని Windows లో కంపైల్ చేసినా, ఆ వచ్చిన Bytecode ని తీసుకువెళ్లి Mac లోనో, Linux లోనో ఉన్న JVM కి ఇస్తే.. ఆ JVM ఆటోమాటిక్ గా ఆ కోడ్ ని ఆ సిస్టమ్ కి తగ్గట్టు మార్చి రన్ చేస్తుంది!`
       },
       {
-        heading: '2. Core Features of Java',
-        content: `Java's enduring dominance across enterprise software, banking, and mobile systems for over three decades is driven by its foundational design pillars:
+        heading: '2. Java లో ఉన్న మెయిన్ ఫీచర్స్ ఏంటి?',
+        content: `ఇన్ని సంవత్సరాలైనా సరే జావాకి ఇండస్ట్రీ లో అంత క్రేజ్ ఉండటానికి కారణం దాని ఫీచర్స్:
 
-| Java Feature | What It Means | Why It Matters |
+| Java Feature | అంటే ఏంటి? | ఎందుకు ఇంపార్టెంట్? |
 | :--- | :--- | :--- |
-| **Simple & Familiar** | Java eliminated complex, error-prone C++ features like explicit pointer arithmetic, manual memory deallocation, and multiple class inheritance. | Drastically reduces software bugs, memory leaks, and onboarding time for developers. |
-| **Object-Oriented (OOP)** | Almost everything in Java revolves around Classes and Objects, enforcing modularity, encapsulation, inheritance, and polymorphism. | Enables clean code organization, maintainability, and reusability in massive enterprise codebases. |
-| **Platform Independent** | Java source code compiles to intermediate Bytecode executed by the platform-specific JVM. | Write code once on your developer laptop; deploy seamlessly to AWS Linux servers or cloud containers. |
-| **Robust & Reliable** | Strict compile-time type checking, strong memory management, runtime exception handling, and automatic Garbage Collection. | Prevents silent data corruption, dangling pointers, and crashes common in lower-level languages. |
-| **Secure** | Java programs run inside the JVM sandbox. The JVM verifies Bytecode safety before execution and blocks unauthorized memory/file access. | Essential for banking, financial transactions, and distributed cloud computing. |
-| **Multi-Threaded** | Built-in native support for concurrent multi-threading at the language and standard library levels. | Allows programs to perform multiple background tasks simultaneously, maximizing modern multi-core CPU usage. |
-| **High Performance** | Advanced Just-In-Time (JIT) compilers profile and translate frequently executed Bytecode into optimized native machine code. | Delivers execution speeds rivaling native compiled languages while maintaining dynamic portability. |`
+| **Simple (సింపుల్)** | C++ లో ఉండే పాయింటర్స్ (pointers), మెమరీ క్లీన్ చేయడం లాంటి కష్టమైన పనుల్ని జావా తీసేసింది. | దీనివల్ల కోడ్ లో బగ్స్ రావడం తగ్గుతుంది, కొత్తవాళ్లు ఈజీగా నేర్చుకోవచ్చు. |
+| **Object-Oriented (OOP)** | జావా లో ప్రతిదీ క్లాసులు, ఆబ్జెక్ట్స్ (Classes and Objects) చుట్టూనే తిరుగుతుంది. | పెద్ద పెద్ద ప్రాజెక్ట్స్ ని చిన్న భాగాలుగా విడగొట్టి నీట్ గా కోడ్ రాయడానికి ఇది బాగా ఉపయోగపడుతుంది. |
+| **Platform Independent** | మనం రాసిన కోడ్ ఏ OS లో అయినా, ఏ ఆర్కిటెక్చర్ లో అయినా ఎలాంటి మార్పుల్లేకుండా రన్ అవుతుంది. | డెవలపర్ తన లాప్ టాప్ లో కోడ్ రాసి, డైరెక్ట్ గా క్లౌడ్ సర్వర్స్ (AWS, Azure) లో ఈజీగా డిప్లాయ్ చేయొచ్చు. |
+| **Robust & Reliable** | దీంట్లో స్ట్రాంగ్ మెమరీ మేనేజ్మెంట్ మరియు ఆటోమేటిక్ గా చెత్తని క్లీన్ చేసే Garbage Collection ఉంది. | సడెన్ గా ప్రోగ్రామ్ క్రాష్ అవ్వకుండా, మెమరీ లీక్స్ రాకుండా సేఫ్ గా రన్ అవుతుంది. |
+| **Secure (సెక్యూర్)** | జావా ప్రోగ్రామ్స్ అన్నీ JVM అనే ఒక బాక్స్ (sandbox) లోపలే రన్ అవుతాయి. వైరస్ లు రాయడం కష్టం. | బ్యాంకింగ్, ఫైనాన్షియల్ యాప్స్ చేయడానికి ఇది చాలా సేఫ్. |
+| **Multi-Threaded** | ఒకేసారి రెండు మూడు పనులు (threads) పారలల్ గా చేసుకునే ఫెసిలిటీ జావాలో ఇన్-బిల్ట్ గా ఉంటుంది. | దీనివల్ల మన ప్రోగ్రామ్ చాలా ఫాస్ట్ గా పనిచేస్తుంది. |
+| **High Performance** | JVM లోపల JIT (Just-In-Time) కంపైలర్ ఉంటుంది. ఇది మన కోడ్ ని చాలా స్పీడ్ గా రన్ అయ్యేలా చేస్తుంది. | C, C++ లాంటి స్పీడ్ తో సమానంగా జావా కోడ్ రన్ అవుతుంది. |`
       },
       {
-        heading: '3. Where is Java Used in the Real World?',
-        content: `Java powers the backbone of global enterprise computing across critical sectors:
+        heading: '3. రియల్ వరల్డ్ లో Java ని ఎక్కడ వాడుతున్నారు?',
+        content: `ప్రపంచవ్యాప్తంగా ఉన్న పెద్ద పెద్ద కంపెనీలు జావా మీద ఆధారపడి ఉన్నాయి:
 
-1. **Enterprise Backend Microservices:** Over 90% of Fortune 500 companies use Java with the **Spring Boot** and **Jakarta EE** frameworks to build scalable REST APIs, payment gateways, and e-commerce backends.
-2. **Android Mobile Development:** Android OS and millions of mobile applications are built using Java and Kotlin on the Android runtime.
-3. **Banking & FinTech Systems:** Top investment banks (Goldman Sachs, JPMorgan, Morgan Stanley) rely on Java for high-frequency trading (HFT) platforms, fraud detection, and transactional ledgers due to its ironclad memory safety and concurrency.
-4. **Big Data & Analytics Engines:** Massive distributed data platforms including **Apache Hadoop**, **Apache Spark**, **Apache Kafka**, and **Elasticsearch** are engineered in Java and Scala.
-5. **Cloud Computing & DevOps:** Scalable container orchestration, serverless lambdas, and enterprise cloud tooling run heavily on the JVM.`
+1. **Enterprise Backend Microservices:** 90% పైగా టాప్ కంపెనీలు వాళ్ల సర్వర్ బ్యాకెండ్ కోడ్ ని **Spring Boot** అనే జావా ఫ్రేమ్ వర్క్ లోనే రాస్తారు. (ఉదా: ఈ-కామర్స్ సైట్స్, పేమెంట్ గేట్వేలు).
+2. **Android Mobile Apps:** ఆండ్రాయిడ్ ఫోన్స్ లో వాడే చాలా యాప్స్ అన్నీ జావా తోనే తయారయ్యాయి.
+3. **Banking & FinTech:** బ్యాంకింగ్ సెక్టార్ (HDFC, SBI, J.P.Morgan) మొత్తం జావా మీదే నడుస్తుంది, ఎందుకంటే ఇది చాలా సెక్యూర్ గా ఉంటుంది కాబట్టి.
+4. **Big Data & AI:** పెద్ద పెద్ద డేటాని హ్యాండిల్ చేసే Apache Hadoop, Spark లాంటి టూల్స్ అన్నీ జావా తోనే రాశారు.
+5. **Cloud Computing:** క్లౌడ్ సర్వర్స్ లో కూడా జావా అప్లికేషన్స్ నే ఎక్కువగా డిప్లాయ్ చేస్తారు.`
       },
       {
-        heading: '4. The Holy Trinity: JDK vs JRE vs JVM',
-        content: `To master Java, you must understand the clear distinction between the three core runtime components:
+        heading: '4. JDK vs JRE vs JVM అంటే ఏంటి?',
+        content: `జావా నేర్చుకోవాలంటే ఈ మూడింటి మధ్య తేడా కచ్చితంగా తెలియాలి:
 
 \`\`\`
 +-------------------------------------------------------------------------------+
 |                       JDK (Java Development Kit)                              |
 |  +-------------------------------------------------------------------------+  |
-|  |  Development Tools: javac (Compiler), jdb (Debugger), javadoc, jar, etc.  |  |
+|  |  Development Tools: javac (కంపైలర్), jdb (డీబగ్గర్), javadoc లాంటివి     |  |
 |  +-------------------------------------------------------------------------+  |
 |                                                                               |
 |  +-------------------------------------------------------------------------+  |
 |  |                    JRE (Java Runtime Environment)                       |  |
 |  |  +-------------------------------------+  +--------------------------+  |  |
 |  |  | Java Standard Class Libraries       |  | Core Runtime Packages    |  |  |
-|  |  | (java.lang, java.util, java.io, etc)|  | (Security, Config, etc.) |  |  |
+|  |  | (String, Scanner లాంటి క్లాసులు)      |  | (సెక్యూరిటీ ఫైల్స్)          |  |  |
 |  |  +-------------------------------------+  +--------------------------+  |  |
 |  |                                                                         |  |
 |  |  +-------------------------------------------------------------------+  |  |
@@ -79,63 +79,58 @@ The Bytecode is not understood directly by physical CPU hardware; instead, it is
 +-------------------------------------------------------------------------------+
 \`\`\`
 
-- **JVM (Java Virtual Machine):** The abstract computing engine that loads Bytecode, verifies security, manages memory, executes instructions, and calls native OS APIs.
-- **JRE (Java Runtime Environment):** JVM + Standard Class Libraries (e.g., \`String\`, \`ArrayList\`, \`Math\`). It provides everything needed to **run** an already compiled Java program, but cannot compile new source code.
-- **JDK (Java Development Kit):** JRE + Development Tools (\`javac\` compiler, \`jar\` packager, \`javadoc\` generator, debuggers). Developers **must install the JDK** to write and compile Java applications.`
+- **JVM (Java Virtual Machine):** ఇది మన Bytecode ని చదివి రన్ చేసే మెయిన్ ఇంజిన్.
+- **JRE (Java Runtime Environment):** JVM తో పాటు, రన్ అవ్వడానికి కావాల్సిన కొన్ని బేసిక్ క్లాసులు, లైబ్రరీలు కలిపితే దాన్ని JRE అంటారు. కేవలం ఎవరైనా రాసిన జావా యాప్ ని వాడాలి అంటే మీ సిస్టమ్ లో JRE ఉంటే చాలు.
+- **JDK (Java Development Kit):** JRE తో పాటు, కోడ్ రాయడానికి కావాల్సిన కంపైలర్ (\`javac\`) లాంటి టూల్స్ అన్నీ కలిపితే JDK. ఒక డెవలపర్ గా మనం **JDK ని ఇన్స్టాల్ చేసుకోవాలి.**`
       },
       {
-        heading: '5. Deep Dive: JVM Internal Architecture',
-        content: `When you execute \`java Main\`, the JVM initializes three primary subsystems to manage your program lifecycle:
+        heading: '5. JVM ఇంటర్నల్ ఆర్కిటెక్చర్ (లోపల ఏం జరుగుతుంది?)',
+        content: `మనం \`java Main\` అని కమాండ్ ఇచ్చి కోడ్ రన్ చేయగానే, లోపల ఈ 3 స్టెప్స్ జరుగుతాయి:
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
 |                           JVM INTERNAL ARCHITECTURE                               |
 +-----------------------------------------------------------------------------------+
-|  1. CLASSLOADER SUBSYSTEM                                                         |
-|     [ Loading: Bootstrap -> Extension/Platform -> Application ]                   |
-|     [ Linking: Verify -> Prepare -> Resolve ]                                     |
-|     [ Initialization: Execute static initializers & static variable values ]      |
+|  1. CLASSLOADER SUBSYSTEM (లోడ్ చేయడం)                                               |
+|     - మన .class ఫైల్స్ ని హార్డ్ డిస్క్ నుంచి మెమరీ (RAM) లోకి తీసుకువస్తుంది.           |
 +-----------------------------------------------------------------------------------+
-|  2. JVM RUNTIME DATA AREAS (MEMORY)                                               |
+|  2. JVM RUNTIME DATA AREAS (మెమరీ డివిజన్స్)                                          |
 |     +---------------------------+  +-------------------------------------------+  |
-|     | Method Area / Metaspace   |  | Heap Memory                               |  |
-|     | (Class metadata, static)  |  | (All Objects, Arrays, Instance Variables) |  |
+|     | Method Area / Metaspace   |  | Heap Memory (హీప్ మెమరీ)                    |  |
+|     | (క్లాస్ డీటెయిల్స్)           |  | (ఆబ్జెక్ట్స్ అన్నీ ఇక్కడే స్టోర్ అవుతాయి)         |  |
 |     +---------------------------+  +-------------------------------------------+  |
 |     +---------------------------+  +-------------------+  +--------------------+  |
 |     | Java Thread Stack         |  | PC Registers      |  | Native Method Stack|  |
-|     | (Frames, local vars, calls|  | (Next instruction)|  | (C/C++ JNI calls)  |  |
+|     | (లోకల్ వేరియబుల్స్)           |  | (నెక్స్ట్ లైన్ ఏంటి)|  | (C/C++ కోడ్ కోసం)    |  |
 |     +---------------------------+  +-------------------+  +--------------------+  |
 +-----------------------------------------------------------------------------------+
-|  3. EXECUTION ENGINE                                                              |
+|  3. EXECUTION ENGINE (రన్ చేయడం)                                                   |
 |     +-------------------+  +-------------------------+  +----------------------+  |
 |     | Interpreter       |  | JIT Compiler (C1 / C2)  |  | Garbage Collector    |  |
-|     | (Bytecode line by |  | (Hotspot compiler: native|  | (Reclaims unreferenced|  |
-|     |  line execution)  |  |  machine code caching)  |  |  Heap memory objects)|  |
+|     | (లైన్ బై లైన్ రన్  |  | (కోడ్ ని ఫాస్ట్ గా మార్చి|  | (వేస్ట్ మెమరీ ని క్లీన్|  |
+|     |  చేస్తుంది)          |  |  సేవ్ చేసుకుంటుంది)     |  |  చేస్తుంది)           |  |
 |     +-------------------+  +-------------------------+  +----------------------+  |
 +-----------------------------------------------------------------------------------+
 \`\`\`
 
-1. **ClassLoader Subsystem:** Loads \`.class\` files from disk into memory, verifies Bytecode safety (ensuring no illegal memory access or stack overflows), and initializes \`static\` members.
-2. **Runtime Memory Areas:**
-   - **Heap Memory:** Shared across all threads. Stores every instantiated object and array. Managed automatically by the Garbage Collector.
-   - **Java Thread Stack:** Private to each thread. Created whenever a thread starts. Stores stack frames containing local variables, method parameters, and intermediate calculation results.
-   - **Method Area (Metaspace in Java 8+):** Stores class-level data, method Bytecode, constant pool, and static variables.
-   - **PC (Program Counter) Register:** Holds the memory address of the JVM instruction currently being executed for each thread.
-   - **Native Method Stack:** Supports C/C++ native system libraries via Java Native Interface (JNI).
-3. **Execution Engine:**
-   - **Interpreter:** Reads Bytecode instructions line-by-line and executes them quickly on startup.
-   - **JIT (Just-In-Time) Compiler:** Identifies "hot spots" (frequently executed loops and methods) and compiles them directly into ultra-fast native CPU machine code, caching the compiled native code for near-instant execution.
-   - **Garbage Collector (GC):** Automatically tracks unreferenced heap objects and frees their memory, preventing memory leaks.`
+1. **ClassLoader Subsystem:** కోడ్ ని మెమరీ లోకి లోడ్ చేస్తుంది.
+2. **Runtime Memory Areas (మెమరీ):**
+   - **Heap Memory:** మనం క్రియేట్ చేసే ప్రతి ఆబ్జెక్ట్ ఇక్కడే సేవ్ అవుతుంది. దీన్ని Garbage Collector ఆటోమాటిక్ గా క్లీన్ చేస్తుంటుంది.
+   - **Java Thread Stack:** మన ఫంక్షన్స్ లోపల ఉండే చిన్న చిన్న వేరియబుల్స్ ఇక్కడ ఉంటాయి.
+3. **Execution Engine (మెయిన్ ఇంజిన్):**
+   - **Interpreter:** కోడ్ ని లైన్ బై లైన్ చదివి రన్ చేస్తుంది.
+   - **JIT (Just-In-Time) Compiler:** పదే పదే రన్ అయ్యే లూప్స్ లాంటి కోడ్ ని ముందే ఫాస్ట్ గా రన్ అయ్యే మెషిన్ కోడ్ లాగా మార్చి పెట్టుకుంటుంది (స్పీడ్ కోసం).
+   - **Garbage Collector (GC):** వాడని ఆబ్జెక్ట్స్ ని మెమరీ నుంచి తీసేసి ఖాళీ చేస్తుంది.`
       }
     ],
     codeExample: `public class Main {
     public static void main(String[] args) {
-        // Display core Java runtime environment details
+        // జావా రన్ టైమ్ డీటెయిల్స్ ని ప్రింట్ చేయడం
         System.out.println("==========================================");
         System.out.println("   WELCOME TO OUR COMPILER JAVA MASTERCLASS ");
         System.out.println("==========================================");
 
-        // Fetching JVM system properties
+        // మన సిస్టమ్ లో ఏ జావా వెర్షన్ ఉందో తెలుసుకోవడానికి:
         String javaVersion = System.getProperty("java.version");
         String javaVendor  = System.getProperty("java.vendor");
         String osName      = System.getProperty("os.name");
@@ -157,14 +152,14 @@ Operating System : Windows 11 (amd64)
 Platform Status  : Write Once, Run Anywhere (WORA) active!
 ==========================================`,
     lineByLine: [
-      { line: 'public class Main', explanation: 'Declares a public class named Main. In Java, every line of executable code must live inside a class, and public class names must match the filename (Main.java).' },
-      { line: 'public static void main(String[] args)', explanation: 'The mandatory entry point for every standalone Java program. The JVM looks specifically for this method signature to begin execution.' },
-      { line: 'System.out.println(...)', explanation: 'Prints the specified text message to the standard output console followed by an automatic newline character.' },
-      { line: 'System.getProperty("java.version")', explanation: 'Queries the JVM runtime environment for system-level configuration metadata, such as the active Java version and host operating system.' }
+      { line: 'public class Main', explanation: 'Main అనే పబ్లిక్ క్లాస్ ని క్రియేట్ చేస్తున్నాం. జావాలో రాసే ప్రతీ కోడ్ ఒక క్లాస్ లోపలే ఉండాలి. మరియు ఫైల్ పేరు కచ్చితంగా Main.java అనే ఉండాలి.' },
+      { line: 'public static void main(String[] args)', explanation: 'ఇది మన ప్రోగ్రామ్ స్టార్ట్ అయ్యే మెయిన్ గేట్ లాంటిది. JVM ఎప్పుడూ ఈ మెయిన్ ఫంక్షన్ (method) నుంచే కోడ్ ని రన్ చేయడం స్టార్ట్ చేస్తుంది.' },
+      { line: 'System.out.println(...)', explanation: 'మనం బ్రాకెట్స్ లో ఇచ్చిన టెక్స్ట్ ని అవుట్పుట్ స్క్రీన్ (కన్సోల్) మీద ప్రింట్ చేసి, నెక్స్ట్ లైన్ కి వెళ్ళమని చెప్తున్నాం.' },
+      { line: 'System.getProperty("java.version")', explanation: 'మన సిస్టమ్ లో ఇన్స్టాల్ అయి ఉన్న జావా వెర్షన్ ఏంటి లాంటి సిస్టమ్ డీటెయిల్స్ ని తెచ్చుకోవడానికి ఇది వాడతాం.' }
     ],
     practicalExample: `public class JVMMemoryInspector {
     public static void main(String[] args) {
-        // Query the active JVM Runtime instance
+        // మన ప్రోగ్రామ్ కి అసలు ఎంత RAM మెమరీ తీసుకుంటుందో చెక్ చేద్దాం
         Runtime runtime = Runtime.getRuntime();
 
         long maxMemoryMB   = runtime.maxMemory() / (1024 * 1024);
@@ -188,41 +183,41 @@ Total Allocated Heap: 256 MB
 Used Heap Memory    : 14 MB
 Free Heap Memory    : 242 MB`,
     commonMistakes: [
-      'Confusing JDK and JRE: Installing only JRE will prevent you from compiling code with javac. Always install the full JDK for software development.',
-      'Assuming Java compiles directly to .exe: Java compiles to .class Bytecode files which require the JVM to run.',
-      'Assuming JVM is platform-independent: Java Bytecode is platform-independent, but the JVM itself is platform-specific (there is a Windows JVM, macOS JVM, Linux JVM).'
+      'JDK బదులు JRE ఇన్స్టాల్ చేయడం: JRE లో కోడ్ రన్ అవుతుంది కానీ కొత్త కోడ్ రాయడానికి కావాల్సిన కంపైలర్ ఉండదు. కాబట్టి ఎప్పుడూ JDK నే ఇన్స్టాల్ చేసుకోవాలి.',
+      'Java డైరెక్ట్ గా .exe అవుతుంది అనుకోవడం: జావా కోడ్ కంపైల్ చేస్తే .class ఫైల్ (Bytecode) వస్తుంది, దాన్ని రన్ చేయాలంటే మన సిస్టమ్ లో JVM ఉండాల్సిందే.',
+      'JVM కూడా ప్లాట్ఫామ్ ఇండిపెండెంట్ అనుకోవడం: జావా Bytecode ఎక్కడైనా రన్ అవుతుంది కానీ.. JVM మాత్రం ఒక్కో OS కి ఒక్కోలా ఉంటుంది (Windows కి వేరే, Mac కి వేరే).'
     ],
     challenge: `// Coding Challenge:
-// Write a Java program that retrieves and prints the following JVM environment details:
-// 1. User Working Directory (property: "user.dir")
+// ఒక చిన్న జావా ప్రోగ్రామ్ రాయండి. అది ఈ కింద ఉన్న సిస్టమ్ డీటెయిల్స్ ని ప్రింట్ చేయాలి:
+// 1. User Working Directory (property: "user.dir") - మీరు ఏ ఫోల్డర్ లో ఉన్నారో చెప్తుంది.
 // 2. Java Virtual Machine Name (property: "java.vm.name")
 // 3. User Name (property: "user.name")
 
 public class JVMChallenge {
     public static void main(String[] args) {
-        // TODO: Use System.getProperty() to display these 3 system properties
+        // TODO: System.getProperty() వాడి ఈ 3 డీటెయిల్స్ ని ప్రింట్ చేయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Why does Java not support multiple class inheritance?',
-        a: 'To avoid the famous "Diamond Problem" of ambiguity (when two parent classes have methods with identical names) and to keep the language simple and robust. Java supports multiple inheritance of interface types instead.'
+        q: 'Java లో మల్టిపుల్ క్లాస్ ఇన్హెరిటెన్స్ (Multiple Inheritance) ఎందుకు సపోర్ట్ చేయదు?',
+        a: 'సింపుల్ గా చెప్పాలంటే "Diamond Problem" (అంటే రెండు పేరెంట్ క్లాసుల్లో ఒకే పేరుతో ఫంక్షన్స్ ఉంటే, దేన్ని వాడాలో కన్ఫ్యూజ్ అవ్వడం) రాకుండా ఉండటానికి జావా దీన్ని తీసేసింది. దానికి బదులు Interfaces ని వాడుకుంటాం.'
       },
       {
-        q: 'What is the role of the JIT (Just-In-Time) compiler in JVM?',
-        a: 'The JIT compiler dynamically monitors running Bytecode, identifies heavily repeated code sections ("hot spots"), and compiles them directly into native machine code so they run at raw hardware speeds without interpretation overhead.'
+        q: 'JIT (Just-In-Time) కంపైలర్ వల్ల నిజంగా స్పీడ్ పెరుగుతుందా?',
+        a: 'అవును. కోడ్ లో పదే పదే రన్ అయ్యే లూప్స్ (hot spots) ని ఇది ముందే కంపైల్ చేసి మెషిన్ కోడ్ లా మార్చేస్తుంది. దీనివల్ల C++ తో సమానమైన స్పీడ్ జావా కి వస్తుంది.'
       },
       {
-        q: 'Is Java completely 100% object-oriented?',
-        a: 'No. Java supports 8 primitive data types (byte, short, int, long, float, double, char, boolean) for maximum computational efficiency. However, everything else in Java is an object.'
+        q: 'జావా 100% ఆబ్జెక్ట్ ఓరియెంటెడ్ (Pure OOP) లాంగ్వేజా?',
+        a: 'కాదు. స్పీడ్ కోసం జావాలో 8 ప్రిమిటివ్ డేటా టైప్స్ (int, float, char లాంటివి) ఇచ్చారు. ఇవి ఆబ్జెక్ట్స్ కావు. ఇవి తప్ప మిగతావన్నీ ఆబ్జెక్ట్సే.'
       }
     ],
     recap: [
-      'Java was designed by James Gosling in 1995 around the "Write Once, Run Anywhere" (WORA) paradigm.',
-      'Java source code (.java) compiles to platform-neutral Bytecode (.class) using the javac compiler.',
-      'The JVM (Java Virtual Machine) loads Bytecode and translates it into native machine instructions on the host OS.',
-      'JDK = JRE + Compilers/Debuggers. JRE = JVM + Standard Class Libraries.'
+      'జావాని 1995 లో జేమ్స్ గాస్లింగ్ కనిపెట్టాడు. ఇది "Write Once, Run Anywhere" అనే కాన్సెప్ట్ తో వచ్చింది.',
+      'మనం రాసే .java కోడ్ ని javac కంపైలర్ .class ఫైల్ (Bytecode) లాగా మారుస్తుంది.',
+      'JVM ఆ Bytecode ని తీసుకుని మనం వాడుతున్న సిస్టమ్ కి అర్థమయ్యేలా మార్చి రన్ చేస్తుంది.',
+      'కోడ్ రాయాలంటే మనకు JDK కావాలి. JRE అంటే కేవలం రన్ చేయడానికి వాడేది.'
     ]
   },
 
@@ -234,44 +229,44 @@ public class JVMChallenge {
     phaseId: 'phase1',
     phaseTitle: 'Phase 1: Java Basics',
     slug: '02-java-installation-ide-and-first-program',
-    title: 'Java Installation, IDEs & First Hello World Program',
+    title: 'Java Installation, IDEs & First Hello World Program (తెలుగులో)',
     badge: '2. Setup & First Program',
     subtopics: 'JDK 21 LTS Installation · Setting JAVA_HOME & PATH · IDEs vs Online Compiler · First Program Breakdown · main() Signature Anatomy · System.out.println',
     readTime: '16 min read',
-    intro: 'Step-by-step walkthrough for configuring modern Java 21 LTS on Windows, macOS, and Linux, setting up professional IDEs like IntelliJ IDEA and VS Code, writing your first Hello World program, and demystifying every single keyword in public static void main(String[] args).',
+    intro: 'మీ కంప్యూటర్ లో Java 21 LTS ని ఎలా ఇన్స్టాల్ చేయాలి? ప్రొఫెషనల్స్ వాడే IDEs (IntelliJ IDEA, VS Code) ఏంటి? మీ మొదటి Hello World ప్రోగ్రామ్ ఎలా రాయాలి? అందులో ఉన్న పబ్లిక్, స్టాటిక్ లాంటి ప్రతి పదం వెనక ఉన్న అర్థం ఏంటో డీటెయిల్డ్ గా చూద్దాం.',
     theorySections: [
       {
-        heading: '1. Installing Java 21 LTS & Configuring Environment Variables',
-        content: `To build modern Java applications, always download a **Long-Term Support (LTS)** release like **Java 21 LTS** or **Java 17 LTS** from trusted vendors:
-- **Oracle OpenJDK / Oracle JDK:** [oracle.com/java](https://www.oracle.com/java/)
-- **Eclipse Temurin (Adoptium):** [adoptium.net](https://adoptium.net/) (Recommended open-source production distribution)
-- **Amazon Corretto:** [aws.amazon.com/corretto](https://aws.amazon.com/corretto/)
+        heading: '1. Java 21 LTS ఇన్స్టాలేషన్ & ఎన్విరాన్మెంట్ వేరియబుల్స్ సెటప్',
+        content: `మనం ఎప్పుడైనా జావా డౌన్లోడ్ చేసేటప్పుడు **Long-Term Support (LTS)** వెర్షన్ నే (ఉదా: Java 21 LTS లేదా 17 LTS) డౌన్లోడ్ చేసుకోవాలి.
+- **Oracle JDK:** [oracle.com/java](https://www.oracle.com/java/)
+- **Eclipse Temurin:** [adoptium.net](https://adoptium.net/) (ఇది చాలా కంపెనీల్లో వాడే ఫ్రీ అండ్ ఓపెన్ సోర్స్ వెర్షన్)
 
-### Configuring Environment Variables on Windows:
-1. **JAVA_HOME:** Point this system variable to your JDK root installation folder (e.g. \`C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.2\`).
-2. **PATH:** Add \`%JAVA_HOME%\\bin\` to your existing system \`Path\` variable. This allows running \`javac\` and \`java\` commands from any terminal directory.
+### Windows లో Environment Variables సెట్ చేయడం:
+జావా ఇన్స్టాల్ చేసిన తర్వాత, మన సిస్టమ్ కి జావా ఎక్కడుందో చెప్పాలి:
+1. **JAVA_HOME:** ఒక కొత్త వేరియబుల్ క్రియేట్ చేసి, అందులో జావా ఇన్స్టాల్ అయిన ఫోల్డర్ పాత్ (ఉదా: \`C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.2\`) ఇవ్వాలి.
+2. **PATH:** సిస్టమ్ లో ఉన్న Path వేరియబుల్ కి \`%JAVA_HOME%\\bin\` ని యాడ్ చేయాలి. అప్పుడే మనం టెర్మినల్ లో \`javac\`, \`java\` కమాండ్స్ వాడగలం.
 
-### Verification in Terminal:
+### టెర్మినల్ (CMD) లో చెక్ చేయడం:
 \`\`\`bash
 javac -version
-# Expected Output: javac 21.0.2
+# అవుట్పుట్ ఇలా రావాలి: javac 21.0.2
 
 java -version
-# Expected Output: openjdk version "21.0.2" ...
+# అవుట్పుట్ ఇలా రావాలి: openjdk version "21.0.2" ...
 \`\`\``
       },
       {
-        heading: '2. Choosing Your Development Environment',
-        content: `Modern Java developers use state-of-the-art IDEs equipped with intelligent code completion, automated refactoring, and step-through debuggers:
+        heading: '2. కోడ్ రాయడానికి బెస్ట్ ఎడిటర్స్ (IDEs) ఏవి?',
+        content: `కంపెనీల్లో కోడ్ రాయడానికి నార్మల్ నోట్ ప్యాడ్ వాడరు. తప్పులు ముందే చూపించే స్మార్ట్ ఎడిటర్స్ (IDEs) వాడతారు:
 
-- **IntelliJ IDEA (JetBrains):** The gold standard in industry enterprise development. Offers supreme refactoring, Spring Boot integration, and static analysis.
-- **Visual Studio Code (VS Code):** Lightweight, ultra-fast editor powered by Microsoft's "Extension Pack for Java".
-- **Eclipse IDE:** Classic open-source enterprise IDE widely used in corporate and legacy projects.
-- **Our Compiler Online Java IDE:** Instant, zero-install, in-browser compiler for rapid prototyping, algorithm practice, and learning.`
+- **IntelliJ IDEA (JetBrains):** జావా అనగానే గుర్తొచ్చే నెంబర్ వన్ సాఫ్ట్ వేర్ ఇదే. చాలా ఫాస్ట్ గా ఉంటుంది, తప్పులు ముందే చెప్తుంది.
+- **Visual Studio Code (VS Code):** మైక్రోసాఫ్ట్ వాళ్ళది. ఇది కూడా ఫాస్ట్ అండ్ సింపుల్. "Extension Pack for Java" ఇన్స్టాల్ చేసుకుంటే సరిపోతుంది.
+- **Eclipse IDE:** ఇది చాలా పాతది కానీ ఇంకా కొన్ని పెద్ద కంపెనీల్లో పాత ప్రాజెక్ట్స్ కోసం వాడుతున్నారు.
+- **Our Compiler (Online):** సాఫ్ట్ వేర్స్ ఏమీ లేకుండా డైరెక్ట్ గా బ్రౌజర్ లోనే ప్రాక్టీస్ చేయాలంటే మన ఆన్లైన్ కంపైలర్ వాడుకోవచ్చు.`
       },
       {
-        heading: '3. Anatomy of the First Java Program: Demystifying Every Keyword',
-        content: `Here is the canonical Java Hello World program:
+        heading: '3. First Java Program: అందులో ఉన్న ప్రతి పదం అర్థం ఏంటి?',
+        content: `ఇది జావాలో రాసే ఫస్ట్ బేసిక్ ప్రోగ్రామ్:
 
 \`\`\`java
 public class Main {
@@ -281,123 +276,122 @@ public class Main {
 }
 \`\`\`
 
-Let us dissect every single token and keyword so you understand exactly why Java requires this exact structure:
+చూడటానికి చాలా పదాలు ఉన్నట్టు అనిపిస్తాయి, కానీ ఒక్కొక్క పదం వెనక ఒక రీజన్ ఉంది:
 
 ### 1. \`public class Main\`
-- **\`public\` (Access Modifier):** Declares that this class is accessible from any other class and package.
-- **\`class\` (Keyword):** Java's fundamental building block used to define a blueprint for objects.
-- **\`Main\` (Identifier):** The identifier/name given to this class. **Crucial Rule:** In Java, if a class is declared \`public\`, its file name MUST match the class name exactly with a \`.java\` extension (\`Main.java\`). Java is strictly case-sensitive!
+- **\`public\` (Access Modifier):** దీన్ని పబ్లిక్ అని ఇస్తేనే బయట ఎక్కడినుంచైనా ఈ కోడ్ ని యాక్సెస్ చేయగలం.
+- **\`class\` (Keyword):** జావాలో మనం రాసే కోడ్ అంతా ఒక క్లాస్ లోపలే ఉండాలి.
+- **\`Main\` (పేరు):** మన ఫైల్ కి పెట్టుకున్న పేరు. **ఇంపార్టెంట్ రూల్:** క్లాస్ కి పబ్లిక్ అని ఇస్తే.. ఆ ఫైల్ పేరు, క్లాస్ పేరు ఎగ్జాక్ట్ గా ఒకేలా ఉండాలి (\`Main.java\`).
 
 ### 2. \`public static void main(String[] args)\`
-This is the mandatory entry point of every Java application. When the JVM starts, it searches specifically for this exact method signature:
-- **\`public\`:** The JVM runs outside your program's package; therefore, the entry point method must be publicly accessible so the JVM can call it.
-- **\`static\`:** Allows the JVM to invoke this method without needing to create an instance/object of the \`Main\` class first (\`Main.main()\`). Without \`static\`, the JVM would not know how to instantiate your class.
-- **\`void\`:** Specifies the method's return type. Since the program terminates when \`main()\` finishes, it returns nothing (\`void\`) to the operating system.
-- **\`main\`:** The reserved method identifier recognized universally by JVM classloaders as the initial entry point.
-- **\`String[] args\` (Parameters):** An array of \`String\` objects that receives optional command-line arguments passed to the application when executed from the terminal (e.g. \`java Main server 8080\`).
+ప్రోగ్రామ్ ఎక్కడినుంచి స్టార్ట్ అవ్వాలో JVM కి చెప్పే మెయిన్ ఎంట్రీ పాయింట్ ఇదే.
+- **\`public\`:** JVM ఎక్కడో బయట రన్ అవుతుంటుంది, అది మన ప్రోగ్రామ్ లోకి రావాలంటే దీన్ని పబ్లిక్ గా ఓపెన్ ఉంచాలి.
+- **\`static\`:** నార్మల్ గా జావాలో ఏ ఫంక్షన్ ని కాల్ చేయాలన్నా దానికి ఆబ్జెక్ట్ క్రియేట్ చేయాలి. కానీ JVM డైరెక్ట్ గా ఈ ఫంక్షన్ ని కాల్ చేయాలి కాబట్టి ఆబ్జెక్ట్ అవసరం లేకుండా static వాడతాం.
+- **\`void\`:** ఈ ఫంక్షన్ పని అయిపోయాక ఎలాంటి రిజల్ట్ ని వెనక్కి (return) ఇవ్వట్లేదు అని చెప్పడానికి.
+- **\`main\`:** JVM వెతికే కీవర్డ్ ఇదే, ఈ పేరు చూసే అది ఎంట్రీ పాయింట్ అని గుర్తుపడుతుంది.
+- **\`String[] args\`:** టెర్మినల్ నుంచి ఎవరైనా మనం రాసిన ప్రోగ్రామ్ కి అదనంగా ఇన్పుట్స్ పంపితే, వాటిని స్టోర్ చేసుకోవడానికి.
 
 ### 3. \`System.out.println("Hello, World!");\`
-- **\`System\`:** A built-in standard class in the \`java.lang\` package containing useful system-level facilities.
-- **\`out\`:** A \`public static final\` instance of \`PrintStream\` inside the \`System\` class representing the standard output stream (console).
-- **\`println()\`:** A method of \`PrintStream\` that prints the passed string argument to the console followed by a newline character (\`\\n\`).
-- **\`;\` (Semicolon):** Every statement in Java MUST terminate with a semicolon. It tells the compiler where a complete instruction ends.`
+- **\`System\`:** ఇది జావాలో ముందే రాసిపెట్టిన ఒక క్లాస్ పేరు.
+- **\`out\`:** ఆ క్లాస్ లోపల ఉండే ఒక పబ్లిక్ ప్రాపర్టీ (దీని పని అవుట్పుట్ ని స్క్రీన్ మీద చూపించడం).
+- **\`println()\`:** టెక్స్ట్ ని ప్రింట్ చేసి, నెక్స్ట్ లైన్ కి వెళ్ళమని చెప్తున్నాం.
+- **\`;\` (Semicolon):** జావాలో ప్రతి లైన్ కచ్చితంగా సెమికోలన్ తో ఎండ్ అవ్వాలి (అంటే అక్కడ స్టేట్మెంట్ కంప్లీట్ అయిందని అర్థం).`
       },
       {
-        heading: '4. \`System.out.println()\` vs \`System.out.print()\` vs \`System.out.printf()\`',
-        content: `Java provides three standard methods to output data to the console:
+        heading: '4. \`print()\` vs \`println()\` vs \`printf()\` మధ్య తేడా?',
+        content: `జావాలో స్క్రీన్ మీద ప్రింట్ చేయడానికి 3 రకాల ఫంక్షన్స్ ఉంటాయి:
 
-| Method | Behavior | Example |
+| Method | ఏం చేస్తుంది? | ఎగ్జాంపుల్ |
 | :--- | :--- | :--- |
-| **\`print()\`** | Outputs text without appending a newline. The next print will continue on the same line. | \`System.out.print("Hello "); System.out.print("World");\` -> \`Hello World\` |
-| **\`println()\`** | Outputs text and immediately advances the cursor to the beginning of the next line. | \`System.out.println("Line 1"); System.out.println("Line 2");\` |
-| **\`printf()\`** | Formats text using C-style format specifiers (\`%s\`, \`%d\`, \`%.2f\`). | \`System.out.printf("Name: %s, Score: %d", "Ravi", 95);\` |`
+| **\`print()\`** | టెక్స్ట్ ప్రింట్ అవుతుంది కానీ కర్సర్ అక్కడే ఆగిపోతుంది. నెక్స్ట్ ఏం ప్రింట్ చేసినా పక్కనే వచ్చేస్తుంది. | \`System.out.print("Hi "); System.out.print("There");\` -> \`Hi There\` |
+| **\`println()\`** | టెక్స్ట్ ప్రింట్ అయ్యాక, ఆటోమాటిక్ గా నెక్స్ట్ లైన్ కి వెళ్ళిపోతుంది. | \`System.out.println("Line 1"); System.out.println("Line 2");\` |
+| **\`printf()\`** | వేరియబుల్స్ లో ఉన్న వాల్యూస్ ని టెక్స్ట్ మధ్యలో నీట్ గా పెట్టి ప్రింట్ చేయడానికి. | \`System.out.printf("పేరు: %s, వయసు: %d", "Ravi", 25);\` |`
       }
     ],
     codeExample: `public class Main {
     public static void main(String[] args) {
-        // 1. Using println() for discrete output lines
-        System.out.println("1. Java 21 LTS initialized successfully.");
-        System.out.println("2. Outputting data across multiple lines:");
+        // 1. println() వాడితే టెక్స్ట్ ప్రింట్ అయ్యాక కింద లైన్ కి వెళ్తుంది
+        System.out.println("1. జావా స్టార్ట్ అయ్యింది.");
+        System.out.println("2. ఇది ఇంకో లైన్ లో వస్తుంది:");
 
-        // 2. Using print() for continuous output on the same line
-        System.out.print("   [Progress: ");
+        // 2. print() వాడితే పక్కపక్కనే వస్తుంది
+        System.out.print("   [డౌన్లోడ్: ");
         System.out.print("25% -> ");
         System.out.print("50% -> ");
-        System.out.print("100% Complete");
-        System.out.println("]"); // Closes line with a newline
+        System.out.print("100% పూర్తయింది");
+        System.out.println("]"); // ఇక్కడ న్యూ లైన్ కి వెళ్తుంది
 
-        // 3. Printing numbers and simple expressions
-        System.out.println("3. Direct Arithmetic Calculation: 10 + 20 = " + (10 + 20));
-        System.out.println("4. Welcome to Professional Java Engineering!");
+        // 3. డైరెక్ట్ గా మ్యాథ్స్ చేయొచ్చు
+        System.out.println("3. 10 + 20 ఎంత? = " + (10 + 20));
+        System.out.println("4. Welcome to Java!");
     }
 }`,
-    output: `1. Java 21 LTS initialized successfully.
-2. Outputting data across multiple lines:
-   [Progress: 25% -> 50% -> 100% Complete]
-3. Direct Arithmetic Calculation: 10 + 20 = 30
-4. Welcome to Professional Java Engineering!`,
+    output: `1. జావా స్టార్ట్ అయ్యింది.
+2. ఇది ఇంకో లైన్ లో వస్తుంది:
+   [డౌన్లోడ్: 25% -> 50% -> 100% పూర్తయింది]
+3. 10 + 20 ఎంత? = 30
+4. Welcome to Java!`,
     lineByLine: [
-      { line: 'public class Main', explanation: 'Class declaration with public accessibility matching Main.java filename.' },
-      { line: 'public static void main(String[] args)', explanation: 'The universal JVM entry point method receiving optional command-line string arguments.' },
-      { line: 'System.out.print(...)', explanation: 'Streams characters to the console without moving the cursor to the next line.' },
-      { line: '"..." + (10 + 20)', explanation: 'String concatenation combining text with parenthesized arithmetic evaluation result (30).' }
+      { line: 'public class Main', explanation: 'Main.java అనే ఫైల్ పేరుతో ఒక పబ్లిక్ క్లాస్ ని స్టార్ట్ చేస్తున్నాం.' },
+      { line: 'public static void main(String[] args)', explanation: 'ప్రోగ్రామ్ స్టార్ట్ అయ్యే చోటు ఇది. JVM డైరెక్ట్ గా ఈ మెయిన్ ఫంక్షన్ లోకి వస్తుంది.' },
+      { line: 'System.out.print(...)', explanation: 'టెక్స్ట్ ప్రింట్ చేశాక నెక్స్ట్ లైన్ కి వెళ్ళకుండా అక్కడే ఆగిపోవడానికి వాడుతున్నాం.' },
+      { line: '"..." + (10 + 20)', explanation: 'టెక్స్ట్ ని క్యాలిక్యులేట్ చేసిన నెంబర్ తో కలపడానికి ప్లస్ (+) వాడాం.' }
     ],
-    practicalExample: `public class CommandLineGreeting {
+    practicalExample: `public class CommandLineArgs {
     public static void main(String[] args) {
-        // Checking if command line arguments were passed
+        // టెర్మినల్ నుంచి ఎవరైనా ఎక్స్ట్రా డేటా పంపితే args లో స్టోర్ అవుతుంది.
         if (args.length > 0) {
-            System.out.println("Received Command-Line Arguments:");
+            System.out.println("టెర్మినల్ నుంచి పంపిన ఇన్పుట్స్ ఇవిగో:");
             for (int i = 0; i < args.length; i++) {
-                System.out.println("  Argument [" + i + "]: " + args[i]);
+                System.out.println("  ఇన్పుట్ [" + i + "]: " + args[i]);
             }
         } else {
-            System.out.println("No command-line arguments provided. Defaulting to standard mode.");
-            System.out.println("Tip: In terminal, run: java CommandLineGreeting DevServer 8080");
+            System.out.println("మీరు బయట నుంచి ఎలాంటి ఎక్స్ట్రా ఇన్పుట్ పంపలేదు.");
+            System.out.println("ఇలా రన్ చేసి చూడండి: java CommandLineArgs Server 8080");
         }
     }
 }`,
-    practicalOutput: `No command-line arguments provided. Defaulting to standard mode.
-Tip: In terminal, run: java CommandLineGreeting DevServer 8080`,
+    practicalOutput: `మీరు బయట నుంచి ఎలాంటి ఎక్స్ట్రా ఇన్పుట్ పంపలేదు.
+ఇలా రన్ చేసి చూడండి: java CommandLineArgs Server 8080`,
     commonMistakes: [
-      'Filename mismatch: Naming the file "test.java" while the code contains "public class Main" causes compile-time error: "class Main is public, should be declared in a file named Main.java".',
-      'Case sensitivity errors: Typing "system.out.println" or "String[] Args" or "main(string[] args)" will fail compilation because Java is strictly case-sensitive.',
-      'Missing semicolon (;): Every statement must end with a semicolon.',
-      'Modifying main method signature: Changing "public static void main(String[] args)" to "private void main()" will compile fine, but running it produces: "Main method not found in class".'
+      'ఫైల్ పేరు, క్లాస్ పేరు వేరువేరుగా ఉండటం: మీరు కోడ్ లో "public class Main" అని రాసి, ఫైల్ ని మాత్రం test.java అని సేవ్ చేస్తే.. ఎర్రర్ వస్తుంది.',
+      'స్పెల్లింగ్ లేదా క్యాపిటల్ లెటర్స్ తప్పు రాయడం: జావా case-sensitive. అంటే "System" అని రాయాలి కానీ "system" అని రాస్తే ఒప్పుకోదు.',
+      'సెమికోలన్ మర్చిపోవడం: ప్రతి లైన్ చివర కచ్చితంగా సెమికోలన్ (;) ఉండాలి.',
+      'మెయిన్ ఫంక్షన్ మార్చడం: "public void main()" అని static తీసేస్తే.. కోడ్ కంపైల్ అవుతుంది కానీ, రన్ చేసేటప్పుడు ఎర్రర్ వస్తుంది.'
     ],
     challenge: `// Coding Challenge:
-// Write a Java program named UserProfileCard that outputs:
+// UserProfile అనే పేరుతో ఒక జావా ఫైల్ క్రియేట్ చేయండి. అందులో కింది విధంగా అవుట్పుట్ రావాలి:
 // ----------------------------------------
-//   DEVELOPER PROFILE: [Your Name]
-//   ROLE: Backend Java Engineer
-//   FAVORITE TOOL: IntelliJ IDEA & Docker
+//   డెవలపర్ పేరు: [మీ పేరు]
+//   రోల్: Backend Java Developer
 // ----------------------------------------
-// Use formatted System.out.println statements.
+// (దీన్ని System.out.println వాడి ప్రింట్ చేయండి)
 
-public class UserProfileCard {
+public class UserProfile {
     public static void main(String[] args) {
-        // TODO: Write your formatted profile card output here
+        // TODO: మీ కోడ్ ని ఇక్కడ రాయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Can we change "String[] args" to "String args[]" or "String... args"?',
-        a: 'Yes! Both "String args[]" (C-style syntax) and "String... args" (varargs syntax) are 100% valid main method signatures accepted by the JVM.'
+        q: '"String[] args" అని కాకుండా వేరేలా రాయొచ్చా?',
+        a: 'రాయొచ్చు! "String args[]" అని కానీ, "String... args" అని కానీ రాసినా జావా యాక్సెప్ట్ చేస్తుంది.'
       },
       {
-        q: 'Can a Java file contain multiple classes?',
-        a: 'Yes, a single .java file can contain multiple classes, but only ONE class can be declared "public", and the file name must match that public class name.'
+        q: 'ఒకే ఫైల్ లో రెండు, మూడు క్లాసులు రాయొచ్చా?',
+        a: 'రాయొచ్చు. కానీ ఆ ఫైల్ మొత్తంలో ఒక్క క్లాస్ కి మాత్రమే "public" అని ఉండాలి. ఆ పబ్లిక్ క్లాస్ పేరే ఫైల్ కి ఉండాలి.'
       },
       {
-        q: 'What happens if we remove the "static" keyword from main()?',
-        a: 'The code will compile without errors, but when you attempt to run it with "java Main", the JVM will throw a NoSuchMethodError because it cannot find a static entry point to call without instantiation.'
+        q: 'main() ఫంక్షన్ లో నుంచి static అనే పదం తీసేస్తే ఏమవుతుంది?',
+        a: 'కోడ్ ఎర్రర్ లేకుండా కంపైల్ అవుతుంది. కానీ రన్ చేద్దామని చూసినప్పుడు.. JVM కి పబ్లిక్ గా యాక్సెస్ అయ్యే స్టాటిక్ ఫంక్షన్ దొరకక "NoSuchMethodError" అని ఆగిపోతుంది.'
       }
     ],
     recap: [
-      'Java 21 LTS is the recommended modern Long-Term Support release for production.',
-      'Every standalone Java program starts execution at: public static void main(String[] args).',
-      'public class name MUST match the filename (Main.java).',
-      'System.out.println() prints with a newline; System.out.print() prints continuously on the same line.'
+      'జావా 21 LTS అనేది లేటెస్ట్ వెర్షన్, దాన్నే అందరూ ప్రాజెక్ట్స్ కి వాడుతున్నారు.',
+      'జావా ప్రోగ్రామ్ రన్ అవ్వాలంటే కచ్చితంగా "public static void main(String[] args)" ఉండాలి.',
+      'పబ్లిక్ క్లాస్ పేరు, ఫైల్ పేరు కచ్చితంగా ఒకేలా ఉండాలి.',
+      'System.out.println() అంటే ప్రింట్ చేసి నెక్స్ట్ లైన్ కి వెళ్లడం. System.out.print() అంటే అక్కడే ఉండిపోవడం.'
     ]
   },
 
@@ -409,210 +403,199 @@ public class UserProfileCard {
     phaseId: 'phase1',
     phaseTitle: 'Phase 1: Java Basics',
     slug: '03-java-compilation-execution-and-source-structure',
-    title: 'How Java Compiles & Runs & Source File Structure',
+    title: 'How Java Compiles & Runs & Source File Structure (తెలుగులో)',
     badge: '3. Compilation & File Structure',
     subtopics: 'Compilation Pipeline (javac to Bytecode to JVM) · Why Java is Compiled & Interpreted · Source File Structure Rules · Packages & Imports',
     readTime: '15 min read',
-    intro: 'Deep exploration of the complete Java compilation and execution pipeline: from source code (.java) to bytecode (.class) and native machine code, why Java is hybrid compiled/interpreted, and the mandatory architectural structure of Java source files.',
+    intro: 'మనం రాసిన కోడ్ కంప్యూటర్ కి ఎలా అర్థం అవుతుంది? అసలు కంపైలేషన్ అంటే ఏంటి? జావా కోడ్ కంపైల్ అయ్యి, రన్ అయ్యే లోపల ఏం ప్రాసెస్ జరుగుతుంది? ఒక ఫైల్ లో కోడ్ రాసేటప్పుడు పైన ఏముండాలి, కింద ఏముండాలి అనే స్ట్రక్చర్ రూల్స్ ఏంటో చూద్దాం.',
     theorySections: [
       {
-        heading: '1. The 2-Step Java Compilation & Execution Lifecycle',
-        content: `Java combines the speed of compiled languages with the flexibility of interpreted languages. Here is the step-by-step journey of your code:
+        heading: '1. కోడ్ రన్ అయ్యే 2-స్టెప్ ప్రాసెస్ (Compilation & Execution)',
+        content: `జావా లో రాసిన కోడ్ డైరెక్ట్ గా కంప్యూటర్ కి అర్థం కాదు. మధ్యలో రెండు స్టెప్స్ ఉంటాయి:
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
 |                        JAVA CODE EXECUTION PIPELINE                               |
 +-----------------------------------------------------------------------------------+
 |  [ Step 1: Human Source Code ]                                                    |
-|    File: Main.java (Plain text readable code written by developer)                |
+|    ఫైల్: Main.java (మనం ఇంగ్లీష్ లాగా రాసే కోడ్)                                            |
 |           |                                                                       |
 |           v                                                                       |
 |  [ Step 2: Java Compiler (javac) ]                                                |
-|    Command: javac Main.java                                                       |
-|    Action : Syntax validation, type checking, semantic analysis                   |
+|    కమాండ్: javac Main.java                                                         |
+|    ఏం చేస్తుంది : మనం రాసిన కోడ్ లో తప్పులు ఏమైనా ఉన్నాయా అని చెక్ చేస్తుంది                 |
 |           |                                                                       |
 |           v                                                                       |
 |  [ Step 3: Architecture-Neutral Bytecode ]                                        |
-|    File: Main.class (Compact, platform-agnostic bytecode instructions)            |
+|    ఫైల్: Main.class (తప్పులు లేకపోతే ఈ ఫైల్ క్రియేట్ అవుతుంది)                             |
 |           |                                                                       |
 |           v                                                                       |
 |  [ Step 4: Java Virtual Machine (JVM) ]                                           |
-|    Command: java Main                                                             |
-|    Actions:                                                                       |
-|      1. ClassLoader loads Main.class into memory                                  |
-|      2. Bytecode Verifier checks security & memory safety                         |
-|      3. Execution Engine:                                                         |
-|         - Interpreter reads instructions immediately                              |
-|         - JIT Compiler compiles hot code paths into optimized machine code       |
+|    కమాండ్: java Main                                                               |
+|    ఏం చేస్తుంది: ఆ .class ఫైల్ ని తీసుకుని విండోస్ అయితే విండోస్ కి, Mac అయితే Mac కి      |
+|               అర్థమయ్యేలా మార్చి రన్ చేస్తుంది.                                        |
 |           |                                                                       |
 |           v                                                                       |
 |  [ Step 5: Native Machine Execution ]                                             |
-|    Binary CPU instructions executed directly on Host CPU (Intel / AMD / ARM)      |
+|    మన కంప్యూటర్ ప్రాసెసర్ కి (జీరోలు, వన్స్ లాగా) అర్థమై స్క్రీన్ మీద అవుట్పుట్ వస్తుంది!       |
 +-----------------------------------------------------------------------------------+
 \`\`\``
       },
       {
-        heading: '2. Why is Java both Compiled and Interpreted?',
-        content: `Lower-level languages (like C and C++) are **Purely Compiled**: they translate source code directly into CPU machine binaries. If the CPU changes, the binary breaks.
+        heading: '2. జావా Compiled లాంగ్వేజా? Interpreted లాంగ్వేజా?',
+        content: `C, C++ లాంటి లాంగ్వేజెస్ **Purely Compiled**. అంటే మనం రాసిన కోడ్ డైరెక్ట్ గా సిస్టమ్ కి అర్థమయ్యే \`.exe\` ఫైల్ గా మారిపోతుంది. ఇవి చాలా స్పీడ్ గా ఉంటాయి.
+        
+Python, JavaScript లాంటివి **Purely Interpreted**. అంటే లైన్ బై లైన్ కోడ్ ని చదువుకుంటూ రన్ అవుతాయి. ఇవి కొంచెం స్లో.
 
-Higher-level scripting languages (like Python and JavaScript) are **Purely Interpreted**: the interpreter reads source code line-by-line during runtime, which can result in slower execution speeds for heavy computation.
-
-**Java combines the best of both worlds:**
-1. **Compilation Phase (\`javac\`):** Pre-compiles source code into Bytecode once, catching syntax errors and type mismatches ahead of time.
-2. **Interpretation & JIT Phase (JVM):** The JVM interprets Bytecode immediately on startup for quick response times, while the **JIT (Just-In-Time) compiler** converts repetitive loops into pure native machine code, achieving near-C++ speeds!`
+**కానీ జావా ఈ రెండింటి కాంబినేషన్:**
+1. **Compilation (\`javac\`):** ముందు మనం రాసిన కోడ్ లో తప్పులు లేకుండా కంపైల్ చేసి ఒక ప్యాకెట్ (.class) లాగా మారుస్తుంది.
+2. **Interpretation (JVM):** ఆ ప్యాకెట్ ని లైన్ బై లైన్ చదువుతూ రన్ చేస్తుంది. మధ్యలో ఏదైనా కోడ్ రిపీట్ అవుతుంటే **JIT (Just-In-Time) కంపైలర్** వాడి దాన్ని సూపర్ ఫాస్ట్ గా రన్ అయ్యేలా చేస్తుంది!`
       },
       {
-        heading: '3. Mandatory Java Source File Structure',
-        content: `A single \`.java\` source file follows a strict top-to-bottom structural hierarchy:
+        heading: '3. జావా ఫైల్ స్ట్రక్చర్ రూల్స్ (ఏది ఎక్కడ రాయాలి?)',
+        content: `ఒక \`.java\` ఫైల్ తీసుకుంటే, అందులో ఏ లైన్ తర్వాత ఏది రావాలో ఒక ఆర్డర్ ఉంటుంది. ఇష్టం వచ్చినట్టు రాయడానికి లేదు:
 
 \`\`\`
 +-----------------------------------------------------------------------+
-| 1. Package Declaration (Optional, must be first line if present)       |
+| 1. Package Declaration (ఫైల్ ఏ ఫోల్డర్ లో ఉందో చెప్పాలి. ఉంటే ఇదే ఫస్ట్ లైన్ లో ఉండాలి) |
 |    package com.ourcompiler.tutorial;                                  |
 +-----------------------------------------------------------------------+
-| 2. Import Statements (Optional, imports external classes/libraries)   |
+| 2. Import Statements (బయట నుంచి వేరే టూల్స్ తెచ్చుకోవడానికి)                 |
 |    import java.util.Scanner;                                          |
-|    import java.time.LocalDateTime;                                    |
 +-----------------------------------------------------------------------+
-| 3. Main Public Class Declaration (Must match filename exactly)        |
+| 3. Main Public Class (ఫైల్ పేరు, ఈ పేరు ఒకటే ఉండాలి)                        |
 |    public class Application {                                         |
 |                                                                       |
-|      // 4. Class Variables & Fields (State)                           |
-|      private String appName = "OurCompiler Engine";                   |
-|      public static final int VERSION = 1;                             |
+|      // 4. Variables (ప్రాపర్టీస్)                                      |
+|      String appName = "OurCompiler";                                  |
 |                                                                       |
-|      // 5. Constructors (Object Initialization)                       |
+|      // 5. Constructors (స్టార్ట్ అవ్వగానే రన్ అయ్యేవి)                    |
 |      public Application() { ... }                                     |
 |                                                                       |
-|      // 6. Methods (Behavior)                                         |
+|      // 6. Methods (ఫంక్షన్స్ / పనులు)                                    |
 |      public void start() { ... }                                      |
 |                                                                       |
-|      // 7. Main Entry Point Method                                    |
+|      // 7. Main Entry Point (స్టార్టింగ్ పాయింట్)                          |
 |      public static void main(String[] args) { ... }                   |
 |    }                                                                  |
 +-----------------------------------------------------------------------+
-| 8. Non-Public Classes (Optional, package-private helper classes)      |
-|    class HelperUtil { ... }                                           |
+| 8. Non-Public Classes (అవసరమైతే ఎక్స్ట్రా క్లాసులు కింద రాసుకోవచ్చు)            |
+|    class Helper { ... }                                               |
 +-----------------------------------------------------------------------+
 \`\`\`
 
-### Fundamental Source File Rules:
-1. **Package Statement First:** If a file belongs to a package (folder), the \`package\` statement must be the very first non-comment line.
-2. **Single Public Class Rule:** A \`.java\` file can have **at most one** \`public\` class.
-3. **Filename Rule:** The filename MUST match the name of the \`public\` class (e.g. \`Application.java\` for \`public class Application\`).`
+### మెయిన్ రూల్స్:
+1. **Package ఫస్ట్:** ప్యాకేజ్ పేరు ఇస్తుంటే కచ్చితంగా అదే ఫస్ట్ లైన్ లో ఉండాలి.
+2. **ఒకే పబ్లిక్ క్లాస్:** ఒక ఫైల్ లో ఎన్నైనా క్లాసులు రాయొచ్చు కానీ, పబ్లిక్ క్లాస్ మాత్రం ఒకటే ఉండాలి.
+3. **ఫైల్ నేమ్:** ఆ పబ్లిక్ క్లాస్ పేరే ఫైల్ కి పెట్టాలి.`
       }
     ],
-    codeExample: `// 1. Package statement (conceptual for tutorial demonstration)
+    codeExample: `// 1. Package (ఇది ఒక ఫోల్డర్ లో ఉంటే కచ్చితంగా రాయాలి)
 // package com.ourcompiler.demo;
 
-// 2. Import statements from standard class library
+// 2. Import (టైమ్ ని తెచ్చుకోవడానికి ఈ లైబ్రరీస్ వాడుతున్నాం)
 import java.util.Date;
 import java.time.LocalDate;
 
-// 3. Primary public class matching filename: SourceStructureDemo.java
+// 3. పబ్లిక్ క్లాస్ (దీని పేరు ఫైల్ పేరు ఒకటే ఉండాలి)
 public class Main {
     
-    // 4. Class-level constants & fields
-    public static final String COURSE_NAME = "Java Masterclass 2026";
+    // 4. క్లాస్ లోపల వేరియబుల్స్ 
+    public static final String COURSE = "Java Course 2026";
 
-    // 5. Main execution entry point
+    // 5. మెయిన్ ఫంక్షన్
     public static void main(String[] args) {
-        System.out.println("Course Title   : " + COURSE_NAME);
-        System.out.println("System Date    : " + new Date());
-        System.out.println("Current Year   : " + LocalDate.now().getYear());
+        System.out.println("కోర్సు పేరు: " + COURSE);
+        System.out.println("ఈరోజు డేట్: " + new Date());
+        System.out.println("సంవత్సరం : " + LocalDate.now().getYear());
         
-        // Calling a helper method
-        displaySystemArchitecture();
+        // మనమే రాసిన ఇంకో ఫంక్షన్ ని కాల్ చేయడం
+        showDetails();
     }
 
-    // 6. Custom member method
-    public static void displaySystemArchitecture() {
-        System.out.println("Architecture   : 2-Step JIT Bytecode Compilation Model");
-        System.out.println("Status         : Fully Compliant with Java 21 LTS Standard");
+    // 6. కస్టమ్ ఫంక్షన్
+    public static void showDetails() {
+        System.out.println("--- జావా ప్రోగ్రామ్ రన్ అవుతోంది ---");
     }
 }`,
-    output: `Course Title   : Java Masterclass 2026
-System Date    : Sun Aug 16 13:45:00 IST 2026
-Current Year   : 2026
-Architecture   : 2-Step JIT Bytecode Compilation Model
-Status         : Fully Compliant with Java 21 LTS Standard`,
+    output: `కోర్సు పేరు: Java Course 2026
+ఈరోజు డేట్: Sun Aug 16 13:45:00 IST 2026
+సంవత్సరం : 2026
+--- జావా ప్రోగ్రామ్ రన్ అవుతోంది ---`,
     lineByLine: [
-      { line: 'import java.util.Date;', explanation: 'Imports the legacy Date class from the java.util standard library package.' },
-      { line: 'public static final String COURSE_NAME', explanation: 'Declares a public, class-level, constant (final) String variable accessible everywhere.' },
-      { line: 'displaySystemArchitecture();', explanation: 'Invokes the static member method defined within the same class.' },
-      { line: 'public static void displaySystemArchitecture()', explanation: 'Method definition containing modular, reusable application logic.' }
+      { line: 'import java.util.Date;', explanation: 'జావా వాళ్ళు ముందే రాసిపెట్టిన Date క్లాస్ ని మన ఫైల్ లోకి తెచ్చుకుంటున్నాం.' },
+      { line: 'public static final String COURSE', explanation: 'ఎవరూ మార్చడానికి వీల్లేని (constant) వేరియబుల్ ని క్రియేట్ చేస్తున్నాం.' },
+      { line: 'showDetails();', explanation: 'కింద రాసిన కస్టమ్ ఫంక్షన్ ని ఇక్కడ కాల్ చేసి రన్ చేస్తున్నాం.' },
+      { line: 'public static void showDetails()', explanation: 'మనం ఓన్ గా రాసుకున్న కస్టమ్ ఫంక్షన్. దీంట్లో ఉన్న కోడ్ కాల్ చేసినప్పుడే రన్ అవుతుంది.' }
     ],
-    practicalExample: `// Multi-class demonstration in a single compilation unit
-class DatabaseConnector {
+    practicalExample: `// ఒకే ఫైల్ లో రెండు మూడు క్లాసులు రాస్తే ఎలా ఉంటుందో చూద్దాం
+class Database {
     void connect() {
-        System.out.println("[DatabaseConnector] Connected to PostgreSQL Database.");
+        System.out.println("[Database] డేటాబేస్ కి కనెక్ట్ అయ్యాం.");
     }
 }
 
-class SecurityGuard {
-    boolean authenticate(String token) {
-        return token.equals("AUTH_SECRET_2026");
+class Security {
+    boolean authenticate(String pwd) {
+        return pwd.equals("Secret123");
     }
 }
 
+// ఇది మెయిన్ పబ్లిక్ క్లాస్ (దీని పేరే ఫైల్ కి ఉండాలి)
 public class Main {
     public static void main(String[] args) {
-        System.out.println("--- Starting Enterprise Service Bootstrapping ---");
+        System.out.println("--- యాప్ స్టార్ట్ అవుతోంది ---");
         
-        SecurityGuard guard = new SecurityGuard();
-        boolean isAuth = guard.authenticate("AUTH_SECRET_2026");
-        System.out.println("Authentication Status: " + (isAuth ? "GRANTED" : "DENIED"));
-
-        if (isAuth) {
-            DatabaseConnector db = new DatabaseConnector();
+        Security sec = new Security();
+        boolean isOk = sec.authenticate("Secret123");
+        
+        if (isOk) {
+            System.out.println("పాస్ వర్డ్ కరెక్ట్!");
+            Database db = new Database();
             db.connect();
-            System.out.println("System Ready for Production Traffic.");
+        } else {
+            System.out.println("పాస్ వర్డ్ రాంగ్!");
         }
     }
 }`,
-    practicalOutput: `--- Starting Enterprise Service Bootstrapping ---
-Authentication Status: GRANTED
-[DatabaseConnector] Connected to PostgreSQL Database.
-System Ready for Production Traffic.`,
+    practicalOutput: `--- యాప్ స్టార్ట్ అవుతోంది ---
+పాస్ వర్డ్ కరెక్ట్!
+[Database] డేటాబేస్ కి కనెక్ట్ అయ్యాం.`,
     commonMistakes: [
-      'Placing import statements before package declaration: Causes a compile error. The package statement must always be first.',
-      'Declaring two public classes in one file: Causes compilation failure: "class X is public, should be declared in a file named X.java".',
-      'Running "java Main.class": The java command takes the CLASS NAME ("java Main"), not the filename with extension.'
+      'imports ని package కంటే పైన రాయడం: ప్యాకేజ్ ఉంటే అది కచ్చితంగా మొదటి లైన్ లోనే ఉండాలి, ఆ తర్వాతే ఇంపోర్ట్స్ ఉండాలి.',
+      'ఒకే ఫైల్ లో రెండు పబ్లిక్ క్లాసులు రాయడం: అలా కుదరదు. ఒక ఫైల్ కి ఒక పబ్లిక్ క్లాస్ మాత్రమే ఉండాలి.',
+      'java Main.class అని టైప్ చేయడం: రన్ చేసేటప్పుడు "java Main" అని క్లాస్ పేరు మాత్రమే ఇవ్వాలి, చివర .class ఇవ్వకూడదు.'
     ],
     challenge: `// Coding Challenge:
-// Create a program containing:
-// 1. A constant APP_NAME = "Enterprise Gateway"
-// 2. A method named verifySystemStatus() that prints "[Status] All microservices operational."
-// 3. Invoke verifySystemStatus() inside main().
+// ఒకే ఫైల్ లో కిందివి ట్రై చేయండి:
+// 1. APP_NAME = "My First App" అనే ఒక కాన్స్టంట్ వేరియబుల్ క్రియేట్ చేయండి.
+// 2. printStatus() అనే ఫంక్షన్ రాసి, అందులో "All good!" అని ప్రింట్ చేయండి.
+// 3. main() ఫంక్షన్ నుంచి దాన్ని కాల్ చేయండి.
 
 public class Main {
-    // TODO: Define APP_NAME constant here
+    // TODO: APP_NAME ని ఇక్కడ రాయండి
     
-    // TODO: Define verifySystemStatus() method here
+    // TODO: printStatus() ఫంక్షన్ రాయండి
 
     public static void main(String[] args) {
-        // TODO: Print APP_NAME and call verifySystemStatus()
+        // TODO: కాల్ చేయండి
         
     }
 }`,
     faq: [
       {
-        q: 'What is inside a .class file?',
-        a: 'A .class file contains binary Java Bytecode instructions, a constant pool (storing literal strings, numbers, and method references), class metadata, and stack/local variable allocations for the JVM.'
+        q: '.class ఫైల్ లో ఏముంటుంది?',
+        a: 'అందులో కంప్యూటర్ కి మాత్రమే అర్థమయ్యే బైనరీ బైట్ కోడ్ (Bytecode), వేరియబుల్స్ డీటెయిల్స్ లాంటివి ఉంటాయి.'
       },
       {
-        q: 'Do I need to import java.lang classes like String or System?',
-        a: 'No! The java.lang package is automatically imported by the Java compiler into every single Java file by default.'
-      },
-      {
-        q: 'What is the command to view decompiled Bytecode?',
-        a: 'You can use the built-in JDK disassembler: "javap -c Main.class" to inspect the human-readable JVM assembly instructions.'
+        q: 'మరి String, System లాంటి క్లాసులు మనం ఇంపోర్ట్ చేసుకోలేదు కదా?',
+        a: 'java.lang అనే ప్యాకేజ్ లో ఉండే ఈ బేసిక్ క్లాసుల్ని జావా కంపైలర్ ఆటోమాటిక్ గా ఇంపోర్ట్ చేసేస్తుంది. మనం రాయనక్కర్లేదు.'
       }
     ],
     recap: [
-      'Java uses a 2-step compilation lifecycle: javac (Source to Bytecode) -> JVM (Bytecode to Machine Code).',
-      'Java source order: 1. package, 2. imports, 3. public class, 4. fields, 5. methods.',
-      'Only one public class is allowed per .java file and its name must match the filename.'
+      'మనం రాసే జావా కోడ్ కంపైలర్ ద్వారా బైట్ కోడ్ గా మారి, ఆ తర్వాత JVM దాన్ని రన్ చేస్తుంది.',
+      'జావా ఫైల్ లో ఎప్పుడూ Package ఫస్ట్ ఉండాలి, తర్వాత Imports, తర్వాత Class ఉండాలి.',
+      'ఒక ఫైల్ లో ఎన్ని క్లాసులు ఉన్నా సరే.. ఒకటే పబ్లిక్ క్లాస్ ఉండాలి. దాని పేరే ఫైల్ కి ఉండాలి.'
     ]
   },
 
@@ -624,169 +607,150 @@ public class Main {
     phaseId: 'phase1',
     phaseTitle: 'Phase 1: Java Basics',
     slug: '04-java-comments-and-naming-conventions',
-    title: 'Java Comments & Industry Naming Conventions',
+    title: 'Java Comments & Industry Naming Conventions (తెలుగులో)',
     badge: '4. Comments & Naming Rules',
     subtopics: 'Single-line // · Multi-line /* */ · Javadoc /** */ with Tags · Naming Conventions (PascalCase, camelCase, UPPER_SNAKE_CASE) · Self-Documenting Code',
     readTime: '14 min read',
-    intro: 'Mastering clean code standards in Java: the three types of comments including professional Javadoc generation with standard tags (@param, @return, @throws), and the official industry naming conventions used across enterprise software teams.',
+    intro: 'కోడ్ పక్కన మనకు అర్థమయ్యేలా చిన్న నోట్స్ (Comments) ఎలా రాసుకోవాలి? అందులో Javadoc కామెంట్స్ స్పెషాలిటీ ఏంటి? మరియు ఇండస్ట్రీ లో కోడ్ రాసేటప్పుడు ఏ వేరియబుల్ కి ఎట్లాంటి పేర్లు (Naming Conventions) పెట్టాలో నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. The 3 Types of Comments in Java',
-        content: `Comments are explanatory notes placed inside source code to assist human developers. The Java compiler completely ignores comments during compilation, meaning they have **zero impact** on binary size or runtime execution performance.
+        heading: '1. కామెంట్స్ (Comments) లో 3 రకాలు',
+        content: `మనం రాసిన కోడ్ ఏంటో తర్వాత చూస్తే మనకే అర్థం కాదు. అందుకే దాని పక్కనే చిన్న వివరణ రాసుకుంటాం. వీటిని కంపైలర్ పట్టించుకోదు, అసలు కోడ్ లోకే తీసుకోదు కాబట్టి ఎంత పెద్దవి రాసినా ఫైల్ సైజ్ పెరగదు.
 
 ### 1. Single-Line Comments (\`//\`)
-Used for short, inline explanations of complex algorithms or quick notes:
+ఒకే లైన్ లో సింపుల్ గా వివరించడానికి:
 \`\`\`java
-// Calculate the compound annual growth rate (CAGR)
-double cagr = Math.pow(finalValue / initialValue, 1.0 / years) - 1;
+// బిల్ కి 18% GST యాడ్ చేస్తున్నాం
+double total = amt + (amt * 0.18);
 \`\`\`
 
 ### 2. Multi-Line Comments (\`/* ... */\`)
-Used for paragraph-length documentation or temporarily disabling code blocks during debugging:
+పెద్ద పెద్ద పేరాలు రాయాలన్నా, లేదా కొంత కోడ్ ని రన్ అవ్వకుండా టెంపరరీ గా ఆఫ్ చేయాలన్నా:
 \`\`\`java
 /*
- * The following algorithm implements the Luhn checksum
- * to validate credit card account numbers before
- * initiating payment gateway network requests.
+ * ఈ కింది కోడ్ కస్టమర్ డేటాబేస్ ని చెక్ చేస్తుంది.
+ * ప్రస్తుతానికి ఆఫ్ చేసాం.
  */
 \`\`\`
 
 ### 3. Javadoc Comments (\`/** ... */\`)
-Professional documentation comments placed immediately above classes, interfaces, methods, and fields. The JDK tool \`javadoc\` parses these comments into rich HTML documentation pages (the same documentation you read on Oracle's official Java API website!):
+కంపెనీల్లో ఒక క్లాస్ ఎందుకు రాశారు? ఒక ఫంక్షన్ కి ఏ ఇన్పుట్ ఇవ్వాలి? అని నీట్ గా డాక్యుమెంటేషన్ రెడీ చేయడానికి ఇది వాడతారు. దీన్ని వాడి ఆటోమాటిక్ గా HTML వెబ్ పేజీలని జనరేట్ చేయొచ్చు:
 \`\`\`java
 /**
- * Calculates the total order price including state tax and shipping fees.
+ * టోటల్ అమౌంట్ ని క్యాలిక్యులేట్ చేసే ఫంక్షన్.
  *
- * @param basePrice The subtotal price before tax (must be > 0).
- * @param taxRate   The applicable state sales tax percentage (e.g. 0.08 for 8%).
- * @return The final rounded invoice amount.
- * @throws IllegalArgumentException If basePrice is negative.
+ * @param price ట్యాక్స్ కలపక ముందు ఉన్న ఒరిజినల్ రేటు
+ * @param tax ట్యాక్స్ పర్సంటేజ్ (ఉదా: 0.18)
+ * @return ఫైనల్ గా కట్టాల్సిన అమౌంట్
  */
-public double calculateInvoice(double basePrice, double taxRate) {
-    if (basePrice < 0) throw new IllegalArgumentException("Base price cannot be negative");
-    return basePrice + (basePrice * taxRate);
+public double getFinalPrice(double price, double tax) {
+    return price + (price * tax);
 }
 \`\`\``
       },
       {
-        heading: '2. Standard Javadoc Tags',
-        content: `Professional Java teams use standard Javadoc tags to build enterprise API documentation:
+        heading: '2. స్టాండర్డ్ Javadoc టాగ్స్',
+        content: `మనం వాడే మెయిన్ టాగ్స్ ఇవే:
 
-| Tag | Syntax | Description |
+| టాగ్ | ఎలా రాయాలి? | ఎందుకు వాడుతారు? |
 | :--- | :--- | :--- |
-| **\`@author\`** | \`@author Developer Name\` | Specifies the author/team responsible for creating the class. |
-| **\`@version\`** | \`@version 1.0.0\` | Documents the current software version release. |
-| **\`@param\`** | \`@param parameterName description\` | Documents the purpose, type, and constraints of a method parameter. |
-| **\`@return\`** | \`@return description\` | Documents the return value and meaning of the method output. |
-| **\`@throws\`** | \`@throws ExceptionClass condition\` | Documents which exceptions can be thrown and under what conditions. |
-| **\`@see\`** | \`@see ClassName#method\` | Provides a cross-reference link to related classes or documentation. |
-| **\`@deprecated\`**| \`@deprecated reason and replacement\` | Warns developers that a method is obsolete and will be removed in future versions. |`
+| **\`@author\`** | \`@author Balaji\` | ఈ కోడ్ రాసింది ఎవరు అని చెప్పడానికి. |
+| **\`@version\`** | \`@version 1.0\` | ఇది ఎన్నో వెర్షన్ అని రాయడానికి. |
+| **\`@param\`** | \`@param name యూజర్ పేరు\` | ఫంక్షన్ కి ఇచ్చే ఇన్పుట్ వేరియబుల్స్ గురించి వివరించడానికి. |
+| **\`@return\`** | \`@return టోటల్ అమౌంట్\` | ఫంక్షన్ రన్ అయ్యాక తిరిగి వచ్చే రిజల్ట్ గురించి చెప్పడానికి. |
+| **\`@throws\`** | \`@throws Exception ఎర్రర్ వస్తే\` | ఏ టైమ్ లో ఎర్రర్స్ రావచ్చో చెప్పడానికి. |`
       },
       {
-        heading: '3. Official Java Naming Conventions',
-        content: `Java has strict, universally accepted naming conventions established by Oracle and Google Style Guides. Adhering to these standards is essential for professional code readability:
+        heading: '3. జావా Naming Conventions (పేర్లు ఎలా పెట్టాలి?)',
+        content: `కంపెనీల్లో కోడ్ రాసేటప్పుడు ఇష్టం వచ్చినట్టు పేర్లు పెట్టకూడదు. జావా కి కొన్ని గ్లోబల్ రూల్స్ ఉన్నాయి. వాటిని ఫాలో అవ్వాల్సిందే:
 
-| Code Element | Naming Convention | Example | Rules & Guidelines |
+| దేనికి? | రూల్ ఏంటి? | ఎగ్జాంపుల్ | గుర్తుపెట్టుకోవాల్సింది |
 | :--- | :--- | :--- | :--- |
-| **Classes & Interfaces** | **PascalCase** (UpperCamelCase) | \`BankAccount\`, \`PaymentService\`, \`UserRepository\` | Must begin with an uppercase letter; nouns representing entities. |
-| **Methods** | **camelCase** (lowerCamelCase) | \`calculateTotal()\`, \`sendNotification()\`, \`getUserById()\` | Must begin with a lowercase letter; verbs representing actions. |
-| **Variables & Fields** | **camelCase** (lowerCamelCase) | \`accountBalance\`, \`userEmail\`, \`totalPrice\` | Must begin with a lowercase letter; descriptive nouns. |
-| **Constants** | **UPPER_SNAKE_CASE** | \`MAX_RETRY_ATTEMPTS\`, \`DEFAULT_TIMEOUT_MS\`, \`PI\` | All uppercase letters separated by underscores; declared \`static final\`. |
-| **Packages** | **all lowercase** (reverse domain) | \`com.ourcompiler.service\`, \`org.springframework.boot\` | Unique reverse Internet domain name prefix; all lowercase. |
-| **Generics Type Parameters** | **Single Uppercase Letter** | \`T\` (Type), \`E\` (Element), \`K\` (Key), \`V\` (Value) | Single capital letters. |`
+| **Classes (క్లాసులు)** | **PascalCase** | \`BankAccount\`, \`UserLogin\` | ప్రతి పదం మొదటి అక్షరం క్యాపిటల్ ఉండాలి. ఇవి ఎప్పుడూ నామవాచకాలు (Nouns) అయి ఉండాలి. |
+| **Methods (ఫంక్షన్స్)** | **camelCase** | \`calculateTotal()\`, \`sendEmail()\` | మొదటి పదం స్మాల్ లెటర్, తర్వాత వచ్చే పదాల మొదటి అక్షరం క్యాపిటల్. ఇవి ఎప్పుడూ పనులు (Verbs) లాగా ఉండాలి. |
+| **Variables (వేరియబుల్స్)** | **camelCase** | \`userAge\`, \`totalPrice\` | ఇది కూడా camelCase ఏ ఫాలో అవుతుంది. |
+| **Constants (కాన్స్టంట్స్)** | **UPPER_SNAKE_CASE** | \`MAX_SPEED\`, \`DEFAULT_TAX\` | అన్నీ క్యాపిటల్ లెటర్స్ ఏ, పదాల మధ్యలో అండర్ స్కోర్ (_) ఉండాలి. |
+| **Packages (ప్యాకేజెస్)** | **అన్నీ స్మాల్ లెటర్స్** | \`com.ourcompiler.user\` | అన్నీ స్మాల్ లెటర్స్ లో ఉండాలి, గ్యాప్స్ ఉండకూడదు. |`
       }
     ],
     codeExample: `/**
- * Demonstrates clean coding standards, Javadoc annotations,
- * and official Java naming conventions.
+ * Naming Conventions ని కరెక్ట్ గా ఫాలో అవుతూ రాసిన కోడ్.
  *
- * @author Our Compiler Technical Editorial Team
- * @version 2026.1
+ * @author మన కంపైలర్ టీమ్
  */
-public class Main {
+public class Main { // క్లాస్ పేరు PascalCase లో ఉంది
 
-    // Constant in UPPER_SNAKE_CASE
-    public static final double DEFAULT_TAX_RATE = 0.18;
-    public static final String CURRENCY_SYMBOL  = "INR (₹)";
+    // కాన్స్టంట్స్ UPPER_SNAKE_CASE లో ఉన్నాయి
+    public static final double DEFAULT_TAX = 0.18;
+    public static final String CURRENCY = "₹";
 
     /**
-     * Computes the total billing amount after applying standard tax.
-     *
-     * @param itemPrice Subtotal price of purchased goods.
-     * @return Final amount including applicable tax.
+     * ట్యాక్స్ కలిపి ఫైనల్ అమౌంట్ ఎంత అవుతుందో లెక్కించే ఫంక్షన్.
      */
-    public static double computeBill(double itemPrice) {
-        // Single-line comment: calculate gross total
-        double taxAmount = itemPrice * DEFAULT_TAX_RATE;
+    public static double computeBill(double itemPrice) { // ఫంక్షన్ పేరు, వేరియబుల్స్ camelCase లో ఉన్నాయి
+        // ట్యాక్స్ ని లెక్కించడం
+        double taxAmount = itemPrice * DEFAULT_TAX;
         return itemPrice + taxAmount;
     }
 
     public static void main(String[] args) {
-        double productPrice = 2500.00; // Variable in camelCase
+        double productPrice = 2500.0; 
         double totalPayable = computeBill(productPrice);
 
-        System.out.println("Product Price : ₹" + productPrice);
-        System.out.println("Tax Rate      : " + (DEFAULT_TAX_RATE * 100) + "%");
-        System.out.println("Total Invoice : ₹" + totalPayable);
-        System.out.println("Currency Code : " + CURRENCY_SYMBOL);
+        System.out.println("ప్రోడక్ట్ ధర : " + CURRENCY + productPrice);
+        System.out.println("ట్యాక్స్ రేటు : 18%");
+        System.out.println("ఫైనల్ బిల్  : " + CURRENCY + totalPayable);
     }
 }`,
-    output: `Product Price : ₹2500.0
-Tax Rate      : 18.0%
-Total Invoice : ₹2950.0
-Currency Code : INR (₹)`,
+    output: `ప్రోడక్ట్ ధర : ₹2500.0
+ట్యాక్స్ రేటు : 18%
+ఫైనల్ బిల్  : ₹2950.0`,
     lineByLine: [
-      { line: '/** ... */', explanation: 'Javadoc documentation block containing structured metadata for the class and its methods.' },
-      { line: 'public static final double DEFAULT_TAX_RATE = 0.18;', explanation: 'Constant declared with static final modifiers formatted in UPPER_SNAKE_CASE.' },
-      { line: 'double taxAmount = itemPrice * DEFAULT_TAX_RATE;', explanation: 'Local variable in camelCase representing intermediate calculation.' },
-      { line: 'computeBill(productPrice)', explanation: 'Method invocation in camelCase conveying clear action verb.' }
+      { line: '/** ... */', explanation: 'క్లాస్ కి పైన రాసిన Javadoc కామెంట్. రేపు పొద్దున్న డాక్యుమెంటేషన్ జనరేట్ చేసినప్పుడు ఇది వెబ్ సైట్ లో కనిపిస్తుంది.' },
+      { line: 'public static final double DEFAULT_TAX', explanation: 'ఇది ఒక కాన్స్టంట్ కాబట్టి అన్నీ క్యాపిటల్ లెటర్స్, మధ్యలో అండర్ స్కోర్ ఇచ్చాం (UPPER_SNAKE_CASE).' },
+      { line: 'double taxAmount = ...', explanation: 'లోకల్ వేరియబుల్స్ కాబట్టి ఫస్ట్ లెటర్ స్మాల్ ఉండి, తర్వాత పదం క్యాపిటల్ తో స్టార్ట్ అయ్యేలా (camelCase) ఇచ్చాం.' }
     ],
     practicalExample: `/**
- * Represents an employee record with enterprise naming conventions.
+ * ఎంప్లాయ్ డీటెయిల్స్ స్టోర్ చేసే క్లాస్.
  */
-class EmployeeRecord {
-    // Instance variables in camelCase
-    private String employeeName;
-    private int employeeId;
-    private double monthlySalary;
+class Employee {
+    // వేరియబుల్స్ camelCase లో
+    private String empName;
+    private double monthlySal;
 
-    public EmployeeRecord(String employeeName, int employeeId, double monthlySalary) {
-        this.employeeName = employeeName;
-        this.employeeId = employeeId;
-        this.monthlySalary = monthlySalary;
+    public Employee(String empName, double monthlySal) {
+        this.empName = empName;
+        this.monthlySal = monthlySal;
     }
 
-    public double calculateAnnualCTC() {
-        // 12 months salary + 10% standard enterprise performance bonus
-        final double BONUS_PERCENTAGE = 0.10;
-        double annualBase = this.monthlySalary * 12;
-        return annualBase + (annualBase * BONUS_PERCENTAGE);
+    // ఫంక్షన్స్ camelCase లో
+    public double getAnnualCTC() {
+        final double BONUS_PCT = 0.10; // కాన్స్టంట్
+        double annualBase = this.monthlySal * 12;
+        return annualBase + (annualBase * BONUS_PCT);
     }
 
-    public void printSummary() {
-        System.out.println("Employee ID   : #" + employeeId);
-        System.out.println("Employee Name : " + employeeName);
-        System.out.println("Annual CTC    : ₹" + calculateAnnualCTC());
+    public void printInfo() {
+        System.out.println("పేరు     : " + empName);
+        System.out.println("వార్షిక జీతం: ₹" + getAnnualCTC());
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        EmployeeRecord dev = new EmployeeRecord("Balaji Nayak", 10142, 85000.00);
-        dev.printSummary();
+        Employee dev = new Employee("Balaji", 85000);
+        dev.printInfo();
     }
 }`,
-    practicalOutput: `Employee ID   : #10142
-Employee Name : Balaji Nayak
-Annual CTC    : ₹1122000.0`,
+    practicalOutput: `పేరు     : Balaji
+వార్షిక జీతం: ₹1122000.0`,
     commonMistakes: [
-      'Using lowercase for class names: "class bankAccount" violates Java conventions and makes code hard to distinguish from variables.',
-      'Using underscores in variable names: "int user_age" is C/Python style; in Java, always use camelCase: "int userAge".',
-      'Over-commenting obvious code: Writing "// print hello" above "System.out.println("hello")" adds noise. Comments should explain WHY a complex logic exists, not WHAT simple syntax does.',
-      'Naming constants in lowercase: Writing "final double pi = 3.14" violates conventions; write "final double PI = 3.14159".'
+      'క్లాస్ కి స్మాల్ లెటర్ తో స్టార్ట్ చేయడం: "class bankAccount" అని ఇవ్వకూడదు, "class BankAccount" అని మాత్రమే ఇవ్వాలి.',
+      'వేరియబుల్స్ కి అండర్ స్కోర్స్ వాడటం: C, Python లో "user_age" అని వాడతారు కానీ, జావా లో కచ్చితంగా "userAge" అని camelCase వాడాలి.',
+      'అవసరం లేని చోటల్లా కామెంట్స్ పెట్టడం: "System.out.println()" పక్కన "ఇది ప్రింట్ చేస్తుంది" అని కామెంట్ పెట్టడం వేస్ట్. అర్థం కాని కాంప్లెక్స్ లాజిక్ కి మాత్రమే కామెంట్స్ రాయాలి.'
     ],
     challenge: `// Coding Challenge:
-// Refactor the following poorly formatted code to follow official Java naming conventions:
+// ఈ కింది కోడ్ లో Naming Conventions అన్నీ తప్పుగా ఉన్నాయి. వాటిని కరెక్ట్ చేయండి:
 // - Class name: employee_manager -> ???
 // - Constant: max_limit = 500 -> ???
 // - Variable: User_first_Name -> ???
@@ -794,29 +758,24 @@ Annual CTC    : ₹1122000.0`,
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: Implement the refactored code following standard Java naming conventions
+        // TODO: పైన ఉన్న వాటిని కరెక్ట్ గా మార్చి రాయండి
         
     }
 }`,
     faq: [
       {
-        q: 'How do I generate HTML documentation from Javadoc comments?',
-        a: 'Run the command "javadoc -d docs Main.java" in your terminal. The JDK will automatically generate a complete web portal with clickable class indexes and API reference pages.'
+        q: 'Javadoc కామెంట్స్ ని HTML లాగా ఎలా మార్చాలి?',
+        a: 'టెర్మినల్ లో "javadoc Main.java" అని కమాండ్ ఇస్తే, ఆటోమాటిక్ గా ఒక వెబ్ పేజీ లాగా డాక్యుమెంటేషన్ ఫైల్స్ అన్నీ క్రియేట్ అవుతాయి.'
       },
       {
-        q: 'Can variable names start with numbers or special characters in Java?',
-        a: 'Variable names CANNOT start with a digit (e.g. "1stName" is invalid). They can only start with a letter (a-z, A-Z), an underscore (_), or a dollar sign ($).'
-      },
-      {
-        q: 'Are comments included in the compiled .class file?',
-        a: 'No. The Java compiler strips out all single-line and multi-line comments during the parsing phase. Javadoc comments are optionally preserved in class metadata only if specific retention flags are enabled.'
+        q: 'వేరియబుల్ పేర్లలో నంబర్స్ వాడొచ్చా?',
+        a: 'వాడొచ్చు, కానీ ఫస్ట్ లెటర్ నంబర్ అవ్వకూడదు (ఉదా: 1stName అని ఇవ్వకూడదు. firstName1 అని ఇవ్వొచ్చు).'
       }
     ],
     recap: [
-      'Java supports single-line (//), multi-line (/* */), and Javadoc (/** */) comments.',
-      'Classes & Interfaces use PascalCase; Methods & Variables use camelCase.',
-      'Constants use UPPER_SNAKE_CASE with static final modifiers.',
-      'Packages use all lowercase reverse domain names (e.g. com.company.module).'
+      'కామెంట్స్ ని కంపైలర్ వదిలేస్తుంది, కాబట్టి ఎన్ని రాసినా ఫైల్ సైజ్ పెరగదు.',
+      'Classes కి PascalCase, వేరియబుల్స్ కి, ఫంక్షన్స్ కి camelCase వాడాలి.',
+      'లైఫ్ లో వాల్యూ మారదు అనుకున్న కాన్స్టంట్స్ కి UPPER_SNAKE_CASE వాడాలి.'
     ]
   },
 
@@ -828,174 +787,161 @@ public class Main {
     phaseId: 'phase1',
     phaseTitle: 'Phase 1: Java Basics',
     slug: '05-java-errors-debugging-and-troubleshooting',
-    title: 'Java Error Types, Stack Traces & Debugging',
+    title: 'Java Error Types, Stack Traces & Debugging (తెలుగులో)',
     badge: '5. Errors & Debugging',
     subtopics: 'Compile-Time / Syntax Errors · Runtime Errors & Exceptions · Logical Errors · Stack Trace Anatomy · Defensive Debugging',
     readTime: '15 min read',
-    intro: 'Mastering the art of troubleshooting Java software: identifying the three distinct error categories (Compile-time, Runtime, and Logical bugs), dissecting JVM stack traces with surgical precision, and building defensive debugging habits.',
+    intro: 'కోడ్ రాసేటప్పుడు ఎర్రర్స్ రావడం కామన్. జావాలో మెయిన్ గా 3 రకాల ఎర్రర్స్ ఉంటాయి (Compile-time, Runtime, Logical). అసలు స్టాక్ ట్రేస్ (Stack Trace) ని ఎలా చదవాలో, బగ్స్ ని ఈజీగా ఎలా పట్టుకోవాలో ఈ చాప్టర్ లో నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. The 3 Primary Error Classifications in Java',
-        content: `Every software bug in Java falls into one of three distinct lifecycle categories:
+        heading: '1. జావాలో 3 రకాల ఎర్రర్స్',
+        content: `మనం చేసే తప్పులు మెయిన్ గా 3 కేటగిరీల కిందకి వస్తాయి:
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
-|                        JAVA ERROR HIERARCHY & LIFECYCLE                           |
+|                        JAVA ERROR HIERARCHY (ఎర్రర్స్ రకాలు)                          |
 +-----------------------------------------------------------------------------------+
-| 1. COMPILE-TIME ERRORS (Syntax & Type Violations)                                 |
-|    - Caught by: javac compiler BEFORE code can ever run                           |
-|    - Examples : Missing semicolon, type mismatch (int x = "hello"),               |
-|                 unclosed braces {}, referencing undeclared variables              |
-|    - Severity : High compile blocker, but easy to find with line numbers          |
+| 1. COMPILE-TIME ERRORS (గ్రామర్ తప్పులు)                                            |
+|    - ఎవరు పట్టుకుంటారు?: మనం రన్ చేయకముందే javac కంపైలర్ పట్టుకుంటుంది.                 |
+|    - ఎగ్జాంపుల్ : సెమికోలన్ (;) మర్చిపోవడం, బ్రాకెట్స్ సరిగ్గా క్లోజ్ చేయకపోవడం లాంటివి.            |
+|    - ఎలా ఉంటుంది?: ఏ లైన్ లో తప్పుందో క్లియర్ గా చూపిస్తుంది కాబట్టి సాల్వ్ చేయడం ఈజీ.        |
 +-----------------------------------------------------------------------------------+
-| 2. RUNTIME ERRORS & EXCEPTIONS (Crashes During Execution)                         |
-|    - Caught by: JVM runtime during program execution                              |
-|    - Examples : NullPointerException, ArithmeticException (/ by zero),            |
-|                 ArrayIndexOutOfBoundsException, ClassCastException               |
-|    - Severity : Dangerous in production; generates a detailed JVM Stack Trace     |
+| 2. RUNTIME ERRORS & EXCEPTIONS (క్రాష్ అవ్వడం)                                        |
+|    - ఎవరు పట్టుకుంటారు?: కోడ్ రన్ అవుతున్నప్పుడు మధ్యలో JVM ఆపేస్తుంది.                     |
+|    - ఎగ్జాంపుల్ : ఒక నెంబర్ ని సున్నా (0) తో డివైడ్ చేయడం, లేని ఫైల్ ని ఓపెన్ చేయాలని చూడటం.   |
+|    - ఎలా ఉంటుంది?: ఇది చాలా డేంజర్, యాప్ మొత్తం క్లోజ్ అయిపోయి ఎర్రర్ మెసేజ్ (Stack Trace) వస్తుంది. |
 +-----------------------------------------------------------------------------------+
-| 3. LOGICAL ERRORS (Silent Calculation & Business Logic Bugs)                      |
-|    - Caught by: Automated Unit Tests (JUnit) or thorough human QA verification    |
-|    - Examples : Using + instead of *, off-by-one loop conditions (< vs <=),       |
-|                 faulty if-else branches, flawed financial tax formulas            |
-|    - Severity : Most dangerous; the code compiles and runs without crashing,      |
-|                 but produces WRONG or corrupt output!                             |
+| 3. LOGICAL ERRORS (లాజిక్ తప్పులు)                                                   |
+|    - ఎవరు పట్టుకుంటారు?: కంపైలర్ పట్టుకోలేదు, రన్ టైమ్ లో యాప్ క్రాష్ అవ్వదు.. మనమే చూసుకోవాలి.  |
+|    - ఎగ్జాంపుల్ : ఫార్ములాలో ప్లస్ (+) బదులు మైనస్ (-) పెట్టడం.                             |
+|    - ఎలా ఉంటుంది?: అంతా పర్ఫెక్ట్ గా రన్ అవుతుంది కానీ వచ్చే ఆన్సర్/రిజల్ట్ తప్పు వస్తుంది!      |
 +-----------------------------------------------------------------------------------+
 \`\`\``
       },
       {
-        heading: '2. Anatomy of a Java JVM Stack Trace',
-        content: `When a runtime exception crashes a Java application, the JVM prints a **Stack Trace** to the standard error stream. Learning to read stack traces from top to bottom is the single most important skill for a Java developer:
+        heading: '2. Stack Trace ని ఎలా చదవాలి?',
+        content: `మన ప్రోగ్రామ్ మధ్యలో క్రాష్ అయినప్పుడు టెర్మినల్ లో ఒక పెద్ద ఎర్రర్ మెసేజ్ వస్తుంది. దీన్నే **Stack Trace** అంటారు. దీన్ని పైనుంచి కిందకు కరెక్ట్ గా చదవడం వస్తే 90% బగ్స్ ని ఈజీగా సాల్వ్ చేయొచ్చు:
 
 \`\`\`
 Exception in thread "main" java.lang.ArithmeticException: / by zero
     at Calculator.divide(Calculator.java:14)
-    at OrderProcessor.calculatePerItemCost(OrderProcessor.java:28)
+    at OrderProcessor.calculateCost(OrderProcessor.java:28)
     at Main.main(Main.java:8)
 \`\`\`
 
-### How to Deconstruct This Stack Trace:
-1. **Thread Name:** \`Exception in thread "main"\` tells you which concurrent thread crashed.
-2. **Exception Class:** \`java.lang.ArithmeticException\` indicates the exact exception category.
-3. **Error Message:** \`/: by zero\` explains why the JVM aborted the operation.
-4. **Call Stack (Bottom to Top):**
-   - \`Main.main(Main.java:8)\`: Execution started at line 8 of \`Main.java\`.
-   - \`OrderProcessor.calculatePerItemCost(OrderProcessor.java:28)\`: Line 8 called \`calculatePerItemCost()\` at line 28 of \`OrderProcessor.java\`.
-   - \`Calculator.divide(Calculator.java:14)\`: The exact crash point occurred at line 14 of \`Calculator.java\` inside the \`divide()\` method!`
+### దీన్ని ఎలా అర్థం చేసుకోవాలి?:
+1. **ఏ థ్రెడ్ లో జరిగింది?:** \`Exception in thread "main"\` అంటే మెయిన్ ప్రోగ్రామ్ రన్ అవుతున్నప్పుడే క్రాష్ అయ్యింది.
+2. **ఏం ఎర్రర్?:** \`java.lang.ArithmeticException\` (మ్యాథ్స్ లో ఏదో తప్పు జరిగింది).
+3. **ఎందుకు వచ్చింది?:** \`/: by zero\` (ఏదో నెంబర్ ని సున్నాతో డివైడ్ చేసాం).
+4. **కిందనుంచి పైకి చదవాలి:**
+   - \`Main.java:8\`: ఫస్ట్ 8వ లైన్ లో ప్రోగ్రామ్ స్టార్ట్ అయ్యింది.
+   - అక్కడినుంచి \`OrderProcessor.java:28\` లైన్ కి వెళ్ళింది.
+   - అక్కడినుంచి \`Calculator.java:14\` వ లైన్ లో ఉన్న \`divide()\` ఫంక్షన్ లోపలికి వెళ్లి.. అక్కడ క్రాష్ అయ్యింది! (సో, ప్రాబ్లమ్ ఆ 14 వ లైన్ లోనే ఉంది).`
       },
       {
-        heading: '3. Common Compile-Time vs Runtime Errors',
-        content: `| Error Name | Type | Cause | Quick Fix |
+        heading: '3. కామన్ గా వచ్చే ఎర్రర్స్ లిస్ట్',
+        content: `| ఎర్రర్ పేరు | ఏ రకం? | ఎందుకొస్తుంది? | ఎలా సాల్వ్ చేయాలి? |
 | :--- | :--- | :--- | :--- |
-| **\`cannot find symbol\`** | Compile-Time | Variable or method name misspelled, or missing import statement. | Check spelling and verify the correct \`import\` package is added. |
-| **\`incompatible types\`** | Compile-Time | Assigning a data type to an incompatible variable (e.g. \`int x = "text"\`). | Apply explicit type casting or adjust the variable type. |
-| **\`missing return statement\`**| Compile-Time | A method declared with a non-void return type fails to return a value on all code paths. | Ensure every \`if-else\` branch returns a valid value. |
-| **\`NullPointerException\`** | Runtime | Attempting to call a method or access a field on an uninitialized (\`null\`) object reference. | Check for null with \`if (obj != null)\` or use \`Optional<T>\`. |
-| **\`ArrayIndexOutOfBoundsException\`** | Runtime | Accessing an array index that is negative or \`>= array.length\`. | Keep loop conditions within \`0\` to \`array.length - 1\`. |
-| **\`ArithmeticException\`** | Runtime | Performing integer division by zero (\`10 / 0\`). | Guard against zero divisor before executing division. |`
+| **\`cannot find symbol\`** | Compile-Time | ఆ పేరుతో అసలు వేరియబుల్ లేకపోవడం లేదా స్పెల్లింగ్ తప్పుండటం. | స్పెల్లింగ్ చెక్ చేయండి లేదా ఆ వేరియబుల్ ని క్రియేట్ చేయండి. |
+| **\`incompatible types\`** | Compile-Time | నెంబర్ పెట్టాల్సిన చోట టెక్స్ట్ (String) ఇస్తే. | టైప్ ని కరెక్ట్ గా మార్చండి (Type casting). |
+| **\`NullPointerException\`** | Runtime | వేరియబుల్ లో ఏ డేటా (null) లేకముందే దాన్ని వాడాలని చూస్తే. | ఆ వేరియబుల్ లో నిజంగా డేటా ఉందా లేదా అని \`!= null\` తో చెక్ చేయండి. |
+| **\`ArrayIndexOutOfBounds\`**| Runtime | అర్రే లో 5 ఐటమ్స్ ఉంటే, 6వ ఐటమ్ ని అడిగితే. | లూప్ కరెక్ట్ గా అర్రే సైజ్ వరకే ఉందో లేదో చెక్ చేసుకోండి. |
+| **\`ArithmeticException\`** | Runtime | ఏ నెంబర్ ని అయినా సున్నా (0) తో భాగిస్తే (\`10 / 0\`). | డివైడ్ చేసేముందు ఆ నెంబర్ 0 కాదని చెక్ చేసుకోండి. |`
       }
     ],
     codeExample: `public class Main {
     public static void main(String[] args) {
-        System.out.println("--- Demonstrating Safe Error Handling in Java ---");
+        System.out.println("--- ఎర్రర్స్ రాకుండా కోడ్ రాయడం (Defensive Programming) ---");
 
         int dividend = 100;
         int divisor  = 0;
 
-        // Defensive Programming: Checking divisor before division to prevent runtime crash
+        // 1. సున్నాతో డివైడ్ చేస్తే క్రాష్ అవుతుంది కాబట్టి, ముందే చెక్ చేస్తున్నాం:
         if (divisor != 0) {
             int result = dividend / divisor;
-            System.out.println("Result: " + result);
+            System.out.println("రిజల్ట్: " + result);
         } else {
-            System.out.println("[Handled Error]: Divisor cannot be 0. Division aborted safely.");
+            System.out.println("[హ్యాండిల్ చేశాం]: సున్నాతో డివైడ్ చేయలేం. క్రాష్ అవ్వకుండా ఆపాం.");
         }
 
-        // Handling potential Null References safely
+        // 2. ఖాళీగా ఉన్నదాని (null) మీద ఫంక్షన్స్ కాల్ చేస్తే NullPointerException వస్తుంది:
         String username = null;
         if (username != null) {
-            System.out.println("User Length: " + username.length());
+            System.out.println("పేరు పొడవు: " + username.length());
         } else {
-            System.out.println("[Handled Error]: Username object is null. Defaulting to 'Guest'.");
+            System.out.println("[హ్యాండిల్ చేశాం]: పేరు లేదు (null). డిఫాల్ట్ గా 'Guest' అని పెడుతున్నాం.");
         }
 
-        System.out.println("Application completed gracefully without crashing!");
+        System.out.println("క్రాష్ అవ్వకుండా ప్రోగ్రామ్ సేఫ్ గా కంప్లీట్ అయ్యింది!");
     }
 }`,
-    output: `--- Demonstrating Safe Error Handling in Java ---
-[Handled Error]: Divisor cannot be 0. Division aborted safely.
-[Handled Error]: Username object is null. Defaulting to 'Guest'.
-Application completed gracefully without crashing!`,
+    output: `--- ఎర్రర్స్ రాకుండా కోడ్ రాయడం (Defensive Programming) ---
+[హ్యాండిల్ చేశాం]: సున్నాతో డివైడ్ చేయలేం. క్రాష్ అవ్వకుండా ఆపాం.
+[హ్యాండిల్ చేశాం]: పేరు లేదు (null). డిఫాల్ట్ గా 'Guest' అని పెడుతున్నాం.
+క్రాష్ అవ్వకుండా ప్రోగ్రామ్ సేఫ్ గా కంప్లీట్ అయ్యింది!`,
     lineByLine: [
-      { line: 'if (divisor != 0)', explanation: 'Defensive validation check preventing an ArithmeticException (/ by zero) runtime crash.' },
-      { line: 'if (username != null)', explanation: 'Null safety check ensuring no NullPointerException is triggered when accessing object methods.' },
-      { line: 'System.out.println("Application completed...")', explanation: 'Proof that the application continued executing safely because error conditions were handled defensively.' }
+      { line: 'if (divisor != 0)', explanation: 'క్రాష్ (ArithmeticException) అవ్వకుండా ముందే సేఫ్ గా చెక్ చేస్తున్నాం.' },
+      { line: 'if (username != null)', explanation: 'జావాలో ఎక్కువగా వచ్చే NullPointerException రాకుండా ముందే ఆపుతున్నాం.' }
     ],
-    practicalExample: `// Demonstrating a Logical Error vs Corrected Logic
+    practicalExample: `// లాజికల్ ఎర్రర్ (Logical Error) కి బెస్ట్ ఎగ్జాంపుల్
 public class Main {
     public static void main(String[] args) {
         double subtotal = 1000.0;
-        double discountPercentage = 10; // 10% discount intended
+        double discount = 10; // 10% డిస్కౌంట్ ఇద్దాం అనుకున్నాం
 
-        // 1. THE LOGICAL BUG:
-        // Intended formula: subtotal - (subtotal * (discountPercentage / 100))
-        // Buggy formula below due to integer division (10 / 100 = 0 in integer math!)
-        double buggyDiscount = subtotal * (10 / 100); // Evaluates to 1000 * 0 = 0.0
+        // 1. ఇక్కడ లాజిక్ తప్పు (BUG):
+        // జావాలో రెండు నెంబర్స్ (10, 100) ఇంటిజర్స్ అయితే.. రిజల్ట్ కూడా ఇంటిజరే వస్తుంది.
+        // అంటే (10 / 100) క్యాలిక్యులేట్ చేస్తే 0.1 కాకుండా 0 వస్తుంది!
+        double buggyDiscount = subtotal * (10 / 100); // 1000 * 0 = 0
         double buggyFinalPrice = subtotal - buggyDiscount;
 
-        // 2. THE CORRECTED LOGIC:
-        // Using floating-point literal 100.0 to force floating-point division
-        double correctDiscount = subtotal * (discountPercentage / 100.0);
+        // 2. కరెక్ట్ లాజిక్:
+        // కనీసం ఒక నెంబర్ పక్కన .0 (100.0) అని పెడితే అది డెసిమల్ లాగా క్యాలిక్యులేట్ అవుతుంది (0.1 వస్తుంది).
+        double correctDiscount = subtotal * (discount / 100.0);
         double correctFinalPrice = subtotal - correctDiscount;
 
-        System.out.println("Subtotal Amount    : ₹" + subtotal);
-        System.out.println("Buggy Final Price  : ₹" + buggyFinalPrice + " (Discount failed!)");
-        System.out.println("Correct Final Price: ₹" + correctFinalPrice + " (10% applied correctly)");
+        System.out.println("బిల్ అమౌంట్    : ₹" + subtotal);
+        System.out.println("బగ్ ఉన్న రిజల్ట్ : ₹" + buggyFinalPrice + " (డిస్కౌంట్ అప్లై అవ్వలేదు!)");
+        System.out.println("కరెక్ట్ రిజల్ట్ : ₹" + correctFinalPrice + " (10% డిస్కౌంట్ అప్లై అయ్యింది)");
     }
 }`,
-    practicalOutput: `Subtotal Amount    : ₹1000.0
-Buggy Final Price  : ₹1000.0 (Discount failed!)
-Correct Final Price: ₹900.0 (10% applied correctly)`,
+    practicalOutput: `బిల్ అమౌంట్    : ₹1000.0
+బగ్ ఉన్న రిజల్ట్ : ₹1000.0 (డిస్కౌంట్ అప్లై అవ్వలేదు!)
+కరెక్ట్ రిజల్ట్ : ₹900.0 (10% డిస్కౌంట్ అప్లై అయ్యింది)`,
     commonMistakes: [
-      'Integer division trap: Writing (10 / 100) evaluates to 0 because both operands are integers. Always use 10.0 / 100.0 for decimal calculations.',
-      'Off-by-one loop errors: Using "for (int i = 0; i <= array.length; i++)" throws ArrayIndexOutOfBoundsException on the last iteration because valid indexes end at length - 1.',
-      'Ignoring compiler warnings: Modern IDE warnings highlight unclosed resources, unused variables, and probable null pointer dereferences before they cause production outages.'
+      'ఇంటిజర్ మ్యాథ్స్ తప్పులు: పైన చూసినట్టు (10 / 100) ఇస్తే 0 వస్తుంది. కచ్చితంగా డెసిమల్స్ కావాలంటే 10.0 / 100.0 అని వాడాలి.',
+      'లూప్స్ లో తప్పులు (Off-by-one): లూప్ రాసేటప్పుడు <= length అని ఇస్తే అర్రే సైజు దాటిపోయి ఎర్రర్ వస్తుంది. ఎప్పుడూ < length మాత్రమే వాడాలి.',
+      'కంపైలర్ వార్నింగ్స్ ని ఇగ్నోర్ చేయడం: మీ ఎడిటర్ లో ఏదైనా ఎల్లో కలర్ గీత వస్తే దాన్ని లైట్ తీసుకోకండి. అది ఫ్యూచర్ లో క్రాష్ అయ్యే బగ్ కి వార్నింగ్ అయి ఉండొచ్చు.'
     ],
     challenge: `// Coding Challenge:
-// The following code contains 3 distinct errors:
-// 1. A Syntax error
-// 2. A Runtime error potential
-// 3. A Logical bug in average calculation
-// Identify and fix all 3 bugs so the program compiles and outputs the exact average 85.0.
+// ఈ కింది కోడ్ లో 3 తప్పులు ఉన్నాయి (సింటాక్స్ తప్పు, రన్ టైమ్ తప్పు, లాజిక్ తప్పు).
+// ఆ మూడింటినీ కనిపెట్టి కరెక్ట్ ఆన్సర్ 85.0 వచ్చేలా చేయండి.
 
 public class Main {
     public static void main(String[] args) {
         int score1 = 80;
         int score2 = 90;
         
-        // Fix the bugs below:
+        // తప్పులు ఇక్కడే ఉన్నాయి, కరెక్ట్ చేయండి:
         // double avg = (score1 + score2) / 2
         // System.out.println("Average: " + avg);
     }
 }`,
     faq: [
       {
-        q: 'What is the difference between an Error and an Exception in Java?',
-        a: 'Both inherit from Throwable. "Error" (e.g. OutOfMemoryError, StackOverflowError) represents serious hardware or JVM failure that normal applications cannot recover from. "Exception" (e.g. NullPointerException, IOException) represents recoverable conditions that programs can catch and handle.'
+        q: 'Java లో "Error" కీ, "Exception" కీ తేడా ఏంటి?',
+        a: 'సిస్టమ్ లో RAM అయిపోవడం లాంటివి జరిగితే వాటిని Error అంటారు, మన ప్రోగ్రామ్ వాటిని ఏం చేయలేదు. కానీ మన కోడ్ లో ఏమైనా తప్పు జరిగితే (ఉదా: సున్నాతో డివైడ్ చేయడం) వాటిని Exception అంటారు, మనం కోడ్ తో వాటిని హ్యాండిల్ చేసి క్రాష్ అవ్వకుండా కాపాడొచ్చు.'
       },
       {
-        q: 'How do I read a stack trace when it has 50 lines?',
-        a: 'Look for the "Caused by:" clause at the bottom of the trace, and find the first line referencing a file in your own project package (ignore internal JVM or framework library lines).'
-      },
-      {
-        q: 'What tool catches logical errors automatically?',
-        a: 'Automated unit testing frameworks like JUnit 5 combined with code coverage tools (JaCoCo) allow you to assert expected outputs against actual outputs for hundreds of edge cases.'
+        q: 'స్టాక్ ట్రేస్ 50 లైన్లు ఉంటే ఎలా చదవాలి?',
+        a: 'మొత్తం చదవాల్సిన పనిలేదు. కింద "Caused by:" అని ఎక్కడ ఉందో చూసి, అందులో మన ఫైల్ పేరు (ఉదా: Main.java) ఎక్కడుందో వెతికితే చాలు. మిగతావన్నీ జావా లోపల ఉండే లైబ్రరీల లైన్స్, వాటితో మనకు పనిలేదు.'
       }
     ],
     recap: [
-      'Compile-time errors occur during javac execution and block class file generation.',
-      'Runtime errors crash the running application and produce a JVM stack trace.',
-      'Logical errors produce incorrect business calculations without crashing the program.',
-      'Always read stack traces from top to bottom, focusing on the root cause and line number.'
+      'Compile-time ఎర్రర్స్ ని కంపైలర్ పట్టుకుంటుంది, ఇవి ఉంటే అసలు యాప్ రన్ అవ్వదు.',
+      'Runtime ఎర్రర్స్ వస్తే యాప్ మధ్యలో క్రాష్ అయిపోయి Stack Trace ని ప్రింట్ చేస్తుంది.',
+      'Logical ఎర్రర్స్ ఉంటే యాప్ క్రాష్ అవ్వదు కానీ, వచ్చే రిజల్ట్ తప్పు వస్తుంది.',
+      'స్టాక్ ట్రేస్ ని ఎప్పుడూ కిందనుంచి పైకి చదవాలి.'
     ]
   }
 ];

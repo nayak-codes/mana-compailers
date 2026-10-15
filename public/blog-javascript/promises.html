@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Asynchronous JavaScript: Event Loop, Promises, Combinators & async/await — JavaScript Tutorial | Our Compiler</title>
-  <meta name="description" content="Master Asynchronous JavaScript: Sync vs Async, Call Stack, Web APIs, Event Loop & Microtask queue priority, Callbacks & Callback Hell, Promise states (Pending, Fulfilled, Rejected), chaining, all/allSettled/race/any combinators, async/await, and Sequential vs Parallel pipelines." />
-  <meta name="keywords" content="javascript tutorial, asynchronous javascript: event loop, promises, combinators & async/await, learn javascript, javascript online compiler" />
+  <title>27. Callbacks, Promises — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="Learn 27. Callbacks, Promises in JavaScript with clear Telugu explanations and live runnable code." />
+  <meta name="keywords" content="javascript tutorial, 27. callbacks, promises, learn javascript, javascript online compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/promises.html" />
@@ -36,38 +36,28 @@
         return `___JS_TOK_${id}___`;
       };
 
-      // 1. Comments
       let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
-
-      // 2. Strings & Template Literals
       code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
-
-      // 3. Keywords
       const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
       const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      // 4. Built-in Classes & Objects
-      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN','localStorage','sessionStorage','Notification','navigator','history','URL','fetch','Response','Request','Headers'];
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN','localStorage'];
       const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
       code = code.replace(typeRegex, m => pushToken('vr', m));
 
-      // 5. Functions & Methods
       code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
         if (['if','for','while','switch','catch'].includes(fnName)) return m;
         return pushToken('fn', fnName);
       });
 
-      // 6. Numbers
       code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
-
-      // 7. Restore Tokens
       code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
       return code;
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -155,8 +145,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-javascript">
 
@@ -183,334 +171,137 @@
     <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
 
     <div class="sidebar-accordion">
-      <!-- Phase 01: JavaScript Fundamentals -->
+      <!-- Part 01: Basics -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🟨</span>
           <div class="phase-info">
-            <span class="phase-tag">Phase 01</span>
-            <span class="phase-title">JavaScript Fundamentals</span>
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
+          <span class="phase-count-badge">7 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
-        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Syntax, Statements & Errors</a>
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. JavaScript ante enti?</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Setup & Environment</a>
+        <a href="/blog-javascript/variables.html">3. Variables: var, let, const</a>
+        <a href="/blog-javascript/data-types.html">4. Data Types</a>
+        <a href="/blog-javascript/operators.html">5. Operators</a>
+        <a href="/blog-javascript/type-conversion.html">6. Type Conversion & Template Literals</a>
+        <a href="/blog-javascript/input-output.html">7. Input/Output (I/O)</a>
       </div>
 
-      <!-- Phase 02: Variables & Data Types -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📦</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 02</span>
-            <span class="phase-title">Variables & Data Types</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/variables.html">3. Variables (let, const & var)</a>
-        <a href="/blog-javascript/operators.html">4. Data Types, typeof & Coercion</a>
-      </div>
-
-      <!-- Phase 03: Operators & Input -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 03</span>
-            <span class="phase-title">Operators & Input</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
-        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
-      </div>
-
-      <!-- Phase 04: Conditional Statements -->
+      <!-- Part 02: Control Flow -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🔀</span>
           <div class="phase-info">
-            <span class="phase-tag">Phase 04</span>
-            <span class="phase-title">Conditional Statements</span>
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
+          <span class="phase-count-badge">4 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/conditionals.html">7. Conditional Statements (if & switch)</a>
+        <a href="/blog-javascript/conditionals.html">8. if, else if, else</a>
+        <a href="/blog-javascript/switch.html">9. switch statement</a>
+        <a href="/blog-javascript/loops.html">10. Loops: for, while, do-while</a>
+        <a href="/blog-javascript/break-continue.html">11. break & continue</a>
       </div>
 
-      <!-- Phase 05: Loops & Iterations -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔁</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 05</span>
-            <span class="phase-title">Loops & Iterations</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/loops.html">8. Loops & Control Flow (Masterclass)</a>
-      </div>
-
-      <!-- Phase 06: Strings Mastery -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🧵</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 06</span>
-            <span class="phase-title">Strings Mastery</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/strings.html">9. Strings & Text Processing (Masterclass)</a>
-      </div>
-
-      <!-- Phase 07: Arrays Masterclass -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📊</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 07</span>
-            <span class="phase-title">Arrays Masterclass</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/arrays.html">10. Arrays Deep Dive & Core Operations</a>
-      </div>
-
-      <!-- Phase 08: Higher-Order Array Methods -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 08</span>
-            <span class="phase-title">Higher-Order Array Methods</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/array-methods.html">11. Array Methods (map, filter, reduce & ES2024)</a>
-      </div>
-
-      <!-- Phase 09: Objects Mastery -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📦</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 09</span>
-            <span class="phase-title">Objects Mastery</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/objects.html">12. Objects & Key-Value Mastery</a>
-      </div>
-
-      <!-- Phase 10: Functions Mastery -->
+      <!-- Part 03: Functions & Data -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🧩</span>
           <div class="phase-info">
-            <span class="phase-tag">Phase 10</span>
-            <span class="phase-title">Functions Mastery</span>
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Functions & Data</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
+          <span class="phase-count-badge">7 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/functions.html">13. Functions, Closures & this (Masterclass)</a>
+        <a href="/blog-javascript/functions.html">12. Functions: declaration, parameters, return</a>
+        <a href="/blog-javascript/arrow-functions.html">13. Arrow Functions</a>
+        <a href="/blog-javascript/arrays.html">14. Arrays: create, access, push/pop</a>
+        <a href="/blog-javascript/array-methods.html">15. Array Methods: map, filter, reduce, forEach</a>
+        <a href="/blog-javascript/objects.html">16. Objects: properties, methods</a>
+        <a href="/blog-javascript/strings.html">17. Strings: common methods</a>
+        <a href="/blog-javascript/math-date.html">18. Math & Date objects</a>
       </div>
 
-      <!-- Phase 11: DOM Manipulation -->
+      <!-- Part 04: DOM (Document Object Model) -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🌐</span>
           <div class="phase-info">
-            <span class="phase-tag">Phase 11</span>
-            <span class="phase-title">DOM Manipulation</span>
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">DOM (Document Object Model)</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
+          <span class="phase-count-badge">5 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/dom.html">14. DOM Manipulation & Web Interactivity</a>
+        <a href="/blog-javascript/dom.html">19. DOM ante enti? Elements select cheyyadam</a>
+        <a href="/blog-javascript/dom-manipulation.html">20. Content & style marchadam</a>
+        <a href="/blog-javascript/events.html">21. Events: click, input, submit</a>
+        <a href="/blog-javascript/form-validation.html">22. Form validation</a>
+        <a href="/blog-javascript/todo-list-project.html">23. Mini project: To-Do List</a>
       </div>
 
-      <!-- Phase 12: Events & Forms -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🎯</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 12</span>
-            <span class="phase-title">Events & Forms</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/events-and-forms.html">15. Browser Events, Forms & Event Delegation</a>
-      </div>
-
-      <!-- Phase 13: Browser APIs & Storage -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">💾</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 13</span>
-            <span class="phase-title">Browser APIs & Storage</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/browser-apis-and-storage.html">16. Browser APIs, Storage & Timers</a>
-      </div>
-
-      <!-- Phase 14: JSON & Fetch API -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🌐</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 14</span>
-            <span class="phase-title">JSON & Fetch API</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/json-and-fetch-api.html">17. JSON, Fetch API & REST Integration</a>
-      </div>
-
-      <!-- Phase 15: Asynchronous JavaScript & Promises -->
+      <!-- Part 05: Intermediate JavaScript -->
       <button class="accordion-header active" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
-          <span class="phase-icon-box">⏳</span>
+          <span class="phase-icon-box">🚀</span>
           <div class="phase-info">
-            <span class="phase-tag">Phase 15</span>
-            <span class="phase-title">Asynchronous JavaScript & Promises</span>
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Intermediate JavaScript</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
+          <span class="phase-count-badge">8 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content open">
-        <a href="/blog-javascript/promises.html" class="active">18. Asynchronous JavaScript, Promises & async/await</a>
-      </div>
-
-      <!-- Phase 16: Error Handling & Debugging -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🐞</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 16</span>
-            <span class="phase-title">Error Handling & Debugging</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-javascript/exceptions.html">19. Error Handling & Debugging</a>
+        <a href="/blog-javascript/scope-hoisting.html">24. Scope & Hoisting</a>
+        <a href="/blog-javascript/destructuring-spread.html">25. Destructuring, Spread, Rest</a>
+        <a href="/blog-javascript/closures.html">26. Closures</a>
+        <a href="/blog-javascript/promises.html" class="active">27. Callbacks, Promises</a>
+        <a href="/blog-javascript/async-await-fetch.html">28. async / await & fetch API</a>
+        <a href="/blog-javascript/error-handling.html">29. Error Handling: try-catch</a>
+        <a href="/blog-javascript/modules.html">30. ES6 Modules</a>
+        <a href="/blog-javascript/localstorage.html">31. localStorage</a>
       </div>
 
     </div>
 
 
     <div class="sidebar-heading">Interactive IDE</div>
-    <a href="/?lang=nodejs" style="color:#10b981; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/?lang=nodejs" style="color:#f7df1e; font-weight:700;">▶ Try JavaScript Online</a>
     <a href="/blog.html">📚 All Tutorials</a>
 
     <div class="sidebar-heading">Other Courses</div>
@@ -525,334 +316,123 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
-      <span class="current">Lesson 18: Asynchronous JavaScript: Event Loop, Promises, Combinators & async/await</span>
+      <span class="current">Lesson 27: 27. Callbacks, Promises</span>
     </div>
 
-    <h1 class="page-title">Asynchronous JavaScript: Event Loop, Promises, Combinators & async/await</h1>
+    <h1 class="page-title">27. Callbacks, Promises</h1>
 
     <div class="page-meta">
       <span class="badge">🟨 JavaScript (ES2026+)</span>
-      <span class="badge">🟢 Lesson 18</span>
-      <span class="badge">📂 Phase 15: Asynchronous JavaScript</span>
+      <span class="badge">🟢 Lesson 27</span>
+      <span class="badge">📂 Part 05: Intermediate JavaScript</span>
       <span class="badge">📅 2026 Edition</span>
     </div>
 
     <!-- Subtopics Pill Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
-      <span>Sync vs Async · Event Loop & Microtasks · Callbacks & Hell · Promise States & Chaining · all/allSettled/race/any · async/await · Sequential vs Parallel · 4 Pipelines</span>
+      <span style="color:#f7df1e; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Asynchronous JS · Callback hell · Promise states (pending, resolved, rejected) · .then/.catch</span>
     </div>
 
+
+    <!-- ====================================================================
+         👇 CHAPTER CONTENT START (ఇక్కడ నుండి మీ పాఠం కంటెంట్ రాయండి) 👇
+         ==================================================================== -->
 
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 15: Asynchronous JavaScript & Promises</strong>! JavaScript is a <strong>single-threaded language</strong> with a non-blocking asynchronous event-driven runtime. In this comprehensive masterclass guide, you will master the inner workings of the <strong>Event Loop</strong> (Call Stack, Web APIs, Callback Task Queue, and Microtask Queue priority), overcome <strong>Callback Hell</strong>, explore <strong>Promises</strong> and their 3 lifecycle states, master the 4 modern Promise combinators (<code>Promise.all</code>, <code>Promise.allSettled</code>, <code>Promise.race</code>, <code>Promise.any</code>), master <code>async/await</code> syntax, and optimize network performance through <strong>Parallel vs Sequential execution</strong>.</p>
+      <p>ఈ పాఠంలో మనం JavaScript లోని ముఖ్యమైన <strong>27. Callbacks, Promises</strong> గురించి స్పష్టంగా, సులభమైన ఉదాహరణలతో నేర్చుకుందాం.</p>
+      <p>రియల్ వరల్డ్ ప్రాజెక్టులలో మరియు ఇంటర్వ్యూలలో ఈ కాన్సెప్ట్ చాలా కీలకం.</p>
     </div>
 
-    <!-- 1. Synchronous vs Asynchronous & The Event Loop Architecture -->
-    <div class="section-title"><span class="num">1</span>Sync vs Async & The Event Loop Architecture ⭐</div>
+    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
     <div class="section-body">
-      <p>Synchronous code line-by-line execute avthundhi (blocking the main UI thread). Asynchronous code background threads (Web APIs) lo run ayi, complete ayyaka Call Stack loki push avthundhi:</p>
-
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#58a6ff; line-height:1.8;">
-        1. Call Stack (LIFO: Synchronous JS Execution)<br>
-        2. Web APIs / C++ Threads (Timers, fetch(), DOM Events running in background)<br>
-        3. Microtask Queue (Promises, await, queueMicrotask) ⚡ HIGHEST PRIORITY!<br>
-        4. Task / Callback Queue (setTimeout, setInterval, I/O)<br>
-        5. Event Loop (Monitors Stack; when Stack is EMPTY, drains Microtasks first, then 1 Macrotask)
-      </div>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><code>Asynchronous JS</code> గురించి అవగాహన</li>
+        <li><code>Callback hell</code> గురించి అవగాహన</li>
+        <li><code>Promise states (pending, resolved, rejected)</code> గురించి అవగాహన</li>
+        <li><code>.then/.catch</code> గురించి అవగాహన</li>
+      </ul>
     </div>
 
-    <!-- 2. Callbacks vs Callback Hell -->
-    <div class="section-title"><span class="num">2</span>Callbacks vs Callback Hell (The Pyramid of Doom)</div>
+    <div class="section-title"><span class="num">2</span>సిద్ధాంతం & ప్రాథమిక కాన్సెప్ట్</div>
     <div class="section-body">
-      <p>Multiple dependent asynchronous operations ni nested callbacks tho raste code deeply indented <em>Pyramid of Doom</em> ga maruthundhi (hard to debug, maintain, and handle errors):</p>
+      <p>ఇక్కడ కాన్సెప్ట్ గురించిన పూర్తి వివరణ రాయండి...</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Callback Hell (❌ Legacy Anti-Pattern)</span>
-        </div>
-        <pre><code>// ❌ Callback Hell: Inversion of control & impossible error handling
-getUser(1, (user) => {
-    getOrders(user.id, (orders) => {
-        getOrderDetails(orders[0].id, (details) => {
-            getInvoice(details.invoiceId, (invoice) => {
-                console.log("Final Invoice:", invoice);
-            });
-        });
-    });
-});</code></pre>
-      </div>
-    </div>
-
-    <!-- 3. Promises & The 3 Lifecycle States -->
-    <div class="section-title"><span class="num">3</span>Promises & The 3 Lifecycle States</div>
-    <div class="section-body">
-      <p>A <strong>Promise</strong> is an Object representing the eventual completion (fulfillment) or failure (rejection) of an asynchronous task:</p>
-
-      <table class="tbl">
-        <tr><th>Promise State</th><th>Meaning</th><th>Triggered By</th></tr>
-        <tr><td><strong>1. <code>Pending</code></strong></td><td>Initial state, async operation is still executing in background.</td><td>Promise construction</td></tr>
-        <tr><td><strong>2. <code>Fulfilled</code></strong></td><td>Operation completed successfully with a result value.</td><td><code>resolve(value)</code> $ightarrow$ triggers <code>.then()</code></td></tr>
-        <tr><td><strong>3. <code>Rejected</code></strong></td><td>Operation failed with an error reason.</td><td><code>reject(error)</code> $ightarrow$ triggers <code>.catch()</code></td></tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Promise Construction & Chaining</span>
+          <span class="lang-tag">JavaScript — ఉదాహరణ 1</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
+        <pre><code>// 27. Callbacks, Promises కోడ్ ఉదాహరణ
+console.log("27. Callbacks, Promises మొదలైంది");
+</code></pre>
+      </div>
 
-function fetchProductPrice(productId) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (productId > 0) {
-                resolve({ id: productId, price: 999 });
-            } else {
-                reject(new Error("Invalid Product ID!"));
-            }
-        }, 500);
-    });
-}
-
-// Consuming Promise with .then(), .catch() and .finally()
-fetchProductPrice(101)
-    .then(product => {
-        console.log("Product Fetched:", product);
-        return product.price * 1.18; // Chain transform
-    })
-    .then(totalWithTax => {
-        console.log("Total with 18% Tax: Rs." + totalWithTax.toFixed(2));
-    })
-    .catch(err => {
-        console.error("Error:", err.message);
-    })
-    .finally(() => {
-        console.log("Transaction pipeline completed.");
-    });</code></pre>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        27. Callbacks, Promises మొదలైంది
       </div>
     </div>
 
-    <!-- 4. The 4 Modern Promise Combinators -->
-    <div class="section-title"><span class="num">4</span>The 4 Modern Promise Combinators (Crucial Interview Topic)</div>
+    <div class="section-title"><span class="num">3</span>రియల్-లైఫ్ ఉదాహరణ & ప్రాక్టీస్</div>
     <div class="section-body">
-      <table class="tbl">
-        <tr><th>Combinator</th><th>When does it Resolve?</th><th>When does it Reject?</th><th>Key Use Case</th></tr>
-        <tr>
-          <td><strong><code>Promise.all([p1, p2])</code></strong></td>
-          <td>When <strong>ALL</strong> promises resolve successfully.</td>
-          <td><strong>Fails Fast:</strong> Rejects immediately if <strong>ANY single promise</strong> rejects!</td>
-          <td>All dependent data needed simultaneously (e.g. User Profile + Settings).</td>
-        </tr>
-        <tr>
-          <td><strong><code>Promise.allSettled([p1, p2])</code></strong> ⭐ ES2020</td>
-          <td>Waits for <strong>ALL</strong> promises to finish (either resolved or rejected).</td>
-          <td><strong>Never Rejects!</strong> Returns array of status objects.</td>
-          <td>Bulk analytics or operations where partial failures are acceptable.</td>
-        </tr>
-        <tr>
-          <td><strong><code>Promise.race([p1, p2])</code></strong></td>
-          <td>Settles as soon as the <strong>FIRST</strong> promise settles (resolves OR rejects).</td>
-          <td>Rejects if the fastest promise rejects.</td>
-          <td>Network request timeout wrappers.</td>
-        </tr>
-        <tr>
-          <td><strong><code>Promise.any([p1, p2])</code></strong> ⭐ ES2021</td>
-          <td>Resolves as soon as the <strong>FIRST SUCCESSFUL</strong> promise fulfills.</td>
-          <td>Rejects only if <strong>ALL</strong> promises fail (<code>AggregateError</code>).</td>
-          <td>Fastest CDN / Mirror download fallbacks.</td>
-        </tr>
-      </table>
+      <p>రెండో ఉదాహరణ లేదా వాస్తవ ప్రపంచంలో దీని ఉపయోగం ఇక్కడ రాయండి...</p>
     </div>
 
-    <!-- 5. async and await -->
-    <div class="section-title"><span class="num">5</span>async / await & Sequential vs Parallel Optimization</div>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు (Common Mistakes)</div>
+      <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">ఈ టాపిక్ నేర్చుకునేటప్పుడు విద్యార్థులు తరచుగా చేసే తప్పులు మరియు వాటిని ఎలా సరిచేయాలో ఇక్కడ పేర్కొనండి.</p>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
     <div class="section-body">
-      <p><code>async/await</code> allows asynchronous code to be written cleanly in a synchronous-looking sequential style with standard <code>try...catch</code> error handling:</p>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>మొదటి ప్రాక్టీస్ ప్రశ్న?</li>
+        <li>రెండో ప్రాక్టీస్ ప్రశ్న?</li>
+      </ol>
 
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — User Curriculum Example</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: var(--text);">👉 సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 10px; font-size: 14px; color: var(--text2); line-height: 1.6;">
+          <p>సమాధానం వివరణ ఇక్కడ రాయండి...</p>
         </div>
-        <pre><code>"use strict";
-
-function getData() {
-    return new Promise(resolve => {
-        setTimeout(() => resolve("Data received successfully!"), 1000);
-    });
-}
-
-async function showData() {
-    console.log("Fetching data in background...");
-    const result = await getData(); // Pauses async execution until resolved!
-    console.log("Result:", result);
-}
-
-showData();</code></pre>
-      </div>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px;">
-          <strong style="color:#ff7b72;">1. Sequential Requests (Slow 🐌)</strong>
-          <pre style="font-size:12px; margin-top:8px;"><code>// Takes 2s + 2s = 4 Seconds total!
-const user = await fetchUser();
-const posts = await fetchPosts();</code></pre>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
-          <strong style="color:#3fb950;">2. Parallel Requests (Fast ⚡)</strong>
-          <pre style="font-size:12px; margin-top:8px;"><code>// Runs in parallel: Takes only 2 Seconds!
-const [user, posts] = await Promise.all([
-    fetchUser(),
-    fetchPosts()
-]);</code></pre>
-        </div>
-      </div>
+      </details>
     </div>
 
-    <!-- 4 REAL-WORLD PRACTICE PIPELINES -->
-    <div class="section-title"><span class="num">6</span>4 Real-World Production Async Pipelines</div>
-    <div class="section-body">
-      <p>Mastering asynchronous JavaScript through 4 production architectures:</p>
-
-      <!-- Pipeline 1: Parallel Aggregator -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#10b981;">Pipeline 1: Parallel Dashboard Data Aggregator</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Parallel Promise.all</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function fetchAnalyticsDashboard() {
-    const fetchUsers = () => new Promise(res => setTimeout(() => res({ totalUsers: 1450 }), 200));
-    const fetchRevenue = () => new Promise(res => setTimeout(() => res({ mrr: "$42,000" }), 300));
-    const fetchTraffic = () => new Promise(res => setTimeout(() => res({ dailyVisits: 89000 }), 150));
-
-    console.time("DashboardLoad");
-    const [users, revenue, traffic] = await Promise.all([
-        fetchUsers(),
-        fetchRevenue(),
-        fetchTraffic()
-    ]);
-    console.timeEnd("DashboardLoad"); // ~300ms total!
-
-    console.log("Dashboard Loaded:", { ...users, ...revenue, ...traffic });
-}
-
-fetchAnalyticsDashboard();</code></pre>
-        </div>
-      </div>
-
-      <!-- Pipeline 2: API Timeout Wrapper -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#10b981;">Pipeline 2: API Request Timeout Wrapper via Promise.race()</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Timeout with Promise.race</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function withTimeout(promise, msTimeout = 2000) {
-    const timeout = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Request Timed Out after " + msTimeout + "ms!")), msTimeout);
-    });
-    return Promise.race([promise, timeout]);
-}
-
-const slowApi = new Promise(res => setTimeout(() => res("Slow Data"), 3000));
-
-withTimeout(slowApi, 1000)
-    .then(data => console.log(data))
-    .catch(err => console.error("Caught Timeout:", err.message)); // Triggers Timeout!</code></pre>
-        </div>
-      </div>
-
-      <!-- Pipeline 3: CDN Mirror Fallback with Promise.any -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#10b981;">Pipeline 3: CDN Mirror Fallback with Promise.any()</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Promise.any CDN</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function fetchFastestCDN() {
-    const cdn1 = new Promise((_, rej) => setTimeout(() => rej("CDN1 Offline"), 100));
-    const cdn2 = new Promise(res => setTimeout(() => res("CDN2 (Singapore)"), 300));
-    const cdn3 = new Promise(res => setTimeout(() => res("CDN3 (Mumbai)"), 200));
-
-    try {
-        const fastest = await Promise.any([cdn1, cdn2, cdn3]);
-        console.log("✅ Connected to Fastest Available Server:", fastest); // CDN3 (Mumbai)
-    } catch (err) {
-        console.error("All CDNs failed:", err);
-    }
-}
-
-fetchFastestCDN();</code></pre>
-        </div>
-      </div>
-
-      <!-- Pipeline 4: Sequential Checkout Flow -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#10b981;">Pipeline 4: Step-by-Step E-Commerce Checkout Pipeline</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Sequential Steps</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function processOrder(orderId) {
-    try {
-        console.log("Step 1: Validating Inventory for Order #" + orderId + "...");
-        await new Promise(r => setTimeout(r, 200));
-
-        console.log("Step 2: Charging Payment Gateway...");
-        await new Promise(r => setTimeout(r, 300));
-
-        console.log("Step 3: Generating Invoice & Dispatching Shipment...");
-        await new Promise(r => setTimeout(r, 200));
-
-        console.log("🎉 Order #" + orderId + " Successfully Placed & Dispatched!");
-    } catch (err) {
-        console.error("Order processing failed:", err.message);
-    }
-}
-
-processOrder(98452);</code></pre>
-        </div>
-      </div>
+    <div class="try-box">
+      <div class="try-title">🚀 మీరే try చేయండి</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">మన ఆన్‌లైన్ కంపైలర్ లో ఈ కోడ్‌ను ఎడిట్ చేసి రన్ చేయండి:</p>
+      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript రన్ చేయండి</a>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary (సారాంశం):</h3>
+      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.6;">
+        <li><strong>27. Callbacks, Promises:</strong> Asynchronous JS · Callback hell · Promise states (pending, resolved, rejected) · .then/.catch</li>
+      </ul>
     </div>
-  
 
-    <div class="nav-footer">
+    <!-- ====================================================================
+         👆 CHAPTER CONTENT END (ఇక్కడితో మీ కంటెంట్ పూర్తవుతుంది) 👆
+         ==================================================================== -->
+
+
+        <div class="nav-footer">
       
-      <a href="json-and-fetch-api.html" class="nav-btn">
+      <a href="closures.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">17. JSON & Fetch API</span>
+        <span class="title">26. Closures</span>
       </a>
 
       
-      <a href="exceptions.html" class="nav-btn" style="text-align:right;">
+      <a href="async-await-fetch.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">Phase 16: Error Handling</span>
+        <span class="title">28. async / await & fetch API</span>
       </a>
     </div>
   </main>
 </div>
 
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

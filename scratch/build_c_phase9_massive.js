@@ -247,7 +247,7 @@ function wrapCPage(title, desc, filename, currentNum, phaseTag, phaseTitle, subt
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -420,29 +420,29 @@ ${contentBody}
 
 // ── BUILD LESSON 21: Pointers, RAM Addresses & Dereferencing ──────────────
 function buildLesson21() {
-  const title = "C Pointers: RAM Memory Architecture, Addresses & Dereferencing Masterclass";
-  const desc = "Comprehensive textbook-grade masterclass on C Pointers (Phase 9 Part 1): Physical RAM addressing, address-of operator (&), pointer declaration and dereferencing (*), why typed pointers exist, 64-bit address size, Null pointers vs Wild pointers vs Dangling pointers, and printing pointers safely with (void*) in %p.";
+  const title = "C Pointers: RAM Memory Architecture, Addresses & Dereferencing (తెలుగులో)";
+  const desc = "C Pointers (Phase 9 Part 1): C లో Pointers అంటే ఏంటి, RAM అడ్రస్ ఎలా ఉంటుంది, Address-of (&) మరియు Dereference (*) ఆపరేటర్స్ ఎలా పనిచేస్తాయి, Null, Wild, Dangling pointers కి తేడా ఏంటో తెలుగులో నేర్చుకుందాం.";
   const filename = "21-c-pointers-memory-addresses-and-dereferencing.html";
   const subtopics = "Memory Addresses & & Operator · Pointer Declaration & Dereferencing (*) · Pointer Types & Byte Sizes · Null, Wild & Dangling Pointers · (void*) Casting in %p";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 9 (Chapter 21): C Pointers, RAM Memory Architecture & Dereferencing Masterclass</strong>! Pointers are the undisputed soul and super-power of the C programming language. Without pointers, direct hardware access, operating system kernels, device drivers, dynamic data structures (trees, graphs, linked lists), and high-performance zero-copy memory manipulation would be impossible. In this exhaustive textbook-grade guide, you will master physical RAM memory addressing in hexadecimal, understand the profound mathematical difference between variable contents and memory addresses, learn how the address-of operator (<code>&amp;</code>) and dereference operator (<code>*</code>) work at the CPU assembly level, analyze the deadly trinity of pointer bugs (Null, Wild, and Dangling pointers), and understand why casting to <code>(void*)</code> is mandatory when printing addresses.</p>
+      <p><strong>Phase 9 (Chapter 21): C Pointers & Memory Architecture Masterclass</strong> కు స్వాగతం! C లాంగ్వేజ్ కి ప్రాణం, అతిపెద్ద సూపర్ పవర్ ఈ Pointers. ఇవి లేకపోతే ఆపరేటింగ్ సిస్టమ్స్ (OS) రాయడం, సిస్టం లోపల హార్డ్‌వేర్ ని కంట్రోల్ చేయడం లాంటివి అసాధ్యం. ఈ గైడ్ లో, అసలు RAM లో అడ్రస్ ఎలా ఉంటుంది, మామూలు వేరియబుల్ కి Pointer కి తేడా ఏంటి, <code>&amp;</code> మరియు <code>*</code> అనే రెండు సింబల్స్ వెనుక ఉన్న సీక్రెట్ ఏంటి, ఒక ప్రోగ్రామర్ చేసే 3 అతిపెద్ద డేంజర్ మిస్టేక్స్ (Null, Wild, Dangling pointers) ఏంటో తెలుగులో డీటెయిల్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. Physical RAM Memory Architecture -->
-    <div class="section-title"><span class="num">1</span>Physical RAM Memory Architecture &amp; Hexadecimal Addresses</div>
+    <div class="section-title"><span class="num">1</span>RAM మెమరీ అంటే ఏంటి? అందులో అడ్రస్ లు ఎలా ఉంటాయి?</div>
     <div class="section-body">
       <p class="text-prose">
-        Computer RAM anedhi billions of individual <strong>1-Byte (8-bit) Memory Cells</strong> యొక్క continuous linear grid. 
-        Prati single byte memory cell ki hardware level lo unique <strong>Numerical Address</strong> untundhi (usually expressed in Hexadecimal e.g. <code>0x7FFF5FBFF8AC</code>).
+        కంప్యూటర్ RAM అనేది కోట్లాది చిన్న చిన్న <strong>1-బైట్ (8-bit) మెమరీ బాక్స్‌ల</strong> సముదాయం. 
+        మన ఊళ్ళో ప్రతి ఇంటికి ఒక డోర్ నంబర్ (Address) ఉన్నట్టే, RAM లో ప్రతి చిన్న బైట్ కి ఒక యూనిక్ <strong>నెంబర్ (Address)</strong> ఉంటుంది (దీన్ని Hexadecimal లో ఇలా చూపిస్తారు: <code>0x7FFF5FBFF8AC</code>).
       </p>
 
       <div class="concept-box">
-        <h4>🌟 Variables vs Memory Addresses Explained:</h4>
-        <p>• <strong>Variable:</strong> Oka human-readable nickname (alias) given to a specific memory slot (e.g. <code>int number = 42;</code>).<br>
-        • <strong>Memory Address (<code>&amp;number</code>):</strong> Aa variable RAM lo physical ga ekkada store ayyi undo cheppe exact byte location!<br>
-        • <strong>Pointer Variable (<code>int* ptr = &amp;number;</code>):</strong> Data values (like 42 or 99) kakunda, <strong>Inko variable యొక్క Memory Address ni thanalo store chesukune special variable!</strong></p>
+        <h4>🌟 Variable కి మరియు Memory Address కి తేడా ఏంటి?</h4>
+        <p>• <strong>Variable (వేరియబుల్):</strong> RAM లో ఎక్కడో ఉన్న ఒక చిన్న మెమరీ బాక్స్ కి మనం మనకి నచ్చినట్టు పెట్టుకున్న పేరు (ఉదాహరణకి <code>int number = 42;</code>).<br>
+        • <strong>Memory Address (అడ్రస్: <code>&amp;number</code>):</strong> ఆ 42 అనే వాల్యూ RAM లో అసలు ఫిజికల్ గా ఏ లోకేషన్ లో సేవ్ అయి ఉందో చెప్పే అసలైన నెంబర్!<br>
+        • <strong>Pointer (పాయింటర్: <code>int* ptr = &amp;number;</code>):</strong> మామూలు వేరియబుల్స్ లాగా నెంబర్లని కాకుండా, <strong>ఇంకొక వేరియబుల్ యొక్క "అడ్రస్" ని తనలో సేవ్ చేసుకునే ఒక స్పెషల్ వేరియబుల్ నే Pointer అంటారు!</strong></p>
       </div>
 
       <div class="memory-diagram">
@@ -459,30 +459,30 @@ function buildLesson21() {
     </div>
 
     <!-- 2. The Two Magical Operators: & and * -->
-    <div class="section-title"><span class="num">2</span>The Address-Of Operator (&amp;) vs Dereferencing Operator (*) ⭐</div>
+    <div class="section-title"><span class="num">2</span>&amp; (అడ్రస్ కనుక్కోవడం) vs * (లోపలికి వెళ్లడం) ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         C language lo pointers tho work cheyyadaniki 2 fundamental unary operators untayi:
       </p>
 
       <table class="tbl spec-table">
-        <tr><th>Operator</th><th>Technical Name</th><th>Role &amp; Mechanism</th><th>Visual Analogy</th></tr>
+        <tr><th>సింబల్ (Operator)</th><th>టెక్నికల్ పేరు</th><th>అసలు ఏం చేస్తుంది?</th><th>ఉదాహరణకి (Analogy)</th></tr>
         <tr>
           <td><strong><code>&amp;</code></strong></td>
           <td><strong>Address-Of Operator</strong></td>
-          <td>Oka variable యొక్క physical RAM memory address ni extract chesthundhi.</td>
-          <td>Finding the GPS location / House Address of a person.</td>
+          <td>ఒక వేరియబుల్ RAM లో ఎక్కడుందో దాని ఒరిజినల్ అడ్రస్ ని బయటకి తీస్తుంది.</td>
+          <td>ఒక మనిషి ఎక్కడున్నాడో వాళ్ళ ఇంటి డోర్ నంబర్ / GPS లొకేషన్ కనుక్కోవడం.</td>
         </tr>
         <tr>
           <td><strong><code>*</code></strong></td>
           <td><strong>Dereference (Indirection) Operator</strong></td>
-          <td>Pointer lo unna memory address ki velli, akkada unna <strong>Actual Value ni Read or Write (Modify)</strong> chesthundhi!</td>
-          <td>Opening the front door of that house and accessing whatever is inside!</td>
+          <td>ఆ పాయింటర్ దగ్గర ఉన్న అడ్రస్ కి వెళ్ళి, ఆ బాక్స్ ని ఓపెన్ చేసి అందులో ఉన్న <strong>అసలైన వాల్యూని చూడటం లేదా మార్చడం</strong> చేస్తుంది!</td>
+          <td>ఆ అడ్రస్ కి వెళ్లి, తలుపు తీసి లోపల ఉన్న మనిషితో మాట్లాడటం లాంటిది!</td>
         </tr>
       </table>
 
       <div class="deep-dive-card">
-        <h3>📐 Why Do Typed Pointers Exist? (int* vs char* vs double*)</h3>
+        <h3>📐 పాయింటర్స్ లో డేటా టైప్ ఎందుకు రాయాలి? (int* vs char*)</h3>
         <p style="color:var(--text2); font-size:14.5px; line-height:1.75;">
           All pointers on a 64-bit operating system occupy the exact same size: <strong>8 Bytes</strong> (because memory addresses are 64 bits wide). 
           <em>Why then do we declare <code>int*</code>, <code>char*</code>, or <code>double*</code> instead of just <code>pointer ptr;</code>?</em><br><br>
@@ -520,25 +520,25 @@ int main(void) {
     </div>
 
     <!-- 3. The Deadly Trinity of Pointers -->
-    <div class="section-title"><span class="num">3</span>The Deadly Trinity: Null, Wild &amp; Dangling Pointers ⚠️</div>
+    <div class="section-title"><span class="num">3</span>అతిపెద్ద మిస్టేక్స్: Null, Wild &amp; Dangling Pointers ⚠️</div>
     <div class="section-body">
       <p class="text-prose">
-        Software history loni million-dollar security crashes and memory corruption bugs ee 3 pointer types valla jaruguthayi:
+        ప్రపంచంలో జరిగిన అతిపెద్ద సాఫ్ట్‌వేర్ క్రాష్‌లు, హ్యాకింగ్స్ అన్నీ ఈ 3 రకాల పాయింటర్ మిస్టేక్స్ వల్లే జరుగుతాయి:
       </p>
 
       <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
-        <h4 style="color:#ff7b72;">1. Wild Pointer (Uninitialized Pointer)</h4>
+        <h4 style="color:#ff7b72;">1. Wild Pointer (ఎక్కడికి వెళ్తుందో తెలియని పాయింటర్)</h4>
         <p>Oka pointer declare chesi elanti address assign cheyyakapothe (<code>int* ptr;</code>), daanilo RAM loni random garbage memory address untundhi. Daanini dereference chesthe (<code>*ptr = 10;</code>) random OS memory overwrite aypoyi system crash avthundhi!</p>
       </div>
 
       <div class="concept-box" style="border-left-color:#38bdf8; background:rgba(56, 189, 248, 0.06);">
-        <h4 style="color:#38bdf8;">2. Null Pointer (<code>NULL</code> / <code>nullptr</code>)</h4>
+        <h4 style="color:#38bdf8;">2. Null Pointer (ఏమీ లేని పాయింటర్)</h4>
         <p>Pointer currently e memory address ki point cheyyatledhu ani theliyajeyyadaniki <strong><code>NULL</code></strong> (Address <code>0x0</code>) assign chesthamu. Attempting to dereference a NULL pointer triggers an immediate <strong>Segmentation Fault</strong> by OS hardware memory protection!<br>
         ✅ <strong>Defensive Rule:</strong> Always check <code>if (ptr != NULL)</code> before dereferencing!</p>
       </div>
 
       <div class="concept-box" style="border-left-color:#f59e0b; background:rgba(245, 158, 11, 0.06);">
-        <h4 style="color:#f59e0b;">3. Dangling Pointer (Dead Memory Reference)</h4>
+        <h4 style="color:#f59e0b;">3. Dangling Pointer (చనిపోయిన దాన్ని పట్టుకోవడం)</h4>
         <p>Oka pointer point chesthunna memory block deallocate (e.g. <code>free(ptr)</code>) ayina taruvatha or function stack frame pop ayina taruvatha, aa pointer inka aa dead memory address ne hold chesthe daanini <strong>Dangling Pointer</strong> antamu.<br>
         ✅ <strong>Fix:</strong> Set <code>ptr = NULL;</code> immediately after calling <code>free(ptr)</code>!</p>
       </div>
@@ -606,18 +606,18 @@ int main(void) {
 
 // ── BUILD LESSON 22: Pointer Arithmetic, Arrays & const Qualifiers ────────
 function buildLesson22() {
-  const title = "C Pointer Arithmetic, Arrays, String Iteration & const Qualifiers";
-  const desc = "Comprehensive textbook-grade masterclass on C Pointer Manipulation (Phase 9 Part 2): The Pointer Arithmetic Scaling Rule (sizeof stride), pointer subtraction (ptrdiff_t), pointers and 1D/2D arrays, string pointer traversal, the 3 degrees of const with pointers, and generic void* pointers.";
+  const title = "C Pointer Arithmetic, Arrays, String Iteration & const (తెలుగులో)";
+  const desc = "C Pointer Arithmetic (Phase 9 Part 2): పాయింటర్స్ ని ప్లస్, మైనస్ చేస్తే ఏమవుతుంది, Pointers కి Arrays కి ఉన్న సంబంధం ఏంటి, String ని ఫాస్ట్ గా ఎలా స్కాన్ చేయాలి, const పాయింటర్స్, మరియు void* పాయింటర్ గురించి తెలుగులో నేర్చుకుందాం.";
   const filename = "22-c-pointer-arithmetic-arrays-and-const-qualifiers.html";
   const subtopics = "Pointer Arithmetic & Scaling Rule · Pointers and 1D/2D Arrays · Pointers & String Iteration · 3 Degrees of const with Pointers · Generic void* Pointers";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 9 (Chapter 22): C Pointer Arithmetic, Arrays, String Traversal & const Qualifiers Masterclass</strong>! Once you understand that pointers hold memory addresses, the real engineering power comes from performing mathematical arithmetic directly on those addresses. Unlike standard integer math where <code>100 + 1 = 101</code>, <strong>Pointer Arithmetic is automatically scaled by the size of the underlying data type in physical RAM</strong>. In this exhaustive textbook-grade guide, you will master the Pointer Scaling Rule, explore the deep architectural equivalence between arrays and pointers, learn how pointers traverse strings at lightning speed, master the 3 degrees of <code>const</code> pointer qualifiers, and understand generic <code>void*</code> pointers.</p>
+      <p><strong>Phase 9 (Chapter 22): Pointer Arithmetic & Arrays Masterclass</strong> కు స్వాగతం! పాయింటర్స్ అడ్రస్ ని సేవ్ చేసుకుంటాయని మనకు తెలుసు, కానీ అసలు మ్యాజిక్ అంతా ఆ అడ్రస్ ల మీద మనం చేసే మ్యాథ్స్ (Arithmetic) లోనే ఉంటుంది. మామూలుగా <code>100 + 1 = 101</code> అవుతుంది. కానీ పాయింటర్స్ లో <strong>+1 చేస్తే అది మెమరీలో డేటా టైప్ సైజుని బట్టి జంప్ అవుతుంది!</strong> ఈ గైడ్ లో, పాయింటర్స్ లో మ్యాథ్స్ ఎలా పనిచేస్తుంది, Array కి Pointer కి ఉన్న రహస్య సంబంధం ఏంటి, పదాలని సూపర్ ఫాస్ట్ గా స్కాన్ చేయడం ఎలా, ఎవరూ మార్చలేని <code>const</code> పాయింటర్స్, మరియు ఏ డేటానైనా తీసుకునే స్పెషల్ <code>void*</code> పాయింటర్ గురించి తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. Pointer Arithmetic & The Scaling Rule -->
-    <div class="section-title"><span class="num">1</span>Pointer Arithmetic &amp; The Hardware Scaling Rule ⭐</div>
+    <div class="section-title"><span class="num">1</span>Pointer మ్యాథ్స్: +1 చేస్తే ఏమవుతుంది? (Scaling Rule) ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         When you add an integer $N$ to a pointer (<code>ptr + N</code>), the CPU does NOT add $N$ raw bytes. 
@@ -646,10 +646,10 @@ function buildLesson22() {
     </div>
 
     <!-- 2. Deep Equivalence: Pointers and Arrays -->
-    <div class="section-title"><span class="num">2</span>Deep Equivalence: Pointers and Arrays in C</div>
+    <div class="section-title"><span class="num">2</span>Array కి మరియు Pointer కి ఉన్న సంబంధం</div>
     <div class="section-body">
       <p class="text-prose">
-        In C, array bracket notation is purely syntactic sugar for pointer arithmetic! Under the hood:
+        నిజం చెప్పాలంటే C లో అసలు Array బ్రాకెట్స్ (<code>arr[3]</code>) అనేవి ఒక మాయ! లోపల ఇంటర్నల్ గా కంపైలర్ వాడేది మొత్తం పాయింటర్స్ నే:
       </p>
 
       <div class="deep-dive-card">
@@ -690,10 +690,10 @@ int main(void) {
     </div>
 
     <!-- 3. The 3 Degrees of const with Pointers -->
-    <div class="section-title"><span class="num">3</span>The 3 Degrees of const with Pointers ⭐</div>
+    <div class="section-title"><span class="num">3</span>"const" పాయింటర్స్ 3 రకాలు ⭐</div>
     <div class="section-body">
       <p class="text-prose">
-        Placing the <code>const</code> keyword relative to the asterisk <code>*</code> creates 3 fundamentally different memory safety rules:
+        మనం <code>const</code> అనే పదాన్ని ఆ స్టార్ (<code>*</code>) కి ఎటువైపు పెట్టాము అనే దాన్ని బట్టి 3 రకాల కండీషన్స్ అప్లై అవుతాయి:
       </p>
 
       <table class="tbl spec-table">
@@ -794,21 +794,21 @@ int main(void) {
 
 // ── BUILD LESSON 23: Double Pointers, Function Pointers & Safety ──────────
 function buildLesson23() {
-  const title = "C Double Pointers (int**), Function Pointers (Callbacks) & Pointer Safety";
-  const desc = "Comprehensive textbook-grade masterclass on Advanced C Pointers (Phase 9 Part 3): Pointer to Pointer (int**) architecture, modifying pointer addresses across functions, Function Pointers syntax and callback systems, the 5 Golden Pointer Safety Commandments, and common pointer pitfalls.";
+  const title = "C Double Pointers (int**), Function Pointers & Pointer Safety (తెలుగులో)";
+  const desc = "Advanced C Pointers (Phase 9 Part 3): డబుల్ పాయింటర్స్ (int**) ఎందుకు వాడతారు, Function Pointers అంటే ఏంటి, వాటితో Callbacks ఎలా చేయాలి, మరియు Pointers వాడేటప్పుడు పాటించాల్సిన 5 గోల్డెన్ రూల్స్ గురించి తెలుగులో నేర్చుకుందాం.";
   const filename = "23-c-double-pointers-function-pointers-and-safety.html";
   const subtopics = "Double Pointers (int**) · Dynamic Pointer Reallocation · Function Pointers & Callbacks · 5 Golden Pointer Safety Commandments · Common Traps";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 9 (Chapter 23): Advanced C Pointers — Double Pointers, Function Pointers & Pointer Safety Masterclass</strong>! Once you have mastered single pointers, advanced systems software engineering requires manipulating pointers themselves and treating executable code instructions as first-class memory addresses. <strong>Double Pointers (<code>Type**</code>)</strong> allow functions to modify caller pointer addresses and construct dynamic 2D matrices, while <strong>Function Pointers</strong> enable event-driven callback architectures, pluggable algorithm strategies, and object-oriented polymorphism in pure C. In this comprehensive textbook-grade guide, you will master multi-level indirection, explore callback architecture, and memorize the 5 Golden Commandments of pointer safety.</p>
+      <p><strong>Phase 9 (Chapter 23): Advanced Pointers & Callbacks Masterclass</strong> కు స్వాగతం! సింగిల్ పాయింటర్స్ నేర్చుకున్న తర్వాత, అడ్వాన్స్డ్ ప్రోగ్రామింగ్ లో ఒక పాయింటర్ తో ఇంకో పాయింటర్ ని కంట్రోల్ చేయడం, అలాగే వేరియబుల్స్ లాగే ఫంక్షన్స్ కి కూడా అడ్రస్ కనుక్కోవడం చాలా ముఖ్యం. <strong>Double Pointers (<code>Type**</code>)</strong> వాడి ఫంక్షన్స్ లోపల నుండి అడ్రస్ లని ఎలా మార్చాలి, <strong>Function Pointers</strong> వాడి రియల్ టైం లో Callbacks (ఒక పని అవ్వగానే ఇంకో ఫంక్షన్ ఆటోమేటిక్ గా రన్ అవ్వడం) ఎలా రాయాలి, మరియు పాయింటర్స్ వాడేటప్పుడు కచ్చితంగా గుర్తుంచుకోవాల్సిన 5 గోల్డెన్ రూల్స్ ఏంటో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. Pointer to Pointer (Double Pointers) -->
-    <div class="section-title"><span class="num">1</span>Pointer to Pointer (Double Pointers: int**) Explained</div>
+    <div class="section-title"><span class="num">1</span>Double Pointers (int**) అంటే ఏంటి? ఎందుకు వాడతారు?</div>
     <div class="section-body">
       <p class="text-prose">
-        A <strong>Double Pointer</strong> is a variable that stores the <strong>Memory Address of another Pointer Variable</strong>:
+        మామూలు పాయింటర్ వేరియబుల్ అడ్రస్ ని సేవ్ చేసుకుంటుంది. కానీ <strong>డబుల్ పాయింటర్</strong> అనేది <strong>ఒక పాయింటర్ యొక్క అడ్రస్ నే ఇంకొక పాయింటర్ లో సేవ్ చేసుకోవడం!</strong>:
       </p>
 
       <div class="memory-diagram">
@@ -833,11 +833,11 @@ function buildLesson23() {
     </div>
 
     <!-- 2. Function Pointers & Callbacks -->
-    <div class="section-title"><span class="num">2</span>Function Pointers &amp; Event-Driven Callbacks ⭐</div>
+    <div class="section-title"><span class="num">2</span>Function Pointers అంటే ఏంటి? &amp; Callbacks ఎలా రాస్తారు? ⭐</div>
     <div class="section-body">
       <p class="text-prose">
-        In compiled C binaries, functions reside in the <strong>Code (Text) Segment</strong> of RAM. 
-        Just like variables, <strong>Every Function Has an Exact RAM Memory Address</strong> (the entry point of its machine instructions)!
+        మనం ప్రోగ్రామ్ రన్ చేసినప్పుడు, మనం రాసిన కోడ్ అంతా RAM లోనే ఉంటుంది. 
+        కాబట్టి వేరియబుల్స్ లాగానే, <strong>ప్రతి ఫంక్షన్ కి కూడా RAM లో కచ్చితమైన ఒక అడ్రస్ ఉంటుంది</strong> (ఆ ఫంక్షన్ ఏ లైన్ లో స్టార్ట్ అయ్యిందో చెప్పడానికి)!
       </p>
 
       <div class="concept-box">
@@ -891,7 +891,7 @@ int main(void) {
     </div>
 
     <!-- 3. The 5 Golden Commandments of Pointer Safety -->
-    <div class="section-title"><span class="num">3</span>The 5 Golden Commandments of C Pointer Safety 🛡️</div>
+    <div class="section-title"><span class="num">3</span>పాయింటర్స్ వాడేటప్పుడు పాటించాల్సిన 5 గోల్డెన్ రూల్స్ 🛡️</div>
     <div class="section-body">
       <div class="concept-box" style="border-left-color:#10b981;">
         <h4 style="color:#10b981;">📜 The 5 Absolute Rules Every C Developer Must Follow:</h4>
@@ -1098,7 +1098,7 @@ function buildBlogCHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

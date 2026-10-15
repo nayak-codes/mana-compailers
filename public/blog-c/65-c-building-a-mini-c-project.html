@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Master Project & Conclusion (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ కోర్సు (C Master Class) ముగింపు! ఇప్పటివరకు మనం నేర్చుకున్న కాన్సెప్ట్స్ (File Handling, Pointers, Structs, Date) అన్నిటిని కలిపి ఒక రియల్ వరల్డ్ ప్రాజెక్ట్ (Bank Management System) ని ఎలా డిజైన్ చేయాలో చూద్దాం. ఇక మీ పయనం ఎటు?" />
+  <meta name="keywords" content="c tutorial, c master project & conclusion (తెలుగులో), dynamic programming c, system calls c, fork exec wait, final project c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/65-c-building-a-mini-c-project.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 20: Algorithms & Final -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Algorithms & Final</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/60-c-searching-linear-and-binary-search.html">60. Linear & Binary Search</a>
+        <a href="/blog-c/61-c-sorting-1-bubble-selection-insertion.html">61. Sorting (Bubble, Selection, Insertion)</a>
+        <a href="/blog-c/62-c-sorting-2-merge-sort-quick-sort.html">62. Sorting (Merge & Quick Sort)</a>
+        <a href="/blog-c/63-c-dynamic-programming-basics.html">63. Dynamic Programming Basics</a>
+        <a href="/blog-c/64-c-system-calls-basics-fork-exec-wait.html">64. System Calls (fork, exec, wait)</a>
+        <a href="/blog-c/65-c-building-a-mini-c-project.html" class="active">65. C Master Project & Conclusion</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 65: C Master Project & Conclusion (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">C Master Project & Conclusion (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 65</span>
+      <span class="badge">📂 Phase 20: Algorithms & Final</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Bank Management System · Full Project Code · What's Next? · Course Conclusion</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఇప్పటివరకు మనం 64 లెసన్స్ లో C లాంగ్వేజ్ యొక్క బేసిక్స్, పాయింటర్స్, ఫైల్స్ నుండి మొదలుకుని... కంపైలర్ ఎలా పనిచేస్తుంది, డేటా స్ట్రక్చర్స్, సిస్టమ్ కాల్స్ వరకు అన్నీ విపరీతమైన డెప్త్ లో నేర్చుకున్నాం! కానీ ఇవన్నీ వేరువేరు ముక్కలు (Lego blocks). ఈ ముక్కలన్నీ కలిపి ఒక ప్రాజెక్ట్ గట్టితే గానీ మీకు అసలైన కిక్ రాదు. అందుకే ఈ లాస్ట్ లెసన్ లో మనం <strong>Bank Management System (బ్యాంక్ మేనేజ్మెంట్ సిస్టమ్)</strong> అనే ఒక సింపుల్ కన్సోల్ (Terminal) అప్లికేషన్ ని ఎలా తయారు చేయాలో నేర్చుకుందాం. దీంట్లో Structs తో డేటాని దాచడం, File Handling తో డేటాని సేవ్ చేయడం లాంటివన్నీ వాడతాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> ప్రాజెక్ట్ లో ఏమేమి ఉంటాయి? (Features)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఈ చిన్న బ్యాంకు సాఫ్ట్వేర్ లో కింది ఫీచర్స్ ఉంటాయి:
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>క్రొత్త అకౌంట్ ఓపెన్ చేయడం:</strong> కస్టమర్ పేరు, డిపాజిట్ అమౌంట్ అడగడం.</li>
+        <li><strong>బ్యాలెన్స్ చెక్ చేయడం:</strong> అకౌంట్ నంబర్ ఇస్తే, సిస్టమ్ లో వెతికి చెప్పడం.</li>
+        <li><strong>డేటాని హార్డ్-డిస్క్ లో సేవ్ చేయడం:</strong> యాప్ క్లోజ్ చేసినా కూడా డేటా పోకుండా ఒక Text File (<code>bank_data.txt</code>) లో సేవ్ అయ్యుండాలి.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> ప్రాజెక్ట్ ఫుల్ కోడ్ (Bank Management in C)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఈ కోడ్ ని మీ లోకల్ VS Code లో కాపీ చేసి రన్ చేయండి. ఆన్లైన్ కంపైలర్స్ లో ఫైల్ సిస్టమ్ పని చేయకపోవచ్చు కాబట్టి లోకల్ గా రన్ చేయడం బెస్ట్.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Final Project (Bank System)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+// 1. కస్టమర్ డేటా స్టోర్ చేసుకోవడానికి బ్లూప్రింట్
+struct Account {
+    int acc_no;
+    char name[50];
+    float balance;
+};
+
+// క్రొత్త అకౌంట్ క్రియేట్ చేసి ఫైల్ లో రాసే ఫంక్షన్
+void createAccount() {
+    struct Account acc;
+    FILE *file;
+    
+    // a+ (Append Mode) లో ఫైల్ ఓపెన్ చేద్దాం
+    file = fopen("bank_data.txt", "a+");
+    if (file == NULL) {
+        printf("Error: Cannot open database file!\n");
+        return;
+    }
+    
+    printf("\n--- Open New Account ---\n");
+    printf("Enter Account Number : ");
+    scanf("%d", &acc.acc_no);
+    
+    // స్పేస్ లతో సహా పేరు తీసుకోవడానికి ట్రిక్
+    printf("Enter Customer Name  : ");
+    getchar(); // పాత enter (newline) ని క్లియర్ చేయడానికి
+    fgets(acc.name, sizeof(acc.name), stdin);
+    acc.name[strcspn(acc.name, "\n")] = 0; // లాస్ట్ లో పడే ఎంటర్ కీ ని తీసేయడం
+    
+    printf("Enter Initial Deposit: ₹");
+    scanf("%f", &acc.balance);
+    
+    // డేటాని ఫైల్ లోకి రైట్ చేద్దాం (ఫార్మాట్ గా)
+    fprintf(file, "%d,%s,%.2f\n", acc.acc_no, acc.name, acc.balance);
+    fclose(file);
+    
+    printf("[Success] Account Created Successfully!\n");
+}
+
+// అకౌంట్ నంబర్ తో వెతికే ఫంక్షన్
+void searchAccount() {
+    struct Account acc;
+    FILE *file;
+    int search_acc, found = 0;
+    
+    file = fopen("bank_data.txt", "r");
+    if (file == NULL) {
+        printf("Database is Empty! Create an account first.\n");
+        return;
+    }
+    
+    printf("\n--- Search Account ---\n");
+    printf("Enter Account Number to Search: ");
+    scanf("%d", &search_acc);
+    
+    // ఫైల్ లో ప్రతి లైన్ ని చదివి అందులో మన అకౌంట్ ఉందా అని చూద్దాం
+    // "%d,%49[^,],%f" అనే ఫార్మాట్ వాడి కామా (,) తో డేటాని విడదీసి చదువుతాం
+    while (fscanf(file, "%d,%49[^,],%f", &acc.acc_no, acc.name, &acc.balance) == 3) {
+        if (acc.acc_no == search_acc) {
+            printf("\n--- Account Details ---\n");
+            printf("A/C No  : %d\n", acc.acc_no);
+            printf("Name    : %s\n", acc.name);
+            printf("Balance : ₹%.2f\n", acc.balance);
+            found = 1;
+            break;
+        }
+    }
+    
+    if (found == 0) {
+        printf("Error: Account Number not found!\n");
+    }
+    fclose(file);
+}
+
+// మెయిన్ మెనూ లూప్
+int main() {
+    int choice;
+    
+    printf("=========================================\n");
+    printf("       WELCOME TO OUR COMPILER BANK      \n");
+    printf("=========================================\n");
+    
+    while (1) {
+        printf("\n[1]. Create New Account\n");
+        printf("[2]. Check Balance\n");
+        printf("[3]. Exit System\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1: createAccount(); break;
+            case 2: searchAccount(); break;
+            case 3: 
+                printf("Thank you for using our Bank. Goodbye!\n");
+                return 0; // ప్రోగ్రామ్ క్లోజ్
+            default:
+                printf("Invalid Choice! Please enter 1, 2 or 3.\n");
+        }
+    }
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> కోడ్ లో ఏం జరుగుతోంది? (The Architecture)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>while(1) (ఇన్ఫినిట్ లూప్):</strong> మెయిన్ ఫంక్షన్ లో యాప్ వెంటనే క్లోజ్ అవ్వకుండా, మనం కీబోర్డ్ లో <code>3 (Exit)</code> నొక్కేదాకా మెనూ చూపిస్తూనే ఉండాలి కదా! అందుకే ఈ లూప్ వాడాం.</li>
+        <li><strong>File Operations:</strong> <code>fopen(..., "a+")</code> అంటే అపెండ్ (Append) మోడ్. అంటే పాత కస్టమర్స్ డేటా డిలీట్ అవ్వదు, ఆ ఫైల్ కిందనే కొత్త లైన్ లో నెక్స్ట్ కస్టమర్ డేటా సేవ్ అవుతుంది. డేటాబేస్ (MySQL) లేనప్పుడు ఇలా టెక్స్ట్ ఫైల్స్ నే డేటాబేస్ లాగా వాడొచ్చు.</li>
+        <li><strong>fscanf Regex:</strong> <code>%49[^,]</code> అంటే ఏంటి? కామా (,) వచ్చేంత వరకు అక్షరాలని చదువు (Scan) అని కంపైలర్ కి స్పెషల్ లాజిక్ చెప్తున్నాం. (అంటే కస్టమర్ పేరు ని సపరేట్ చేయడానికి వాడే ట్రిక్ ఇది).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> వాట్ నెక్స్ట్? (ఇక మీ పయనం ఎటు?)</div>
+    <div class="section-body">
+      <div class="deep-dive-card">
+        <h3>🚀 C నేర్చుకున్నాక నెక్స్ట్ ఏం నేర్చుకోవాలి?</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          C లాంగ్వేజ్ అనేది అన్ని మోడరన్ లాంగ్వేజెస్ కి అమ్మ లాంటిది. మీకు C లో పాయింటర్స్, మెమరీ మేనేజ్మెంట్ అర్థమైతే, ఇక ప్రపంచంలో ఏ లాంగ్వేజ్ అయినా 10 రోజుల్లో నేర్చేసుకోవచ్చు. <br><br>
+          <strong>1. ఆబ్జెక్ట్ ఓరియెంటెడ్ (OOP):</strong> C++ లేదా Java నేర్చుకోండి. C లో ఉన్న Structs కి ఫంక్షన్స్ కూడా కలిపితే అదే Class (క్లాస్) అవుతుంది. పెద్ద ప్రాజెక్ట్స్ కి అది వాడుతారు.<br>
+          <strong>2. ఎంబెడెడ్ సిస్టమ్స్ (Hardware):</strong> ఎలక్ట్రానిక్స్ (Arduino, Raspberry Pi, IoT) మీద ఆసక్తి ఉంటే <em>Embedded C</em> వైపు వెళ్లండి.<br>
+          <strong>3. ఆపరేటింగ్ సిస్టమ్స్:</strong> లైనక్స్ కెర్నల్ (Linux Kernel) సోర్స్ కోడ్ ని డౌన్లోడ్ చేసి చదవడం అలవాటు చేసుకోండి. సిస్టమ్ ప్రోగ్రామింగ్ కి మీరే దేవుడు అవుతారు.
+        </p>
+      </div>
+    </div>
+    
+    <div style="background:#10b981; color:#000; padding:20px; border-radius:10px; text-align:center; margin-top:40px;">
+        <h2 style="margin:0; font-size:24px; font-weight:800;">🎉 కంగ్రాచ్యులేషన్స్! 🎉</h2>
+        <p style="margin:10px 0 0 0; font-weight:600; font-size:16px;">మీరు విజయవంతంగా "C మాస్టర్" కోర్సును పూర్తి చేసారు! ఈ జర్నీ మీకు ఎంతో నాలెడ్జ్ ఇచ్చిందని ఆశిస్తున్నాం. - From "Our Compiler" Team.</p>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="64-c-system-calls-basics-fork-exec-wait.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">64. System Calls</span>
+      </a>
+
+      
+      <a href="/blog-c.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Course Index →</span>
+        <span class="title">C Master Index</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

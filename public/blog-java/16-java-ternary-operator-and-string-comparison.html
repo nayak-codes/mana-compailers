@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ternary Expressions & String Comparisons (.equals vs ==) — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Deep dive into concise decision expressions and the critical mechanics of String equality in Java: understanding the ternary operator, why using == on Strings leads to subtle production bugs, how .equals() and .equalsIgnoreCase() work, and writing null-safe string comparisons." />
-  <meta name="keywords" content="ternary expressions & string comparisons (.equals vs ==), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Ternary Expressions & String Comparisons (.equals vs ==) (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="if-else ని ఒకే లైన్ లో షార్ట్ కట్ లో (Ternary) ఎలా రాయాలి? మరియు జావాలో స్ట్రింగ్స్ ని కంపేర్ చేయడానికి `==` ఎందుకు వాడకూడదు? దానికి బదులుగా `.equals()` ఎలా వాడాలి? Null వచ్చినప్పుడు యాప్ క్రాష్ అవ్వకుండా ఎలా చూసుకోవాలో నేర్చుకుందాం." />
+  <meta name="keywords" content="ternary expressions & string comparisons (.equals vs ==) (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/16-java-ternary-operator-and-string-comparison.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 16: 16. Ternary & String Equality</span>
     </div>
 
-    <h1 class="page-title">Ternary Expressions & String Comparisons (.equals vs ==)</h1>
+    <h1 class="page-title">Ternary Expressions & String Comparisons (.equals vs ==) (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,66 +541,66 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Deep dive into concise decision expressions and the critical mechanics of String equality in Java: understanding the ternary operator, why using == on Strings leads to subtle production bugs, how .equals() and .equalsIgnoreCase() work, and writing null-safe string comparisons.</p>
+      <p>if-else ని ఒకే లైన్ లో షార్ట్ కట్ లో (Ternary) ఎలా రాయాలి? మరియు జావాలో స్ట్రింగ్స్ ని కంపేర్ చేయడానికి `==` ఎందుకు వాడకూడదు? దానికి బదులుగా `.equals()` ఎలా వాడాలి? Null వచ్చినప్పుడు యాప్ క్రాష్ అవ్వకుండా ఎలా చూసుకోవాలో నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The Ternary Operator (`? :`) in Java</h2>
+      <h2>1. Ternary Operator (`? :`) అంటే ఏంటి?</h2>
       <div class="theory-text">
-        <p>The <strong>Ternary Operator</strong> (also known as the conditional operator) is Java's only operator that takes three operands. It is an inline shorthand for an <code>if-else</code> statement that <strong>returns a value</strong>:</p>
-<div class="code-block"><pre><code>variable = (condition) ? valueIfTrue : valueIfFalse;</code></pre></div>
+        <p><strong>Ternary Operator</strong> అనేది <code>if-else</code> కి ఒక షార్ట్ కట్. 4 లైన్లలో రాసే కోడ్ ని ఒకే లైన్ లో రాసి, ఆ వచ్చిన వాల్యూ ని డైరెక్ట్ గా ఒక వేరియబుల్ కి ఇచ్చేయొచ్చు:</p>
+<div class="code-block"><pre><code>వాల్యూ = (కండిషన్) ? కండిషన్ ట్రూ అయితే ఇక్కడున్నది : ఫాల్స్ అయితే ఇక్కడున్నది;</code></pre></div>
 <div class="code-block"><pre><code>int score = 75;
 String status = (score &gt;= 50) ? "PASS" : "FAIL";
-<p>int a = 20, b = 45;<br>int maximum = (a &gt; b) ? a : b; // Evaluates to 45</code></pre></div></p>
-<h3>When to Use Ternary vs If-Else:</h3>- <strong>Use Ternary:</strong> For simple, one-line value assignments or variable initializations.
-- <strong>Use If-Else:</strong> When executing multi-line statements, database calls, or complex logging actions.
+<p>int a = 20, b = 45;<br>int maximum = (a &gt; b) ? a : b; // ఇక్కడ a పెద్దది కాదు కాబట్టి b ని తీసుకుంటుంది (45)</code></pre></div></p>
+<h3>ఏది ఎప్పుడు వాడాలి?:</h3>- <strong>Ternary వాడాలి:</strong> సింపుల్ గా వాల్యూస్ అసైన్ చేసేటప్పుడు ఒకే లైన్ లో ఉంటే.
+- <strong>If-Else వాడాలి:</strong> లోపల డేటాబేస్ కాల్స్, పెద్ద పెద్ద లాజిక్స్ ఉన్నప్పుడు (ఎందుకంటే చదవడానికి ఈజీగా ఉంటుంది).
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. The Fatal Flaw: Comparing Strings with `==` vs `.equals()`</h2>
+      <h2>2. పెద్ద బగ్: స్ట్రింగ్స్ కి `==` వాడకూడదు.. ఎందుకు?</h2>
       <div class="theory-text">
-        <p>One of the most dangerous and common bugs in Java is comparing <code>String</code> content using the <code>==</code> operator.</p>
+        <p>జావాలో చాలామంది డెవలపర్స్ చేసే పెద్ద తప్పు.. రెండు స్ట్రింగ్స్ వాల్యూస్ ఒకటే ఉన్నాయా లేదా అని చెక్ చేయడానికి <code>==</code> వాడటం.</p>
 <div class="code-block"><pre><code>+-----------------------------------------------------------------------------------+
-|                        == vs .equals() IN JAVA MEMORY                             |
+|                        == vs .equals() తేడా ఏంటి?                                    |
 +-----------------------------------------------------------------------------------+
-|  1. == OPERATOR (Reference Address Check):                                        |
-|     Checks if two variables point to the EXACT SAME MEMORY LOCATION in RAM.       |
-|     (Does NOT check what letters or characters are inside the string!)            |
+|  1. == ఆపరేటర్ (అడ్రెస్ చెక్):                                                          |
+|     ఇది రెండు స్ట్రింగ్స్ RAM లో ఒకే మెమరీ అడ్రెస్ లో ఉన్నాయా లేదా అని మాత్రమే చెక్ చేస్తుంది.         |
+|     (లోపల ఏ అక్షరాలు ఉన్నాయో ఇది అసలు చూడదు!)                                            |
 +-----------------------------------------------------------------------------------+
-|  2. .equals() METHOD (Character Content Check):                                   |
-|     Compares the actual sequence of characters character-by-character.            |
+|  2. .equals() ఫంక్షన్ (కంటెంట్ చెక్):                                                    |
+|     ఇది మెమరీతో సంబంధం లేకుండా, లోపల ఉన్న అక్షరాలని ఒక్కొక్కటిగా చెక్ చేసి కరెక్ట్ గా చెప్తుంది.     |
 +-----------------------------------------------------------------------------------+</code></pre></div>
-<h3>Why <code>==</code> Seems to Work Sometimes (The String Pool Trap):</h3><div class="code-block"><pre><code>String s1 = "Admin";
+<h3>అప్పుడప్పుడు <code>==</code> కూడా ఎందుకు పనిచేస్తుంది? (String Pool ట్రాప్):</h3><div class="code-block"><pre><code>String s1 = "Admin";
 String s2 = "Admin";
 String s3 = new String("Admin");
-<p>System.out.println(s1 == s2);      // true! (Both point to same String Pool object)<br>System.out.println(s1 == s3);      // FALSE! (s3 is a separate object in Heap memory)<br>System.out.println(s1.equals(s3)); // TRUE! (Both contain the exact characters 'A','d','m','i','n')</code></pre></div></p>
-<p><strong>Golden Rule of Java:</strong> <strong>NEVER</strong> use <code>==</code> to compare String values! <strong>ALWAYS</strong> use <code>.equals()</code> or <code>.equalsIgnoreCase()</code>!</p>
+<p>System.out.println(s1 == s2);      // true! (ఎందుకంటే రెండూ String Pool లో ఒకే అడ్రెస్ ని షేర్ చేసుకుంటాయి)<br>System.out.println(s1 == s3);      // FALSE! (s3 అనేది new వాడటం వల్ల సపరేట్ గా Heap లో క్రియేట్ అయ్యింది)<br>System.out.println(s1.equals(s3)); // TRUE! (లోపల ఉన్న కంటెంట్ సేమ్ కదా.. అందుకే .equals() కరెక్ట్ గా పనిచేసింది)</code></pre></div></p>
+<p><strong>గోల్డెన్ రూల్:</strong> జావాలో స్ట్రింగ్స్ ని కంపేర్ చేయడానికి <strong>ఎప్పుడూ</strong> <code>==</code> వాడకండి! <strong>కచ్చితంగా</strong> <code>.equals()</code> మాత్రమే వాడాలి!</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. `.equals()` vs `.equalsIgnoreCase()`</h2>
+      <h2>3. `.equals()` కి `.equalsIgnoreCase()` కి తేడా ఏంటి?</h2>
       <div class="theory-text">
-        <div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>Method</th><th>Case Sensitive?</th><th>Example</th><th>Result</th></tr></thead><tbody><tr><td>**`str1.equals(str2)`**</td></tr></tbody></table></div>
- <strong>Yes</strong> (Strict) | <code>"Java".equals("java")</code> | <code>false</code> |
-| <strong><code>str1.equalsIgnoreCase(str2)</code></strong> | <strong>No</strong> (Ignores case) | <code>"Java".equalsIgnoreCase("java")</code> | <code>true</code> |
+        <div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>ఫంక్షన్</th><th>అక్షరాలు (Case) పర్ఫెక్ట్ గా ఉండాలా?</th><th>ఎగ్జాంపుల్</th><th>రిజల్ట్</th></tr></thead><tbody><tr><td>**`str1.equals(str2)`**</td></tr></tbody></table></div>
+ <strong>అవును</strong> (Strict) | <code>"Java".equals("java")</code> | <code>false</code> |
+| <strong><code>str1.equalsIgnoreCase(str2)</code></strong> | <strong>అవసరం లేదు</strong> (స్మాల్/క్యాపిటల్స్ ఉన్నా ఓకే) | <code>"Java".equalsIgnoreCase("java")</code> | <code>true</code> |
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Null-Safe String Comparisons (Yoda Conditions)</h2>
+      <h2>4. Null వస్తే యాప్ క్రాష్ అవ్వకుండా ఎలా ఆపాలి? (Yoda Conditions)</h2>
       <div class="theory-text">
-        <p>If a String variable is <code>null</code>, calling <code>userRole.equals("ADMIN")</code> will throw a fatal <strong><code>NullPointerException</code></strong>!</p>
-<h3>The Two Professional Fixes:</h3>1. <strong>Yoda Condition (Literal First):</strong>
-   <div class="code-block"><pre><code>// Safe even if userRole is null! Literals are guaranteed non-null.
+        <p>మీరు ఎప్పుడైనా <code>userRole.equals("ADMIN")</code> అని రాశారనుకోండి. ఒకవేళ ఏ కారణం చేతనైనా ఆ userRole వేరియబుల్ లోకి <code>null</code> వస్తే.. యాప్ వెంటనే క్రాష్ అయిపోతుంది (దీన్నే <strong><code>NullPointerException</code></strong> అంటారు).</p>
+<h3>దీన్ని సాల్వ్ చేయడానికి ప్రొఫెషనల్స్ వాడే 2 ట్రిక్స్:</h3>1. <strong>Yoda Condition (కొటేషన్స్ లో ఉన్నది ముందు రాయడం):</strong>
+   <div class="code-block"><pre><code>// ఒకవేళ userRole లో null ఉన్నా సరే యాప్ క్రాష్ అవ్వదు, సింపుల్ గా false వస్తుంది!
    if ("ADMIN".equalsIgnoreCase(userRole)) { ... }</code></pre></div>
-2. <strong>Objects.equals() Utility (Java 7+):</strong>
+2. <strong>Objects.equals() వాడటం (Java 7 నుంచి):</strong>
    <div class="code-block"><pre><code>import java.util.Objects;
    if (Objects.equals(userRole, "ADMIN")) { ... }</code></pre></div>
       </div>
@@ -622,44 +622,44 @@ String s3 = new String("Admin");
 
 public class Main {
     public static void main(String[] args) {
-        // 1. Ternary Operator Demonstration
+        // 1. Ternary ఆపరేటర్ 
         int userAge = 20;
-        String eligibility = (userAge &gt;= 18) ? "Eligible for Driving License" : "Underage";
-        System.out.println("Age Check: " + eligibility);
+        String eligibility = (userAge &gt;= 18) ? "లైసెన్స్ కి ఎలిజిబుల్" : "ఇంకా వయసు రాలేదు";
+        System.out.println("ఏజ్ చెక్: " + eligibility);
 
         // 2. String Equality (.equals vs ==)
-        String roleFromAuthToken = "SUPER_ADMIN";
-        String roleFromDatabase  = new String("SUPER_ADMIN");
+        String authRole = "SUPER_ADMIN";
+        String dbRole  = new String("SUPER_ADMIN");
 
         System.out.println("
---- String Comparison Deep Dive ---");
-        System.out.println("Using == (Memory Address Check) : " + (roleFromAuthToken == roleFromDatabase)); // false
-        System.out.println("Using .equals() (Content Check) : " + roleFromAuthToken.equals(roleFromDatabase)); // true
+--- స్ట్రింగ్ కంపారిజన్ (String Comparison) ---");
+        System.out.println("== వాడితే (అడ్రెస్ చెక్)     : " + (authRole == dbRole)); // false వస్తుంది
+        System.out.println(".equals() వాడితే (కంటెంట్ చెక్) : " + authRole.equals(dbRole)); // true వస్తుంది
 
-        // 3. Case-Insensitive Comparison
+        // 3. Case-Insensitive (స్మాల్/క్యాపిటల్స్ ఇష్యూ లేకుండా)
         String inputCoupon = "save20";
         String validCoupon = "SAVE20";
         boolean isCouponValid = inputCoupon.equalsIgnoreCase(validCoupon);
-        System.out.println("Coupon Validation (IgnoreCase)  : " + isCouponValid);
+        System.out.println("కూపన్ చెకింగ్ (IgnoreCase)    : " + isCouponValid);
 
-        // 4. Null-Safe Comparison
+        // 4. Null-Safe (క్రాష్ అవ్వకుండా)
         String nullableRole = null;
-        // System.out.println(nullableRole.equals("ADMIN")); // Throws NullPointerException!
-        boolean isSafeAdmin = "ADMIN".equalsIgnoreCase(nullableRole); // Safe!
-        System.out.println("Null-Safe Admin Check (Yoda)    : " + isSafeAdmin);
+        // System.out.println(nullableRole.equals("ADMIN")); // ఇది రన్ చేస్తే యాప్ క్రాష్ అవుతుంది (NullPointerException)!
+        boolean isSafeAdmin = "ADMIN".equalsIgnoreCase(nullableRole); // కానీ ఇది సేఫ్ గా క్రాష్ అవ్వకుండా false అని ఇస్తుంది.
+        System.out.println("క్రాష్ అవ్వకుండా అడ్మిన్ చెక్ (Yoda) : " + isSafeAdmin);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">Age Check: Eligible for Driving License
+        <div class="output-content">ఏజ్ చెక్: లైసెన్స్ కి ఎలిజిబుల్
 
---- String Comparison Deep Dive ---
-Using == (Memory Address Check) : false
-Using .equals() (Content Check) : true
-Coupon Validation (IgnoreCase)  : true
-Null-Safe Admin Check (Yoda)    : false</div>
+--- స్ట్రింగ్ కంపారిజన్ (String Comparison) ---
+== వాడితే (అడ్రెస్ చెక్)     : false
+.equals() వాడితే (కంటెంట్ చెక్) : true
+కూపన్ చెకింగ్ (IgnoreCase)    : true
+క్రాష్ అవ్వకుండా అడ్మిన్ చెక్ (Yoda) : false</div>
       </div>
 
       <div class="explain-card">
@@ -667,25 +667,25 @@ Null-Safe Admin Check (Yoda)    : false</div>
         
     <div class="explain-item">
       <code class="code-token">(userAge &gt;= 18) ? ... : ...</code>
-      <p>Inline ternary expression evaluating boolean age check and returning the corresponding string.</p>
+      <p>Ternary ఆపరేటర్: 18 దాటింది కాబట్టి ఫస్ట్ వాల్యూ ని అసైన్ చేసింది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">roleFromAuthToken == roleFromDatabase</code>
-      <p>Evaluates to false because new String() forces a separate heap memory allocation.</p>
+      <code class="code-token">authRole == dbRole</code>
+      <p>new String() వాడటం వల్ల అది సపరేట్ గా వేరే మెమరీలో స్టోర్ అయ్యింది. అందుకే అడ్రెస్ లు మ్యాచ్ అవ్వక false వచ్చింది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">roleFromAuthToken.equals(roleFromDatabase)</code>
-      <p>Evaluates to true by inspecting actual string character content.</p>
+      <code class="code-token">authRole.equals(dbRole)</code>
+      <p>మెమరీలతో సంబంధం లేకుండా లోపల ఉన్న అక్షరాలు సేమ్ కాబట్టి true వచ్చింది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">"ADMIN".equalsIgnoreCase(nullableRole)</code>
-      <p>Null-safe comparison: placing non-null string literal first prevents NullPointerException.</p>
+      <p>దీన్నే యోడా (Yoda) కండిషన్ అంటారు. హార్డ్ కోడెడ్ స్ట్రింగ్ ని ముందు పెడితే యాప్ ఎప్పటికీ క్రాష్ అవ్వదు.</p>
     </div>
   
       </div>
@@ -705,20 +705,21 @@ Null-Safe Admin Check (Yoda)    : false</div>
         <pre><code>public class LoginAuthenticationService {
     public static void main(String[] args) {
         String registeredUser = "BalajiNayak";
-        String enteredUsername = "balajinayak";
+        String enteredUsername = "balajinayak"; // యూజర్ స్మాల్ లెటర్స్ లో టైప్ చేసాడు
         String enteredPassword = "Password@2026";
         String correctPassword = "Password@2026";
 
-        // Username should be case-insensitive, Password MUST be strictly case-sensitive
+        // యూజర్ నేమ్ లో క్యాపిటల్స్ ఉన్నా, స్మాల్స్ ఉన్నా ఓకే (equalsIgnoreCase) 
+        // కానీ పాస్వర్డ్ మాత్రం ఎగ్జాక్ట్ గా మ్యాచ్ అవ్వాలి (equals)
         boolean isUsernameMatch = registeredUser.equalsIgnoreCase(enteredUsername);
         boolean isPasswordMatch = correctPassword.equals(enteredPassword);
 
         if (isUsernameMatch && isPasswordMatch) {
-            System.out.println("✓ Login Successful! Welcome, " + registeredUser);
+            System.out.println("✓ లాగిన్ సక్సెస్! వెల్కమ్, " + registeredUser);
         } else if (!isUsernameMatch) {
-            System.out.println("✗ Login Failed: Username not found!");
+            System.out.println("✗ ఫెయిల్: అసలు యూజర్ నేమ్ డేటాబేస్ లో లేదు!");
         } else {
-            System.out.println("✗ Login Failed: Invalid password provided!");
+            System.out.println("✗ ఫెయిల్: మీరు తప్పు పాస్వర్డ్ ఎంటర్ చేసారు!");
         }
     }
 }</code></pre>
@@ -726,7 +727,7 @@ Null-Safe Admin Check (Yoda)    : false</div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">✓ Login Successful! Welcome, BalajiNayak</div>
+        <div class="output-content">✓ లాగిన్ సక్సెస్! వెల్కమ్, BalajiNayak</div>
       </div>
     </section>
 
@@ -735,13 +736,13 @@ Null-Safe Admin Check (Yoda)    : false</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using == for String content check: "if (name == "Ravi")" fails when String comes from Scanner, database, or network requests. Always use .equals().</li>
+    <li style="margin-bottom:8px; line-height:1.6;">స్ట్రింగ్స్ కి == వాడటం: "if (name == "Ravi")" అని రాస్తే, యూజర్ Scanner ద్వారా గాని, డేటాబేస్ నుంచి గాని ఆ పేరు వస్తే ఇది కచ్చితంగా ఫెయిల్ అవుతుంది. ఎప్పుడూ .equals() మాత్రమే వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Calling .equals() on potentially null variables: "str.equals("text")" crashes if str is null. Use ""text".equals(str)" instead.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">.equals() కి ముందు వేరియబుల్ పెట్టడం: "str.equals("text")" వాడితే str లో null ఉన్నప్పుడు క్రాష్ అవుతుంది. రివర్స్ లో ""text".equals(str)" అని వాడటం మంచి అలవాటు.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Over-complicating ternary with multiple statements: Ternary operators should only evaluate expressions that return a single value, not execute multi-step blocks.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">Ternary లోపల పెద్ద లాజిక్స్ రాయడం: Ternary అనేది వాల్యూస్ అసైన్ చేయడానికి మాత్రమే వాడాలి. లోపల ప్రింట్ స్టేట్మెంట్స్, లూప్స్ రాస్తే కోడ్ అర్థం కాదు.</li>
   
       </ul>
     </div>
@@ -758,17 +759,17 @@ Null-Safe Admin Check (Yoda)    : false</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Given two strings: str1 = "Java21", str2 = new String("java21"):
-// 1. Check if they are equal with == (result1)
-// 2. Check if they are equal with .equals() (result2)
-// 3. Check if they are equal with .equalsIgnoreCase() (result3)
-// Print all 3 boolean outcomes.
+// కింది రెండు స్ట్రింగ్స్ ని తీసుకోండి: str1 = "Java21", str2 = new String("java21"):
+// 1. "==" వాడి చెక్ చేయండి (result1)
+// 2. ".equals()" వాడి చెక్ చేయండి (result2)
+// 3. ".equalsIgnoreCase()" వాడి చెక్ చేయండి (result3)
+// మూడింటి రిజల్ట్స్ ప్రింట్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
         String str1 = "Java21";
         String str2 = new String("java21");
-        // TODO: Perform the 3 checks
+        // TODO: ఆ 3 చెక్స్ చేసి ప్రింట్ చేయండి
         
     }
 }</code></pre>
@@ -780,20 +781,14 @@ public class Main {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why does "==" sometimes return true for Strings?</h4>
-      <p>Because of Java's String Constant Pool. If both strings are created as identical string literals (e.g. String a = "hi"; String b = "hi";), the JVM assigns them the same memory address, making a == b true by coincidence. However, dynamic strings from Scanner or new String() will fail ==.</p>
+      <h4>❓ స్ట్రింగ్స్ కి "==" వాడినప్పుడు అప్పుడప్పుడు ఎందుకు true వస్తుంది?</h4>
+      <p>ఎందుకంటే జావాలో మెమరీని సేవ్ చేయడానికి ఒకే పేరుతో ఉన్న స్ట్రింగ్స్ ని String Pool లోకి పంపుతుంది. అప్పుడు రెండింటికీ ఒకటే అడ్రెస్ ఉంటుంది కాబట్టి true వస్తుంది. కానీ మనం Scanner నుంచి తీసుకున్నప్పుడు వేరే అడ్రెస్ వస్తుంది కాబట్టి అక్కడ తప్పు ఆన్సర్ వస్తుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ How does .compareTo() differ from .equals()?</h4>
-      <p>".equals()" returns a boolean (true/false) indicating exact match. ".compareTo()" returns an integer (negative, 0, positive) indicating alphabetical lexicographical order, essential for sorting.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ Can the ternary operator return different data types in its branches?</h4>
-      <p>Yes, but the compiler will infer the common supertype (e.g. Object or double if mixing int and double), which can cause subtle auto-unboxing type issues.</p>
+      <h4>❓ Ternary వాడినప్పుడు ఒక దాంట్లో int, ఇంకో దాంట్లో double వాల్యూ ఇవ్వొచ్చా?</h4>
+      <p>ఇవ్వొచ్చు, కానీ జావా ఆటోమాటిక్ గా int ని కూడా double కింద మార్చేస్తుంది. ఇది కొన్నిసార్లు మనం ఊహించని బగ్స్ కి దారితీస్తుంది.</p>
     </div>
   
     </section>
@@ -803,16 +798,16 @@ public class Main {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Ternary operator: (condition ? valIfTrue : valIfFalse) returns an evaluated value.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Ternary operator: if-else ని ఒకే లైన్ లో రాసి, వచ్చిన రిజల్ట్ ని వేరియబుల్ లో స్టోర్ చేయడం.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">NEVER use == for String content comparison; == checks memory address references.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">స్ట్రింగ్స్ కి ఎప్పుడూ == వాడకండి. అది కేవలం మెమరీ అడ్రెస్ ని మాత్రమే చెక్ చేస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Use .equals() for case-sensitive equality and .equalsIgnoreCase() for case-insensitive matching.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఎగ్జాక్ట్ గా మ్యాచ్ అవ్వాలంటే .equals(), క్యాపిటల్స్/స్మాల్స్ పట్టించుకోకూడదు అంటే .equalsIgnoreCase() వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Prevent NullPointerException by placing the string literal first ("ADMIN".equals(role)).</li>
+    <li style="margin-bottom:6px; line-height:1.5;">null వచ్చినప్పుడు క్రాష్ అవ్వకుండా ఉండాలంటే ("ADMIN".equals(role)) ఇలా యోడా కండిషన్ వాడాలి.</li>
   
       </ul>
     </div>

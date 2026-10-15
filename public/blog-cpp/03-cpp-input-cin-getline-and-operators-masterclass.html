@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Input, cin, getline(), Operators & 6 Practice Programs Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on C++ Input & Operators (Phase 3): std::cin, std::getline, buffer clearing, error streams, operators catalog, and 6 practice programs." />
-  <meta name="keywords" content="c++ tutorial, c++ input, cin, getline(), operators & 6 practice programs masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>cin, getline(), Operators Masterclass (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో యూజర్ దగ్గర నుండి ఇన్పుట్ ఎలా తీసుకోవాలి? cin కి getline() కి ఉన్న తేడా ఏంటి? ఆపరేటర్స్ ఎలా పనిచేస్తాయో డీప్ గా తెలుసుకుందాం." />
+  <meta name="keywords" content="c++ tutorial, cin, getline(), operators masterclass (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/03-cpp-input-cin-getline-and-operators-masterclass.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -293,6 +270,193 @@
         <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
       </div>
 
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
     </div>
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
@@ -303,63 +467,125 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 3: C++ Input, cin, getline(), Operators & 6 Practice Programs Masterclass</span>
+      <span class="current">Lesson 3: cin, getline(), Operators Masterclass (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Input, cin, getline(), Operators & 6 Practice Programs Masterclass</h1>
+    <h1 class="page-title">cin, getline(), Operators Masterclass (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 3</span>
-      <span class="badge">📂 Phase 03: Input, Operators & Practice</span>
+      <span class="badge">📂 Phase 03: Input & Operators</span>
       <span class="badge">📅 2026 Master Edition</span>
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>std::cin & std::getline() · Buffer Clearing (cin.ignore) · Input Error Recovery · Operators & Precedence · Integer Division Traps · 6 Practice Programs</span>
+      <span>User Input (std::cin) · Buffer Issues · getline() · Operators · Math Logic</span>
     </div>
-<div class="intro-box">  <p>Welcome to <strong>Phase 3 (Chapter 3): C++ Input, cin, getline(), Operators &amp; 6 Practice Programs Masterclass</strong>! Stream input in C++ requires mastering <code>std::cin</code>, line-based reading with <code>std::getline()</code>, avoiding the newline buffer trap with <code>std::cin.ignore()</code>, and handling invalid inputs with <code>std::cerr</code>.</p></div><div class="section-title"><span class="num">1</span>The cin Newline Input Buffer Trap &amp; Solution</div><div class="section-body">  <p class="text-prose">When mixing <code>std::cin &gt;&gt; age;</code> followed by <code>std::getline(std::cin, name);</code>, the newline character <code>\n</code> left in the input buffer by <code>cin &gt;&gt;</code> immediately satisfies <code>getline()</code>, causing it to read an empty string!</p>  <div class="concept-box">    <h4>The Solution: std::cin.ignore()</h4>    <p>Always clear leftover newline characters before calling <code>getline()</code>:</p>    <p><code>std::cin.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n');</code></p>  </div></div><div class="section-title"><span class="num">2</span>6 Complete Practice Programs</div><div class="section-body">  <div class="code-block">    <div class="code-block-header"><span class="lang-tag">C++ — 6 Interactive Practice Programs</span><a class="try-btn" href="/?lang=cpp17">▶ Run Code in C++ Compiler</a></div><pre><code>#include &lt;iostream&gt;
+
+    <div class="intro-box">
+      <p>మన ప్రోగ్రామ్ లో అన్ని వాల్యూస్ మనమే కోడ్ లో రాసేస్తే (Hardcoding) దానివల్ల ఉపయోగం లేదు. ఉదాహరణకు, క్యాలిక్యులేటర్ యాప్ లో యూజర్ ఏ నంబర్స్ ఇస్తాడో మనకు ముందుగా తెలీదు కదా! అంటే ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు, కీబోర్డ్ ద్వారా యూజర్ దగ్గర నుండి వాల్యూస్ తీసుకోవాలి. దీనికోసమే C++ లో <strong><code>std::cin</code></strong> అనే అద్భుతమైన ఫీచర్ ఉంది. కానీ <code>cin</code> వాడేటప్పుడు చాలా మంది స్టూడెంట్స్ బఫర్ (Buffer) ఇష్యూస్ ఫేస్ చేస్తారు, సగం సగం పేర్లు మాత్రమే వస్తాయి. ఈ ఆర్టికల్ లో <code>cin</code> మరియు <code>getline()</code> ఎలా వాడాలో, వాటితో పాటు ఆపరేటర్స్ (Operators) ఎలా పనిచేస్తాయో డీప్ గా చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> cin (Character Input) ఎలా పనిచేస్తుంది?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మనం C లాంగ్వేజ్ లో <code>scanf</code> వాడినట్లు, C++ లో <code>cin</code> వాడుతాం. <code>cout</code> వాడేటప్పుడు ఎడమ వైపు (<code><<</code>) ఆరోస్ ఉంటాయో, <code>cin</code> వాడేటప్పుడు కుడి వైపు (<code>>></code>) ఆరోస్ ఉంటాయి. అంటే కీబోర్డ్ నుండి వచ్చిన డేటాని ఆ వేరియబుల్ లోకి తోస్తుంది అని అర్థం.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>⚠️ రియల్ లైఫ్ ప్రాబ్లెమ్: Space వస్తే cin ఎందుకు ఆగిపోతుంది?</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          మీరు యూజర్ పేరు అడిగారు, అతను <strong>"Ratan Tata"</strong> అని టైప్ చేసాడు అనుకోండి. మీరు <code>cin &gt;&gt; name;</code> అని వాడితే, కంప్యూటర్ కి కేవలం <strong>"Ratan"</strong> మాత్రమే తీసుకుంటుంది! "Tata" ని వదిలేస్తుంది.<br><br>
+          ఎందుకంటే <code>cin</code> ఎప్పుడూ కూడా ఒక <strong>స్పేస్ (Space)</strong> లేదా <strong>ఎంటర్ (Enter)</strong> రాగానే ఆగిపోతుంది. దానికి పదాల మధ్య ఉన్న ఖాళీ జాగాలు అర్థం కావు. ఆ సమస్యని పరిష్కరించడానికి వాడేదే <strong><code>std::getline()</code></strong>. ఇది ఒక లైన్ మొత్తాన్ని, స్పేస్ లతో సహా పూర్తిగా చదువుతుంది.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Operators (ఆపరేటర్స్) అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఆపరేటర్స్ అంటే సింబల్స్. మ్యాథ్స్ లో <code>+</code>, <code>-</code> లాగా ప్రోగ్రామింగ్ లో చాలా సింబల్స్ ఉంటాయి.
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>Arithmetic:</strong> + (కూడిక), - (తీసివేత), * (గుణకారం), / (భాగాహారం), % (శేషం / Modulo).</li>
+        <li><strong>Relational:</strong> == (సమానమా?), != (సమానం కాదా?), &gt;, &lt;.</li>
+        <li><strong>Logical:</strong> && (రెండూ నిజం అయితే), || (ఏదో ఒకటి నిజం అయితే).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Input & getline)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో ముందుగా వయసు (నంబర్) తీసుకుని, ఆ తర్వాత <code>getline()</code> వాడి పేరు ఎలా తీసుకుంటున్నామో చూడండి. (ఇక్కడ బఫర్ క్లియర్ చేయడం చాలా ముఖ్యం).
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — cin & getline Demo</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
-#include &lt;limits&gt;
 
 int main() {
-    // 1. Safe String & Number Input
-    std::string fullName;
     int age;
-    double principal, rate, time;
-
-    std::cout &lt;&lt; "Enter your full name: ";
-    std::getline(std::cin, fullName);
-
-    std::cout &lt;&lt; "Enter your age: ";
-    std::cin &gt;&gt; age;
-
-    // Clear input buffer before next line input!
-    std::cin.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n');
-
-    // 2. Simple Interest Calculation
-    std::cout &lt;&lt; "Enter Principal, Rate(%), and Time(years): ";
-    std::cin &gt;&gt; principal &gt;&gt; rate &gt;&gt; time;
-
-    double simpleInterest = (principal * rate * time) / 100.0;
-
-    std::cout &lt;&lt; "\n--- SUMMARY REPORT ---\n";
-    std::cout &lt;&lt; "User: " &lt;&lt; fullName &lt;&lt; " (" &lt;&lt; age &lt;&lt; " yrs)\n";
-    std::cout &lt;&lt; "Calculated Simple Interest: $" &lt;&lt; simpleInterest &lt;&lt; "\n";
-
+    std::string fullName;
+    
+    std::cout << "Enter your age: ";
+    std::cin >> age;
+    
+    // cin తర్వాత ఎంటర్ (\n) బఫర్ లో ఉండిపోతుంది, దాన్ని క్లియర్ చేయాలి
+    std::cin.ignore(); 
+    
+    std::cout << "Enter your Full Name: ";
+    // స్పేస్ లతో సహా మొత్తం లైన్ ని తీసుకుంటుంది
+    std::getline(std::cin, fullName); 
+    
+    std::cout << "Hello " << fullName << ", you are " << age << " years old.\n";
+    
     return 0;
-}</code></pre>  </div></div><div class="section-title"><span class="num">3</span>Technical FAQs</div><div class="section-body">  <div class="faq-grid">    <div class="faq-item"><h4>Q1: What is std::cerr used for?</h4><p><code>std::cerr</code> is the standard unbuffered error stream object used to print diagnostic error messages directly to console.</p></div>    <div class="faq-item"><h4>Q2: How do you detect if std::cin failed to read a number?</h4><p>Check <code>if (std::cin.fail())</code>. Reset state with <code>std::cin.clear()</code> and discard invalid characters with <code>std::cin.ignore()</code>.</p></div>    <div class="faq-item"><h4>Q3: What is the difference between pre-increment (++x) and post-increment (x++)?</h4><p>Pre-increment <code>++x</code> increments first and returns modified reference. Post-increment <code>x++</code> copies old value, increments, and returns copy.</p></div>    <div class="faq-item"><h4>Q4: Why does 5 / 2 produce 2 instead of 2.5 in C++?</h4><p>Integer division truncates fractional parts! Use <code>5.0 / 2</code> or <code>static_cast&lt;double&gt;(5) / 2</code> to get 2.5.</p></div>    <div class="faq-item"><h4>Q5: What is operator overloading introduction in C++?</h4><p>C++ allows defining custom behavior for standard operators (`+`, `-`, `&lt;&lt;`) when applied to user-defined class objects.</p></div>  </div></div>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>std::cin &gt;&gt; age;</code>: యూజర్ టైప్ చేసిన నంబర్ ని <code>age</code> లోకి పంపుతుంది. కానీ యూజర్ నంబర్ టైప్ చేసి 'Enter' నొక్కుతాడు కదా, ఆ Enter క్యారెక్టర్ (<code>\n</code>) కీబోర్డ్ బఫర్ లోనే ఉండిపోతుంది.</li>
+        <li><code>std::cin.ignore();</code>: ఇది ఆ మిగిలిపోయిన Enter ని చెత్తబుట్టలో వేస్తుంది (Clear Buffer). ఒకవేళ ఇది రాయకపోతే, కింద ఉన్న getline() దానంతట అదే ఆ Enter ని చదివేసుకుని ఎంప్టీ లైన్ (Empty) ని తీసుకుని ఆగిపోతుంది!</li>
+        <li><code>std::getline(std::cin, fullName);</code>: ఇప్పుడు ఇది కరెక్ట్ గా యూజర్ టైప్ చేసిన పూర్తి పేరుని (space లతో కలిపి) చదివి <code>fullName</code> లో పెడుతుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: Modulo (<code>%</code>) ఆపరేటర్ ఎక్కడ వాడతారు?</h4>
+          <p>భాగాహారం (Division) చేస్తే వచ్చేది కోషంట్ (Quotient). కానీ మోడ్యులో (<code>%</code>) వాడితే వచ్చేది రిమైండర్ (శేషం). ఉదాహరణకు 10 % 3 = 1 వస్తుంది. దీన్ని సరి సంఖ్య (Even) బేసి సంఖ్య (Odd) కనుక్కోవడానికి ఎక్కువగా వాడతారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: <code>cin.ignore()</code> లేకుండా ఉంటే ప్రోగ్రామ్ క్రాష్ అవుతుందా?</h4>
+          <p>క్రాష్ అవ్వదు కానీ, లాజికల్ బగ్ వస్తుంది. మీరు ఎప్పుడైతే ఒక నంబర్ (cin) అడిగి, ఆ వెంటనే ఒక స్ట్రింగ్ (getline) అడుగుతారో, అప్పుడు మునుపటి బఫర్ వల్ల సెకండ్ ఇన్పుట్ స్కిప్ అయిపోయి ప్రోగ్రామ్ ముందుకు వెళ్లిపోతుంది. అందుకే cin తర్వాత getline వస్తే ఖచ్చితంగా <code>ignore()</code> వాడాలి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: C++ లో <code>string</code> అనేది డేటా టైపా లేక క్లాస్ (Class) ఆ?</h4>
+          <p>C లాంగ్వేజ్ లో స్ట్రింగ్ అనేది ఒక అక్షరాల సమూహం (Array of characters) మాత్రమే. కానీ C++ లో <code>std::string</code> అనేది ఒక ఫుల్లీ పవర్ ఫుల్ క్లాస్ (Class). దానికి ఎంత పెద్ద టెక్స్ట్ ఇచ్చినా దానంతట అదే సైజు పెంచుకుంటుంది, మరియు అక్షరాలు యాడ్ చేయడం లాంటివి చాలా సింపుల్ గా చేయొచ్చు.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="02-cpp-variables-data-types-constexpr-auto-and-scope.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">2. Variables, Data Types, constexpr, auto & Scope</span>
+    <span class="title">2. Variables, Data Types & Scope</span>
   </a>
   <a href="04-cpp-conditional-branching-if-else-and-switch-case.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">4. if-else Ladders, Logical Logic & switch-case</span>
+    <span class="title">4. if-else & switch-case</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

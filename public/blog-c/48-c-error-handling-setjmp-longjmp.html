@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error Handling (setjmp, longjmp) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ లో Java/Python లాగా try-catch బ్లాక్స్ ఎందుకు లేవు? పెద్ద ప్రాజెక్ట్స్ లో ఎర్రర్ వస్తే ఒక ఫంక్షన్ నుండి ఇంకో ఫంక్షన్ కి డైరెక్ట్ గా ఎలా జంప్ చేయాలో setjmp మరియు longjmp వాడి డీప్ గా నేర్చుకుందాం." />
+  <meta name="keywords" content="c tutorial, error handling (setjmp, longjmp) (తెలుగులో), setjmp longjmp c, variable arguments c, pthreads c, linked lists c, insert delete linked list" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/48-c-error-handling-setjmp-longjmp.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 17: Advanced Concepts -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Advanced Concepts</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/48-c-error-handling-setjmp-longjmp.html" class="active">48. Error Handling (setjmp, longjmp)</a>
+        <a href="/blog-c/49-c-variable-arguments-stdarg-h.html">49. Variable Arguments (stdarg.h)</a>
+        <a href="/blog-c/50-c-multi-threading-pthreads-basics.html">50. Multi-threading in C (pthreads)</a>
+      </div>
+
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html">55. Queue Implementation</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 48: Error Handling (setjmp, longjmp) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Error Handling (setjmp, longjmp) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 48</span>
+      <span class="badge">📂 Phase 17: Advanced Concepts</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Exception Handling in C · setjmp() · longjmp() · Stack Unwinding · Goto vs Longjmp</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>జావా (Java) లేదా పైథాన్ (Python) లాంటి మోడరన్ లాంగ్వేజెస్ లో ఏదైనా ఎర్రర్ వస్తే దాన్ని <code>try-catch</code> బ్లాక్ తో చాలా ఈజీగా హ్యాండిల్ చేస్తారు. కానీ మన C లాంగ్వేజ్ ఏమో 1970లలో పుట్టింది. అప్పట్లో ఈ <code>try-catch</code> లాంటి ఫ్యాన్సీ ఫీచర్స్ ఏమీ లేవు. మరి ఒక పెద్ద ప్రోగ్రామ్ లో ఎక్కడో లోపల (3వ లెవల్ ఫంక్షన్ లో) ఎర్రర్ వస్తే, అక్కడ నుండి డైరెక్ట్ గా మెయిన్ ఫంక్షన్ కి (బయటకి) ఎలా దూకాలి? దానికి C ఇచ్చిన రెండు మాయా అస్త్రాలే <strong><code>setjmp()</code> మరియు <code>longjmp()</code></strong>. ఇవి అచ్చం టైమ్-మెషిన్ లాగా పనిచేస్తాయి. అదెలాగో ఈరోజు డీప్ గా చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> నార్మల్ గా ఎర్రర్స్ ఎలా హ్యాండిల్ చేస్తారు?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        సాధారణంగా C లో ఫంక్షన్స్ రిటర్న్ చేసే నంబర్స్ (<code>0</code> అంటే సక్సెస్, <code>-1</code> అంటే ఫెయిల్) ని చెక్ చేస్తూ <code>if...else</code> రాసుకుంటూ వెళ్తాము. కానీ ఒక ఫంక్షన్ ఇంకో ఫంక్షన్ ని కాల్ చేసి, అది ఇంకో ఫంక్షన్ ని కాల్ చేసినప్పుడు (A -> B -> C), C లో ఎర్రర్ వస్తే B కి చెప్పి, ఆ B వెళ్లి A కి చెప్పి... ఇదంతా చాలా పెద్ద ప్రాసెస్ అయిపోతుంది.
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>⏳ రియల్ లైఫ్ స్టోరీ: వీడియో గేమ్ లో సేవ్ పాయింట్ (Save Point)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          మీరు ఒక వీడియో గేమ్ ఆడుతున్నారు. ఒక సేఫ్ ప్లేస్ లో ఆటని సేవ్ చేసుకుంటారు (ఇదే <strong><code>setjmp</code></strong>). ఆ తర్వాత మీరు గేమ్ లో ముందుకు వెళ్లి, అడవిలోకి వెళ్లి, ఒక రాక్షసుడితో ఫైట్ చేసి (అదే ఫంక్షన్ కాల్స్) చనిపోతారు (Error).<br><br>
+          చనిపోగానే మీరు మళ్ళీ నడుచుకుంటూ వెనక్కి రారు కదా! డైరెక్ట్ గా ఎక్కడ సేవ్ చేసారో అక్కడికే టెలిపోర్ట్ (Teleport) అయిపోతారు. ఆ టెలిపోర్ట్ చేసే పవరే <strong><code>longjmp</code></strong>. C ప్రోగ్రామ్ లో కూడా మీరు <code>longjmp</code> వాడితే, కంపైలర్ డైరెక్ట్ గా పాత <code>setjmp</code> దగ్గరికి దూకేస్తుంది!
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> goto వర్సెస్ longjmp</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీరు <code>goto</code> వాడి కూడా వేరే లైన్ కి దూకవచ్చు కదా అనుకోవచ్చు. కానీ <code>goto</code> కేవలం అదే ఫంక్షన్ లోపల (Local) మాత్రమే దూకగలదు. మీరు వేరే ఫంక్షన్ లో ఉండి, మెయిన్ ఫంక్షన్ కి దూకాలంటే <code>goto</code> పనిచేయదు. <strong><code>longjmp</code></strong> అనేది ఫంక్షన్స్ మధ్య బోర్డర్స్ ని దాటి (Non-local jump) దూకగలదు!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Try-Catch Simulation)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో డివిజన్ బై జీరో (Division by Zero) ఎర్రర్ వచ్చినప్పుడు, లోపలి ఫంక్షన్ నుండి డైరెక్ట్ గా బయటికి ఎలా దూకామో యానిమేటెడ్ లాగా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — setjmp & longjmp</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;setjmp.h&gt; // ఈ హెడ్డర్ ఫైల్ కచ్చితంగా ఉండాలి
+
+// సేవ్ పాయింట్ ని స్టోర్ చేసుకోవడానికి ఒక గ్లోబల్ బఫర్
+jmp_buf save_point;
+
+// ఒక ప్రమాదకరమైన ఫంక్షన్ (B)
+void divide_numbers(int a, int b) {
+    printf("  [Inside Function] Trying to divide %d by %d...\n", a, b);
+    
+    if (b == 0) {
+        printf("  [Error!] Division by Zero detected! Jumping back!\n");
+        // ఎర్రర్ వస్తే డైరెక్ట్ గా బేస్ క్యాంప్ (save_point) కి దూకేయ్!
+        // 1 అనే కోడ్ తో దూకుతున్నాం (ఇది క్యాచ్ బ్లాక్ కి సిగ్నల్)
+        longjmp(save_point, 1);
+    }
+    
+    // ఒకవేళ ఎర్రర్ రాకపోతే నార్మల్ గా రిజల్ట్ ఇస్తుంది
+    printf("  [Success] Result is: %d\n", a / b);
+}
+
+// మెయిన్ ఫంక్షన్ (A)
+int main() {
+    printf("--- Try-Catch in C (Simulation) ---\n\n");
+    
+    // 1. ఆటని సేవ్ చేయడం (Try Block లాగా)
+    // ఫస్ట్ టైమ్ సేవ్ చేసినప్పుడు setjmp 0 ని రిటర్న్ చేస్తుంది.
+    int status = setjmp(save_point);
+    
+    if (status == 0) {
+        // ఇదంతా Try Block లోపల అన్నమాట
+        printf("Save Point Created. Let's run the risky code.\n");
+        divide_numbers(10, 2); // ఇది సక్సెస్ అవుతుంది
+        
+        printf("\nNow running risky code again...\n");
+        divide_numbers(10, 0); // ఇది ఫెయిల్ అయ్యి దూకేస్తుంది
+        
+        // ఈ లైన్ ఎప్పటికీ ప్రింట్ అవ్వదు, ఎందుకంటే పైనే దూకేసింది
+        printf("This line will never print!\n"); 
+    } 
+    else if (status == 1) {
+        // ఇది Catch Block లాగా అన్నమాట (longjmp 1 తో దూకినప్పుడు)
+        printf("\n[Caught Exception] We safely landed back in main()!\n");
+        printf("Error Code received: %d\n", status);
+    }
+    
+    printf("\nProgram safely finished.\n");
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>jmp_buf save_point;</code>: ఇది కంపైలర్ కోసం ఒక స్పెషల్ బాక్స్. మీరు ఏ ఫంక్షన్ లో ఉన్నారు, మీ CPU రిజిస్టర్స్ (Registers) ఏంటి అని మొత్తం మీ కరెంట్ స్టేట్ ని (టైమ్ మెషిన్ లాగా) ఇందులో దాచుకుంటుంది.</li>
+        <li><code>setjmp(save_point)</code>: ఇది మొదట రన్ అయినప్పుడు అదంతా దాచుకుని <strong>0</strong> ని ఇస్తుంది. అందుకే మనం ఫస్ట్ హాఫ్ కోడ్ రన్ చేస్తాం.</li>
+        <li><code>longjmp(save_point, 1)</code>: ఇది రన్ అవ్వగానే, CPU డైరెక్ట్ గా పాత <code>setjmp</code> లైన్ కి వెళ్లిపోతుంది. కానీ ఈసారి <code>setjmp</code> కి 0 బదులు <strong>1</strong> వస్తుంది (మనం 1 పాస్ చేసాం కాబట్టి). అప్పుడు కంపైలర్ కింద ఉన్న ఎల్స్-ఇఫ్ (Catch block) లోకి వెళ్తుంది. ఇది అచ్చం మ్యాజిక్ లాంటి కాన్సెప్ట్!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఇది అంత పవర్ ఫుల్ అయితే, అందరూ ఎందుకు వాడరు?</h4>
+          <p>దీనికి ఒక పెద్ద సైడ్ ఎఫెక్ట్ ఉంది. దీనివల్ల <strong>Memory Leaks</strong> వస్తాయి! మీరు ఒక ఫంక్షన్ లోపల <code>malloc</code> వాడి మెమరీ క్రియేట్ చేసి, దాన్ని <code>free</code> చేయకుండానే <code>longjmp</code> తో బయటికి దూకేస్తే... ఆ మెమరీ అలా లాక్ అయ్యి ఉండిపోతుంది (Stack Unwinding జరగదు). అందుకే C++ లో ఈ సమస్య రాకుండా <code>try-catch</code> కనిపెట్టారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ఒకవేళ <code>setjmp</code> రాసిన ఫంక్షన్ క్లోజ్ అయ్యాక <code>longjmp</code> వాడితే?</h4>
+          <p>ఇది ప్రోగ్రామ్ ని వెంటనే క్రాష్ చేస్తుంది (Undefined Behavior)! మీరు సేవ్ పాయింట్ పెట్టిన ఫంక్షన్ ఇంకా బతికి ఉంటేనే (Stack లో ఉంటేనే) అక్కడికి దూకగలరు. ఆ ఫంక్షన్ ఎండ్ అయిపోయి, వేరే ఫంక్షన్ కి వెళ్లి దూకమని చెప్తే దానికి దారి తెలీక బ్లూ స్క్రీన్ వచ్చేస్తుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: గేమ్ ఇంజిన్స్ లో దీన్ని ఇంకా వాడుతున్నారా?</h4>
+          <p>అవును! క్వేక్ (Quake) లాంటి పాత గేమ్ ఇంజిన్స్ లో సిస్టమ్ క్రాష్ అవ్వకుండా ఆపడానికి (Fatal Errors) దీన్నే వాడేవాళ్ళు. ఇప్పటికీ రొబోటిక్స్ లో హార్డ్వేర్ ఫెయిల్ అయినప్పుడు మెయిన్ లూప్ కి సేఫ్ గా రావడానికి ఈ కాన్సెప్ట్ నే వాడతారు.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="47-c-bit-fields-and-struct-packing.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">47. Bit Fields & Struct Packing</span>
+      </a>
+
+      
+      <a href="49-c-variable-arguments-stdarg-h.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">49. Variable Arguments (stdarg.h)</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

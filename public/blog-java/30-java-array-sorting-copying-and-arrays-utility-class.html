@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Array Sorting, Copying & java.util.Arrays Masterclass — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering sorting algorithms, memory duplication techniques, and the complete java.util.Arrays utility library: two-pointer in-place reversal, step-by-step Bubble Sort mechanics, JVM Dual-Pivot Quicksort architecture, high-speed memory copying with System.arraycopy(), and deep equality inspections." />
-  <meta name="keywords" content="java array sorting, copying & java.util.arrays masterclass, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Array Sorting, Copying & java.util.Arrays (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="అరే ని రివర్స్ చేయడం ఎలా? Bubble Sort లాంటి బేసిక్ సార్టింగ్ ఎలా పనిచేస్తుంది? జావాలో ముందే ఉన్న `Arrays.sort()` వెనక ఉన్న సీక్రెట్ ఏంటి? ఒక అరే ని ఇంకో అరే లోకి కాపీ చేయాలంటే `=` వాడితే ఎందుకు తప్పు వస్తుంది? ఇలాంటి బేసిక్ కానీ చాలా పవర్ఫుల్ కాన్సెప్ట్స్ మరియు `java.util.Arrays` క్లాస్ గురించి క్లియర్ గా తెలుసుకుందాం." />
+  <meta name="keywords" content="java array sorting, copying & java.util.arrays (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/30-java-array-sorting-copying-and-arrays-utility-class.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 30: 30. Sorting, Copying & Utilities</span>
     </div>
 
-    <h1 class="page-title">Java Array Sorting, Copying & java.util.Arrays Masterclass</h1>
+    <h1 class="page-title">Java Array Sorting, Copying & java.util.Arrays (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,75 +541,76 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering sorting algorithms, memory duplication techniques, and the complete java.util.Arrays utility library: two-pointer in-place reversal, step-by-step Bubble Sort mechanics, JVM Dual-Pivot Quicksort architecture, high-speed memory copying with System.arraycopy(), and deep equality inspections.</p>
+      <p>అరే ని రివర్స్ చేయడం ఎలా? Bubble Sort లాంటి బేసిక్ సార్టింగ్ ఎలా పనిచేస్తుంది? జావాలో ముందే ఉన్న `Arrays.sort()` వెనక ఉన్న సీక్రెట్ ఏంటి? ఒక అరే ని ఇంకో అరే లోకి కాపీ చేయాలంటే `=` వాడితే ఎందుకు తప్పు వస్తుంది? ఇలాంటి బేసిక్ కానీ చాలా పవర్ఫుల్ కాన్సెప్ట్స్ మరియు `java.util.Arrays` క్లాస్ గురించి క్లియర్ గా తెలుసుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. In-Place Array Reversal (Two-Pointer Algorithm)</h2>
+      <h2>1. అరే ని రివర్స్ చేయడం (కొత్త మెమరీ వాడకుండా)</h2>
       <div class="theory-text">
-        <p>Reversing an array without creating a second array saves heap allocation:</p>
+        <p>ఒక అరే ని రివర్స్ చేయాలంటే కొత్త అరే క్రియేట్ చేసి వెనకనుంచి కాపీ చేయొచ్చు. కానీ అది మెమరీ వేస్ట్. దానికి బదులు Two-Pointer టెక్నిక్ వాడితే అసలు మెమరీ వాడకుండానే (In-Place) రివర్స్ అయిపోతుంది:</p>
 <div class="code-block"><pre><code>int left = 0, right = arr.length - 1;
 while (left &lt; right) {
+    // లెఫ్ట్ లో ఉన్నదాన్ని రైట్ కి, రైట్ లో ఉన్నదాన్ని లెఫ్ట్ కి స్వాప్ (Swap) చేస్తున్నాం
     int temp = arr[left];
     arr[left] = arr[right];
     arr[right] = temp;
-    left++;
-    right--;
+    
+    left++;  // లెఫ్ట్ ది ఒక అడుగు ముందుకి
+    right--; // రైట్ ది ఒక అడుగు వెనక్కి (సగం వరకు రాగానే ఆగిపోతాయి)
 }</code></pre></div>
-- Runs in $O(N/2) = O(N)$ time.
-- Uses $O(1)$ auxiliary space.
+- ఇది చాలా ఫాస్ట్ గా ఉంటుంది ($O(N)$ టైమ్).
+- ఏ కొత్త అరే క్రియేట్ చేయలేదు కాబట్టి మెమరీ అసలు వాడలేదు ($O(1)$ స్పేస్).
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Understanding Bubble Sort Mechanics</h2>
+      <h2>2. బబుల్ సార్ట్ (Bubble Sort) ఎలా పనిచేస్తుంది?</h2>
       <div class="theory-text">
-        <p><strong>Bubble Sort</strong> repeatedly compares adjacent elements and swaps them if they are in the wrong order. With each outer pass, the largest remaining element "bubbles up" to its final position at the end of the array:</p>
-<div class="code-block"><pre><code>Pass 1: [5, 1, 4, 2, 8] -&gt; [1, 5, 4, 2, 8] -&gt; [1, 4, 5, 2, 8] -&gt; [1, 4, 2, 5, 8] (8 is in place)
-  Pass 2: [1, 4, 2, 5, 8] -&gt; [1, 2, 4, 5, 8] (5 is in place)
-  Pass 3: Array is sorted!</code></pre></div>
-<p>- <strong>Time Complexity:</strong> $O(N^2)$ worst/average case; $O(N)$ best case when optimized with a <code>swapped</code> boolean flag.</p>
+        <p><strong>Bubble Sort</strong> అంటే పక్కపక్కన ఉన్న రెండు నంబర్స్ ని చూసి.. అందులో ఏది పెద్దదైతే దాన్ని రైట్ సైడ్ కి తోసుకుంటూ వెళ్లడం. ఇలా ఒక్కో రౌండ్ కి అరే లో ఉన్న అన్నిటికన్నా పెద్ద నంబర్ బుడగ లాగా లాస్ట్ కి చేరిపోతుంది:</p>
+<div class="code-block"><pre><code>రౌండ్ 1: [5, 1, 4, 2, 8] -&gt; [1, 5, 4, 2, 8] -&gt; [1, 4, 5, 2, 8] -&gt; [1, 4, 2, 5, 8] (8 కరెక్ట్ ప్లేస్ కి వెళ్ళిపోయింది)
+  రౌండ్ 2: [1, 4, 2, 5, 8] -&gt; [1, 2, 4, 5, 8] (5 కరెక్ట్ ప్లేస్ కి వెళ్ళిపోయింది)
+  రౌండ్ 3: అరే మొత్తం సార్ట్ అయిపొయింది!</code></pre></div>
+<p>- ఇది చాలా బేసిక్ సార్టింగ్. అర్థం చేసుకోవడానికి బాగుంటుంది కానీ పెద్ద డేటా ఇస్తే చాలా స్లో ($O(N^2)$ టైమ్).</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. 4 Ways to Copy Arrays in Java</h2>
+      <h2>3. అరే ని కాపీ చేయడానికి ఉన్న 4 పద్ధతులు</h2>
       <div class="theory-text">
-        <p>In Java, writing <code>int[] copy = original;</code> does NOT copy the array! It simply creates a <strong>second reference pointing to the exact same Heap object</strong>. Modifying <code>copy[0]</code> will corrupt <code>original[0]</code>!</p>
-<p>To duplicate the array data, use one of these 4 techniques:</p>
+        <p>జావాలో మీరు <code>int[] copy = original;</code> అని రాస్తే అరే కాపీ అయిపోయింది అనుకుంటారు. కానీ అది కాపీ కాదు! జస్ట్ ఒకే అరే కి ఇంకో పేరు పెట్టినట్టు అవుతుంది. మీరు <code>copy</code> లో ఏదైనా మారిస్తే <code>original</code> లో కూడా మారిపోతుంది. అసలైన డూప్లికేట్ కావాలంటే ఈ 4 పద్ధతులు వాడాలి:</p>
 <div class="ref-table-wrap">
   <table class="ref-table">
     <thead>
       <tr>
-        <th>Method</th>
-        <th>Syntax</th>
-        <th>Characteristics</th>
+        <th>పద్ధతి (Method)</th>
+        <th>సింటాక్స్ (Syntax)</th>
+        <th>డీటెయిల్స్</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>1. Manual Loop</strong></td>
+        <td><strong>1. మ్యాన్యువల్ లూప్</strong></td>
         <td><code>for (int i=0; i&lt;len; i++) copy[i] = orig[i];</code></td>
-        <td>Simple, readable, manual control.</td>
+        <td>లూప్ వేసి మనమే ఒక్కొక్కటి కాపీ చేయడం (సింపుల్).</td>
       </tr>
       <tr>
         <td><strong>2. System.arraycopy()</strong></td>
         <td><code>System.arraycopy(src, 0, dest, 0, len);</code></td>
-        <td><strong>Fastest</strong> (Native C++ JVM memmove call directly in RAM).</td>
+        <td><strong>సూపర్ ఫాస్ట్</strong> (ఇది డైరెక్ట్ గా ర్యామ్ లో కాపీ కొట్టేస్తుంది, టైమ్ అస్సలు పట్టదు).</td>
       </tr>
       <tr>
         <td><strong>3. Arrays.copyOf()</strong></td>
         <td><code>int[] copy = Arrays.copyOf(orig, newLength);</code></td>
-        <td>Allocates and copies in one concise call; allows resizing.</td>
+        <td>కాపీతో పాటు ఒకేసారి అరే సైజు ని కూడా పెంచుకోవచ్చు.</td>
       </tr>
       <tr>
         <td><strong>4. clone()</strong></td>
         <td><code>int[] copy = orig.clone();</code></td>
-        <td>Creates a shallow clone of the array object.</td>
+        <td>ఇది పాత పద్ధతి. ఉన్న అరే కి ఎగ్జాక్ట్ క్లోన్ క్రియేట్ చేస్తుంది.</td>
       </tr>
     </tbody>
   </table>
@@ -619,10 +620,10 @@ while (left &lt; right) {
   
 
     <section class="lesson-section">
-      <h2>4. The java.util.Arrays Utility Toolkit</h2>
+      <h2>4. java.util.Arrays క్లాస్ పవర్ ఏంటి?</h2>
       <div class="theory-text">
-        <p>The <code>java.util.Arrays</code> class contains static helper methods:</p>
-<p>- <strong><code>Arrays.toString(arr)</code>:</strong> Converts 1D array into clean readable string <code>"[1, 2, 3]"</code>.<br>- <strong><code>Arrays.sort(arr)</code>:</strong> In-place ascending sort.<br>- <strong><code>Arrays.fill(arr, val)</code>:</strong> Sets every slot in the array to <code>val</code>.<br>- <strong><code>Arrays.equals(arr1, arr2)</code>:</strong> Checks if two 1D arrays contain identical elements in identical order.<br>- <strong><code>Arrays.mismatch(arr1, arr2)</code>:</strong> (Java 9+) Returns the index of the first differing element, or <code>-1</code> if identical.<br>- <strong><code>Arrays.compare(arr1, arr2)</code>:</strong> (Java 9+) Lexicographical array comparison.</p>
+        <p>అరేస్ ని ఈజీగా మేనేజ్ చేయడానికి జావా వల్లే <code>java.util.Arrays</code> అనే క్లాస్ లో కొన్ని రెడీమేడ్ మెథడ్స్ ఇచ్చారు:</p>
+<p>- <strong><code>Arrays.toString(arr)</code>:</strong> అరే ని నీట్ గా బ్రాకెట్స్ లో <code>"[1, 2, 3]"</code> అని ప్రింట్ చేస్తుంది.<br>- <strong><code>Arrays.sort(arr)</code>:</strong> చాలా ఫాస్ట్ గా సార్ట్ చేస్తుంది.<br>- <strong><code>Arrays.fill(arr, val)</code>:</strong> అరే మొత్తం ఒకే నంబర్ తో నింపేయాలంటే ఇది వాడాలి.<br>- <strong><code>Arrays.equals(arr1, arr2)</code>:</strong> రెండు అరేస్ లో డేటా సేమ్ ఉందా లేదా అని చెక్ చేస్తుంది.<br>- <strong><code>Arrays.mismatch(arr1, arr2)</code>:</strong> (Java 9+) రెండు అరేస్ ఎక్కడ (ఏ ఇండెక్స్ దగ్గర) డిఫరెంట్ గా ఉన్నాయో ఆ నంబర్ ఇస్తుంది.<br>- <strong><code>Arrays.compare(arr1, arr2)</code>:</strong> (Java 9+) ఏ అరే పెద్దదో చెక్ చేస్తుంది.</p>
       </div>
     </section>
   
@@ -641,24 +642,25 @@ while (left &lt; right) {
         <pre><code>import java.util.Arrays;
 
 public class Main {
-    // Bubble sort with optimized early exit
+    // బబుల్ సార్ట్ (సార్ట్ అయిపోగానే ఆగిపోయేలా ఆప్టిమైజ్ చేసాం)
     public static void bubbleSort(int[] arr) {
         int n = arr.length;
         for (int i = 0; i &lt; n - 1; i++) {
             boolean swapped = false;
             for (int j = 0; j &lt; n - 1 - i; j++) {
                 if (arr[j] &gt; arr[j + 1]) {
+                    // స్వాప్ చేయడం
                     int temp = arr[j];
                     arr[j] = arr[j + 1];
                     arr[j + 1] = temp;
                     swapped = true;
                 }
             }
-            if (!swapped) break; // Array is already sorted
+            if (!swapped) break; // ముందే సార్ట్ అయిపోతే అనవసరంగా లూప్ తిరగకుండా ఆపేస్తాం
         }
     }
 
-    // In-place two-pointer reversal
+    // టూ-పాయింటర్ వాడి ఇన్-ప్లేస్ లో రివర్స్ చేయడం
     public static void reverseArray(int[] arr) {
         int left = 0, right = arr.length - 1;
         while (left &lt; right) {
@@ -671,70 +673,71 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        System.out.println("=== 1. In-Place Array Reversal ===");
+        System.out.println("=== 1. ఇన్-ప్లేస్ రివర్స్ (మెమరీ సేవ్) ===");
         int[] numbers = {10, 20, 30, 40, 50};
-        System.out.println("Original              : " + Arrays.toString(numbers));
+        System.out.println("ఒరిజినల్ అరే           : " + Arrays.toString(numbers));
         reverseArray(numbers);
-        System.out.println("Reversed              : " + Arrays.toString(numbers));
+        System.out.println("రివర్స్ చేసిన తర్వాత     : " + Arrays.toString(numbers));
 
         System.out.println("
-=== 2. Custom Bubble Sort ===");
+=== 2. బబుల్ సార్ట్ (Bubble Sort) ===");
         int[] unsorted = {64, 34, 25, 12, 22, 11, 90};
-        System.out.println("Before Bubble Sort    : " + Arrays.toString(unsorted));
+        System.out.println("సార్టింగ్ కి ముందు      : " + Arrays.toString(unsorted));
         bubbleSort(unsorted);
-        System.out.println("After Bubble Sort     : " + Arrays.toString(unsorted));
+        System.out.println("సార్ట్ చేసిన తర్వాత      : " + Arrays.toString(unsorted));
 
         System.out.println("
-=== 3. Array Copying Techniques ===");
+=== 3. అరే కాపీ చేయడానికి పద్ధతులు ===");
         int[] original = {100, 200, 300, 400};
 
-        // Technique A: Arrays.copyOf()
+        // టెక్నిక్ 1: Arrays.copyOf()
         int[] copyA = Arrays.copyOf(original, original.length);
 
-        // Technique B: System.arraycopy()
+        // టెక్నిక్ 2: System.arraycopy() (ఇది ఫాస్టెస్ట్)
         int[] copyB = new int[original.length];
         System.arraycopy(original, 0, copyB, 0, original.length);
 
-        // Technique C: clone()
+        // టెక్నిక్ 3: clone()
         int[] copyC = original.clone();
 
-        System.out.println("Copy via Arrays.copyOf: " + Arrays.toString(copyA));
-        System.out.println("Copy via arraycopy()  : " + Arrays.toString(copyB));
-        System.out.println("Copy via clone()      : " + Arrays.toString(copyC));
+        System.out.println("Arrays.copyOf తో కాపీ : " + Arrays.toString(copyA));
+        System.out.println("arraycopy() తో కాపీ   : " + Arrays.toString(copyB));
+        System.out.println("clone() తో కాపీ       : " + Arrays.toString(copyC));
 
         System.out.println("
-=== 4. Arrays Utility Class Methods ===");
-        System.out.println("Arrays.equals(A, B)   : " + Arrays.equals(copyA, copyB)); // true
+=== 4. Arrays రెడీమేడ్ మెథడ్స్ ===");
+        System.out.println("రెండు అరేస్ ఒకటేనా? (equals) : " + Arrays.equals(copyA, copyB)); // true
 
         int[] fillArray = new int[5];
-        Arrays.fill(fillArray, 7);
-        System.out.println("Arrays.fill(..., 7)   : " + Arrays.toString(fillArray));
+        Arrays.fill(fillArray, 7); // మొత్తం 7 తో నింపేస్తుంది
+        System.out.println("Arrays.fill(..., 7) వాడితే  : " + Arrays.toString(fillArray));
 
-        int[] rangeCopy = Arrays.copyOfRange(original, 1, 3); // Extracts [200, 300]
-        System.out.println("Arrays.copyOfRange(1,3): " + Arrays.toString(rangeCopy));
+        // 1 నుంచి 3 వరకు మాత్రమే కట్ చేసి కొత్త అరే ఇస్తుంది (3 రాదు, దాని ముందు వరకే)
+        int[] rangeCopy = Arrays.copyOfRange(original, 1, 3);
+        System.out.println("Arrays.copyOfRange(1,3)     : " + Arrays.toString(rangeCopy));
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. In-Place Array Reversal ===
-Original              : [10, 20, 30, 40, 50]
-Reversed              : [50, 40, 30, 20, 10]
+        <div class="output-content">=== 1. ఇన్-ప్లేస్ రివర్స్ (మెమరీ సేవ్) ===
+ఒరిజినల్ అరే           : [10, 20, 30, 40, 50]
+రివర్స్ చేసిన తర్వాత     : [50, 40, 30, 20, 10]
 
-=== 2. Custom Bubble Sort ===
-Before Bubble Sort    : [64, 34, 25, 12, 22, 11, 90]
-After Bubble Sort     : [11, 12, 22, 25, 34, 64, 90]
+=== 2. బబుల్ సార్ట్ (Bubble Sort) ===
+సార్టింగ్ కి ముందు      : [64, 34, 25, 12, 22, 11, 90]
+సార్ట్ చేసిన తర్వాత      : [11, 12, 22, 25, 34, 64, 90]
 
-=== 3. Array Copying Techniques ===
-Copy via Arrays.copyOf: [100, 200, 300, 400]
-Copy via arraycopy()  : [100, 200, 300, 400]
-Copy via clone()      : [100, 200, 300, 400]
+=== 3. అరే కాపీ చేయడానికి పద్ధతులు ===
+Arrays.copyOf తో కాపీ : [100, 200, 300, 400]
+arraycopy() తో కాపీ   : [100, 200, 300, 400]
+clone() తో కాపీ       : [100, 200, 300, 400]
 
-=== 4. Arrays Utility Class Methods ===
-Arrays.equals(A, B)   : true
-Arrays.fill(..., 7)   : [7, 7, 7, 7, 7]
-Arrays.copyOfRange(1,3): [200, 300]</div>
+=== 4. Arrays రెడీమేడ్ మెథడ్స్ ===
+రెండు అరేస్ ఒకటేనా? (equals) : true
+Arrays.fill(..., 7) వాడితే  : [7, 7, 7, 7, 7]
+Arrays.copyOfRange(1,3)     : [200, 300]</div>
       </div>
 
       <div class="explain-card">
@@ -742,31 +745,31 @@ Arrays.copyOfRange(1,3): [200, 300]</div>
         
     <div class="explain-item">
       <code class="code-token">reverseArray(numbers);</code>
-      <p>Reverses the array elements directly in place using two converging pointers without allocating a new array.</p>
+      <p>టూ-పాయింటర్ టెక్నిక్ వాడి లెఫ్ట్, రైట్ ఎలిమెంట్స్ ని స్వాప్ చేయడం వల్ల, కొత్త అరే క్రియేట్ చేయకుండానే అరే ఉల్టా అయిపోయింది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">System.arraycopy(original, 0, copyB, 0, original.length);</code>
-      <p>Executes high-speed native memory copying directly in the JVM with zero bytecode overhead.</p>
+      <p>ఇది జావాలో అన్నిటికన్నా ఫాస్ట్ గా కాపీ చేసే పద్ధతి. ఎందుకంటే ఇది డైరెక్ట్ గా ఆపరేటింగ్ సిస్టమ్ ర్యామ్ లో కాపీ కొడుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">Arrays.copyOf(original, original.length);</code>
-      <p>Allocates a new heap array and copies elements in a single expression.</p>
+      <p>ఇది చాలా సింపుల్ గా ఉంటుంది. కొత్త అరే క్రియేట్ చేసి కాపీ అంతా ఇదే చేసేస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">Arrays.fill(fillArray, 7);</code>
-      <p>Assigns value 7 to every element in the array.</p>
+      <p>లక్ష సైజు ఉన్న అరే లో అన్నీ ఒకే వాల్యూ తో నింపాలంటే లూప్ వేయకుండా సింపుల్ గా దీన్ని వాడొచ్చు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">Arrays.equals(copyA, copyB);</code>
-      <p>Compares content element-by-element, returning true if lengths and corresponding elements match.</p>
+      <p>రెండు అరేస్ లో డేటా సేమ్ ఉందా లేదా అని పర్ఫెక్ట్ గా చెక్ చేసి true లేదా false చెప్తుంది.</p>
     </div>
   
       </div>
@@ -785,24 +788,25 @@ Arrays.copyOfRange(1,3): [200, 300]</div>
         </div>
         <pre><code>public class PracticalApplication {
     public static void main(String[] args) {
-        // Industry Simulation: Dynamic Array Expansion & Buffer Management
+        // రియల్ టైమ్ సినారియో: సర్వర్ బఫర్ సైజు ని పెంచడం (Dynamic Expansion)
         int[] buffer = {10, 20, 30};
-        System.out.println("Initial Buffer (Cap 3): " + Arrays.toString(buffer));
+        System.out.println("స్టార్టింగ్ బఫర్ (సైజు 3): " + Arrays.toString(buffer));
 
-        // Incoming new data exceeds capacity: Expand buffer to 2x capacity
+        // కొత్త డేటా వచ్చింది కానీ అరే ఫుల్ అయిపొయింది, ఇప్పుడు సైజు డబుల్ చేయాలి
         int[] expandedBuffer = Arrays.copyOf(buffer, buffer.length * 2);
+        // పాతవి అన్నీ వచ్చేసాయి, ఇప్పుడు కొత్తవి యాడ్ చేద్దాం
         expandedBuffer[3] = 40;
         expandedBuffer[4] = 50;
 
-        System.out.println("Expanded Buffer(Cap 6): " + Arrays.toString(expandedBuffer));
+        System.out.println("పెంచిన బఫర్ (సైజు 6)   : " + Arrays.toString(expandedBuffer));
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">Initial Buffer (Cap 3): [10, 20, 30]
-Expanded Buffer(Cap 6): [10, 20, 30, 40, 50, 0]</div>
+        <div class="output-content">స్టార్టింగ్ బఫర్ (సైజు 3): [10, 20, 30]
+పెంచిన బఫర్ (సైజు 6)   : [10, 20, 30, 40, 50, 0]</div>
       </div>
     </section>
 
@@ -811,16 +815,16 @@ Expanded Buffer(Cap 6): [10, 20, 30, 40, 50, 0]</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Writing <code>int[] b = a;</code> believing it clones the array. It only creates a second reference to the same array object.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>int[] b = a;</code> అని రాసి అరే కాపీ అయిపోయింది అనుకోవడం. ఇది కాపీ కాదు, జస్ట్ రిమోట్ కంట్రోల్ (Reference) పాస్ చేసినట్టు అంతే. ఒకదాంట్లో మారిస్తే ఇంకోదాంట్లో మారుతుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Calling <code>a.equals(b)</code> on two arrays instead of <code>Arrays.equals(a, b)</code>. <code>a.equals(b)</code> compares memory addresses!</li>
+    <li style="margin-bottom:8px; line-height:1.6;">రెండు అరేస్ ని <code>a.equals(b)</code> అని చెక్ చేయడం. స్ట్రింగ్స్ కి ఇది కరెక్టే కానీ, అరేస్ కి ఎప్పుడూ <code>Arrays.equals(a, b)</code> వాడాలి. లేకపోతే అడ్రెస్ లు చెక్ చేసి ఎప్పుడూ false ఇస్తుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Printing an array with <code>System.out.println(arr)</code> which prints memory hashes like <code>[I@1b6d3586</code> instead of <code>Arrays.toString(arr)</code>.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">అరే ని డైరెక్ట్ గా <code>System.out.println(arr)</code> అని ప్రింట్ చేయడం. అలా చేస్తే <code>[I@1b6d3586</code> లాంటి పిచ్చి అడ్రెస్ ప్రింట్ అవుతుంది. ఎప్పుడూ <code>Arrays.toString(arr)</code> వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Forgetting that <code>Arrays.copyOfRange(arr, 1, 4)</code> uses half-open range <code>[1, 4)</code> and excludes index 4.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>Arrays.copyOfRange(arr, 1, 4)</code> వాడినప్పుడు 4 కూడా వస్తుందని కన్ఫ్యూజ్ అవ్వడం. ఎప్పుడైనా ఎండింగ్ ఇండెక్స్ ఇంక్లూడ్ అవ్వదు (దాని ముందు వరకే కట్ అవుతుంది).</li>
   
       </ul>
     </div>
@@ -837,9 +841,9 @@ Expanded Buffer(Cap 6): [10, 20, 30, 40, 50, 0]</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Write a method removeDuplicates(int[] sortedArr) that:
-// 1. Takes a SORTED array with duplicate numbers: {1, 1, 2, 2, 3, 4, 4, 5}.
-// 2. Removes duplicates in-place in O(N) time and returns the new unique count.
+// మీ దగ్గర సార్ట్ చేసి ఉన్న ఒక అరే ఉంది. అందులో ఒకే నంబర్ చాలాసార్లు రిపీట్ అయ్యింది: {1, 1, 2, 2, 3, 4, 4, 5}.
+// 1. దాన్ని అదే అరే లోపల క్లీన్ చేసి డూప్లికేట్స్ తీసేయాలి (O(N) టైమ్ లో).
+// 2. కొత్తగా ఎన్ని యూనిక్ నంబర్స్ ఉన్నాయో ఆ కౌంట్ ని రిటర్న్ చేయాలి.
 
 public class Challenge {
     public static int removeDuplicates(int[] arr) {
@@ -848,17 +852,17 @@ public class Challenge {
         for (int i = 1; i &lt; arr.length; i++) {
             if (arr[i] != arr[uniqueIdx]) {
                 uniqueIdx++;
-                arr[uniqueIdx] = arr[i];
+                arr[uniqueIdx] = arr[i]; // పాత దాని ప్లేస్ లో యూనిక్ నంబర్ తో రీప్లేస్ చేస్తున్నాం
             }
         }
-        return uniqueIdx + 1;
+        return uniqueIdx + 1; // యూనిక్ నంబర్స్ కౌంట్
     }
 
     public static void main(String[] args) {
         int[] sorted = {1, 1, 2, 2, 3, 4, 4, 5};
         int newLength = removeDuplicates(sorted);
-        System.out.println("Unique Count : " + newLength);
-        System.out.print("Unique Array : ");
+        System.out.println("యూనిక్ కౌంట్ : " + newLength);
+        System.out.print("యూనిక్ అరే   : ");
         for (int i = 0; i &lt; newLength; i++) {
             System.out.print(sorted[i] + " ");
         }
@@ -873,20 +877,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why does System.out.println(new int[]{1,2,3}) print [I@6d06d69c?</h4>
-      <p>Arrays in Java inherit `toString()` from `java.lang.Object`, which prints the class name (`[I` means 1D integer array) followed by `@` and the hexadecimal unsigned hash code. Always use `Arrays.toString(arr)` to print values.</p>
+      <h4>❓ System.out.println(new int[]{1,2,3}) అని రాస్తే [I@6d06d69c లాంటి చెత్త ఎందుకు వస్తుంది?</h4>
+      <p>ఎందుకంటే అరేస్ కి జావాలో డీఫాల్ట్ గా `toString()` అనే మెథడ్ ఆబ్జెక్ట్ అడ్రెస్ (హ్యాష్ కోడ్) ని ప్రింట్ చేసేలా సెట్ చేసి ఉంటుంది. అందులో `[I` అంటే ఇంటిజర్ అరే అని, `@` తర్వాత ఉండేది దాని అడ్రెస్ అని అర్థం. వాల్యూస్ కావాలంటే `Arrays.toString(arr)` ఏ వాడాలి.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What sorting algorithm does Arrays.sort() use for primitives vs objects?</h4>
-      <p>For primitives (`int[]`, `double[]`), it uses **Dual-Pivot Quicksort** by Vladimir Yaroslavskiy (fast, $O(N \log N)$, not stable). For objects (`String[]`, `Comparable[]`), it uses **Timsort** (stable, derived from merge sort).</p>
+      <h4>❓ Arrays.sort() అనేది లోపల ఏ అల్గారిథమ్ ని వాడుతుంది?</h4>
+      <p>నార్మల్ నంబర్స్ (int, double లాంటివి) ఇస్తే **Dual-Pivot Quicksort** ని వాడుతుంది (ఇది చాలా ఫాస్ట్). అదే Objects (String లాంటివి) ఇస్తే **Timsort** ని వాడుతుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Which array copy method is the fastest in Java?</h4>
-      <p>`System.arraycopy()` is the fastest because it is a native C/C++ method that translates directly into high-speed SIMD memory block copies in CPU hardware.</p>
+      <h4>❓ అన్నిటికన్నా ఫాస్ట్ గా కాపీ చేసే పద్ధతి ఏది?</h4>
+      <p>`System.arraycopy()` అనేది దేనికైనా కింగ్. ఎందుకంటే ఇది జావా కోడ్ కాదు, డైరెక్ట్ గా C/C++ లో రాసిన నేటివ్ సిస్టమ్ కాల్. ఇది ర్యామ్ లో అమాంతం డేటాని తీసుకెళ్లి కాపీ కొడుతుంది.</p>
     </div>
   
     </section>
@@ -896,19 +900,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Two-pointer algorithms reverse arrays in $O(N)$ time with zero additional memory allocation.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">రివర్స్ చేయడానికి టూ-పాయింటర్ టెక్నిక్ వాడితే మెమరీ ఫుల్ గా సేవ్ అవుతుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Assigning <code>int[] b = a;</code> copies references, not data; use <code>Arrays.copyOf()</code> or <code>System.arraycopy()</code> for true cloning.</li>
+    <li style="margin-bottom:6px; line-height:1.5;"><code>int[] b = a;</code> రాస్తే డేటా కాపీ అవ్వదు, కేవలం లింక్ క్రియేట్ అవుతుంది. నిజంగా కాపీ కావాలంటే <code>Arrays.copyOf()</code> వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Always use <code>Arrays.toString()</code> to print arrays and <code>Arrays.equals()</code> to compare array contents.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">అరేస్ ని ప్రింట్ చేయడానికి, కంపేర్ చేయడానికి ఎప్పుడూ <code>Arrays</code> క్లాస్ లోని మెథడ్స్ ఏ వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;"><code>Arrays.sort()</code> uses Dual-Pivot Quicksort for primitives and Timsort for objects.</li>
+    <li style="margin-bottom:6px; line-height:1.5;"><code>Arrays.sort()</code> అనేది ప్రపంచంలోనే అత్యంత ఫాస్ట్ అయిన సార్టింగ్ అల్గారిథమ్స్ ని ఇంటర్నల్ గా వాడుకుంటుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;"><code>System.arraycopy()</code> is the industry standard for high-performance memory duplication.</li>
+    <li style="margin-bottom:6px; line-height:1.5;"><code>System.arraycopy()</code> వాడితే సూపర్ ఫాస్ట్ గా మెమరీ కాపీ జరుగుతుంది.</li>
   
       </ul>
     </div>

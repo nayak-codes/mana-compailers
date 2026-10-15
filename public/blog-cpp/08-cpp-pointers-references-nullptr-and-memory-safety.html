@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Pointers, References, nullptr & Memory Safety Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on C++ Pointers (Phase 8): Memory addresses, dereferencing, nullptr vs NULL, references (T&), raw pointer rules, and ownership guidelines." />
-  <meta name="keywords" content="c++ tutorial, c++ pointers, references, nullptr & memory safety masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Pointers, References & nullptr (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో Pointers అంటే ఏమిటి? References కి పాయింటర్స్ కి తేడా ఏంటి? NULL ప్లేస్ లో C++11 లో వచ్చిన nullptr ఎందుకు వాడాలో కంప్లీట్ గైడ్." />
+  <meta name="keywords" content="c++ tutorial, pointers, references & nullptr (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/08-cpp-pointers-references-nullptr-and-memory-safety.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -293,6 +270,193 @@
         <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
       </div>
 
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
     </div>
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
@@ -303,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 8: C++ Pointers, References, nullptr & Memory Safety Masterclass</span>
+      <span class="current">Lesson 8: Pointers, References & nullptr (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Pointers, References, nullptr & Memory Safety Masterclass</h1>
+    <h1 class="page-title">Pointers, References & nullptr (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 8</span>
@@ -314,45 +478,111 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Address-of & Dereferencing · nullptr vs NULL · References vs Pointers · Pointer Arithmetic · Ownership Guidelines · Smart Pointers Intro</span>
+      <span>Memory Addresses · Pointers vs References · nullptr vs NULL · Dereferencing · Pass by Reference</span>
     </div>
-<div class="intro-box">  <p>Welcome to <strong>Phase 8 (Chapter 8): C++ Pointers, References, nullptr &amp; Memory Safety Masterclass</strong>! Memory management lies at the core of C++. In Modern C++, raw pointers are used <em>only for non-owning access</em>, <code>nullptr</code> replaces <code>NULL</code>, and resource ownership is managed using smart pointers or RAII.</p></div><div class="section-title"><span class="num">1</span>Modern C++ Pointer Ownership Rules</div><div class="section-body">  <div class="concept-box">    <h4>Core Guidelines for Modern C++ Pointers:</h4>    <p>1. <strong>Use nullptr:</strong> Always initialize pointers to <code>nullptr</code> (C++11) instead of <code>NULL</code> or <code>0</code>.</p>    <p>2. <strong>Avoid raw new / delete:</strong> Use smart pointers (<code>std::unique_ptr</code>, <code>std::shared_ptr</code>) or containers for resource ownership.</p>    <p>3. <strong>Raw pointers for Non-Owning View:</strong> Raw pointers (<code>T*</code>) should only be used to inspect or pass memory owned elsewhere.</p>    <p>4. <strong>Prefer References (T&amp;):</strong> If a parameter cannot be null, pass by reference (<code>T&amp;</code>) rather than pointer (<code>T*</code>).</p>  </div></div><div class="section-title"><span class="num">2</span>Code Demonstration: Pointers &amp; References</div><div class="section-body">  <div class="code-block">    <div class="code-block-header"><span class="lang-tag">C++ — Pointers, References & nullptr</span><a class="try-btn" href="/?lang=cpp17">▶ Run Code in C++ Compiler</a></div><pre><code>#include &lt;iostream&gt;
+
+    <div class="intro-box">
+      <p>C++ ప్రపంచాన్ని శాసిస్తోంది అంటే దానికి ఒకేఒక్క కారణం ఉంది, అదే <strong>మెమరీ కంట్రోల్ (Memory Control)</strong>. జావా, పైథాన్ లాంటి లాంగ్వేజెస్ లో మెమరీ అంతా వాటంతట అవే చూసుకుంటాయి, మనం ఏమీ చేయలేం. కానీ C++ లో మీకు RAM మెమరీ మీద పూర్తి అధికారం ఉంటుంది. ప్రతి ఒక్క బైట్ ఎక్కడ ఉందో తెలుసుకుని, దాన్ని మార్చే పవర్ మన చేతుల్లో ఉంటుంది. ఆ పవర్ ఇచ్చే మ్యాజికల్ కాన్సెప్ట్ లే <strong>Pointers (పాయింటర్స్)</strong> మరియు <strong>References (రిఫరెన్సెస్)</strong>. చాలా మంది వీటికి భయపడతారు కానీ, ఈ ఆర్టికల్ చదివాక అది ఎంత సింపులో మీకే అర్థమవుతుంది.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> అసలు పాయింటర్స్ మరియు రిఫరెన్సెస్ అంటే ఏంటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ప్రతి వేరియబుల్ (బాక్స్) క్రియేట్ అయినప్పుడు దానికి RAM లో ఒక అడ్రస్ (ఉదాహరణకు <code>0x7ffe1234</code>) దొరుకుతుంది. ఆ అడ్రస్ ని సేవ్ చేసుకునే స్పెషల్ వేరియబుల్ నే <strong>Pointer (పాయింటర్)</strong> అంటారు. పాయింటర్ అనేది దారి చూపే మ్యాప్ లాంటిది.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>📍 రియల్ లైఫ్ స్టోరీ: మీ ఇల్లు, అడ్రస్ కార్డు, మరియు నిక్ నేమ్</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          మీకొక ఇల్లు (Variable) ఉంది అనుకుందాం. అందులో మీరు (Data) ఉన్నారు.<br><br>
+          <strong>Pointer అంటే:</strong> ఒక విజిటింగ్ కార్డు లాంటిది. ఆ కార్డు మీద మీ ఇంటి అడ్రస్ రాసి ఉంది. నేను ఆ అడ్రస్ పట్టుకుని మీ ఇంటికి వచ్చి మిమ్మల్ని కలవచ్చు. ఆ కార్డు (పాయింటర్) ని నేను నా ఫ్రెండ్ కి ఇస్తే, వాడు కూడా ఆ అడ్రస్ తో మీ ఇంటికి రాగలడు. పాయింటర్ ఎప్పుడైనా మారొచ్చు (మీరు వేరే అడ్రస్ కి మారొచ్చు).<br><br>
+          <strong>Reference అంటే:</strong> ఇది మీ ఇంటికి ఉన్న ఇంకొక ముద్దు పేరు (Alias/Nickname) లాంటిది. ఉదాహరణకు "రాము ఇల్లు" అన్నా "సురేష్ ఇల్లు" అన్నా ఒకటే అని ఫిక్స్ అయిపోవడం. ఇది ఒకసారి ఫిక్స్ అయితే మళ్ళీ ఇంకో ఇంటికి మార్చడం కుదరదు! C++ లో పాయింటర్స్ కంటే ఈ References వాడటం చాలా సేఫ్ అండ్ ఈజీ.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> NULL బదులు C++11 లో వచ్చిన "nullptr"</div>
+    <div class="section-body">
+      <p class="text-prose">
+        పాత C లో ఒక పాయింటర్ కి ఏ అడ్రస్ లేకపోతే దానికి <code>NULL</code> (అంటే కేవలం 0) అని ఇచ్చేవాళ్లు. కానీ కొన్ని ఫంక్షన్స్ కి పంపినప్పుడు 0 అంటే నంబర్ 0 నా లేక ఎంప్టీ పాయింటరా అని కంపైలర్ కి విపరీతమైన కన్ఫ్యూజన్ వచ్చేది. ఆ బగ్ ని తీసేయడానికి C++11 లో <strong><code>nullptr</code></strong> ని తెచ్చారు. ఇక మీదట ఎప్పుడైనా ఎంప్టీ పాయింటర్ వాడాలంటే <code>nullptr</code> మాత్రమే వాడాలి.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (References vs Pointers)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో ఒకే ఒక వాల్యూ ని పాయింటర్ ద్వారా మరియు రిఫరెన్స్ ద్వారా ఎలా మారుస్తున్నామో జాగ్రత్తగా గమనించండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — Pointers & References</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    int number{42};
-    int* ptr{&amp;number};   // Pointer holding address of number
-    int&amp; ref{number};    // Reference alias for number
-
-    std::cout &lt;&lt; "Value of number: " &lt;&lt; number &lt;&lt; "\n";
-    std::cout &lt;&lt; "Address (&number): " &lt;&lt; &amp;number &lt;&lt; "\n";
-    std::cout &lt;&lt; "Pointer value (ptr): " &lt;&lt; ptr &lt;&lt; "\n";
-    std::cout &lt;&lt; "Dereferenced (*ptr): " &lt;&lt; *ptr &lt;&lt; "\n";
-    std::cout &lt;&lt; "Reference (ref): " &lt;&lt; ref &lt;&lt; "\n\n";
-
-    // Modifying through reference
-    ref = 100;
-    std::cout &lt;&lt; "After ref = 100, number is: " &lt;&lt; number &lt;&lt; "\n";
-
-    // C++11 nullptr check
-    int* nullPtr{nullptr};
-    if (nullPtr == nullptr) {
-        std::cout &lt;&lt; "nullPtr is safely checked against nullptr!\n";
-    }
+    int score = 50;
+    
+    // 1. Reference (నిక్ నేమ్). ఇది ఎప్పుడూ & తో రాయాలి.
+    int &ref = score; 
+    
+    // 2. Pointer (అడ్రస్ కార్డు). దీనికి అడ్రస్ (&score) ఇవ్వాలి.
+    int *ptr = &score;
+    
+    // రిఫరెన్స్ వాడి మార్చుతున్నాం (ఇది డైరెక్ట్ గా వాడుకోవచ్చు)
+    ref = 75;
+    
+    // పాయింటర్ వాడి మార్చుతున్నాం (దీనికి స్టార్ * వాడాలి)
+    *ptr = 100;
+    
+    // ఫైనల్ గా స్కోర్ ఎంత ఉందో చూద్దాం
+    std::cout << "Final Score: " << score << std::endl;
+    
     return 0;
-}</code></pre>  </div></div><div class="section-title"><span class="num">3</span>Technical FAQs</div><div class="section-body">  <div class="faq-grid">    <div class="faq-item"><h4>Q1: What is the difference between a pointer and a reference in C++?</h4><p>Pointers hold memory addresses, can be <code>nullptr</code>, and can be reassigned. References are non-null aliases that must be initialized upon declaration and cannot be reassigned.</p></div>    <div class="faq-item"><h4>Q2: Why was nullptr introduced in C++11 to replace NULL?</h4><p><code>NULL</code> is macro constant 0 (an integer), which caused function overloading ambiguity between <code>f(int)</code> and <code>f(char*)</code>. <code>nullptr</code> is a dedicated pointer type (<code>std::nullptr_t</code>).</p></div>    <div class="faq-item"><h4>Q3: What is a dangling pointer?</h4><p>A pointer referencing memory that has already been deallocated or gone out of scope. Accessing a dangling pointer causes undefined behavior.</p></div>    <div class="faq-item"><h4>Q4: What is pointer arithmetic?</h4><p>Adding/subtracting integers to a pointer moves its address by multiples of <code>sizeof(T)</code> bytes.</p></div>    <div class="faq-item"><h4>Q5: What is std::unique_ptr?</h4><p>A smart pointer (C++11) that owns a dynamically allocated object exclusively and automatically deallocates it when going out of scope.</p></div>  </div></div>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>int &amp;ref = score;</code>: ఇక్కడ <code>ref</code> అనేది కొత్త వేరియబుల్ కాదు. అది కేవలం <code>score</code> కి పెట్టిన ఇంకొక పేరు మాత్రమే. <code>ref</code> ని మార్చినా డైరెక్ట్ గా <code>score</code> మారిపోతుంది.</li>
+        <li><code>int *ptr = &amp;score;</code>: ఇక్కడ <code>ptr</code> ఒక కొత్త బాక్స్. అందులో <code>score</code> యొక్క RAM అడ్రస్ ని దాచుకున్నాం.</li>
+        <li><code>*ptr = 100;</code>: పాయింటర్ కి ముందు <code>*</code> (Dereference) పెడితే, దాని అర్థం "ఆ అడ్రస్ కి వెళ్ళి, అక్కడ ఉన్న వాల్యూ ని 100 కి మార్చు" అని అర్థం. కాబట్టి ఫైనల్ గా స్కోర్ 100 ప్రింట్ అవుతుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: పాయింటర్ కి, రిఫరెన్స్ కి మెయిన్ డిఫరెన్స్ ఏంటి? ఏది వాడాలి?</h4>
+          <p>రిఫరెన్స్ ని ఒకసారి క్రియేట్ చేసాక దాన్ని వేరే దానికి లింక్ చేయడం కుదరదు, మరియు దానికి <code>nullptr</code> ఇవ్వలేము. కానీ పాయింటర్ ని మీరు ఎప్పుడైనా వేరే అడ్రస్ కి మార్చుకోవచ్చు. C++ లో ఫంక్షన్స్ కి డేటా పంపేటప్పుడు 90% రిఫరెన్సెస్ (ఉదా: <code>void print(const string& str)</code>) వాడటమే బెస్ట్ ప్రాక్టీస్, ఎందుకంటే అవి క్రాష్ కావు, సేఫ్.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Dangling Pointer (డాంగ్లింగ్ పాయింటర్) అంటే ఏంటి?</h4>
+          <p>మీ పాయింటర్ ఒక మెమరీ అడ్రస్ ని పట్టుకుని ఉంది. కానీ ఆ మెమరీ ని వేరే వాళ్ళు డిలీట్ చేసేశారు. ఇప్పుడు మీ పాయింటర్ దగ్గర ఉన్న అడ్రస్ లో ఏమీ లేదు, కానీ అది ఇంకా అక్కడికే పాయింట్ చేస్తూ ఉంటుంది. ఆ చెత్త అడ్రస్ కి పాయింట్ చేసే దాన్నే డాంగ్లింగ్ పాయింటర్ అంటారు. దీన్ని వాడితే ప్రోగ్రామ్ వంద శాతం క్రాష్ అవుతుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: <code>*</code> సింబల్ రెండు సార్లు (ఉదా: <code>int **ptr</code>) ఉంటే అర్థం ఏంటి?</h4>
+          <p>దీన్నే Pointer to a Pointer అంటారు. అంటే మొదటి పాయింటర్ ఇంకొక పాయింటర్ యొక్క అడ్రస్ ని దాచుకుంది అని అర్థం. 2D అర్రేస్ ని మరియు కాంప్లెక్స్ మ్యాట్రిక్స్ ని హ్యాండిల్ చేయడానికి అడ్వాన్స్డ్ ప్రోగ్రామర్స్ దీన్ని వాడుతారు.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="07-cpp-arrays-std-string-string-view-and-std-vector.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">7. Arrays, std::string, string_view & std::vector</span>
+    <span class="title">7. Arrays, std::string & std::vector</span>
   </a>
   <a href="09-cpp-object-oriented-programming-classes-objects-and-encapsulation.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">9. OOP, Classes, Objects, Access Specifiers & Pillars</span>
+    <span class="title">9. OOP, Classes & Objects</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

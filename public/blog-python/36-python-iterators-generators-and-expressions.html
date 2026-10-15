@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Iterators & Generators — Python 3 Tutorial | Our Compiler</title>
-  <meta name="description" content="Master lazy evaluation and streaming data pipelines in Python: in-depth understanding of the Iterator Protocol (__iter__ and __next__), stack-frame suspension with yield, generator expressions, and processing gigabytes of data in constant O(1) memory." />
-  <meta name="keywords" content="python tutorial, learn python, python iterators & generators, python online compiler, python automation, web scraping, python testing" />
+  <title>Python Iterators & Generators (తెలుగులో) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="పైథాన్ లో పెద్ద పెద్ద ఫైల్స్ ని (GBs of Data) మెమరీ క్రాష్ అవ్వకుండా ఎలా చదవాలి? Iterators అంటే ఏంటి? Generators లో yield కీవర్డ్ ఎలా పనిచేస్తుంది? తెలుసుకుందాం." />
+  <meta name="keywords" content="python tutorial, learn python, python iterators & generators (తెలుగులో), python online compiler, python automation, web scraping, python testing" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-python/36-python-iterators-generators-and-expressions.html" />
@@ -20,8 +20,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Python Iterators & Generators — Python 3 Master Tutorial",
-  "description": "Master lazy evaluation and streaming data pipelines in Python: in-depth understanding of the Iterator Protocol (__iter__ and __next__), stack-frame suspension with yield, generator expressions, and processing gigabytes of data in constant O(1) memory.",
+  "headline": "Python Iterators & Generators (తెలుగులో) — Python 3 Master Tutorial",
+  "description": "పైథాన్ లో పెద్ద పెద్ద ఫైల్స్ ని (GBs of Data) మెమరీ క్రాష్ అవ్వకుండా ఎలా చదవాలి? Iterators అంటే ఏంటి? Generators లో yield కీవర్డ్ ఎలా పనిచేస్తుంది? తెలుసుకుందాం.",
   "articleSection": "Phase 8: Advanced Python",
   "author": {
     "@type": "Organization",
@@ -44,26 +44,18 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is the difference between yield and yield from in Python?",
+      "name": "yield మరియు yield from కి తేడా ఏంటి?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "yield from iterable is used to delegate part of a generator's operations to another sub-generator or iterable, cleanly transparently forwarding values."
+        "text": "yield from అనేది ఒక షార్ట్ కట్. ఇంకొక జనరేటర్ నుంచి వాల్యూస్ తెచ్చి ఇవ్వాలంటే (ఉదా: yield from range(10)) ఇలా డైరెక్ట్ గా వాడొచ్చు."
       }
     },
     {
       "@type": "Question",
-      "name": "Can generators receive data from the caller while running?",
+      "name": "రన్ అవుతున్న జనరేటర్ లోకి మనం డేటా పంపొచ్చా?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! You can pass values into a running generator using generator.send(value). Inside the generator, the yield expression evaluates to the received value."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Are generators thread-safe in Python?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Calling next() on the same generator instance simultaneously from multiple threads is not thread-safe without explicit synchronization (threading.Lock)."
+        "text": "పంపొచ్చు! generator.send(value) అని వాడితే, జనరేటర్ లోపల ఆ yield దగ్గరికి ఆ వాల్యూ వెళ్తుంది."
       }
     }
   ]
@@ -205,8 +197,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-python">
 
@@ -548,7 +538,7 @@
       <span class="current">Chapter 36: 36. Iterators & Generators</span>
     </div>
 
-    <h1 class="page-title">Python Iterators & Generators</h1>
+    <h1 class="page-title">Python Iterators & Generators (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">🐍 Python 3.12+</span>
@@ -564,35 +554,35 @@
     </div>
 
     <div class="intro-box">
-      Master lazy evaluation and streaming data pipelines in Python: in-depth understanding of the Iterator Protocol (__iter__ and __next__), stack-frame suspension with yield, generator expressions, and processing gigabytes of data in constant O(1) memory.
+      పైథాన్ లో పెద్ద పెద్ద ఫైల్స్ ని (GBs of Data) మెమరీ క్రాష్ అవ్వకుండా ఎలా చదవాలి? Iterators అంటే ఏంటి? Generators లో yield కీవర్డ్ ఎలా పనిచేస్తుంది? తెలుసుకుందాం.
     </div>
 
 
-    <div class="section-title"><span class="num">1</span>The Iterator Protocol: Iterable vs Iterator Deep Dive</div>
+    <div class="section-title"><span class="num">1</span>Iterator Protocol అంటే ఏంటి? (Iterable vs Iterator)</div>
     <div class="section-body">
-      <p>In Python, iteration is one of the most powerful and fundamental language features. Under the hood, iteration is governed by the formal <strong>Iterator Protocol</strong> consisting of two distinct roles:</p>
+      <p>పైథాన్ లో లూప్స్ (for loop) అంత ఈజీగా ఎలా పనిచేస్తాయి? దీని వెనుక <strong>Iterator Protocol</strong> అనే లాజిక్ ఉంటుంది. ఇందులో రెండు మెయిన్ క్యారెక్టర్స్ ఉంటాయి:</p>
         
-        <h4 style="color:#10b981; margin:16px 0 8px;">1. What is an Iterable?</h4>
-        <p>An <strong>Iterable</strong> is any Python object capable of returning its members one at a time. Examples include lists, strings, tuples, dictionaries, sets, and open file objects. An object qualifies as an iterable if it implements the <strong><code>__iter__()</code></strong> method (or <code>__getitem__()</code> with sequential integer indices).</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">1. Iterable అంటే ఏంటి?</h4>
+        <p><strong>Iterable</strong> అంటే ఒక బాక్స్ లాంటిది. అందులోనుంచి మనం ఐటమ్స్ ని ఒక్కొక్కటిగా బయటకి తీయొచ్చు. లిస్ట్స్ (Lists), స్ట్రింగ్స్ (Strings), సెట్స్ ఇవన్నీ iterables. వీటికి <strong><code>__iter__()</code></strong> అనే ఫంక్షన్ ఉంటుంది.</p>
 
-        <h4 style="color:#10b981; margin:16px 0 8px;">2. What is an Iterator?</h4>
-        <p>An <strong>Iterator</strong> is the stateful stream object that actually produces values during traversal. An iterator maintains an internal cursor in memory and must implement two methods:</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">2. Iterator అంటే ఏంటి?</h4>
+        <p><strong>Iterator</strong> అంటే ఆ బాక్స్ లోపల ఉండే ఒక పాయింటర్ (Cursor). ఇది ఏ ఐటమ్ దాకా వచ్చాం అనేది గుర్తుపెట్టుకుంటుంది. దీనికి రెండు ఫంక్షన్స్ ఉంటాయి:</p>
         <ul>
-          <li><strong><code>__iter__()</code>:</strong> Returns the iterator object itself.</li>
-          <li><strong><code>__next__()</code>:</strong> Returns the next item from the container. If no further items remain, it <strong>must raise the <code>StopIteration</code> exception</strong>.</li>
+          <li><strong><code>__iter__()</code>:</strong> తనను తానే రిటర్న్ చేస్తుంది.</li>
+          <li><strong><code>__next__()</code>:</strong> తర్వాతి ఐటమ్ ని ఇస్తుంది. ఐటమ్స్ అన్నీ అయిపోతే <strong><code>StopIteration</code></strong> అనే ఎర్రర్ ఇచ్చి లూప్ ని ఆపేస్తుంది.</li>
         </ul>
 
         <div class="diagram-box">┌────────────────────────────────────────────────────────────────────────┐
 │                     THE PYTHON ITERATOR PROTOCOL                       │
 ├────────────────────────────────────────────────────────────────────────┤
 │  Iterable: data = [10, 20, 30]                                         │
-│  └── Calls it = iter(data) / data.__iter__()                           │
+│  └── దీన్ని పిలుస్తాం: it = iter(data)                                  │
 │                                                                        │
-│  Iterator Stream Object (it):                                          │
-│  ├── next(it) -> 10  (Cursor advances to position 1)                   │
-│  ├── next(it) -> 20  (Cursor advances to position 2)                   │
-│  ├── next(it) -> 30  (Cursor advances to position 3)                   │
-│  └── next(it) -> raises StopIteration! (Clean loop termination)        │
+│  Iterator పాయింటర్ (it):                                                │
+│  ├── next(it) -> 10  (పాయింటర్ 1 వ పొజిషన్ కి వెళ్ళింది)                │
+│  ├── next(it) -> 20  (పాయింటర్ 2 వ పొజిషన్ కి వెళ్ళింది)                │
+│  ├── next(it) -> 30  (పాయింటర్ 3 వ పొజిషన్ కి వెళ్ళింది)                │
+│  └── next(it) -> raises StopIteration! (అయిపోయింది, లూప్ ఆపు!)           │
 └────────────────────────────────────────────────────────────────────────┘</div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
@@ -602,53 +592,41 @@
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Demonstrating the Iterator Protocol manually step-by-step:
+          <pre><code># Iterator Protocol ని మాన్యువల్ గా స్టెప్-బై-స్టెప్ చూద్దాం:
 fruits = ["Apple", "Mango", "Banana"]
 
-# Step 1: Obtain an iterator from the iterable list:
+# స్టెప్ 1: లిస్ట్ నుంచి iterator పాయింటర్ ని తీసుకుందాం:
 fruit_stream = iter(fruits)
 print("Iterator Type:", type(fruit_stream))
 
-# Step 2: Fetch elements one by one via next():
+# స్టెప్ 2: ఒక్కొక్క ఐటమ్ ని next() వాడి అడుగుదాం:
 print("1st Fetch:", next(fruit_stream)) # 'Apple'
 print("2nd Fetch:", next(fruit_stream)) # 'Mango'
 print("3rd Fetch:", next(fruit_stream)) # 'Banana'
 
-# Step 3: Stream is now exhausted; subsequent call raises StopIteration:
+# స్టెప్ 3: అన్నీ అయిపోయాయి కాబట్టి మళ్ళీ అడిగితే StopIteration వస్తుంది:
 try:
     next(fruit_stream)
 except StopIteration:
-    print("🛑 StopIteration Exception Caught: Stream fully exhausted!")</code></pre>
+    print("🛑 StopIteration Exception Caught: లిస్ట్ కంప్లీట్ అయిపోయింది!")</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Under-the-Hood: How Python "for" Loops Work:</strong>
-          <p style="margin-top:6px;">When you write <code>for x in fruits:</code>, Python executes three exact C-level steps: (1) calls <code>iter(fruits)</code>, (2) enters an infinite loop repeatedly calling <code>next()</code>, and (3) catches <code>StopIteration</code> to terminate the loop cleanly without crashing!</p>
+          <strong style="color:#10b981;">🔍 "for" లూప్ లోపల ఏం జరుగుతుంది?:</strong>
+          <p style="margin-top:6px;">మీరు <code>for x in fruits:</code> అని రాసినప్పుడు, పైథాన్ లోపల ఈ <code>iter()</code> మరియు <code>next()</code> లనే పదే పదే పిలుస్తుంది. <code>StopIteration</code> రాగానే ఎర్రర్ చూపించకుండా సైలెంట్ గా లూప్ ని ఆపేస్తుంది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">2</span>Generators & The "yield" Keyword (State Suspension Mechanics)</div>
+    <div class="section-title"><span class="num">2</span>Generators & "yield" కీవర్డ్ మ్యాజిక్</div>
     <div class="section-body">
-      <p>A <strong>Generator</strong> is a special function that produces a sequence of values lazily on demand. Unlike standard functions that compute everything up-front and return a complete list in RAM, generators calculate each item only when requested.</p>
+      <p><strong>Generator</strong> అనేది ఒక స్పెషల్ ఫంక్షన్. ఇది ఒకేసారి మొత్తం ఆన్సర్ ని ఇవ్వకుండా, మీరు అడిగినప్పుడల్లా ఒక్కో వాల్యూ ఇస్తుంది. దీనివల్ల కంప్యూటర్ ర్యామ్ (RAM) చాలా సేవ్ అవుతుంది.</p>
 
-        <h4 style="color:#10b981; margin:16px 0 8px;">The Crucial Difference Between return and yield:</h4>
+        <h4 style="color:#10b981; margin:16px 0 8px;">return కి, yield కి ఉన్న తేడా:</h4>
         <ul>
-          <li><strong><code>return</code>:</strong> Computes the final value, destroys the function's local execution stack frame and local variables, and returns control to the caller.</li>
-          <li><strong><code>yield</code>:</strong> Pauses execution, <strong>freezes the entire execution stack frame in RAM</strong> (all local variable values, loop counters, and instruction pointers), sends the yielded value to the caller, and waits. When <code>next()</code> is called again, execution resumes immediately at the exact line after <code>yield</code>!</li>
+          <li><strong><code>return</code>:</strong> ఇది వాడితే ఫంక్షన్ పని మొత్తం అయిపోయినట్టు. లోపల ఉన్న వేరియబుల్స్ అన్నీ మెమరీ నుండి డిలీట్ అయిపోతాయి.</li>
+          <li><strong><code>yield</code>:</strong> ఇది ఒక మ్యాజిక్ లాంటిది. దీన్ని వాడితే ఆ ఫంక్షన్ అక్కడే <strong>పాజ్ (Pause)</strong> అవుతుంది. ఆ వాల్యూని బయటకి ఇచ్చేసి, లోపల ఉన్న వేరియబుల్స్ ని అలాగే మెమరీలో ఫ్రీజ్ చేసి పెడుతుంది. నెక్స్ట్ టైమ్ పిలిచినప్పుడు మళ్ళీ అక్కడి నుండే స్టార్ట్ అవుతుంది!</li>
         </ul>
-
-        <div class="diagram-box">┌────────────────────────────────────────────────────────────────────────┐
-│                 STACK-FRAME SUSPENSION WITH YIELD                      │
-├────────────────────────────────────────────────────────────────────────┤
-│  def count_to_three():                                                 │
-│      n = 1                                                             │
-│      yield n  ──>[1. Yields 1] ──>[FREEZES STACK: n=1, line=3]        │
-│      n += 1                                                            │
-│      yield n  ──>[2. Resumes]  ──>[Yields 2] ──>[FREEZES: n=2, line=5]│
-│      n += 1                                                            │
-│      yield n  ──>[3. Resumes]  ──>[Yields 3] ──>[FREEZES: n=3, line=7]│
-└────────────────────────────────────────────────────────────────────────┘</div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Generator Function with yield and State Suspension</div>
@@ -657,43 +635,41 @@ except StopIteration:
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Generator function demonstrating state suspension:
+          <pre><code># ఒక జనరేటర్ ఫంక్షన్ (yield వాడుతూ):
 def countdown_timer(start_seconds):
-    """Yields countdown numbers lazily."""
+    """కౌంట్ డౌన్ నెంబర్స్ ఇస్తుంది."""
     current = start_seconds
     while current > 0:
-        print(f"  [Generator Internals] Yielding {current} and freezing state...")
+        print(f"  [లోపల] {current} ని ఇస్తున్నాను, ఫంక్షన్ ఇక్కడ ఫ్రీజ్ అవుతుంది...")
         yield current
-        current -= 1 # Resumes here on next call!
-    print("  [Generator Internals] Countdown complete!")
+        current -= 1 # నెక్స్ట్ టైమ్ పిలిచినప్పుడు ఇక్కడినుండి స్టార్ట్ అవుతుంది!
+    print("  [లోపల] కౌంట్ డౌన్ ఫినిష్!")
 
-print("--- Calling Generator Function ---")
-# Calling the generator function returns a generator object instantly without executing code:
+print("--- జనరేటర్ ఫంక్షన్ ని కాల్ చేద్దాం ---")
+# జనరేటర్ ఫంక్షన్ ని పిలిస్తే లోపల కోడ్ రన్ అవ్వదు, జస్ట్ ఒక ఆబ్జెక్ట్ ఇస్తుంది:
 timer_gen = countdown_timer(3)
 print("Generator Object Created:", timer_gen)
 
-print("\n--- Iterating Through Values Lazily ---")
+print("\n--- లూప్ వాడి ఒక్కొక్క వాల్యూ తీసుకుందాం ---")
 for sec in timer_gen:
     print(f"👉 Received: {sec}s remaining")</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Memory Comparison:</strong>
-          <p style="margin-top:6px;">If <code>start_seconds = 100,000,000</code>, creating a list <code>list(range(100_000_000))</code> would require <strong>~800 Megabytes</strong> of RAM. The generator requires only <strong>~120 Bytes</strong> because it produces numbers one at a time on the fly.</p>
+          <strong style="color:#10b981;">🔍 మెమరీ లాభం ఏంటి?:</strong>
+          <p style="margin-top:6px;">ఒకవేళ మీరు 1 కోటి నెంబర్స్ ని ఒక లిస్ట్ లో స్టోర్ చేస్తే ~80MB ర్యామ్ పోతుంది. కానీ జనరేటర్ వాడితే, అది అడిగినప్పుడే ఇస్తుంది కాబట్టి కేవలం <strong>~120 Bytes</strong> ర్యామ్ మాత్రమే తీసుకుంటుంది!</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">3</span>Generator Expressions ((expr for x in seq)) vs List Comprehensions</div>
+    <div class="section-title"><span class="num">3</span>Generator Expressions (షార్ట్ కట్)</div>
     <div class="section-body">
-      <p>A <strong>Generator Expression</strong> uses the exact same syntax as a list comprehension, but replaces square brackets <code>[...]</code> with parentheses <code>(...)</code>.</p>
+      <p>లిస్ట్ కాంప్రహెన్షన్ (List Comprehension) లాగానే ఉంటుంది, కానీ స్క్వేర్ బ్రాకెట్స్ <code>[...]</code> బదులు రౌండ్ బ్రాకెట్స్ <code>(...)</code> వాడతాం. దీన్నే <strong>Generator Expression</strong> అంటారు.</p>
         
         <table class="tbl" style="margin-top:8px; font-size:12.5px;">
-          <tr><th>Feature</th><th>List Comprehension <code>[...]</code></th><th>Generator Expression <code>(...)</code></th></tr>
-          <tr><td><strong>Evaluation</strong></td><td><strong>Eager</strong> (Calculates all elements immediately)</td><td><strong>Lazy</strong> (Calculates elements one-by-one on demand)</td></tr>
-          <tr><td><strong>Memory</strong></td><td>$O(N)$ memory (Scales linearly with dataset size)</td><td>$O(1)$ constant memory (~100 bytes regardless of size)</td></tr>
-          <tr><td><strong>Access</strong></td><td>Indexed random access (<code>lst[5]</code>) and slicing</td><td>Sequential streaming access only (via <code>next()</code> or loop)</td></tr>
-          <tr><td><strong>Reusability</strong></td><td>Can be iterated multiple times</td><td>Exhausted after a single iteration pass</td></tr>
+          <tr><th>లక్షణం</th><th>List Comprehension <code>[...]</code></th><th>Generator Expression <code>(...)</code></th></tr>
+          <tr><td><strong>ఎలా పనిచేస్తుంది?</strong></td><td>ఒకేసారి మొత్తం లిస్ట్ ని క్రియేట్ చేస్తుంది (Eager).</td><td>అడిగినప్పుడు మాత్రమే ఒక్కొక్కటిగా ఇస్తుంది (Lazy).</td></tr>
+          <tr><td><strong>మెమరీ</strong></td><td>ఎక్కువ డేటా ఉంటే ర్యామ్ అంతా నిండిపోతుంది.</td><td>ఎంత డేటా ఉన్నా ర్యామ్ అసలు తీసుకోదు!</td></tr>
         </table>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
@@ -705,35 +681,35 @@ for sec in timer_gen:
           </div>
           <pre><code>import sys
 
-# 1. Eager List Comprehension (Allocates memory for 1,000,000 items in RAM):
+# 1. List Comprehension (10 లక్షల నెంబర్స్ ని ఒకేసారి మెమరీలో పెడుతుంది):
 list_squares = [x ** 2 for x in range(1_000_000)]
 
-# 2. Lazy Generator Expression (Allocates only lightweight generator state object):
+# 2. Generator Expression (మెమరీ తీసుకోదు, అడిగితే ఆన్సర్ చెప్పడానికి రెడీగా ఉంటుంది):
 gen_squares = (x ** 2 for x in range(1_000_000))
 
-print(f"📦 List Comprehension Memory: {sys.getsizeof(list_squares):,} bytes (~8.4 MB)")
-print(f"⚡ Generator Expression Memory:  {sys.getsizeof(gen_squares):,} bytes (Constantly tiny!)")
+print(f"📦 List Comprehension మెమరీ: {sys.getsizeof(list_squares):,} bytes (~8.4 MB)")
+print(f"⚡ Generator Expression మెమరీ:  {sys.getsizeof(gen_squares):,} bytes (చాలా తక్కువ!)")
 
-# Passing generator expressions directly into aggregation functions:
-total_sum = sum(x ** 2 for x in range(1000)) # Parentheses can be omitted inside functions!
-print(f"\nSum of squares up to 1000: {total_sum:,}")</code></pre>
+# సమ్ ఫంక్షన్ లోపల డైరెక్ట్ గా వాడుకోవచ్చు:
+total_sum = sum(x ** 2 for x in range(1000)) # లోపల బ్రాకెట్స్ కూడా అక్కర్లేదు!
+print(f"\nమొదటి 1000 నెంబర్స్ స్క్వేర్స్ టోటల్: {total_sum:,}")</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Performance Best Practice:</strong>
-          <p style="margin-top:6px;">When passing data into aggregation functions like <code>sum()</code>, <code>max()</code>, <code>min()</code>, or <code>any()</code>, always use a generator expression without square brackets to avoid creating unnecessary intermediate lists in RAM.</p>
+          <strong style="color:#10b981;">🔍 బెస్ట్ ప్రాక్టీస్:</strong>
+          <p style="margin-top:6px;">మీరు <code>sum()</code>, <code>max()</code>, <code>min()</code> వాడేటప్పుడు ఎప్పుడూ రౌండ్ బ్రాకెట్స్ (Generator) వాడండి, మెమరీ ఫుల్ అవ్వకుండా ఉంటుంది.</p>
         </div>
     </div>
   
 
     <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfall: Attempting to Re-Iterate Over an Exhausted Generator</div>
-      <p>Generators are one-way data streams. Once an iterator reaches the end and raises StopIteration, subsequent for-loops over that instance will execute 0 times. To re-iterate, you must instantiate a fresh generator.</p>
+      <div class="callout-title">⚠️ Common Developer Pitfall: అయిపోయిన Generator ని మళ్ళీ వాడటం</div>
+      <p>జనరేటర్స్ వన్-వే ట్రాఫిక్ లాంటివి. ఒకసారి లూప్ లో వాడుకున్నాక అవి ఖాళీ అయిపోతాయి (StopIteration). మళ్ళీ ప్రింట్ చేస్తే ఏమీ రాదు. మళ్ళీ కావాలంటే కొత్త జనరేటర్ క్రియేట్ చేసుకోవాలి.</p>
     </div>
 
     <div class="try-box">
       <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p>Write a generator fibonacci(limit) that yields Fibonacci numbers up to limit. Print all generated numbers in a single line.</p>
+      <p>ఒక ఫంక్షన్ fibonacci(limit) రాయండి. అది yield వాడుతూ, limit దాటకుండా ఫిబొనాచీ సిరీస్ నెంబర్స్ ని ఇవ్వాలి.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">Python 3 Practice Challenge</span>
@@ -745,7 +721,7 @@ print(f"\nSum of squares up to 1000: {total_sum:,}")</code></pre>
         yield a
         a, b = b, a + b
 
-print("Fibonacci numbers up to 100:")
+print("100 లోపు ఫిబొనాచీ నెంబర్స్:")
 for num in fibonacci(100):
     print(num, end=" ")
 print()</code></pre>
@@ -756,20 +732,14 @@ print()</code></pre>
     <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the difference between yield and yield from in Python?</h4>
-      <p>yield from iterable is used to delegate part of a generator's operations to another sub-generator or iterable, cleanly transparently forwarding values.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> yield మరియు yield from కి తేడా ఏంటి?</h4>
+      <p>yield from అనేది ఒక షార్ట్ కట్. ఇంకొక జనరేటర్ నుంచి వాల్యూస్ తెచ్చి ఇవ్వాలంటే (ఉదా: yield from range(10)) ఇలా డైరెక్ట్ గా వాడొచ్చు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Can generators receive data from the caller while running?</h4>
-      <p>Yes! You can pass values into a running generator using generator.send(value). Inside the generator, the yield expression evaluates to the received value.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Are generators thread-safe in Python?</h4>
-      <p>Calling next() on the same generator instance simultaneously from multiple threads is not thread-safe without explicit synchronization (threading.Lock).</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> రన్ అవుతున్న జనరేటర్ లోకి మనం డేటా పంపొచ్చా?</h4>
+      <p>పంపొచ్చు! generator.send(value) అని వాడితే, జనరేటర్ లోపల ఆ yield దగ్గరికి ఆ వాల్యూ వెళ్తుంది.</p>
     </div>
   
 
@@ -798,6 +768,5 @@ print()</code></pre>
 </div>
 
 <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

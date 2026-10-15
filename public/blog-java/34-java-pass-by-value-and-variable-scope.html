@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Pass-by-Value Mechanics & Variable Scope Deep Dive — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering Java's memory evaluation model: resolving the classic pass-by-value vs pass-by-reference confusion once and for all, understanding how primitive bits vs object memory addresses are copied, mutating object state versus reassigning reference pointers, and exploring block, method, and loop variable scopes." />
-  <meta name="keywords" content="java pass-by-value mechanics & variable scope deep dive, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Pass-by-Value Mechanics & Variable Scope Deep Dive (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="మెథడ్ కి ఒక వేరియబుల్ పంపించి లోపల దాన్ని మార్చితే, బయట ఉన్న అసలు వేరియబుల్ మారుతుందా లేదా? చాలామంది కన్ఫ్యూజ్ అయ్యే `Pass-by-Value` vs `Pass-by-Reference` కాన్సెప్ట్ ని ఈ చాప్టర్ లో మెమరీ బొమ్మలతో సహా క్లియర్ గా అర్థం చేసుకుందాం. దాంతో పాటే ఏ వేరియబుల్ ఎక్కడివరకే పనిచేస్తుంది (Variable Scope) అనేది కూడా తెలుసుకుందాం." />
+  <meta name="keywords" content="java pass-by-value mechanics & variable scope deep dive (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/34-java-pass-by-value-and-variable-scope.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 34: 34. Pass-by-Value & Scope</span>
     </div>
 
-    <h1 class="page-title">Java Pass-by-Value Mechanics & Variable Scope Deep Dive</h1>
+    <h1 class="page-title">Java Pass-by-Value Mechanics & Variable Scope Deep Dive (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,82 +541,83 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering Java's memory evaluation model: resolving the classic pass-by-value vs pass-by-reference confusion once and for all, understanding how primitive bits vs object memory addresses are copied, mutating object state versus reassigning reference pointers, and exploring block, method, and loop variable scopes.</p>
+      <p>మెథడ్ కి ఒక వేరియబుల్ పంపించి లోపల దాన్ని మార్చితే, బయట ఉన్న అసలు వేరియబుల్ మారుతుందా లేదా? చాలామంది కన్ఫ్యూజ్ అయ్యే `Pass-by-Value` vs `Pass-by-Reference` కాన్సెప్ట్ ని ఈ చాప్టర్ లో మెమరీ బొమ్మలతో సహా క్లియర్ గా అర్థం చేసుకుందాం. దాంతో పాటే ఏ వేరియబుల్ ఎక్కడివరకే పనిచేస్తుంది (Variable Scope) అనేది కూడా తెలుసుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The Golden Rule: Java is ALWAYS Strictly Pass-by-Value!</h2>
+      <h2>1. గోల్డెన్ రూల్: జావా ఎప్పటికీ Pass-by-Value మాత్రమే!</h2>
       <div class="theory-text">
-        <p>One of the most frequently misunderstood concepts in Java is parameter passing.</p>
-<p><strong>The Absolute Rule:</strong><br><strong>Java is ALWAYS 100% strictly Pass-by-Value.</strong> There is NO "pass-by-reference" mechanism in Java!</p>
-<p>When you pass an argument to a method:<br>- <strong>For Primitives (<code>int</code>, <code>double</code>, <code>boolean</code>):</strong> The JVM makes a <strong>copy of the raw binary bits</strong>. Any modification inside the method affects ONLY the local copy.<br>- <strong>For Objects (<code>int[]</code>, <code>String</code>, <code>Student</code>):</strong> The JVM makes a <strong>copy of the reference address (pointer)</strong>.<br>  - If you use that copied address to modify the object's internal fields (<code>arr[0] = 99</code>), the change is reflected in Heap memory.<br>  - If you <strong>reassign the reference variable</strong> (<code>arr = new int[5]</code>), you only point your local copy to a new address—the caller's original reference remains completely untouched!</p>
+        <p>జావా నేర్చుకునే వాళ్ళకి ఒక పెద్ద డౌట్ ఉంటుంది. జావాలో Pass-by-Reference ఉంటుందా అని!</p>
+<p><strong>ద అబ్సొల్యూట్ రూల్:</strong><br><strong>జావా 100% ఎప్పుడూ పాస్-బై-వాల్యూ (Pass-by-Value) మాత్రమే!</strong> జావాలో పాస్-బై-రిఫరెన్స్ అనే కాన్సెప్ట్ అసలు లేదు.</p>
+<p>మీరు ఒక మెథడ్ కి వాల్యూ ని పంపినప్పుడు ఏమవుతుందంటే:<br>- <strong>Primitives పంపితే (<code>int</code>, <code>double</code> లాంటివి):</strong> మీరు పంపించిన నంబర్ కి జావా ఒక <strong>జిరాక్స్ కాపీ</strong> తీసి ఆ మెథడ్ కి పంపుతుంది. ఆ మెథడ్ లోపల దాన్ని ఎంత మార్చినా బయట ఉన్న ఒరిజినల్ వేరియబుల్ మారదు!<br>- <strong>Objects పంపితే (<code>int[]</code>, <code>String</code>, <code>Student</code> లాంటివి):</strong> అరే పంపితే మొత్తం అరే కాపీ అవ్వదు! ఆ అరే ఎక్కడుందో చెప్పే అడ్రెస్ (Reference) కి <strong>జిరాక్స్ కాపీ</strong> తీసి ఇస్తుంది. దాన్ని పట్టుకుని వాళ్ళు మెమరీ (Heap) లోపల దాకా వెళ్లి మార్చితే.. అది అందరికీ మారుతుంది. కానీ ఆ కాపీ అడ్రెస్ ని చింపేసి కొత్త అడ్రెస్ పెట్టుకుంటే.. బయట వాళ్ళకి ఏం ప్రాబ్లం ఉండదు!</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Primitive Pass-by-Value Proof</h2>
+      <h2>2. Primitives కి Pass-by-Value ఎలా పనిచేస్తుంది?</h2>
       <div class="theory-text">
         <div class="code-block"><pre><code>static void modify(int x) {
-    x = 99; // Modifies local stack variable 'x' only!
+    x = 99; // ఇక్కడ కేవలం మనం పంపిన 'కాపీ' మాత్రమే మారుతుంది!
 }
-<p>public static void main(String[] args) {<br>    int number = 10;<br>    modify(number);<br>    System.out.println(number); // Prints 10 (NOT 99!)<br>}</code></pre></div></p>
-<div class="code-block"><pre><code>STACK MEMORY (Primitive):
+<p>public static void main(String[] args) {<br>    int number = 10;<br>    modify(number); // 10 అనే నంబర్ ని కాపీ చేసి పంపిస్తున్నాం<br>    System.out.println(number); // ఇప్పుడు ఏమొస్తుంది? 10 ఏ వస్తుంది (99 రాదు!)<br>}</code></pre></div></p>
+<div class="code-block"><pre><code>STACK MEMORY (ఎలా జరుగుతుంది?):
   +-------------------------+
-  | modify() Frame: [x=99]  | &lt;--- Modifies copy; popped upon return!
+  | modify() Frame: [x=99]  | &lt;--- కాపీ మాత్రమే 99 అయ్యింది. మెథడ్ అవ్వగానే ఇది డిలీట్ అయిపోతుంది!
   +-------------------------+
-  | main() Frame: [num=10]  | &lt;--- Original value 10 unchanged
+  | main() Frame: [num=10]  | &lt;--- మన ఒరిజినల్ 10 అలానే సేఫ్ గా ఉంది
   +-------------------------+</code></pre></div>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Object Reference Pass-by-Value: Mutating vs Reassigning</h2>
+      <h2>3. Objects కి పాస్-బై-వాల్యూ (లోపలికి వెళ్లి మార్చడం vs అడ్రెస్ మార్చడం)</h2>
       <div class="theory-text">
-        <div class="code-block"><pre><code>// Case A: MUTATING OBJECT STATE (Changes ARE visible to caller)
+        <p>ఇది చాలా ఇంపార్టెంట్ ఇంటర్వ్యూ క్వశ్చన్!</p>
+<div class="code-block"><pre><code>// కేస్ A: అడ్రెస్ లోపలికి వెళ్లి మార్చడం (ఇది బయట వాళ్లకి కూడా ఎఫెక్ట్ అవుతుంది)
 static void changeFirstElement(int[] arr) {
-    arr[0] = 999; // Follows copied address to Heap and modifies index 0
+    arr[0] = 999; // కాపీ ఇచ్చిన అడ్రెస్ పట్టుకుని లోపలికెళ్లి మార్చేసింది!
 }
-<p>// Case B: REASSIGNING REFERENCE (Changes ARE NOT visible to caller)<br>static void reassignArray(int[] arr) {<br>    arr = new int[]{100, 200, 300}; // Reassigns local parameter to a new heap object<br>}</code></pre></div></p>
-<div class="code-block"><pre><code>STACK (main)            STACK (reassignArray)              HEAP MEMORY
+<p>// కేస్ B: అడ్రెస్ ని మార్చేయడం (ఇది బయట వాళ్లకి ఎఫెక్ట్ అవ్వదు)<br>static void reassignArray(int[] arr) {<br>    arr = new int[]{100, 200, 300}; // వీడి కాపీలో ఉన్న అడ్రెస్ తీసేసి కొత్త అరే అడ్రెస్ పెట్టుకున్నాడు<br>}</code></pre></div></p>
+<div class="code-block"><pre><code>STACK (main)            STACK (reassignArray)              HEAP MEMORY (అసలు డేటా)
   +---------------+       +---------------+            +---------------------+
   | data = 0x5000 |       | arr = 0x8800  | ---------&gt; | [100, 200, 300]     |
   +-------|-------+       +---------------+            +---------------------+
           |
           +------------------------------------------&gt; +---------------------+
-                                                       | [1, 2, 3, 4, 5]     |
+                                                       | [1, 2, 3] (సేఫ్!)    |
                                                        +---------------------+</code></pre></div>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Variable Scope & Lifetime in Java</h2>
+      <h2>4. వేరియబుల్ స్కోప్ (Variable Scope) ఎక్కడ వరకే పనిచేస్తుంది?</h2>
       <div class="theory-text">
-        <p>A variable's <strong>Scope</strong> defines the region of code where that variable is accessible and recognized by the compiler:</p>
-<p>1. <strong>Method Scope (Local Variables):</strong> Declared inside a method. Born when the method is invoked; destroyed when the method returns.<br>2. <strong>Block Scope (<code>{ ... }</code>):</strong> Variables declared inside an <code>if</code>, <code>for</code>, or arbitrary <code>{ }</code> block exist only between those opening and closing braces.<br>3. <strong>Loop Variable Scope:</strong> <code>for (int i = 0; ...)</code> variable <code>i</code> exists exclusively inside the loop body.</p>
+        <p>ఒక వేరియబుల్ కి ఎక్కడిదాకా లైఫ్ ఉంటుంది, దాన్ని ఎక్కడ వాడొచ్చు అని చెప్పేదే <strong>Scope</strong>:</p>
+<p>1. <strong>Method Scope:</strong> ఒక మెథడ్ లోపల రాస్తే.. ఆ మెథడ్ స్టార్ట్ అయినప్పటినుంచి, పూర్తయ్యే దాకా అది పనిచేస్తుంది.<br>2. <strong>Block Scope (<code>{ ... }</code>):</strong> <code>if</code> లోపల గానీ, <code>for</code> లూప్ లోపల గానీ వేరియబుల్స్ రాస్తే (బ్రాకెట్స్ లోపల).. అవి ఆ బ్రాకెట్ ఓపెన్ అయినప్పటినుంచి క్లోజ్ అయ్యేదాకా మాత్రమే బ్రతికి ఉంటాయి.</p>
 <div class="code-block"><pre><code>void example() {
-    int x = 10; // Method scope
+    int x = 10; // ఇది ఈ మెథడ్ మొత్తం పనిచేస్తుంది
     if (x &gt; 5) {
-        int y = 20; // Block scope (Only accessible inside if-block)
-        System.out.println(x + y); // OK
+        int y = 20; // ఇది కేవలం ఈ 'if' బ్లాక్ లోపల వరకే పనిచేస్తుంది
+        System.out.println(x + y); // రెండు కలిపి యాక్సెస్ చేయొచ్చు
     }
-    // System.out.println(y); // COMPILE ERROR: y is out of scope!
+    // System.out.println(y); // ఎర్రర్! ఎందుకంటే y కి లైఫ్ అయిపొయింది కాబట్టి ఇక్కడికి రాదు
 }</code></pre></div>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. Variable Shadowing</h2>
+      <h2>5. Variable Shadowing (వేరియబుల్ షాడోయింగ్)</h2>
       <div class="theory-text">
-        <p><strong>Variable Shadowing</strong> occurs when a local variable in an inner scope has the exact same name as a variable in an outer class scope:</p>
+        <p>ఒక క్లాస్ లోపల ఒక వేరియబుల్ ఉండి, మళ్ళీ మెథడ్ లోపల అదే పేరుతో ఇంకో వేరియబుల్ క్రియేట్ చేస్తే ఏమవుతుంది? లోకల్ వేరియబుల్ వచ్చి క్లాస్ వేరియబుల్ ని కప్పేస్తుంది (Shadow చేస్తుంది).</p>
 <div class="code-block"><pre><code>public class ShadowDemo {
-    static int count = 100; // Class-level field
-<p>static void print() {<br>        int count = 5; // Local variable shadows class field!<br>        System.out.println(count); // Prints 5 (Local variable wins!)<br>        System.out.println(ShadowDemo.count); // Prints 100 (Explicit class scope)<br>    }<br>}</code></pre></div></p>
+    static int count = 100; // క్లాస్ లోపల రాసిన వేరియబుల్
+<p>static void print() {<br>        int count = 5; // మళ్ళీ అదే పేరుతో లోకల్ గా రాసాము<br>        System.out.println(count); // ఇక్కడ ఏమొస్తుంది? 5 ఏ వస్తుంది! (లోకల్ కే పవర్ ఎక్కువ)<br>        System.out.println(ShadowDemo.count); // 100 కావాలంటే ఇలా క్లాస్ పేరుతో పిలవాలి<br>    }<br>}</code></pre></div></p>
       </div>
     </section>
   
@@ -635,78 +636,78 @@ static void changeFirstElement(int[] arr) {
         <pre><code>import java.util.Arrays;
 
 public class Main {
-    // 1. Primitive Pass-by-Value Test
+    // 1. Primitive Pass-by-Value టెస్ట్ (జిరాక్స్ కాపీ)
     static void tryToModifyPrimitive(int value) {
-        value = 999;
-        System.out.println("  Inside method (primitive) : " + value);
+        value = 999; // మనం కేవలం కాపీ ని మారుస్తున్నాం, ఒరిజినల్ ని కాదు
+        System.out.println("  మెథడ్ లోపల (primitive) : " + value);
     }
 
-    // 2. Object Mutation Test (Modifies Heap Object Content)
+    // 2. Object Mutation టెస్ట్ (అడ్రెస్ పట్టుకుని వెళ్లి మార్చడం)
     static void modifyArrayContent(int[] arr) {
-        arr[0] = 777; // Modifies slot in Heap memory
-        System.out.println("  Inside method (mutated)   : " + Arrays.toString(arr));
+        arr[0] = 777; // Heap లోపల ఉన్న డేటానే మార్చేస్తున్నాం
+        System.out.println("  మెథడ్ లోపల (mutated)   : " + Arrays.toString(arr));
     }
 
-    // 3. Object Reassignment Test (Rebinds Local Reference Variable)
+    // 3. Object Reassignment టెస్ట్ (కాపీ చేసిన అడ్రెస్ నే మార్చేయడం)
     static void tryToReassignReference(int[] arr) {
-        arr = new int[]{99, 99, 99}; // Local variable now points to new heap object
-        System.out.println("  Inside method (reassigned): " + Arrays.toString(arr));
+        arr = new int[]{99, 99, 99}; // వీడు ఆ అడ్రెస్ వదిలేసి కొత్త అరే క్రియేట్ చేసుకున్నాడు
+        System.out.println("  మెథడ్ లోపల (reassigned): " + Arrays.toString(arr));
     }
 
     public static void main(String[] args) {
-        System.out.println("=== 1. Primitive Pass-by-Value ===");
+        System.out.println("=== 1. Primitive పాస్-బై-వాల్యూ ===");
         int score = 50;
-        System.out.println("Before method call          : " + score);
+        System.out.println("మెథడ్ పిలవకముందు          : " + score);
         tryToModifyPrimitive(score);
-        System.out.println("After method call           : " + score + " (Unchanged!)");
+        System.out.println("మెథడ్ పిలిచిన తర్వాత        : " + score + " (మారలేదు!)");
 
         System.out.println("
-=== 2. Object Mutation via Copied Reference ===");
+=== 2. అరే లోపలికి వెళ్లి మార్చడం (Mutation) ===");
         int[] scores = {10, 20, 30};
-        System.out.println("Before method call          : " + Arrays.toString(scores));
+        System.out.println("మెథడ్ పిలవకముందు          : " + Arrays.toString(scores));
         modifyArrayContent(scores);
-        System.out.println("After method call           : " + Arrays.toString(scores) + " (Slot 0 Changed!)");
+        System.out.println("మెథడ్ పిలిచిన తర్వాత        : " + Arrays.toString(scores) + " (మొదటి నంబర్ మారిపోయింది!)");
 
         System.out.println("
-=== 3. Object Reassignment (Pass-by-Value Proof) ===");
+=== 3. అడ్రెస్ మార్చేయడం (Reassignment) ===");
         int[] originalArray = {1, 2, 3};
-        System.out.println("Before reassignment call    : " + Arrays.toString(originalArray));
+        System.out.println("మెథడ్ పిలవకముందు          : " + Arrays.toString(originalArray));
         tryToReassignReference(originalArray);
-        System.out.println("After reassignment call     : " + Arrays.toString(originalArray) + " (Reference Unchanged!)");
+        System.out.println("మెథడ్ పిలిచిన తర్వాత        : " + Arrays.toString(originalArray) + " (ఇది సేఫ్, మారలేదు!)");
 
         System.out.println("
-=== 4. Block Scope Demonstration ===");
+=== 4. Block Scope డెమో ===");
         int outerX = 100;
         {
-            int innerY = 500;
-            System.out.println("Inside block: outerX + innerY = " + (outerX + innerY));
+            int innerY = 500; // బ్రాకెట్స్ ఓపెన్ చేసి దీన్ని లోపల పెట్టాం
+            System.out.println("బ్లాక్ లోపల: outerX + innerY = " + (outerX + innerY));
         }
-        // innerY is unreachable here; outerX remains valid
-        System.out.println("Outside block: outerX = " + outerX);
+        // ఇక్కడకి వచ్చేసరికి బ్రాకెట్ క్లోజ్ అయిపోయింది కాబట్టి innerY డిలీట్ అయిపొయింది
+        System.out.println("బ్లాక్ బయట: outerX = " + outerX);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. Primitive Pass-by-Value ===
-Before method call          : 50
-  Inside method (primitive) : 999
-After method call           : 50 (Unchanged!)
+        <div class="output-content">=== 1. Primitive పాస్-బై-వాల్యూ ===
+మెథడ్ పిలవకముందు          : 50
+  మెథడ్ లోపల (primitive) : 999
+మెథడ్ పిలిచిన తర్వాత        : 50 (మారలేదు!)
 
-=== 2. Object Mutation via Copied Reference ===
-Before method call          : [10, 20, 30]
-  Inside method (mutated)   : [777, 20, 30]
-After method call           : [777, 20, 30] (Slot 0 Changed!)
+=== 2. అరే లోపలికి వెళ్లి మార్చడం (Mutation) ===
+మెథడ్ పిలవకముందు          : [10, 20, 30]
+  మెథడ్ లోపల (mutated)   : [777, 20, 30]
+మెథడ్ పిలిచిన తర్వాత        : [777, 20, 30] (మొదటి నంబర్ మారిపోయింది!)
 
-=== 3. Object Reassignment (Pass-by-Value Proof) ===
-Before reassignment call    : [1, 2, 3]
-  Inside method (reassigned): [99, 99, 99]
-After reassignment call     : [1, 2, 3] (Reference Unchanged!)
+=== 3. అడ్రెస్ మార్చేయడం (Reassignment) ===
+మెథడ్ పిలవకముందు          : [1, 2, 3]
+  మెథడ్ లోపల (reassigned): [99, 99, 99]
+మెథడ్ పిలిచిన తర్వాత        : [1, 2, 3] (ఇది సేఫ్, మారలేదు!)
 
-=== 4. Block Scope Demonstration ===
-Inside block: outerX + innerY = 600
-Outside block: outerX = 100</div>
+=== 4. Block Scope డెమో ===
+బ్లాక్ లోపల: outerX + innerY = 600
+బ్లాక్ బయట: outerX = 100</div>
       </div>
 
       <div class="explain-card">
@@ -714,25 +715,25 @@ Outside block: outerX = 100</div>
         
     <div class="explain-item">
       <code class="code-token">tryToModifyPrimitive(score);</code>
-      <p>Copies the raw value 50 into the parameter "value". Changes inside the method do not affect "score".</p>
+      <p>ఇక్కడ 50 అనే వాల్యూ కాపీ అవుతుంది. మెథడ్ లోపల ఆ వాల్యూని 999 గా మార్చినా.. మన ఒరిజినల్ వేరియబుల్ score మాత్రం 50 గానే ఉంటుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">arr[0] = 777;</code>
-      <p>Follows the copied reference address to the shared Heap array and updates slot 0, which is visible to the caller.</p>
+      <p>ఇక్కడ అరే యొక్క అడ్రెస్ కాపీ అవుతుంది. కాబట్టి ఆ అడ్రెస్ పట్టుకుని లోపలికెళ్లి మార్చితే, బయట ఉన్న వాళ్లకి కూడా ఆ మార్పు కనిపిస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">arr = new int[]{99, 99, 99};</code>
-      <p>Reassigns the local parameter variable to point to a new Heap object, leaving the caller's original array reference untouched.</p>
+      <p>ఇక్కడ మెథడ్ వాడు తనకి వచ్చిన కాపీ అడ్రెస్ ని తీసేసి.. కొత్త అరే అడ్రెస్ పెట్టుకున్నాడు. దానివల్ల మన ఒరిజినల్ అరే కి ఎలాంటి నష్టం జరగదు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">int innerY = 500;</code>
-      <p>Demonstrates block scope: innerY exists only within the enclosing curly braces and is destroyed at the closing brace.</p>
+      <p>దీన్ని బ్రాకెట్స్ (Block) లోపల రాసాం కాబట్టి.. ఆ బ్రాకెట్స్ వరకే దీని జీవితం. బయట దీన్ని ఎవరూ వాడుకోలేరు.</p>
     </div>
   
       </div>
@@ -750,7 +751,7 @@ Outside block: outerX = 100</div>
           </div>
         </div>
         <pre><code>public class PracticalApplication {
-    // Industry Simulation: User Profile Sanitizer
+    // రియల్ టైమ్ సినారియో: యూజర్ ప్రొఫైల్ ని క్లీన్ చేసే సర్వీస్
     static class UserProfile {
         String username;
         String email;
@@ -759,32 +760,33 @@ Outside block: outerX = 100</div>
 
     public static void sanitizeProfile(UserProfile profile) {
         if (profile == null) return;
-        // Mutating fields via shared reference address
+        // ఇక్కడ ఆబ్జెక్ట్ లోపల ఫీల్డ్స్ (Fields) ని మారుస్తున్నాం కాబట్టి అది బయట కూడా మారుతుంది
         profile.username = profile.username.trim().toLowerCase();
         profile.email = profile.email.trim().toLowerCase();
     }
 
     public static void main(String[] args) {
+        // ఎవరో యూజర్ స్పేస్ లు, క్యాపిటల్ లెటర్స్ ఇచ్చి రిజిస్టర్ అయ్యాడు అనుకుందాం
         UserProfile user = new UserProfile("  Admin_User2026 ", "  Support@Company.ORG ");
-        System.out.println("=== Before Sanitization ===");
-        System.out.println("Username: [" + user.username + "], Email: [" + user.email + "]");
+        System.out.println("=== క్లీన్ చేయకముందు ===");
+        System.out.println("యూజర్ నేమ్: [" + user.username + "], ఈమెయిల్: [" + user.email + "]");
 
         sanitizeProfile(user);
 
         System.out.println("
-=== After Sanitization ===");
-        System.out.println("Username: [" + user.username + "], Email: [" + user.email + "]");
+=== క్లీన్ చేసిన తర్వాత ===");
+        System.out.println("యూజర్ నేమ్: [" + user.username + "], ఈమెయిల్: [" + user.email + "]");
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== Before Sanitization ===
-Username: [  Admin_User2026 ], Email: [  Support@Company.ORG ]
+        <div class="output-content">=== క్లీన్ చేయకముందు ===
+యూజర్ నేమ్: [  Admin_User2026 ], ఈమెయిల్: [  Support@Company.ORG ]
 
-=== After Sanitization ===
-Username: [admin_user2026], Email: [support@company.org]</div>
+=== క్లీన్ చేసిన తర్వాత ===
+యూజర్ నేమ్: [admin_user2026], ఈమెయిల్: [support@company.org]</div>
       </div>
     </section>
 
@@ -793,16 +795,16 @@ Username: [admin_user2026], Email: [support@company.org]</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Believing Java has "Pass-by-Reference" because mutating object fields works. Java passes the *reference by value*!</li>
+    <li style="margin-bottom:8px; line-height:1.6;">జావాలో ఒక అరే ని పాస్ చేసి మార్చగానే మారిపోయింది కదా, అంటే ఇది పాస్-బై-రిఫరెన్స్ అని భ్రమ పడటం. అది రిఫరెన్స్ కాదు, రిఫరెన్స్ కి తీసిన కాపీ వాల్యూ (Pass-by-Value of Reference) అంతే!</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Trying to swap two primitive variables with a <code>swap(a, b)</code> method. In Java, primitives cannot be swapped via helper methods without returning an array or object container.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>swap(a, b)</code> అనే మెథడ్ రాసి రెండు నంబర్స్ ని ఎక్స్చేంజ్ చేయొచ్చు అని ట్రై చేయడం. సి, సి++ లో కుదురుతుంది కానీ జావాలో ప్రైమిటివ్స్ ని అలా మార్చలేము.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Attempting to access a loop counter <code>i</code> outside its <code>for</code> loop body.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>for (int i=0;...)</code> లూప్ వాడాక, ఆ <code>i</code> ని లూప్ బయట కూడా ప్రింట్ చేద్దాం అని ట్రై చేసి ఎర్రర్స్ తెచ్చుకోవడం. <code>i</code> లైఫ్ లూప్ బ్రాకెట్ తోనే అయిపోతుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Reassigning a method parameter expecting the caller's variable to point to the new object.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">మెథడ్ లోపల పారామీటర్ కే కొత్త ఆబ్జెక్ట్ ఇస్తే (<code>arr = new int[]</code>), బయట ఉన్న వాళ్లకి కూడా ఆ కొత్త ఆబ్జెక్ట్ వస్తుందేమో అని ఆశపడటం.</li>
   
       </ul>
     </div>
@@ -819,22 +821,23 @@ Username: [admin_user2026], Email: [support@company.org]</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Write a method swapFirstAndLast(int[] arr) that swaps the first and last elements of an array.
-// Verify that the change persists in the caller's main() method.
+// ఒక అరే ని తీసుకుని అందులో మొదటి నంబర్ ని, చివరి నంబర్ ని స్వాప్ (Exchange) చేసే swapFirstAndLast(int[] arr) మెథడ్ రాయండి.
+// ఇది రాసాక, మెయిన్ మెథడ్ లో నిజంగానే అరే మారిందో లేదో ప్రింట్ చేసి చెక్ చేయండి.
 
 public class Challenge {
     public static void swapFirstAndLast(int[] arr) {
+        // అరే లో కనీసం 2 నంబర్స్ ఉంటేనే స్వాప్ చేస్తాం
         if (arr == null || arr.length &lt; 2) return;
         int temp = arr[0];
-        arr[0] = arr[arr.length - 1];
-        arr[arr.length - 1] = temp;
+        arr[0] = arr[arr.length - 1]; // లాస్ట్ దాన్ని ఫస్ట్ లోకి
+        arr[arr.length - 1] = temp;   // ఫస్ట్ దాన్ని లాస్ట్ లోకి
     }
 
     public static void main(String[] args) {
         int[] data = {100, 20, 30, 500};
-        System.out.println("Before Swap: " + java.util.Arrays.toString(data));
+        System.out.println("స్వాప్ కి ముందు: " + java.util.Arrays.toString(data));
         swapFirstAndLast(data);
-        System.out.println("After Swap : " + java.util.Arrays.toString(data));
+        System.out.println("స్వాప్ కి తర్వాత: " + java.util.Arrays.toString(data)); // రిజల్ట్ లో 500 ముందుకి, 100 వెనక్కి వెళ్తుంది
     }
 }</code></pre>
       </div>
@@ -845,20 +848,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why can’t I write a swap(int a, int b) method in Java?</h4>
-      <p>Because Java passes primitives strictly by value. The method receives isolated copies of `a` and `b` on its stack frame. Swapping the copies does not affect the variables in the caller's stack frame.</p>
+      <h4>❓ జావాలో రెండు నంబర్స్ ని మార్చే swap(int a, int b) మెథడ్ ఎందుకు రాయలేం?</h4>
+      <p>ఎందుకంటే జావా వాల్యూస్ ని జిరాక్స్ కాపీ తీసి ఇస్తుంది. మీరు మెథడ్ లోపల ఎంతసేపు ఆ కాపీలనే అటూ ఇటూ మార్చుకుంటారు తప్ప, అసలైన నంబర్స్ ఉన్న అడ్రెస్ (main లో ఉన్నవి) కి వెళ్ళలేరు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ How does Pass-by-Value differ from C++ pass-by-reference (&)?</h4>
-      <p>In C++, passing by reference `void func(int &x)` creates an alias directly to the caller's variable in memory. In Java, there are no aliases; an address value is always copied into a new parameter variable.</p>
+      <h4>❓ C++ లో Pass-by-Reference కి, జావాకి తేడా ఏంటి?</h4>
+      <p>C++ లో `void func(int &x)` అని రాస్తే, మీరు డైరెక్ట్ గా ఒరిజినల్ వేరియబుల్ కి లింక్ అవుతారు (కాపీ ఉండదు). కాబట్టి అక్కడ మారుతుంది. జావాలో అడ్రెస్ ని కూడా కాపీ తీసి వాల్యూ గానే ఇస్తారు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Does String immutability affect pass-by-value?</h4>
-      <p>Yes. When you pass a `String` to a method, you pass a copy of the reference. Because strings are immutable, any method call like `str = str.toUpperCase()` creates a new string and reassigns only the local parameter reference, leaving the caller's string unmodified.</p>
+      <h4>❓ String ని మెథడ్ కి పంపిస్తే ఏమవుతుంది?</h4>
+      <p>స్ట్రింగ్స్ ని పంపిస్తే కూడా అడ్రెస్ కాపీ అయ్యే వెళ్తుంది. కానీ స్ట్రింగ్స్ Immutability (మారవు) రూల్ వల్ల.. మీరు `str.toUpperCase()` అని రాస్తే ఆ పాత స్ట్రింగ్ ఏం అవ్వదు, కొత్త స్ట్రింగ్ క్రియేట్ అవుతుంది కాబట్టి ఒరిజినల్ స్ట్రింగ్ ఎప్పుడూ సేఫ్ గానే ఉంటుంది.</p>
     </div>
   
     </section>
@@ -868,22 +871,22 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Java is strictly Pass-by-Value for both primitives and object reference types.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">జావా ఎప్పుడూ, ఎక్కడైనా, ఏ సిట్యువేషన్ లో అయినా సరే.. 100% Pass-by-Value మాత్రమే వాడుతుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">For primitives, raw value bits are copied into the method's stack frame.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">మామూలు నంబర్స్ పంపితే వాటి వాల్యూ కాపీ అయ్యి వెళ్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">For objects, the 64-bit reference address is copied into the parameter.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఆబ్జెక్ట్స్ పంపితే వాటి అడ్రెస్ (Reference) కాపీ అయ్యి వెళ్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Mutating an object's fields via its reference modifies the shared Heap object.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">కాపీ ఇచ్చిన అడ్రెస్ తో ఆబ్జెక్ట్ లోపలికెళ్లి ఏమైనా మారిస్తే.. బయట వాళ్లకి కూడా ఆ మార్పు కనిపిస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Reassigning a parameter reference variable has zero effect on the caller's variable.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఒకవేళ పారామీటర్ కే కొత్త ఆబ్జెక్ట్ అడ్రెస్ ఇస్తే మాత్రం బయట వాళ్లకి ఏం కాదు, సేఫ్ గా ఉంటారు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Variables are scoped strictly to the block <code>{}</code> in which they are declared.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">బ్రాకెట్స్ <code>{}</code> మధ్యలో క్రియేట్ చేసిన వేరియబుల్స్ కి ఆ బ్రాకెట్స్ బయట లైఫ్ ఉండదు (Block Scope).</li>
   
       </ul>
     </div>

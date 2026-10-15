@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Inheritance, Virtual Functions & Runtime Polymorphism Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive C++ guide on Inheritance (Phase 11): single/multi/hierarchical inheritance, virtual functions, pure virtual, abstract classes, vtable, upcasting, dynamic_cast, and composition vs inheritance." />
-  <meta name="keywords" content="c++ tutorial, c++ inheritance, virtual functions & runtime polymorphism masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Inheritance, Virtual Functions & Polymorphism (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో Inheritance ఎలా పనిచేస్తుంది? Base Class కి Derived Class కి ఉన్న సంబంధం ఏంటి? Virtual Functions ద్వారా Runtime Polymorphism ని ఎలా అచీవ్ చేయాలో పూర్తి స్థాయి డీప్ ఎక్స్‌ప్లనేషన్ తో నేర్చుకుందాం." />
+  <meta name="keywords" content="c++ tutorial, inheritance, virtual functions & polymorphism (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -490,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 11: C++ Inheritance, Virtual Functions & Runtime Polymorphism Masterclass</span>
+      <span class="current">Lesson 11: Inheritance, Virtual Functions & Polymorphism (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Inheritance, Virtual Functions & Runtime Polymorphism Masterclass</h1>
+    <h1 class="page-title">Inheritance, Virtual Functions & Polymorphism (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 11</span>
@@ -501,199 +478,142 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Base & Derived Classes · public/protected/private Inheritance · Virtual Functions · vtable · Pure Virtual · Abstract Classes · virtual Destructor · dynamic_cast · Composition vs Inheritance</span>
+      <span>Inheritance Types · Base vs Derived · Virtual Functions · V-Table & V-Ptr · Runtime Polymorphism</span>
     </div>
-<div class="intro-box">
-  <p>Welcome to <strong>Phase 11: Inheritance &amp; Polymorphism</strong>! Inheritance lets a derived class reuse, extend, and specialize a base class. Polymorphism (runtime dispatch through virtual functions) allows a base-class pointer/reference to call the correct overridden method at runtime — the foundation of object-oriented design in C++.</p>
-</div>
 
-<div class="section-title"><span class="num">1</span>Inheritance Basics — Base &amp; Derived Classes</div>
-<div class="section-body">
-  <p class="text-prose">A <strong>derived class</strong> inherits members from a <strong>base class</strong>. Access specifier in the inheritance declaration controls how base members are seen in the derived class and outside world.</p>
-  <table class="tbl spec-table">
-    <thead><tr><th>Inheritance Type</th><th>public in Base</th><th>protected in Base</th><th>private in Base</th></tr></thead>
-    <tbody>
-      <tr><td><code>public</code> inheritance</td><td>public</td><td>protected</td><td>inaccessible</td></tr>
-      <tr><td><code>protected</code> inheritance</td><td>protected</td><td>protected</td><td>inaccessible</td></tr>
-      <tr><td><code>private</code> inheritance</td><td>private</td><td>private</td><td>inaccessible</td></tr>
-    </tbody>
-  </table>
-  <div class="concept-box">
-    <h4>Inheritance Hierarchy Types:</h4>
-    <p>• <strong>Single:</strong> One derived from one base.</p>
-    <p>• <strong>Multilevel:</strong> A → B → C chain.</p>
-    <p>• <strong>Multiple:</strong> Derived inherits from two or more bases.</p>
-    <p>• <strong>Hierarchical:</strong> Multiple derived classes from one base.</p>
-  </div>
-</div>
+    <div class="intro-box">
+      <p>ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) లో రెండు అతిపెద్ద పిల్లర్స్ ఉన్నాయి. అందులో ఒకటి <strong>Inheritance (వారసత్వం)</strong>, మరొకటి <strong>Polymorphism (బహురూపకత)</strong>. ఒకసారి రాసిన కోడ్ ని పదే పదే రాయకుండా, ఉన్న కోడ్ నే కొద్దిగా మార్చుకుని కొత్త ఫీచర్స్ తయారు చేయడానికి ఇవి ఎంతో ఉపయోగపడతాయి. ముఖ్యంగా గేమ్ డెవలప్‌మెంట్ లాంటి పెద్ద ప్రాజెక్ట్స్ లో వందలాది క్యారెక్టర్స్ కి ఒకే రకమైన మూమెంట్స్ (నడక, పరుగు) ఉన్నప్పుడు, ప్రతి ఒక్కరికీ విడివిడిగా కోడ్ రాయలేము. అప్పుడే ఈ బేస్ క్లాస్ - డిరైవ్డ్ క్లాస్ కాన్సెప్ట్ మనల్ని కాపాడుతుంది. పైగా C++ కి మాత్రమే ప్రత్యేకం అయిన Virtual Table (v-table) ఎలా పనిచేస్తుందో ఈ రోజు డీప్ గా పోస్ట్‌మార్టం చేసి తెలుసుకుందాం.</p>
+    </div>
 
-<div class="section-title"><span class="num">2</span>Virtual Functions &amp; Runtime Polymorphism</div>
-<div class="section-body">
-  <p class="text-prose">Declaring a method <code>virtual</code> in the base class tells the compiler to use the <strong>vtable (virtual dispatch table)</strong> mechanism. At runtime, the actual object type determines which override is called — this is <strong>runtime polymorphism</strong>.</p>
-  <div class="concept-box">
-    <h4>Key Rules:</h4>
-    <p>• Always mark the destructor <code>virtual</code> in a polymorphic base class to prevent undefined behaviour on delete.</p>
-    <p>• Use <code>override</code> keyword in derived classes to catch typos at compile time.</p>
-    <p>• Use <code>final</code> to prevent further overriding.</p>
-    <p>• A <strong>pure virtual function</strong> (<code>= 0</code>) makes the class <em>abstract</em> — it cannot be instantiated directly.</p>
-  </div>
-  <div class="memory-diagram">Virtual Table (vtable) mechanism:
+    <div class="section-title"><span class="num">1</span> అసలు Inheritance (వారసత్వం) ఎందుకు అవసరం?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీరు ఒక జూ (Zoo) కి సంబంధించిన సాఫ్ట్‌వేర్ రాస్తున్నారు అనుకోండి. అందులో "సింహం (Lion)", "ఏనుగు (Elephant)", "కుక్క (Dog)" అనే మూడు క్లాసెస్ తయారు చేయాలి. మూడింటికి కామన్ గా కొన్ని లక్షణాలు ఉంటాయి: ప్రాణం ఉంటుంది, తింటాయి, నిద్రపోతాయి, అరుస్తాయి. ఆ మూడింటికి విడివిడిగా <code>eat()</code>, <code>sleep()</code> అనే ఫంక్షన్స్ రాస్తే కోడ్ మొత్తం డూప్లికేట్ (డబుల్) అవుతుంది.
+      </p>
 
-  Animal object (base pointer)
-  ┌─────────────────────────────────┐
-  │  vptr ──────────────────────────┼──► Animal::vtable
-  │  data members...               │         │── &amp;Animal::sound()
-  └─────────────────────────────────┘         │── &amp;Animal::~Animal()
+      <div class="deep-dive-card">
+        <h3>🦁 రియల్ లైఫ్ స్టోరీ: జంతువులు - బేస్ క్లాస్ మరియు డిరైవ్డ్ క్లాస్</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          ఈ డూప్లికేషన్ ప్రాబ్లెమ్ ని సాల్వ్ చేయడానికి ప్రోగ్రామర్స్ ఏం చేస్తారంటే, ముందుగా <strong>"Animal"</strong> అనే ఒక పెద్ద క్లాస్ (దీన్నే Base Class లేదా Parent Class అంటారు) తయారు చేస్తారు. అందులో కామన్ గా ఉండే <code>eat()</code>, <code>sleep()</code> లాంటివి రాసి పెడతారు.<br><br>
+          ఆ తర్వాత <strong>Lion</strong> మరియు <strong>Elephant</strong> అనే చిన్న క్లాసెస్ (దీన్నే Derived Class లేదా Child Class అంటారు) తయారు చేసి, వాటిని <strong>Animal</strong> కి లింక్ చేస్తారు (దీన్నే Inherit చేసుకోవడం అంటారు). ఇలా లింక్ చేసిన వెంటనే, Animal లో ఉన్న ఫంక్షన్స్ అన్నీ ఆటోమేటిక్ గా Lion లోకి వచ్చేస్తాయి! మళ్ళీ రాయక్కర్లేదు. ఇప్పుడు Lion క్లాస్ లో కేవలం సింహానికి మాత్రమే ప్రత్యేకమైన <code>roar()</code> (గర్జించడం) ఫంక్షన్ రాసుకుంటే చాలు. ఇదే ఇన్హెరిటెన్స్ మ్యాజిక్!
+        </p>
+      </div>
+    </div>
 
-  Dog object (actual runtime type)
-  ┌─────────────────────────────────┐
-  │  vptr ──────────────────────────┼──► Dog::vtable
-  │  data members...               │         │── &amp;Dog::sound()   ← OVERRIDE
-  └─────────────────────────────────┘         │── &amp;Dog::~Dog()
-  
-  animal.sound() → vptr lookup → Dog::sound() called ✅</div>
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Polymorphism, Virtual &amp; Pure Virtual</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;memory&gt;
-#include &lt;vector&gt;
+    <div class="section-title"><span class="num">2</span> Polymorphism (పాలిమార్ఫిజం) అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        "Poly" అంటే చాలా (Many), "Morphs" అంటే రూపాలు (Forms). ఒకే ఫంక్షన్ వేరువేరు క్లాసెస్ లో వేరువేరు విధాలుగా పనిచేయడాన్నే పాలిమార్ఫిజం అంటారు. ఉదాహరణకు, <code>Animal</code> క్లాస్ లో <code>makeSound()</code> అనే ఫంక్షన్ ఉందనుకోండి. ఆ ఫంక్షన్ ని కుక్క (Dog) కాల్ చేస్తే "భౌ భౌ" అనాలి, పిల్లి (Cat) కాల్ చేస్తే "మియావ్" అనాలి. ఒకే <code>makeSound()</code> పేరు... కానీ అది పనిచేసే విధానం ఆబ్జెక్ట్ ని బట్టి మారిపోతుంది.
+      </p>
+    </div>
 
+    <div class="section-title"><span class="num">3</span> Virtual Functions మరియు V-Table రహస్యం</div>
+    <div class="section-body">
+      <p class="text-prose">
+        C++ లో పాలిమార్ఫిజం సాధించాలంటే బేస్ క్లాస్ లోని ఫంక్షన్ కి ముందు <strong><code>virtual</code></strong> అనే కీవర్డ్ పెట్టాలి. ఆ <code>virtual</code> అని పెడితే కంపైలర్ బ్యాక్ గ్రౌండ్ లో ఏం చేస్తుందో తెలుసా? ఒక రహస్యమైన టేబుల్ ని క్రియేట్ చేస్తుంది. దాన్నే <strong>V-Table (Virtual Table)</strong> అంటారు.
+      </p>
+      <p class="text-prose">
+        మీరు ప్రోగ్రామ్ ని రన్ చేసినప్పుడు, పాయింటర్ ఏ ఆబ్జెక్ట్ ని పట్టుకుని ఉందో చూసుకుని (అది కుక్కనా లేక పిల్లా అని), ఆ V-Table లో వెతికి కరెక్ట్ ఫంక్షన్ ని ఆన్ ది స్పాట్ (Runtime) లో కాల్ చేస్తుంది. దీనికి కొంచెం ఎక్స్ట్రా మెమరీ (V-Ptr) మరియు మైక్రో సెకండ్స్ టైమ్ పడుతుంది, కానీ ఇది ఎంతో పవర్ ఫుల్!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> ఒకే ఒక సింపుల్ కోడ్ (Runtime Polymorphism)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో <code>virtual</code> కీవర్డ్ వాడి <code>makeSound()</code> అనే ఒకే ఫంక్షన్ తో కుక్కని, పిల్లిని ఎలా అరిపించామో (Polymorphism) జాగ్రత్తగా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — Inheritance & Virtual Functions</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+// Base Class (పేరెంట్)
 class Animal {
 public:
-    virtual void sound() const {
-        std::cout &lt;&lt; "Generic animal sound
-";
+    // virtual పెట్టడం వల్ల కంపైలర్ కి అర్థమవుతుంది ఇది చైల్డ్ లో మారబోతోందని
+    virtual void makeSound() {
+        std::cout << "Some generic animal sound..." << std::endl;
     }
-    virtual std::string name() const = 0;  // pure virtual → abstract class
-    virtual ~Animal() = default;           // virtual destructor ESSENTIAL!
 };
 
+// Derived Class 1 (చైల్డ్)
 class Dog : public Animal {
 public:
-    void sound() const override {
-        std::cout &lt;&lt; "Dog: Woof! Woof!
-";
+    // బేస్ క్లాస్ ఫంక్షన్ ని ఓవర్ రైడ్ (Override) చేస్తున్నాం
+    void makeSound() override {
+        std::cout << "Dog says: Bow Bow!" << std::endl;
     }
-    std::string name() const override { return "Dog"; }
 };
 
+// Derived Class 2 (చైల్డ్)
 class Cat : public Animal {
 public:
-    void sound() const override {
-        std::cout &lt;&lt; "Cat: Meow!
-";
-    }
-    std::string name() const override { return "Cat"; }
-};
-
-class GuideDog : public Dog {        // multilevel inheritance
-public:
-    void guide() const {
-        std::cout &lt;&lt; "GuideDog: Leading the way!
-";
+    void makeSound() override {
+        std::cout << "Cat says: Meow Meow!" << std::endl;
     }
 };
 
 int main() {
-    // Runtime polymorphism via base-class pointer
-    std::vector&lt;std::unique_ptr&lt;Animal&gt;&gt; animals;
-    animals.push_back(std::make_unique&lt;Dog&gt;());
-    animals.push_back(std::make_unique&lt;Cat&gt;());
-    animals.push_back(std::make_unique&lt;GuideDog&gt;());
-
-    for (const auto&amp; a : animals) {
-        std::cout &lt;&lt; a-&gt;name() &lt;&lt; ": ";
-        a-&gt;sound();
-    }
-
-    // dynamic_cast for safe downcasting
-    Animal* ptr = new GuideDog();
-    if (auto* gd = dynamic_cast&lt;GuideDog*&gt;(ptr)) {
-        gd-&gt;guide();
-    }
-    delete ptr;
+    // బేస్ క్లాస్ పాయింటర్ (Animal*) తో చైల్డ్ ఆబ్జెక్ట్స్ ని కంట్రోల్ చేయడం
+    Animal* myPet1 = new Dog();
+    Animal* myPet2 = new Cat();
+    
+    // ఒకే రకమైన పాయింటర్, కానీ ఆబ్జెక్ట్ ని బట్టి రిజల్ట్ మారుతుంది!
+    myPet1->makeSound(); // ఇది Bow Bow అని వస్తుంది
+    myPet2->makeSound(); // ఇది Meow Meow అని వస్తుంది
+    
+    // మెమరీ లీక్ రాకుండా డిలీట్ చేయాలి
+    delete myPet1;
+    delete myPet2;
+    
     return 0;
 }</code></pre>
-  </div>
-</div>
+      </div>
+    </div>
 
-<div class="section-title"><span class="num">3</span>Upcasting, Downcasting &amp; dynamic_cast</div>
-<div class="section-body">
-  <table class="tbl spec-table">
-    <thead><tr><th>Cast Type</th><th>Direction</th><th>Safety</th><th>Example</th></tr></thead>
-    <tbody>
-      <tr><td>Upcasting</td><td>Derived → Base</td><td>Always safe (implicit)</td><td><code>Animal* a = &amp;dog;</code></td></tr>
-      <tr><td>Downcasting (static)</td><td>Base → Derived</td><td>Unsafe — programmer must verify type</td><td><code>static_cast&lt;Dog*&gt;(a)</code></td></tr>
-      <tr><td>Downcasting (dynamic)</td><td>Base → Derived</td><td>Runtime-checked; returns nullptr if wrong</td><td><code>dynamic_cast&lt;Dog*&gt;(a)</code></td></tr>
-    </tbody>
-  </table>
-  <div class="concept-box">
-    <h4>Composition vs Inheritance:</h4>
-    <p>• <strong>Inheritance</strong> expresses an IS-A relationship (Dog IS-A Animal).</p>
-    <p>• <strong>Composition</strong> expresses a HAS-A relationship (Car HAS-A Engine). Prefer composition for flexibility — it avoids deep inheritance hierarchies and fragile base-class coupling.</p>
-  </div>
-</div>
+    <div class="section-title"><span class="num">5</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>class Dog : public Animal</code>: ఇక్కడ <code>public Animal</code> అని రాయడం వల్ల, Animal లో ఉన్న లక్షణాలన్నీ Dog లోకి వచ్చేశాయి.</li>
+        <li><code>virtual void makeSound()</code>: పేరెంట్ లో virtual అని పెట్టకపోతే, మీరు <code>Animal*</code> పాయింటర్ వాడినప్పుడు అది ఎప్పటికీ పేరెంట్ లో ఉన్న "generic sound" నే కాల్ చేస్తుంది. Virtual పెట్టడం వల్లే అది ఒరిజినల్ ఆబ్జెక్ట్ (కుక్క) ఫంక్షన్ ని రన్ చేస్తుంది.</li>
+        <li><code>override</code>: ఇది C++11 లో వచ్చిన ఫీచర్. మనం కావాలనే పేరెంట్ ఫంక్షన్ ని మారుస్తున్నాం అని కంపైలర్ కి క్లారిటీ ఇవ్వడానికి (స్పెల్లింగ్ మిస్టేక్స్ లేకుండా) ఇది వాడుతాం.</li>
+        <li><code>Animal* myPet1 = new Dog();</code>: దీన్నే <strong>Upcasting</strong> అంటారు. ఒక పేరెంట్ పాయింటర్ తో చైల్డ్ ఆబ్జెక్ట్ ని స్టోర్ చేయడం. పెద్ద ప్రాజెక్ట్స్ లో వేలాది ఆబ్జెక్ట్స్ ని ఒకే అర్రే (Array of Animal Pointers) లో పెట్టి లూప్ తిప్పడానికి ఇది ప్రాణం లాంటిది.</li>
+      </ul>
+    </div>
 
-<div class="section-title"><span class="num">4</span>Abstract Classes &amp; Interface-Style Design</div>
-<div class="section-body">
-  <p class="text-prose">In C++, an <strong>abstract class</strong> has at least one pure virtual function. It defines a contract that all derived classes must fulfill. This mimics Java/C# interfaces without a separate <code>interface</code> keyword.</p>
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Abstract Interface Pattern</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
-
-class ILogger {                     // Interface-style abstract base
-public:
-    virtual void log(const std::string&amp; msg) const = 0;
-    virtual void setLevel(int level) = 0;
-    virtual ~ILogger() = default;
-};
-
-class ConsoleLogger : public ILogger {
-    int level_{0};
-public:
-    void log(const std::string&amp; msg) const override {
-        std::cout &lt;&lt; "[LOG-" &lt;&lt; level_ &lt;&lt; "] " &lt;&lt; msg &lt;&lt; "
-";
-    }
-    void setLevel(int level) override { level_ = level; }
-};
-
-void processWithLogger(ILogger&amp; logger) {
-    logger.setLevel(2);
-    logger.log("System started successfully");
-}
-
-int main() {
-    ConsoleLogger clog;
-    processWithLogger(clog);
-    return 0;
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">5</span>Technical FAQs</div>
-<div class="section-body">
-  <div class="faq-grid">
-    <div class="faq-item"><h4>Q1: Why is virtual destructor important?</h4><p>Without a virtual destructor, deleting a Derived object through a Base pointer calls only the Base destructor — the Derived destructor is skipped, causing resource leaks.</p></div>
-    <div class="faq-item"><h4>Q2: What is the diamond problem in multiple inheritance?</h4><p>When two base classes share a common ancestor, the derived class gets two copies of that ancestor. Solved with <code>virtual</code> inheritance: <code>class B : virtual public A</code>.</p></div>
-    <div class="faq-item"><h4>Q3: Can a constructor be virtual?</h4><p>No. Constructors cannot be virtual because the vtable is set up during construction — the object type isn't fully known yet.</p></div>
-    <div class="faq-item"><h4>Q4: What is the overhead of virtual functions?</h4><p>Each polymorphic object carries a hidden vptr (8 bytes on 64-bit). Each virtual call does one extra pointer dereference — negligible in almost all applications.</p></div>
-    <div class="faq-item"><h4>Q5: What does override keyword do?</h4><p><code>override</code> instructs the compiler to verify the function actually overrides a virtual function in the base. It catches typos and signature mismatches at compile time.</p></div>
-  </div>
-</div>
+    <div class="section-title"><span class="num">6</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: C++ లో Multiple Inheritance (రెండు పేరెంట్స్ నుండి వారసత్వం) ఉంటుందా?</h4>
+          <p>ఉంటుంది! జావా లో మల్టిపుల్ ఇన్హెరిటెన్స్ ఉండదు, కానీ C++ లో ఒక చైల్డ్ కి ఇద్దరు పేరెంట్స్ (ఉదాహరణకు <code>class SmartPhone : public Phone, public Camera</code>) ఉండొచ్చు. అయితే దీనివల్ల ఒక పెద్ద ప్రాబ్లెమ్ వస్తుంది, దాన్నే <strong>"Diamond Problem"</strong> అంటారు. దీన్ని సాల్వ్ చేయడానికి మళ్ళీ <code>virtual inheritance</code> అనే అడ్వాన్స్డ్ టెక్నిక్ వాడాలి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Pure Virtual Function అంటే ఏంటి? Abstract Class అంటే ఏంటి?</h4>
+          <p>కొన్నిసార్లు పేరెంట్ క్లాస్ లో ఫంక్షన్ బాడీ ఉండకూడదు, కేవలం హెడ్డింగ్ మాత్రమే ఉండాలి. అప్పుడు <code>virtual void makeSound() = 0;</code> అని రాస్తారు. దీన్నే ప్యూర్ వర్చువల్ ఫంక్షన్ అంటారు. ఏ క్లాస్ లో అయితే కనీసం ఒక ప్యూర్ వర్చువల్ ఫంక్షన్ ఉంటుందో దాన్ని <strong>Abstract Class (అబ్స్ట్రాక్ట్ క్లాస్)</strong> అంటారు. ఈ అబ్స్ట్రాక్ట్ క్లాస్ కి మీరు <code>new</code> వాడి డైరెక్ట్ గా ఆబ్జెక్ట్ క్రియేట్ చేయలేరు!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: Destructor ని ఎందుకు ఎప్పుడూ <code>virtual</code> గా పెట్టమని చెప్తారు?</h4>
+          <p>ఇది చాలా ఇంపార్టెంట్ ఇంటర్వ్యూ క్వశ్చన్! మీరు పేరెంట్ పాయింటర్ (Animal*) తో చైల్డ్ ఆబ్జెక్ట్ (Dog) ని క్రియేట్ చేసి, చివరికి <code>delete myPet1;</code> అని కాల్ చేస్తే, కంపైలర్ కేవలం Animal డిస్ట్రక్టర్ ని మాత్రమే రన్ చేసి Dog డిస్ట్రక్టర్ ని వదిలేస్తుంది (దీనివల్ల మెమరీ లీక్ వస్తుంది). అదే మీరు బేస్ క్లాస్ లో <code>virtual ~Animal()</code> అని పెడితే, అది ముందు కుక్క డిస్ట్రక్టర్ ని కాల్ చేసి, ఆ తర్వాత యానిమల్ డిస్ట్రక్టర్ ని క్లీన్ చేస్తుంది. పూర్తి సేఫ్టీ!</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="10-cpp-constructors-destructors-rule-of-five-and-raii.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">10. Constructors, Destructors, Rule of 5 & RAII</span>
+    <span class="title">10. Constructors & RAII</span>
   </a>
   <a href="12-cpp-operator-overloading-friend-functions-and-stream-operators.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">12. Operator Overloading, Friend Functions & Streams</span>
+    <span class="title">12. Operator Overloading</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

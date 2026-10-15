@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Type Casting (Widening/Narrowing) & var Keyword — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Comprehensive masterclass on Java type conversion: widening automatic casting, narrowing explicit casting, truncation and overflow risks, character-to-integer Unicode conversions, and local variable type inference with the modern var keyword (Java 10+)." />
-  <meta name="keywords" content="java type casting (widening/narrowing) & var keyword, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Type Casting (Widening/Narrowing) & var Keyword (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="ఒక డేటా టైప్ లో ఉన్న వాల్యూ ని వేరే డేటా టైప్ లోకి ఎలా మార్చాలి (Type Casting)? చిన్నదాన్ని పెద్ద దానిలోకి వేస్తే ఏమవుతుంది? పెద్ద దాన్ని చిన్నదాంట్లోకి వేస్తే డేటా ఎలా మిస్ అవుతుంది? మరియు జావా 10 లో కొత్తగా వచ్చిన `var` కీవర్డ్ తో ఈజీగా కోడ్ ఎలా రాయాలో చూద్దాం." />
+  <meta name="keywords" content="java type casting (widening/narrowing) & var keyword (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/09-java-type-casting-and-var-inference.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 9: 9. Type Casting & var</span>
     </div>
 
-    <h1 class="page-title">Java Type Casting (Widening/Narrowing) & var Keyword</h1>
+    <h1 class="page-title">Java Type Casting (Widening/Narrowing) & var Keyword (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,81 +541,79 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Comprehensive masterclass on Java type conversion: widening automatic casting, narrowing explicit casting, truncation and overflow risks, character-to-integer Unicode conversions, and local variable type inference with the modern var keyword (Java 10+).</p>
+      <p>ఒక డేటా టైప్ లో ఉన్న వాల్యూ ని వేరే డేటా టైప్ లోకి ఎలా మార్చాలి (Type Casting)? చిన్నదాన్ని పెద్ద దానిలోకి వేస్తే ఏమవుతుంది? పెద్ద దాన్ని చిన్నదాంట్లోకి వేస్తే డేటా ఎలా మిస్ అవుతుంది? మరియు జావా 10 లో కొత్తగా వచ్చిన `var` కీవర్డ్ తో ఈజీగా కోడ్ ఎలా రాయాలో చూద్దాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. What is Type Casting in Java?</h2>
+      <h2>1. Type Casting అంటే ఏంటి?</h2>
       <div class="theory-text">
-        <p><strong>Type Casting</strong> is the process of converting a value of one primitive data type into another data type.</p>
-<p>In Java, type casting is divided into two primary categories:</p>
+        <p><strong>Type Casting</strong> అంటే ఒక డేటా టైప్ లో ఉన్న వాల్యూ ని వేరే డేటా టైప్ కి మార్చడం.</p>
+<p>దీంట్లో మెయిన్ గా రెండు రకాలు ఉంటాయి:</p>
 <div class="code-block"><pre><code>+-----------------------------------------------------------------------------------+
 |                        JAVA TYPE CASTING HIERARCHY                                |
 +-----------------------------------------------------------------------------------+
-|  1. WIDENING CASTING (Implicit / Automatic - Safe, No Data Loss)                  |
+|  1. WIDENING CASTING (చిన్నదాని నుంచి పెద్దదానికి - ఆటోమేటిక్ గా జరుగుతుంది)              |
 |     byte -&gt; short -&gt; char -&gt; int -&gt; long -&gt; float -&gt; double                       |
-|     (Smaller memory size converted automatically to larger memory container)      |
+|     (చిన్న సైజు ఉన్న డేటాని పెద్ద బాక్స్ లో పెడుతున్నాం కాబట్టి ఏ ప్రాబ్లమ్ రాదు)                 |
 +-----------------------------------------------------------------------------------+
-|  2. NARROWING CASTING (Explicit / Manual - Dangerous, Potential Data Loss)        |
+|  2. NARROWING CASTING (పెద్దదాని నుంచి చిన్నదానికి - మనమే మాన్యువల్ గా చేయాలి)            |
 |     double -&gt; float -&gt; long -&gt; int -&gt; char -&gt; short -&gt; byte                       |
-|     (Larger memory size forced into smaller memory container with (type) syntax)  |
+|     (పెద్ద సైజు డేటాని చిన్న బాక్స్ లోకి కుక్కుతున్నాం కాబట్టి డేటా మిస్ అవ్వొచ్చు!)             |
 +-----------------------------------------------------------------------------------+</code></pre></div>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Widening Casting (Implicit / Automatic)</h2>
+      <h2>2. Widening Casting (ఆటోమేటిక్ గా జరిగేది)</h2>
       <div class="theory-text">
-        <p>Widening casting happens automatically when passing a smaller data type to a larger data type container. Because the destination container has more bits than the source, <strong>no data loss occurs</strong>:</p>
+        <p>ఒక చిన్న డేటా టైప్ (ఉదా: <code>int</code>) లో ఉన్న వాల్యూని పెద్ద డేటా టైప్ (ఉదా: <code>double</code>) కి ఇస్తే జావా ఎవరికీ చెప్పకుండా సైలెంట్ గా మార్చేసుకుంటుంది. దీనివల్ల డేటా ఏమీ పోదు.</p>
 <div class="code-block"><pre><code>int smallNumber = 100;
-double largeNumber = smallNumber; // Automatic Widening: int (4 bytes) -&gt; double (8 bytes)
-<p>System.out.println(smallNumber); // 100<br>System.out.println(largeNumber); // 100.0</code></pre></div></p>
+double largeNumber = smallNumber; // int(4 bytes) కాస్త double(8 bytes) అయిపోయింది
+<p>System.out.println(smallNumber); // 100<br>System.out.println(largeNumber); // 100.0 (చివర ఆటోమాటిక్ గా పాయింట్ జీరో వచ్చింది)</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Narrowing Casting (Explicit / Manual) & Overflow Risks</h2>
+      <h2>3. Narrowing Casting (మనం ఫోర్స్ చేసి చేయాలి)</h2>
       <div class="theory-text">
-        <p>Narrowing casting must be done manually by placing the target type in parentheses <code>(targetType)</code> before the value.</p>
-<p>Because you are cramming a larger number of bits into a smaller memory container, <strong>precision loss (truncation of decimals) or arithmetic integer overflow</strong> can occur:</p>
-<div class="code-block"><pre><code>// Decimal Truncation:
+        <p>ఒక పెద్ద డేటా టైప్ (ఉదా: <code>double</code>) వాల్యూ ని చిన్న డేటా టైప్ (ఉదా: <code>int</code>) లోకి మార్చాలి అంటే ఆటోమేటిక్ గా జరగదు. మనం ఫోర్స్ చేయాలి. ఎలా అంటే, మనం మార్చాలనుకున్న టైప్ ని బ్రాకెట్స్ లో <code>(int)</code> అని ముందు పెట్టాలి.</p>
+<p>ఇలా పెద్దదాన్ని చిన్నదాంట్లోకి కుక్కడం వల్ల <strong>డేటా మిస్ అయ్యే ఛాన్స్</strong> ఉంది (ఉదాహరణకి డెసిమల్స్ పోతాయి):</p>
+<div class="code-block"><pre><code>// డెసిమల్స్ పోవడం:
 double itemPrice = 99.95;
-int truncatedPrice = (int) itemPrice; // Fractional decimals (.95) discarded! Evaluates to 99
-<p>// Byte Overflow (Wrap-around):<br>int largeInt = 130;<br>byte overflowByte = (byte) largeInt; // Max byte is 127! Wraps around to -126!</code></pre></div></p>
+int truncatedPrice = (int) itemPrice; // పాయింట్ తర్వాత ఉన్న .95 ని జావా కట్ చేసి పారేస్తుంది! కేవలం 99 మాత్రమే మిగులుతుంది.
+<p>// బైట్ లిమిట్ దాటిపోవడం:<br>int largeInt = 130;<br>byte overflowByte = (byte) largeInt; // బైట్ కి మాక్సిమం 127 వరకే పడుతుంది. ఇక్కడ 130 ఇస్తే అది కన్ఫ్యూజ్ అయిపోయి మైనస్ 126 (-126) కి మారిపోతుంది!</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Char to Int & Int to Char (Unicode Code Points)</h2>
+      <h2>4. అక్షరాలని నంబర్స్ లాగా మార్చొచ్చా (Char to Int)?</h2>
       <div class="theory-text">
-        <p>Because <code>char</code> is an unsigned 16-bit numeric type under the hood, you can freely cast between characters and their integer ASCII/Unicode values:</p>
+        <p>జావాలో <code>char</code> కి 2 బైట్స్ ఉంటాయి, అంతేకాకుండా వెనకాల ప్రతి అక్షరానికి ఒక నంబర్ (Unicode) లింక్ అయి ఉంటుంది. కాబట్టి మనం ఈజీగా నంబర్స్ ని అక్షరాల్లా, అక్షరాల్ని నంబర్స్ లా మార్చుకోవచ్చు.</p>
 <div class="code-block"><pre><code>char letter = 'A';
-int asciiValue = (int) letter; // Evaluates to 65
-<p>int charCode = 66;<br>char convertedChar = (char) charCode; // Evaluates to 'B'</code></pre></div></p>
+int code = (int) letter; // 65 వస్తుంది
+<p>int myCode = 66;<br>char myLetter = (char) myCode; // 'B' వస్తుంది</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. Modern Java: Local Variable Type Inference with `var`</h2>
+      <h2>5. కొత్తగా వచ్చిన `var` కీవర్డ్ (జావా 10 నుంచి)</h2>
       <div class="theory-text">
-        <p>Starting in <strong>Java 10</strong>, Java introduced the <strong><code>var</code></strong> keyword for <strong>Local Variable Type Inference</strong>.</p>
-<p>With <code>var</code>, the compiler automatically detects the variable's type from the right-hand initialization expression:</p>
-<div class="code-block"><pre><code>var age = 25;                       // Inferred as int
-var price = 99.99;                  // Inferred as double
-var greeting = "Hello, Java 21!";   // Inferred as String
-var active = true;                  // Inferred as boolean
-var usersList = new ArrayList&lt;String&gt;(); // Inferred as ArrayList&lt;String&gt;</code></pre></div>
-<h3>Crucial Rules for Using <code>var</code>:</h3>1. <strong>Still Statically Typed:</strong> <code>var</code> does NOT make Java dynamically typed like Python/JavaScript. Once inferred, the type is fixed!
+        <p>జావా 10 నుంచి మనం ప్రతిసారి <code>int</code>, <code>String</code> అని చెప్పాల్సిన పనిలేకుండా, సింపుల్ గా <strong><code>var</code></strong> వాడుకోవచ్చు. మనం ఇచ్చిన వాల్యూ ని బట్టి అది ఏ టైపో కంపైలర్ ఆటోమాటిక్ గా గుర్తుపడుతుంది.</p>
+<div class="code-block"><pre><code>var age = 25;                       // వాల్యూ 25 కాబట్టి ఇది int అని అదే అర్థం చేసుకుంటుంది
+var price = 99.99;                  // ఇది double
+var greeting = "Hello!";            // ఇది String
+var isOk = true;                    // ఇది boolean</code></pre></div>
+<h3>var వాడుతున్నప్పుడు గుర్తుపెట్టుకోవాల్సిన రూల్స్:</h3>1. <strong>మధ్యలో మార్చలేం:</strong> మీరు ఒకసారి నంబర్ ఇస్తే, అది <code>int</code> అయిపోతుంది. తర్వాత వెళ్లి అందులో టెక్స్ట్ పెడతా అంటే ఒప్పుకోదు. (ఇది పైథాన్ లాగా డైనమిక్ కాదు).
    <div class="code-block"><pre><code>var count = 10;
-   // count = "ten"; // COMPILE ERROR: incompatible types!</code></pre></div>
-2. <strong>Local Variables Only:</strong> <code>var</code> can ONLY be used inside method bodies. It CANNOT be used for class fields, method parameters, or return types.
-3. <strong>Mandatory Initialization:</strong> <code>var x;</code> is illegal because the compiler cannot infer an uninitialized variable.
+   // count = "ten"; // ఎర్రర్ వస్తుంది!</code></pre></div>
+2. <strong>లోకల్ గా మాత్రమే:</strong> ఫంక్షన్స్ లోపల మాత్రమే <code>var</code> వాడాలి. క్లాస్ లో పైన రాయడానికి లేదు.
+3. <strong>కచ్చితంగా వాల్యూ ఇవ్వాలి:</strong> <code>var x;</code> అని వదిలేయడానికి కుదరదు. వాల్యూ ఇవ్వకపోతే అది ఏ టైపో కంపైలర్ కి ఎలా తెలుస్తుంది?
       </div>
     </section>
   
@@ -631,35 +629,33 @@ var usersList = new ArrayList&lt;String&gt;(); // Inferred as ArrayList&lt;Strin
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>import java.util.ArrayList;
-
-public class Main {
+        <pre><code>public class Main {
     public static void main(String[] args) {
-        // 1. Widening Casting (Implicit)
-        int salaryInt = 50000;
-        double salaryDouble = salaryInt; // int -&gt; double
+        // 1. Widening Casting (చిన్న నుంచి పెద్దకి)
+        int salary = 50000;
+        double salaryDouble = salary;
         System.out.println("Widening Casting (int -&gt; double): " + salaryDouble);
 
-        // 2. Narrowing Casting (Explicit Truncation)
-        double marketRate = 1845.75;
-        int roundedRate = (int) marketRate; // Discards .75
-        System.out.println("Narrowing Casting (double -&gt; int): " + roundedRate + " (Decimals discarded)");
+        // 2. Narrowing Casting (పెద్ద నుంచి చిన్నకి)
+        double rate = 1845.75;
+        int rateInt = (int) rate; // పాయింట్ తర్వాత ఉన్నది పోతుంది
+        System.out.println("Narrowing Casting (double -&gt; int): " + rateInt + " (డెసిమల్స్ కట్ అయ్యాయి)");
 
-        // 3. Char to ASCII conversion
+        // 3. Char to Int
         char symbol = 'Z';
-        int asciiCode = (int) symbol;
-        System.out.println("Character '" + symbol + "' has ASCII code: " + asciiCode);
+        int ascii = (int) symbol;
+        System.out.println("అక్షరం '" + symbol + "' కి ఉన్న నంబర్: " + ascii);
 
-        // 4. Local Variable Type Inference with 'var' (Java 10+)
-        var transactionId = 987654321L;     // Inferred as long
-        var accountHolder = "Anita Desai";  // Inferred as String
-        var isVerified    = true;           // Inferred as boolean
+        // 4. var కీవర్డ్
+        var id = 987654321L;     // long అని అదే తెలుసుకుంటుంది
+        var name = "Anitha";     // String
+        var ok = true;           // boolean
 
         System.out.println("
---- Modern Java 'var' Inferred Types ---");
-        System.out.println("Transaction ID : " + transactionId + " (Type: " + ((Object)transactionId).getClass().getSimpleName() + ")");
-        System.out.println("Account Holder : " + accountHolder + " (Type: " + accountHolder.getClass().getSimpleName() + ")");
-        System.out.println("Verified Status: " + isVerified);
+--- var వాడి క్రియేట్ చేసినవి ---");
+        System.out.println("ID  : " + id + " (టైప్: Long)");
+        System.out.println("పేరు: " + name + " (టైప్: String)");
+        System.out.println("Okనా: " + ok);
     }
 }</code></pre>
       </div>
@@ -667,39 +663,39 @@ public class Main {
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
         <div class="output-content">Widening Casting (int -&gt; double): 50000.0
-Narrowing Casting (double -&gt; int): 1845 (Decimals discarded)
-Character 'Z' has ASCII code: 90
+Narrowing Casting (double -&gt; int): 1845 (డెసిమల్స్ కట్ అయ్యాయి)
+అక్షరం 'Z' కి ఉన్న నంబర్: 90
 
---- Modern Java 'var' Inferred Types ---
-Transaction ID : 987654321 (Type: Long)
-Account Holder : Anita Desai (Type: String)
-Verified Status: true</div>
+--- var వాడి క్రియేట్ చేసినవి ---
+ID  : 987654321 (టైప్: Long)
+పేరు: Anitha (టైప్: String)
+Okనా: true</div>
       </div>
 
       <div class="explain-card">
         <h3>🔍 Line-by-Line Code Explanation</h3>
         
     <div class="explain-item">
-      <code class="code-token">double salaryDouble = salaryInt;</code>
-      <p>Implicit widening casting: converts 32-bit integer 50000 into 64-bit float 50000.0 with zero precision loss.</p>
+      <code class="code-token">double salaryDouble = salary;</code>
+      <p>int లో ఉన్నది double లోకి ఆటోమాటిక్ గా మారిపోయింది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">int roundedRate = (int) marketRate;</code>
-      <p>Explicit narrowing cast: truncates decimal fraction .75, keeping integer portion 1845.</p>
+      <code class="code-token">int rateInt = (int) rate;</code>
+      <p>double ని ఫోర్స్ చేసి మరీ int లోకి మార్చాం, కాబట్టి .75 కట్ అయిపోయింది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">int asciiCode = (int) symbol;</code>
-      <p>Converts Unicode character 'Z' to its decimal integer code point (90).</p>
+      <code class="code-token">int ascii = (int) symbol;</code>
+      <p>అక్షరాన్ని (Z) నంబర్ లాగా మారిస్తే 90 వచ్చింది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">var transactionId = 987654321L;</code>
-      <p>Java 10+ local variable type inference: compiler infers type as long at compile-time.</p>
+      <code class="code-token">var id = 987654321L;</code>
+      <p>మనం టైప్ చెప్పకుండా var వాడితే, జావానే దాన్ని లాంగ్ (Long) అని డిసైడ్ చేసింది.</p>
     </div>
   
       </div>
@@ -716,29 +712,28 @@ Verified Status: true</div>
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>public class ByteOverflowInspector {
+        <pre><code>public class OverflowTest {
     public static void main(String[] args) {
-        System.out.println("=== Demonstrating Byte Overflow in Narrowing Cast ===");
+        System.out.println("=== లిమిట్ దాటితే డేటా ఎలా తారుమారు అవుతుందో చూద్దాం ===");
         
-        int originalValue = 130;
-        // Maximum byte value is 127
-        byte castedByte = (byte) originalValue;
+        int orig = 130;
+        // బైట్ కి మాక్సిమం 127 వరకే పడుతుంది
+        byte casted = (byte) orig;
 
-        System.out.println("Original int value : " + originalValue);
-        System.out.println("Casted byte value   : " + castedByte + " (Binary wrap-around!)");
+        System.out.println("ఒరిజినల్ int వాల్యూ : " + orig);
+        System.out.println("బైట్ లోకి మార్చాక    : " + casted + " (మైనస్ లోకి వెళ్లిపోయింది!)");
 
-        // Explanation of binary wrap-around
-        // 130 in binary (32-bit): 00000000 00000000 00000000 10000010
-        // Lower 8-bits:          10000010 (In Two's Complement signed byte, MSB 1 means negative: -126)
+        // వివరణ:
+        // బైట్ 127 వరకు వెళ్ళి, ఆ తర్వాత 128 అవ్వకుండా.. వెనక్కి తిరిగి మైనస్ 128, మైనస్ 127.. అలా మైనస్ 126 కి వచ్చి ఆగుతుంది.
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== Demonstrating Byte Overflow in Narrowing Cast ===
-Original int value : 130
-Casted byte value   : -126 (Binary wrap-around!)</div>
+        <div class="output-content">=== లిమిట్ దాటితే డేటా ఎలా తారుమారు అవుతుందో చూద్దాం ===
+ఒరిజినల్ int వాల్యూ : 130
+బైట్ లోకి మార్చాక    : -126 (మైనస్ లోకి వెళ్లిపోయింది!)</div>
       </div>
     </section>
 
@@ -747,13 +742,13 @@ Casted byte value   : -126 (Binary wrap-around!)</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using var without immediate initialization: Writing "var x;" causes compile error: "cannot infer type for local variable x (cannot use 'var' on variable without initializer)".</li>
+    <li style="margin-bottom:8px; line-height:1.6;">var కి వాల్యూ ఇవ్వకుండా వాడటం: "var x;" అని రాస్తే ఎర్రర్ వస్తుంది. కచ్చితంగా వాల్యూ ఇస్తేనే అది పనిచేస్తుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Using var as a class field: Writing "class User { var age = 20; }" is illegal. var is permitted only for local variables inside methods.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">క్లాస్ లోపల var వాడటం: ఫంక్షన్స్ లోపల మాత్రమే var పనిచేస్తుంది, పైన గ్లోబల్ గా వేరియబుల్స్ కి వాడలేం.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Assuming cast rounds to nearest integer: (int) 9.99 results in 9, NOT 10! Narrowing casting truncates towards zero; it does not perform mathematical rounding. Use Math.round() for rounding.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">Casting చేస్తే రౌండ్ ఆఫ్ అవుతుంది అనుకోవడం: "int x = (int) 9.99;" అంటే 10 రాదు, 9 మాత్రమే వస్తుంది. రౌండ్ ఆఫ్ చేయాలంటే Math.round() వాడాలి.</li>
   
       </ul>
     </div>
@@ -770,15 +765,14 @@ Casted byte value   : -126 (Binary wrap-around!)</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Given a total bill of 1450.85:
-// 1. Cast it to an int (rupeesOnly)
-// 2. Extract the remaining paise as an integer (paiseOnly = (int) Math.round((bill - rupeesOnly) * 100))
-// 3. Print: "₹1450 and 85 Paise"
+// ఒక బిల్ అమౌంట్ 1450.85 ఉంది అనుకోండి:
+// 1. దాన్ని int లోకి మార్చి కేవలం రూపాయలు (1450) సపరేట్ చేయండి.
+// 2. దాన్ని ప్రింట్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
         double bill = 1450.85;
-        // TODO: Perform the casting operations and print formatted bill
+        // TODO: int లోకి మార్చి ప్రింట్ చేయండి
         
     }
 }</code></pre>
@@ -790,20 +784,14 @@ public class Main {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Does using "var" slow down application runtime execution?</h4>
-      <p>Not at all! "var" is resolved entirely at compile-time by javac. The generated .class Bytecode is 100% identical to explicit type declarations, resulting in zero runtime overhead.</p>
+      <h4>❓ var వాడితే ప్రోగ్రామ్ స్లో అవుతుందా?</h4>
+      <p>అస్సలు అవ్వదు. మనం కోడ్ కంపైల్ చేసేటప్పుడే కంపైలర్ దాన్ని ఒరిజినల్ టైప్ (int, String) లాగా మార్చేసుకుంటుంది. కాబట్టి స్పీడ్ ఎక్కడా తగ్గదు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the safe way to cast between Object types?</h4>
-      <p>Always check with "instanceof" before casting objects to avoid runtime ClassCastException: "if (obj instanceof String str) { System.out.println(str.length()); }".</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ Why does integer division truncate decimals before casting?</h4>
-      <p>In "double d = (double) (5 / 2);", the division (5 / 2) executes first as integer math (2), and then 2 is cast to 2.0. To preserve decimals, cast before dividing: "(double) 5 / 2" yields 2.5.</p>
+      <h4>❓ ఒక ఆబ్జెక్ట్ ని ఇంకో ఆబ్జెక్ట్ లోకి టైప్ కాస్ట్ చేయొచ్చా?</h4>
+      <p>చేయొచ్చు, దాన్ని Downcasting / Upcasting అంటారు. కానీ ఎర్రర్ రాకుండా ఉండటానికి "instanceof" వాడి చెక్ చేసుకొని చేయాలి.</p>
     </div>
   
     </section>
@@ -813,16 +801,16 @@ public class Main {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Widening casting (smaller to larger) is automatic and safe from data loss.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">చిన్న డేటాని పెద్ద దానిలోకి మారిస్తే (Widening) ఎలాంటి ప్రాబ్లమ్ రాదు, ఆటోమేటిక్ గా జరిగిపోతుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Narrowing casting (larger to smaller) requires explicit (type) syntax and truncates decimals or overflows.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">పెద్ద డేటాని చిన్నదానిలోకి కుక్కితే (Narrowing) డెసిమల్స్ పోవడం, మైనస్ లోకి వెళ్ళిపోవడం లాంటివి జరుగుతాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">char and int can be converted based on Unicode numeric code points.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">అక్షరాలని ఈజీగా నంబర్స్ లాగా మార్చుకోవచ్చు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">var (Java 10+) provides local variable compile-time type inference without sacrificing static type safety.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">జావా 10 నుంచి ప్రతిదానికీ డేటా టైప్ చెప్పకుండా var వాడుకుని సింపుల్ గా కోడ్ రాయొచ్చు.</li>
   
       </ul>
     </div>

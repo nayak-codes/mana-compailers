@@ -770,7 +770,7 @@ const masterIndexHtml = `<!DOCTYPE html>
       else { content.classList.add('open'); btn.classList.add('active'); }
     }
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
@@ -957,7 +957,7 @@ allFlaskChapters.forEach((ch, idx) => {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Array Algorithms: Sum, Average, Min/Max & Searching — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering essential algorithmic patterns on Java arrays: calculating aggregate metrics (sum, floating-point average), determining minimum and maximum values without off-by-one errors, single-pass second largest discovery, linear search for unsorted data, and high-speed binary search on sorted sequences." />
-  <meta name="keywords" content="java array algorithms: sum, average, min/max & searching, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Array Algorithms: Sum, Average, Min/Max & Searching (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="అరేస్ మీద చేసే కామన్ ఆపరేషన్స్ (Algorithms) ఏంటి? మొత్తం నంబర్స్ ని కలపడం, యావరేజ్ కనుక్కోవడం, అందులో అన్నిటికన్నా పెద్దది (Max) లేదా చిన్నది (Min) ఏది అని కనిపెట్టడం, అలాగే అరే లో మనకు కావాల్సిన ఒక నంబర్ ని వెతకడం (Linear & Binary Search) లాంటి ఇంపార్టెంట్ కాన్సెప్ట్స్ ని ఈ చాప్టర్ లో డీకోడ్ చేద్దాం." />
+  <meta name="keywords" content="java array algorithms: sum, average, min/max & searching (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/29-java-array-algorithms-sum-min-max-and-searching.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 29: 29. Array Math & Search Algorithms</span>
     </div>
 
-    <h1 class="page-title">Java Array Algorithms: Sum, Average, Min/Max & Searching</h1>
+    <h1 class="page-title">Java Array Algorithms: Sum, Average, Min/Max & Searching (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,90 +541,87 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering essential algorithmic patterns on Java arrays: calculating aggregate metrics (sum, floating-point average), determining minimum and maximum values without off-by-one errors, single-pass second largest discovery, linear search for unsorted data, and high-speed binary search on sorted sequences.</p>
+      <p>అరేస్ మీద చేసే కామన్ ఆపరేషన్స్ (Algorithms) ఏంటి? మొత్తం నంబర్స్ ని కలపడం, యావరేజ్ కనుక్కోవడం, అందులో అన్నిటికన్నా పెద్దది (Max) లేదా చిన్నది (Min) ఏది అని కనిపెట్టడం, అలాగే అరే లో మనకు కావాల్సిన ఒక నంబర్ ని వెతకడం (Linear & Binary Search) లాంటి ఇంపార్టెంట్ కాన్సెప్ట్స్ ని ఈ చాప్టర్ లో డీకోడ్ చేద్దాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. Array Aggregations: Sum and Floating-Point Average</h2>
+      <h2>1. అరేలో ఉన్న నంబర్స్ ని కలపడం (Sum) & ఆవరేజ్ (Average)</h2>
       <div class="theory-text">
-        <p>Calculating statistical aggregates over an array requires accumulating values in a running counter:</p>
+        <p>అరే లో ఉన్న నంబర్స్ అన్నింటినీ కలపాలి అంటే ఒక వేరియబుల్ (counter) పెట్టుకుని లూప్ లో కలుపుకుంటూ వెళ్ళాలి:</p>
 <div class="code-block"><pre><code>int[] numbers = {10, 20, 30, 40, 50};
 int sum = 0;
-<p>for (int num : numbers) {<br>    sum += num;<br>}<br>// CRITICAL: Cast sum to double before division to prevent integer truncation!<br>double average = (double) sum / numbers.length;</code></pre></div></p>
-<p><strong>Integer Division Pitfall:</strong><br>If <code>sum = 15</code> and <code>length = 4</code>, <code>15 / 4</code> produces integer <code>3</code>, discarding the decimal <code>.75</code>. Always write <code>(double) sum / length</code> to receive <code>3.75</code>.</p>
+<p>for (int num : numbers) {<br>    sum += num;<br>}<br>// వెరీ వెరీ ఇంపార్టెంట్: ఆవరేజ్ తీసేటప్పుడు sum ని double కి మార్చాలి!<br>double average = (double) sum / numbers.length;</code></pre></div></p>
+<p><strong>ఎక్కువ మంది చేసే తప్పు:</strong><br>ఒకవేళ <code>sum = 15</code> ఉండి <code>length = 4</code> ఉంటే.. మీరు మామూలుగా <code>15 / 4</code> అని రాస్తే జావా <code>3.75</code> బదులు <code>3</code> అని ఇంటిజర్ మాత్రమే ఇస్తుంది (పాయింట్ తర్వాత ఎగిరిపోతుంది). అందుకే దాన్ని ముందే <code>(double) sum / length</code> అని క్యాస్టింగ్ చేస్తే పర్ఫెక్ట్ రిజల్ట్ వస్తుంది.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Finding Maximum and Minimum Elements (The Golden Rule)</h2>
+      <h2>2. మినిమమ్ & మాక్సిమమ్ కనుక్కోవడం (గోల్డెన్ రూల్)</h2>
       <div class="theory-text">
-        <p>To find the maximum or minimum value in an array:</p>
-<p><strong>The Mistake to Avoid:</strong><br>Never initialize <code>int max = 0;</code>! If the array contains only negative numbers (e.g. <code>{-15, -8, -42, -99}</code>), your program will incorrectly report <code>0</code> as the maximum even though <code>0</code> is not in the array!</p>
-<p><strong>The Correct Approach:</strong><br>Always initialize <code>max</code> and <code>min</code> with the <strong>first element</strong> <code>arr[0]</code> (or <code>Integer.MIN_VALUE</code> / <code>Integer.MAX_VALUE</code>):</p>
+        <p>అరే లో అతి పెద్ద నంబర్ లేదా చిన్న నంబర్ కనుక్కోవాలంటే ఒక రూల్ గుర్తుపెట్టుకోవాలి:</p>
+<p><strong>చేయకూడని తప్పు:</strong><br>చాలామంది స్టార్టింగ్ లో <code>int max = 0;</code> అని తీసుకుని కంపేర్ చేస్తారు. ఒకవేళ మీ అరేలో అన్నీ నెగటివ్ నంబర్స్ (<code>{-15, -8, -42}</code>) ఉంటే ఏమవుతుంది? అరే లో లేకపోయినా <code>0</code> అనేది పెద్దది కాబట్టి అదే అవుట్పుట్ లో వస్తుంది. ఇది తప్పు!</p>
+<p><strong>కరెక్ట్ పద్ధతి:</strong><br>ఎప్పుడైనా <code>max</code> లేదా <code>min</code> ని స్టార్ట్ చేసేటప్పుడు అరే లో ఉన్న <strong>మొదటి వాల్యూ తోనే</strong> (<code>arr[0]</code>) స్టార్ట్ చేయాలి:</p>
 <div class="code-block"><pre><code>int[] data = {-15, -8, -42, -99};
 int max = data[0];
 int min = data[0];
-<p>for (int i = 1; i &lt; data.length; i++) {<br>    if (data[i] &gt; max) max = data[i];<br>    if (data[i] &lt; min) min = data[i];<br>}</code></pre></div></p>
+<p>for (int i = 1; i &lt; data.length; i++) {<br>    if (data[i] &gt; max) max = data[i]; // పాత దానికంటే పెద్దదైతే అప్డేట్ చేస్తాం<br>    if (data[i] &lt; min) min = data[i]; // పాత దానికంటే చిన్నదైతే అప్డేట్ చేస్తాం<br>}</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Single-Pass Second Largest Element Algorithm (O(N))</h2>
+      <h2>3. సెకండ్ లార్జెస్ట్ నంబర్ కనుక్కోవడం (సింగిల్ పాస్)</h2>
       <div class="theory-text">
-        <p>Finding the second largest value without sorting (which takes $O(N \log N)$) can be solved in a single $O(N)$ pass:</p>
-<div class="code-block"><pre><code>int largest = Integer.MIN_VALUE;
+        <p>అరేని సార్టింగ్ చేయకుండా (సార్ట్ చేస్తే టైమ్ పడుతుంది కదా).. ఒకేసారి లూప్ వేసి ఫస్ట్ పెద్దది, సెకండ్ పెద్దది ఎలా కనుక్కోవాలి?</p>
+<div class="code-block"><pre><code>int largest = Integer.MIN_VALUE; // జావాలో అతి చిన్న నంబర్ తో స్టార్ట్ చేస్తున్నాం
 int secondLargest = Integer.MIN_VALUE;
-<p>for (int num : arr) {<br>    if (num &gt; largest) {<br>        secondLargest = largest;<br>        largest = num;<br>    } else if (num &gt; secondLargest && num != largest) {<br>        secondLargest = num;<br>    }<br>}</code></pre></div></p>
+<p>for (int num : arr) {<br>    if (num &gt; largest) {<br>        // కొత్తది largest కంటే పెద్దదైతే, పాత largest ని second కి ఇచ్చేసి కొత్తదాన్ని largest లో పెట్టుకుంటాం<br>        secondLargest = largest;<br>        largest = num;<br>    } else if (num &gt; secondLargest && num != largest) {<br>        // largest కంటే చిన్నదే, కానీ second కంటే పెద్దదైతే..<br>        secondLargest = num;<br>    }<br>}</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Linear Search vs Binary Search Comparison</h2>
+      <h2>4. లీనియర్ సెర్చ్ vs బైనరీ సెర్చ్ (Linear vs Binary)</h2>
       <div class="theory-text">
         <div class="ref-table-wrap">
   <table class="ref-table">
     <thead>
       <tr>
-        <th>Algorithm</th>
-        <th>Prerequisite</th>
-        <th>Time Complexity</th>
-        <th>Space Complexity</th>
-        <th>How it Works</th>
+        <th>అల్గారిథమ్</th>
+        <th>రూల్స్ (Prerequisite)</th>
+        <th>స్పీడ్ (Time)</th>
+        <th>ఎలా పనిచేస్తుంది?</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Linear Search</strong></td>
-        <td>None (Works on unsorted arrays)</td>
-        <td><strong>O(N)</strong> (Scans up to N elements)</td>
-        <td>O(1)</td>
-        <td>Iterates from index 0 to length - 1 checking <code>if (arr[i] == target)</code>.</td>
+        <td><strong>లీనియర్ సెర్చ్ (Linear Search)</strong></td>
+        <td>రూల్స్ ఏమీ లేవు (డేటా ఎలా పడితే అలా ఉన్నా పనిచేస్తుంది)</td>
+        <td><strong>O(N)</strong> (స్లో)</td>
+        <td>మొదటినుంచి లాస్ట్ దాకా ఒక్కొక్కటి వరుసగా వెతుక్కుంటూ వెళ్తుంది.</td>
       </tr>
       <tr>
-        <td><strong>Binary Search</strong></td>
-        <td><strong>Must be SORTED</strong></td>
-        <td><strong>O(log N)</strong> (Halves search space each step)</td>
-        <td>O(1)</td>
-        <td>Compares target with middle element; discards left or right half.</td>
+        <td><strong>బైనరీ సెర్చ్ (Binary Search)</strong></td>
+        <td><strong>డేటా కచ్చితంగా సార్టింగ్ చేసి (ఆర్డర్ లో) ఉండాలి</strong></td>
+        <td><strong>O(log N)</strong> (సూపర్ ఫాస్ట్)</td>
+        <td>ఎగ్జాక్ట్ గా మధ్యలో చూస్తుంది. టార్గెట్ దానికన్నా చిన్నదైతే లెఫ్ట్ కి, పెద్దదైతే రైట్ సగం మాత్రమే వెతుకుతుంది.</td>
       </tr>
     </tbody>
   </table>
 </div>
-<p><strong>Binary Search Efficiency:</strong><br>For 1,000,000 items:<br>- Linear Search: Up to <strong>1,000,000 comparisons</strong>.<br>- Binary Search: Maximum <strong>20 comparisons</strong>! ($log_2(1000000) \approx 19.93$).</p>
+<p><strong>బైనరీ సెర్చ్ పవర్ (ఎంత ఫాస్ట్?):</strong><br>ఒకవేళ మీ దగ్గర 10 లక్షల (1,000,000) రికార్డ్స్ ఉన్నాయనుకోండి:<br>- లీనియర్ సెర్చ్ అయితే లక్ష సార్లు వెతుకుతుంది.<br>- బైనరీ సెర్చ్ అయితే కేవలం <strong>20 సార్లు</strong> చెక్ చేసి చెప్పేస్తుంది!</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. Binary Search Safe Mid Calculation</h2>
+      <h2>5. బైనరీ సెర్చ్ లో Mid ని క్యాలిక్యులేట్ చేసే సేఫ్ ఫార్ములా</h2>
       <div class="theory-text">
-        <p>In standard binary search, calculating <code>mid = (left + right) / 2</code> has a famous 32-bit integer overflow bug when <code>left + right > 2,147,483,647</code>.</p>
-<p><strong>The Production Safe Formula:</strong><br>$$\text{mid} = \text{left} + \frac{\text{right} - \text{left}}{2}$$</p>
+        <p>బైనరీ సెర్చ్ రాసేటప్పుడు మధ్యలో ఉన్న నంబర్ తెలుసుకోవడానికి <code>mid = (left + right) / 2</code> అని రాస్తుంటారు. కానీ ఇది తప్పు!<br>ఒకవేళ అరే సైజు కోట్లలో ఉండి, left + right కలిపినప్పుడు 214 కోట్ల కన్నా ఎక్కువైతే జావాలో ఇంటిజర్ ఫుల్ అయిపోయి మైనస్ లోకి వెళ్లిపోతుంది (దీన్నే Overflow bug అంటారు).</p>
+<p><strong>ప్రొఫెషనల్ గా రాయాల్సిన ఫార్ములా:</strong><br>$$\text{mid} = \text{left} + \frac{\text{right} - \text{left}}{2}$$</p>
       </div>
     </section>
   
@@ -643,33 +640,33 @@ int secondLargest = Integer.MIN_VALUE;
         <pre><code>import java.util.Arrays;
 
 public class Main {
-    // 1. Linear Search Implementation (O(N))
+    // 1. లీనియర్ సెర్చ్ (వరుసగా వెతకడం)
     public static int linearSearch(int[] arr, int target) {
         for (int i = 0; i &lt; arr.length; i++) {
             if (arr[i] == target) {
-                return i; // Found at index i
+                return i; // దొరికితే ఇండెక్స్ ఇస్తుంది
             }
         }
-        return -1; // Not found
+        return -1; // దొరక్కపోతే -1 ఇస్తుంది
     }
 
-    // 2. Binary Search Implementation (O(log N))
+    // 2. బైనరీ సెర్చ్ (సగం సగం చేసుకుంటూ వెతకడం)
     public static int binarySearch(int[] arr, int target) {
         int left = 0;
         int right = arr.length - 1;
 
         while (left &lt;= right) {
-            int mid = left + (right - left) / 2; // Overflow-safe
+            int mid = left + (right - left) / 2; // ఇది సేఫ్ ఫార్ములా
 
             if (arr[mid] == target) {
-                return mid; // Target matched
+                return mid; // మధ్యలోనే దొరికేసింది
             } else if (arr[mid] &lt; target) {
-                left = mid + 1; // Search right half
+                left = mid + 1; // నంబర్ పెద్దది కాబట్టి రైట్ కి వెళ్తాం
             } else {
-                right = mid - 1; // Search left half
+                right = mid - 1; // నంబర్ చిన్నది కాబట్టి లెఫ్ట్ కి వెళ్తాం
             }
         }
-        return -1; // Target not present
+        return -1; // ఇక్కడ కూడా దొరకలేదంటే లేనట్టే
     }
 
     public static void main(String[] args) {
@@ -685,16 +682,16 @@ public class Main {
             if (s &lt; min) min = s;
             if (s &gt; max) max = s;
         }
-        double avg = (double) sum / scores.length;
+        double avg = (double) sum / scores.length; // (double) మర్చిపోవద్దు
 
-        System.out.println("Dataset               : " + Arrays.toString(scores));
-        System.out.println("Total Sum             : " + sum);
-        System.out.printf("Average               : %.2f%n", avg);
-        System.out.println("Smallest (Min)        : " + min);
-        System.out.println("Largest (Max)         : " + max);
+        System.out.println("ఒరిజినల్ డేటా          : " + Arrays.toString(scores));
+        System.out.println("మొత్తం (Sum)           : " + sum);
+        System.out.printf("ఆవరేజ్ (Avg)           : %.2f%n", avg);
+        System.out.println("అతి చిన్నది (Min)      : " + min);
+        System.out.println("అతి పెద్దది (Max)      : " + max);
 
         System.out.println("
-=== 2. Single-Pass Second Largest ===");
+=== 2. సెకండ్ లార్జెస్ట్ నంబర్ (Single-Pass) ===");
         int largest = Integer.MIN_VALUE;
         int secondLargest = Integer.MIN_VALUE;
         for (int s : scores) {
@@ -705,24 +702,26 @@ public class Main {
                 secondLargest = s;
             }
         }
-        System.out.println("Largest Value         : " + largest);
-        System.out.println("Second Largest Value  : " + secondLargest);
+        System.out.println("ఫస్ట్ లార్జెస్ట్         : " + largest);
+        System.out.println("సెకండ్ లార్జెస్ట్        : " + secondLargest);
 
         System.out.println("
-=== 3. Linear Search ===");
+=== 3. లీనియర్ సెర్చ్ (Linear Search) ===");
         int searchTarget = 85;
         int linearIdx = linearSearch(scores, searchTarget);
-        System.out.println("Linear Search for " + searchTarget + " : Found at index " + linearIdx);
+        System.out.println("లీనియర్ సెర్చ్ లో 85 దొరికిన ఇండెక్స్: " + linearIdx);
 
         System.out.println("
-=== 4. Binary Search (Sorted Array) ===");
-        Arrays.sort(scores); // Must sort before Binary Search!
-        System.out.println("Sorted Dataset        : " + Arrays.toString(scores));
+=== 4. బైనరీ సెర్చ్ (Binary Search) ===");
+        Arrays.sort(scores); // బైనరీ సెర్చ్ కి ముందే సార్టింగ్ కచ్చితంగా ఉండాలి!
+        System.out.println("సార్ట్ చేసిన డేటా        : " + Arrays.toString(scores));
+        
         int binaryIdx = binarySearch(scores, searchTarget);
-        System.out.println("Custom Binary Search  : Found at index " + binaryIdx);
+        System.out.println("మన బైనరీ సెర్చ్ రిజల్ట్    : " + binaryIdx);
 
+        // జావాలో ముందే రాసిపెట్టిన బైనరీ సెర్చ్ కూడా ఉంది
         int builtinIdx = Arrays.binarySearch(scores, searchTarget);
-        System.out.println("Arrays.binarySearch() : Found at index " + builtinIdx);
+        System.out.println("Arrays.binarySearch() : " + builtinIdx);
     }
 }</code></pre>
       </div>
@@ -730,23 +729,23 @@ public class Main {
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
         <div class="output-content">=== 1. Sum, Average, Min & Max ===
-Dataset               : [45, 92, 18, 77, 85, 99, 63]
-Total Sum             : 479
-Average               : 68.43
-Smallest (Min)        : 18
-Largest (Max)         : 99
+ఒరిజినల్ డేటా          : [45, 92, 18, 77, 85, 99, 63]
+మొత్తం (Sum)           : 479
+ఆవరేజ్ (Avg)           : 68.43
+అతి చిన్నది (Min)      : 18
+అతి పెద్దది (Max)      : 99
 
-=== 2. Single-Pass Second Largest ===
-Largest Value         : 99
-Second Largest Value  : 92
+=== 2. సెకండ్ లార్జెస్ట్ నంబర్ (Single-Pass) ===
+ఫస్ట్ లార్జెస్ట్         : 99
+సెకండ్ లార్జెస్ట్        : 92
 
-=== 3. Linear Search ===
-Linear Search for 85 : Found at index 4
+=== 3. లీనియర్ సెర్చ్ (Linear Search) ===
+లీనియర్ సెర్చ్ లో 85 దొరికిన ఇండెక్స్: 4
 
-=== 4. Binary Search (Sorted Array) ===
-Sorted Dataset        : [18, 45, 63, 77, 85, 92, 99]
-Custom Binary Search  : Found at index 4
-Arrays.binarySearch() : Found at index 4</div>
+=== 4. బైనరీ సెర్చ్ (Binary Search) ===
+సార్ట్ చేసిన డేటా        : [18, 45, 63, 77, 85, 92, 99]
+మన బైనరీ సెర్చ్ రిజల్ట్    : 4
+Arrays.binarySearch() : 4</div>
       </div>
 
       <div class="explain-card">
@@ -754,31 +753,31 @@ Arrays.binarySearch() : Found at index 4</div>
         
     <div class="explain-item">
       <code class="code-token">double avg = (double) sum / scores.length;</code>
-      <p>Casts integer sum to double before division to preserve fractional precision.</p>
+      <p>డివైడ్ చేసే ముందు sum ని డబుల్ (పాయింట్స్) గా మార్చాము. లేకపోతే డెసిమల్స్ ఎగిరిపోయి తప్పు ఆన్సర్ వస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">if (s &gt; largest) { secondLargest = largest; largest = s; }</code>
-      <p>Maintains running track of top two maximums in single linear O(N) pass.</p>
+      <p>ఒకేసారి ఫస్ట్ ది, సెకండ్ ది రికార్డ్ చేస్కుంటున్నాం. దీనివల్ల సార్టింగ్ చేయాల్సిన పని తప్పుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">linearSearch(scores, searchTarget);</code>
-      <p>Sequentially inspects each index from 0 to N-1; suitable for unsorted datasets.</p>
+      <p>ఇది అరే లో ఉన్న నంబర్స్ ని 0 నుంచి వరుసగా ఒక్కొక్కటి వెతుక్కుంటూ వెళ్తుంది. డేటా సార్ట్ అవ్వకపోయినా పనిచేస్తుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">int mid = left + (right - left) / 2;</code>
-      <p>Calculates the midpoint index without risking 32-bit integer overflow.</p>
+      <p>అరే సైజు కోట్లలో ఉన్నప్పుడు కూడా ఇంటిజర్ ఫుల్ అయిపోయి క్రాష్ అవ్వకుండా ఉండటానికి ఈ సేఫ్ ఫార్ములా వాడాము.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">Arrays.binarySearch(scores, searchTarget);</code>
-      <p>Invokes Java's standard library binary search on the sorted array in O(log N) time.</p>
+      <p>ఇది జావా వాళ్ళు రాసిపెట్టిన ఫాస్ట్ బైనరీ సెర్చ్. సగం సగం కట్ చేసుకుంటూ వెతుకుతుంది కాబట్టి డేటా సార్ట్ అయ్యుండాలి.</p>
     </div>
   
       </div>
@@ -797,34 +796,34 @@ Arrays.binarySearch() : Found at index 4</div>
         </div>
         <pre><code>public class PracticalApplication {
     public static void main(String[] args) {
-        // Industry Simulation: Server Response Time Telemetry Analysis
+        // రియల్ టైమ్ సినారియో: సర్వర్ రెస్పాన్స్ టైమ్ (మెట్రిక్స్)
         int[] latencyMs = {120, 85, 430, 210, 95, 850, 110, 340};
 
         int total = 0;
-        int slaViolations = 0; // Requests taking &gt; 300ms
+        int slaViolations = 0; // 300ms కన్నా ఎక్కువ టైమ్ తీసుకున్నవి
         int maxLatency = latencyMs[0];
 
         for (int lat : latencyMs) {
             total += lat;
-            if (lat &gt; 300) slaViolations++;
-            if (lat &gt; maxLatency) maxLatency = lat;
+            if (lat &gt; 300) slaViolations++; // స్లో గా రెస్పాండ్ అయినవి కౌంట్ చేస్తున్నాం
+            if (lat &gt; maxLatency) maxLatency = lat; // అన్నిటికన్నా స్లో ఏదో రికార్డ్ చేస్తున్నాం
         }
 
         double avgLatency = (double) total / latencyMs.length;
-        System.out.println("=== API Gateway Latency Report ===");
-        System.out.printf("Average Latency       : %.2f ms%n", avgLatency);
-        System.out.println("Peak Latency (Max)    : " + maxLatency + " ms");
-        System.out.println("SLA Breaches (&gt;300ms) : " + slaViolations + " requests");
+        System.out.println("=== API రెస్పాన్స్ రిపోర్ట్ ===");
+        System.out.printf("ఆవరేజ్ రెస్పాన్స్ టైమ్ : %.2f ms%n", avgLatency);
+        System.out.println("అతి స్లో రెస్పాన్స్ (Max) : " + maxLatency + " ms");
+        System.out.println("కండిషన్ ఫెయిల్ అయినవి (&gt;300ms) : " + slaViolations + " రిక్వెస్ట్స్");
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== API Gateway Latency Report ===
-Average Latency       : 280.00 ms
-Peak Latency (Max)    : 850 ms
-SLA Breaches (&gt;300ms) : 3 requests</div>
+        <div class="output-content">=== API రెస్పాన్స్ రిపోర్ట్ ===
+ఆవరేజ్ రెస్పాన్స్ టైమ్ : 280.00 ms
+అతి స్లో రెస్పాన్స్ (Max) : 850 ms
+కండిషన్ ఫెయిల్ అయినవి (&gt;300ms) : 3 రిక్వెస్ట్స్</div>
       </div>
     </section>
 
@@ -833,16 +832,16 @@ SLA Breaches (&gt;300ms) : 3 requests</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Performing Binary Search on an unsorted array, which returns completely unpredictable or negative results.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">అరే సార్ట్ చేయకుండా బైనరీ సెర్చ్ వాడటం. అలా వాడితే అది ఎక్కడెక్కడో వెతికి మైనస్ వాల్యూస్ ఇస్తుంది తప్ప కరెక్ట్ ఆన్సర్ ఇవ్వదు.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Initializing <code>min</code> or <code>max</code> with <code>0</code> instead of <code>arr[0]</code>, breaking calculations when all numbers are negative.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>min</code> లేదా <code>max</code> ని 0 తో స్టార్ట్ చేయడం. నెగటివ్ నంబర్స్ ఉన్నప్పుడు మొత్తం రిజల్ట్ తప్పు వస్తుంది. ఎప్పుడూ <code>arr[0]</code> తోనే స్టార్ట్ చేయాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Dividing integers without casting to double (e.g. <code>sum / length</code> instead of <code>(double) sum / length</code>), losing decimals.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">ఆవరేజ్ కనుక్కునేటప్పుడు <code>(double)</code> రాయడం మర్చిపోవడం. అప్పుడు 3.75 రావాల్సింది 3 అని వస్తుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Using <code>mid = (left + right) / 2</code> which can overflow for very large arrays with millions of elements.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">బైనరీ సెర్చ్ లో <code>mid = (left + right) / 2</code> అని వాడటం. చిన్న అరేస్ కి పర్లేదు కానీ, లక్షల్లో డేటా ఉన్నప్పుడు క్రాష్ అయ్యే ఛాన్స్ ఉంది.</li>
   
       </ul>
     </div>
@@ -859,8 +858,9 @@ SLA Breaches (&gt;300ms) : 3 requests</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Write a method findThirdLargest(int[] arr) that finds the third largest distinct number in an array in O(N) time.
-// If less than 3 distinct numbers exist, return the maximum value.
+// థర్డ్ లార్జెస్ట్ (మూడవ అతిపెద్ద) నంబర్ కనుక్కోండి.
+// టైమ్ కండిషన్: O(N) (అంటే ఒకేసారి లూప్ వేయాలి, సార్టింగ్ వాడకూడదు).
+// అరే లో 3 కంటే తక్కువ నంబర్స్ ఉంటే, ఉన్నవాటిలో పెద్దది ప్రింట్ చేయాలి.
 
 public class Challenge {
     public static int findThirdLargest(int[] arr) {
@@ -885,8 +885,8 @@ public class Challenge {
     }
 
     public static void main(String[] args) {
-        System.out.println("Third Largest: " + findThirdLargest(new int[]{10, 45, 99, 85, 23})); // 45
-        System.out.println("Third Largest: " + findThirdLargest(new int[]{10, 20})); // 20
+        System.out.println("థర్డ్ లార్జెస్ట్: " + findThirdLargest(new int[]{10, 45, 99, 85, 23})); // 45
+        System.out.println("థర్డ్ లార్జెస్ట్: " + findThirdLargest(new int[]{10, 20})); // 20 (3 నంబర్స్ లేవు కాబట్టి పెద్దదే ప్రింట్ అవుతుంది)
     }
 }</code></pre>
       </div>
@@ -897,20 +897,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ What does Arrays.binarySearch() return if the element is NOT found?</h4>
-      <p>It returns `-(insertion_point + 1)`, where `insertion_point` is the index where the key would be inserted to maintain sorted order. For example, returning `-1` means the element should be inserted at index 0.</p>
+      <h4>❓ Arrays.binarySearch() కి నంబర్ దొరకకపోతే -1 ఇస్తుందా?</h4>
+      <p>ఎప్పుడూ -1 ఇవ్వదు. దొరకకపోతే అది ఎక్కడ ఉండాలో ఆ ఇండెక్స్ ని మైనస్ లో ఇస్తుంది `-(insertion_point + 1)`. ఉదాహరణకి -1 వచ్చిందంటే, ఆ నంబర్ ని మీరు 0వ ఇండెక్స్ లో పెట్టాలి అని అర్థం.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ When should I use Linear Search instead of Binary Search?</h4>
-      <p>Use Linear Search when the array is unsorted and you only perform a single search (because sorting takes $O(N \log N)$, which is slower than a single $O(N)$ scan). If you need to search multiple times, sort once and use Binary Search.</p>
+      <h4>❓ బైనరీ సెర్చ్ అంత ఫాస్ట్ అయినప్పుడు ఇంకా లీనియర్ సెర్చ్ ఎందుకు వాడుతున్నారు?</h4>
+      <p>బైనరీ సెర్చ్ వాడాలంటే డేటా ఆర్డర్ లో (సార్ట్ అయ్యి) ఉండాలి. సార్ట్ చేయడానికి చాలా టైమ్ పడుతుంది. మీరు ఒక్కసారే వెతకాలనుకుంటే అడ్డదిడ్డంగా ఉన్న డేటాలో డైరెక్ట్ లీనియర్ సెర్చ్ చేయడమే ఫాస్ట్. అదే పదే పదే వెతకాలనుకుంటే ఒకసారి సార్ట్ చేసి పెట్టుకుని బైనరీ సెర్చ్ వాడుకోవాలి.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ How does (double) sum / arr.length work?</h4>
-      <p>The cast `(double) sum` converts the integer sum into a 64-bit IEEE 754 floating-point number *before* the division operator runs, forcing floating-point division rather than integer division.</p>
+      <h4>❓ (double) sum / arr.length అంటే ఏం జరుగుతుంది?</h4>
+      <p>జావాలో రెండు పూర్ణ సంఖ్యలని (int) భాగిస్తే ఆన్సర్ కూడా ఇంటిజర్ గానే వస్తుంది. అలా కాకుండా పాయింట్స్ లో రావాలంటే, డివైడ్ చేయకముందే అందులో ఒకదాన్ని డెసిమల్ గా మార్చాలి. అప్పుడే కరెక్ట్ ఆన్సర్ వస్తుంది.</p>
     </div>
   
     </section>
@@ -920,19 +920,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Always cast sum to <code>(double)</code> before dividing by length to compute accurate decimal averages.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఆవరేజ్ తీసేముందు కచ్చితంగా <code>(double)</code> అని క్యాస్టింగ్ చేయాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Initialize <code>min</code> and <code>max</code> variables with <code>arr[0]</code> to handle negative numbers correctly.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Min, Max వెతికేటప్పుడు నెగటివ్ నంబర్స్ ఇష్యూ రాకుండా <code>arr[0]</code> తో స్టార్ట్ చేయాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Single-pass algorithms can find the 1st and 2nd largest elements in linear $O(N)$ time.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఒకే లూప్ లో సార్ట్ చేయకుండానే సెకండ్ లార్జెస్ట్, థర్డ్ లార్జెస్ట్ లాంటివి కనుక్కోవచ్చు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Linear Search operates on unsorted arrays in $O(N)$ time.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">లీనియర్ సెర్చ్ స్లో కానీ సార్టింగ్ అవసరం లేదు. బైనరీ సెర్చ్ సూపర్ ఫాస్ట్ కానీ కచ్చితంగా సార్టింగ్ ఉండాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Binary Search requires a sorted array and achieves lightning-fast $O(\log N)$ lookup speed.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">బైనరీ సెర్చ్ లో <code>mid</code> కనుక్కోవడానికి ఎప్పుడూ <code>left + (right - left) / 2</code> ఫార్ములానే వాడాలి.</li>
   
       </ul>
     </div>

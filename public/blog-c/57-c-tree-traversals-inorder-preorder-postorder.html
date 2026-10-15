@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tree Traversals (Inorder, Preorder, Postorder) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో ట్రీ (Tree) ని ప్రింట్ చేయడం అంత సులభం కాదు! దానికి లూప్స్ పనిచేయవు. Inorder, Preorder, Postorder అనే మూడు రకాల Recursion టెక్నిక్స్ తో చెట్టు మీద ప్రతి ఆకునీ ఎలా టచ్ చేసి రావాలో యానిమేషన్ లాంటి థియరీతో నేర్చుకుందాం." />
+  <meta name="keywords" content="c tutorial, tree traversals (inorder, preorder, postorder) (తెలుగులో), doubly linked list c, circular linked list, stack in c, queue in c, binary search tree c, tree traversals c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html">55. Queue Implementation</a>
+      </div>
+
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html" class="active">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html">59. Graphs (Matrix & List)</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 57: Tree Traversals (Inorder, Preorder, Postorder) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Tree Traversals (Inorder, Preorder, Postorder) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 57</span>
+      <span class="badge">📂 Phase 19: Data Structures - 2</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Tree Traversal · Inorder (L N R) · Preorder (N L R) · Postorder (L R N) · Recursion Magic</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>లాస్ట్ లెసన్ లో మనం చెట్టుని క్రియేట్ చేసాం కదా! కానీ అందులో ఉన్న డేటా ని ప్రింట్ చేయాలంటే అర్రే లాగా <code>for</code> లూప్ రాస్తే కుదరదు. ఎందుకంటే ఎక్కడికి వెళ్ళాలో రెండు దారులు ఉంటాయి (Left, Right). మరి చెట్టు మొత్తాన్ని మిస్ అవ్వకుండా ఎలా కవర్ చేయాలి? దానికి ఉన్న దారే <strong>Tree Traversals (ట్రావర్సల్స్)</strong>. ఇందులో Inorder, Preorder, Postorder అని మూడు ఫేమస్ పద్ధతులు ఉన్నాయి. ఈ మూడు పద్ధతులు Recursion (రికర్షన్) అనే మ్యాజిక్ వాడి 10 లైన్ల కోడ్ తోనే 10 వేల నోడ్స్ ని ఎలా ప్రింట్ చేస్తాయో ఈరోజు అద్భుతంగా చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> మూడు పద్ధతులు ఏంటి? (The Golden Rules)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ప్రతి నోడ్ దగ్గరికి వెళ్ళినప్పుడు మనం మూడు పనులు చేయాలి: 1. ఎడమవైపు (<strong>L</strong>) కి వెళ్ళడం, 2. కుడివైపు (<strong>R</strong>) కి వెళ్ళడం, 3. అసలు డేటాని ప్రింట్ (<strong>N</strong> - Node) చేయడం. ఈ మూడు పనుల ఆర్డర్ బట్టే పేర్లు మారాయి!
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>🚶‍♂️ రియల్ లైఫ్ స్టోరీ: అడవిలో ఫొటోగ్రాఫర్</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          <strong>1. Inorder (L-N-R) - "మధ్యలో దేవుడు":</strong> ఫొటోగ్రాఫర్ ముందు ఎడమ పక్కకెళ్లి అంతా ఫోటోలు తీసి, ఆ తర్వాత మెయిన్ బాస్ (N) ఫోటో తీసి, లాస్ట్ లో కుడి పక్కకి వెళ్తాడు. BST లో ఇలా ప్రింట్ చేస్తే, <strong>మొత్తం డేటా అసెండింగ్ ఆర్డర్ (చిన్న నుండి పెద్ద) లో</strong> నీట్ గా సార్ట్ అయ్యి బయటికి వస్తుంది!<br><br>
+          <strong>2. Preorder (N-L-R) - "ముందే సెల్ఫీ":</strong> ఒక కొత్త చెట్టు దగ్గరికి వెళ్ళగానే ముందే వాడు సెల్ఫీ (N) తీసేసుకుంటాడు. ఆ తర్వాతే ఎడమకి, కుడికి వెళ్తాడు. ఒక చెట్టుని యాజ్-ఇట్-ఈజ్ గా జిరాక్స్ కాపీ (Clone) కొట్టాలంటే ఈ పద్ధతి బెస్ట్.<br><br>
+          <strong>3. Postorder (L-R-N) - "లాస్ట్ లో బ్రేక్":</strong> ముందు ఎడమ మొత్తం, తర్వాత కుడి మొత్తం చూసేసాక, లాస్ట్ లో ఆ బాస్ (N) ఫోటో తీస్తాడు. ఒక చెట్టుని సేఫ్ గా కిందినుండి డిలీట్ (Delete tree) చేయాలంటే ఇదే వాడాలి.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> రికర్షన్ (Recursion) మ్యాజిక్ ఎలా పనిచేస్తుంది?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీరు <code>Inorder(root-&gt;left)</code> అని రాస్తే, కంపైలర్ ప్రస్తుతం ప్రింట్ చేసే పనిని స్టాక్ (Stack Memory) లో హోల్డ్ లో పెట్టి, కిందికి దూకి దాని ఎడమ కొమ్మ పని పూర్తిచేస్తుంది. అది పూర్తిగా అయ్యాకే పైకి వచ్చి అప్పుడు ప్రింట్ చేస్తుంది. ఇది అర్ధం చేసుకోవడానికి కష్టం గానీ, రన్ అయితే భలే మ్యాజిక్ లాగా ఉంటుంది.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (3 Traversals Demo)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో మూడు ఫంక్షన్స్ చాలా చిన్నవిగా ఉంటాయి, కానీ అవుట్పుట్ లో వాటి ఆర్డర్ ఎలా మారుతుందో లైవ్ గా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Tree Traversals</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+// కొత్త నోడ్ క్రియేట్ చేయడానికి హెల్పర్
+struct Node* create(int v) {
+    struct Node* n = (struct Node*)malloc(sizeof(struct Node));
+    n->data = v; n->left = NULL; n->right = NULL;
+    return n;
+}
+
+// ------------------------------------
+// 1. Inorder (L - N - R)
+// ------------------------------------
+void inorder(struct Node* root) {
+    if (root == NULL) return; // చెట్టు ఎండ్ అయితే ఆగిపో
+    
+    inorder(root->left);           // 1. ముందు మొత్తం ఎడమకి వెళ్ళు
+    printf("%d ", root->data);     // 2. డేటాని ప్రింట్ చేయి
+    inorder(root->right);          // 3. ఆ తర్వాత కుడికి వెళ్ళు
+}
+
+// ------------------------------------
+// 2. Preorder (N - L - R)
+// ------------------------------------
+void preorder(struct Node* root) {
+    if (root == NULL) return;
+    
+    printf("%d ", root->data);     // 1. ముందే ప్రింట్ చేసేయ్
+    preorder(root->left);          // 2. ఎడమకి వెళ్ళు
+    preorder(root->right);         // 3. కుడికి వెళ్ళు
+}
+
+// ------------------------------------
+// 3. Postorder (L - R - N)
+// ------------------------------------
+void postorder(struct Node* root) {
+    if (root == NULL) return;
+    
+    postorder(root->left);         // 1. ఎడమకి వెళ్ళు
+    postorder(root->right);        // 2. కుడికి వెళ్ళు
+    printf("%d ", root->data);     // 3. అంతా అయ్యాక లాస్ట్ లో ప్రింట్ చేయి
+}
+
+int main() {
+    printf("--- Tree Traversals Magic ---\n\n");
+    
+    // ఒక సింపుల్ చెట్టుని మాన్యువల్ గా క్రియేట్ చేద్దాం
+    //       50
+    //     /    \
+    //   30      70
+    //  /  \    /  \
+    // 20  40  60   80
+    
+    struct Node* root = create(50);
+    root->left = create(30);
+    root->right = create(70);
+    root->left->left = create(20);
+    root->left->right = create(40);
+    root->right->left = create(60);
+    root->right->right = create(80);
+    
+    printf("1. Inorder (Sorted output) : ");
+    inorder(root); // అవుట్పుట్: 20 30 40 50 60 70 80
+    
+    printf("\n2. Preorder (Top-down)     : ");
+    preorder(root); // అవుట్పుట్: 50 30 20 40 70 60 80
+    
+    printf("\n3. Postorder (Bottom-up)   : ");
+    postorder(root); // అవుట్పుట్: 20 40 30 60 80 70 50
+    
+    printf("\n");
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>if (root == NULL) return;</code>: ఇది రికర్షన్ కి బ్రేక్ (Base condition). ఇది లేకపోతే మీ లూప్ గాలిలోకి వెళ్లి ఇన్ఫినిట్ అయిపోయి స్టాక్ ఓవర్ ఫ్లో (Stack Overflow) వచ్చి క్రాష్ అవుతుంది! ఆకు (Leaf) దాటాక కింద ఏమీ ఉండదు కాబట్టి, ఇది అక్కడి నుండి వెనక్కి పంపుతుంది.</li>
+        <li><code>printf</code> లైన్ మార్చడమే మ్యాజిక్! ఆ <code>printf</code> లైన్ ఎక్కడ ఉందో దాన్ని బట్టే ప్రింట్ అయ్యే ఆర్డర్ మారిపోతుంది. రికర్షన్ స్టాక్ (Stack Memory) లో హోల్డ్ అవుతుంది కాబట్టి, కింది ఫంక్షన్స్ పూర్తయ్యాకే పై ఫంక్షన్స్ <code>printf</code> ఎగ్జిక్యూట్ అవుతాయి.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఇవి కాకుండా Level Order (లెవెల్ ఆర్డర్) అని ఒకటి ఉంటుందా?</h4>
+          <p>అవును! పై మూడు పద్ధతులు నిలువుగా (Depth-first) వెళ్తాయి. లెవెల్ ఆర్డర్ అనేది ఒక ఫ్లోర్ తర్వాత ఇంకో ఫ్లోర్ అడ్డంగా (Breadth-first) ప్రింట్ చేస్తుంది. ఇది రాయాలంటే కేవలం రికర్షన్ సరిపోదు, అదనంగా ఒక <strong>Queue (క్యూ)</strong> అనే డేటా స్ట్రక్చర్ ని వాడి కోడ్ చేయాలి. ఇంటర్వ్యూస్ లో ఇది చాలా ఫేమస్!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ఒక చెట్టుని పూర్తిగా డిలీట్ చేయాలంటే ఏ పద్ధతి వాడాలి?</h4>
+          <p><strong>Postorder</strong> నే వాడాలి! ఎందుకంటే, ముందు పిల్లల్ని (ఎడమ, కుడి) <code>free()</code> చేసి డిలీట్ చేసాకే పేరెంట్ ని డిలీట్ చేయాలి. ఒకవేళ ముందే పేరెంట్ ని (Inorder లాగా) డిలీట్ చేస్తే పిల్లల దగ్గరికి వెళ్ళే దారి (Address) పోయి మెమరీ లీక్ అయిపోతుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: Recursion కాకుండా Loops వాడి ఇవి రాయొచ్చా?</h4>
+          <p>ఖచ్చితంగా రాయొచ్చు. దాన్నే <strong>Iterative Traversal</strong> అంటారు. కానీ దానికి మీరు సొంతంగా ఒక <strong>Stack</strong> డేటా స్ట్రక్చర్ ని కోడ్ లో మెయింటైన్ చేయాలి. రికర్షన్ వాడితే ఆ స్టాక్ ని ఆపరేటింగ్ సిస్టమే ఆటోమేటిక్ గా ఇస్తుంది కాబట్టి 3 లైన్ల కోడ్ లో పని అయిపోయింది.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="56-c-trees-basics-and-binary-search-tree-bst.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">56. Trees Basics & BST</span>
+      </a>
+
+      
+      <a href="58-c-hashing-and-collision-handling.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">58. Hashing & Collisions</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

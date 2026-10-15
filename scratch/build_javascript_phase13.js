@@ -9,145 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
+    title: 'Object-Oriented Programming (OOP)',
+    icon: '🏗️',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions Mastery',
-    icon: '🧩',
-    desc: 'Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions, Closures & this (Masterclass)', subtopics: 'Declaration vs Expression · Arrow Syntax · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'DOM Manipulation',
-    icon: '🌐',
-    desc: 'DOM ante enti?, Selecting elements (getElementById, querySelector, querySelectorAll), textContent vs innerHTML, changing styles, classList (add, remove, toggle), reading input values, creating & appending elements, removing elements, data attributes, DOM traversal (parent, children, closest), dynamic lists, and 4 interactive projects.',
-    lessons: [
-      { num: 14, file: 'dom.html', title: '14. DOM Manipulation & Web Interactivity', subtopics: 'DOM ante enti? · Selecting Elements · textContent vs innerHTML · Styles & classList · createElement & append · Data Attributes · DOM Traversal & closest · 4 Interactive Projects' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Events & Forms',
-    icon: '🎯',
-    desc: 'Browser events, addEventListener, click, dblclick, mouse events, keyboard events, input & change, submit event, focus & blur, event object, event bubbling vs capturing, event delegation, preventDefault, form validation, error messages, and 6 full projects.',
-    lessons: [
-      { num: 15, file: 'events-and-forms.html', title: '15. Browser Events, Forms & Event Delegation', subtopics: 'addEventListener · Click, Mouse & Keyboard · Input vs Change · Submit & preventDefault() · Bubbling & Delegation · Form Validation · 6 Complete Projects' }
-    ]
-  },
-  {
-    id: 'phase13',
-    tag: 'Phase 13',
-    title: 'Browser APIs & Storage',
-    icon: '💾',
-    desc: 'window, document, console utilities, setTimeout, setInterval, clearTimeout, clearInterval, localStorage, sessionStorage, Cookies, URL & URLSearchParams, History API, Clipboard API, Geolocation API, Notifications, and Permissions.',
-    lessons: [
-      { num: 16, file: 'browser-apis-and-storage.html', title: '16. Browser APIs, Storage & Timers', subtopics: 'window & document · Timers (setTimeout/setInterval) · localStorage vs sessionStorage vs Cookies · URL API · History · Clipboard · Geolocation · Notifications' }
-    ]
-  },
-  {
-    id: 'phase14',
-    tag: 'Phase 14',
-    title: 'Asynchronous JavaScript & APIs',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, Error Handling with try-catch-finally, and Network requests.',
-    lessons: [
-      { num: 17, file: 'promises.html', title: '17. Promises & Async/Await (Masterclass)', subtopics: 'Event Loop · Call Stack · Promises · async/await · Fetch API' },
-      { num: 18, file: 'exceptions.html', title: '18. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -263,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -452,320 +400,113 @@ function buildLesson16() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 13: Browser APIs and Storage</strong>! While core JavaScript provides language syntax and data structures, modern web browsers equip developers with a powerful suite of <strong>Web APIs (Browser Object Model)</strong> and <strong>Client-Side Storage Engines</strong>. In this comprehensive masterclass guide, you will master the global <code>window</code> environment, scheduling with <code>setTimeout</code> & <code>setInterval</code>, persistent client storage with <strong><code>localStorage</code></strong>, session-based storage with <strong><code>sessionStorage</code></strong>, HTTP Cookies, dynamic routing with the <strong>URL & History APIs</strong>, seamless clipboard copying with the <strong>Clipboard API</strong>, user coordinates with the <strong>Geolocation API</strong>, and desktop alerts with the <strong>Notifications API</strong>.</p>
+      <p>యూజర్ బ్రౌజర్ ని క్లోజ్ చేసినా లేదా పేజీని రిఫ్రెష్ చేసినా డేటా దాచి ఉంచడానికి <strong>LocalStorage</strong>, మరియు నిర్ణీత సమయంలో కోడ్ రన్ చేయడానికి <strong>Timers (setTimeout / setInterval)</strong> వాడతాం. ఈ చాప్టర్ లో LocalStorage API, JSON Storage, మరియు Async Timers ల గురించి స్పష్టంగా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. The Global BOM Environment -->
-    <div class="section-title"><span class="num">1</span>The Global Browser Environment: window, document & console</div>
+    <div class="callout">
+      <div class="callout-title">🔐 రియల్ లైఫ్ అనలాజీ: జిమ్ పర్సనల్ లాకర్ (Personal Gym Locker)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">మీరు జిమ్ లో ఒక లాకర్ వాడుతున్నారు అనుకోండి:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>LocalStorage:</strong> మీ సామాన్లు లాకర్ లో దాచి తాళం వేస్తే, మీరు ఇంటికి వెళ్ళి మరుసటి రోజు వచ్చినా లాకర్ లో సామాన్లు సురక్షితంగా ఉంటాయి! (Browser restart చేసినా డేటా అలాగే ఉంటుంది).</li>
+        <li><strong>SessionStorage:</strong> మీరు జిమ్ లో ఉన్నంతసేపే లాకర్ పనిచేస్తుంది. బయటకు రాగానే ఖాళీ అవుతుంది! (Tab close చేస్తే డేటా పోతుంది).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>LocalStorage API Methods</div>
     <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong><code>window</code>:</strong> The global execution root object in web browsers. All global variables, BOM APIs, and viewport metrics (<code>window.innerWidth</code>, <code>window.innerHeight</code>) belong to <code>window</code>.</li>
-        <li><strong><code>document</code>:</strong> The DOM root node representing the HTML page content currently loaded inside the window.</li>
-        <li><strong><code>console</code>:</strong> Rich developer diagnostics (<code>console.log()</code>, <code>console.warn()</code>, <code>console.error()</code>, <code>console.table()</code>, and performance timers <code>console.time()</code> / <code>console.timeEnd()</code>).</li>
+      <table class="tbl">
+        <tr><th>Method</th><th>వివరణ (Description)</th><th>ఉదాహరణ (Example)</th></tr>
+        <tr><td><code>localStorage.setItem(key, value)</code></td><td>డేటాను దాచడానికి</td><td><code>localStorage.setItem("theme", "dark")</code></td></tr>
+        <tr><td><code>localStorage.getItem(key)</code></td><td>దాచిన డేటాను పొందడానికి</td><td><code>let t = localStorage.getItem("theme")</code></td></tr>
+        <tr><td><code>localStorage.removeItem(key)</code></td><td>ఒక డేటాను తొలగించడానికి</td><td><code>localStorage.removeItem("theme")</code></td></tr>
+        <tr><td><code>localStorage.clear()</code></td><td>అన్నింటినీ తొలగించడానికి</td><td><code>localStorage.clear()</code></td></tr>
+      </table>
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Storing Objects in LocalStorage (JSON.stringify & parse)</div>
+    <div class="section-body">
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ LocalStorage కేవలం String లను మాత్రమే దాచగలదు!</div>
+        <p>మీరు ఒక Object ని నేరుగా దాచడానికి ప్రయత్నిస్తే అది <code>"[object Object]"</code> గా మారి డేటా పోతుంది! కాబట్టి దాచేటప్పుడు <code>JSON.stringify()</code> ద్వారా స్ట్రింగ్ గా మార్చి, బయటకు తీసేటప్పుడు <code>JSON.parse()</code> ద్వారా తిరిగి Object గా మార్చాలి.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Object Storage</span>
+        </div>
+        <pre><code>let user = { name: "Balaji", score: 100 };
+
+// 1. Object ని String గా మార్చి దాచడం
+localStorage.setItem("userProfile", JSON.stringify(user));
+
+// 2. బయటకు తీసి తిరిగి Object గా మార్చడం
+let savedData = localStorage.getItem("userProfile");
+if (savedData) {
+    let parsedUser = JSON.parse(savedData);
+    console.log("User Name:", parsedUser.name); // Balaji
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Timers: setTimeout & setInterval</div>
+    <div class="section-body">
+      <ul>
+        <li><strong><code>setTimeout(callback, ms)</code>:</strong> కొన్ని మిల్లీ సెకన్ల తర్వాత <strong>ఒకే ఒక సారి</strong> కోడ్ ని రన్ చేస్తుంది.</li>
+        <li><strong><code>setInterval(callback, ms)</code>:</strong> ప్రతి కొన్ని మిల్లీ సెకన్లకు <strong>పదే పదే</strong> కోడ్ ని రన్ చేస్తుంది (ఆపడానికి <code>clearInterval</code> వాడాలి).</li>
       </ul>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Console Diagnostics</span>
+          <span class="lang-tag">JavaScript — Timers</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-const students = [
-    { name: "Ravi", role: "Frontend Dev", score: 95 },
-    { name: "Sneha", role: "Backend Dev", score: 92 }
-];
+// 1. 3 సెకన్ల (3000ms) తర్వాత మెసేజ్ రావడం
+setTimeout(() => {
+    console.log("⏰ 3 సెకన్లు ముగిసాయి!");
+}, 3000);
 
-console.table(students); // Prints formatted interactive table in DevTools!
+// 2. కౌంట్ డౌన్ టైమర్ (ప్రతి 1 సెకనుకు)
+let count = 1;
+let timer = setInterval(() => {
+    console.log("Timer Tick:", count);
+    count++;
 
-console.time("ArrayProcess");
-const filtered = students.filter(s => s.score > 90);
-console.timeEnd("ArrayProcess"); // Prints exact execution time in milliseconds</code></pre>
-      </div>
-    </div>
-
-    <!-- 2. Timers & Scheduling -->
-    <div class="section-title"><span class="num">2</span>Timers & Scheduling: setTimeout vs setInterval</div>
-    <div class="section-body">
-      <table class="tbl">
-        <tr><th>Timer API</th><th>Execution Pattern</th><th>Cancellation Method</th></tr>
-        <tr>
-          <td><strong><code>setTimeout(callback, delayMs)</code></strong></td>
-          <td>Runs <strong>ONCE</strong> after delay milliseconds.</td>
-          <td><code>clearTimeout(timerId)</code></td>
-        </tr>
-        <tr>
-          <td><strong><code>setInterval(callback, intervalMs)</code></strong></td>
-          <td>Repeats <strong>CONTINUOUSLY</strong> every interval milliseconds.</td>
-          <td><code>clearInterval(intervalId)</code> ⭐ Crucial to avoid memory leaks!</td>
-        </tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Countdown Timer with setInterval</span>
-        </div>
-        <pre><code>"use strict";
-
-let count = 5;
-
-const countdownTimer = setInterval(() => {
-    console.log("Countdown:", count);
-    count--;
-
-    if (count < 0) {
-        clearInterval(countdownTimer); // Stop timer!
-        console.log("🚀 Blast Off! Mission Started.");
+    if (count > 3) {
+        clearInterval(timer); // 3 సార్లు అయ్యాక ఆగిపోతుంది
+        console.log("🛑 Timer Stopped.");
     }
 }, 1000);</code></pre>
       </div>
     </div>
 
-    <!-- 3. Client-Side Storage -->
-    <div class="section-title"><span class="num">3</span>Client Storage: localStorage vs sessionStorage vs Cookies</div>
+    <div class="section-title"><span class="num">4</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <table class="tbl">
-        <tr><th>Feature</th><th>localStorage ⭐</th><th>sessionStorage</th><th>Cookies (document.cookie)</th></tr>
-        <tr><td><strong>Persistence</strong></td><td><strong>Permanent</strong> (survives tab & browser close)</td><td>Tab Session Only (cleared on tab close)</td><td>Expires based on Max-Age / Expiry date</td></tr>
-        <tr><td><strong>Storage Capacity</strong></td><td><strong>~5MB - 10MB</strong></td><td>~5MB</td><td>~4KB (very small)</td></tr>
-        <tr><td><strong>Server Sent?</strong></td><td>❌ No (Pure Client-side)</td><td>❌ No</td><td>✅ Yes (Sent with every HTTP header)</td></tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — localStorage CRUD Operations</span>
+      <details>
+        <summary>Q1. LocalStorage కి SessionStorage కి తేడా ఏమిటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> LocalStorage బ్రౌజర్ క్లోజ్ చేసినా డేటాని ఉంచుతుంది (పరిమితి లేదు). SessionStorage కేవలం ఆ నిర్దిష్టమైన Tab ఓపెన్ లో ఉన్నంతవరకే డేటాని ఉంచుతుంది.</p>
         </div>
-        <pre><code>// 1. Store single string
-localStorage.setItem("username", "Ravi");
+      </details>
 
-// 2. Read single string
-const username = localStorage.getItem("username");
-console.log("Retrieved Username:", username); // "Ravi"
-
-// 3. Storing Objects & Arrays with JSON
-const userPreferences = { theme: "dark", fontSize: 16 };
-localStorage.setItem("userPrefs", JSON.stringify(userPreferences));
-
-// 4. Reading & Parsing JSON
-const savedPrefs = JSON.parse(localStorage.getItem("userPrefs"));
-console.log("Saved Theme:", savedPrefs?.theme);
-
-// 5. Deleting item
-localStorage.removeItem("username");
-// localStorage.clear(); // Clears all keys for current origin</code></pre>
-      </div>
+      <details>
+        <summary>Q2. <code>setTimeout(fn, 0)</code> ఇస్తే కోడ్ వెంటనే రన్ అవుతుందా?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> లేదు! JavaScript Event Loop ప్రకారం, ప్రస్తుత కాల్ స్టేక్ ఖాళీ అయిన తర్వాతే (Microtask Queue/Task Queue ముగిసాక) రన్ అవుతుంది.</p>
+        </div>
+      </details>
     </div>
 
-    <!-- 4. URL API & History API -->
-    <div class="section-title"><span class="num">4</span>URL API & History API (Single Page Application Routing)</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong><code>URL & URLSearchParams</code>:</strong> Effortlessly parsing URL queries without messy string splits: <code>const params = new URLSearchParams(window.location.search); const id = params.get("id");</code></li>
-        <li><strong><code>History API</code>:</strong> Updating browser URL without triggering a page reload (used by React Router / Next.js): <code>history.pushState({ page: 2 }, "Page 2", "/page-2");</code></li>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>శాశ్వత డేటా కోసం <code>localStorage</code> వాడండి.</li>
+        <li>ఆబ్జెక్టుల కోసం <code>JSON.stringify</code> మరియు <code>JSON.parse</code> వాడండి.</li>
+        <li>సమయానుకూల పనుల కోసం <code>setTimeout</code> / <code>setInterval</code> వాడండి.</li>
       </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — URLSearchParams Demo</span>
-        </div>
-        <pre><code>"use strict";
-
-const sampleUrl = new URL("https://www.ourcompiler.com/blog-javascript/index.html?lang=nodejs&theme=dark&page=3");
-
-console.log("Host:", sampleUrl.hostname); // "www.ourcompiler.com"
-console.log("Path:", sampleUrl.pathname); // "/blog-javascript/index.html"
-
-// Access query params easily
-const params = sampleUrl.searchParams;
-console.log("Language Param:", params.get("lang"));   // "nodejs"
-console.log("Page Param:", params.get("page"));       // "3"
-console.log("Has Theme?", params.has("theme"));       // true</code></pre>
-      </div>
     </div>
-
-    <!-- 5. Clipboard, Geolocation & Notifications -->
-    <div class="section-title"><span class="num">5</span>Modern Web APIs: Clipboard, Geolocation & Notifications</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Clipboard API:</strong> Asynchronously write/read clipboard data: <code>await navigator.clipboard.writeText("Code snippet");</code></li>
-        <li><strong>Geolocation API:</strong> Access device GPS coordinates: <code>navigator.geolocation.getCurrentPosition(pos => console.log(pos.coords.latitude));</code></li>
-        <li><strong>Notifications API & Permissions:</strong> Request permission and dispatch native operating system desktop alerts: <code>Notification.requestPermission()</code>.</li>
-      </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Async Clipboard & Notification APIs</span>
-        </div>
-        <pre><code>// 1. One-click Copy Function
-async function copyToClipboard(text) {
-    try {
-        await navigator.clipboard.writeText(text);
-        console.log("✅ Copied to clipboard successfully!");
-    } catch (err) {
-        console.error("Failed to copy:", err);
-    }
-}
-
-// 2. Desktop Notification
-function triggerNotification() {
-    if (Notification.permission === "granted") {
-        new Notification("Code Executed!", {
-            body: "Your JavaScript code executed successfully on Our Compiler.",
-            icon: "/logo.png"
-        });
-    } else if (Notification.permission !== "denied") {
-        Notification.requestPermission();
-    }
-}</code></pre>
-      </div>
-    </div>
-
-    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
-    <div class="section-title"><span class="num">6</span>4 Real-World Practice Projects</div>
-    <div class="section-body">
-      <p>Mastering browser APIs and storage through 4 real-world production components:</p>
-
-      <!-- Project 1: User Theme Store -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: Persistent Theme Store with localStorage</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Theme Store</span>
-          </div>
-          <pre><code>const ThemeManager = {
-    KEY: "app_theme_preference",
-
-    saveTheme(themeName) {
-        localStorage.setItem(this.KEY, themeName);
-        document.body.className = themeName + "-theme";
-    },
-
-    loadTheme() {
-        const saved = localStorage.getItem(this.KEY) || "dark";
-        document.body.className = saved + "-theme";
-        return saved;
-    }
-};
-
-ThemeManager.loadTheme();</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: Stopwatch Component -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Interactive Stopwatch with setInterval</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Stopwatch Engine</span>
-          </div>
-          <pre><code>class Stopwatch {
-    constructor() {
-        this.seconds = 0;
-        this.intervalId = null;
-    }
-
-    start() {
-        if (this.intervalId) return;
-        this.intervalId = setInterval(() => {
-            this.seconds++;
-            console.log("Elapsed Time:", this.seconds, "seconds");
-        }, 1000);
-    }
-
-    stop() {
-        clearInterval(this.intervalId);
-        this.intervalId = null;
-        console.log("Stopwatch Paused at:", this.seconds, "seconds");
-    }
-
-    reset() {
-        this.stop();
-        this.seconds = 0;
-        console.log("Stopwatch Reset to 0.");
-    }
-}
-
-const timer = new Stopwatch();
-timer.start();</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Clipboard One-Click Copier -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: One-Click Code Snippet Copier</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Clipboard Copier</span>
-          </div>
-          <pre><code>function setupCopyButton(buttonSelector, codeSelector) {
-    const btn = document.querySelector(buttonSelector);
-    const codeBlock = document.querySelector(codeSelector);
-
-    btn?.addEventListener("click", async () => {
-        const text = codeBlock.textContent;
-        await navigator.clipboard.writeText(text);
-        btn.textContent = "✅ Copied!";
-        setTimeout(() => { btn.textContent = "📋 Copy Code"; }, 2000);
-    });
-}</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Geolocation Coordinates Finder -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Geolocation GPS Coordinates Finder</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Geolocation API</span>
-          </div>
-          <pre><code>function findUserLocation() {
-    if (!navigator.geolocation) {
-        console.error("Geolocation is not supported by your browser!");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const { latitude, longitude, accuracy } = position.coords;
-            console.log("Latitude:", latitude);
-            console.log("Longitude:", longitude);
-            console.log("Accuracy within:", accuracy, "meters");
-        },
-        (error) => {
-            console.warn("Location Access Denied or Unavailable:", error.message);
-        },
-        { enableHighAccuracy: true, timeout: 5000 }
-    );
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Test localStorage item storage and retrieval in our browser live compiler:</p>
-      
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript Storage</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>// Store item in browser storage
-localStorage.setItem("username", "Ravi");
-
-// Retrieve item
-const username = localStorage.getItem("username");
-console.log("Retrieved Username:", username);</code></pre>
-      </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
-    </div>
-
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 16, subtopics, contentBody, 'events-and-forms.html', '15. Events & Forms', 'promises.html', 'Phase 14: Promises & Async/Await');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -862,7 +603,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

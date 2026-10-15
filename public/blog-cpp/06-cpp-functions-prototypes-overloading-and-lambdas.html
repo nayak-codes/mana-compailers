@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Functions, Overloading, Pass-by-Reference & Lambdas Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on C++ Functions (Phase 6): Declarations, default arguments, overloading, inline functions, pass-by-reference (const T&), and C++11 Lambdas." />
-  <meta name="keywords" content="c++ tutorial, c++ functions, overloading, pass-by-reference & lambdas masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Functions, Overloading & Default Arguments (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో ఫంక్షన్స్ ఎలా పనిచేస్తాయి? Function Overloading అంటే ఏమిటి? Default Arguments ఎలా వాడాలో డీప్ ఎక్స్‌ప్లనేషన్ తో నేర్చుకుందాం." />
+  <meta name="keywords" content="c++ tutorial, functions, overloading & default arguments (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/06-cpp-functions-prototypes-overloading-and-lambdas.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -293,6 +270,193 @@
         <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html">10. Constructors, Destructors, Rule of 5 & RAII</a>
       </div>
 
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
     </div>
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
@@ -303,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 6: C++ Functions, Overloading, Pass-by-Reference & Lambdas Masterclass</span>
+      <span class="current">Lesson 6: Functions, Overloading & Default Arguments (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Functions, Overloading, Pass-by-Reference & Lambdas Masterclass</h1>
+    <h1 class="page-title">Functions, Overloading & Default Arguments (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 6</span>
@@ -314,51 +478,113 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Function Prototypes · Pass-by-Value vs Pass-by-Reference · const T& Performance Rule · Function Overloading · inline Functions · C++11 Lambdas</span>
+      <span>Functions & Return Types · Pass by Value · Function Overloading · Default Arguments · Code Reusability</span>
     </div>
-<div class="intro-box">  <p>Welcome to <strong>Phase 6 (Chapter 6): C++ Functions, Overloading, Pass-by-Reference &amp; Lambdas Masterclass</strong>! Functions modularize code. In Modern C++, pass-by-reference (<code>const T&amp;</code>) prevents unnecessary copying, function overloading enables polymorphic signatures, and lambda expressions (C++11) provide inline anonymous functions.</p></div><div class="section-title"><span class="num">1</span>Pass-by-Value vs Pass-by-Reference (const T&amp;)</div><div class="section-body">  <table class="tbl spec-table">    <thead><tr><th>Passing Strategy</th><th>Syntax</th><th>Copy Overhead?</th><th>Can Modify Original?</th></tr></thead>    <tbody>      <tr><td>Pass-by-Value</td><td><code>void f(int x)</code></td><td>Yes (Full copy made)</td><td>No (Operates on copy)</td></tr>      <tr><td>Pass-by-Reference</td><td><code>void f(int &amp;x)</code></td><td>No (Zero-copy alias)</td><td><strong>Yes</strong> (Modifies original variable)</td></tr>      <tr><td>Pass-by-Const-Reference</td><td><code>void f(const std::string &amp;s)</code></td><td><strong>No (Zero-copy alias)</strong></td><td><strong>No</strong> (Read-only protection!)</td></tr>    </tbody>  </table></div><div class="section-title"><span class="num">2</span>Function Overloading &amp; Modern Lambdas</div><div class="section-body">  <div class="code-block">    <div class="code-block-header"><span class="lang-tag">C++ — Overloading, References & Lambdas</span><a class="try-btn" href="/?lang=cpp17">▶ Run Code in C++ Compiler</a></div><pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;vector&gt;
-#include &lt;algorithm&gt;
 
-// Function Overloading
-int add(int a, int b) { return a + b; }
-double add(double a, double b) { return a + b; }
+    <div class="intro-box">
+      <p>ఒక పెద్ద ప్రాజెక్ట్ (ఉదాహరణకు వాట్సాప్ యాప్) రాస్తున్నప్పుడు, మెసేజ్ పంపడానికి, ఫోటో పంపడానికి, స్టేటస్ అప్‌డేట్ చేయడానికి... అన్నిటికీ కోడ్ ని ఒకే చోట (మెయిన్ లోనే) రాస్తే అది లక్షల లైన్లు దాటిపోతుంది. అలా ఒకేచోట రాయడం వల్ల తప్పులు కనిపెట్టడం అసాధ్యం అవుతుంది. ఆ ప్రాబ్లెమ్ ని సాల్వ్ చేయడానికి కోడ్ ని చిన్న చిన్న ముక్కలుగా విడగొడతాం. ఆ ముక్కలనే <strong>Functions (ఫంక్షన్స్)</strong> అంటారు. C++ లో ఫంక్షన్స్ కి మామూలు C కంటే ఎన్నో అడ్వాన్స్డ్ ఫీచర్స్ (Overloading, Default Arguments) ఉన్నాయి. ఈ పాఠంలో అవెలా పనిచేస్తాయో డీప్ గా తెలుసుకుందాం.</p>
+    </div>
 
-// Pass-by-Reference to swap
-void swapValues(int &amp;a, int &amp;b) {
-    int temp = a;
-    a = b;
-    b = temp;
+    <div class="section-title"><span class="num">1</span> అసలు ఫంక్షన్ అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఫంక్షన్ అంటే కేవలం ఒక పర్టికులర్ పనిని మాత్రమే చేసే ఒక చిన్న ఫ్యాక్టరీ మెషిన్ లాంటిది. దానికి కొంత ఇన్పుట్ ఇస్తే అది ప్రాసెస్ చేసి మనకు అవుట్‌పుట్ ని ఇస్తుంది.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>☕ రియల్ లైఫ్ స్టోరీ: కాఫీ వెండింగ్ మెషిన్</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          ఆఫీస్ లో ఉండే ఒక కాఫీ మెషిన్ ని ఊహించుకోండి. మీరు దానికి 10 రూపాయలు (Input / Argument) ఇస్తారు. ఆ మెషిన్ లోపల నీళ్ళు, పాలు, కాఫీ పౌడర్ అన్నీ మిక్స్ అయ్యి ఒక ప్రాసెస్ (Code execution) జరుగుతుంది. చివరగా మీకు ఒక కప్పు వేడి కాఫీ (Output / Return value) వస్తుంది.<br><br>
+          ఫంక్షన్ కూడా అంతే! మీరు ఒక నంబర్ పంపిస్తే, అది లోపల లాజిక్ చేసి మీకు రిజల్ట్ ఇస్తుంది. ఒకసారి ఆ మెషిన్ ని కొనుక్కుంటే (ఫంక్షన్ రాసుకుంటే), మీకు ఎన్నిసార్లు కావాలంటే అన్నిసార్లు వాడుకోవచ్చు (Code Reusability). పదే పదే కాఫీ డికాషన్ మీరే పెట్టుకోవాల్సిన పనిలేదు!
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Function Overloading అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        C లాంగ్వేజ్ లో ఒకే పేరుతో రెండు ఫంక్షన్స్ రాయకూడదు. కానీ C++ లో ఉన్న బెస్ట్ ఫీచర్ ఏంటంటే, ఒకే పేరుతో మీరు ఎన్ని ఫంక్షన్స్ అయినా రాయొచ్చు... కానీ వాటన్నిటికీ మీరు పంపించే ఇన్పుట్స్ (Arguments) వేరేలా ఉండాలి. దీన్నే <strong>Function Overloading (ఫంక్షన్ ఓవర్‌లోడింగ్)</strong> అంటారు.
+      </p>
+      <p class="text-prose">
+        ఉదాహరణకు <code>print(int x)</code> అని ఒకటి, <code>print(double x)</code> అని ఇంకోటి రాయొచ్చు. మీరు ఏ వాల్యూ పంపిస్తే కంపైలర్ ఆటోమేటిక్ గా దానికి తగ్గ ఫంక్షన్ ని కాల్ చేసుకుంటుంది.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Function Overloading)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో <code>calculateArea</code> అనే ఒకే పేరుతో రెండు ఫంక్షన్స్ ఎలా రాశామో చూడండి. ఒకటి స్క్వేర్ (చతురస్రం) కోసం, ఇంకోటి రెక్టాంగిల్ (దీర్ఘచతురస్రం) కోసం.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — Function Overloading</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+// ఫంక్షన్ 1: ఒకటే నంబర్ తీసుకుంటుంది
+int calculateArea(int side) {
+    return side * side;
+}
+
+// ఫంక్షన్ 2: అదే పేరు, కానీ రెండు నంబర్స్ తీసుకుంటుంది
+int calculateArea(int length, int breadth) {
+    return length * breadth;
 }
 
 int main() {
-    std::cout &lt;&lt; "int add: " &lt;&lt; add(10, 20) &lt;&lt; "\n";
-    std::cout &lt;&lt; "double add: " &lt;&lt; add(5.5, 4.3) &lt;&lt; "\n";
-
-    int x = 100, y = 200;
-    swapValues(x, y);
-    std::cout &lt;&lt; "After swap: x=" &lt;&lt; x &lt;&lt; ", y=" &lt;&lt; y &lt;&lt; "\n";
-
-    // C++11 Lambda Expression
-    auto square = [](int n) { return n * n; };
-    std::cout &lt;&lt; "Lambda square(6): " &lt;&lt; square(6) &lt;&lt; "\n";
-
+    // కంపైలర్ మీరు పంపిన నంబర్స్ బట్టి ఏ ఫంక్షన్ రన్ చేయాలో డిసైడ్ చేస్తుంది
+    int square = calculateArea(5);        // ఫంక్షన్ 1 కి వెళ్తుంది
+    int rectangle = calculateArea(5, 10); // ఫంక్షన్ 2 కి వెళ్తుంది
+    
+    std::cout << "Square Area: " << square << std::endl;
+    std::cout << "Rectangle Area: " << rectangle << std::endl;
+    
     return 0;
-}</code></pre>  </div></div><div class="section-title"><span class="num">3</span>Technical FAQs</div><div class="section-body">  <div class="faq-grid">    <div class="faq-item"><h4>Q1: When should I pass by const T& vs pass by value?</h4><p>Pass primitive types (`int`, `double`, `char`) by value. Pass objects, strings, vectors, and custom structs by `const T&amp;` to eliminate copy overhead.</p></div>    <div class="faq-item"><h4>Q2: How does function overloading work under the hood?</h4><p>The C++ compiler uses <strong>Name Mangling</strong> to encode parameter types directly into the binary symbol name (e.g. `_Z3addii` vs `_Z3adddd`).</p></div>    <div class="faq-item"><h4>Q3: What are inline functions?</h4><p>Functions declared `inline` hint to the compiler to substitute the function body directly at call sites to eliminate call overhead.</p></div>    <div class="faq-item"><h4>Q4: What is a lambda capture clause []?</h4><p>`[]` captures no variables. `[=]` captures surrounding variables by value. `[&amp;]` captures surrounding variables by reference.</p></div>    <div class="faq-item"><h4>Q5: Can default argument values be specified in function definitions?</h4><p>Default arguments should be specified in the <strong>function declaration (prototype)</strong> in header files, NOT repeated in the definition body.</p></div>  </div></div>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li>మనం <code>calculateArea</code> అనే పేరుతో రెండు ఫంక్షన్స్ రాశాం. ఇది C లో అయితే "Redefinition error" అని ఫెయిల్ అవుతుంది. కానీ C++ లో అలో చేస్తుంది.</li>
+        <li>మనం మెయిన్ నుండి కేవలం <code>(5)</code> పంపినప్పుడు, కంపైలర్ చూసుకుని "అరె ఇక్కడ ఒకటే ఆర్గ్యుమెంట్ ఉంది, కాబట్టి ఫస్ట్ ఫంక్షన్ రన్ చేద్దాం" అని డిసైడ్ అవుతుంది.</li>
+        <li>ఆ తర్వాత <code>(5, 10)</code> అని రెండు పంపినప్పుడు, సెకండ్ ఫంక్షన్ కి వెళ్లిపోతుంది. దీన్నే కంపైల్-టైమ్ పాలిమార్ఫిజం (Compile-time Polymorphism) అని కూడా అంటారు.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: కేవలం రిటర్న్ టైప్ (Return Type) మారిస్తే Overloading అవుతుందా?</h4>
+          <p>అస్సలు కాదు! ఉదాహరణకు <code>int getAge(int x)</code> మరియు <code>float getAge(int x)</code> రాస్తే కంపైలర్ కి ఎర్రర్ వస్తుంది. ఎందుకంటే కంపైలర్ ఎప్పుడూ మీరు పంపే పరామీటర్స్ (కొన్నిసార్లు బ్రాకెట్స్ లో ఉన్నవి) చూసి మాత్రమే డిసైడ్ చేస్తుంది, రిటర్న్ ఏమొస్తుందో దానికి సంబంధం లేదు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Default Arguments అంటే ఏమిటి?</h4>
+          <p>మీరు ఫంక్షన్ డిక్లేర్ చేసేటప్పుడే <code>int calculateArea(int length, int breadth = 10)</code> అని రాయొచ్చు. దీని అర్థం ఏంటంటే, ఒకవేళ యూజర్ కేవలం ఒకటే నంబర్ పంపిస్తే, రెండో నంబర్ ని ఆటోమేటిక్ గా 10 కింద తీసుకో అని అర్థం. ఇది చాలా పాపులర్ ఫీచర్!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: ఫంక్షన్ డిక్లరేషన్ (Prototype) ఎందుకు పైన రాయాలి?</h4>
+          <p>C++ లో కంపైలర్ ఎప్పుడూ పై నుండి కిందికి చదువుకుంటూ వస్తుంది. మెయిన్ ఫంక్షన్ లోకి వచ్చేసరికి మీరు ఒక ఫంక్షన్ ని కాల్ చేస్తే, "ఇదెక్కడి నుంచి వచ్చింది?" అని కంపైలర్ కన్ఫ్యూజ్ అవుతుంది. అందుకే కింద రాసిన ఫంక్షన్ల గురించి ముందే పైన ఒక హెడ్డింగ్ (Prototype) లాగా చెప్తాము.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="05-cpp-loops-for-while-do-while-and-range-based-for.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">5. for, while, Range-for & 9 Practice Programs</span>
+    <span class="title">5. Loops & Control Flow</span>
   </a>
   <a href="07-cpp-arrays-std-string-string-view-and-std-vector.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">7. Arrays, std::string, string_view & std::vector</span>
+    <span class="title">7. Arrays, std::string & std::vector</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

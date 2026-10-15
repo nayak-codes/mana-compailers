@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Constructors, Destructors, Rule of 5 & RAII Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on C++ Object Lifecycle (Phase 10): Constructors, destructors, copy/move semantics, Rule of Zero/Three/Five, and RAII resource management." />
-  <meta name="keywords" content="c++ tutorial, c++ constructors, destructors, rule of 5 & raii masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Constructors, Destructors & RAII (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో ఒక ఆబ్జెక్ట్ పుట్టినప్పుడు (Constructor), చనిపోయేటప్పుడు (Destructor) ఏం జరుగుతుంది? RAII అనే అడ్వాన్స్డ్ కాన్సెప్ట్ మెమరీ లీక్స్ ని ఎలా ఆపుతుందో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c++ tutorial, constructors, destructors & raii (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -293,6 +270,193 @@
         <a href="/blog-cpp/10-cpp-constructors-destructors-rule-of-five-and-raii.html" class="active">10. Constructors, Destructors, Rule of 5 & RAII</a>
       </div>
 
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧬</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 11</span>
+            <span class="phase-title">Inheritance & Polymorphism</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html">11. Inheritance, Virtual Functions & Runtime Polymorphism</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">➕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 12</span>
+            <span class="phase-title">Operator Overloading</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html">12. Operator Overloading, Friend Functions & Streams</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 13</span>
+            <span class="phase-title">Templates & Generic Programming</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html">13. Templates, Specialization, Variadic & Concepts</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">STL Containers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html">14. STL: vector, map, set, unordered & Container Adaptors</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔄</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Iterators & Algorithms</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html">15. Iterators, sort, find, transform & STL Algorithms</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Lambda Expressions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/16-cpp-lambda-expressions-captures-std-function-and-closures.html">16. Lambdas, Captures, std::function & Closures</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Smart Pointers & Memory</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/17-cpp-smart-pointers-unique-ptr-shared-ptr-weak-ptr-and-raii.html">17. unique_ptr, shared_ptr, weak_ptr & RAII Memory</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Exception Handling</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html">18. try, catch, throw, Custom Exceptions & Safety</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">File Handling & Filesystem</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html">19. fstream, std::filesystem, Paths & Serialization</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Modern C++ Features</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html">20. constexpr, Structured Bindings, optional, variant & format</a>
+      </div>
+
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 21</span>
+            <span class="phase-title">Ranges & Views (C++20)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/21-cpp-ranges-views-filter-transform-pipelines-and-lazy-evaluation.html">21. Ranges, Views, Pipelines & Lazy Evaluation (C++20)</a>
+      </div>
+
     </div>
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=cpp17" style="color:#3b82f6; font-weight:700;">▶ Try C++ Online Compiler</a>
@@ -303,82 +467,133 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 10: C++ Constructors, Destructors, Rule of 5 & RAII Masterclass</span>
+      <span class="current">Lesson 10: Constructors, Destructors & RAII (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Constructors, Destructors, Rule of 5 & RAII Masterclass</h1>
+    <h1 class="page-title">Constructors, Destructors & RAII (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 10</span>
-      <span class="badge">📂 Phase 10: Constructors, Destructors & RAII</span>
+      <span class="badge">📂 Phase 10: Constructors & RAII</span>
       <span class="badge">📅 2026 Master Edition</span>
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Constructors & Destructors · Member Initializer Lists · Copy vs Move Semantics · Rule of Zero / Three / Five · RAII Resource Management · std::move</span>
+      <span>Constructors · Destructors · Resource Acquisition (RAII) · Memory Leaks Prevention</span>
     </div>
-<div class="intro-box">  <p>Welcome to <strong>Phase 10 (Chapter 10): C++ Constructors, Destructors, Rule of 5 &amp; RAII Masterclass</strong>! Object lifecycle management is the core strength of C++. In this guide, you will master constructors, copy/move semantics, Rule of Zero / Three / Five, and <strong>RAII (Resource Acquisition Is Initialization)</strong>.</p></div><div class="section-title"><span class="num">1</span>The Rule of Zero, Three, and Five Matrix</div><div class="section-body">  <table class="tbl spec-table">    <thead><tr><th>Rule Name</th><th>When It Applies</th><th>Special Member Functions to Implement</th></tr></thead>    <tbody>      <tr><td><strong>Rule of Zero</strong></td><td>Classes using RAII members (vectors, strings, smart pointers).</td><td><strong>None!</strong> Rely on compiler-generated defaults. (Preferred modern style!)</td></tr>      <tr><td>Rule of Three (C++98)</td><td>Classes managing raw heap memory or file handles.</td><td>1. Destructor<br>2. Copy Constructor<br>3. Copy Assignment Operator</td></tr>      <tr><td><strong>Rule of Five (C++11)</strong></td><td>Classes managing raw resources requiring move optimization.</td><td>1. Destructor<br>2. Copy Constructor<br>3. Copy Assignment<br>4. <strong>Move Constructor</strong><br>5. <strong>Move Assignment</strong></td></tr>    </tbody>  </table></div><div class="section-title"><span class="num">2</span>RAII (Resource Acquisition Is Initialization) Paradigm</div><div class="section-body">  <div class="memory-diagram">RAII Execution Lifecycle:
 
-  Scope Entry ──► Constructor executes ──► Acquires Resource (Heap memory, File handle, Mutex lock)
-                       │
-                       ▼ [Normal Execution OR Exception Thrown]
-                       │
-  Scope Exit  ──► Destructor executes  ──► Automatically Releases Resource! (Zero Leaks!)
-  </div>  <p class="text-prose">RAII guarantees resource cleanup even if exceptions are thrown during function execution!</p></div><div class="section-title"><span class="num">3</span>Complete RAII Class Implementation</div><div class="section-body">  <div class="code-block">    <div class="code-block-header"><span class="lang-tag">C++ — Exception-Safe RAII Resource Manager</span><a class="try-btn" href="/?lang=cpp17">▶ Run Code in C++ Compiler</a></div><pre><code>#include &lt;iostream&gt;
-#include &lt;utility&gt; // for std::move
+    <div class="intro-box">
+      <p>గత పాఠంలో మనం క్లాస్ (Class) తయారు చేయడం చూసాము. కానీ ఒక ఆబ్జెక్ట్ మెమరీ లో పుట్టినప్పుడు (క్రియేట్ అయినప్పుడు), దాని లోపల ఉన్న వాల్యూస్ కి మొదట్లోనే ఏదైనా డేటా ఇవ్వాలి అనుకుంటే ఎలా? ఆటోమేటిక్ గా రన్ అయ్యే స్పెషల్ ఫంక్షన్స్ మనకు కావాలి. వాటినే <strong>Constructors (కన్‌స్ట్రక్టర్స్)</strong> అంటారు. అలాగే ఆ ఆబ్జెక్ట్ పని అయిపోయి మెమరీ నుండి చనిపోయేటప్పుడు, అది వాడుకున్న రామ్ (RAM) ని, ఫైల్స్ ని తిరిగి సిస్టమ్ కి ఇచ్చేయాలి. ఆ క్లీనింగ్ పని చేసేదే <strong>Destructors (డిస్ట్రక్టర్స్)</strong>. ఈ రెండు కలిపితే పుట్టే అద్భుతమైన కాన్సెప్టే "RAII". అది ఎంటో ఇప్పుడు క్లియర్ గా తెలుసుకుందాం.</p>
+    </div>
 
-class IntBuffer {
+    <div class="section-title"><span class="num">1</span> Constructors మరియు Destructors అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>Constructor:</strong> ఇది క్లాస్ పేరుతోనే ఉండే ఒక స్పెషల్ ఫంక్షన్. దీనికి ఎటువంటి రిటర్న్ టైప్ (<code>void</code> లాంటివి) ఉండదు. ఆబ్జెక్ట్ పుట్టగానే ఇది ఎవరి పిలుపు లేకుండా ఆటోమేటిక్ గా దానంతట అదే రన్ అవుతుంది. దీన్ని సెటప్ (Setup) చేయడానికి వాడతారు.
+      </p>
+      <p class="text-prose">
+        <strong>Destructor:</strong> ఇది కూడా క్లాస్ పేరుతోనే ఉంటుంది, కానీ ముందు ఒక <code>~</code> (టిల్డ్) సింబల్ ఉంటుంది. ఆబ్జెక్ట్ మెమరీ నుండి డిలీట్ అయ్యే చివరి సెకనులో ఇది రన్ అయ్యి, చెత్త అంతా క్లీన్ చేసి పోతుంది.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🎬 రియల్ లైఫ్ స్టోరీ: థియేటర్ లో సినిమా సీటు (RAII)</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          మీరు థియేటర్ కి వెళ్లి ఒక సీటులో కూర్చున్నారు అనుకోండి.<br><br>
+          <strong>Constructor (పుట్టుక):</strong> మీరు సీటులో కూర్చోగానే, ఆ సీటు మీ పేరు మీద <strong>రిజర్వ్ (Book)</strong> అయిపోయింది. వేరే వాళ్లు అందులో కూర్చోలేరు. ఆ రిజర్వేషన్ చేసేదే కన్‌స్ట్రక్టర్.<br><br>
+          <strong>Destructor (ముగింపు):</strong> సినిమా అయిపోయిన వెంటనే, మీరు లేచి వెళ్లిపోతారు. మీరు లేవగానే ఆటోమేటిక్ గా ఆ సీటు నెక్స్ట్ వాళ్ళ కోసం <strong>ఖాళీ (Clean up/Free)</strong> అయిపోతుంది. <br><br>
+          అంటే ఒక వస్తువు ఉన్నంతసేపే ఆ మెమరీ లాక్ అయి ఉంటుంది, దాని పని అవ్వగానే దానంతట అదే మెమరీ ని రిలీజ్ చేస్తుంది. C++ లో ఈ అద్భుతమైన ప్యాట్రన్ నే <strong>RAII (Resource Acquisition Is Initialization)</strong> అంటారు. దీనివల్ల కంప్యూటర్ లో "మెమరీ లీక్స్" (RAM ఫుల్ అయిపోయి హ్యాంగ్ అవ్వడం) జరగవు.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> ఒకే ఒక సింపుల్ కోడ్ (Constructor & Destructor)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో ఫైల్ హ్యాండ్లింగ్ కి సంబంధించిన క్లాస్ ఎలా ఆటోమేటిక్ గా కనెక్ట్ అయ్యి, ఆటోమేటిక్ గా క్లోజ్ అవుతుందో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — Constructor, Destructor (RAII)</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+class Database {
 private:
-    int* data;
-    size_t size;
+    std::string dbName;
 
 public:
-    // 1. Parameterized Constructor (Resource Acquisition)
-    explicit IntBuffer(size_t bufferSize)
-        : data(new int[bufferSize]{}), size(bufferSize) {
-        std::cout &lt;&lt; "[RAII] Allocated buffer of " &lt;&lt; size &lt;&lt; " ints\n";
+    // 1. Constructor (పుట్టినప్పుడు రన్ అవుతుంది)
+    Database(std::string name) {
+        dbName = name;
+        std::cout << "[+] Database '" << dbName << "' is Connected!" << std::endl;
     }
 
-    // 2. Destructor (Automatic Resource Release)
-    ~IntBuffer() {
-        delete[] data;
-        std::cout &lt;&lt; "[RAII] Freed buffer memory safely.\n";
+    void doWork() {
+        std::cout << "    -> Fetching users from " << dbName << "..." << std::endl;
     }
 
-    // 3. Copy Constructor (Deep Copy)
-    IntBuffer(const IntBuffer&amp; other) : data(new int[other.size]), size(other.size) {
-        for (size_t i = 0; i &lt; size; i++) data[i] = other.data[i];
-        std::cout &lt;&lt; "[Rule of 5] Deep Copy Constructor called.\n";
-    }
-
-    // 4. Move Constructor (Resource Transfer - C++11)
-    IntBuffer(IntBuffer&amp;&amp; other) noexcept : data(other.data), size(other.size) {
-        other.data = nullptr;
-        other.size = 0;
-        std::cout &lt;&lt; "[Rule of 5] Fast Move Constructor called.\n";
+    // 2. Destructor (~ సింబల్ తో ఉంటుంది, చనిపోయేటప్పుడు రన్ అవుతుంది)
+    ~Database() {
+        std::cout << "[-] Database '" << dbName << "' is Disconnected. Memory Freed!" << std::endl;
     }
 };
 
 int main() {
-    {
-        IntBuffer buf1(100); // Resource acquired
-        IntBuffer buf2 = std::move(buf1); // Fast move, zero copy overhead!
-    } // Scope ends: Destructor automatically called, memory freed!
-
+    std::cout << "--- Main Started ---" << std::endl;
+    
+    { // ఇక్కడ ఒక చిన్న స్కోప్ (బ్రాకెట్) క్రియేట్ చేశాం
+        Database db("Facebook_Users"); // ఇక్కడ Constructor రన్ అవుతుంది
+        db.doWork();
+    } // బ్రాకెట్ అవ్వగానే ఆబ్జెక్ట్ చనిపోతుంది, Destructor ఆటోమేటిక్ గా రన్ అవుతుంది!
+    
+    std::cout << "--- Main Ended ---" << std::endl;
+    
     return 0;
-}</code></pre>  </div></div><div class="section-title"><span class="num">4</span>Technical FAQs</div><div class="section-body">  <div class="faq-grid">    <div class="faq-item"><h4>Q1: What is RAII in C++?</h4><p>Resource Acquisition Is Initialization: A design pattern where resource allocation happens in the constructor and automatic deallocation happens in the destructor when the object goes out of scope.</p></div>    <div class="faq-item"><h4>Q2: Why prefer Rule of Zero in Modern C++?</h4><p>By using standard containers (`std::vector`, `std::string`, `std::unique_ptr`) as member variables, the compiler automatically generates correct copy, move, and destruction logic without custom code.</p></div>    <div class="faq-item"><h4>Q3: What is the purpose of std::move?</h4><p><code>std::move(x)</code> casts an lvalue to an rvalue reference (<code>x&amp;&amp;</code>), enabling fast move construction by stealing resources instead of making deep copies.</p></div>    <div class="faq-item"><h4>Q4: Why mark move operations noexcept?</h4><p>Standard library containers like <code>std::vector</code> will only use fast move constructors during reallocation if marked <code>noexcept</code> for exception safety guarantees.</p></div>    <div class="faq-item"><h4>Q5: What is constructor delegation?</h4><p>A constructor calling another constructor of the same class in its member initializer list to reuse initialization code (C++11).</p></div>  </div></div>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li>మనం <code>Database db("Facebook_Users");</code> అనగానే <code>Database(...)</code> అనే కన్‌స్ట్రక్టర్ రన్ అయ్యి, ఆ పేరుని సెట్ చేసి కనెక్షన్ అయినట్లు ప్రింట్ చేసింది.</li>
+        <li>ఆ తర్వాత బ్రాకెట్ <code>}</code> క్లోజ్ అవ్వగానే, ఆ ఆబ్జెక్ట్ యొక్క టైమ్ అయిపోయింది కాబట్టి కంపైలర్ దాన్ని మెమరీ లోనుండి లేపేస్తుంది. ఆ లేపేసే ముందే <code>~Database()</code> డిస్ట్రక్టర్ ని కాల్ చేస్తుంది.</li>
+        <li>దీనివల్ల ప్రోగ్రామర్ ఎప్పుడూ <code>db.close()</code> అని మ్యాన్యువల్ గా రాయాల్సిన టెన్షన్ లేదు (ముఖ్యంగా ఎర్రర్స్ వచ్చి ప్రోగ్రామ్ క్రాష్ అయినప్పుడు కూడా డిస్ట్రక్టర్ గ్యారెంటీగా రన్ అవుతుంది). ఇదే RAII బ్యూటీ!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: కన్‌స్ట్రక్టర్ ని నేను పిలవచ్చా? (ఉదా: <code>db.Database()</code>)</h4>
+          <p>లేదండి! కన్‌స్ట్రక్టర్ ని మీరు విడిగా డైరెక్ట్ గా ఎప్పుడూ కాల్ చేయలేరు. ఆబ్జెక్ట్ (వేరియబుల్) ని క్రియేట్ చేస్తున్న ఆ ఒక్క సెకనులో కంపైలర్ మాత్రమే దాన్ని కాల్ చేయగలదు. అది సెటప్ కోసం మాత్రమే వాడే వన్-టైమ్ కీ.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: నా క్లాస్ లో నేను కన్‌స్ట్రక్టర్ రాయకపోతే ఏమవుతుంది? ప్రోగ్రామ్ ఎర్రర్ వస్తుందా?</h4>
+          <p>ఎర్రర్ రాదు. మీరు రాయకపోతే C++ కంపైలర్ దానంతట అదే ఒక డమ్మీ (Empty / Default) కన్‌స్ట్రక్టర్ ని క్రియేట్ చేసి రన్ చేస్తుంది. దాన్ని "Compiler Generated Default Constructor" అంటారు. కానీ అందులోపల ఏ వాల్యూస్ సెట్ అవ్వవు, చెత్త (Garbage) వాల్యూస్ ఉండిపోతాయి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: Rule of Three / Rule of Five అంటే ఏంటి?</h4>
+          <p>మీరు ఒక క్లాస్ లో మీ స్వంతంగా ఒక డిస్ట్రక్టర్ ని రాయాల్సి వచ్చింది అంటే... మీరు డైరెక్ట్ గా పాయింటర్స్ మరియు ర్యామ్ (Heap memory) తో ఆడుకుంటున్నారు అని అర్థం. అలాంటప్పుడు కాపీ చేసేటప్పుడు క్రాష్ అవ్వకుండా ఉండటానికి మీరు ఖచ్చితంగా Copy Constructor మరియు Copy Assignment Operator ని కూడా రాయాలి. ఈ మూడింటినీ కలిపే రూల్ ఆఫ్ త్రీ అంటారు.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="09-cpp-object-oriented-programming-classes-objects-and-encapsulation.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">9. OOP, Classes, Objects, Access Specifiers & Pillars</span>
+    <span class="title">9. OOP, Classes & Objects</span>
   </a>
-  <a href="/blog-cpp.html" class="nav-btn" style="text-align:right;">
-    <span class="label">Course Index →</span>
-    <span class="title">C++ Master Index</span>
+  <a href="11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html" class="nav-btn" style="text-align:right;">
+    <span class="label">Next Lesson →</span>
+    <span class="title">11. Inheritance & Virtual Functions</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

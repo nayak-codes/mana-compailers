@@ -9,128 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
-    lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions & Arrow Syntax',
-    icon: '🧩',
-    desc: 'Function declarations, expressions, arrow functions, default params, rest params, callback functions, and pure functions.',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions & Arrow Syntax', subtopics: 'Declaration vs Expression · Arrow Syntax · Default Params · Closures' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'Advanced ES6+ & OOP',
+    title: 'Object-Oriented Programming (OOP)',
     icon: '🏗️',
-    desc: 'Advanced Destructuring, ES6 Classes, Prototypes, Inheritance, and this keyword binding.',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 14, file: 'es6-features.html', title: '14. ES6+ Advanced Features', subtopics: 'Advanced Destructuring · Symbols · Maps & Sets' },
-      { num: 15, file: 'closures.html', title: '15. Closures & Scope Chain', subtopics: 'Lexical Scope · Closures · Higher Order Functions' },
-      { num: 16, file: 'oop.html', title: '16. OOP: Classes & Prototypes', subtopics: 'Prototypes · ES6 Classes · Getters/Setters · Static' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Asynchronous JavaScript & DOM',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, DOM manipulation, and LocalStorage.',
-    lessons: [
-      { num: 17, file: 'promises.html', title: '17. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise · async/await · Fetch API' },
-      { num: 18, file: 'exceptions.html', title: '18. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' },
-      { num: 19, file: 'dom.html', title: '19. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -246,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -435,152 +400,87 @@ function buildLesson12() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 9: Objects Mastery</strong>! In JavaScript, nearly everything is an <strong>Object</strong>. An Object is a collection of related data and functionality represented as <strong>key-value pairs</strong> (properties and methods). Unlike primitive types that store a single value, objects allow you to model complex real-world entities (like Users, Products, Shopping Carts, and Application State) in structured Heap memory. In this comprehensive masterclass guide, you will master object creation, dot vs bracket notation, mutation operations, nested hierarchies, ES6 destructuring, static utilities (<code>Object.keys</code>, <code>Object.values</code>, <code>Object.entries</code>, <code>Object.assign</code>), computed keys, the <code>this</code> keyword, and safe traversal with <strong>Optional Chaining (<code>?.</code>)</strong>.</p>
+      <p>నిజ జీవితంలోని వస్తువులను (Real World Objects - ఉదాహరణకు ఒక ఫోన్, యూజర్ ప్రోఫైల్, కారు) వాటి వివరాలతో సహా కోడ్ లో దాచడానికి <strong>Objects</strong> వాడతాం. ఆబ్జెక్టులలో Key-Value జంటలుగా డేటా నిల్వ ఉంటుంది. ఈ చాప్టర్ లో Objects క్రియేషన్, Properties, Methods, <code>this</code> Keyword, మరియు ES6 Destructuring ల గురించి స్పష్టంగా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. Object Ante Enti & Creation -->
-    <div class="section-title"><span class="num">1</span>Object Ante Enti? & Object Literals</div>
+    <div class="callout">
+      <div class="callout-title">🪪 రియల్ లైఫ్ అనలాజీ: స్టూడెంట్ ఐడి కార్డ్ (Student ID Card)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">ఒక కాలేజ్ ఐడి కార్డ్ లో ఏముంటాయి?</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>Key (లక్షణం):</strong> Name, RollNo, Age, Branch</li>
+        <li><strong>Value (విలువ):</strong> "Balaji", 101, 20, "CSE"</li>
+      </ul>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">ఈ ల్యాబుల్స్ మరియు వాల్యూస్ అన్నింటినీ కలిపి JavaScript లో <strong>Object "{...}"</strong> అంటాం!</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>Object Creation & Property Access</div>
     <div class="section-body">
-      <p>JavaScript lo <strong>Object</strong> ante named properties mariyu functions (methods) ni okate variable lo bundle chese reference data structure. Memory lo object references Heap memory lo reside avthayi:</p>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:14px;">
-          <strong style="color:#f7df1e;">1. Object Literal (⭐ Standard)</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Curly braces <code>{}</code> tho key-value pairs define cheyyadam: <code>const user = { name: "Ravi", age: 20 };</code></p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:14px;">
-          <strong style="color:#58a6ff;">2. Properties vs Methods</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Key lo string/number data unte <strong>Property</strong> antaru. Key lo function unte <strong>Method</strong> antaru.</p>
-        </div>
-      </div>
-
+      <p>ఆబ్జెక్టులను Curly Braces <code>{...}</code> ఉపయోగించి తయారుచేస్తాం. వాల్యూస్ ని <code>.</code> (Dot Notation) లేదా <code>[...]</code> (Bracket Notation) ద్వారా యాక్సెస్ చేయవచ్చు.</p>
+      
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Student Object with Method & this</span>
+          <span class="lang-tag">JavaScript — Object Basics</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-const student = {
-    name: "Ravi",
-    age: 20,
-    course: "JavaScript",
-
-    // ES6 Method Shorthand
-    introduce() {
-        console.log(\`I am \${this.name}\`);
-    }
+let student = {
+    name: "Balaji",
+    age: 21,
+    branch: "CSE",
+    isGraduated: false
 };
 
-console.log("Student Name:", student.name);
-student.introduce(); // Output: I am Ravi</code></pre>
+// 1. Dot Notation ద్వారా యాక్సెస్
+console.log("Student Name:", student.name); // Balaji
+
+// 2. Bracket Notation ద్వారా యాక్సెస్ (వేరియబుల్స్ లో ఉన్న కీస్ కోసం ఇది అవసరం)
+let key = "branch";
+console.log("Branch:", student[key]); // CSE
+
+// 3. Property ని అప్‌డేట్ చేయడం & కొత్తది చేర్చడం
+student.age = 22;
+student.city = "Hyderabad"; // కొత్త property చేరింది
+console.log("Updated Student:", student);</code></pre>
       </div>
     </div>
 
-    <!-- 2. Dot Notation vs Bracket Notation -->
-    <div class="section-title"><span class="num">2</span>Accessing Properties: Dot Notation vs Bracket Notation</div>
+    <div class="section-title"><span class="num">2</span>Object Methods & 'this' Keyword</div>
     <div class="section-body">
+      <p>ఆబ్జెక్ట్ లోపల ఫంక్షన్ ని నిర్వచించినప్పుడు దాన్ని <strong>Method</strong> అంటాం. ఆబ్జెక్ట్ లోని ఓన్ ప్రాపర్టీస్ ని వాడటానికి <code>this</code> కీవర్డ్ తో సూచిస్తాం.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Object Methods</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>let user = {
+    firstName: "Nayak",
+    lastName: "Codes",
+    getFullName: function() {
+        // this అంటే ఈ user ఆబ్జెక్ట్ ని సూచిస్తుంది
+        return this.firstName + " " + this.lastName;
+    }
+};
+
+console.log("Full Name:", user.getFullName()); // Nayak Codes</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Useful Object Static Methods</div>
+    <div class="section-body">
+      <p>ఆబ్జెక్ట్ లోని Keys మరియు Values ని విడదీయడానికి JS కొన్ని ఉపయోగకరమైన ఫంక్షన్లను ఇస్తుంది:</p>
+
       <table class="tbl">
-        <tr><th>Feature</th><th>Dot Notation (<code>obj.prop</code>)</th><th>Bracket Notation (<code>obj["prop"]</code>) ⭐ Dynamic</th></tr>
-        <tr><td><strong>Syntax</strong></td><td><code>student.name</code></td><td><code>student["name"]</code></td></tr>
-        <tr><td><strong>Dynamic Variable Keys</strong></td><td>❌ Not supported (looks for literal property name)</td><td>✅ <code>student[variableKey]</code> dynamically resolves!</td></tr>
-        <tr><td><strong>Keys with Spaces / Hyphens</strong></td><td>❌ Syntax error: <code>obj.user-name</code> fails!</td><td>✅ Supported: <code>obj["user-name"]</code> works cleanly!</td></tr>
+        <tr><th>Static Method</th><th>పని (Description)</th><th>రిజల్ట్ (Result)</th></tr>
+        <tr><td><code>Object.keys(obj)</code></td><td>ఆబ్జెక్ట్ లోని అన్ని Keys (కీస్) ల అర్రే ని ఇస్తుంది.</td><td><code>["name", "age", "branch"]</code></td></tr>
+        <tr><td><code>Object.values(obj)</code></td><td>ఆబ్జెక్ట్ లోని అన్ని Values ల అర్రే ని ఇస్తుంది.</td><td><code>["Balaji", 21, "CSE"]</code></td></tr>
+        <tr><td><code>Object.entries(obj)</code></td><td>Key-Value జంటల 2D అర్రే ని ఇస్తుంది.</td><td><code>[["name","Balaji"], ...]</code></td></tr>
       </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Dot vs Bracket Access</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const profile = {
-    "first-name": "Ravi",
-    role: "Developer",
-    experienceYears: 3
-};
-
-// 1. Bracket required for hyphenated keys
-console.log("First Name:", profile["first-name"]);
-
-// 2. Dynamic key resolution
-const searchKey = "role";
-console.log("Dynamic Value:", profile[searchKey]); // "Developer"</code></pre>
-      </div>
     </div>
 
-    <!-- 3. Adding, Updating & Deleting Properties -->
-    <div class="section-title"><span class="num">3</span>Mutating Objects: Adding, Updating & Deleting</div>
+    <div class="section-title"><span class="num">4</span>ES6 Object Destructuring & Spread Operator</div>
     <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Adding:</strong> <code>student.email = "ravi@gmail.com";</code> (Creates new key-value pair).</li>
-        <li><strong>Updating:</strong> <code>student.age = 21;</code> (Mutates existing value).</li>
-        <li><strong>Deleting:</strong> <code>delete student.course;</code> (Permanently removes property and returns <code>true</code>).</li>
-      </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Object Mutation Demo</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const car = { brand: "Tesla", model: "Model 3" };
-
-// 1. Add property
-car.year = 2026;
-car.color = "Red";
-
-// 2. Update property
-car.color = "Midnight Silver";
-
-// 3. Delete property
-delete car.model;
-
-console.log("Updated Car Object:", car); // { brand: 'Tesla', year: 2026, color: 'Midnight Silver' }</code></pre>
-      </div>
-    </div>
-
-    <!-- 4. Nested Objects & Optional Chaining (?.) -->
-    <div class="section-title"><span class="num">4</span>Nested Objects & Optional Chaining (?.)</div>
-    <div class="section-body">
-      <p>Objects can contain nested sub-objects to represent hierarchical data structures. <strong>Optional Chaining (<code>?.</code>)</strong> guarantees that accessing deeply nested properties will never throw a <code>TypeError: Cannot read properties of undefined</code> crash:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Nested Objects & ?.</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const developer = {
-    id: 101,
-    name: "Ravi",
-    address: {
-        city: "Hyderabad",
-        state: "Telangana"
-        // zipCode is missing!
-    }
-};
-
-// Safe deep access with Optional Chaining (?.)
-console.log("City:", developer?.address?.city); // "Hyderabad"
-console.log("ZipCode:", developer?.address?.zipCode); // undefined (No crash!)
-console.log("Company:", developer?.work?.companyName); // undefined (No crash!)</code></pre>
-      </div>
-    </div>
-
-    <!-- 5. Object Destructuring, Spread & Rest -->
-    <div class="section-title"><span class="num">5</span>Object Destructuring, Property Shorthand & Spread/Rest</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Property Shorthand:</strong> <code>const name = "Ravi"; const obj = { name };</code> (If key matches variable name, no need to repeat <code>name: name</code>).</li>
-        <li><strong>Object Destructuring:</strong> Unpacking object keys into variables: <code>const { name, age } = student;</code></li>
-        <li><strong>Renaming & Defaults:</strong> <code>const { name: fullName, country = "India" } = student;</code></li>
-        <li><strong>Spread & Rest (<code>...</code>):</strong> Shallow cloning <code>{ ...student }</code>, merging <code>{ ...obj1, ...obj2 }</code>, and extracting remaining keys with rest <code>const { id, ...restDetails } = obj;</code>.</li>
-      </ul>
-
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">JavaScript — Destructuring & Spread</span>
@@ -588,253 +488,52 @@ console.log("Company:", developer?.work?.companyName); // undefined (No crash!)<
         </div>
         <pre><code>"use strict";
 
-const user = { id: 501, username: "ravi_dev", role: "admin", points: 1500 };
+let person = { name: "Ramesh", age: 25, city: "Vizag" };
 
-// 1. Destructuring with Rest
-const { username, role, ...stats } = user;
-console.log("User:", username, "| Role:", role);
-console.log("Remaining Stats (Rest):", stats); // { id: 501, points: 1500 }
+// 1. Destructuring (సులభంగా వేరియబుల్స్ గా బయటకు తీయడం)
+let { name, city } = person;
+console.log(name, "from", city); // Ramesh from Vizag
 
-// 2. Spread Cloning & Overriding
-const updatedUser = {
-    ...user,
-    role: "superadmin", // Overrides role
-    lastActive: "Today" // Adds new property
-};
-console.log("Updated User:", updatedUser);</code></pre>
+// 2. Object Spread Operator (కాపీ చేయడం / కలపడం)
+let updatedPerson = { ...person, role: "Admin", city: "Hyderabad" };
+console.log("Updated Person:", updatedPerson);</code></pre>
       </div>
     </div>
 
-    <!-- 6. Static Methods: keys, values, entries, assign & Computed Properties -->
-    <div class="section-title"><span class="num">6</span>Object.keys(), Object.values(), Object.entries() & Computed Properties</div>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li>Arrow Functions <code>() => {}</code> లని Object Methods గా వాడితే <code>this</code> కీవర్డ్ ఆ ఆబ్జెక్ట్ ని పాయింట్ చేయదు (Global scope ని పాయింట్ చేస్తుంది)! కాబట్టి మల్టీ-లైన్ మెథడ్స్ కి మామూలు ఫంక్షన్లనే వాడాలి.</li>
+        <li>లేని ప్రాపర్టీని ప్రింట్ చేస్తే <code>undefined</code> వస్తుంది. (Ex: <code>person.phone</code> -> <code>undefined</code>).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <table class="tbl">
-        <tr><th>Static Method</th><th>Description</th><th>Return Value</th></tr>
-        <tr><td><strong><code>Object.keys(obj)</code></strong></td><td>Extracts all own property names/keys</td><td>Array of strings: <code>["name", "age"]</code></td></tr>
-        <tr><td><strong><code>Object.values(obj)</code></strong></td><td>Extracts all property values</td><td>Array of values: <code>["Ravi", 20]</code></td></tr>
-        <tr><td><strong><code>Object.entries(obj)</code></strong></td><td>Extracts key-value pairs</td><td>Array of <code>[key, value]</code> pairs</td></tr>
-        <tr><td><strong><code>Object.assign(target, ...src)</code></strong></td><td>Copies properties into target object</td><td>Mutated target object</td></tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Object Static Methods & Computed Keys</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+      <details>
+        <summary>Q1. Dot Notation కి Bracket Notation కి ఉన్న ముఖ్యమైన వ్యత్యాసం ఏమిటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> Key పేరు ఒక వేరియబుల్ లో ఉన్నప్పుడు (Ex: <code>let k = "age"</code>), లేదా Key లో స్పేస్ లు ఉన్నప్పుడు కేవలం Bracket Notation <code>obj[k]</code> మాత్రమే పనిచేస్తుంది.</p>
         </div>
-        <pre><code>"use strict";
+      </details>
 
-const scores = { Math: 95, Physics: 88, Chemistry: 92 };
-
-console.log("Keys:", Object.keys(scores));     // ['Math', 'Physics', 'Chemistry']
-console.log("Values:", Object.values(scores)); // [95, 88, 92]
-console.log("Entries:", Object.entries(scores)); // [['Math', 95], ['Physics', 88], ...]
-
-// Computed Property Names
-const dynamicKey = "subject_" + 4;
-const dynamicObj = {
-    [dynamicKey]: "Computer Science"
-};
-console.log("Computed Object:", dynamicObj); // { subject_4: 'Computer Science' }</code></pre>
-      </div>
+      <details>
+        <summary>Q2. ఆబ్జెక్ట్ లోని ఒక Property ని పూర్తిగా తొలగించడం (Delete) ఎలా?</summary>
+        <div class="faq-ans">
+          <p><strong>కోడ్:</strong> <code>delete student.branch;</code></p>
+        </div>
+      </details>
     </div>
 
-    <!-- 7. this Keyword Context in Objects -->
-    <div class="section-title"><span class="num">7</span>The this Keyword & Arrow Function Context Trap</div>
-    <div class="section-body">
-      <div class="callout">
-        <div class="callout-title">⚠️ The Arrow Function this Binding Trap!</div>
-        <p>Object methods lo standard functions (or shorthand methods <code>fn() {}</code>) vadali. <strong>Arrow functions do NOT have their own <code>this</code></strong>! Arrow function lopala <code>this</code> vadithe adhi enclosing global window / module scope ki point chesthundi (returning <code>undefined</code>)!</p>
-      </div>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — this Binding Comparison</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const account = {
-    owner: "Ravi",
-    balance: 5000,
-
-    // ✅ Correct Method: 'this' binds to account object
-    getBalance() {
-        return \`Account owner: \${this.owner} | Balance: Rs.\${this.balance}\`;
-    },
-
-    // ❌ Arrow Function Bug: 'this' is NOT account!
-    buggyArrow: () => {
-        return \`Owner: \${this?.owner}\`; // 'this' is undefined in strict mode!
-    }
-};
-
-console.log(account.getBalance());
-console.log(account.buggyArrow()); // Owner: undefined</code></pre>
-      </div>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>Objects key-value జంటలుగా ఉంటాయి.</li>
+        <li>మెథడ్స్ లో <code>this</code> కీవర్డ్ ఆబ్జెక్ట్ ని సూచిస్తుంది.</li>
+        <li>సులభంగా వేరియబుల్స్ క్రియేట్ చేయడానికి ES6 Destructuring వాడండి.</li>
+      </ul>
     </div>
-
-    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
-    <div class="section-title"><span class="num">8</span>4 Real-World Practice Projects</div>
-    <div class="section-body">
-      <p>Mastering objects through 4 real-world production-grade architectures:</p>
-
-      <!-- Project 1: User Profile Manager -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: User Profile CRUD Store</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Profile CRUD</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const profileStore = {
-    users: {},
-
-    addUser(id, name, email) {
-        this.users[id] = { name, email, createdAt: new Date().getFullYear() };
-        return \`User \${name} added successfully!\`;
-    },
-
-    updateEmail(id, newEmail) {
-        if (this.users[id]) {
-            this.users[id].email = newEmail;
-            return \`Updated email for \${this.users[id].name}\`;
-        }
-        return "User not found!";
-    },
-
-    deleteUser(id) {
-        if (this.users[id]) {
-            delete this.users[id];
-            return \`User \${id} deleted.\`;
-        }
-        return "User not found!";
-    }
-};
-
-console.log(profileStore.addUser(1, "Ravi", "ravi@dev.io"));
-console.log(profileStore.updateEmail(1, "ravi@ourcompiler.com"));
-console.log("Current Users Store:", profileStore.users);</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: Deep Cloning vs Shallow Cloning -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Deep Cloning with structuredClone() vs Spread</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Deep Clone Demo</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const originalConfig = {
-    theme: "dark",
-    preferences: {
-        fontSize: 16,
-        tabSize: 2
-    }
-};
-
-// 1. Deep Clone with built-in structuredClone() (ES2022 ⭐)
-const deepCloned = structuredClone(originalConfig);
-deepCloned.preferences.fontSize = 24; // Mutates ONLY deepCloned
-
-console.log("Original Config Font Size:", originalConfig.preferences.fontSize); // 16 (Safe!)
-console.log("Deep Cloned Font Size:", deepCloned.preferences.fontSize);         // 24</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Object Key Renaming & Transformation -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: Object Key Renaming & Data Normalization</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Key Renamer</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const rawServerData = {
-    user_name: "ravi2026",
-    user_email_address: "ravi@gmail.com",
-    account_status_code: 200
-};
-
-// Transform snake_case keys to camelCase keys
-const normalized = {
-    userName: rawServerData.user_name,
-    userEmail: rawServerData.user_email_address,
-    statusCode: rawServerData.account_status_code
-};
-
-console.log("Normalized Clean Object:", normalized);</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Dynamic Form State Store -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Dynamic Form State Store with Computed Properties</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Form State</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-let formState = {};
-
-function handleInputChange(fieldName, fieldValue) {
-    formState = {
-        ...formState,
-        [fieldName]: fieldValue // Dynamic computed property key
-    };
-}
-
-handleInputChange("fullName", "Ravi Nayak");
-handleInputChange("email", "ravi@ourcompiler.com");
-handleInputChange("newsletterSubscribed", true);
-
-console.log("Final Form State:", formState);</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this student object with methods and this binding in our live compiler:</p>
-      
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript Objects</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const student = {
-    name: "Ravi",
-    age: 20,
-    course: "JavaScript",
-
-    introduce() {
-        console.log(\`I am \${this.name}\`);
-    }
-};
-
-console.log("Student Name:", student.name);
-student.introduce();</code></pre>
-      </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
-    </div>
-
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 12, subtopics, contentBody, 'array-methods.html', '11. Higher-Order Array Methods', 'functions.html', 'Phase 10: Functions');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -931,7 +630,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

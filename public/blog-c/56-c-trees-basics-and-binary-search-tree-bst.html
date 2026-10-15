@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trees Basics & Binary Search Tree (BST) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో Non-linear Data Structures ప్రపంచం! Tree (చెట్టు) అంటే ఏంటి? రూట్, ఆకులు (Leafs) ఎలా ఉంటాయి? గూగుల్ లో వెతికినట్టు లక్ష డేటాని ఒకే సెకనులో వెతికే Binary Search Tree (BST) మ్యాజిక్ ఏంటో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c tutorial, trees basics & binary search tree (bst) (తెలుగులో), doubly linked list c, circular linked list, stack in c, queue in c, binary search tree c, tree traversals c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html">55. Queue Implementation</a>
+      </div>
+
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html" class="active">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html">59. Graphs (Matrix & List)</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 56: Trees Basics & Binary Search Tree (BST) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Trees Basics & Binary Search Tree (BST) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 56</span>
+      <span class="badge">📂 Phase 19: Data Structures - 2</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Tree Terminology · Root & Leaves · Binary Tree · Binary Search Tree (BST) Logic</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఇంతవరకు మనం నేర్చుకున్న Array, Linked List అన్నీ ఒక సరళ రేఖలో (Linear) ఉంటాయి. అంటే డేటా వెతకాలంటే ఒకదాని తర్వాత ఒకటి వెతుక్కుంటూ వెళ్లాలి. ఒకవేళ 1 కోటి రికార్డ్స్ ఉంటే, లాస్ట్ రికార్డ్ వెతకడానికి ఒక కోటి సెకన్లు పడుతుంది! కానీ గూగుల్ లాంటి వాళ్ళు మీరు టైప్ చేయగానే ఆన్సర్ ఎలా ఇస్తున్నారు? దానికి వాడే బ్రహ్మాస్త్రమే <strong>Trees (చెట్లు)</strong>. ఇవి Non-linear డేటా స్ట్రక్చర్స్. మన ఫ్యామిలీ ట్రీ లాగా, లేదా కంప్యూటర్ ఫోల్డర్ల లాగా డేటాని ఒక చెట్టు కొమ్మల్లాగా విడగొట్టి కనెక్ట్ చేస్తాయి. ఇందులో <strong>Binary Search Tree (BST)</strong> అయితే డేటాని వెతకడంలో స్పీడ్ కి రారాజు! అదెలాగో ఈరోజు అద్భుతంగా నేర్చుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> ట్రీ (Tree) లో ఉండే పదాలు (Terminology)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ప్రోగ్రామింగ్ లో చెట్టు తలకిందులుగా ఉంటుంది! అంటే వేర్లు పైన ఉంటాయి, ఆకులు కింద ఉంటాయి.
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>Root (రూట్):</strong> చెట్టు పైభాగంలో ఉండే మొట్టమొదటి బాక్స్. (హెడ్ లాగా అన్నమాట).</li>
+        <li><strong>Parent & Child (తల్లి - పిల్లలు):</strong> ఒక బాక్స్ కింద ఇంకో బాక్స్ కి లింక్ ఉంటే, పైనున్న దాన్ని పేరెంట్ అని, కింద దాన్ని చైల్డ్ అని అంటారు.</li>
+        <li><strong>Leaf (ఆకు):</strong> కింద ఇంకా ఎవరికీ కనెక్ట్ అవ్వని బాక్స్ ని (చివరి వాటిని) లీఫ్ నోడ్స్ అంటారు.</li>
+      </ul>
+      <p class="text-prose">
+        <strong>Binary Tree (బైనరీ ట్రీ) అంటే ఏంటి?</strong> ఏ చెట్టులో అయితే ప్రతి పేరెంట్ కి కేవలం మాక్సిమం <strong>ఇద్దరు పిల్లలే</strong> (Left Child, Right Child) ఉంటారో, దాన్నే బైనరీ ట్రీ అంటారు. (అంటే 0, 1, లేదా 2 పిల్లలు మాత్రమే ఉండాలి).
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Binary Search Tree (BST) లాజిక్</div>
+    <div class="section-body">
+      <p class="text-prose">
+        బైనరీ ట్రీ కి ఒక పవర్ఫుల్ కండిషన్ (రూల్) పెడితే, అది బైనరీ సెర్చ్ ట్రీ (BST) అవుతుంది! ఆ రూల్ ఏంటంటే:
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>🔍 రియల్ లైఫ్ స్టోరీ: స్కూల్ అసెంబ్లీ లైన్ (The Left-Right Rule)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          ఒక బాస్ (Root = 50) నిలబడ్డాడు. కొత్తగా ఒక పిల్లాడు (30) వచ్చాడు. బాస్ కన్నా తక్కువ ఉన్నాడు కాబట్టి, కచ్చితంగా <strong>ఎడమ వైపు (Left)</strong> నిలబడాలి. ఇంకో పిల్లాడు (70) వచ్చాడు. బాస్ కన్నా ఎక్కువ ఉన్నాడు కాబట్టి <strong>కుడి వైపు (Right)</strong> నిలబడాలి.<br><br>
+          ఇప్పుడు మీరు 25 కోసం వెతకాలి. బాస్ ని అడుగుతారు. బాస్ ఏమంటాడు? "నేను 50, నువ్వు వెతుకుతున్నది నాకన్నా చిన్నది కదా, కాబట్టి నా కుడి వైపు అసలు వెళ్ళకు, అందులో లక్ష మంది ఉన్నా వాళ్ళంతా నాకన్నా పెద్దోళ్ళే. డైరెక్ట్ గా నా ఎడమ వైపు వెళ్లి వెతుక్కో" అంటాడు.<br>
+          దీనివల్ల సగం డేటా వెతకాల్సిన అవసరమే లేకుండా డిలీట్ అయిపోతుంది! ఇదే BST స్పీడ్ మ్యాజిక్ (O(log N)).
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Creating a BST Node)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో డబుల్ లింక్డ్ లిస్ట్ లాగానే రెండు పాయింటర్స్ తీసుకుని, కానీ ఈసారి వాటిని left మరియు right గా పెట్టి ఒక సింపుల్ BST ని ఎలా డిజైన్ చేసామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Binary Search Tree (BST)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+// ట్రీ నోడ్ బ్లూప్రింట్ (ఒక డేటా, రెండు చేతులు)
+struct Node {
+    int data;
+    struct Node* left;  // ఎడమ చేయి
+    struct Node* right; // కుడి చేయి
+};
+
+// కొత్త నోడ్ ని తయారుచేసే ఫంక్షన్
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// BST లోకి కొత్త వాల్యూ ని దూర్చడం (Insert)
+struct Node* insertNode(struct Node* root, int value) {
+    // చెట్టు ఖాళీగా ఉంటే, వీడే రూట్ (బాస్) అవుతాడు
+    if (root == NULL) {
+        return createNode(value);
+    }
+    
+    // వాల్యూ బాస్ కన్నా చిన్నది అయితే ఎడమ వైపు వెళ్ళు
+    if (value < root->data) {
+        root->left = insertNode(root->left, value);
+    }
+    // వాల్యూ బాస్ కన్నా పెద్దది అయితే కుడి వైపు వెళ్ళు
+    else if (value > root->data) {
+        root->right = insertNode(root->right, value);
+    }
+    
+    // బాస్ కి పర్మిషన్ ఇచ్చి రిటర్న్ చేయి
+    return root;
+}
+
+int main() {
+    printf("--- Binary Search Tree (BST) ---\n\n");
+    
+    struct Node* root = NULL; // మొదట్లో చెట్టు లేదు
+    
+    // 50 ని యాడ్ చేద్దాం (ఇది రూట్ అవుతుంది)
+    root = insertNode(root, 50);
+    printf("Inserted 50 (Root)\n");
+    
+    // చిన్నవి యాడ్ చేద్దాం (ఇవి ఎడమ వైపుకి వెళ్తాయి)
+    insertNode(root, 30);
+    insertNode(root, 20);
+    printf("Inserted 30, 20 (Went Left)\n");
+    
+    // పెద్దవి యాడ్ చేద్దాం (ఇవి కుడి వైపుకి వెళ్తాయి)
+    insertNode(root, 70);
+    insertNode(root, 90);
+    printf("Inserted 70, 90 (Went Right)\n");
+    
+    printf("\n[+] Tree successfully created in RAM!\n");
+    
+    // (నెక్స్ట్ లెసన్ లో వీటిని ఎలా ప్రింట్ చేయాలో చూద్దాం)
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>struct Node* left, *right;</code>: డబుల్ లింక్డ్ లిస్ట్ లో లాగా ఇక్కడ వెనక్కి వెళ్లే దారి ఉండదు! పేరెంట్ నుండి చైల్డ్ కి, ఎడమ కొమ్మ లేదా కుడి కొమ్మ గా రెండు దారులు చీలుతాయి.</li>
+        <li><code>insertNode(...)</code>: ఇది ఒక <strong>రికర్సివ్ (Recursive) ఫంక్షన్</strong>. అంటే తనని తనే కాల్ చేసుకుంటుంది. బాస్ కన్నా చిన్నది వస్తే, <code>insertNode(root-&gt;left, value)</code> అని పిలిచి, ఎడమ పక్కన ఉన్నవాడిని అడగమని కిందికి పంపుతుంది. ఖాళీ దొరికేదాకా ఆ వాల్యూ కిందికి దిగుతూనే ఉంటుంది!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఒకవేళ వాల్యూ బాస్ తో సమానం అయితే (Duplicate) ఎటు వెళ్ళాలి?</h4>
+          <p>చాలా ఇంపార్టెంట్ క్వశ్చన్! స్టాండర్డ్ బైనరీ సెర్చ్ ట్రీ లో డూప్లికేట్స్ ని అసలు ఒప్పుకోరు. కానీ కొన్ని సిస్టమ్స్ లో కావాలనుకుంటే, వాటిని ఎప్పుడూ కుడి వైపు (Right side) కి వెళ్లేలా రూల్ రాసుకుంటారు. (<code>&gt;=</code> అని వాడతారు).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: BST లో డేటా వెతకడానికి ఎంత టైమ్ పడుతుంది?</h4>
+          <p>ఆవరేజ్ గా <strong>O(log N)</strong> పడుతుంది. అంటే మీరు ప్రతిసారి సగం చెట్టుని ఇగ్నోర్ చేస్తారు. 1024 రికార్డ్స్ ఉంటే కేవలం 10 సార్లు జంప్ చేస్తే చాలు డేటా దొరుకుతుంది. అర్రే లో అయితే 1024 సార్లు వెతకాలి. అదీ పవర్ ఆఫ్ ట్రీ!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: వరస్ట్ కేస్ (Worst case) లో BST ఎలా బిహేవ్ చేస్తుంది?</h4>
+          <p>మీరు డేటాని ఒక ఆర్డర్ లో (10, 20, 30, 40) ఇస్తే, అన్నీ బాస్ కి కుడివైపే వెళ్తాయి. అప్పుడు ఆ చెట్టు కాస్తా ఒక సరళ రేఖ (Linked List లాగా) అయిపోతుంది! దాన్ని Skewed Tree అంటారు. అప్పుడు దాని స్పీడ్ కాస్తా స్లో (O(N)) అయిపోతుంది. దీన్ని సాల్వ్ చేయడానికే AVL Trees, Red-Black Trees అని డిజైన్ చేశారు (వాటంతట అవే బ్యాలెన్స్ చేసుకుంటాయి).</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="55-c-queue-implementation-linear-circular.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">55. Queue Implementation</span>
+      </a>
+
+      
+      <a href="57-c-tree-traversals-inorder-preorder-postorder.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">57. Tree Traversals</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

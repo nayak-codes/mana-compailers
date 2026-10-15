@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Preprocessor, Macros & #define (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C కంపైలర్ కోడ్ ని రన్ చేసే ముందే ఏం జరుగుతుంది? ప్రీప్రాసెసర్ (Preprocessor) అంటే ఏంటి? #define తో Macros ఎలా క్రియేట్ చేయాలి? కోడ్ లో మ్యాజిక్ నంబర్స్ ని ఆపడానికి కాన్స్టంట్స్ ఎలా వాడాలో డీప్ గా తెలుసుకుందాం." />
+  <meta name="keywords" content="c tutorial, c preprocessor, macros & #define (తెలుగులో), file errors in c, feof, c preprocessor, c macros, header files in c, double pointers c, function pointers c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/39-c-preprocessor-macros-define-and-conditional-compilation.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 14: File I/O & Preprocessor -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">File I/O & Preprocessor</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/36-c-file-handling-fopen-fclose-and-text-io.html">36. File Handling, fopen() & I/O</a>
+        <a href="/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html">37. Binary File I/O & fseek()</a>
+        <a href="/blog-c/38-c-file-error-handling-feof-ferror-and-errno.html">38. File Errors & feof()</a>
+        <a href="/blog-c/39-c-preprocessor-macros-define-and-conditional-compilation.html" class="active">39. C Preprocessor, Macros & #define</a>
+        <a href="/blog-c/40-c-header-files-h-and-multi-file-projects.html">40. Header Files (.h) & Multi-file Projects</a>
+      </div>
+
+      <!-- Phase 15: Advanced Pointers -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Advanced Pointers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/41-c-double-pointers-and-memory-addresses.html">41. Double Pointers (**) & Memory Addresses</a>
+        <a href="/blog-c/42-c-function-pointers-and-callbacks.html">42. Function Pointers & Callbacks</a>
+        <a href="/blog-c/43-c-void-pointers-and-generic-programming.html">43. Void Pointers & Generic Programming</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 39: C Preprocessor, Macros & #define (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">C Preprocessor, Macros & #define (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 39</span>
+      <span class="badge">📂 Phase 14: File I/O & Preprocessor</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>The Preprocessor Phase · #define Macros · Magic Numbers · #ifdef & #ifndef · Inline Functions</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>మనం రాసిన C ప్రోగ్రామ్ డైరెక్ట్ గా కంపైల్ అవ్వదు. ముందుగా <strong>Preprocessor (ప్రీప్రాసెసర్)</strong> అనే ఒక చిన్న రోబోట్ వచ్చి మీ కోడ్ లో ఉన్న హాష్ సింబల్స్ (<code>#</code>) అన్నిటినీ చూసుకుంటుంది. అది కోడ్ ని క్లీన్ చేసి, కాపీ-పేస్ట్ చేసి అప్పుడు కంపైలర్ కి ఇస్తుంది. ఇందులో అత్యంత పవర్ ఫుల్ ఆయుధం <strong><code>#define</code> (Macros)</strong>. దీనితో మనం ఒక చిన్న వర్డ్ కి పెద్ద ఫార్ములాస్ లింక్ చేసి, కోడ్ ని సూపర్ ఫాస్ట్ గా మరియు సింపుల్ గా మార్చొచ్చు. గేమింగ్ ఇంజిన్స్ లో మరియు సిస్టమ్ డెవలప్మెంట్ లో అసలు ఇవి లేకుండా కోడ్ ఉండదు. అవెలా పనిచేస్తాయో డీప్ గా చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> ప్రీప్రాసెసర్ అంటే ఏంటి? (The Invisible Robot)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీరు <code>#include &lt;stdio.h&gt;</code> అని రాసినప్పుడు, ప్రీప్రాసెసర్ వచ్చి నిజంగానే ఆ <code>stdio.h</code> ఫైల్ ని ఓపెన్ చేసి, అందులో ఉన్న వందల లైన్ల కోడ్ ని తీసుకొచ్చి మీ ప్రోగ్రామ్ పైభాగంలో (Top) సింపుల్ గా <strong>కాపీ-పేస్ట్</strong> చేస్తుంది. ఇది కంపైలర్ కి వెళ్లే ముందే జరిగే టెక్స్ట్ రీప్లేస్మెంట్ ప్రాసెస్!
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>✨ రియల్ లైఫ్ స్టోరీ: Find & Replace (మ్యాజిక్ నంబర్స్)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          మీరు ఒక గేమ్ కోడ్ రాస్తున్నారు. ఆ గేమ్ లో మొత్తం 100 మంది ఎనిమీస్ (Enemies) ఉంటారు. మీరు కోడ్ లో ప్రతిచోటా <code>for(i=0; i&lt;100; i++)</code> అని రాసుకుంటూ వెళ్లారు. దీన్నే <strong>Magic Numbers</strong> అంటారు (ఎందుకంటే ఆ 100 అంటే ఏంటో చూసే వాడికి తెలీదు).<br><br>
+          రేపు పొద్దున బాస్ వచ్చి "ఎనిమీస్ ని 500 చేయి" అంటే... ఆ వేల లైన్ల కోడ్ లో వెతికి వెతికి ఎక్కడ 100 ఉందో మార్చాలి. అదే మీరు పైభాగంలో <code>#define MAX_ENEMIES 100</code> అని రాసుకుంటే... రోబోట్ వచ్చి కోడ్ మొత్తంలో ఎక్కడ MAX_ENEMIES ఉంటే అక్కడ 100 పెట్టి కంపైల్ చేస్తుంది. మార్చాలంటే జస్ట్ ఆ ఒక్కచోట మారిస్తే యాప్ అంతా ఆటోమేటిక్ గా అప్డేట్ అయిపోతుంది!
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> మ్యాక్రోస్ (Macros) vs ఫంక్షన్స్ (Functions)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఫంక్షన్ ని కాల్ చేసినప్పుడు ప్రోగ్రామ్ మెమరీ లో ఒక కొత్త బ్లాక్ (Stack frame) క్రియేట్ చేసి అక్కడికి దూకి పని చేసి వెనక్కి వస్తుంది. ఇది కొంచెం టైమ్ టేకింగ్. కానీ మీరు ఒక ఫార్ములాని మ్యాక్రో లాగా <code>#define SQUARE(x) (x*x)</code> అని రాస్తే, కంపైల్ అయ్యే ముందే ఆ టెక్స్ట్ మొత్తం అక్కడే డైరెక్ట్ గా పేస్ట్ అవుతుంది. దూకడం (Jumping) ఉండదు కాబట్టి ఎగ్జిక్యూషన్ ఫుల్ ఫాస్ట్!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Advanced Macros)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో పీ (PI) వాల్యూ ని, ఒక మ్యాక్రో ఫంక్షన్ ని మరియు కండిషనల్ కంపైలేషన్ (Conditional Compilation) ని ఎలా వాడామో క్లియర్ గా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Preprocessor & Macros</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// 1. సాధారణ మ్యాక్రో (కాన్స్టంట్)
+#define PI 3.14159
+#define GAME_NAME "Space Invaders 2026"
+
+// 2. మ్యాక్రో ఫంక్షన్ (బ్రాకెట్లు చాలా ముఖ్యం!)
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+// 3. కండిషనల్ కంపైలేషన్ (DEBUG మోడ్)
+#define DEBUG_MODE 1
+
+int main() {
+    printf("Welcome to %s!\n\n", GAME_NAME);
+    
+    // మ్యాక్రో తో ఏరియా క్యాలిక్యులేషన్
+    float radius = 5.0;
+    float area = PI * radius * radius;
+    printf("Circle Area: %.2f\n", area);
+    
+    // మ్యాక్రో ఫంక్షన్ తో హైయెస్ట్ నంబర్ (ఇది టెక్స్ట్ లాగా పేస్ట్ అవుతుంది)
+    int score1 = 450, score2 = 720;
+    printf("Highest Score: %d\n", MAX(score1, score2));
+    
+    // 4. ఇక్కడ మ్యాజిక్: DEBUG_MODE 1 ఉంటేనే ఈ లైన్ కంపైల్ అవుతుంది!
+#if DEBUG_MODE
+    printf("\n[DEBUG]: Variables checking... radius=%.1f\n", radius);
+#endif
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>#define PI 3.14</code>: ఇక్కడ కచ్చితంగా గుర్తుపెట్టుకోవాల్సింది ఏంటంటే, చివర్లో సెమికోలన్ (<code>;</code>) పెట్టకూడదు! ఒకవేళ పెడితే, మీరు ఎక్కడ PI వాడితే అక్కడ సెమికోలన్ కూడా పేస్ట్ అయ్యి కోడ్ ఎర్రర్ వస్తుంది.</li>
+        <li><code>#define MAX(a,b) ((a) &gt; (b) ? (a) : (b))</code>: బ్రాకెట్స్ ఎందుకు అన్నిసార్లు పెట్టామంటే... ఎవరైనా <code>MAX(2+3, 4)</code> అని పిలిస్తే, బ్రాకెట్స్ లేకపోతే బాడ్-మాస్ (BODMAS) రూల్స్ దెబ్బతిని రిజల్ట్ రాంగ్ వస్తుంది. సేఫ్ సైడ్ కి ఎప్పుడూ లోపల కూడా బ్రాకెట్స్ పెట్టాలి.</li>
+        <li><code>#if DEBUG_MODE</code>: ఇది కంపైలర్ కి వెళ్లే ముందే, 1 ఉంటే ఆ కోడ్ ని ఉంచుతుంది, 0 ఉంటే ఆ కోడ్ ని పూర్తిగా డిలీట్ చేస్తుంది! మనం యాప్ ని రిలీజ్ (Playstore లోకి) చేసేటప్పుడు దీన్ని 0 చేస్తాం, అప్పుడు హ్యాకర్స్ కి మన డీబగ్ కోడ్ ఏమీ కనిపించదు (కనీసం ఫైల్ సైజు కూడా పెరగదు).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: <code>const int PI = 3;</code> కి <code>#define PI 3</code> కి తేడా ఏంటి?</h4>
+          <p>చాలా పెద్ద తేడా ఉంది! <code>const</code> వాడితే దానికి మెమరీ (RAM) లో ఒక అడ్రస్ క్రియేట్ అయ్యి 4 బైట్స్ తీసుకుంటుంది. దాని అడ్రస్ ని ఇంకెవరికైనా పాస్ చేయొచ్చు. కానీ <code>#define</code> కి మెమరీ అడ్రస్ ఉండదు, అది కేవలం టెక్స్ట్ ఫైండ్-రీప్లేస్ లాగా పనిచేస్తుంది. కాబట్టి ఎవరికైనా అడ్రస్ ఇవ్వాల్సిన పని లేనప్పుడు #define వాడటం స్పీడ్ అండ్ సేఫ్!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: <code>#undef</code> అంటే ఏంటి?</h4>
+          <p>మీరు పైన <code>#define MAX 100</code> అని ఇచ్చారు, కానీ కింద కొంత కోడ్ తర్వాత అది 200 అవ్వాలి అనుకోండి. అప్పుడు <code>#undef MAX</code> అని రాసి (అంటే దాన్ని చెరిపేసి), మళ్ళీ కొత్తగా <code>#define MAX 200</code> అని రాసుకోవచ్చు. ఒకే ఫైల్ లో వేరు వేరు లిమిట్స్ కావాల్సినప్పుడు ఇది బాగా వాడుతారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: <code>#ifndef</code> ఎందుకు వాడుతారు? (Header Guards)</h4>
+          <p>పెద్ద ప్రాజెక్ట్స్ లో ఒకే <code>.h</code> ఫైల్ ని రెండు మూడు సార్లు ఇంక్లూడ్ చేస్తే కంపైలర్ కన్ఫ్యూజ్ అవుతుంది. అలా డూప్లికేట్ అవ్వకుండా ఉండటానికి, <strong>If Not Defined</strong> (<code>#ifndef</code>) వాడతాం. "ఒకవేళ ముందే ఇంక్లూడ్ అయి ఉంటే, మళ్ళీ చేయొద్దు" అని కంపైలర్ కి ఆర్డర్ వేయడమే ఈ కాన్సెప్ట్ (వీటినే Header Guards అంటారు).</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="38-c-file-error-handling-feof-ferror-and-errno.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">38. File Errors & feof()</span>
+      </a>
+
+      
+      <a href="40-c-header-files-h-and-multi-file-projects.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">40. Header Files & Projects</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

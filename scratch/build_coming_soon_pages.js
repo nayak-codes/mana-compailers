@@ -223,7 +223,7 @@ function buildPage(tech) {
   </style>
   <script>
     (function() {
-      const t = localStorage.getItem('theme') || 'dark';
+      const t = localStorage.getItem('theme') || 'light';
       if (t === 'light') { document.documentElement.classList.add('light-theme'); document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme')); }
       window.addEventListener('DOMContentLoaded', () => {
         const topnav = document.querySelector('.topnav');

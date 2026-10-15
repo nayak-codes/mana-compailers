@@ -1,31 +1,39 @@
-async function testPaizaJava() {
-  const start = Date.now();
-  console.log('Testing Paiza.IO API for Java...');
+async function testPaiza(lang, code) {
   try {
-    const code = 'public class Main { public static void main(String[] args) { System.out.println("Hello Java Paiza!"); } }';
-    const createRes = await fetch(`https://api.paiza.io/runners/create?language=java&source_code=${encodeURIComponent(code)}&api_key=guest`, {
-      method: 'POST'
+    const res = await fetch('https://api.paiza.io/runners/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: lang,
+        source_code: code,
+        input: '',
+        api_key: 'guest'
+      })
     });
-    const createData = await createRes.json();
-    const id = createData.id;
-    console.log('Created runner ID:', id);
-
-    let status = 'running';
-    let getResultData;
-    for (let i = 0; i < 10; i++) {
-      await new Promise(r => setTimeout(r, 300));
-      const getRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`);
-      getResultData = await getRes.json();
-      if (getResultData.status === 'completed') {
-        break;
+    const data = await res.json();
+    if (!data.id) return console.log(`Paiza ${lang}: failed to create`, data);
+    
+    let tries = 10;
+    while (tries-- > 0) {
+      await new Promise(r => setTimeout(r, 400));
+      const detRes = await fetch(`https://api.paiza.io/runners/get_details?id=${data.id}&api_key=guest`);
+      const det = await detRes.json();
+      if (det.status === 'completed') {
+        console.log(`Paiza ${lang}: SUCCESS ->`, (det.stdout || det.stderr || '').trim());
+        return;
       }
     }
-
-    const elapsed = ((Date.now() - start) / 1000).toFixed(2);
-    console.log(`[Paiza Java] Elapsed: ${elapsed}s | Output:`, JSON.stringify(getResultData.stdout || getResultData.stderr));
-  } catch (err) {
-    console.error('Error:', err.message);
+    console.log(`Paiza ${lang}: timed out waiting for details`);
+  } catch (e) {
+    console.log(`Paiza ${lang} error:`, e.message);
   }
 }
 
-testPaizaJava();
+async function run() {
+  await testPaiza('python3', 'print("Paiza Python works")');
+  await testPaiza('c', '#include <stdio.h>\nint main(){printf("Paiza C works\\n"); return 0;}');
+  await testPaiza('rust', 'fn main(){println!("Paiza Rust works");}');
+  await testPaiza('csharp', 'using System; class P { static void Main(){ Console.WriteLine("Paiza C# works"); } }');
+}
+
+run();

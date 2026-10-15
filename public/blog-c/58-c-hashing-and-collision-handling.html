@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashing & Collision Handling (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ లో లక్ష మంది యూజర్స్ డేటా నుండి ఒకడి పాస్వర్డ్ ని కేవలం 1 సెకనులో ఎలా కనిపెట్టాలి? Hashing (హ్యాషింగ్) అంటే ఏంటి? ఒకవేళ ఇద్దరికి ఒకే హ్యాష్ (Collision) వస్తే Chaining మరియు Probing తో దాన్ని ఎలా సాల్వ్ చేయాలో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c tutorial, hashing & collision handling (తెలుగులో), hashing c, collision handling, graphs c, binary search c, sorting algorithms c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/58-c-hashing-and-collision-handling.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html" class="active">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html">59. Graphs (Matrix & List)</a>
+      </div>
+
+      <!-- Phase 20: Algorithms & Final -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Algorithms & Final</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/60-c-searching-linear-and-binary-search.html">60. Linear & Binary Search</a>
+        <a href="/blog-c/61-c-sorting-1-bubble-selection-insertion.html">61. Sorting (Bubble, Selection, Insertion)</a>
+        <a href="/blog-c/62-c-sorting-2-merge-sort-quick-sort.html">62. Sorting (Merge & Quick Sort)</a>
+        <a href="/blog-c/63-c-dynamic-programming-basics.html">63. Dynamic Programming Basics</a>
+        <a href="/blog-c/64-c-system-calls-basics-fork-exec-wait.html">64. System Calls (fork, exec, wait)</a>
+        <a href="/blog-c/65-c-building-a-mini-c-project.html">65. C Master Project & Conclusion</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 58: Hashing & Collision Handling (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Hashing & Collision Handling (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 58</span>
+      <span class="badge">📂 Phase 19: Data Structures - 2</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Hash Function · Hash Table · Collisions · Chaining · Linear Probing</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఇంతవరకు మనం అర్రేలో (Array) వెతకాలంటే O(N) టైమ్ పడుతుందని, ట్రీ (BST) లో అయితే సగం టైమ్ O(log N) పడుతుందని చూసాం. కానీ వంద కోట్ల మంది యూజర్స్ ఉన్న సిస్టమ్ లో, ఒకడి పేరు కొట్టగానే వాడి అకౌంట్ వివరాలు <strong>కరెక్ట్ గా ఒకే సెకనులో (O(1) టైమ్ లో)</strong> ఎలా వస్తాయి? ఈ అద్భుతమైన మ్యాజిక్ చేసే టెక్నిక్ పేరే <strong>Hashing (హ్యాషింగ్)</strong>. ఒక పెద్ద పేరుకి ఒక చిన్న నంబర్ (ఇండెక్స్) ని జనరేట్ చేసి, అక్కడే డేటాని దాచడం. మరి ఇద్దరికి ఒకే నంబర్ వస్తే ఏం చేస్తారు? దీన్నే Collision అంటారు. ఇవన్నీ ఎలా జరుగుతాయో యానిమేషన్ లాగా నేర్చుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> హ్యాషింగ్ (Hashing) అంటే ఏంటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        హ్యాషింగ్ లో రెండు మెయిన్ పార్ట్స్ ఉంటాయి: 1. <strong>Hash Table (హ్యాష్ టేబుల్)</strong>: ఇది నార్మల్ అర్రే (Array). 2. <strong>Hash Function (హ్యాష్ ఫంక్షన్)</strong>: ఇది ఒక మిక్సీ (Mixer) లాంటిది. మీరు ఏ పేరు (String/Data) ఇచ్చినా, అది క్యాలిక్యులేట్ చేసి ఒక నంబర్ (Index) ని ఇస్తుంది.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🗄️ రియల్ లైఫ్ స్టోరీ: హోటల్ రూమ్ లాకర్స్</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          ఒక ఫేమస్ క్లబ్ లో వంద లాకర్స్ (Hash Table) ఉన్నాయి. కస్టమర్ వచ్చి తన వస్తువులు ఇవ్వగానే, రిసెప్షనిస్ట్ లాకర్ నంబర్ వెతకడు. వాడి పేరులో ఉన్న అక్షరాలని తీసుకుని ఒక లెక్క వేస్తాడు (ఉదా: <em>A=1, B=2 కాబట్టి 'CAB' అంటే 3+1+2 = 6</em>). డైరెక్ట్ గా వెళ్లి 6వ లాకర్ లో వస్తువులు పెట్టేస్తాడు (ఇదే Hash Function).<br><br>
+          రేపు వాడు వచ్చి "నా పేరు CAB" అనగానే, మళ్ళీ లెక్కేసి డైరెక్ట్ గా 6వ లాకర్ తీసి ఇస్తాడు! అంటే లక్ష మంది ఉన్నా సరే, వెతకడానికి పట్టే టైమ్ O(1) (కేవలం ఒక్క సెకను) మాత్రమే.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> గొడవలు (Collisions) ఎందుకు వస్తాయి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మన ఫంక్షన్ లో 'CAB' కి 6 వచ్చింది. రేపు 'BCA' అనేవాడు వచ్చాడు. దానికి లెక్కేస్తే (2+3+1 = 6) వాడికీ అదే లాకర్ నంబర్ వచ్చింది! ఆల్రెడీ అందులో వేరే వాడి వస్తువులు ఉన్నాయి. ఇద్దరికి ఒకే లాకర్ ఎలా ఇస్తాం? దీన్నే <strong>Collision (కలయిక/గొడవ)</strong> అంటారు.
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong>సొల్యూషన్ 1 (Linear Probing):</strong> 6 ఫుల్ అయితే, పక్కనే ఉన్న 7వ లాకర్ ఖాళీ ఉందేమో చూసి అక్కడ పెట్టడం (ఓపెన్ అడ్రెస్సింగ్).</li>
+        <li><strong>సొల్యూషన్ 2 (Chaining):</strong> 6వ లాకర్ లోనే ఒక సంచి తగిలించి, వాడి వస్తువులు, వీడి వస్తువులు రెండూ ఒకదాని కింద ఒకటి (Linked List లాగా) అందులోనే పెట్టడం!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Hash Table with Chaining)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో మనం 10 సైజు ఉన్న అర్రే ని హ్యాష్ టేబుల్ గా తీసుకుని, మోడ్యులో (<code>%</code>) ఆపరేటర్ వాడి హ్యాష్ కనుక్కుని, కలయిక (Collision) వచ్చినప్పుడు లింక్డ్ లిస్ట్ వాడి ఎలా చైనింగ్ చేసామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Hashing (Chaining)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define TABLE_SIZE 10
+
+// చైనింగ్ కోసం ఒక లింక్డ్ లిస్ట్ నోడ్
+struct Node {
+    int key;
+    struct Node* next;
+};
+
+// మన హ్యాష్ టేబుల్ (నోడ్ పాయింటర్స్ ఉన్న అర్రే)
+struct Node* hashTable[TABLE_SIZE];
+
+// 1. అతి సింపుల్ హ్యాష్ ఫంక్షన్ (మిక్సీ)
+int hashFunction(int key) {
+    return key % TABLE_SIZE; // 10 తో డివైడ్ చేస్తే 0 నుండి 9 వరకు ఇండెక్స్ వస్తుంది!
+}
+
+// 2. డేటాని టేబుల్ లో దూర్చడం (Insert)
+void insert(int key) {
+    int index = hashFunction(key); // ఇండెక్స్ కనుక్కోవడం
+    
+    // కొత్త బాక్స్ క్రియేట్ చేద్దాం
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->key = key;
+    
+    // ఆ ఇండెక్స్ లో ఆల్రెడీ ఎవరైనా ఉన్నా (Collision), దాన్ని ముందుకి నెట్టి ఇది హెడ్ అవుతుంది (Chaining)
+    newNode->next = hashTable[index];
+    hashTable[index] = newNode;
+    
+    printf("Inserted %d at index %d\n", key, index);
+}
+
+// 3. హ్యాష్ టేబుల్ ని ప్రింట్ చేయడం
+void displayTable() {
+    printf("\n--- Current Hash Table ---\n");
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        printf("[%d]: ", i);
+        struct Node* temp = hashTable[i];
+        
+        if (temp == NULL) {
+            printf("Empty\n");
+        } else {
+            // ఆ లాకర్ లో ఎంతమంది ఉన్నారో లింక్డ్ లిస్ట్ లూప్
+            while (temp != NULL) {
+                printf("%d -> ", temp->key);
+                temp = temp->next;
+            }
+            printf("NULL\n");
+        }
+    }
+}
+
+int main() {
+    // టేబుల్ మొత్తం ఖాళీ (NULL) చేద్దాం
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        hashTable[i] = NULL;
+    }
+    
+    // డేటా యాడ్ చేద్దాం
+    insert(15); // 15 % 10 = ఇండెక్స్ 5
+    insert(25); // 25 % 10 = ఇండెక్స్ 5 (కొలిజన్ వస్తుంది, ఇద్దరూ అక్కడే ఉంటారు!)
+    insert(7);  // 7 % 10  = ఇండెక్స్ 7
+    insert(42); // 42 % 10 = ఇండెక్స్ 2
+    
+    // టేబుల్ ఎలా ఉందో చూద్దాం
+    displayTable();
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>hashFunction(key)</code>: మనం 15 పంపితే (15 % 10 = 5) వస్తుంది. 25 పంపినా (25 % 10 = 5) వస్తుంది. ఇక్కడ ఇండెక్స్ 5 దగ్గర కొలిజన్ (Collision) వచ్చింది.</li>
+        <li><code>newNode-&gt;next = hashTable[index];</code>: ఇది లింక్డ్ లిస్ట్ లో (Insert at Head) లాజిక్. 25 వచ్చినప్పుడు, 5వ లాకర్ లో ఆల్రెడీ ఉన్న 15 ని <code>next</code> తో కనెక్ట్ చేసుకుని, 25 ముందుకు వస్తుంది (<code>25 -&gt; 15 -&gt; NULL</code>). దీన్నే <strong>Chaining (చైనింగ్)</strong> అంటారు.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: Linear Probing కన్నా Chaining ఎందుకు బెస్ట్?</h4>
+          <p>Linear Probing లో ఇండెక్స్ ఫుల్ అయితే పక్క ఇండెక్స్ లో దూరుస్తాం కదా. ఒకవేళ పక్కది కూడా ఫుల్ అయితే ఆ పక్కకి... ఇలా వెళ్తూ ఉంటే మొత్తం లాకర్లు ఫుల్ అయ్యి <em>Clustering</em> అనే సమస్య వస్తుంది. వెతకడానికి మళ్ళీ అర్రే లాగా O(N) టైమ్ పడుతుంది. కానీ Chaining లో లిస్ట్ బయటికి పెరుగుతుంది కాబట్టి పక్క లాకర్లు ఖాళీగానే ఉంటాయి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ఒక పర్ఫెక్ట్ Hash Function కి రూల్స్ ఏంటి?</h4>
+          <p>1. అది క్యాలిక్యులేట్ చేయడానికి చాలా ఫాస్ట్ గా ఉండాలి (Cryptographic hash లాగా స్లో ఉండకూడదు). <br> 2. వచ్చిన ఇండెక్స్ లు అన్ని లాకర్లకి సమానంగా పంచాలి (Uniform distribution). ఒకటే లాకర్ లోకి అందరినీ పంపకూడదు. Prime numbers (ప్రైమ్ నంబర్స్) తో మోడ్యులో చేస్తే బెస్ట్ రిజల్ట్స్ వస్తాయి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: పాస్వర్డ్ హ్యాషింగ్ (SHA-256) కి, ఈ డేటా స్ట్రక్చర్ హ్యాషింగ్ కి తేడా ఏంటి?</h4>
+          <p>చాలా డిఫరెన్స్ ఉంది! మనం వాడేది డేటా ని ఫాస్ట్ గా వెతకడానికి వాడే "Data Structure Hashing" (O(1) స్పీడ్ కోసం). కానీ పాస్వర్డ్స్ కి వాడేది "Cryptographic Hashing". అందులో స్పీడ్ కాదు, సెక్యూరిటీ ముఖ్యం. రివర్స్ చేయడానికి వీల్లేకుండా దాన్ని డిజైన్ చేస్తారు (One-way hash).</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="57-c-tree-traversals-inorder-preorder-postorder.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">57. Tree Traversals</span>
+      </a>
+
+      
+      <a href="59-c-graphs-basics-adjacency-matrix-list.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">59. Graphs (Matrix & List)</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

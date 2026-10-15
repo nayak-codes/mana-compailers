@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ File Handling: fstream, std::filesystem, Paths & Binary I/O Complete Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade C++ File Handling (Phase 19): ifstream/ofstream/fstream with all modes, reading lines/words/all-at-once, writing/appending, seekg/seekp, binary file I/O with struct serialization, and C++17 std::filesystem for paths, directory iteration, copy/rename/remove." />
-  <meta name="keywords" content="c++ tutorial, c++ file handling: fstream, std::filesystem, paths & binary i/o complete masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>File Handling & std::filesystem (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో ఫైల్స్ ని (Files) ఎలా క్రియేట్ చేయాలి? రీడ్/రైట్ ఆపరేషన్స్ fstream తో ఎలా జరుగుతాయి? C++17 లో వచ్చిన విప్లవాత్మకమైన std::filesystem తో ఫోల్డర్స్ తో ఎలా ఆడుకోవాలో నేర్చుకుందాం." />
+  <meta name="keywords" content="c++ tutorial, file handling & std::filesystem (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/19-cpp-file-handling-fstream-filesystem-and-serialization.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -490,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 19: C++ File Handling: fstream, std::filesystem, Paths & Binary I/O Complete Masterclass</span>
+      <span class="current">Lesson 19: File Handling & std::filesystem (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ File Handling: fstream, std::filesystem, Paths & Binary I/O Complete Masterclass</h1>
+    <h1 class="page-title">File Handling & std::filesystem (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 19</span>
@@ -501,372 +478,126 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>File Stream Classes · Open Modes (in/out/app/binary) · getline & read · write & append · seekg/seekp & tellg · readAll via rdbuf · Binary I/O & struct serialization · std::filesystem paths · directory_iterator · recursive_directory_iterator · file copy/rename/remove</span>
+      <span>fstream (Read/Write) · Binary files · std::filesystem (C++17) · Path manipulation · Directories</span>
     </div>
 
-<div class="intro-box">
-  <p>Welcome to <strong>Phase 19 (Chapter 19): C++ File Handling &amp; Filesystem Masterclass</strong>! C++ provides <code>std::ifstream</code>, <code>std::ofstream</code>, and <code>std::fstream</code> for high-level text and binary I/O. C++17 adds the powerful <code>std::filesystem</code> library for cross-platform path manipulation, directory traversal, file metadata, copying, renaming, and deletion — all without system-specific OS calls.</p>
-</div>
+    <div class="intro-box">
+      <p>మనం ప్రోగ్రామ్ లో క్రియేట్ చేసే వేరియబుల్స్ అన్నీ RAM లో ఉంటాయి. అంటే పవర్ ఆఫ్ చేయగానే ఆ డేటా అంతా ఎగిరిపోతుంది (Volatile Memory). కానీ డేటాని పర్మనెంట్ గా ఒక టెక్స్ట్ ఫైల్ లో గాని, ఇమేజ్ లాగా గాని హార్డ్ డిస్క్ (SSD) లో సేవ్ చేయాలంటే <strong>File Handling (ఫైల్ హ్యాండ్లింగ్)</strong> కావాలి. C++ లో దీనికోసం <code>&lt;fstream&gt;</code> అనే లైబ్రరీ ఉంటుంది. అదేవిధంగా, ఫోల్డర్స్ ని క్రియేట్ చేయడం, ఫైల్ సైజు తెలుసుకోవడం లాంటి విండోస్/లైనక్స్ పనుల కోసం C++17 లో <strong><code>std::filesystem</code></strong> అనే అద్భుతమైన ఫీచర్ తెచ్చారు. ఈ పాఠంలో ఆ రెండిటి పవర్ ఏంటో డీప్ గా తెలుసుకుందాం.</p>
+    </div>
 
-<div class="section-title"><span class="num">1</span>File Stream Classes &amp; Open Modes</div>
-<div class="section-body">
-  <table class="tbl spec-table">
-    <thead><tr><th>Class</th><th>Direction</th><th>Default Mode</th><th>Use For</th></tr></thead>
-    <tbody>
-      <tr><td><code>std::ifstream</code></td><td>Read only</td><td><code>ios::in</code></td><td>Reading files</td></tr>
-      <tr><td><code>std::ofstream</code></td><td>Write only</td><td><code>ios::out | ios::trunc</code></td><td>Writing (overwrites)</td></tr>
-      <tr><td><code>std::fstream</code></td><td>Read &amp; Write</td><td><code>ios::in | ios::out</code></td><td>Read-modify-write</td></tr>
-    </tbody>
-  </table>
-  <table class="tbl spec-table">
-    <thead><tr><th>Mode Flag</th><th>Meaning</th><th>Combine With</th></tr></thead>
-    <tbody>
-      <tr><td><code>ios::in</code></td><td>Open for reading</td><td>ifstream, fstream</td></tr>
-      <tr><td><code>ios::out</code></td><td>Open for writing</td><td>ofstream, fstream</td></tr>
-      <tr><td><code>ios::app</code></td><td>Always write at end (append)</td><td>ofstream</td></tr>
-      <tr><td><code>ios::ate</code></td><td>Seek to end after open</td><td>any</td></tr>
-      <tr><td><code>ios::trunc</code></td><td>Truncate/erase existing content</td><td>ofstream</td></tr>
-      <tr><td><code>ios::binary</code></td><td>Binary mode (no newline translation)</td><td>any</td></tr>
-    </tbody>
-  </table>
-</div>
+    <div class="section-title"><span class="num">1</span> fstream తో ఫైల్స్ లో రాయడం (Writing) మరియు చదవడం (Reading)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        C లాంగ్వేజ్ లో ఫైల్స్ హ్యాండిల్ చేయడానికి <code>fopen</code>, <code>fprintf</code> లాంటి కష్టమైన ఫంక్షన్స్ ఉంటాయి. కానీ C++ లో మనం <code>cout</code> ని ఎలా వాడతామో, <strong>ఫైల్స్ ని కూడా అంతే ఈజీగా వాడుకోవచ్చు!</strong>
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong><code>ofstream</code> (Output File Stream):</strong> ఇది ఫైల్స్ ని కొత్తగా క్రియేట్ చేయడానికి లేదా డేటాని ఫైల్ లోపలికి రైట్ చేయడానికి వాడుతారు (<code>cout</code> లాగా).</li>
+        <li><strong><code>ifstream</code> (Input File Stream):</strong> ఇది హార్డ్ డిస్క్ లో ముందే ఉన్న ఫైల్ ని ఓపెన్ చేసి చదవడానికి వాడుతారు (<code>cin</code> లాగా).</li>
+        <li><strong><code>fstream</code>:</strong> ఇది రైట్ మరియు రీడ్ రెండూ చేయగలదు.</li>
+      </ul>
+    </div>
 
-<div class="section-title"><span class="num">2</span>Reading &amp; Writing Text Files</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Complete text file read/write</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;fstream&gt;
-#include &lt;iostream&gt;
-#include &lt;sstream&gt;
-#include &lt;string&gt;
-#include &lt;vector&gt;
-#include &lt;stdexcept&gt;
+    <div class="section-title"><span class="num">2</span> C++17 లో వచ్చిన std::filesystem మ్యాజిక్</div>
+    <div class="section-body">
+      <p class="text-prose">
+        పాత కాలంలో ఒక ఫోల్డర్ ఉందో లేదో తెలుసుకోవాలన్నా, లేదా ఆ ఫోల్డర్ లోపల ఎన్ని ఫైల్స్ ఉన్నాయో కౌంట్ చేయాలన్నా... విండోస్ లో ఒకలా, లైనక్స్ లో ఒకలా (OS-specific OS APIs) కోడ్ రాయాల్సి వచ్చేది. ఇది చాలా పెద్ద తలనొప్పి. దాన్ని క్యూర్ చేయడానికి C++17 లో <strong><code>std::filesystem</code></strong> వచ్చింది. ఇది వాడితే విండోస్, మ్యాక్, లైనక్స్ ఎక్కడైనా ఒకటే కోడ్ పనిచేస్తుంది. (దీని కోసం <code>#include &lt;filesystem&gt;</code> వాడాలి).
+      </p>
+    </div>
 
-// Write CSV data to file
-void writeCSV(const std::string&amp; filename,
-              const std::vector&lt;std::vector&lt;std::string&gt;&gt;&amp; rows) {
-    std::ofstream file(filename);
-    if (!file.is_open())
-        throw std::runtime_error("Cannot open for writing: " + filename);
-    for (const auto&amp; row : rows) {
-        for (std::size_t i = 0; i &lt; row.size(); ++i) {
-            if (i) file &lt;&lt; ',';
-            file &lt;&lt; row[i];
-        }
-        file &lt;&lt; '
-';
-    }
-    std::cout &lt;&lt; "Written " &lt;&lt; rows.size() &lt;&lt; " rows to " &lt;&lt; filename &lt;&lt; "
-";
-}  // RAII: file automatically closed here
-
-// Read all lines
-std::vector&lt;std::string&gt; readLines(const std::string&amp; filename) {
-    std::ifstream file(filename);
-    if (!file)
-        throw std::runtime_error("Cannot open for reading: " + filename);
-    std::vector&lt;std::string&gt; lines;
-    std::string line;
-    while (std::getline(file, line)) {
-        lines.push_back(line);
-    }
-    return lines;
-}
-
-// Read entire file into string
-std::string readAll(const std::string&amp; filename) {
-    std::ifstream file(filename);
-    if (!file) throw std::runtime_error("Cannot open: " + filename);
-    std::ostringstream oss;
-    oss &lt;&lt; file.rdbuf();   // read entire buffer
-    return oss.str();
-}
-
-// Read word by word
-void readWords(const std::string&amp; filename) {
-    std::ifstream file(filename);
-    std::string word;
-    std::cout &lt;&lt; "Words: ";
-    while (file &gt;&gt; word) std::cout &lt;&lt; "[" &lt;&lt; word &lt;&lt; "] ";
-    std::cout &lt;&lt; "
-";
-}
-
-// Append to file
-void appendLog(const std::string&amp; logFile, const std::string&amp; message) {
-    std::ofstream file(logFile, std::ios::app);  // append mode
-    if (!file) throw std::runtime_error("Cannot open log: " + logFile);
-    file &lt;&lt; "[LOG] " &lt;&lt; message &lt;&lt; '
-';
-}
-
-// seekg/seekp — random access
-void seekDemo(const std::string&amp; filename) {
-    std::fstream file(filename, std::ios::in | std::ios::out);
-    if (!file) return;
-
-    file.seekg(0, std::ios::end);   // seek to end
-    auto fileSize = file.tellg();   // get position = file size
-    std::cout &lt;&lt; "File size: " &lt;&lt; fileSize &lt;&lt; " bytes
-";
-
-    file.seekg(0, std::ios::beg);   // back to beginning
-    std::string firstLine;
-    std::getline(file, firstLine);
-    std::cout &lt;&lt; "First line: " &lt;&lt; firstLine &lt;&lt; "
-";
-}
-
-int main() {
-    const std::string csvFile = "students.csv";
-    const std::string logFile = "app.log";
-
-    writeCSV(csvFile, {
-        {"Name", "Score", "Grade"},
-        {"Alice", "95", "A"},
-        {"Bob", "87", "B"},
-        {"Charlie", "72", "C"},
-        {"Diana", "98", "A+"}
-    });
-
-    auto lines = readLines(csvFile);
-    std::cout &lt;&lt; "Read " &lt;&lt; lines.size() &lt;&lt; " lines:
-";
-    for (const auto&amp; l : lines) std::cout &lt;&lt; "  " &lt;&lt; l &lt;&lt; "
-";
-
-    appendLog(logFile, "Application started");
-    appendLog(logFile, "CSV read successfully");
-
-    std::string content = readAll(logFile);
-    std::cout &lt;&lt; "Log contents:
-" &lt;&lt; content;
-
-    seekDemo(csvFile);
-    return 0;
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">3</span>Binary File I/O</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Binary read/write, struct serialization</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;fstream&gt;
-#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;vector&gt;
-#include &lt;cstring&gt;
-
-#pragma pack(push, 1)  // prevent padding in struct
-struct StudentRecord {
-    char name[32];
-    int rollNo;
-    float gpa;
-    int year;
-};
-#pragma pack(pop)
-
-void writeBinary(const std::string&amp; filename, const std::vector&lt;StudentRecord&gt;&amp; records) {
-    std::ofstream file(filename, std::ios::binary);
-    if (!file) throw std::runtime_error("Cannot write binary: " + filename);
-
-    uint32_t count = (uint32_t)records.size();
-    file.write(reinterpret_cast&lt;const char*&gt;(&amp;count), sizeof(count));    // header: record count
-    file.write(reinterpret_cast&lt;const char*&gt;(records.data()),             // all records at once
-               (std::streamsize)(records.size() * sizeof(StudentRecord)));
-    std::cout &lt;&lt; "Written " &lt;&lt; count &lt;&lt; " binary records
-";
-}
-
-std::vector&lt;StudentRecord&gt; readBinary(const std::string&amp; filename) {
-    std::ifstream file(filename, std::ios::binary);
-    if (!file) throw std::runtime_error("Cannot read binary: " + filename);
-
-    uint32_t count;
-    file.read(reinterpret_cast&lt;char*&gt;(&amp;count), sizeof(count));
-
-    std::vector&lt;StudentRecord&gt; records(count);
-    file.read(reinterpret_cast&lt;char*&gt;(records.data()),
-              (std::streamsize)(count * sizeof(StudentRecord)));
-    return records;
-}
-
-int main() {
-    std::vector&lt;StudentRecord&gt; students;
-    auto makeRecord = [](const char* name, int roll, float gpa, int year) {
-        StudentRecord r{};
-        std::strncpy(r.name, name, sizeof(r.name) - 1);
-        r.rollNo = roll; r.gpa = gpa; r.year = year;
-        return r;
-    };
-    students.push_back(makeRecord("Alice",   101, 9.2f, 2));
-    students.push_back(makeRecord("Bob",     102, 8.7f, 3));
-    students.push_back(makeRecord("Charlie", 103, 9.5f, 1));
-
-    writeBinary("students.dat", students);
-    auto loaded = readBinary("students.dat");
-
-    std::cout &lt;&lt; "Loaded " &lt;&lt; loaded.size() &lt;&lt; " records:
-";
-    for (const auto&amp; s : loaded) {
-        std::cout &lt;&lt; "  Roll:" &lt;&lt; s.rollNo &lt;&lt; " Name:" &lt;&lt; s.name
-                  &lt;&lt; " GPA:" &lt;&lt; s.gpa &lt;&lt; " Year:" &lt;&lt; s.year &lt;&lt; "
-";
-    }
-    return 0;
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">4</span>std::filesystem (C++17) — Paths, Dirs &amp; File Operations</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — std::filesystem complete API</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;filesystem&gt;
-#include &lt;iostream&gt;
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Filesystem & fstream)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో ముందుగా ఒక కొత్త ఫోల్డర్ ని ఎలా క్రియేట్ చేసామో (C++17 వాడి), ఆ తర్వాత అందులో ఒక ఫైల్ క్రియేట్ చేసి డేటా ఎలా సేవ్ చేసామో, మళ్ళీ ఆ డేటాని ఎలా చదివామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++17 — Filesystem & fstream</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 #include &lt;fstream&gt;
 #include &lt;string&gt;
+#include &lt;filesystem&gt; // C++17 Filesystem
 
-namespace fs = std::filesystem;
-
-void demonstratePaths() {
-    fs::path p1 = "data/logs/app.log";
-    std::cout &lt;&lt; "path:        " &lt;&lt; p1 &lt;&lt; "
-";
-    std::cout &lt;&lt; "filename:    " &lt;&lt; p1.filename() &lt;&lt; "
-";       // app.log
-    std::cout &lt;&lt; "stem:        " &lt;&lt; p1.stem() &lt;&lt; "
-";           // app
-    std::cout &lt;&lt; "extension:   " &lt;&lt; p1.extension() &lt;&lt; "
-";      // .log
-    std::cout &lt;&lt; "parent_path: " &lt;&lt; p1.parent_path() &lt;&lt; "
-";    // data/logs
-
-    fs::path p2 = "/home/user";
-    fs::path p3 = p2 / "documents" / "report.pdf";  // path concatenation
-    std::cout &lt;&lt; "joined:      " &lt;&lt; p3 &lt;&lt; "
-";
-
-    // Replace extension
-    fs::path p4 = "image.jpg";
-    p4.replace_extension(".png");
-    std::cout &lt;&lt; "replaced ext: " &lt;&lt; p4 &lt;&lt; "
-";
-}
-
-void demonstrateDirectories() {
-    // Create directories (all parent dirs too)
-    fs::create_directories("output/temp/data");
-    std::cout &lt;&lt; "Created directories
-";
-
-    // Write test files
-    for (const char* name : {"a.txt", "b.txt", "c.cpp", "d.hpp"}) {
-        std::ofstream(std::string("output/temp/") + name) &lt;&lt; "test content
-";
-    }
-
-    // Directory iteration
-    std::cout &lt;&lt; "Contents of output/temp:
-";
-    for (const auto&amp; entry : fs::directory_iterator("output/temp")) {
-        std::cout &lt;&lt; "  "
-                  &lt;&lt; (fs::is_directory(entry) ? "[DIR] " : "[FILE] ")
-                  &lt;&lt; entry.path().filename()
-                  &lt;&lt; " (" &lt;&lt; (fs::is_regular_file(entry) ? std::to_string(fs::file_size(entry)) + "B" : "-")
-                  &lt;&lt; ")
-";
-    }
-
-    // Recursive iteration
-    std::cout &lt;&lt; "
-Recursive contents:
-";
-    for (const auto&amp; entry : fs::recursive_directory_iterator("output")) {
-        std::cout &lt;&lt; "  " &lt;&lt; std::string(entry.depth() * 2, ' ')
-                  &lt;&lt; entry.path().filename() &lt;&lt; "
-";
-    }
-}
-
-void demonstrateFileOps() {
-    // Copy
-    fs::copy("output/temp/a.txt", "output/temp/a_backup.txt",
-             fs::copy_options::overwrite_existing);
-    std::cout &lt;&lt; "Copied a.txt to a_backup.txt
-";
-
-    // Rename/move
-    fs::rename("output/temp/b.txt", "output/temp/b_renamed.txt");
-    std::cout &lt;&lt; "Renamed b.txt
-";
-
-    // Remove single file
-    fs::remove("output/temp/c.cpp");
-    std::cout &lt;&lt; "Removed c.cpp
-";
-
-    // File metadata
-    auto p = fs::path("output/temp/a.txt");
-    std::cout &lt;&lt; "a.txt exists: " &lt;&lt; std::boolalpha &lt;&lt; fs::exists(p) &lt;&lt; "
-";
-    std::cout &lt;&lt; "a.txt size:   " &lt;&lt; fs::file_size(p) &lt;&lt; " bytes
-";
-    std::cout &lt;&lt; "is_regular:   " &lt;&lt; fs::is_regular_file(p) &lt;&lt; "
-";
-
-    // Space info
-    auto space = fs::space(".");
-    std::cout &lt;&lt; "Disk free: " &lt;&lt; space.free / 1024 / 1024 &lt;&lt; " MB
-";
-
-    // Cleanup
-    fs::remove_all("output");  // delete entire tree
-    std::cout &lt;&lt; "Cleaned up output directory
-";
-}
+namespace fs = std::filesystem; // పేరు చిన్నగా ఉండటానికి షార్ట్ కట్
 
 int main() {
-    std::cout &lt;&lt; "=== Path Operations ===
-";
-    demonstratePaths();
-    std::cout &lt;&lt; "
-=== Directory Operations ===
-";
-    demonstrateDirectories();
-    std::cout &lt;&lt; "
-=== File Operations ===
-";
-    demonstrateFileOps();
+    std::string folderName = "MyGameData";
+    std::string fileName = folderName + "/save_state.txt";
+    
+    // 1. ఫోల్డర్ క్రియేషన్ (C++17 Filesystem)
+    if (!fs::exists(folderName)) {
+        fs::create_directory(folderName);
+        std::cout << "[+] Created Folder: " << folderName << std::endl;
+    }
+    
+    // 2. ఫైల్ లోపలికి రైట్ చేయడం (ofstream)
+    std::ofstream outFile(fileName);
+    if (outFile.is_open()) {
+        outFile << "PlayerLevel: 50\n";
+        outFile << "Score: 9999\n";
+        outFile.close(); // ఫైల్ ని సేఫ్ గా లాక్ చేస్తున్నాం 
+        std::cout << "[+] Game Saved Successfully!" << std::endl;
+    }
+    
+    // 3. ఫైల్ ని చదవడం (ifstream)
+    std::ifstream inFile(fileName);
+    std::string line;
+    
+    std::cout << "\n--- Loading Game ---" << std::endl;
+    if (inFile.is_open()) {
+        // ఫైల్ ఎండ్ అయ్యేదాకా లైన్ బై లైన్ చదువుతుంది
+        while (std::getline(inFile, line)) {
+            std::cout << "Read: " << line << std::endl;
+        }
+        inFile.close();
+    }
+    
     return 0;
 }</code></pre>
-  </div>
-</div>
+      </div>
+    </div>
 
-<div class="section-title"><span class="num">5</span>Technical FAQs</div>
-<div class="section-body">
-  <div class="faq-grid">
-    <div class="faq-item"><h4>Q1: Do I need to explicitly close() a file stream?</h4><p>No — RAII handles it. The stream destructor calls <code>close()</code> automatically when it goes out of scope. Explicit <code>close()</code> is only needed when you want to flush and reopen within the same scope, or check the close return status.</p></div>
-    <div class="faq-item"><h4>Q2: How to read entire file into std::string efficiently?</h4><p>Use <code>std::ostringstream oss; oss &lt;&lt; file.rdbuf();</code> for simple cases. For large files, <code>file.seekg(0, ios::end); auto size = file.tellg(); file.seekg(0, ios::beg); string s(size, ' '); file.read(s.data(), size);</code> avoids a copy.</p></div>
-    <div class="faq-item"><h4>Q3: What is the difference between ios::app and ios::ate?</h4><p><code>ios::app</code> forces every write to the end of file (even after seeking). <code>ios::ate</code> seeks to the end on open but allows writing anywhere after that. Use <code>ios::app</code> for true append-only logs.</p></div>
-    <div class="faq-item"><h4>Q4: How to traverse directories recursively?</h4><p>Use <code>std::filesystem::recursive_directory_iterator</code>: <code>for (const auto&amp; entry : fs::recursive_directory_iterator("root")) { ... }</code>. Use <code>entry.depth()</code> to get the nesting level.</p></div>
-    <div class="faq-item"><h4>Q5: What is std::filesystem::path advantage over string?</h4><p><code>fs::path</code> is cross-platform (handles <code>/</code> vs <code></code> separators), provides decomposition methods (<code>filename()</code>, <code>extension()</code>, <code>parent_path()</code>), and supports natural path concatenation with <code>/</code> operator.</p></div>
-  </div>
-</div>
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>fs::create_directory()</code>: ఇది C++17 ఫీచర్. మనం ఇచ్చిన పేరుతో ఒక కొత్త డైరెక్టరీ (Folder) ని ఆపరేటింగ్ సిస్టమ్ లో క్రియేట్ చేస్తుంది.</li>
+        <li><code>std::ofstream outFile(...)</code>: ఇది ఫైల్ ని క్రియేట్ చేసి, రైట్ చేయడానికి కనెక్షన్ ఓపెన్ చేస్తుంది. దాన్ని మనం <code>cout</code> వాడినట్లే <code>outFile &lt;&lt; "Text"</code> అని వాడుకోవచ్చు.</li>
+        <li><code>std::getline(inFile, line)</code>: ఫైల్ ని స్పేస్ లతో కాకుండా, ఒక లైన్ (Enter కొట్టేదాకా) మొత్తాన్ని చదివి స్ట్రింగ్ లోకి వేస్తుంది. ఆ తర్వాత నెక్స్ట్ లైన్ కి వెళ్తుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఫైల్ ని ఓపెన్ చేసాక కచ్చితంగా <code>.close()</code> చేయాలా? చేయకపోతే ఏమవుతుంది?</h4>
+          <p>సింపుల్ స్కోప్ లో <code>.close()</code> మర్చిపోయినా పర్లేదు, ఎందుకంటే <code>fstream</code> క్లాస్ లోపల రాసిన డిస్ట్రక్టర్ (RAII కాన్సెప్ట్) దానంతట అదే ఫైల్ ని క్లోజ్ చేస్తుంది. కానీ మీరు ఒకే ఫంక్షన్ లో పెద్ద ప్రోగ్రామ్ రాస్తుంటే, వాడుకున్న వెంటనే మీరే క్లోజ్ చేయడం బెస్ట్, లేకపోతే మెమరీ లీక్ అవ్వకపోయినా ఆ ఫైల్ అప్పటిదాకా లాక్ అయి ఉంటుంది, వేరే వాళ్ళు దాన్ని ఓపెన్ చేయలేరు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: టెక్స్ట్ ఫైల్స్ కి, బైనరీ (Binary) ఫైల్స్ కి తేడా ఏంటి?</h4>
+          <p>టెక్స్ట్ ఫైల్స్ అంటే మనం నోట్ పాడ్ (Notepad) లో చదవగలిగే ఇంగ్లీష్ అక్షరాలు ఉంటాయి (పై కోడ్ లో రాసినట్లు). కానీ ఆబ్జెక్ట్స్ ని, ఇమేజెస్ ని, లేదా వీడియో ఫైల్స్ ని సేవ్ చేయాలంటే <code>ios::binary</code> అనే మోడ్ వాడాలి. అప్పుడు డేటా డైరెక్ట్ గా 0s & 1s లాగా వెళ్తుంది (మనుషులు చదవలేరు కానీ కంప్యూటర్ కి చాలా ఫాస్ట్).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: C++17 Filesystem లో ఒక ఫోల్డర్ లో ఉన్న అన్ని ఫైల్స్ ని ఎలా చూడాలి?</h4>
+          <p>దీనికి <code>fs::directory_iterator</code> అనే అద్భుతమైన ఇటరేటర్ ని వాడతారు. ఒక ఫర్ లూప్ <code>for (const auto& entry : fs::directory_iterator(path))</code> అని రాస్తే, ఆ ఫోల్డర్ లోపల ఉన్న అన్నీ ఫైల్స్ పేర్లు వరుసగా ప్రింట్ అయిపోతాయి (Python os.listdir లాగా). ఇది చాలా మోడరన్ ఫీచర్.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="18-cpp-exception-handling-try-catch-throw-and-custom-exceptions.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">18. try, catch, throw, Custom Exceptions & Safety</span>
+    <span class="title">18. Exception Handling</span>
   </a>
   <a href="20-cpp-modern-features-constexpr-structured-bindings-optional-variant-format.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">20. constexpr, Structured Bindings, optional, variant & format</span>
+    <span class="title">20. Modern C++ Features</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

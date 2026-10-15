@@ -9,164 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
+    title: 'Object-Oriented Programming (OOP)',
+    icon: '🏗️',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions Mastery',
-    icon: '🧩',
-    desc: 'Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions, Closures & this (Masterclass)', subtopics: 'Declaration vs Expression · Arrow Syntax · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'DOM Manipulation',
-    icon: '🌐',
-    desc: 'DOM ante enti?, Selecting elements (getElementById, querySelector, querySelectorAll), textContent vs innerHTML, changing styles, classList (add, remove, toggle), reading input values, creating & appending elements, removing elements, data attributes, DOM traversal (parent, children, closest), dynamic lists, and 4 interactive projects.',
-    lessons: [
-      { num: 14, file: 'dom.html', title: '14. DOM Manipulation & Web Interactivity', subtopics: 'DOM ante enti? · Selecting Elements · textContent vs innerHTML · Styles & classList · createElement & append · Data Attributes · DOM Traversal & closest · 4 Interactive Projects' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Events & Forms',
-    icon: '🎯',
-    desc: 'Browser events, addEventListener, click, dblclick, mouse events, keyboard events, input & change, submit event, focus & blur, event object, event bubbling vs capturing, event delegation, preventDefault, form validation, error messages, and 6 full projects.',
-    lessons: [
-      { num: 15, file: 'events-and-forms.html', title: '15. Browser Events, Forms & Event Delegation', subtopics: 'addEventListener · Click, Mouse & Keyboard · Input vs Change · Submit & preventDefault() · Bubbling & Delegation · Form Validation · 6 Complete Projects' }
-    ]
-  },
-  {
-    id: 'phase13',
-    tag: 'Phase 13',
-    title: 'Browser APIs & Storage',
-    icon: '💾',
-    desc: 'window, document, console utilities, setTimeout, setInterval, clearTimeout, clearInterval, localStorage, sessionStorage, Cookies, URL & URLSearchParams, History API, Clipboard API, Geolocation API, Notifications, and Permissions.',
-    lessons: [
-      { num: 16, file: 'browser-apis-and-storage.html', title: '16. Browser APIs, Storage & Timers', subtopics: 'window & document · Timers (setTimeout/setInterval) · localStorage vs sessionStorage vs Cookies · URL API · History · Clipboard · Geolocation · Notifications' }
-    ]
-  },
-  {
-    id: 'phase14',
-    tag: 'Phase 14',
-    title: 'JSON & Fetch API',
-    icon: '🌐',
-    desc: 'What is JSON?, Objects & Arrays, JSON.stringify & parse, HTTP basics (GET, POST, PUT, DELETE), Headers, Body, response.ok, Status codes, Error handling, Loading states, Query params, Authentication, and 5 full projects.',
-    lessons: [
-      { num: 17, file: 'json-and-fetch-api.html', title: '17. JSON, Fetch API & REST Integration', subtopics: 'JSON.stringify & parse · HTTP GET/POST/PUT/DELETE · Headers & Body · response.ok & Status · Loading States · Auth & Tokens · 5 Projects' }
-    ]
-  },
-  {
-    id: 'phase15',
-    tag: 'Phase 15',
-    title: 'Asynchronous JavaScript & Promises',
-    icon: '⏳',
-    desc: 'Sync vs Async, Call Stack, Web APIs, Event Loop & Microtasks priority, Callbacks & Callback Hell, Promises & 3 states, .then/.catch/.finally, Promise Chaining, Promise combinators (all, allSettled, race, any), async/await, and Sequential vs Parallel execution.',
-    lessons: [
-      { num: 18, file: 'promises.html', title: '18. Asynchronous JavaScript, Promises & async/await', subtopics: 'Sync vs Async · Event Loop & Microtasks · Callbacks & Hell · Promise States · all/allSettled/race/any · async/await · Sequential vs Parallel' }
-    ]
-  },
-  {
-    id: 'phase16',
-    tag: 'Phase 16',
-    title: 'Error Handling & Debugging',
-    icon: '🐞',
-    desc: 'try...catch...finally, Custom Error Classes, throw statements, and Chrome DevTools Console Debugging.',
-    lessons: [
-      { num: 19, file: 'exceptions.html', title: '19. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · throw · Chrome DevTools' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -282,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -471,297 +400,118 @@ function buildLesson18() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 15: Asynchronous JavaScript & Promises</strong>! JavaScript is a <strong>single-threaded language</strong> with a non-blocking asynchronous event-driven runtime. In this comprehensive masterclass guide, you will master the inner workings of the <strong>Event Loop</strong> (Call Stack, Web APIs, Callback Task Queue, and Microtask Queue priority), overcome <strong>Callback Hell</strong>, explore <strong>Promises</strong> and their 3 lifecycle states, master the 4 modern Promise combinators (<code>Promise.all</code>, <code>Promise.allSettled</code>, <code>Promise.race</code>, <code>Promise.any</code>), master <code>async/await</code> syntax, and optimize network performance through <strong>Parallel vs Sequential execution</strong>.</p>
+      <p>డేటాబేస్ నుండి డేటా రావడం, ఫైల్స్ అప్‌లోడ్ అవ్వడం లాంటి సమయం పట్టే పనులను వెబ్‌సైట్ స్లో అవ్వకుండా (Non-blocking) వెనుక భాగంలో జరపడానికి <strong>Asynchronous JavaScript</strong> వాడతాం. ఈ చాప్టర్ లో Callbacks, Promises, Promise States (<code>Pending</code>, <code>Fulfilled</code>, <code>Rejected</code>), మరియు Modern <code>async/await</code> ల గురించి లోతుగా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. Synchronous vs Asynchronous & The Event Loop Architecture -->
-    <div class="section-title"><span class="num">1</span>Sync vs Async & The Event Loop Architecture ⭐</div>
-    <div class="section-body">
-      <p>Synchronous code line-by-line execute avthundhi (blocking the main UI thread). Asynchronous code background threads (Web APIs) lo run ayi, complete ayyaka Call Stack loki push avthundhi:</p>
-
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#58a6ff; line-height:1.8;">
-        1. Call Stack (LIFO: Synchronous JS Execution)<br>
-        2. Web APIs / C++ Threads (Timers, fetch(), DOM Events running in background)<br>
-        3. Microtask Queue (Promises, await, queueMicrotask) ⚡ HIGHEST PRIORITY!<br>
-        4. Task / Callback Queue (setTimeout, setInterval, I/O)<br>
-        5. Event Loop (Monitors Stack; when Stack is EMPTY, drains Microtasks first, then 1 Macrotask)
-      </div>
+    <div class="callout">
+      <div class="callout-title">☕ రియల్ లైఫ్ అనలాజీ: స్టార్ బక్స్ కాఫీ ఆర్డర్ (Starbucks Token)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">మీరు స్టార్ బక్స్ లో కాఫీ ఆర్డర్ చేశారు:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>Promise Given (టోకెన్ వచ్చింది):</strong> కాఫీ ఇస్తానని కౌంటర్ వ్యక్తి మీకు ఒక మాట ఇచ్చాడు (Promise created).</li>
+        <li><strong>Pending State:</strong> కాఫీ ఇంకా మెషిన్ లో తయారవుతోంది.</li>
+        <li><strong>Fulfilled / Resolved:</strong> కాఫీ రెడీ అయి మీ చేతికి వచ్చింది (<code>.then()</code> రన్ అవుతుంది).</li>
+        <li><strong>Rejected:</strong> పాలు అయిపోయి కాఫీ ఇవ్వలేమని చెప్పారు (<code>.catch()</code> రన్ అవుతుంది).</li>
+      </ul>
     </div>
 
-    <!-- 2. Callbacks vs Callback Hell -->
-    <div class="section-title"><span class="num">2</span>Callbacks vs Callback Hell (The Pyramid of Doom)</div>
+    <div class="section-title"><span class="num">1</span>Creating & Consuming Promises</div>
     <div class="section-body">
-      <p>Multiple dependent asynchronous operations ni nested callbacks tho raste code deeply indented <em>Pyramid of Doom</em> ga maruthundhi (hard to debug, maintain, and handle errors):</p>
+      <p>జావాస్క్రిప్ట్ లో Promise ని <code>new Promise((resolve, reject) => {})</code> ద్వారా తయారుచేస్తాం:</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Callback Hell (❌ Legacy Anti-Pattern)</span>
-        </div>
-        <pre><code>// ❌ Callback Hell: Inversion of control & impossible error handling
-getUser(1, (user) => {
-    getOrders(user.id, (orders) => {
-        getOrderDetails(orders[0].id, (details) => {
-            getInvoice(details.invoiceId, (invoice) => {
-                console.log("Final Invoice:", invoice);
-            });
-        });
-    });
-});</code></pre>
-      </div>
-    </div>
-
-    <!-- 3. Promises & The 3 Lifecycle States -->
-    <div class="section-title"><span class="num">3</span>Promises & The 3 Lifecycle States</div>
-    <div class="section-body">
-      <p>A <strong>Promise</strong> is an Object representing the eventual completion (fulfillment) or failure (rejection) of an asynchronous task:</p>
-
-      <table class="tbl">
-        <tr><th>Promise State</th><th>Meaning</th><th>Triggered By</th></tr>
-        <tr><td><strong>1. <code>Pending</code></strong></td><td>Initial state, async operation is still executing in background.</td><td>Promise construction</td></tr>
-        <tr><td><strong>2. <code>Fulfilled</code></strong></td><td>Operation completed successfully with a result value.</td><td><code>resolve(value)</code> $\rightarrow$ triggers <code>.then()</code></td></tr>
-        <tr><td><strong>3. <code>Rejected</code></strong></td><td>Operation failed with an error reason.</td><td><code>reject(error)</code> $\rightarrow$ triggers <code>.catch()</code></td></tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Promise Construction & Chaining</span>
+          <span class="lang-tag">JavaScript — Promise Creation & Handling</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-function fetchProductPrice(productId) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (productId > 0) {
-                resolve({ id: productId, price: 999 });
-            } else {
-                reject(new Error("Invalid Product ID!"));
-            }
-        }, 500);
-    });
-}
+// 1. Promise తయారు చేయడం
+const makeCoffee = new Promise((resolve, reject) => {
+    let milkAvailable = true;
 
-// Consuming Promise with .then(), .catch() and .finally()
-fetchProductPrice(101)
-    .then(product => {
-        console.log("Product Fetched:", product);
-        return product.price * 1.18; // Chain transform
+    setTimeout(() => {
+        if (milkAvailable) {
+            resolve("☕ మీ రుచికరమైన కాఫీ రెడీ!");
+        } else {
+            reject("❌ పాలు అయిపోయాయి, కాఫీ చేయలేము.");
+        }
+    }, 2000);
+});
+
+// 2. Promise ని హ్యాండిల్ చేయడం (.then / .catch)
+console.log("కాఫీ ఆర్డర్ చేసాము...");
+
+makeCoffee
+    .then(result => {
+        console.log("Success:", result);
     })
-    .then(totalWithTax => {
-        console.log("Total with 18% Tax: Rs." + totalWithTax.toFixed(2));
-    })
-    .catch(err => {
-        console.error("Error:", err.message);
+    .catch(error => {
+        console.log("Failure:", error);
     })
     .finally(() => {
-        console.log("Transaction pipeline completed.");
+        console.log("🏁 ప్రాసెస్ పూర్తయింది.");
     });</code></pre>
       </div>
     </div>
 
-    <!-- 4. The 4 Modern Promise Combinators -->
-    <div class="section-title"><span class="num">4</span>The 4 Modern Promise Combinators (Crucial Interview Topic)</div>
+    <div class="section-title"><span class="num">2</span>Modern async / await Syntax</div>
     <div class="section-body">
-      <table class="tbl">
-        <tr><th>Combinator</th><th>When does it Resolve?</th><th>When does it Reject?</th><th>Key Use Case</th></tr>
-        <tr>
-          <td><strong><code>Promise.all([p1, p2])</code></strong></td>
-          <td>When <strong>ALL</strong> promises resolve successfully.</td>
-          <td><strong>Fails Fast:</strong> Rejects immediately if <strong>ANY single promise</strong> rejects!</td>
-          <td>All dependent data needed simultaneously (e.g. User Profile + Settings).</td>
-        </tr>
-        <tr>
-          <td><strong><code>Promise.allSettled([p1, p2])</code></strong> ⭐ ES2020</td>
-          <td>Waits for <strong>ALL</strong> promises to finish (either resolved or rejected).</td>
-          <td><strong>Never Rejects!</strong> Returns array of status objects.</td>
-          <td>Bulk analytics or operations where partial failures are acceptable.</td>
-        </tr>
-        <tr>
-          <td><strong><code>Promise.race([p1, p2])</code></strong></td>
-          <td>Settles as soon as the <strong>FIRST</strong> promise settles (resolves OR rejects).</td>
-          <td>Rejects if the fastest promise rejects.</td>
-          <td>Network request timeout wrappers.</td>
-        </tr>
-        <tr>
-          <td><strong><code>Promise.any([p1, p2])</code></strong> ⭐ ES2021</td>
-          <td>Resolves as soon as the <strong>FIRST SUCCESSFUL</strong> promise fulfills.</td>
-          <td>Rejects only if <strong>ALL</strong> promises fail (<code>AggregateError</code>).</td>
-          <td>Fastest CDN / Mirror download fallbacks.</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- 5. async and await -->
-    <div class="section-title"><span class="num">5</span>async / await & Sequential vs Parallel Optimization</div>
-    <div class="section-body">
-      <p><code>async/await</code> allows asynchronous code to be written cleanly in a synchronous-looking sequential style with standard <code>try...catch</code> error handling:</p>
+      <p><code>.then()</code> లతో కోడ్ గందరగోళంగా మారకుండా (Callback Hell ను నివారించడానికి), Async కోడ్ ని కూడా సింక్రోనస్ కోడ్ లాగా క్లీన్ గా రాయడానికి ES2017 లో <strong><code>async/await</code></strong> వచ్చాయి.</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — User Curriculum Example</span>
+          <span class="lang-tag">JavaScript — Clean async/await</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
-
-function getData() {
-    return new Promise(resolve => {
-        setTimeout(() => resolve("Data received successfully!"), 1000);
-    });
+        <pre><code>// async ఫంక్షన్ ని నిర్వచించడం
+async function getCoffeeOrder() {
+    try {
+        console.log("ఆర్డర్ ప్రాసెస్ అవుతోంది...");
+        let msg = await makeCoffee; // Promise అయ్యేవరకు ఇక్కడ ఆగుతుంది
+        console.log("కాఫీ వచ్చింది:", msg);
+    } catch (err) {
+        console.log("Error:", err);
+    }
 }
 
-async function showData() {
-    console.log("Fetching data in background...");
-    const result = await getData(); // Pauses async execution until resolved!
-    console.log("Result:", result);
-}
-
-showData();</code></pre>
-      </div>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px;">
-          <strong style="color:#ff7b72;">1. Sequential Requests (Slow 🐌)</strong>
-          <pre style="font-size:12px; margin-top:8px;"><code>// Takes 2s + 2s = 4 Seconds total!
-const user = await fetchUser();
-const posts = await fetchPosts();</code></pre>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
-          <strong style="color:#3fb950;">2. Parallel Requests (Fast ⚡)</strong>
-          <pre style="font-size:12px; margin-top:8px;"><code>// Runs in parallel: Takes only 2 Seconds!
-const [user, posts] = await Promise.all([
-    fetchUser(),
-    fetchPosts()
-]);</code></pre>
-        </div>
+getCoffeeOrder();</code></pre>
       </div>
     </div>
 
-    <!-- 4 REAL-WORLD PRACTICE PIPELINES -->
-    <div class="section-title"><span class="num">6</span>4 Real-World Production Async Pipelines</div>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li><code>await</code> కీవర్డ్ ని కేవలం <code>async</code> అని మార్క్ చేసిన ఫంక్షన్ల లోపల మాత్రమే వాడాలి. సాధారణ ఫంక్షన్లలో వాడితే <code>SyntaxError</code> వస్తుంది.</li>
+        <li><code>await Promise.all([p1, p2])</code> ని వాడటం ద్వారా ఒకేసారి చాలా Promises ని సమాంతరంగా (Parallel execution) ప్రాసెస్ చేయవచ్చు.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <p>Mastering asynchronous JavaScript through 4 production architectures:</p>
-
-      <!-- Pipeline 1: Parallel Aggregator -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Pipeline 1: Parallel Dashboard Data Aggregator</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Parallel Promise.all</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function fetchAnalyticsDashboard() {
-    const fetchUsers = () => new Promise(res => setTimeout(() => res({ totalUsers: 1450 }), 200));
-    const fetchRevenue = () => new Promise(res => setTimeout(() => res({ mrr: "$42,000" }), 300));
-    const fetchTraffic = () => new Promise(res => setTimeout(() => res({ dailyVisits: 89000 }), 150));
-
-    console.time("DashboardLoad");
-    const [users, revenue, traffic] = await Promise.all([
-        fetchUsers(),
-        fetchRevenue(),
-        fetchTraffic()
-    ]);
-    console.timeEnd("DashboardLoad"); // ~300ms total!
-
-    console.log("Dashboard Loaded:", { ...users, ...revenue, ...traffic });
-}
-
-fetchAnalyticsDashboard();</code></pre>
+      <details>
+        <summary>Q1. Promise కి ఉన్న 3 స్థితులు (States) ఏమిటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> 1. <code>Pending</code> (ఇంకా ప్రాసెస్ అవుతోంది), 2. <code>Fulfilled</code> (విజయం సాధించింది), 3. <code>Rejected</code> (విఫలమైంది).</p>
         </div>
-      </div>
+      </details>
 
-      <!-- Pipeline 2: API Timeout Wrapper -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Pipeline 2: API Request Timeout Wrapper via Promise.race()</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Timeout with Promise.race</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function withTimeout(promise, msTimeout = 2000) {
-    const timeout = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Request Timed Out after " + msTimeout + "ms!")), msTimeout);
-    });
-    return Promise.race([promise, timeout]);
-}
-
-const slowApi = new Promise(res => setTimeout(() => res("Slow Data"), 3000));
-
-withTimeout(slowApi, 1000)
-    .then(data => console.log(data))
-    .catch(err => console.error("Caught Timeout:", err.message)); // Triggers Timeout!</code></pre>
+      <details>
+        <summary>Q2. <code>Promise.all()</code> ఎప్పుడు ఫెయిల్ అవుతుంది?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> అందులోని ఏ ఒక్క Promise రిజెక్ట్ (Reject) అయినా <code>Promise.all()</code> మొత్తం రిజెక్ట్ అయిపోతుంది.</p>
         </div>
-      </div>
-
-      <!-- Pipeline 3: CDN Mirror Fallback with Promise.any -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Pipeline 3: CDN Mirror Fallback with Promise.any()</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Promise.any CDN</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function fetchFastestCDN() {
-    const cdn1 = new Promise((_, rej) => setTimeout(() => rej("CDN1 Offline"), 100));
-    const cdn2 = new Promise(res => setTimeout(() => res("CDN2 (Singapore)"), 300));
-    const cdn3 = new Promise(res => setTimeout(() => res("CDN3 (Mumbai)"), 200));
-
-    try {
-        const fastest = await Promise.any([cdn1, cdn2, cdn3]);
-        console.log("✅ Connected to Fastest Available Server:", fastest); // CDN3 (Mumbai)
-    } catch (err) {
-        console.error("All CDNs failed:", err);
-    }
-}
-
-fetchFastestCDN();</code></pre>
-        </div>
-      </div>
-
-      <!-- Pipeline 4: Sequential Checkout Flow -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Pipeline 4: Step-by-Step E-Commerce Checkout Pipeline</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Sequential Steps</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-async function processOrder(orderId) {
-    try {
-        console.log("Step 1: Validating Inventory for Order #" + orderId + "...");
-        await new Promise(r => setTimeout(r, 200));
-
-        console.log("Step 2: Charging Payment Gateway...");
-        await new Promise(r => setTimeout(r, 300));
-
-        console.log("Step 3: Generating Invoice & Dispatching Shipment...");
-        await new Promise(r => setTimeout(r, 200));
-
-        console.log("🎉 Order #" + orderId + " Successfully Placed & Dispatched!");
-    } catch (err) {
-        console.error("Order processing failed:", err.message);
-    }
-}
-
-processOrder(98452);</code></pre>
-        </div>
-      </div>
+      </details>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>Asynchronous పనుల కోసం Promises వాడండి.</li>
+        <li>కోడ్ ని సులభంగా ఉంచడానికి <code>async/await</code> వాడండి.</li>
+        <li>ఎర్రర్స్ ని క్యాచ్ చేయడానికి <code>try...catch</code> వాడండి.</li>
+      </ul>
     </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 18, subtopics, contentBody, 'json-and-fetch-api.html', '17. JSON & Fetch API', 'exceptions.html', 'Phase 16: Error Handling');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -858,7 +608,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

@@ -10,113 +10,113 @@ module.exports = [
     phaseId: 'phase2',
     phaseTitle: 'Phase 2: Variables & Data Types',
     slug: '06-java-variables-declaration-and-memory-model',
-    title: 'Java Variables, Declaration & Memory Allocation',
+    title: 'Java Variables, Declaration & Memory Allocation (తెలుగులో)',
     badge: '6. Variables & Memory',
     subtopics: 'What is a Variable? · Declaration vs Initialization vs Assignment · Strong Static Typing · JVM Stack vs Heap Memory Model',
     readTime: '15 min read',
-    intro: 'Mastering the fundamental memory mechanics of Java: understanding variables as named RAM addresses, the difference between declaration and initialization, Java\'s strict compile-time static type system, and the dual Stack vs Heap memory allocation architecture.',
+    intro: 'జావాలో వేరియబుల్స్ (Variables) అంటే ఏంటి? వాటికి మెమరీ ఎలా క్రియేట్ అవుతుంది? జావా స్ట్రిక్ట్ గా డేటా టైప్స్ ని ఎందుకు ఫాలో అవుతుంది? మరియు ఇంటర్నల్ గా JVM Stack మెమరీకీ, Heap మెమరీకీ ఉన్న తేడా ఏంటో ఈ చాప్టర్ లో డీటెయిల్డ్ గా నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. What is a Variable? (Memory Concept)',
-        content: `A **Variable** in Java is a named container (or reserved memory location) in computer RAM used to store data values during program execution.
+        heading: '1. వేరియబుల్ (Variable) అంటే ఏంటి? (మెమరీ కాన్సెప్ట్)',
+        content: `**వేరియబుల్ (Variable)** అంటే సింపుల్ గా చెప్పాలంటే కంప్యూటర్ RAM (మెమరీ) లో కొంత స్పేస్ ని రిజర్వ్ చేసుకుని, దానికి ఒక పేరు పెట్టుకోవడం. అందులో మనం డేటాని స్టోర్ చేసుకోవచ్చు.
 
-When you declare a variable in Java, the JVM allocates a specific number of bytes in memory based on the variable's **Data Type**, and associates your variable identifier with that physical memory address.
+జావాలో మీరు ఒక వేరియబుల్ క్రియేట్ చేయగానే.. JVM ఆ డేటా టైప్ ని బట్టి మెమరీలో ఒక బాక్స్ ని (కొన్ని బైట్స్ ని) క్రియేట్ చేసి, దానికి మీరు పెట్టిన పేరు పెడుతుంది.
 
-### The 3 Stages of Variable Lifecycle:
-1. **Declaration:** Informs the compiler about the variable's name and data type, reserving memory space. No value is stored yet.
+### వేరియబుల్ క్రియేట్ చేయడంలో 3 స్టెప్స్:
+1. **Declaration (డిక్లరేషన్):** నేను ఫలానా పేరుతో, ఫలానా డేటా టైప్ తో వేరియబుల్ క్రియేట్ చేస్తున్నా అని కంపైలర్ కి చెప్పడం. (ఇక్కడ వాల్యూ ఇవ్వము).
    \`\`\`java
-   int accountBalance; // Declaration: 4 bytes allocated on stack
+   int accountBalance; // డిక్లరేషన్: మెమరీలో 4 బైట్స్ రిజర్వ్ అవుతాయి
    \`\`\`
-2. **Initialization:** Assigning a value to a variable for the very first time.
+2. **Initialization (ఇనిషియలైజేషన్):** ఆ క్రియేట్ చేసిన వేరియబుల్ కి ఫస్ట్ టైమ్ వాల్యూ ఇవ్వడం.
    \`\`\`java
-   accountBalance = 50000; // Initialization
+   accountBalance = 50000; // ఇనిషియలైజేషన్
    \`\`\`
-3. **Combined Declaration & Initialization:** Best practice in modern Java.
+3. **Combined (కలిపి రాయడం):** జావాలో అందరూ ఎక్కువగా ఒకే లైన్ లో రాస్తుంటారు.
    \`\`\`java
-   int accountBalance = 50000; // Combined
+   int accountBalance = 50000; // డిక్లరేషన్ + ఇనిషియలైజేషన్
    \`\`\`
-4. **Re-assignment / Mutation:** Overwriting the stored memory with a new value.
+4. **Re-assignment (మార్చడం):** ఆల్రెడీ ఉన్న వాల్యూ తీసేసి కొత్త వాల్యూ పెట్టడం.
    \`\`\`java
-   accountBalance = 75000; // Re-assigned
+   accountBalance = 75000; // పాత 50000 పోయి కొత్తది స్టోర్ అవుతుంది
    \`\`\``
       },
       {
-        heading: '2. Strong Static Typing in Java',
-        content: `Java is a **Statically-Typed and Strongly-Typed** language:
-- **Statically-Typed:** Every variable's data type must be explicitly defined at compile-time and cannot change during runtime. You cannot assign a text String to an \`int\` variable.
-- **Strongly-Typed:** The Java compiler strictly enforces type safety, forbidding implicit operations that could cause unpredictable memory corruption.
+        heading: '2. స్ట్రాంగ్ స్టాటిక్ టైపింగ్ (Strong Static Typing) అంటే ఏంటి?',
+        content: `జావా అనేది ఒక **Statically-Typed** మరియు **Strongly-Typed** లాంగ్వేజ్:
+- **Statically-Typed:** అంటే కోడ్ రాసేటప్పుడే అది నంబరా? టెక్స్టా? డెసిమలా? అనేది (Data Type) ముందే చెప్పాలి. ఒకసారి \`int\` అని చెప్తే, అందులో టెక్స్ట్ పెట్టడానికి ట్రై చేస్తే ఒప్పుకోదు.
+- **Strongly-Typed:** వేరే డేటా టైప్ ఇస్తే కంపైలర్ ఎర్రర్ ఇచ్చేస్తుంది. జావా చాలా స్ట్రిక్ట్.
 
 \`\`\`java
-int userAge = 25;       // Valid
-// userAge = "Twenty-Five"; // COMPILE ERROR: incompatible types: String cannot be converted to int
+int userAge = 25;       // కరెక్ట్
+// userAge = "Twenty-Five"; // COMPILE ERROR: జావాలో టెక్స్ట్ ని int లో స్టోర్ చేయలేరు!
 \`\`\`
 
-### Why Static Typing is an Enterprise Superpower:
-1. **Zero Runtime Type Crashes:** Bugs like \`TypeError: undefined is not a function\` are caught at compile-time before code is ever deployed.
-2. **Extreme IDE Autocompletion:** IDEs (IntelliJ, VS Code) know every field and method available on every variable instantly.
-3. **Optimized Machine Code:** Because the JVM knows exact byte sizes in advance, it can allocate memory and cache registers with maximum hardware efficiency.`
+### జావా అంత స్ట్రిక్ట్ గా ఎందుకు ఉంటుంది?:
+1. **Zero Runtime Type Crashes:** Python, JS లాంటి లాంగ్వేజెస్ లో లాగా మధ్యలో డేటా టైప్ మారిపోయి యాప్ క్రాష్ అయ్యే ఛాన్స్ ఉండదు. కంపైల్ చేసేటప్పుడే ఎర్రర్స్ పట్టుకుంటుంది.
+2. **స్మార్ట్ సజెషన్స్:** మీ కోడ్ ఎడిటర్ (IDE) కి ఏ వేరియబుల్ లో ఏముందో పక్కాగా తెలుస్తుంది కాబట్టి, మీకు సూపర్ ఫాస్ట్ గా సజెషన్స్ ఇస్తుంది.
+3. **మెమరీ ప్లానింగ్:** ముందే డేటా టైప్ చెప్పడం వల్ల, దానికి ఎంత మెమరీ కావాలో JVM ముందే క్యాలిక్యులేట్ చేసుకోగలుగుతుంది.`
       },
       {
-        heading: '3. The JVM Memory Model: Stack vs Heap Memory',
-        content: `Understanding where your variables live in RAM is critical for mastering Java performance and preventing memory leaks:
+        heading: '3. JVM మెమరీ మోడల్: Stack vs Heap Memory',
+        content: `జావాలో వేరియబుల్స్ స్టోర్ అవ్వడానికి RAM లో 2 రకాల మెమరీ ఏరియాలు ఉంటాయి. ఇది తెలియడం చాలా ఇంపార్టెంట్:
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
 |                        JVM STACK MEMORY vs HEAP MEMORY                            |
 +-----------------------------------------------------------------------------------+
-|  STACK MEMORY (Thread-Specific, Fast, LIFO)                                       |
+|  STACK MEMORY (ఫాస్ట్ గా ఉంటుంది, ఫంక్షన్ అయిపోగానే క్లీన్ అవుతుంది)                     |
 |  +-----------------------------------------------------------------------------+  |
-|  |  main() Stack Frame:                                                        |  |
-|  |    int age = 21;                 (Direct 4-byte primitive value in stack)   |  |
-|  |    double salary = 85000.50;     (Direct 8-byte primitive value in stack)   |  |
-|  |    boolean isStudent = true;     (Direct primitive boolean in stack)        |  |
-|  |    String name = 0x4F2A; --------+ (Memory pointer/reference address)       |  |
-|  |    int[] scores = 0x8B1C; -------|---+ (Array pointer/reference address)    |  |
+|  |  main() ఫంక్షన్ కోసం:                                                        |  |
+|  |    int age = 21;                 (డైరెక్ట్ గా స్టాక్ లోనే సేవ్ అవుతుంది)               |  |
+|  |    double salary = 85000.50;     (ఇది కూడా స్టాక్ లోనే ఉంటుంది)                   |  |
+|  |    boolean isStudent = true;     (ఇది కూడా స్టాక్ లోనే)                         |  |
+|  |    String name = 0x4F2A; --------+ (ఇది స్ట్రింగ్ కాబట్టి, అసలు వాల్యూ ఎక్కడుందో దారి చూపిస్తుంది)|  |
+|  |    int[] scores = 0x8B1C; -------|---+ (అర్రే కూడా అంతే, దారి (Address) మాత్రమే స్టాక్ లో ఉంటుంది) |  |
 |  +----------------------------------|---|--------------------------------------+  |
 +-------------------------------------|---|-----------------------------------------+
-|  HEAP MEMORY (Shared, Managed by Garbage Collector)                               |
+|  HEAP MEMORY (ఆబ్జెక్ట్స్ అన్నీ ఇక్కడే ఉంటాయి, గ్యార్బేజ్ కలెక్టర్ క్లీన్ చేస్తుంది)             |
 |  +----------------------------------|---|--------------------------------------+  |
 |  |  Address: 0x4F2A                 v   |                                      |  |
-|  |  [ String Object: "Balaji" ] <-------+                                      |  |
+|  |  [ String Object: "Balaji" ] <-------+ (అసలు స్ట్రింగ్ డేటా ఇక్కడ ఉంటుంది)           |  |
 |  |                                                                             |  |
 |  |  Address: 0x8B1C                     v                                      |  |
-|  |  [ Array Object: { 85, 90, 78, 92 } ]<-------------------------------------+  |
+|  |  [ Array Object: { 85, 90, 78 } ]<-----------------------------------------+  |
 |  +-----------------------------------------------------------------------------+  |
 +-----------------------------------------------------------------------------------+
 \`\`\`
 
-- **Stack Memory:** Stores primitive data values (\`int\`, \`double\`, \`char\`, \`boolean\`) and reference addresses (pointers). Allocations and deallocations are instantaneous when method frames open and close.
-- **Heap Memory:** Stores all actual complex Objects, Instances, and Arrays. Objects remain in heap memory until the Garbage Collector detects that no active stack reference points to them.`
+- **Stack Memory:** సింపుల్ డేటా టైప్స్ (\`int\`, \`double\`, \`char\`, \`boolean\`) అన్నీ డైరెక్ట్ గా స్టాక్ లోనే సేవ్ అవుతాయి. ఫంక్షన్ పని అవ్వగానే స్టాక్ ఆటోమాటిక్ గా క్లీన్ అయిపోతుంది.
+- **Heap Memory:** కొంచెం పెద్దవి అయిన ఆబ్జెక్ట్స్, స్ట్రింగ్స్, అర్రేస్ (Arrays) లాంటివి Heap లో సేవ్ అవుతాయి. వాడని ఆబ్జెక్ట్స్ ని Garbage Collector ఆటోమాటిక్ గా క్లీన్ చేస్తుంది.`
       }
     ],
     codeExample: `public class Main {
     public static void main(String[] args) {
-        // Variable Declarations & Initializations
-        String name = "Ravi";
-        int age = 21;
-        double height = 5.8;
-        char grade = 'A';
-        boolean isStudent = true;
+        // వేరియబుల్స్ ని క్రియేట్ చేయడం
+        String name = "Ravi";     // ఇది Heap లో సేవ్ అవుతుంది
+        int age = 21;             // ఇది Stack లో ఉంటుంది
+        double height = 5.8;      // Stack
+        char grade = 'A';         // Stack
+        boolean isStudent = true; // Stack
 
-        // Displaying Variable Values
-        System.out.println("Name       : " + name);
-        System.out.println("Age        : " + age);
-        System.out.println("Height     : " + height);
-        System.out.println("Grade      : " + grade);
-        System.out.println("Is Student : " + isStudent);
+        // వాటిని ప్రింట్ చేయడం
+        System.out.println("పేరు        : " + name);
+        System.out.println("వయసు        : " + age);
+        System.out.println("ఎత్తు       : " + height);
+        System.out.println("గ్రేడ్       : " + grade);
+        System.out.println("స్టూడెంటా?    : " + isStudent);
     }
 }`,
-    output: `Name       : Ravi
-Age        : 21
-Height     : 5.8
-Grade      : A
-Is Student : true`,
+    output: `పేరు        : Ravi
+వయసు        : 21
+ఎత్తు       : 5.8
+గ్రేడ్       : A
+స్టూడెంటా?    : true`,
     lineByLine: [
-      { line: 'String name = "Ravi";', explanation: 'Reference data type: Allocates a String object in the String Constant Pool (Heap) and stores its memory reference in "name" on the Stack.' },
-      { line: 'int age = 21;', explanation: 'Primitive integer type: Reserves 4 bytes (32 bits) directly on the thread Stack storing the whole number 21.' },
-      { line: 'double height = 5.8;', explanation: 'Primitive floating-point type: Reserves 8 bytes (64 bits) on the Stack for double-precision decimal 5.8.' },
-      { line: 'char grade = \'A\';', explanation: 'Primitive character type: Stores 2 bytes (16-bit Unicode UTF-16) for the single character \'A\' (Unicode 65).' },
-      { line: 'boolean isStudent = true;', explanation: 'Primitive truth-value type: Stores true or false directly on the Stack.' }
+      { line: 'String name = "Ravi";', explanation: 'ఇది Reference డేటా టైప్. అంటే ఆ "Ravi" అనే పేరు Heap మెమరీలో సేవ్ అయ్యి.. దాని అడ్రెస్ (లింక్) మాత్రం name అనే వేరియబుల్ ద్వారా Stack లో ఉంటుంది.' },
+      { line: 'int age = 21;', explanation: 'ఇది Primitive (సింపుల్) డేటా టైప్. దీనికి 4 బైట్స్ మెమరీ డైరెక్ట్ గా Stack లోనే అలోకేట్ అయ్యి సేవ్ అవుతుంది.' },
+      { line: 'double height = 5.8;', explanation: 'డెసిమల్స్ (పాయింట్ తర్వాత వచ్చేవి) కోసం 8 బైట్స్ మెమరీ Stack లో సేవ్ అవుతుంది.' },
+      { line: 'char grade = \'A\';', explanation: 'సింగిల్ కొటేషన్స్ లో ఒక అక్షరం ఇవ్వడానికి ఇది వాడతాం (2 బైట్స్ తీసుకుంటుంది).' },
+      { line: 'boolean isStudent = true;', explanation: 'అవునా కాదా (true/false) చెప్పడానికి.' }
     ],
     practicalExample: `public class BankBalanceTracker {
     public static void main(String[] args) {
@@ -124,61 +124,57 @@ Is Student : true`,
         long accountNumber   = 987654321012L;
         double balance       = 15000.00;
 
-        System.out.println("Initial Balance for " + accountHolder + ": ₹" + balance);
+        System.out.println(accountHolder + " అకౌంట్ లో ఉన్న బ్యాలెన్స్: ₹" + balance);
 
-        // Depositing funds
+        // డబ్బులు డిపాజిట్ చేయడం
         double depositAmount = 5000.00;
-        balance = balance + depositAmount;
-        System.out.println("Deposited: ₹" + depositAmount + " | New Balance: ₹" + balance);
+        balance = balance + depositAmount; // పాత బ్యాలెన్స్ కి కొత్తది కలిపి మళ్ళీ సేవ్ చేస్తున్నాం
+        System.out.println("డిపాజిట్ చేసినది: ₹" + depositAmount + " | కొత్త బ్యాలెన్స్: ₹" + balance);
 
-        // Withdrawing funds
+        // డబ్బులు విత్ డ్రా చేయడం
         double withdrawalAmount = 3500.00;
         balance = balance - withdrawalAmount;
-        System.out.println("Withdrawn: ₹" + withdrawalAmount + " | Final Balance: ₹" + balance);
+        System.out.println("విత్ డ్రా చేసినది: ₹" + withdrawalAmount + " | ఫైనల్ బ్యాలెన్స్: ₹" + balance);
     }
 }`,
-    practicalOutput: `Initial Balance for Priya Sharma: ₹15000.0
-Deposited: ₹5000.0 | New Balance: ₹20000.0
-Withdrawn: ₹3500.0 | Final Balance: ₹16500.0`,
+    practicalOutput: `Priya Sharma అకౌంట్ లో ఉన్న బ్యాలెన్స్: ₹15000.0
+డిపాజిట్ చేసినది: ₹5000.0 | కొత్త బ్యాలెన్స్: ₹20000.0
+విత్ డ్రా చేసినది: ₹3500.0 | ఫైనల్ బ్యాలెన్స్: ₹16500.0`,
     commonMistakes: [
-      'Using uninitialized local variables: In Java, local variables inside methods have NO default values. Using "int x; System.out.println(x);" causes compile error: "variable x might not have been initialized".',
-      'Assigning mismatched types without casting: "int x = 5.8;" fails compilation. You must use explicit casting "(int) 5.8" or declare as "double".',
-      'Confusing char quotes with String quotes: Single quotes \'A\' are for char; double quotes "A" are for String objects.'
+      'వాల్యూ ఇవ్వకుండా వాడటం: జావాలో మెయిన్ ఫంక్షన్ లోపల "int x;" అని వదిలేసి, కింద "System.out.println(x);" అంటే ఎర్రర్ వస్తుంది. కచ్చితంగా వాల్యూ ఇచ్చాకే వాడాలి.',
+      'టైప్స్ ని మ్యాచ్ చేయకపోవడం: "int x = 5.8;" అని ఇస్తే ఎర్రర్ వస్తుంది. డెసిమల్స్ ఉంటే double అని మాత్రమే ఇవ్వాలి.',
+      'చార్ట్స్, స్ట్రింగ్స్ కి కొటేషన్స్ తప్పు వాడటం: సింగిల్ లెటర్ (char) కి ఎప్పుడూ సింగిల్ కొటేషన్స్ (\'A\') వాడాలి. పదాలకి (String) డబుల్ కొటేషన్స్ ("A") వాడాలి.'
     ],
     challenge: `// Coding Challenge:
-// Declare variables representing a smartphone product:
+// ఒక స్మార్ట్ ఫోన్ కి సంబంధించిన ఈ కింది వేరియబుల్స్ ని క్రియేట్ చేయండి:
 // 1. brand (String) = "Samsung"
 // 2. ramGB (int) = 12
 // 3. price (double) = 74999.99
 // 4. inStock (boolean) = true
 // 5. rating (char) = '5'
-// Output a clean formatted product specs card.
+// వాటన్నింటినీ నీట్ గా ప్రింట్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: Declare and print the 5 smartphone variables
+        // TODO: ఆ 5 వేరియబుల్స్ క్రియేట్ చేసి ప్రింట్ చేయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Why are local variables stored in the Stack instead of the Heap?',
-        a: 'Stack allocation is extremely fast and follows strict LIFO (Last-In, First-Out) ordering. When a method finishes, its entire stack frame is automatically freed in one CPU clock instruction without needing Garbage Collector overhead.'
+        q: 'లోకల్ వేరియబుల్స్ అన్నీ Stack లోనే ఎందుకు స్టోర్ అవుతాయి?',
+        a: 'ఎందుకంటే Stack చాలా ఫాస్ట్. ఒక ఫంక్షన్ పని అవ్వగానే అందులో ఉన్న వేరియబుల్స్ అన్నీ ఆటోమాటిక్ గా ఒక్క సెకన్లో క్లీన్ అయిపోతాయి (Garbage Collector తో పనిలేదు).'
       },
       {
-        q: 'What is the default value of instance variables in Java?',
-        a: 'Unlike local variables, instance variables (class fields) get automatic default values: numeric types get 0 / 0.0, boolean gets false, char gets \'\\u0000\' (null char), and object references get null.'
-      },
-      {
-        q: 'Can variable names start with an underscore in Java?',
-        a: 'Yes, variable names can start with letters, underscores (_), or dollar signs ($), but by convention, always start with lowercase letters in camelCase (e.g. userAge).'
+        q: 'జావాలో వేరియబుల్ కి డీఫాల్ట్ వాల్యూస్ (జీరో లాంటివి) ఉంటాయా?',
+        a: 'ఫంక్షన్స్ లోపల ఉండే లోకల్ వేరియబుల్స్ కి డీఫాల్ట్ వాల్యూస్ ఉండవు. కానీ క్లాస్ లెవెల్ లో ఉండే వేరియబుల్స్ కి మాత్రం నంబర్స్ అయితే 0 అని, boolean అయితే false అని డీఫాల్ట్ వాల్యూ తీసుకుంటుంది.'
       }
     ],
     recap: [
-      'Variables are named memory allocations in RAM classified by data types.',
-      'Java is statically-typed: variable data types are fixed at compile-time.',
-      'Stack memory stores primitive values and object references; Heap memory stores actual objects and arrays.',
-      'Local variables must be explicitly initialized before use.'
+      'వేరియబుల్స్ అంటే మెమరీలో ఒక బాక్స్ క్రియేట్ చేసి డేటాని స్టోర్ చేసుకోవడం.',
+      'జావా అనేది Statically-typed, అంటే డేటా టైప్ ముందే చెప్పాలి.',
+      'సింపుల్ డేటా అన్నీ Stack మెమరీలో ఉంటే, పెద్ద పెద్ద ఆబ్జెక్ట్స్ అన్నీ Heap మెమరీలో ఉంటాయి.',
+      'వేరియబుల్స్ ని వాల్యూ ఇచ్చాకే ప్రింట్ చేయాలి, లేదంటే ఎర్రర్ వస్తుంది.'
     ]
   },
 
@@ -190,113 +186,106 @@ public class Main {
     phaseId: 'phase2',
     phaseTitle: 'Phase 2: Variables & Data Types',
     slug: '07-java-primitive-data-types-and-literals',
-    title: 'Java 8 Primitive Data Types & Literals',
+    title: 'Java 8 Primitive Data Types & Literals (తెలుగులో)',
     badge: '7. Primitive Data Types',
     subtopics: 'byte, short, int, long · float, double · char (Unicode UTF-16) · boolean · Memory Sizes & Bit Ranges · Numeric Underscores & Literals',
     readTime: '16 min read',
-    intro: 'Deep dive into the 8 primitive data types of Java: exact byte sizes, minimum/maximum mathematical ranges, IEEE 754 floating-point standards, 16-bit Unicode characters, boolean logic, and modern numeric literal formatting (binary, hex, and numeric underscores).',
+    intro: 'జావాలో బేసిక్ గా ఉండే 8 రకాల డేటా టైప్స్ ఏంటి? వాటికి మెమరీ లో ఎన్ని బైట్స్ తీసుకుంటాయి? పెద్ద నంబర్స్ వస్తే ఏది వాడాలి? పాయింట్ తర్వాత వచ్చే నంబర్స్ కి ఏది వాడాలి? అనే విషయాలు డీటెయిల్డ్ గా నేర్చుకుందాం.',
     theorySections: [
       {
-        heading: '1. The 8 Primitive Data Types Complete Table',
-        content: `Java has exactly **8 Primitive Data Types** built directly into the language syntax for maximum hardware performance:
+        heading: '1. జావాలో ఉండే 8 Primitive Data Types లిస్ట్',
+        content: `జావాలో ముందే డిజైన్ చేసిపెట్టిన 8 బేసిక్ (Primitive) డేటా టైప్స్ ఇవే:
 
-| Data Type | Category | Size (Bytes) | Size (Bits) | Minimum Value | Maximum Value | Default Value | Example Literal |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **\`byte\`** | Integer | 1 byte | 8 bits | \`-128\` ($-2^7$) | \`127\` ($2^7 - 1$) | \`0\` | \`byte b = 100;\` |
-| **\`short\`** | Integer | 2 bytes | 16 bits | \`-32,768\` ($-2^{15}$) | \`32,767\` ($2^{15} - 1$) | \`0\` | \`short s = 25000;\` |
-| **\`int\`** | Integer | 4 bytes | 32 bits | \`-2,147,483,648\` ($-2^{31}$) | \`2,147,483,647\` ($2^{31} - 1$) | \`0\` | \`int i = 500000;\` |
-| **\`long\`** | Integer | 8 bytes | 64 bits | \`-9,223,372,036,854,775,808\` ($-2^{63}$) | \`9,223,372,036,854,775,807\` ($2^{63} - 1$) | \`0L\` | \`long l = 9876543210L;\` |
-| **\`float\`** | Floating Point | 4 bytes | 32 bits | $\\approx 1.4 \\times 10^{-45}$ | $\\approx 3.4028235 \\times 10^{38}$ (6-7 decimal digits precision) | \`0.0f\` | \`float f = 3.14159f;\` |
-| **\`double\`** | Floating Point | 8 bytes | 64 bits | $\\approx 4.9 \\times 10^{-324}$ | $\\approx 1.7976931 \\times 10^{308}$ (15-16 decimal digits precision) | \`0.0d\` | \`double d = 3.1415926535;\` |
-| **\`char\`** | Character | 2 bytes | 16 bits | \`'\\u0000'\` (0) | \`'\\uffff'\` (65,535 unsigned Unicode UTF-16) | \`'\\u0000'\` | \`char c = 'A';\` |
-| **\`boolean\`** | Truth Value | 1 bit (JVM dependent) | 1 bit | \`false\` | \`true\` | \`false\` | \`boolean flag = true;\` |`
+| డేటా టైప్ | ఏ రకం? | సైజు (Bytes) | ఎక్కడ నుంచి ఎక్కడ వరకు? | డీఫాల్ట్ వాల్యూ | ఎగ్జాంపుల్ |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **\`byte\`** | నంబర్ | 1 byte | \`-128\` నుంచి \`127\` వరకు | \`0\` | \`byte b = 100;\` |
+| **\`short\`** | నంబర్ | 2 bytes | \`-32,768\` నుంచి \`32,767\` వరకు | \`0\` | \`short s = 25000;\` |
+| **\`int\`** | నంబర్ | 4 bytes | దాదాపు మైనస్ 214 కోట్లు నుంచి ప్లస్ 214 కోట్ల వరకు | \`0\` | \`int i = 500000;\` |
+| **\`long\`** | నంబర్ | 8 bytes | ఇంకా చాలా పెద్ద నంబర్స్ కోసం | \`0L\` | \`long l = 9876543210L;\` |
+| **\`float\`** | డెసిమల్స్ | 4 bytes | పాయింట్ తర్వాత 6-7 నంబర్స్ వరకు కరెక్ట్ గా వస్తుంది | \`0.0f\` | \`float f = 3.14159f;\` |
+| **\`double\`** | డెసిమల్స్ | 8 bytes | పాయింట్ తర్వాత 15 నంబర్స్ వరకు కరెక్ట్ గా వస్తుంది | \`0.0d\` | \`double d = 3.1415926535;\` |
+| **\`char\`** | అక్షరం | 2 bytes | ఒకే ఒక అక్షరం (ఏ భాషదైనా సరే) | \`'\\u0000'\` | \`char c = 'A';\` |
+| **\`boolean\`** | అవునా కాదా | 1 bit | కేవలం \`true\` లేదా \`false\` | \`false\` | \`boolean flag = true;\` |`
       },
       {
-        heading: '2. Integer Types: Why `int` is Default & The `long` \'L\' Suffix',
-        content: `In Java, every whole integer literal (e.g. \`100\`, \`5000\`) is treated by default as a 32-bit \`int\`.
+        heading: '2. నంబర్స్ (Integers): `int` ఎందుకు డీఫాల్ట్? `long` కి L ఎందుకు వాడాలి?',
+        content: `మనం జావాలో ఏ నంబర్ రాసినా సరే, జావా దాన్ని బై డీఫాల్ట్ \`int\` (4 బైట్స్) లాగే చూస్తుంది.
 
-If a number exceeds the maximum 32-bit limit (\`2,147,483,647\`), you **must append an uppercase \`L\` or lowercase \`l\` suffix** (always use uppercase \`L\` to avoid confusing \`l\` with the digit \`1\`):
+ఒకవేళ మీరు \`int\` సైజు కంటే పెద్ద నంబర్ (214 కోట్లు దాటినవి) రాస్తుంటే, దాని చివర కచ్చితంగా **L** (అంటే Long) అని పెట్టాలి. లేదంటే ఎర్రర్ వస్తుంది.
 
 \`\`\`java
 int standardNumber = 2000000;
-long worldPopulation = 8000000000L; // Mandatory 'L' suffix
+long worldPopulation = 8000000000L; // పెద్ద నంబర్ కాబట్టి L పెట్టాలి
 \`\`\``
       },
       {
-        heading: '3. Floating-Point: `float` (\'F\' Suffix) vs `double` (Default)',
-        content: `In Java, every fractional decimal literal (e.g. \`3.14\`, \`99.99\`) is treated by default as a 64-bit \`double\` (IEEE 754 standard).
+        heading: '3. డెసిమల్ నంబర్స్: `float` (f) vs `double` (డీఫాల్ట్)',
+        content: `జావాలో పాయింట్ ఉన్న ఏ నంబర్ రాసినా, అది బై డీఫాల్ట్ \`double\` (8 బైట్స్) అనుకుంటుంది.
 
-If you want to store a decimal in a 32-bit \`float\` to conserve memory in graphics/game engines, you **must append an \`F\` or \`f\` suffix**:
+ఒకవేళ మీరు దాన్ని \`float\` లోనే స్టోర్ చేసి మెమరీ సేవ్ చేద్దామనుకుంటే, కచ్చితంగా దాని పక్కన **f** అని పెట్టాలి. లేదంటే జావా ఒప్పుకోదు.
 
 \`\`\`java
-double exactGpa = 3.95;    // 64-bit standard default
-float screenCoord = 120.5f; // Mandatory 'f' suffix
+double exactGpa = 3.95;    // పక్కన ఏమీ ఇవ్వకపోతే అది double అనుకుంటుంది
+float screenCoord = 120.5f; // float కి మాత్రం చివర 'f' ఇవ్వాల్సిందే
 \`\`\``
       },
       {
-        heading: '4. `char` and Unicode UTF-16 Support',
-        content: `Unlike C/C++ where \`char\` is only 1 byte (ASCII only, 0-127), Java's \`char\` is **2 bytes (16-bit unsigned Unicode)**. This allows Java to represent characters from every human language (English, Telugu, Hindi, Chinese, Arabic) and international symbols natively!
+        heading: '4. `char` మరియు ప్రపంచ భాషలు (Unicode)',
+        content: `పాత లాంగ్వేజెస్ (C, C++) లో ఒక అక్షరాన్ని స్టోర్ చేయడానికి (ASCII) 1 బైట్ వాడేవాళ్లు. కానీ అందులో ఇంగ్లీష్ అక్షరాలు మాత్రమే స్టోర్ అవుతాయి.
+        
+కానీ జావా ప్రపంచం మొత్తానికి పనికిరావాలని, **char కి 2 బైట్స్ (Unicode)** ఇచ్చింది. దీనివల్ల ఇంగ్లీషే కాకుండా తెలుగు, హిందీ, చైనీస్ లాంటి ఏ భాష అక్షరాలనైనా స్టోర్ చేసుకోవచ్చు!
 
 \`\`\`java
 char englishChar = 'A';
-char unicodeChar = '\\u0C05'; // Telugu letter 'అ'
-char copyright   = '\\u00A9'; // © Symbol
-char asciiCode   = 65;       // Storing numeric ASCII 65 yields 'A'
+char teluguChar = '\\u0C05'; // తెలుగు అక్షరం 'అ'
+char asciiCode   = 65;       // నంబర్ 65 ఇస్తే అది 'A' ని ప్రింట్ చేస్తుంది
 \`\`\``
       },
       {
-        heading: '5. Modern Java Literals: Underscores, Binary, and Hexadecimal',
-        content: `Java 7+ introduced expressive literal formats to improve code readability:
+        heading: '5. నంబర్స్ ని ఈజీగా చదవడానికి Underscores (_)',
+        content: `లక్షలు, కోట్లు రాసేటప్పుడు ఎన్ని సున్నాలు ఉన్నాయో చదవడం కష్టం కదా. అందుకే జావా 7 నుంచి నంబర్స్ మధ్యలో అండర్ స్కోర్స్ పెట్టుకునే ఫెసిలిటీ ఇచ్చారు:
 
-1. **Underscores in Numbers:** Group large numbers visually (the compiler strips underscores automatically):
-   \`\`\`java
-   long creditCardNumber = 4123_5678_9012_3456L;
-   int oneMillion = 1_000_000;
-   double nationalBudget = 4_500_000.75;
-   \`\`\`
-2. **Binary Literals (\`0b\` prefix):**
-   \`\`\`java
-   int binaryByte = 0b1010_1100; // Decimal: 172
-   \`\`\`
-3. **Hexadecimal Literals (\`0x\` prefix):**
-   \`\`\`java
-   int hexColor = 0xFF_57_33; // RGB Hex Color
-   \`\`\``
+\`\`\`java
+long creditCardNumber = 4123_5678_9012_3456L;
+int oneMillion = 1_000_000;
+double price = 4_500.75;
+\`\`\`
+ఈ అండర్ స్కోర్స్ ని కంపైలర్ వదిలేస్తుంది, జస్ట్ మనం చదువుకోవడానికే.`
       }
     ],
     codeExample: `public class Main {
     public static void main(String[] args) {
         // 1. Integer Types
-        byte  serverPortSmall = 80;
-        short companyOffices  = 1250;
-        int   cityPopulation  = 2_500_000; // Underscore for readability
-        long  globalDataBytes = 9_876_543_210_000L; // 'L' suffix
+        byte  smallNum = 80;
+        short mediumNum  = 1250;
+        int   cityPopulation  = 2_500_000; // అండర్ స్కోర్ వాడాం
+        long  globalData = 9_876_543_210_000L; // చివర 'L' వాడాం
 
         // 2. Floating-Point Types
-        float  fuelLevelPercent = 87.5f; // 'f' suffix
-        double precisePI        = 3.141592653589793;
+        float  percentage = 87.5f; // చివర 'f' వాడాం
+        double exactValue = 3.141592653589793;
 
-        // 3. Character & Unicode
-        char letterAlpha = 'J';
-        char teluguVowel = '\\u0C05'; // Telugu 'అ'
-        char symbolRupee = '₹';
+        // 3. Character
+        char letter = 'J';
+        char teluguLetter = '\\u0C05'; // తెలుగు 'అ'
+        char symbol = '₹';
 
         // 4. Boolean
-        boolean isServerOnline = true;
+        boolean isOnline = true;
 
-        // Output all primitives
-        System.out.println("--- Java 8 Primitive Types Demonstration ---");
-        System.out.println("byte    (8-bit)  : " + serverPortSmall);
-        System.out.println("short   (16-bit) : " + companyOffices);
+        // అవుట్పుట్ ప్రింట్ చేయడం
+        System.out.println("--- జావా బేసిక్ డేటా టైప్స్ ---");
+        System.out.println("byte    (8-bit)  : " + smallNum);
+        System.out.println("short   (16-bit) : " + mediumNum);
         System.out.println("int     (32-bit) : " + cityPopulation);
-        System.out.println("long    (64-bit) : " + globalDataBytes);
-        System.out.println("float   (32-bit) : " + fuelLevelPercent + "%");
-        System.out.println("double  (64-bit) : " + precisePI);
-        System.out.println("char    (Unicode): " + letterAlpha + " | " + teluguVowel + " | " + symbolRupee);
-        System.out.println("boolean (Truth)  : " + isServerOnline);
+        System.out.println("long    (64-bit) : " + globalData);
+        System.out.println("float   (32-bit) : " + percentage + "%");
+        System.out.println("double  (64-bit) : " + exactValue);
+        System.out.println("char    (Unicode): " + letter + " | " + teluguLetter + " | " + symbol);
+        System.out.println("boolean (Truth)  : " + isOnline);
     }
 }`,
-    output: `--- Java 8 Primitive Types Demonstration ---
+    output: `--- జావా బేసిక్ డేటా టైప్స్ ---
 byte    (8-bit)  : 80
 short   (16-bit) : 1250
 int     (32-bit) : 2500000
@@ -306,68 +295,63 @@ double  (64-bit) : 3.141592653589793
 char    (Unicode): J | అ | ₹
 boolean (Truth)  : true`,
     lineByLine: [
-      { line: 'int cityPopulation = 2_500_000;', explanation: 'Underscores enhance readability for large numeric literals without affecting compiled value.' },
-      { line: 'long globalDataBytes = 9_876_543_210_000L;', explanation: 'The L suffix forces the compiler to treat this 64-bit literal as long instead of 32-bit int.' },
-      { line: 'float fuelLevelPercent = 87.5f;', explanation: 'The f suffix prevents compile error by explicitly designating a 32-bit single-precision float.' },
-      { line: 'char teluguVowel = \'\\u0C05\';', explanation: '2-byte Unicode escape sequence representing the Telugu alphabet vowel character \'అ\'.' }
+      { line: 'int cityPopulation = 2_500_000;', explanation: 'నంబర్స్ ని ఈజీగా చదవడానికి మధ్యలో అండర్ స్కోర్ పెట్టొచ్చు, దానివల్ల అవుట్పుట్ మారదు.' },
+      { line: 'long globalData = 9_876_543_210_000L;', explanation: 'నంబర్ పెద్దది కాబట్టి జావా కన్ఫ్యూజ్ అవ్వకుండా ఉండటానికి లాస్ట్ లో L పెట్టాం.' },
+      { line: 'float percentage = 87.5f;', explanation: 'డెసిమల్స్ ని double అనుకోకుండా float అనుకోవడానికి చివర f పెట్టాం.' },
+      { line: 'char teluguLetter = \'\\u0C05\';', explanation: 'యూనికోడ్ వాడి తెలుగు అక్షరం కూడా ఇచ్చాం (ప్రతి అక్షరానికి ఒక కోడ్ ఉంటుంది).' }
     ],
-    practicalExample: `public class ScientificDataDemo {
+    practicalExample: `public class DataLimits {
     public static void main(String[] args) {
-        // Querying Primitive Type Limits using Built-in Wrapper Constants
-        System.out.println("=== Primitive Type Maximum & Minimum Bounds ===");
-        System.out.println("Byte Range   : " + Byte.MIN_VALUE + " to " + Byte.MAX_VALUE);
-        System.out.println("Short Range  : " + Short.MIN_VALUE + " to " + Short.MAX_VALUE);
-        System.out.println("Integer Range: " + Integer.MIN_VALUE + " to " + Integer.MAX_VALUE);
-        System.out.println("Long Range   : " + Long.MIN_VALUE + " to " + Long.MAX_VALUE);
-        System.out.println("Float Min/Max: " + Float.MIN_VALUE + " to " + Float.MAX_VALUE);
-        System.out.println("Double Bounds: " + Double.MIN_VALUE + " to " + Double.MAX_VALUE);
+        // జావా లో ముందే రాసిపెట్టిన కాన్స్టంట్స్ వాడి ఏ డేటా టైప్ లిమిట్ ఏంటో చూద్దాం:
+        System.out.println("=== డేటా టైప్స్ మినిమం, మాక్సిమం లిమిట్స్ ===");
+        System.out.println("Byte రేంజ్ : " + Byte.MIN_VALUE + " నుంచి " + Byte.MAX_VALUE);
+        System.out.println("Short రేంజ్: " + Short.MIN_VALUE + " నుంచి " + Short.MAX_VALUE);
+        System.out.println("Int రేంజ్  : " + Integer.MIN_VALUE + " నుంచి " + Integer.MAX_VALUE);
+        System.out.println("Long రేంజ్ : " + Long.MIN_VALUE + " నుంచి " + Long.MAX_VALUE);
     }
 }`,
-    practicalOutput: `=== Primitive Type Maximum & Minimum Bounds ===
-Byte Range   : -128 to 127
-Short Range  : -32768 to 32767
-Integer Range: -2147483648 to 2147483647
-Long Range   : -9223372036854775808 to 9223372036854775807
-Float Min/Max: 1.4E-45 to 3.4028235E38
-Double Bounds: 4.9E-324 to 1.7976931348623157E308`,
+    practicalOutput: `=== డేటా టైప్స్ మినిమం, మాక్సిమం లిమిట్స్ ===
+Byte రేంజ్ : -128 నుంచి 127
+Short రేంజ్: -32768 నుంచి 32767
+Int రేంజ్  : -2147483648 నుంచి 2147483647
+Long రేంజ్ : -9223372036854775808 నుంచి 9223372036854775807`,
     commonMistakes: [
-      'Omitting the \'L\' on large numbers: "long x = 5000000000;" fails with "integer number too large" because the literal is evaluated as int before assignment. Use "5000000000L".',
-      'Omitting the \'f\' on float decimals: "float pi = 3.14;" fails compilation with "possible loss of precision". Use "3.14f".',
-      'Treating boolean as 1 or 0: In C++, 1 is true and 0 is false. In Java, boolean is strictly true or false. Writing "boolean flag = 1;" fails compilation.'
+      'పెద్ద నంబర్స్ కి L మర్చిపోవడం: "long x = 5000000000;" అని ఇస్తే ఎర్రర్ వస్తుంది. "5000000000L" అని ఇవ్వాలి.',
+      'ఫ్లోట్ కి f మర్చిపోవడం: "float pi = 3.14;" అంటే ఎర్రర్ వస్తుంది, ఎందుకంటే 3.14 అనగానే దాన్ని double అనుకుంటుంది. "3.14f" అని ఇవ్వాలి.',
+      'boolean ని 0, 1 లాగా రాయడం: వేరే లాంగ్వేజెస్ లో 1 అంటే true. కానీ జావాలో boolean కచ్చితంగా true లేదా false అని అక్షరాల్లోనే రాయాలి.'
     ],
     challenge: `// Coding Challenge:
-// Write a program that demonstrates all 4 integer types with their exact max limits:
+// కింది 4 వేరియబుల్స్ కి మాక్సిమం లిమిట్స్ ప్రింట్ చేయండి:
 // 1. byte b = Byte.MAX_VALUE;
 // 2. short s = Short.MAX_VALUE;
 // 3. int i = Integer.MAX_VALUE;
 // 4. long l = Long.MAX_VALUE;
-// Print their values and calculate the sum (l + i).
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: Declare and print the primitive max values
+        // TODO: ప్రింట్ చేయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Why does Java use 16-bit char instead of 8-bit like C?',
-        a: 'Java was designed for global internet applications. 8-bit ASCII can only represent 256 characters (English alphabet and basic punctuation), whereas 16-bit Unicode supports over 65,000 international characters natively.'
+        q: 'C లాంగ్వేజ్ లాగా కాకుండా జావాలో char కి 2 బైట్స్ ఎందుకిచ్చారు?',
+        a: 'ఇంగ్లీష్ కి 1 బైట్ చాలు. కానీ ప్రపంచంలో ఉన్న తెలుగు, హిందీ లాంటి అన్ని భాషల అక్షరాలని సపోర్ట్ చేయాలంటే 2 బైట్స్ (Unicode) ఉండాల్సిందే.'
       },
       {
-        q: 'Should I use float or double for monetary transactions?',
-        a: 'Neither! Floating point types (float/double) suffer from binary rounding inaccuracies (e.g. 0.1 + 0.2 != 0.3). Always use "java.math.BigDecimal" for financial, banking, and e-commerce calculations.'
+        q: 'బ్యాంక్ బ్యాలెన్స్ లాంటి డబ్బులకి float వాడాలా double వాడాలా?',
+        a: 'రెండూ వాడకూడదు! ఇవి రెండూ కొన్నిసార్లు డెసిమల్స్ ని రౌండ్ ఆఫ్ చేస్తాయి. డబ్బుల లెక్కల కోసం జావాలో కచ్చితంగా "BigDecimal" అనే క్లాస్ ని వాడాలి.'
       },
       {
-        q: 'Can underscores be placed at the start or end of a number?',
-        a: 'No! Underscores can only be placed between digits (e.g. 1_000). Writing "_100" or "100_" causes a compile-time syntax error.'
+        q: 'నంబర్ ముందు అండర్ స్కోర్ (_100) పెట్టొచ్చా?',
+        a: 'పెట్టకూడదు. ఎప్పుడూ నంబర్స్ మధ్యలోనే పెట్టాలి. ఫస్ట్ కానీ లాస్ట్ కానీ అండర్ స్కోర్ పెడితే ఎర్రర్ వస్తుంది.'
       }
     ],
     recap: [
-      'Java provides 8 primitives: byte (1B), short (2B), int (4B), long (8B), float (4B), double (8B), char (2B), and boolean.',
-      'Integer literals default to int (use \'L\' for long); decimal literals default to double (use \'f\' for float).',
-      'char uses 2-byte Unicode UTF-16 in single quotes (\'A\').',
-      'Use underscores (e.g. 1_000_000) for clean numeric readability.'
+      'జావాలో బేసిక్ డేటా టైప్స్ 8 ఉంటాయి. (byte, short, int, long, float, double, char, boolean).',
+      'నార్మల్ నంబర్ ఇస్తే int అనుకుంటుంది, డెసిమల్ ఇస్తే double అనుకుంటుంది.',
+      'long వాడాలంటే చివర L, float వాడాలంటే చివర f కచ్చితంగా పెట్టాలి.',
+      'char కి 2 బైట్స్ ఉంటాయి, కాబట్టి ఏ భాష అక్షరాన్నైనా స్టోర్ చేసుకోవచ్చు.'
     ]
   },
 
@@ -379,69 +363,68 @@ public class Main {
     phaseId: 'phase2',
     phaseTitle: 'Phase 2: Variables & Data Types',
     slug: '08-java-reference-types-strings-and-scopes',
-    title: 'Reference Types, Strings, Constants & Variable Scopes',
+    title: 'Reference Types, Strings, Constants & Variable Scopes (తెలుగులో)',
     badge: '8. Reference Types & Scopes',
     subtopics: 'Primitive vs Reference Types · String Immutability & Pool · final Constants · Variable Scopes: Local, Instance & Static',
     readTime: '16 min read',
-    intro: 'Exploring Java reference types, the internal mechanics of the String pool and immutability, immutable constants with the final keyword, and the three fundamental variable scopes: Local variables, Instance fields, and Static class-level variables.',
+    intro: 'బేసిక్ డేటా టైప్స్ (Primitive) కీ, రెఫరెన్స్ డేటా టైప్స్ (Reference) కీ తేడా ఏంటి? అసలు జావాలో String ని అంత స్పెషల్ గా ఎందుకు డిజైన్ చేశారు? ఎవరూ మార్చలేని వేరియబుల్స్ (Constants) ఎలా క్రియేట్ చేయాలి? లోకల్, ఇన్స్టాన్స్ వేరియబుల్స్ అంటే ఏంటో చూద్దాం.',
     theorySections: [
       {
-        heading: '1. Primitive Data Types vs Reference Data Types',
-        content: `In Java, all data types fall into two fundamental architectural categories:
+        heading: '1. Primitive కి Reference డేటా టైప్స్ కి తేడా ఏంటి?',
+        content: `జావాలో మెయిన్ గా రెండు రకాల డేటా టైప్స్ ఉంటాయి:
 
-| Feature | Primitive Types (\`int\`, \`double\`, etc.) | Reference Types (\`String\`, \`Arrays\`, \`Classes\`) |
+| తేడా | Primitive Types (\`int\`, \`double\` వగైరా) | Reference Types (\`String\`, \`Arrays\`, \`Classes\`) |
 | :--- | :--- | :--- |
-| **Storage Location** | Value is stored directly in **Stack Memory**. | Reference address (pointer) in **Stack**, actual object in **Heap**. |
-| **Memory Size** | Fixed predefined byte size (1, 2, 4, or 8 bytes). | Variable size depending on object members and payload. |
-| **Default Value** | Numerical \`0\`, \`false\`, or \`'\\u0000'\` (for fields). | \`null\` (meaning pointer points to nowhere). |
-| **Method Calls** | Cannot call methods (no \`.\` operator). | Can invoke member methods (e.g. \`name.toUpperCase()\`). |
-| **Comparison** | \`==\` compares direct binary mathematical values. | \`==\` compares memory addresses; \`.equals()\` compares actual content! |`
+| **ఎక్కడ స్టోర్ అవుతాయి?** | డైరెక్ట్ గా వాల్యూ మొత్తం **Stack Memory** లోనే ఉంటుంది. | అసలు డేటా **Heap Memory** లో ఉంటే, దానికి సంబంధించిన అడ్రెస్ (లింక్) మాత్రం Stack లో ఉంటుంది. |
+| **సైజు ఎంత?** | ఇది ముందే ఫిక్స్ (1, 2, 4, 8 bytes). | అది తీసుకునే డేటాని బట్టి సైజు మారుతుంది. |
+| **డీఫాల్ట్ వాల్యూ?** | \`0\`, \`false\` లాంటివి ఉంటాయి. | \`null\` ఉంటుంది (అంటే ఏం లేదని). |
+| **ఫంక్షన్స్ వాడొచ్చా?** | వాడలేం (దాని పక్కన డాట్ (\`.\`) పెడితే ఏమీ రావు). | దానికి సంబంధించిన ఫంక్షన్స్ వాడుకోవచ్చు (ఉదా: \`name.toUpperCase()\`). |`
       },
       {
-        heading: '2. Introduction to \`String\` & The String Literal Pool',
-        content: `A **\`String\`** in Java is a reference object representing a sequence of characters.
+        heading: '2. `String` మరియు String Pool స్టోరీ',
+        content: `జావాలో **\`String\`** అనేది ఒక టెక్స్ట్ ని సేవ్ చేసుకునే ఒక ఆబ్జెక్ట్.
+        
+జావాలో స్ట్రింగ్స్ కి ఒక స్పెషాలిటీ ఉంది.. అవేంటంటే **Immutable (మార్చలేనివి)**. ఒకసారి క్రియేట్ చేశాక అందులో అక్షరాల్ని మనం మార్చలేం. ఒకవేళ మీరు ఆ టెక్స్ట్ కి ఇంకొంచెం టెక్స్ట్ ని యాడ్ చేసినా (లేదా మార్చినా), జావా ఏం చేస్తుందంటే.. పాతదాన్ని అలాగే వదిలేసి కొత్త పేరుతో ఇంకో ఆబ్జెక్ట్ ని క్రియేట్ చేస్తుంది.
 
-Unlike C strings (null-terminated char arrays), Java Strings are **Immutable**: once created, their internal character contents can never be modified. Any method that appears to modify a String (like \`.toUpperCase()\` or \`.replace()\`) actually instantiates and returns a brand-new String object in Heap memory!
-
-### The String Constant Pool (SCP):
-To save memory, the JVM maintains a special cache area inside Heap memory called the **String Pool**:
-- When you write \`String s1 = "Java";\`, the JVM checks the String Pool. If \`"Java"\` exists, it reuses the existing memory address!
-- When you write \`String s2 = "Java";\`, \`s1\` and \`s2\` point to the exact same object in memory (\`s1 == s2\` evaluates to \`true\`).
-- If you use \`new String("Java")\`, it bypasses the pool and forces the creation of a separate object in normal heap memory.`
+### String Pool అంటే ఏంటి?:
+మెమరీ వేస్ట్ అవ్వకుండా ఉండటానికి Heap Memory లోపల ఒక చిన్న ఏరియాని కేటాయించారు. దాన్నే **String Pool** అంటారు.
+- మీరు \`String s1 = "Java";\` అన్నారనుకోండి. పూల్ లో "Java" సేవ్ అవుతుంది.
+- మళ్లీ ఇంకోసారి \`String s2 = "Java";\` అన్నారనుకోండి. ఇప్పుడు కొత్తగా సేవ్ చేయకుండా, ఆల్రెడీ పూల్ లో ఉన్న దాన్నే \`s2\` కి కూడా ఇస్తుంది! అంటే \`s1\`, \`s2\` రెండూ ఒకే వాల్యూ ని పాయింట్ చేస్తుంటాయి.
+- అదే ఒకవేళ మీరు కావాలని \`new String("Java")\` అంటే మాత్రం.. పూల్ కి సంబంధం లేకుండా విడిగా ఇంకో ఆబ్జెక్ట్ క్రియేట్ అవుతుంది.`
       },
       {
-        heading: '3. Constants in Java using the \`final\` Keyword',
-        content: `To create an unchangeable **Constant** in Java, use the **\`final\`** keyword.
+        heading: '3. `final` కీవర్డ్ తో Constants క్రియేట్ చేయడం',
+        content: `ప్రోగ్రామ్ రన్ అవుతున్నంత సేపు ఒక వేరియబుల్ వాల్యూ ఎవరూ మార్చకూడదు అనుకుంటే, దాని ముందు **\`final\`** అనే కీవర్డ్ పెట్టాలి. వాటినే Constants అంటారు.
 
-Once a \`final\` variable is initialized, its value is locked and cannot be re-assigned:
+ఒకసారి \`final\` వేరియబుల్ కి వాల్యూ ఇచ్చాక దాన్ని మళ్ళీ అసైన్ చేయలేం:
 
 \`\`\`java
-public static final double PI = 3.141592653589793;
-public static final int MAX_LOGIN_ATTEMPTS = 5;
+public static final double PI = 3.14159;
+public static final int MAX_USERS = 5;
 \`\`\`
 
-### Industry Best Practices for Constants:
-1. Combine with \`static\` (\`public static final\`) so the constant is shared once across all instances without wasting heap memory.
-2. Format the identifier name in **\`UPPER_SNAKE_CASE\`**.`
+### బెస్ట్ ప్రాక్టీసెస్:
+1. కాన్స్టంట్స్ కి ఎప్పుడూ \`static final\` రెండు కలిపి రాయడం మంచిది. ఎందుకంటే ఆ వాల్యూ అందరికీ ఒకటే కాబట్టి మెమరీ సేవ్ అవుతుంది.
+2. కాన్స్టంట్స్ పేర్లు ఎప్పుడూ క్యాపిటల్స్ లోనే **\`UPPER_SNAKE_CASE\`** ఉండాలి.`
       },
       {
-        heading: '4. The 3 Variable Scopes in Java',
-        content: `A variable's **Scope** determines where in the program it is accessible and how long it lives in memory:
+        heading: '4. మూడు రకాల Variable Scopes',
+        content: `ఒక వేరియబుల్ ని ఎక్కడ డిక్లేర్ చేసాం అనేదాన్ని బట్టి, అది ఎంతసేపు బ్రతికుటుందో ఆధారపడి ఉంటుంది. దీన్నే Scope అంటారు.
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
 |                           JAVA VARIABLE SCOPES                                    |
 +-----------------------------------------------------------------------------------+
-|  class BankAccount {                                                              |
+|  class Bank {                                                                     |
 |                                                                                   |
-|    // 1. STATIC VARIABLE (Class Scope - 1 copy shared by ALL instances)          |
-|    public static String bankName = "State Bank of India";                        |
+|    // 1. STATIC VARIABLE (క్లాస్ లోపల, সবারకి ఒకటే)                                   |
+|    public static String bankName = "SBI";                                         |
 |                                                                                   |
-|    // 2. INSTANCE VARIABLE (Object Scope - Unique copy per object in Heap)        |
+|    // 2. INSTANCE VARIABLE (క్లాస్ లోపల, కానీ ఒక్కో ఆబ్జెక్ట్ కి ఒక్కో కాపీ)                    |
 |    private double balance = 1000.00;                                             |
 |                                                                                   |
 |    public void deposit(double amount) {                                           |
-|      // 3. LOCAL VARIABLE (Block/Method Scope - Exists ONLY during method run)    |
+|      // 3. LOCAL VARIABLE (ఫంక్షన్ లోపల మాత్రమే బ్రతికుటుంది)                          |
 |      double fee = 10.0;                                                           |
 |      balance = balance + (amount - fee);                                          |
 |    }                                                                              |
@@ -449,122 +432,120 @@ public static final int MAX_LOGIN_ATTEMPTS = 5;
 +-----------------------------------------------------------------------------------+
 \`\`\`
 
-1. **Local Variables:** Declared inside a method, constructor, or code block \`{}\`. They exist only while that block is executing and are destroyed when the block finishes. They have **no default values**.
-2. **Instance Variables (Fields):** Declared inside a class but outside methods. Each object created from the class gets its own independent copy stored in Heap memory.
-3. **Static Variables (Class Variables):** Declared with the \`static\` keyword. Only **one single copy** exists in the Method Area, shared across all instances of the class.`
+1. **Local Variables:** ఒక బ్లాక్ \`{}\` లేదా ఫంక్షన్ లోపల రాసేవి. ఆ ఫంక్షన్ అవ్వగానే ఇవి మెమరీ నుంచి పోతాయి. వీటికి ముందే వాల్యూ ఇవ్వాలి.
+2. **Instance Variables:** ఫంక్షన్స్ కి పైన క్లాస్ లో రాసేవి. మనం ఎన్ని ఆబ్జెక్ట్స్ క్రియేట్ చేస్తే అన్ని కాపీలు తయారవుతాయి.
+3. **Static Variables:** క్లాస్ లో రాసి ముందు \`static\` అని పెట్టేవి. ఇవి ఎన్ని ఆబ్జెక్ట్స్ క్రియేట్ చేసినా సరే, క్లాస్ కి ఒకటే కాపీ ఉంటుంది. అందరూ దాన్నే వాడుకోవాలి.`
       }
     ],
     codeExample: `public class Main {
     
-    // 1. Static Variable (Class-level scope, shared by everyone)
-    public static final String UNIVERSITY_NAME = "Osmania University";
-    public static int totalEnrolledStudents    = 0;
+    // 1. Static Variable (క్లాస్ లెవెల్, అందరికీ ఒకటే)
+    public static final String COLLEGE = "XYZ College";
+    public static int totalStudents    = 0;
 
-    // 2. Instance Variables (Object-level scope in Heap)
-    private String studentName;
+    // 2. Instance Variables (ఆబ్జెక్ట్ లెవెల్, ఎవరికీ వారికి విడిగా ఉంటుంది)
+    private String name;
     private double gpa;
 
-    // Constructor to initialize instance variables
-    public Main(String name, double gpa) {
-        this.studentName = name;
-        this.gpa = gpa;
-        totalEnrolledStudents++; // Increment shared class counter
+    // ఇది కన్స్ట్రక్టర్ (వాల్యూస్ సెట్ చేయడానికి)
+    public Main(String n, double g) {
+        this.name = n;
+        this.gpa = g;
+        totalStudents++; // ఆబ్జెక్ట్ క్రియేట్ అయిన ప్రతిసారీ స్టూడెంట్స్ కౌంట్ పెంచుతున్నాం
     }
 
-    public void displayStudent() {
-        // 3. Local Variable (Method-level scope in Stack)
-        String status = (this.gpa >= 3.5) ? "Distinction" : "Standard Pass";
+    public void showData() {
+        // 3. Local Variable (ఈ ఫంక్షన్ లోపల మాత్రమే పనిచేస్తుంది)
+        String grade = (this.gpa >= 3.5) ? "A Grade" : "B Grade";
 
-        System.out.println("University : " + UNIVERSITY_NAME);
-        System.out.println("Student    : " + this.studentName);
-        System.out.println("GPA        : " + this.gpa + " (" + status + ")");
-        System.out.println("----------------------------------------");
+        System.out.println("కాలేజ్  : " + COLLEGE);
+        System.out.println("పేరు   : " + this.name);
+        System.out.println("గ్రేడ్  : " + grade);
+        System.out.println("-------------------------");
     }
 
     public static void main(String[] args) {
-        // Creating student object instances
-        Main s1 = new Main("Balaji Nayak", 3.9);
-        Main s2 = new Main("Ravi Teja", 3.2);
+        // ఇద్దరు స్టూడెంట్స్ కి ఆబ్జెక్ట్స్ క్రియేట్ చేసాం
+        Main s1 = new Main("Balaji", 3.9);
+        Main s2 = new Main("Ravi", 3.2);
 
-        s1.displayStudent();
-        s2.displayStudent();
+        s1.showData();
+        s2.showData();
 
-        System.out.println("Total Students Enrolled: " + Main.totalEnrolledStudents);
+        // స్టాటిక్ వేరియబుల్ కావడంతో టోటల్ కౌంట్ 2 అయింది
+        System.out.println("మొత్తం స్టూడెంట్స్: " + Main.totalStudents);
     }
 }`,
-    output: `University : Osmania University
-Student    : Balaji Nayak
-GPA        : 3.9 (Distinction)
-----------------------------------------
-University : Osmania University
-Student    : Ravi Teja
-GPA        : 3.2 (Standard Pass)
-----------------------------------------
-Total Students Enrolled: 2`,
+    output: `కాలేజ్  : XYZ College
+పేరు   : Balaji
+గ్రేడ్  : A Grade
+-------------------------
+కాలేజ్  : XYZ College
+పేరు   : Ravi
+గ్రేడ్  : B Grade
+-------------------------
+మొత్తం స్టూడెంట్స్: 2`,
     lineByLine: [
-      { line: 'public static final String UNIVERSITY_NAME', explanation: 'Constant class-level variable accessible across all instances without object instantiation.' },
-      { line: 'public static int totalEnrolledStudents = 0;', explanation: 'Shared static variable that tracks the global count of created student instances.' },
-      { line: 'private String studentName; private double gpa;', explanation: 'Instance fields stored inside individual object heap memory allocations.' },
-      { line: 'String status = ...', explanation: 'Local variable created inside displayStudent() stack frame, destroyed when method returns.' }
+      { line: 'public static final String COLLEGE', explanation: 'ఎవరూ మార్చలేని స్టాటిక్ వేరియబుల్, ఇది అందరికీ ఒకటే ఉంటుంది.' },
+      { line: 'public static int totalStudents = 0;', explanation: 'స్టాటిక్ కాబట్టి ప్రతి ఆబ్జెక్ట్ లోనూ కౌంట్ అప్డేట్ అవుతూ వస్తుంది.' },
+      { line: 'private String name; private double gpa;', explanation: 'ఇన్స్టాన్స్ వేరియబుల్స్. Balaji కి ఒక కాపీ, Ravi కి ఒక కాపీ ఉంటాయి.' },
+      { line: 'String grade = ...', explanation: 'లోకల్ వేరియబుల్, కేవలం showData ఫంక్షన్ లో మాత్రమే ఉంటుంది.' }
     ],
-    practicalExample: `public class StringPoolInspection {
+    practicalExample: `public class StringPoolTest {
     public static void main(String[] args) {
-        // String Literals (Stored in String Constant Pool)
-        String str1 = "Java2026";
-        String str2 = "Java2026";
+        // నార్మల్ గా స్ట్రింగ్స్ క్రియేట్ చేస్తే పూల్ లోకి వెళ్తాయి
+        String s1 = "Java";
+        String s2 = "Java";
 
-        // String Object using 'new' (Forces separate Heap allocation)
-        String str3 = new String("Java2026");
+        // న్యూ కీవర్డ్ తో క్రియేట్ చేస్తే సపరేట్ గా వెళ్తాయి
+        String s3 = new String("Java");
 
-        System.out.println("=== String Pool Memory Comparison ===");
-        // == compares memory reference pointers
-        System.out.println("str1 == str2 (Pool Memory Reference): " + (str1 == str2)); // true!
-        System.out.println("str1 == str3 (Heap Object Reference): " + (str1 == str3)); // false!
+        System.out.println("=== String Pool టెస్ట్ ===");
+        
+        // "==" అనేది కేవలం అడ్రెస్ (లింక్) ని మాత్రమే చెక్ చేస్తుంది
+        System.out.println("s1 == s2 : " + (s1 == s2)); // పూల్ లో ఒకటే లింక్ కాబట్టి true
+        System.out.println("s1 == s3 : " + (s1 == s3)); // s3 సపరేట్ కాబట్టి false
 
-        // .equals() compares actual character content
-        System.out.println("str1.equals(str3) (Content Check)   : " + str1.equals(str3)); // true!
+        // ".equals()" వాల్యూ ని చెక్ చేస్తుంది కాబట్టి రెండూ true వస్తాయి
+        System.out.println("s1.equals(s3) : " + s1.equals(s3)); 
     }
 }`,
-    practicalOutput: `=== String Pool Memory Comparison ===
-str1 == str2 (Pool Memory Reference): true
-str1 == str3 (Heap Object Reference): false
-str1.equals(str3) (Content Check)   : true`,
+    practicalOutput: `=== String Pool టెస్ట్ ===
+s1 == s2 : true
+s1 == s3 : false
+s1.equals(s3) : true`,
     commonMistakes: [
-      'Using == to compare String values: "name == \"Ravi\"" checks memory addresses, not character text. Always use "name.equals(\"Ravi\")" or "name.equalsIgnoreCase(\"Ravi\")".',
-      'Attempting to reassign final variables: "final int x = 10; x = 20;" causes compile error: "cannot assign a value to final variable x".',
-      'Accessing instance variables from static methods: Writing "studentName = \"Ravi\";" inside "public static void main" fails with "non-static variable cannot be referenced from a static context".'
+      'స్ట్రింగ్స్ వాల్యూ సమానంగా ఉందో లేదో "==" తో చెక్ చేయడం: ఇది అస్సలు చేయకూడదు. జావాలో ఎప్పుడూ "str1.equals(str2)" అని మాత్రమే వాడాలి.',
+      'final వేరియబుల్ ని మార్చాలని చూడటం: "final int x = 10; x = 20;" అంటే జావా ఒప్పుకోదు.',
+      'స్టాటిక్ ఫంక్షన్ లోపల ఇన్స్టాన్స్ వేరియబుల్ వాడటం: main అనేది స్టాటిక్ ఫంక్షన్. అందులో డైరెక్ట్ గా స్టాటిక్ కాని వేరియబుల్స్ వాడితే ఎర్రర్ వస్తుంది.'
     ],
     challenge: `// Coding Challenge:
-// Create a class ConfigSettings containing:
-// 1. public static final String ENVIRONMENT = "PRODUCTION";
-// 2. public static final int MAX_CONNECTIONS = 100;
-// 3. Inside main(), verify that attempting to reassign MAX_CONNECTIONS throws a compiler error.
+// ఒక ఫైల్ లోపల ఈ కింద చెప్పిన విధంగా వేరియబుల్స్ వాడండి:
+// 1. public static final String ENV = "PRODUCTION";
+// 2. దాన్ని main ఫంక్షన్ లో ప్రింట్ చేయండి. 
+// 3. దాని వాల్యూ ని మార్చడానికి ట్రై చేసి చూడండి (ఎర్రర్ వస్తుందో లేదో చూడండి).
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: Print the constants from ConfigSettings
+        // TODO: ఇక్కడ రాయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Why are Strings immutable in Java?',
-        a: '1. Security: Strings are used for database URLs, passwords, and network sockets; immutability prevents unauthorized modification. 2. Thread Safety: Immutable objects are naturally thread-safe without locks. 3. String Pooling: Sharing strings in memory is only safe if characters cannot change.'
+        q: 'స్ట్రింగ్స్ ని ఎందుకు Immutable (మార్చలేనివిగా) చేసారు?',
+        a: 'సెక్యూరిటీ కోసం! పాస్వర్డ్స్, డేటాబేస్ లింక్స్ అన్నీ స్ట్రింగ్స్ లోనే ఇస్తాం. ఎవరైనా హ్యాకర్ వాటిని మార్చాలని చూసినా మార్చలేరు. అలాగే పూల్ లో స్టోర్ చేసి మెమరీ సేవ్ చేయడానికి కూడా ఇది ఉపయోగపడుతుంది.'
       },
       {
-        q: 'What is the difference between static and final?',
-        a: '"static" means only one shared copy exists per class rather than one per object. "final" means the value/reference cannot be reassigned once initialized.'
-      },
-      {
-        q: 'Can a final variable be initialized in a constructor?',
-        a: 'Yes! A "blank final" instance variable can be assigned once inside the class constructor.'
+        q: 'static కీ, final కీ తేడా ఏంటి?',
+        a: '"static" అంటే అందరికీ కలిపి ఒకటే కాపీ ఉందని అర్థం. "final" అంటే ఆ కాపీ వాల్యూ ఇంక మారదు అని అర్థం.'
       }
     ],
     recap: [
-      'Primitive types store raw values on the Stack; Reference types store heap memory pointers on the Stack.',
-      'Strings are immutable objects cached in the String Constant Pool. Always compare strings with .equals().',
-      'The final keyword creates immutable constants formatted in UPPER_SNAKE_CASE.',
-      'Variable scopes: Local (method stack), Instance (object heap), and Static (class method area).'
+      'Primitive టైప్స్ Stack లో ఉంటాయి, Reference టైప్స్ Heap లో ఉంటాయి.',
+      'జావాలో స్ట్రింగ్స్ ని ఒకసారి క్రియేట్ చేసాక వాటి వాల్యూ మార్చలేం. సేమ్ వాల్యూ ఉంటే పూల్ లోంచి తీసుకుంటాయి.',
+      'final కీవర్డ్ పెడితే అది ఇంక కాన్స్టంట్ అయిపోతుంది.',
+      'లోకల్, ఇన్స్టాన్స్, స్టాటిక్ అని 3 రకాల స్కోప్స్ ఉంటాయి.'
     ]
   },
 
@@ -576,196 +557,185 @@ public class Main {
     phaseId: 'phase2',
     phaseTitle: 'Phase 2: Variables & Data Types',
     slug: '09-java-type-casting-and-var-inference',
-    title: 'Java Type Casting (Widening/Narrowing) & var Keyword',
+    title: 'Java Type Casting (Widening/Narrowing) & var Keyword (తెలుగులో)',
     badge: '9. Type Casting & var',
     subtopics: 'Widening Casting (Implicit) · Narrowing Casting (Explicit) · Data Loss & Overflow · ASCII char/int Conversions · var Keyword (Local Variable Type Inference)',
     readTime: '15 min read',
-    intro: 'Comprehensive masterclass on Java type conversion: widening automatic casting, narrowing explicit casting, truncation and overflow risks, character-to-integer Unicode conversions, and local variable type inference with the modern var keyword (Java 10+).',
+    intro: 'ఒక డేటా టైప్ లో ఉన్న వాల్యూ ని వేరే డేటా టైప్ లోకి ఎలా మార్చాలి (Type Casting)? చిన్నదాన్ని పెద్ద దానిలోకి వేస్తే ఏమవుతుంది? పెద్ద దాన్ని చిన్నదాంట్లోకి వేస్తే డేటా ఎలా మిస్ అవుతుంది? మరియు జావా 10 లో కొత్తగా వచ్చిన `var` కీవర్డ్ తో ఈజీగా కోడ్ ఎలా రాయాలో చూద్దాం.',
     theorySections: [
       {
-        heading: '1. What is Type Casting in Java?',
-        content: `**Type Casting** is the process of converting a value of one primitive data type into another data type.
+        heading: '1. Type Casting అంటే ఏంటి?',
+        content: `**Type Casting** అంటే ఒక డేటా టైప్ లో ఉన్న వాల్యూ ని వేరే డేటా టైప్ కి మార్చడం.
 
-In Java, type casting is divided into two primary categories:
+దీంట్లో మెయిన్ గా రెండు రకాలు ఉంటాయి:
 
 \`\`\`
 +-----------------------------------------------------------------------------------+
 |                        JAVA TYPE CASTING HIERARCHY                                |
 +-----------------------------------------------------------------------------------+
-|  1. WIDENING CASTING (Implicit / Automatic - Safe, No Data Loss)                  |
+|  1. WIDENING CASTING (చిన్నదాని నుంచి పెద్దదానికి - ఆటోమేటిక్ గా జరుగుతుంది)              |
 |     byte -> short -> char -> int -> long -> float -> double                       |
-|     (Smaller memory size converted automatically to larger memory container)      |
+|     (చిన్న సైజు ఉన్న డేటాని పెద్ద బాక్స్ లో పెడుతున్నాం కాబట్టి ఏ ప్రాబ్లమ్ రాదు)                 |
 +-----------------------------------------------------------------------------------+
-|  2. NARROWING CASTING (Explicit / Manual - Dangerous, Potential Data Loss)        |
+|  2. NARROWING CASTING (పెద్దదాని నుంచి చిన్నదానికి - మనమే మాన్యువల్ గా చేయాలి)            |
 |     double -> float -> long -> int -> char -> short -> byte                       |
-|     (Larger memory size forced into smaller memory container with (type) syntax)  |
+|     (పెద్ద సైజు డేటాని చిన్న బాక్స్ లోకి కుక్కుతున్నాం కాబట్టి డేటా మిస్ అవ్వొచ్చు!)             |
 +-----------------------------------------------------------------------------------+
 \`\`\``
       },
       {
-        heading: '2. Widening Casting (Implicit / Automatic)',
-        content: `Widening casting happens automatically when passing a smaller data type to a larger data type container. Because the destination container has more bits than the source, **no data loss occurs**:
+        heading: '2. Widening Casting (ఆటోమేటిక్ గా జరిగేది)',
+        content: `ఒక చిన్న డేటా టైప్ (ఉదా: \`int\`) లో ఉన్న వాల్యూని పెద్ద డేటా టైప్ (ఉదా: \`double\`) కి ఇస్తే జావా ఎవరికీ చెప్పకుండా సైలెంట్ గా మార్చేసుకుంటుంది. దీనివల్ల డేటా ఏమీ పోదు.
 
 \`\`\`java
 int smallNumber = 100;
-double largeNumber = smallNumber; // Automatic Widening: int (4 bytes) -> double (8 bytes)
+double largeNumber = smallNumber; // int(4 bytes) కాస్త double(8 bytes) అయిపోయింది
 
 System.out.println(smallNumber); // 100
-System.out.println(largeNumber); // 100.0
+System.out.println(largeNumber); // 100.0 (చివర ఆటోమాటిక్ గా పాయింట్ జీరో వచ్చింది)
 \`\`\``
       },
       {
-        heading: '3. Narrowing Casting (Explicit / Manual) & Overflow Risks',
-        content: `Narrowing casting must be done manually by placing the target type in parentheses \`(targetType)\` before the value.
+        heading: '3. Narrowing Casting (మనం ఫోర్స్ చేసి చేయాలి)',
+        content: `ఒక పెద్ద డేటా టైప్ (ఉదా: \`double\`) వాల్యూ ని చిన్న డేటా టైప్ (ఉదా: \`int\`) లోకి మార్చాలి అంటే ఆటోమేటిక్ గా జరగదు. మనం ఫోర్స్ చేయాలి. ఎలా అంటే, మనం మార్చాలనుకున్న టైప్ ని బ్రాకెట్స్ లో \`(int)\` అని ముందు పెట్టాలి.
 
-Because you are cramming a larger number of bits into a smaller memory container, **precision loss (truncation of decimals) or arithmetic integer overflow** can occur:
+ఇలా పెద్దదాన్ని చిన్నదాంట్లోకి కుక్కడం వల్ల **డేటా మిస్ అయ్యే ఛాన్స్** ఉంది (ఉదాహరణకి డెసిమల్స్ పోతాయి):
 
 \`\`\`java
-// Decimal Truncation:
+// డెసిమల్స్ పోవడం:
 double itemPrice = 99.95;
-int truncatedPrice = (int) itemPrice; // Fractional decimals (.95) discarded! Evaluates to 99
+int truncatedPrice = (int) itemPrice; // పాయింట్ తర్వాత ఉన్న .95 ని జావా కట్ చేసి పారేస్తుంది! కేవలం 99 మాత్రమే మిగులుతుంది.
 
-// Byte Overflow (Wrap-around):
+// బైట్ లిమిట్ దాటిపోవడం:
 int largeInt = 130;
-byte overflowByte = (byte) largeInt; // Max byte is 127! Wraps around to -126!
+byte overflowByte = (byte) largeInt; // బైట్ కి మాక్సిమం 127 వరకే పడుతుంది. ఇక్కడ 130 ఇస్తే అది కన్ఫ్యూజ్ అయిపోయి మైనస్ 126 (-126) కి మారిపోతుంది!
 \`\`\``
       },
       {
-        heading: '4. Char to Int & Int to Char (Unicode Code Points)',
-        content: `Because \`char\` is an unsigned 16-bit numeric type under the hood, you can freely cast between characters and their integer ASCII/Unicode values:
+        heading: '4. అక్షరాలని నంబర్స్ లాగా మార్చొచ్చా (Char to Int)?',
+        content: `జావాలో \`char\` కి 2 బైట్స్ ఉంటాయి, అంతేకాకుండా వెనకాల ప్రతి అక్షరానికి ఒక నంబర్ (Unicode) లింక్ అయి ఉంటుంది. కాబట్టి మనం ఈజీగా నంబర్స్ ని అక్షరాల్లా, అక్షరాల్ని నంబర్స్ లా మార్చుకోవచ్చు.
 
 \`\`\`java
 char letter = 'A';
-int asciiValue = (int) letter; // Evaluates to 65
+int code = (int) letter; // 65 వస్తుంది
 
-int charCode = 66;
-char convertedChar = (char) charCode; // Evaluates to 'B'
+int myCode = 66;
+char myLetter = (char) myCode; // 'B' వస్తుంది
 \`\`\``
       },
       {
-        heading: '5. Modern Java: Local Variable Type Inference with \`var\`',
-        content: `Starting in **Java 10**, Java introduced the **\`var\`** keyword for **Local Variable Type Inference**.
-
-With \`var\`, the compiler automatically detects the variable's type from the right-hand initialization expression:
+        heading: '5. కొత్తగా వచ్చిన `var` కీవర్డ్ (జావా 10 నుంచి)',
+        content: `జావా 10 నుంచి మనం ప్రతిసారి \`int\`, \`String\` అని చెప్పాల్సిన పనిలేకుండా, సింపుల్ గా **\`var\`** వాడుకోవచ్చు. మనం ఇచ్చిన వాల్యూ ని బట్టి అది ఏ టైపో కంపైలర్ ఆటోమాటిక్ గా గుర్తుపడుతుంది.
 
 \`\`\`java
-var age = 25;                       // Inferred as int
-var price = 99.99;                  // Inferred as double
-var greeting = "Hello, Java 21!";   // Inferred as String
-var active = true;                  // Inferred as boolean
-var usersList = new ArrayList<String>(); // Inferred as ArrayList<String>
+var age = 25;                       // వాల్యూ 25 కాబట్టి ఇది int అని అదే అర్థం చేసుకుంటుంది
+var price = 99.99;                  // ఇది double
+var greeting = "Hello!";            // ఇది String
+var isOk = true;                    // ఇది boolean
 \`\`\`
 
-### Crucial Rules for Using \`var\`:
-1. **Still Statically Typed:** \`var\` does NOT make Java dynamically typed like Python/JavaScript. Once inferred, the type is fixed!
+### var వాడుతున్నప్పుడు గుర్తుపెట్టుకోవాల్సిన రూల్స్:
+1. **మధ్యలో మార్చలేం:** మీరు ఒకసారి నంబర్ ఇస్తే, అది \`int\` అయిపోతుంది. తర్వాత వెళ్లి అందులో టెక్స్ట్ పెడతా అంటే ఒప్పుకోదు. (ఇది పైథాన్ లాగా డైనమిక్ కాదు).
    \`\`\`java
    var count = 10;
-   // count = "ten"; // COMPILE ERROR: incompatible types!
+   // count = "ten"; // ఎర్రర్ వస్తుంది!
    \`\`\`
-2. **Local Variables Only:** \`var\` can ONLY be used inside method bodies. It CANNOT be used for class fields, method parameters, or return types.
-3. **Mandatory Initialization:** \`var x;\` is illegal because the compiler cannot infer an uninitialized variable.`
+2. **లోకల్ గా మాత్రమే:** ఫంక్షన్స్ లోపల మాత్రమే \`var\` వాడాలి. క్లాస్ లో పైన రాయడానికి లేదు.
+3. **కచ్చితంగా వాల్యూ ఇవ్వాలి:** \`var x;\` అని వదిలేయడానికి కుదరదు. వాల్యూ ఇవ్వకపోతే అది ఏ టైపో కంపైలర్ కి ఎలా తెలుస్తుంది?`
       }
     ],
-    codeExample: `import java.util.ArrayList;
-
-public class Main {
+    codeExample: `public class Main {
     public static void main(String[] args) {
-        // 1. Widening Casting (Implicit)
-        int salaryInt = 50000;
-        double salaryDouble = salaryInt; // int -> double
+        // 1. Widening Casting (చిన్న నుంచి పెద్దకి)
+        int salary = 50000;
+        double salaryDouble = salary;
         System.out.println("Widening Casting (int -> double): " + salaryDouble);
 
-        // 2. Narrowing Casting (Explicit Truncation)
-        double marketRate = 1845.75;
-        int roundedRate = (int) marketRate; // Discards .75
-        System.out.println("Narrowing Casting (double -> int): " + roundedRate + " (Decimals discarded)");
+        // 2. Narrowing Casting (పెద్ద నుంచి చిన్నకి)
+        double rate = 1845.75;
+        int rateInt = (int) rate; // పాయింట్ తర్వాత ఉన్నది పోతుంది
+        System.out.println("Narrowing Casting (double -> int): " + rateInt + " (డెసిమల్స్ కట్ అయ్యాయి)");
 
-        // 3. Char to ASCII conversion
+        // 3. Char to Int
         char symbol = 'Z';
-        int asciiCode = (int) symbol;
-        System.out.println("Character '" + symbol + "' has ASCII code: " + asciiCode);
+        int ascii = (int) symbol;
+        System.out.println("అక్షరం '" + symbol + "' కి ఉన్న నంబర్: " + ascii);
 
-        // 4. Local Variable Type Inference with 'var' (Java 10+)
-        var transactionId = 987654321L;     // Inferred as long
-        var accountHolder = "Anita Desai";  // Inferred as String
-        var isVerified    = true;           // Inferred as boolean
+        // 4. var కీవర్డ్
+        var id = 987654321L;     // long అని అదే తెలుసుకుంటుంది
+        var name = "Anitha";     // String
+        var ok = true;           // boolean
 
-        System.out.println("\n--- Modern Java 'var' Inferred Types ---");
-        System.out.println("Transaction ID : " + transactionId + " (Type: " + ((Object)transactionId).getClass().getSimpleName() + ")");
-        System.out.println("Account Holder : " + accountHolder + " (Type: " + accountHolder.getClass().getSimpleName() + ")");
-        System.out.println("Verified Status: " + isVerified);
+        System.out.println("\n--- var వాడి క్రియేట్ చేసినవి ---");
+        System.out.println("ID  : " + id + " (టైప్: Long)");
+        System.out.println("పేరు: " + name + " (టైప్: String)");
+        System.out.println("Okనా: " + ok);
     }
 }`,
     output: `Widening Casting (int -> double): 50000.0
-Narrowing Casting (double -> int): 1845 (Decimals discarded)
-Character 'Z' has ASCII code: 90
+Narrowing Casting (double -> int): 1845 (డెసిమల్స్ కట్ అయ్యాయి)
+అక్షరం 'Z' కి ఉన్న నంబర్: 90
 
---- Modern Java 'var' Inferred Types ---
-Transaction ID : 987654321 (Type: Long)
-Account Holder : Anita Desai (Type: String)
-Verified Status: true`,
+--- var వాడి క్రియేట్ చేసినవి ---
+ID  : 987654321 (టైప్: Long)
+పేరు: Anitha (టైప్: String)
+Okనా: true`,
     lineByLine: [
-      { line: 'double salaryDouble = salaryInt;', explanation: 'Implicit widening casting: converts 32-bit integer 50000 into 64-bit float 50000.0 with zero precision loss.' },
-      { line: 'int roundedRate = (int) marketRate;', explanation: 'Explicit narrowing cast: truncates decimal fraction .75, keeping integer portion 1845.' },
-      { line: 'int asciiCode = (int) symbol;', explanation: 'Converts Unicode character \'Z\' to its decimal integer code point (90).' },
-      { line: 'var transactionId = 987654321L;', explanation: 'Java 10+ local variable type inference: compiler infers type as long at compile-time.' }
+      { line: 'double salaryDouble = salary;', explanation: 'int లో ఉన్నది double లోకి ఆటోమాటిక్ గా మారిపోయింది.' },
+      { line: 'int rateInt = (int) rate;', explanation: 'double ని ఫోర్స్ చేసి మరీ int లోకి మార్చాం, కాబట్టి .75 కట్ అయిపోయింది.' },
+      { line: 'int ascii = (int) symbol;', explanation: 'అక్షరాన్ని (Z) నంబర్ లాగా మారిస్తే 90 వచ్చింది.' },
+      { line: 'var id = 987654321L;', explanation: 'మనం టైప్ చెప్పకుండా var వాడితే, జావానే దాన్ని లాంగ్ (Long) అని డిసైడ్ చేసింది.' }
     ],
-    practicalExample: `public class ByteOverflowInspector {
+    practicalExample: `public class OverflowTest {
     public static void main(String[] args) {
-        System.out.println("=== Demonstrating Byte Overflow in Narrowing Cast ===");
+        System.out.println("=== లిమిట్ దాటితే డేటా ఎలా తారుమారు అవుతుందో చూద్దాం ===");
         
-        int originalValue = 130;
-        // Maximum byte value is 127
-        byte castedByte = (byte) originalValue;
+        int orig = 130;
+        // బైట్ కి మాక్సిమం 127 వరకే పడుతుంది
+        byte casted = (byte) orig;
 
-        System.out.println("Original int value : " + originalValue);
-        System.out.println("Casted byte value   : " + castedByte + " (Binary wrap-around!)");
+        System.out.println("ఒరిజినల్ int వాల్యూ : " + orig);
+        System.out.println("బైట్ లోకి మార్చాక    : " + casted + " (మైనస్ లోకి వెళ్లిపోయింది!)");
 
-        // Explanation of binary wrap-around
-        // 130 in binary (32-bit): 00000000 00000000 00000000 10000010
-        // Lower 8-bits:          10000010 (In Two's Complement signed byte, MSB 1 means negative: -126)
+        // వివరణ:
+        // బైట్ 127 వరకు వెళ్ళి, ఆ తర్వాత 128 అవ్వకుండా.. వెనక్కి తిరిగి మైనస్ 128, మైనస్ 127.. అలా మైనస్ 126 కి వచ్చి ఆగుతుంది.
     }
 }`,
-    practicalOutput: `=== Demonstrating Byte Overflow in Narrowing Cast ===
-Original int value : 130
-Casted byte value   : -126 (Binary wrap-around!)`,
+    practicalOutput: `=== లిమిట్ దాటితే డేటా ఎలా తారుమారు అవుతుందో చూద్దాం ===
+ఒరిజినల్ int వాల్యూ : 130
+బైట్ లోకి మార్చాక    : -126 (మైనస్ లోకి వెళ్లిపోయింది!)`,
     commonMistakes: [
-      'Using var without immediate initialization: Writing "var x;" causes compile error: "cannot infer type for local variable x (cannot use \'var\' on variable without initializer)".',
-      'Using var as a class field: Writing "class User { var age = 20; }" is illegal. var is permitted only for local variables inside methods.',
-      'Assuming cast rounds to nearest integer: (int) 9.99 results in 9, NOT 10! Narrowing casting truncates towards zero; it does not perform mathematical rounding. Use Math.round() for rounding.'
+      'var కి వాల్యూ ఇవ్వకుండా వాడటం: "var x;" అని రాస్తే ఎర్రర్ వస్తుంది. కచ్చితంగా వాల్యూ ఇస్తేనే అది పనిచేస్తుంది.',
+      'క్లాస్ లోపల var వాడటం: ఫంక్షన్స్ లోపల మాత్రమే var పనిచేస్తుంది, పైన గ్లోబల్ గా వేరియబుల్స్ కి వాడలేం.',
+      'Casting చేస్తే రౌండ్ ఆఫ్ అవుతుంది అనుకోవడం: "int x = (int) 9.99;" అంటే 10 రాదు, 9 మాత్రమే వస్తుంది. రౌండ్ ఆఫ్ చేయాలంటే Math.round() వాడాలి.'
     ],
     challenge: `// Coding Challenge:
-// Given a total bill of 1450.85:
-// 1. Cast it to an int (rupeesOnly)
-// 2. Extract the remaining paise as an integer (paiseOnly = (int) Math.round((bill - rupeesOnly) * 100))
-// 3. Print: "₹1450 and 85 Paise"
+// ఒక బిల్ అమౌంట్ 1450.85 ఉంది అనుకోండి:
+// 1. దాన్ని int లోకి మార్చి కేవలం రూపాయలు (1450) సపరేట్ చేయండి.
+// 2. దాన్ని ప్రింట్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
         double bill = 1450.85;
-        // TODO: Perform the casting operations and print formatted bill
+        // TODO: int లోకి మార్చి ప్రింట్ చేయండి
         
     }
 }`,
     faq: [
       {
-        q: 'Does using "var" slow down application runtime execution?',
-        a: 'Not at all! "var" is resolved entirely at compile-time by javac. The generated .class Bytecode is 100% identical to explicit type declarations, resulting in zero runtime overhead.'
+        q: 'var వాడితే ప్రోగ్రామ్ స్లో అవుతుందా?',
+        a: 'అస్సలు అవ్వదు. మనం కోడ్ కంపైల్ చేసేటప్పుడే కంపైలర్ దాన్ని ఒరిజినల్ టైప్ (int, String) లాగా మార్చేసుకుంటుంది. కాబట్టి స్పీడ్ ఎక్కడా తగ్గదు.'
       },
       {
-        q: 'What is the safe way to cast between Object types?',
-        a: 'Always check with "instanceof" before casting objects to avoid runtime ClassCastException: "if (obj instanceof String str) { System.out.println(str.length()); }".'
-      },
-      {
-        q: 'Why does integer division truncate decimals before casting?',
-        a: 'In "double d = (double) (5 / 2);", the division (5 / 2) executes first as integer math (2), and then 2 is cast to 2.0. To preserve decimals, cast before dividing: "(double) 5 / 2" yields 2.5.'
+        q: 'ఒక ఆబ్జెక్ట్ ని ఇంకో ఆబ్జెక్ట్ లోకి టైప్ కాస్ట్ చేయొచ్చా?',
+        a: 'చేయొచ్చు, దాన్ని Downcasting / Upcasting అంటారు. కానీ ఎర్రర్ రాకుండా ఉండటానికి "instanceof" వాడి చెక్ చేసుకొని చేయాలి.'
       }
     ],
     recap: [
-      'Widening casting (smaller to larger) is automatic and safe from data loss.',
-      'Narrowing casting (larger to smaller) requires explicit (type) syntax and truncates decimals or overflows.',
-      'char and int can be converted based on Unicode numeric code points.',
-      'var (Java 10+) provides local variable compile-time type inference without sacrificing static type safety.'
+      'చిన్న డేటాని పెద్ద దానిలోకి మారిస్తే (Widening) ఎలాంటి ప్రాబ్లమ్ రాదు, ఆటోమేటిక్ గా జరిగిపోతుంది.',
+      'పెద్ద డేటాని చిన్నదానిలోకి కుక్కితే (Narrowing) డెసిమల్స్ పోవడం, మైనస్ లోకి వెళ్ళిపోవడం లాంటివి జరుగుతాయి.',
+      'అక్షరాలని ఈజీగా నంబర్స్ లాగా మార్చుకోవచ్చు.',
+      'జావా 10 నుంచి ప్రతిదానికీ డేటా టైప్ చెప్పకుండా var వాడుకుని సింపుల్ గా కోడ్ రాయొచ్చు.'
     ]
   }
 ];

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doubly & Circular Linked Lists (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో సింగిల్ లింక్డ్ లిస్ట్ వల్ల వెనక్కి రాలేం! దానికి సొల్యూషన్ ఏంటి? బ్రౌజర్ లో Back & Forward బటన్స్ లాగా రెండు వైపులా కదిలే Doubly Linked List మరియు రౌండ్ గా తిరిగే Circular List ఎలా పనిచేస్తాయో చూద్దాం." />
+  <meta name="keywords" content="c tutorial, doubly & circular linked lists (తెలుగులో), doubly linked list c, circular linked list, stack in c, queue in c, binary search tree c, tree traversals c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/53-c-doubly-and-circular-linked-lists.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html" class="active">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html">55. Queue Implementation</a>
+      </div>
+
+      <!-- Phase 19: Data Structures - 2 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 19</span>
+            <span class="phase-title">Data Structures - 2</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/56-c-trees-basics-and-binary-search-tree-bst.html">56. Trees Basics & BST</a>
+        <a href="/blog-c/57-c-tree-traversals-inorder-preorder-postorder.html">57. Tree Traversals (In/Pre/Post)</a>
+        <a href="/blog-c/58-c-hashing-and-collision-handling.html">58. Hashing & Collision Handling</a>
+        <a href="/blog-c/59-c-graphs-basics-adjacency-matrix-list.html">59. Graphs (Matrix & List)</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 53: Doubly & Circular Linked Lists (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Doubly & Circular Linked Lists (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 53</span>
+      <span class="badge">📂 Phase 18: Data Structures - 1</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Doubly Linked List (prev & next) · Circular Linked List · Reverse Traversal · Real-world usage</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>మామూలు లింక్డ్ లిస్ట్ (Singly) లో ఒక ప్రాబ్లమ్ ఉంది. అది వన్-వే ట్రాఫిక్ లాంటిది. మీరు ముందుకి వెళ్ళగలరే తప్ప వెనక్కి రాలేరు. మీరు క్రోమ్ బ్రౌజర్ లో హిస్టరీ చూస్తుంటే <strong>Back</strong> మరియు <strong>Forward</strong> రెండు బటన్స్ నొక్కుతారు కదా! ఆ ఫీచర్ కావాలంటే ఒక నోడ్ కి ముందు నోడ్ ఎవరో, వెనక నోడ్ ఎవరో రెండు అడ్రస్ లు తెలియాలి. దాన్నే <strong>Doubly Linked List (డబుల్ లింక్డ్ లిస్ట్)</strong> అంటారు. అలాగే లాస్ట్ నోడ్ కి నల్ (NULL) ఇవ్వకుండా దాన్ని తీసుకొచ్చి మళ్ళీ ఫస్ట్ నోడ్ (Head) కి తగిలిస్తే అదొక చక్రం లాగా తిరుగుతుంది, దాన్నే <strong>Circular List (సర్క్యులర్ లిస్ట్)</strong> అంటారు. ఇవెలా పనిచేస్తాయో డీప్ గా పోస్ట్‌మార్టం చేద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> Doubly Linked List అంటే ఏంటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        సింగిల్ లిస్ట్ లో ప్రతి డబ్బా కి ఒకటే చైన్ (next) ఉంటుంది. డబుల్ లిస్ట్ లో ప్రతి డబ్బా కి రెండు చైన్స్ (prev మరియు next) ఉంటాయి.
+      </p>
+      <div class="memory-diagram">
+[ NULL | Data: 10 | Next ] <====> [ Prev | Data: 20 | Next ] <====> [ Prev | Data: 30 | NULL ]</div>
+      <p class="text-prose">
+        దీనివల్ల మనం హెడ్ (Head) నుండి చివరి దాకా వెళ్ళచ్చు, మళ్ళీ లాస్ట్ (Tail) పట్టుకుని మొదటి వరకు వెనక్కి (Reverse) రావచ్చు. మ్యూజిక్ ప్లేయర్ లో "Next Song", "Previous Song" బటన్స్ అన్నీ బ్యాక్ గ్రౌండ్ లో ఈ డబుల్ లిస్ట్ మీదే పనిచేస్తాయి.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Circular Linked List (చక్రం)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        సర్క్యులర్ లిస్ట్ లో <code>NULL</code> అనే కాన్సెప్టే ఉండదు! లాస్ట్ డబ్బా యొక్క <code>next</code> పాయింటర్ ని తీసుకొచ్చి మొదటి డబ్బాకి (Head) కనెక్ట్ చేస్తారు.
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>🔁 రియల్ లైఫ్ స్టోరీ: విండోస్ లో ఆల్ట్+ట్యాబ్ (Alt+Tab)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          మీరు కంప్యూటర్ లో 5 యాప్స్ ఓపెన్ చేసారు. ఆల్ట్ పట్టుకుని ట్యాబ్ నొక్కుతూ ఉంటే ఒకదాని తర్వాత ఒకటి హైలైట్ అవుతూ, లాస్ట్ యాప్ దాటాక మళ్ళీ ఫస్ట్ యాప్ కి వస్తుంది కదా! అదొక సర్క్యులర్ లిస్ట్! <br><br>
+          ఆపరేటింగ్ సిస్టమ్ (OS) లో ఒక ప్రాసెసర్ వంద యాప్స్ కి టైమ్ ఇస్తున్నప్పుడు (Round Robin Scheduling), లాస్ట్ యాప్ కి టైమ్ ఇచ్చాక మళ్ళీ లూప్ తిరిగి ఫస్ట్ యాప్ కి రావాలి. ఆ ప్రాసెస్ మొత్తాన్ని హ్యాండిల్ చేసేది ఈ సర్క్యులర్ లింక్డ్ లిస్టే.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Doubly Linked List)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో డబుల్ పాయింటర్స్ (prev, next) వాడి ఒక లిస్ట్ ని ఎలా తయారు చేసామో, దాన్ని ముందుకి మరియు వెనక్కి ఎలా ప్రింట్ (Forward & Reverse) చేసామో క్రియేటివ్ గా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Doubly Linked List</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+// 1. డబుల్ లిస్ట్ కోసం నోడ్ బ్లూప్రింట్ (రెండు పాయింటర్స్ ఉంటాయి)
+struct Node {
+    int data;
+    struct Node* prev; // వెనక డబ్బా అడ్రస్
+    struct Node* next; // ముందు డబ్బా అడ్రస్
+};
+
+// కొత్త బాక్స్ క్రియేట్ చేసి చివర్లో యాడ్ చేయడానికి ఫంక్షన్
+void append(struct Node** head_ref, int new_data) {
+    // కొత్త బాక్స్ కి మెమరీ ఇద్దాం
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = NULL; // ఇది లాస్ట్ కాబట్టి next నల్ అవుతుంది
+    
+    struct Node* last = *head_ref;
+    
+    // ఒకవేళ లిస్ట్ ఖాళీగా ఉంటే, ఇదే ఫస్ట్ (Head) అవుతుంది
+    if (*head_ref == NULL) {
+        new_node->prev = NULL; // ఫస్ట్ కాబట్టి prev కూడా నల్
+        *head_ref = new_node;
+        return;
+    }
+    
+    // ఖాళీ లేకపోతే, లాస్ట్ డబ్బా దాకా వెతుక్కుంటూ వెళ్దాం
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    
+    // లాస్ట్ డబ్బా దొరికింది! దానికి ఈ కొత్త బాక్స్ ని కనెక్ట్ చేద్దాం
+    last->next = new_node;
+    new_node->prev = last; // కొత్త బాక్స్ కి వెనకాల ఈ పాత డబ్బా ఉంటుందని చెప్పాలి!
+}
+
+// లిస్ట్ ని ముందుకి, వెనక్కి ప్రింట్ చేసే ఫంక్షన్
+void printList(struct Node* node) {
+    struct Node* last;
+    
+    printf("Forward Traversal (Head to Tail):\n");
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        last = node; // వెనక్కి రావడానికి లాస్ట్ డబ్బా ని పట్టుకుంటున్నాం
+        node = node->next;
+    }
+    printf("NULL\n\n");
+    
+    printf("Reverse Traversal (Tail to Head):\n");
+    while (last != NULL) {
+        printf("%d -> ", last->data);
+        last = last->prev; // చైన్ పట్టుకుని వెనక్కి (prev) నడుస్తున్నాం!
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    
+    printf("--- Doubly Linked List Demo ---\n\n");
+    
+    // కొన్ని నోడ్స్ ని యాడ్ చేద్దాం
+    append(&head, 10);
+    append(&head, 20);
+    append(&head, 30);
+    append(&head, 40);
+    
+    // ముందుకి వెనక్కి ప్రింట్ చేద్దాం
+    printList(head);
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>struct Node* prev;</code>: ఇదే మనకి వెనక్కి వెళ్లడానికి ఉపయోగపడే టైమ్ మెషిన్. మనం కొత్త డబ్బా క్రియేట్ చేసిన ప్రతిసారీ, <code>new_node-&gt;prev = last;</code> అని కనెక్ట్ చేస్తేనే ఆ లింక్ అతుక్కుంటుంది.</li>
+        <li><code>last = node;</code>: ఫార్వర్డ్ లూప్ లో మనం లాస్ట్ కి వెళ్ళిపోతే <code>node</code> నల్ (NULL) అయిపోతుంది. కానీ రివర్స్ రావాలంటే లాస్ట్ డబ్బా అడ్రస్ కావాలి కదా! అందుకే లూప్ లోపలే <code>last</code> అనే పాయింటర్ లో దాన్ని సేవ్ చేసుకుంటూ వెళ్ళాం.</li>
+        <li><code>last = last-&gt;prev;</code>: రివర్స్ లూప్ లో <code>next</code> కాకుండా <code>prev</code> వాడాం. అంటే 40 నుండి 30, 30 నుండి 20 కి రివర్స్ గేర్ లో వస్తుంది!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: Doubly Linked List లో మెమరీ వేస్ట్ అవుతుందా?</h4>
+          <p>అవును! సింగిల్ లిస్ట్ తో పోలిస్తే ఇందులో ప్రతి డబ్బాలో ఎక్స్ట్రా ఒక పాయింటర్ (prev) ఉంటుంది. ఒక పాయింటర్ కి 8 బైట్స్ (64-bit సిస్టమ్ లో) పడుతుంది. లక్ష డబ్బాలు ఉంటే లక్ష ఎక్స్ట్రా పాయింటర్స్ కి మెమరీ పోతుంది. అందుకే వెనక్కి రావలసిన అవసరం ఉంటేనే దీన్ని వాడాలి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: డబుల్ లిస్ట్ లో ఇన్సర్ట్ (Insert) చేయడం కష్టమా?</h4>
+          <p>లాజిక్ కొంచెం కష్టం! మీరు మధ్యలో కొత్త నోడ్ దూర్చాలంటే సింగిల్ లిస్ట్ లో 2 చైన్స్ అతుకుతారు. కానీ ఇందులో 4 చైన్స్ మార్చాలి! (కొత్త దాని prev, next కి కనెక్ట్ చేయాలి, అలాగే అటు ఇటు ఉన్న డబ్బాల prev, next లని కూడా కొత్త దానికి మార్చాలి). ఏ ఒక్కటి మర్చిపోయినా లిస్ట్ విరిగిపోతుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: బ్రౌజర్ హిస్టరీ లో Doubly List ఎందుకు బెస్ట్? Array వాడొచ్చు కదా?</h4>
+          <p>బ్రౌజర్ హిస్టరీ లో మీరు 10 పేజీలు ముందుకెళ్లి, 5 పేజీలు వెనక్కి (Back) వచ్చి, అక్కడ నుండి కొత్త లింక్ క్లిక్ చేస్తే... పాత ఫార్వర్డ్ హిస్టరీ మొత్తం డిలీట్ అయిపోవాలి! లింక్డ్ లిస్ట్ లో అయితే చైన్ కట్ చేస్తే ఆటోమేటిక్ గా కట్ అయిపోతుంది (O(1)). అదే అర్రే లో అయితే అన్నిటినీ వెతుక్కుంటూ డిలీట్ చేయాలి (స్లో). అందుకే డబుల్ లిస్ట్ బెస్ట్!</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="52-c-linked-lists-insertion-deletion.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">52. Insert & Delete</span>
+      </a>
+
+      
+      <a href="54-c-stack-implementation-array-linkedlist.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">54. Stack Implementation</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

@@ -9,100 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings & Functions',
-    icon: '🧩',
-    desc: 'String manipulation, template literals, function declarations, function expressions, arrow functions, and default parameters.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Regex Search' },
-      { num: 10, file: 'functions.html', title: '10. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays & Objects',
-    icon: '📊',
-    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 11, file: 'arrays.html', title: '11. Arrays & Iteration Methods', subtopics: 'Mutating Methods · map, filter, reduce · Array Spread' },
-      { num: 12, file: 'objects.html', title: '12. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · JSON Parsing' },
-      { num: 13, file: 'es6-features.html', title: '13. ES6+ Destructuring & Spread', subtopics: 'Array & Object Destructuring · Spread/Rest (...) · Nullish Coalescing (??)' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Advanced Functions & OOP',
+    title: 'Object-Oriented Programming (OOP)',
     icon: '🏗️',
-    desc: 'Lexical scope, closures, higher-order functions, Object-Oriented JS, prototypes, ES6 classes, and this keyword binding.',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 14, file: 'closures.html', title: '14. Closures & Higher-Order Functions', subtopics: 'Lexical Scope · Closures · Currying · Callbacks' },
-      { num: 15, file: 'oop.html', title: '15. OOP: Classes & Prototypes', subtopics: 'Prototypes & Inheritance · ES6 Classes · this Keyword Binding' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Asynchronous JavaScript & DOM',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, DOM manipulation, and LocalStorage.',
-    lessons: [
-      { num: 16, file: 'promises.html', title: '16. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise · async/await · Fetch API' },
-      { num: 17, file: 'exceptions.html', title: '17. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' },
-      { num: 18, file: 'dom.html', title: '18. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -218,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -407,401 +400,156 @@ function buildLesson8() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 5: Loops & Iterations</strong>! In programming, repetitive tasks are automated through <strong>Loops</strong>. Rather than writing duplicate code, loops execute a block of instructions continuously until a termination condition is met. In this masterclass guide, you will master standard <code>for</code> loops, <code>while</code> loops, <code>do...while</code>, modern <code>for...of</code> (iterables) & <code>for...in</code> (object properties), nested loops, <code>break</code>/<code>continue</code> controllers, string/array traversal, star patterns, and solve 8 essential coding interview algorithms.</p>
+      <p>ఒకే పనిని లేదా ఒకే కోడ్ ని పదే పదే రిపీట్ చేయడాన్ని <strong>Loops</strong> అంటారు. ఉదాహరణకు 1 నుండి 100 వరకు సంఖ్యలు ప్రింట్ చేయాలన్నా, లేదా డేటాబేస్ లోని 50 మంది యూజర్ల వివరాలు డిస్ప్లే చేయాలన్నా లూప్స్ అత్యంత అవసరం. ఈ చాప్టర్ లో <code>for</code>, <code>while</code>, <code>do...while</code>, <code>for...of</code>, మరియు <code>break/continue</code> ల గురించి స్పష్టంగా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. Why Loops are Needed -->
-    <div class="section-title"><span class="num">1</span>Why Loops are Needed (DRY Principle)</div>
-    <div class="section-body">
-      <p>Imagine 1 nunchi 100 daka numbers print cheyyali. Loop lekunte 100 lines <code>console.log()</code> rayalsi untundhi. <strong>Loops</strong> software development lo <strong>DRY (Don't Repeat Yourself)</strong> principle ni follow avthu, 3 lines of code tho millions of records ni process cheyyagala power ni isthayi.</p>
+    <div class="callout">
+      <div class="callout-title">🏃‍♂️ రియల్ లైఫ్ అనలాజీ: రన్నింగ్ ట్రాక్ లో గ్రౌండ్ రౌండ్లు</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">మీరు ఒక రన్నింగ్ ట్రాక్ లో 5 రౌండ్లు తిరగాలి:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>స్టార్ట్ (Initialization):</strong> రౌండ్ కౌంట్ 1 దగ్గర ప్రారంభమవుతుంది (<code>let round = 1</code>).</li>
+        <li><strong>కండిషన్ (Condition):</strong> రౌండ్ల సంఖ్య 5 దాటనంత వరకు పరిగెత్తుతారు (<code>round <= 5</code>).</li>
+        <li><strong>అప్‌డేట్ (Increment):</strong> ప్రతి రౌండ్ పూర్తయ్యాక కౌంట్ ఒకటికి పెరుగుతుంది (<code>round++</code>).</li>
+      </ul>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">జావాస్క్రిప్ట్ <code>for</code> లూప్ కూడా సరిగ్గా ఇదే సూత్రం పై పనిచేస్తుంది!</p>
+    </div>
 
+    <div class="section-title"><span class="num">1</span>Classic for Loop</div>
+    <div class="section-body">
+      <p>మనకి ఎన్ని సార్లు లూప్ తిరగాలో ముందుగానే తెలిసినప్పుడు <strong><code>for</code> loop</strong> వాడతాం.</p>
+      
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — 1 to 5 Counter</span>
+          <span class="lang-tag">JavaScript — for Loop Syntax</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
-
-for (let number = 1; number <= 5; number++) {
-    console.log(number);
+        <pre><code>// Syntax: for (ఆరంభం; షరతు; మార్పు)
+for (let i = 1; i <= 5; i++) {
+    console.log("రౌండ్ నంబర్ 🏃‍♂️:", i);
 }</code></pre>
       </div>
     </div>
 
-    <!-- 2. The Big 5 Loop Types in JavaScript -->
-    <div class="section-title"><span class="num">2</span>The 5 Loop Types in JavaScript</div>
+    <div class="section-title"><span class="num">2</span>while Loop & do...while Loop</div>
     <div class="section-body">
+      <p>కండిషన్ <code>true</code> అయినంత వరకు లూప్ తిరగాలి అనుకున్నప్పుడు <code>while</code> వాడతాం. <code>do...while</code> కనీసం ఒక్కసారైనా కోడ్ ని రన్ చేశాక కండిషన్ ని చెక్ చేస్తుంది!</p>
+
       <table class="tbl">
-        <tr><th>Loop Construct</th><th>Syntax</th><th>When to Use?</th></tr>
+        <tr><th>Loop Type</th><th>కండిషన్ చెకింగ్ (Checking Time)</th><th>కనీస ఎగ్జిక్యూషన్ (Min Runs)</th></tr>
         <tr>
-          <td><strong>1. <code>for</code> loop</strong></td>
-          <td><code>for (let i = 0; i &lt; n; i++)</code></td>
-          <td>When the <strong>exact number of iterations</strong> is known in advance.</td>
+          <td><strong><code>while</code> Loop</strong></td>
+          <td>లూప్ ప్రారంభంలోనే చెక్ చేస్తుంది (Pre-test loop)</td>
+          <td>0 సార్లు (కండిషన్ మొదట్లోనే false అయితే అసలు రన్ అవ్వదు)</td>
         </tr>
         <tr>
-          <td><strong>2. <code>while</code> loop</strong></td>
-          <td><code>while (condition) { ... }</code></td>
-          <td>When iterations depend on a dynamic condition (unknown count).</td>
-        </tr>
-        <tr>
-          <td><strong>3. <code>do...while</code> loop</strong></td>
-          <td><code>do { ... } while (condition);</code></td>
-          <td>When code must execute <strong>at least once</strong> before checking condition.</td>
-        </tr>
-        <tr>
-          <td><strong>4. <code>for...of</code> loop</strong></td>
-          <td><code>for (const item of array)</code></td>
-          <td>Iterating over values of <strong>Iterables</strong> (Arrays, Strings, Sets, Maps).</td>
-        </tr>
-        <tr>
-          <td><strong>5. <code>for...in</code> loop</strong></td>
-          <td><code>for (const key in object)</code></td>
-          <td>Iterating over <strong>Keys / Property names</strong> of an Object.</td>
+          <td><strong><code>do...while</code> Loop</strong></td>
+          <td>లూప్ చివర్లో చెక్ చేస్తుంది (Post-test loop)</td>
+          <td><strong>కనీసం 1 సారి విధిగా రన్ అవుతుంది!</strong></td>
         </tr>
       </table>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Loop Varieties Demo</span>
+          <span class="lang-tag">JavaScript — while vs do-while</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-// 1. While Loop
-let count = 3;
-while (count > 0) {
-    console.log("Countdown:", count);
-    count--;
+// 1. while loop
+let count = 1;
+while (count <= 3) {
+    console.log("While Count:", count);
+    count++; // ఇది లేకపోతే ఇన్‌ఫినిట్ లూప్ అవుతుంది!
 }
 
-// 2. do...while Loop (Executes at least once)
+// 2. do-while loop (కండిషన్ ఫెయిల్ అయినా 1 సారి రన్ అవుతుంది)
 let x = 10;
 do {
-    console.log("do-while executed, x is:", x);
+    console.log("Do-While రన్ అయ్యింది! x =", x);
     x++;
-} while (x < 5); // False condition, but executed once!
+} while (x < 5); // 10 < 5 అనేది false, అయినా పైన 1 సారి ప్రింట్ అయ్యింది!</code></pre>
+      </div>
+    </div>
 
-// 3. for...of Loop (Iterating array values)
-const fruits = ["🍎 Apple", "🍌 Banana", "🥭 Mango"];
-for (const fruit of fruits) {
-    console.log("Fruit:", fruit);
-}
+    <div class="section-title"><span class="num">3</span>Modern Iteration: for...of Loop</div>
+    <div class="section-body">
+      <p>అర్రేలు (Arrays) లేదా స్ట్రింగ్స్ లోని ప్రతి ఎలిమెంట్ ని సులభంగా ఇటరేట్ చేయడానికి ES6 లో <strong><code>for...of</code></strong> వచ్చింది.</p>
 
-// 4. for...in Loop (Iterating object properties)
-const user = { name: "Ravi", role: "Dev", city: "Hyderabad" };
-for (const key in user) {
-    console.log(key + " -> " + user[key]);
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — for...of Iteration</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>let fruits = ["మామిడి 🥭", "అరటి 🍌", "జామ 🍏"];
+
+for (let fruit of fruits) {
+    console.log("పండు పేరు:", fruit);
 }</code></pre>
       </div>
     </div>
 
-    <!-- 3. break, continue & Infinite Loops -->
-    <div class="section-title"><span class="num">3</span>break, continue & Infinite Loops</div>
+    <div class="section-title"><span class="num">4</span>Loop Control: break & continue</div>
     <div class="section-body">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:14px;">
-          <strong style="color:#ff7b72;">1. break Statement</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Loop execution ni ventane terminate chesi loop bayataki vachi vestundi.</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:14px;">
-          <strong style="color:#f7df1e;">2. continue Statement</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Current iteration ni skip chesi direct ga next iteration ki jump chesthundi.</p>
-        </div>
-      </div>
+      <ul>
+        <li><strong><code>break</code>:</strong> లూప్ ని మధ్యలోనే పూర్తిగా ఆపేసి బయటకు వచ్చేస్తుంది.</li>
+        <li><strong><code>continue</code>:</strong> ప్రస్తుత స్టెప్ ని మాత్రమే స్కిప్ చేసి, తర్వాత స్టెప్ కి వెళ్తుంది.</li>
+      </ul>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — break & continue</span>
+          <span class="lang-tag">JavaScript — break and continue</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-console.log("--- continue demo (skipping 3) ---");
+console.log("--- continue ఉదాహరణ (3 ని స్కిప్ చేస్తుంది) ---");
 for (let i = 1; i <= 5; i++) {
-    if (i === 3) continue; // Skip 3
+    if (i === 3) continue; // 3 వచ్చినప్పుడు స్కిప్ అయి 4 కి వెళ్తుంది
     console.log("Number:", i);
 }
 
-console.log("--- break demo (stopping at 4) ---");
-for (let i = 1; i <= 10; i++) {
-    if (i === 4) break; // Terminate loop
+console.log("--- break ఉదాహరణ (3 రాగానే ఆగిపోతుంది) ---");
+for (let i = 1; i <= 5; i++) {
+    if (i === 3) break; // 3 రాగానే లూప్ ముగుస్తుంది
     console.log("Number:", i);
-}</code></pre>
-      </div>
-
-      <div class="callout">
-        <div class="callout-title">⚠️ Infinite Loop Warning</div>
-        <p>Loop update step (e.g. <code>i++</code>) marchipothe, condition eppatiki <code>true</code> gaa undi browser or server CPU 100% crash avthundhi. Always ensure the loop variable moves towards a termination boundary!</p>
-      </div>
-    </div>
-
-    <!-- 4. Looping through Strings & Arrays -->
-    <div class="section-title"><span class="num">4</span>Looping through Strings & Arrays</div>
-    <div class="section-body">
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — String & Array Traversal</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// Traversal on String
-const tech = "JS2026";
-for (let i = 0; i < tech.length; i++) {
-    console.log("Char at " + i + ": " + tech[i]);
-}
-
-// Array sum calculation
-const prices = [100, 250, 450, 800];
-let totalCart = 0;
-for (const price of prices) {
-    totalCart += price;
-}
-console.log("Total Cart Amount: Rs." + totalCart);</code></pre>
-      </div>
-    </div>
-
-    <!-- 5. Nested Loops & Star/Number Patterns -->
-    <div class="section-title"><span class="num">5</span>Nested Loops & Star / Number Patterns</div>
-    <div class="section-body">
-      <p>Outer loop rows kosam, inner loop columns kosam run avthundhi:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Patterns</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// 1. Right Angled Star Pattern
-console.log("--- Star Triangle Pattern ---");
-for (let row = 1; row <= 5; row++) {
-    let rowStr = "";
-    for (let col = 1; col <= row; col++) {
-        rowStr += "* ";
-    }
-    console.log(rowStr);
-}
-
-// 2. Number Pattern
-console.log("--- Number Triangle Pattern ---");
-for (let row = 1; row <= 5; row++) {
-    let rowStr = "";
-    for (let col = 1; col <= row; col++) {
-        rowStr += col + " ";
-    }
-    console.log(rowStr);
 }</code></pre>
       </div>
     </div>
 
-    <!-- 6. Loop Performance Basics -->
-    <div class="section-title"><span class="num">6</span>Loop Performance Basics</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Array Length Caching:</strong> For giant arrays with $100,000+$ items, store length in variable: <code>for (let i = 0, len = arr.length; i < len; i++)</code>.</li>
-        <li><strong>Avoid DOM queries inside loop:</strong> Don't call <code>document.getElementById()</code> inside a loop — fetch the element once outside!</li>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li><strong>Infinite Loops (అంతం లేని లూప్‌లు):</strong> <code>while</code> లూప్ రాసేటప్పుడు <code>i++</code> (Increment) రాయడం మర్చిపోతే బ్రౌజర్/కంప్యూటర్ హ్యాంగ్ అయిపోతుంది!</li>
+        <li><strong>Off-by-one Error:</strong> 10 సార్లు తిరగాల్సిన లూప్ 9 సార్లే తిరగడం (<code>i < 10</code> కి బదులు <code>i <= 10</code> వాడాలా లేదా అనేది సరిగ్గా చూసుకోకపోవడం).</li>
       </ul>
     </div>
 
-    <!-- 8 PRACTICE PROGRAMS -->
-    <div class="section-title"><span class="num">7</span>Practice Programs (All 8 Complete Solutions)</div>
+    <div class="section-title"><span class="num">5</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <p>Mastering loops through 8 essential algorithm implementations:</p>
-
-      <!-- 1. Print 1 to 100 -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 1: Print Numbers 1 to 100 (in 10-item chunks)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-for (let i = 1; i <= 100; i += 10) {
-    let line = "";
-    for (let j = i; j < i + 10; j++) {
-        line += j + " ";
-    }
-    console.log(line);
-}</code></pre>
+      <details>
+        <summary>Q1. <code>while(false)</code> మరియు <code>do { ... } while(false)</code> ల తేడా ఏంటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>while(false)</code> అస్సలు రన్ అవ్వదు. కానీ <code>do...while</code> కనీసం 1 సారి రన్ అయి ఆగుతుంది.</p>
         </div>
-      </div>
+      </details>
 
-      <!-- 2. Multiplication Table -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 2: Multiplication Table (5 Table)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-let tableNum = 5;
-for (let i = 1; i <= 10; i++) {
-    console.log(tableNum + " x " + i + " = " + (tableNum * i));
-}</code></pre>
+      <details>
+        <summary>Q2. <code>for...of</code> మరియు <code>for...in</code> కి ఉన్న తేడా ఏంటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>for...of</code> అర్రేలలోని <strong>Values (వాల్యూస్)</strong> ని ఇస్తుంది. <code>for...in</code> ఆబ్జెక్టులలోని <strong>Keys/Indices (కీలు/ఇండెక్స్ లు)</strong> ని ఇస్తుంది.</p>
         </div>
-      </div>
-
-      <!-- 3. Sum of Numbers -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 3: Sum of First N Numbers</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-let n = 10;
-let sum = 0;
-for (let i = 1; i <= n; i++) {
-    sum += i;
-}
-console.log("Sum of first " + n + " numbers is: " + sum); // 55</code></pre>
-        </div>
-      </div>
-
-      <!-- 4. Factorial -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 4: Factorial of a Number (5!)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-let num = 5;
-let fact = 1;
-for (let i = 1; i <= num; i++) {
-    fact *= i;
-}
-console.log(num + "! = " + fact); // 120</code></pre>
-        </div>
-      </div>
-
-      <!-- 5. Reverse a Number -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 5: Reverse a Number (12345 -> 54321)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-let original = 12345;
-let temp = original;
-let reversed = 0;
-
-while (temp > 0) {
-    let digit = temp % 10;
-    reversed = (reversed * 10) + digit;
-    temp = Math.floor(temp / 10);
-}
-
-console.log("Original: " + original + " | Reversed: " + reversed);</code></pre>
-        </div>
-      </div>
-
-      <!-- 6. Prime Number Checker -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 6: Prime Number Checker</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function isPrime(num) {
-    if (num <= 1) return false;
-    for (let i = 2; i <= Math.sqrt(num); i++) {
-        if (num % i === 0) return false;
-    }
-    return true;
-}
-
-console.log("Is 29 Prime? " + isPrime(29)); // true
-console.log("Is 35 Prime? " + isPrime(35)); // false</code></pre>
-        </div>
-      </div>
-
-      <!-- 7. Fibonacci Series -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 7: Fibonacci Series Generator</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-let terms = 10;
-let n1 = 0, n2 = 1;
-let fibSequence = [];
-
-for (let i = 1; i <= terms; i++) {
-    fibSequence.push(n1);
-    let nextTerm = n1 + n2;
-    n1 = n2;
-    n2 = nextTerm;
-}
-
-console.log("Fibonacci (" + terms + " terms):", fibSequence.join(", "));</code></pre>
-        </div>
-      </div>
-
-      <!-- 8. Pyramid Star Pattern -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 8: Pyramid Star Pattern</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-let totalRows = 5;
-for (let i = 1; i <= totalRows; i++) {
-    let spaces = " ".repeat(totalRows - i);
-    let stars = "*".repeat(2 * i - 1);
-    console.log(spaces + stars);
-}</code></pre>
-        </div>
-      </div>
+      </details>
     </div>
 
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this 1 to 5 number loop in our live compiler:</p>
-      
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-for (let number = 1; number <= 5; number++) {
-    console.log(number);
-}</code></pre>
-      </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>కౌంట్ తెలిస్తే <code>for</code> లూప్, షరతు మాత్రమే తెలిస్తే <code>while</code> వాడండి.</li>
+        <li><code>do...while</code> కనీసం ఒకసారి ఖచ్చితంగా రన్ అవుతుంది.</li>
+        <li>మధ్యలో ఆగడానికి <code>break</code>, ఒక స్టెప్ దాటవేయడానికి <code>continue</code> వాడండి.</li>
+      </ul>
     </div>
-
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 8, subtopics, contentBody, 'conditionals.html', '7. Conditions (if & switch)', 'strings.html', 'Phase 6: Strings & Functions');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -898,7 +646,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

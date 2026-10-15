@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JavaScript Data Types తెలుగులో | string, number, boolean, null, undefined — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="JavaScript లో data types అంటే ఏమిటి, string, number, boolean, null, undefined మధ్య తేడాలు, typeof operator ని తెలుగులో ఉదాహరణలతో నేర్చుకోండి." />
+  <meta name="keywords" content="javascript tutorial, javascript data types తెలుగులో | string, number, boolean, null, undefined, learn javascript, javascript online compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/operators.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightJSCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___JS_TOK_${id}___`;
+      };
+
+      // 1. Comments
+      let code = rawCode.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, m => pushToken('cm', m));
+
+      // 2. Strings & Template Literals
+      code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, m => pushToken('st', m));
+
+      // 3. Keywords
+      const kwList = ['const','let','var','function','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','new','this','class','extends','super','import','export','async','await','yield','of','in','typeof','instanceof','delete','void'];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      // 4. Built-in Classes & Objects
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false'];
+      const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
+      code = code.replace(typeRegex, m => pushToken('vr', m));
+
+      // 5. Functions & Methods
+      code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, (m, fnName) => {
+        if (['if','for','while','switch','catch'].includes(fnName)) return m;
+        return pushToken('fn', fnName);
+      });
+
+      // 6. Numbers
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('nu', m));
+
+      // 7. Restore Tokens
+      code = code.replace(/___JS_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightJSCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_nodejs', rawCode);
+              localStorage.setItem('code_javascript', rawCode);
+              window.location.href = '/?lang=nodejs';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightJSCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_nodejs', rawCode);
+                localStorage.setItem('code_javascript', rawCode);
+                window.location.href = '/?lang=nodejs';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-javascript">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html" class="active">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">JavaScript Course</div>
+    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01: JavaScript Fundamentals & Basics -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🟨</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">JavaScript Fundamentals & Basics</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-javascript/01-javascript-fundamentals.html">1. Welcome & JS Fundamentals</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Setup, Console & Script Tag</a>
+        <a href="/blog-javascript/variables.html">3. Variables (let, const, var)</a>
+        <a href="/blog-javascript/operators.html" class="active">4. Data Types (string, number, boolean...)</a>
+      </div>
+
+      <!-- Phase 02: Operators & Input -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">Operators & Input</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/05-operators-expressions-and-precedence.html">5. Operators, Expressions & Precedence</a>
+        <a href="/blog-javascript/06-browser-input-and-number-parsing.html">6. Input & Output (alert, prompt...)</a>
+      </div>
+
+      <!-- Phase 03: Conditionals & Loops -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">Conditionals & Loops</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/conditionals.html">7. Conditionals (if-else & switch)</a>
+        <a href="/blog-javascript/loops.html">8. Loops & Control Flow</a>
+      </div>
+
+      <!-- Phase 04: Strings & Functions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">Strings & Functions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/strings.html">9. Strings & Template Literals</a>
+        <a href="/blog-javascript/functions.html">10. Functions & Arrow Syntax</a>
+      </div>
+
+      <!-- Phase 05: Arrays & Objects -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">Arrays & Objects</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/arrays.html">11. Arrays Basics & Methods</a>
+        <a href="/blog-javascript/array-methods.html">12. Higher-Order Array Methods</a>
+        <a href="/blog-javascript/objects.html">13. Objects & JSON</a>
+      </div>
+
+      <!-- Phase 06: DOM & Browser APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🌐</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 06</span>
+            <span class="phase-title">DOM & Browser APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/dom.html">14. DOM Basics & Tree Selection</a>
+        <a href="/blog-javascript/events-and-forms.html">15. Events, Listeners & Form Handling</a>
+        <a href="/blog-javascript/browser-apis-and-storage.html">16. LocalStorage & Timers</a>
+      </div>
+
+      <!-- Phase 07: Asynchronous JavaScript & APIs -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⏳</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 07</span>
+            <span class="phase-title">Asynchronous JavaScript & APIs</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">2 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/json-and-fetch-api.html">17. JSON & Fetch API (HTTP)</a>
+        <a href="/blog-javascript/promises.html">18. Promises & Async/Await</a>
+      </div>
+
+      <!-- Phase 08: Object-Oriented Programming (OOP) -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 08</span>
+            <span class="phase-title">Object-Oriented Programming (OOP)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">1 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-javascript/oop.html">19. OOP: Classes & Prototypes</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=nodejs" style="color:#f7df1e; font-weight:700;">▶ Try JavaScript Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (32 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
+      <span class="current">Lesson 4: JavaScript Data Types తెలుగులో | string, number, boolean, null, undefined</span>
+    </div>
+
+    <h1 class="page-title">JavaScript Data Types తెలుగులో | string, number, boolean, null, undefined</h1>
+
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript (ES2026+)</span>
+      <span class="badge">🟢 Lesson 4</span>
+      <span class="badge">📂 Phase 01: JavaScript Fundamentals & Basics</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#f7df1e; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>string · number · boolean · null · undefined · typeof Operator · NaN · Infinity · "5" vs 5</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఇంట్లో వంటగదిలో చూడండి. బియ్యం, పప్పు, ఉప్పు, నూనె అన్నీ వేర్వేరు డబ్బాల్లో ఉంటాయి. ఎందుకంటే అవన్నీ వేర్వేరు రకాలు. బియ్యాన్ని కొలిచే విధానం వేరు, నూనెను కొలిచే విధానం వేరు కదా?</p>
+      <p>Programming లో కూడా అంతే. Variable డబ్బాల్లో పెట్టే విలువలు వేర్వేరు <strong>రకాలు</strong> (types) గా ఉంటాయి. పేరు (text), సంఖ్య (number), అవును/కాదు (true/false) ఇలా. ఈ రకాలనే <strong>Data Types</strong> అంటారు.</p>
+      <p>ఒక విలువ ఏ రకానికి చెందినదో తెలిస్తేనే, దానితో ఏం చేయొచ్చో, ఏం చేయలేమో తెలుస్తుంది. ఉదాహరణకు, రెండు సంఖ్యలను కూడొచ్చు, కానీ "పేరు" ను "పేరు" తో కూడితే ఏమవుతుంది? ఈ chapter లో అవన్నీ చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>JavaScript లోని ముఖ్యమైన data types: string, number, boolean, null, undefined</li>
+        <li><code>typeof</code> operator తో ఒక విలువ ఏ రకమో తెలుసుకోవడం</li>
+        <li><code>null</code> మరియు <code>undefined</code> మధ్య తేడా</li>
+        <li><code>NaN</code> మరియు <code>Infinity</code> అంటే ఏమిటి</li>
+        <li><code>"5"</code> మరియు <code>5</code> మధ్య తేడా</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Primitive Data Types అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p>JavaScript లో సరళమైన, ప్రాథమిక రకాలను <strong>Primitive data types</strong> అంటారు. ఈ chapter లో మనం ముఖ్యమైన ఐదింటిని నేర్చుకుందాం:</p>
+
+      <table class="tbl">
+        <tr><th>Data Type</th><th>అర్థం</th><th>ఉదాహరణ</th></tr>
+        <tr><td><strong>string</strong></td><td>అక్షరాల text</td><td><code>"రవి"</code>, <code>'Hello'</code></td></tr>
+        <tr><td><strong>number</strong></td><td>సంఖ్యలు (పూర్ణ మరియు దశాంశ)</td><td><code>25</code>, <code>3.14</code>, <code>-7</code></td></tr>
+        <tr><td><strong>boolean</strong></td><td>అవును లేదా కాదు</td><td><code>true</code>, <code>false</code></td></tr>
+        <tr><td><strong>null</strong></td><td>"ఉద్దేశపూర్వకంగా ఖాళీ"</td><td><code>null</code></td></tr>
+        <tr><td><strong>undefined</strong></td><td>"ఇంకా విలువ ఇవ్వలేదు"</td><td><code>undefined</code></td></tr>
+      </table>
+      <p style="margin-top:10px; color:var(--text2); font-size:13.5px;">(ఇవి కాకుండా <code>bigint</code>, <code>symbol</code> అనే మరో రెండు ఉన్నాయి. అవి చాలా అరుదుగా వాడతారు, కాబట్టి ప్రస్తుతానికి వదిలేద్దాం.)</p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>typeof operator: విలువ ఏ రకమో తెలుసుకోవడం</div>
+    <div class="section-body">
+      <p>ఏదైనా విలువ ఏ data type కి చెందినదో తెలుసుకోవడానికి <strong><code>typeof</code></strong> అనే operator వాడతాం.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — typeof Operator</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>console.log(typeof "Hello");
+console.log(typeof 25);
+console.log(typeof true);
+console.log(typeof undefined);</code></pre>
+      </div>
+      <p style="margin-top:8px;"><strong>Output:</strong></p>
+      <pre style="background: #1e1e1e; color: #fff; padding: 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;">string
+number
+boolean
+undefined</pre>
+      <p><code>typeof</code> తర్వాత విలువ లేదా variable రాస్తే, దాని రకం text గా వస్తుంది. ఈ chapter అంతా దీన్ని వాడుతూనే ఉంటాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>1. String: Text డేటా</div>
+    <div class="section-body">
+      <p><strong>String</strong> అంటే అక్షరాల వరుస. పేరు, ఊరు, message, ఇలా text ఏదైనా string. String ని ఎప్పుడూ <strong>quotes</strong> మధ్యలో రాయాలి.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — String Creation</span>
+        </div>
+        <pre><code>let name1 = "రవి";
+let name2 = 'సీత';
+let message = &#96;నమస్కారం&#96;;
+
+console.log(name1);
+console.log(name2);
+console.log(message);
+console.log(typeof name1); // string</code></pre>
+      </div>
+
+      <h3 style="margin-top: 15px; margin-bottom: 8px; font-size: 16px;">Quotes లోపల quotes రాయడం</h3>
+      <div class="code-block">
+        <pre><code>console.log("It's a nice day");
+console.log('అతను "హాయ్" అన్నాడు');</code></pre>
+      </div>
+
+      <h3 style="margin-top: 15px; margin-bottom: 8px; font-size: 16px;">String పొడవు (.length)</h3>
+      <div class="code-block">
+        <pre><code>let language = "JavaScript";
+console.log(language.length); // 10</code></pre>
+      </div>
+      <p><code>.length</code> తో string లో ఎన్ని అక్షరాలు ఉన్నాయో సులభంగా తెలుస్తుంది.</p>
+    </div>
+
+    <div class="section-title"><span class="num">5</span>2. Number: సంఖ్యలు, Infinity & NaN</div>
+    <div class="section-body">
+      <p>JavaScript లో <strong>number</strong> అనే ఒకే రకం ఉంటుంది. పూర్ణ సంఖ్యలు (<code>10</code>), దశాంశ సంఖ్యలు (<code>3.14</code>), రుణ సంఖ్యలు (<code>-5</code>) అన్నీ number లే.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Number Type</span>
+        </div>
+        <pre><code>let age = 25;
+let price = 99.50;
+let temperature = -4;
+
+console.log(typeof age);   // number
+console.log(typeof price); // number</code></pre>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">ప్రత్యేక number విలువలు: Infinity మరియు NaN</h3>
+      <p><strong>Infinity:</strong> ఒక సంఖ్యను సున్నాతో భాగిస్తే (గణితంలో ఇది కుదరదు), JavaScript <code>Infinity</code> ఇస్తుంది.</p>
+      <div class="code-block">
+        <pre><code>console.log(10 / 0);  // Infinity
+console.log(-10 / 0); // -Infinity</code></pre>
+      </div>
+
+      <p style="margin-top: 10px;"><strong>NaN (Not a Number):</strong> సంఖ్య కాని దాన్ని సంఖ్యలా లెక్కించడానికి ప్రయత్నిస్తే <code>NaN</code> వస్తుంది. ఆశ్చర్యంగా <strong>NaN కూడా "number" రకమే!</strong></p>
+      <div class="code-block">
+        <pre><code>console.log("abc" * 2);  // NaN
+console.log(typeof NaN); // number</code></pre>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">దశాంశ సంఖ్యల విచిత్రం (Floating Point Quirk)</h3>
+      <div class="code-block">
+        <pre><code>console.log(0.1 + 0.2); // 0.30000000000000004</code></pre>
+      </div>
+      <p><code>0.3</code> రావాలి కదా? కంప్యూటర్లు దశాంశ సంఖ్యలను binary లో store చేసే విధానం వల్ల చిన్న తేడా వస్తుంది. డబ్బు లెక్కల్లో దీని గురించి జాగ్రత్తగా ఉండాలి.</p>
+    </div>
+
+    <div class="section-title"><span class="num">6</span>3. Boolean: అవును లేదా కాదు (true / false)</div>
+    <div class="section-body">
+      <p><strong>Boolean</strong> కి కేవలం రెండే విలువలు ఉంటాయి: <code>true</code> (అవును) మరియు <code>false</code> (కాదు). ఇది లైట్ స్విచ్ లాంటిది — ఆన్ లేదా ఆఫ్.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Boolean Comparisons</span>
+        </div>
+        <pre><code>let isStudent = true;
+let isMarried = false;
+
+console.log(typeof isStudent); // boolean
+console.log(10 > 5);           // true
+console.log(3 === 4);          // false</code></pre>
+      </div>
+      <p><strong>గుర్తుంచుకోండి:</strong> <code>true</code> మరియు <code>false</code> ని quotes లో రాయకూడదు. <code>"true"</code> అనేది కేవలం ఒక text (string).</p>
+    </div>
+
+    <div class="section-title"><span class="num">7</span>4. undefined vs 5. null</div>
+    <div class="section-body">
+      <div class="callout">
+        <div class="callout-title">🎬 రియల్ లైఫ్ అనలాజీ: సినిమా హాల్ సీట్ బుకింగ్</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">ఈ రెంటికి తేడా చాలా సులభం:</p>
+        <ul style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">
+          <li><strong>undefined:</strong> డబ్బా ఉంది కానీ ఏమీ పెట్టడం మర్చిపోయాం, లేదా ఇంకా పెట్టలేదు. (మీరు ఇంకా seat select చేయలేదు).</li>
+          <li><strong>null:</strong> డబ్బా ఉంది, మరియు "ఇది ఖాళీ" అని మనమే ఉద్దేశపూర్వకంగా చెప్పాం. (మీరు "నాకు ఏ seat వద్దు" అని స్పష్టంగా చెప్పారు).</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — null vs undefined</span>
+        </div>
+        <pre><code>let phoneNumber;
+console.log(phoneNumber);        // undefined
+console.log(typeof phoneNumber); // undefined
+
+let selectedSeat = null;
+console.log(selectedSeat);        // null
+console.log(typeof selectedSeat); // object (హిస్టారిక్ బగ్!)</code></pre>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:15px;">
+        <div class="callout-title">⚠️ typeof null విచిత్రం:</div>
+        <p><code>typeof null</code> ఎప్పుడూ <strong>"object"</strong> అని వస్తుంది! ఇది 1995 లో JavaScript మొదటి version లో జరిగిన ఒక పొరపాటు. పాత వెబ్సైట్లు పాడవ్వకూడదని దీన్ని అలాగే ఉంచేశారు.</p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">8</span>"5" మరియు 5 మధ్య తేడా (కూడిక vs అతికింపు)</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — String Concatenation vs Number Addition</span>
+        </div>
+        <pre><code>console.log(5 + 3);   // 8 (నంబర్ల కూడిక)
+console.log("5" + 3); // "53" (టెక్స్ట్ అతికింపు - Concatenation!)</code></pre>
+      </div>
+      <p><code>5 + 3</code> రెండూ number లు కాబట్టి సంకలనం జరిగింది. కానీ <code>"5" + 3</code> లో ఒకటి string కాబట్టి JavaScript వాటిని పక్కపక్కనే అతికించింది (Concatenation).</p>
+    </div>
+
+    <div class="section-title"><span class="num">9</span>అన్నీ కలిపి ఒక ఉదాహరణ: విద్యార్థి వివరాలు</div>
+    <div class="section-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Full Data Types Example</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>let studentName = "సీత";
+let marks = 87.5;
+let isPassed = true;
+let address = null;
+let phoneNumber;
+
+console.log(studentName, "->", typeof studentName); // string
+console.log(marks, "->", typeof marks);             // number
+console.log(isPassed, "->", typeof isPassed);       // boolean
+console.log(address, "->", typeof address);         // object
+console.log(phoneNumber, "->", typeof phoneNumber); // undefined</code></pre>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు</div>
+      <ul>
+        <li><strong>Number ని quotes లో రాయడం:</strong> <code>let age = "25"; age + 5;</code> అంటే <code>"255"</code> వస్తుంది కానీ <code>30</code> రాదు! సంఖ్యలకు quotes వాడకూడదు.</li>
+        <li><strong>Boolean ని quotes లో రాయడం:</strong> <code>let isLoggedIn = "false";</code> అనేది boolean కాదు, string! దీన్ని <code>if</code> లో వాడితే <code>true</code> లా ప్రవర్తిస్తుంది!</li>
+        <li><strong>NaN ని === తో పోల్చడం:</strong> <code>NaN === NaN</code> రిజల్ట్ <code>false</code>! NaN ని చెక్ చేయడానికి ఎప్పుడూ <code>Number.isNaN()</code> వాడాలి.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">10</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <div class="section-body">
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>కింది విలువల data types చెప్పండి: <code>"hello"</code>, <code>42</code>, <code>3.14</code>, <code>true</code>, <code>null</code>, <code>undefined</code>, <code>"100"</code>, <code>false</code>.</li>
+        <li>ఈ <code>typeof</code> లు ఏం print చేస్తాయి? <code>typeof "true"</code>, <code>typeof true</code>, <code>typeof (7 / 2)</code>, <code>typeof NaN</code>.</li>
+        <li>ఒక variable లో మీ పేరు, వయసు, student అవునా కాదా (boolean) పెట్టి, ప్రతిదాని <code>typeof</code> print చేయండి.</li>
+        <li><code>"10" + 5</code> మరియు <code>10 + 5</code> ఫలితాలు ఏమిటి? ఎందుకు వేర్వేరు?</li>
+        <li><code>0.1 + 0.2 === 0.3</code> ఏం ఇస్తుంది?</li>
+      </ol>
+
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: var(--text);">సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 10px; font-size: 14px; color: var(--text2);">
+          <p><strong>1.</strong> <code>"hello"</code> → string, <code>42</code> → number, <code>3.14</code> → number, <code>true</code> → boolean, <code>null</code> → null (కానీ typeof object), <code>undefined</code> → undefined, <code>"100"</code> → string, <code>false</code> → boolean.</p>
+          <p style="margin-top: 8px;"><strong>2.</strong> <code>string</code>, <code>boolean</code>, <code>number</code>, <code>number</code> (NaN కూడా number రకమే!).</p>
+          <p style="margin-top: 8px;"><strong>3.</strong> <code>let myName = "రవి"; let myAge = 20; let isStudent = true;</code> (Types: string, number, boolean).</p>
+          <p style="margin-top: 8px;"><strong>4.</strong> <code>"10" + 5</code> → <code>"105"</code> (string concatenation). <code>10 + 5</code> → <code>15</code> (number addition).</p>
+          <p style="margin-top: 8px;"><strong>5.</strong> <code>false</code>. ఎందుకంటే <code>0.1 + 0.2</code> ఫలితం <code>0.30000000000000004</code>.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">🚀 మీరే try చేయండి</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">ఈ code ని మన compiler లో run చేసి, విలువలు మార్చి ఫలితాలు చూడండి:</p>
+      <div class="code-block">
+        <pre><code>let productName = "Laptop";
+let price = 45000;
+let inStock = true;
+let discount = null;
+let rating;
+
+console.log(productName, "->", typeof productName);
+console.log(price, "->", typeof price);
+console.log(inStock, "->", typeof inStock);
+console.log(discount, "->", typeof discount);
+console.log(rating, "->", typeof rating);</code></pre>
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript try చేయండి</a>
+    </div>
+
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>Data type అంటే విలువ యొక్క రకం. <code>typeof</code> తో తెలుసుకోవచ్చు.</li>
+        <li><strong>string</strong>: text. <strong>number</strong>: సంఖ్యలు (Infinity, NaN తో సహా). <strong>boolean</strong>: <code>true</code> / <code>false</code>.</li>
+        <li><strong>undefined</strong>: విలువ ఇంకా ఇవ్వలేదు. <strong>null</strong>: ఉద్దేశపూర్వకంగా ఖాళీ.</li>
+        <li><code>typeof null</code> ఎప్పుడూ <code>"object"</code> అని ఇస్తుంది (ఒక పాత quirk).</li>
+        <li><code>"5"</code> (string) మరియు <code>5</code> (number) వేరు వేరు. <code>"5" + 3</code> ఫలితం <code>"53"</code>.</li>
+      </ul>
+    </div>
+
+
+                <div class="nav-footer">
+      
+      <a href="variables.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">3. Variables: var, let, const</span>
+      </a>
+
+      
+      <a href="operators.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">5. Operators</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

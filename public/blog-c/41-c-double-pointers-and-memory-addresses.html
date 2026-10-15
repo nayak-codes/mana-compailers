@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Double Pointers (**) & Memory Addresses (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో పాయింటర్స్ కీ పాయింటర్ అంటే ఏంటి? డబుల్ పాయింటర్ (**) ఎందుకు వాడాలి? ఒక ఫంక్షన్ ద్వారా పాయింటర్ అడ్రస్ ని ఎలా మార్చాలో యానిమేటెడ్ రియల్ లైఫ్ ఉదాహరణలతో డీప్ గా తెలుసుకుందాం." />
+  <meta name="keywords" content="c tutorial, double pointers (**) & memory addresses (తెలుగులో), file errors in c, feof, c preprocessor, c macros, header files in c, double pointers c, function pointers c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/41-c-double-pointers-and-memory-addresses.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 14: File I/O & Preprocessor -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📁</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 14</span>
+            <span class="phase-title">File I/O & Preprocessor</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/36-c-file-handling-fopen-fclose-and-text-io.html">36. File Handling, fopen() & I/O</a>
+        <a href="/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html">37. Binary File I/O & fseek()</a>
+        <a href="/blog-c/38-c-file-error-handling-feof-ferror-and-errno.html">38. File Errors & feof()</a>
+        <a href="/blog-c/39-c-preprocessor-macros-define-and-conditional-compilation.html">39. C Preprocessor, Macros & #define</a>
+        <a href="/blog-c/40-c-header-files-h-and-multi-file-projects.html">40. Header Files (.h) & Multi-file Projects</a>
+      </div>
+
+      <!-- Phase 15: Advanced Pointers -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Advanced Pointers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/41-c-double-pointers-and-memory-addresses.html" class="active">41. Double Pointers (**) & Memory Addresses</a>
+        <a href="/blog-c/42-c-function-pointers-and-callbacks.html">42. Function Pointers & Callbacks</a>
+        <a href="/blog-c/43-c-void-pointers-and-generic-programming.html">43. Void Pointers & Generic Programming</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 41: Double Pointers (**) & Memory Addresses (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Double Pointers (**) & Memory Addresses (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 41</span>
+      <span class="badge">📂 Phase 15: Advanced Pointers</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Double Pointers (**) · Pointer to Pointer · Changing Pointers in Functions · Dynamic 2D Arrays</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఒక వేరియబుల్ ఎక్కడుందో చెప్పేది పాయింటర్ (Pointer). మరి ఆ పాయింటర్ ఎక్కడుందో చెప్పేదే <strong>Double Pointer (డబుల్ పాయింటర్ <code>**</code>)</strong>! వినడానికి కొంచెం బ్రెయిన్ ఫ్రీజ్ లాగా అనిపిస్తుంది కానీ, రియల్ ప్రాజెక్ట్స్ లో ఒక ఫంక్షన్ కి మీ పాయింటర్ ని పాస్ చేసి, అందులో ఉన్న అడ్రస్ ని మార్చాలంటే దీనివల్లనే సాధ్యం. డేటా స్ట్రక్చర్స్ లో (Linked Lists లో నోడ్స్ డిలీట్ చేసేటప్పుడు) ఇది చాలా కీలకం. ఈరోజు డబుల్ పాయింటర్స్ వెనక ఉన్న మ్యాజిక్ ఏంటో పోస్ట్‌మార్టం చేద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> పాయింటర్ టు పాయింటర్ (Inception)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        సింపుల్ గా చెప్పాలంటే ఇది ఒక ట్రెజర్ హంట్ (Treasure Hunt) లాంటిది! మీరు ఒక బాక్స్ (<code>**ptr2</code>) ఓపెన్ చేస్తే అందులో ఇంకో బాక్స్ అడ్రస్ (<code>*ptr1</code>) ఉంటుంది, దాన్ని ఓపెన్ చేస్తే అసలు డేటా (<code>data</code>) దొరుకుతుంది.
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>📦 రియల్ లైఫ్ స్టోరీ: లాకర్ కి తాళం (The Double Lock)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          మీరు ఒక బ్యాంకు లో డబ్బు దాచారు (ఇదే ఒరిజినల్ వేరియబుల్ <code>a=100</code>). ఆ డబ్బు ఒక లాకర్ లో (Locker 501) ఉంది.<br><br>
+          ఆ లాకర్ తాళం మీ ఫ్రెండ్ చేతిలో ఉంది (ఇదే సింగిల్ పాయింటర్ <code>int *ptr = &amp;a;</code>). ఇప్పుడు మీ ఫ్రెండ్ ఎక్కడున్నాడు? అతను ఇంకో రూమ్ లో (Room 902) కూర్చున్నాడు. మీరు మీ బాస్ కి "ఆ రూమ్ 902 కి వెళ్ళు, అక్కడ మా ఫ్రెండ్ ఉన్నాడు, వాడి దగ్గర లాకర్ కీ ఉంది, అందులో నా డబ్బు ఉంది" అని చెప్తారు (ఇదే డబుల్ పాయింటర్ <code>int **boss = &amp;ptr;</code>).<br><br>
+          అంటే బాస్ డైరెక్ట్ గా డబ్బు దగ్గరికి వెళ్లలేడు, ముందు కీ (పాయింటర్) ఉన్నోడి దగ్గరికి వెళ్లి, వాడి ద్వారా డబ్బు తెచ్చుకుంటాడు.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> ఫంక్షన్స్ లో అడ్రస్ మార్చడం (Pass by Reference for Pointers)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీరు ఒక ఫంక్షన్ కి నార్మల్ వేరియబుల్ ని పాస్ చేసి దాన్ని మార్చాలంటే అడ్రస్ (<code>&amp;a</code>) ని పాస్ చేస్తారు కదా! అదే విధంగా, ఒక ఫంక్షన్ కి <strong>పాయింటర్ ని పాస్ చేసి, ఆ పాయింటర్ నే మార్చాలంటే</strong> మీరు దాని అడ్రస్ ని (అంటే డబుల్ పాయింటర్ ని) పాస్ చేయాలి. 
+      </p>
+      <p class="text-prose">
+        మెమరీని ఆన్ ది స్పాట్ లో (malloc) క్రియేట్ చేసి పంపే ఫంక్షన్స్ కి ఇవి చాలా చాలా అవసరం!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Pointer of Pointer Magic)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో డబుల్ పాయింటర్ వాడి, మూడు అంచెల్లో ఒక వాల్యూని ఎలా మార్చామో (Dereferencing) క్లియర్ గా చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Double Pointers (**)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// ఫంక్షన్ పాయింటర్ ని మారుస్తుంది (డబుల్ పాయింటర్ వాడి)
+void changePointer(int **doublePtr, int *newAddress) {
+    // లోపల ఉన్న సింగిల్ పాయింటర్ కి కొత్త అడ్రస్ ని ఇస్తున్నాం
+    *doublePtr = newAddress;
+}
+
+int main() {
+    int x = 10;
+    int y = 99;
+    
+    // సింగిల్ పాయింటర్ (x ని పాయింట్ చేస్తుంది)
+    int *ptr = &x;
+    
+    printf("--- Before Function Call ---\n");
+    printf("ptr points to value: %d\n", *ptr); // అవుట్పుట్: 10
+    
+    // ఇప్పుడు ptr అనే పాయింటర్ అడ్రస్ నే మార్చేద్దాం!
+    // ptr అడ్రస్ ని పంపుతున్నాం కాబట్టి ఫంక్షన్ కి (**) కావాలి
+    changePointer(&ptr, &y);
+    
+    printf("\n--- After Function Call ---\n");
+    printf("ptr now points to value: %d\n", *ptr); // అవుట్పుట్: 99
+    
+    // అసలు డబుల్ పాయింటర్ వాల్యూని డైరెక్ట్ గా ప్రింట్ చేస్తే...
+    int **dp = &ptr;
+    printf("\nUsing Double Pointer: **dp = %d\n", **dp); // అవుట్పుట్: 99
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>int *ptr = &amp;x;</code>: ఇది నార్మల్. <code>x</code> ఉన్న మెమరీ లొకేషన్ ని <code>ptr</code> పట్టుకుంది.</li>
+        <li><code>changePointer(&amp;ptr, &amp;y);</code>: మనం <code>ptr</code> యొక్క సొంత మెమరీ అడ్రస్ ని పంపుతున్నాం! అంటే ఆ బాక్స్ లోపలికి వెళ్లి దాన్ని చెరిపేసి కొత్తగా <code>y</code> అడ్రస్ ని పేస్ట్ చేయమని పర్మిషన్ ఇచ్చాం.</li>
+        <li><code>**dp</code> (డబుల్ డీ-రిఫరెన్స్): స్టార్ స్టార్ (<code>**</code>) వాడితే, కంపైలర్ ఫస్ట్ టైమ్ ఒక జంప్ చేసి పాయింటర్ దగ్గరికి వెళ్తుంది, మళ్ళీ ఇంకో స్టార్ కి ఇంకో జంప్ చేసి అసలు వాల్యూ (99) దగ్గరికి వెళ్తుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: <code>***ptr</code> (ట్రిపుల్ పాయింటర్) వాడొచ్చా? ఇది వాలిడ్ ఏనా?</h4>
+          <p>సింటాక్స్ పరంగా మీరు ఎన్ని స్టార్స్ అయినా పెట్టుకోవచ్చు (<code>****ptr</code>). కానీ రియల్ వరల్డ్ లో డబుల్ పాయింటర్ (<code>**</code>) కి మించి వెళ్తే అది "Bad Design" కింద లెక్క. ఎందుకంటే బ్రెయిన్ కన్ఫ్యూజ్ అయ్యి బగ్స్ వస్తాయి. ట్రిపుల్ పాయింటర్స్ ని చాలా అరుదుగా, మల్టీ-డైమెన్షనల్ స్ట్రింగ్ అర్రేస్ (3D arrays) కోసం మాత్రమే వాడుతారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Dynamic 2D Arrays లో డబుల్ పాయింటర్స్ ఎందుకు వాడతారు?</h4>
+          <p>మీకు ఒక మ్యాట్రిక్స్ (రోస్ & కాలమ్స్) హీప్ లో కావాలంటే, ముందుగా రోస్ అడ్రస్ లు పెట్టుకోవడానికి ఒక <code>malloc</code> కావాలి (ఇదే <code>int **</code>). ఆ తర్వాత ప్రతి రో లో కాలమ్స్ కోసం మళ్ళీ లూప్ లోపల ఇంకో <code>malloc</code> వాడాలి (ఇవి సింగిల్ <code>int *</code>). ఇండస్ట్రీలో 2D అర్రేస్ ని ఇలాగే తయారు చేస్తారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: జావా, పైథాన్ లాంటి లాంగ్వేజెస్ లో ఈ డబుల్ పాయింటర్స్ ఉంటాయా?</h4>
+          <p>ఉండవు! జావా లో పాయింటర్స్ నే పూర్తిగా తీసేశారు, అంతా రిఫరెన్సెస్ (References) ద్వారా ఆటోమేటిక్ గా జరుగుతుంది. అందుకే జావా నేర్చుకోవడం చాలా ఈజీ అంటారు. కానీ మెమరీ మీద ఫుల్ కంట్రోల్ ఉండదు. సి లాంగ్వేజ్ లో పాయింటర్స్ వల్లే అది హార్డ్వేర్ కి కింగ్ అయింది.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="40-c-header-files-h-and-multi-file-projects.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">40. Header Files & Projects</span>
+      </a>
+
+      
+      <a href="42-c-function-pointers-and-callbacks.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">42. Function Pointers & Callbacks</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

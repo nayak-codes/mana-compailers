@@ -256,7 +256,7 @@ function wrapCPage(title, desc, filename, currentNum, phaseTag, phaseTitle, subt
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -429,45 +429,45 @@ ${contentBody}
 
 // ── BUILD LESSON 24: Passing Addresses, Swapping & Returning Pointers ──────
 function buildLesson24() {
-  const title = "C Pointers & Functions: Passing Addresses, Mutating Caller RAM & Safe Returns";
-  const desc = "Comprehensive textbook-grade masterclass on Pointers and Functions in C (Phase 10 Part 1): Pass-by-Value stack frame isolation vs Pass-by-Address pointer dereferencing, in-place variable swapping, CPU stack activation record lifecycles, and the 3 professional methods to return pointers safely.";
+  const title = "C Pointers & Functions: Passing Addresses, Mutating Caller RAM (తెలుగులో)";
+  const desc = "C Pointers & Functions (Phase 10 Part 1): ఫంక్షన్స్ కి మామూలుగా వేరియబుల్స్ కి బదులు అడ్రస్ లు ఎందుకు పంపిస్తారు, Swap ఫంక్షన్ అసలు ఎలా పనిచేస్తుంది, మరియు ఫంక్షన్ నుండి పాయింటర్స్ ని ఎలా సేఫ్ గా రిటర్న్ చేయాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "24-c-pointers-and-functions-call-by-reference.html";
   const subtopics = "Pass-by-Value vs Pass-by-Address · Mutating Caller Memory · Swap Algorithm & Stack Lifecycle · Returning Pointers Safely · Dangling Stack Traps";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 10 (Chapter 24): C Pointers and Functions — Passing Addresses, Mutating Caller RAM & Safe Returns Masterclass</strong>! By default in C, all function arguments are passed strictly by value: isolated copies are pushed onto the called function's stack frame, making it impossible for a helper function to alter the caller's original variables. <strong>Pointers bridge this stack frame boundary</strong>. By passing physical RAM memory addresses (<code>&amp;var</code>) into pointer parameters (<code>Type* ptr</code>), functions gain direct read and write access to the caller's memory slots. In this exhaustive textbook-grade guide, you will master the mechanics of Pass-by-Address, trace the CPU call stack lifecycle during in-place swapping, analyze the dangerous trap of returning local stack pointers, and learn the 3 professional architectural patterns for returning pointers safely.</p>
+      <p><strong>Phase 10 (Chapter 24): C Pointers & Functions Masterclass</strong> కు స్వాగతం! C లో మామూలుగా ఒక ఫంక్షన్ కి వాల్యూస్ పంపిస్తే (Pass-by-Value), అది ఒరిజినల్ వాల్యూస్ ని టచ్ చేయలేదు, కేవలం వాటి డూప్లికేట్ కాపీలతో మాత్రమే పనిచేస్తుంది. కానీ <strong>పాయింటర్స్ వాడితే మనం ఒరిజినల్ డేటా నే డైరెక్ట్ గా మార్చేయొచ్చు!</strong> ఈ గైడ్ లో, ఫంక్షన్స్ కి వాల్యూ కి బదులు అడ్రస్ పంపిస్తే (Pass-by-Address) లోపల ఏం జరుగుతుంది, రెండు వాల్యూస్ ని మార్చే Swap లాజిక్ RAM లో ఎలా రన్ అవుతుంది, మరియు ఒక ఫంక్షన్ లోపల క్రియేట్ చేసిన పాయింటర్ ని బయటకి రిటర్న్ చేస్తే వచ్చే డేంజర్ ఏంటి, దాన్ని సేఫ్ గా ఎలా రిటర్న్ చేయాలో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. Pass-by-Value vs Pass-by-Address Architecture -->
-    <div class="section-title"><span class="num">1</span>Pass-by-Value Isolation vs Pass-by-Address (Pointer Passing)</div>
+    <div class="section-title"><span class="num">1</span>Pass-by-Value vs Pass-by-Address అంటే ఏంటి?</div>
     <div class="section-body">
       <p class="text-prose">
-        C compiler architecture operates under strict <strong>Stack Frame Isolation</strong>. Every function invocation creates an independent activation record containing its private local variables:
+        C కంపైలర్ లో ప్రతి ఫంక్షన్ కి దాని సొంత ప్రైవేట్ మెమరీ (Stack Frame) ఉంటుంది. ఒక ఫంక్షన్ మెమరీని ఇంకో ఫంక్షన్ టచ్ చేయలేదు:
       </p>
 
       <table class="tbl spec-table">
-        <tr><th>Mechanism</th><th>What Travels into Function?</th><th>Stack Frame Behavior</th><th>Can Caller State Be Modified?</th></tr>
+        <tr><th>పద్ధతి (Mechanism)</th><th>ఫంక్షన్ లోపలికి ఏం వెళ్తుంది?</th><th>మెమరీలో ఏం జరుగుతుంది?</th><th>ఒరిజినల్ డేటా మారుతుందా?</th></tr>
         <tr>
           <td><strong>Pass by Value</strong></td>
-          <td>A temporary <strong>copy</strong> of the data (4 to 8 bytes).</td>
-          <td>New local variable created; destroyed on exit.</td>
-          <td>❌ <strong>NO.</strong> Caller's variables remain untouched.</td>
+          <td>కేవలం డేటా యొక్క <strong>డూప్లికేట్ కాపీ</strong> మాత్రమే వెళ్తుంది.</td>
+          <td>కొత్త వేరియబుల్ క్రియేట్ అవుతుంది, ఫంక్షన్ అవ్వగానే డిలీట్ అవుతుంది.</td>
+          <td>❌ <strong>మారదు.</strong> ఒరిజినల్ వేరియబుల్స్ కి ఏమీ కాదు.</td>
         </tr>
         <tr>
           <td><strong>Pass by Address</strong></td>
-          <td>The <strong>physical RAM address (<code>&amp;var</code>)</strong>.</td>
-          <td>Pointer parameter holds the caller's memory address.</td>
-          <td>✅ <strong>YES!</strong> Dereferencing (<code>*ptr</code>) mutates caller RAM directly!</td>
+          <td>ఒరిజినల్ వేరియబుల్ యొక్క <strong>అడ్రస్ (<code>&amp;var</code>)</strong> వెళ్తుంది.</td>
+          <td>ఆ ఫంక్షన్ పాయింటర్, మన ఒరిజినల్ వేరియబుల్ అడ్రస్ నే పాయింట్ చేస్తుంది.</td>
+          <td>✅ <strong>ఎస్ మారుతుంది!</strong> <code>*ptr</code> వాడి డైరెక్ట్ గా మన ఒరిజినల్ డేటాని మార్చేయొచ్చు!</td>
         </tr>
       </table>
     </div>
 
     <!-- 2. The Canonical Swap Algorithm & CPU Call Stack Walkthrough -->
-    <div class="section-title"><span class="num">2</span>The Canonical In-Place Swap Algorithm &amp; CPU Call Stack Walkthrough ⭐</div>
+    <div class="section-title"><span class="num">2</span>Swap ప్రోగ్రామ్ అసలు RAM లో ఎలా రన్ అవుతుంది? ⭐</div>
     <div class="section-body">
       <p class="text-prose">
-        Let us analyze what happens inside computer RAM when the classic <code>swap(&amp;first, &amp;second)</code> executes:
+        అందరూ రాసే <code>swap(&amp;first, &amp;second)</code> రన్ అయినప్పుడు, అసలు RAM లోపల సీక్రెట్ గా ఏం జరుగుతుందో చూద్దాం:
       </p>
 
       <div class="memory-diagram">
@@ -522,7 +522,7 @@ int main(void) {
     </div>
 
     <!-- 3. Returning Pointers Safely from Functions -->
-    <div class="section-title"><span class="num">3</span>Returning Pointers Safely: The Dangling Stack Trap ☠️</div>
+    <div class="section-title"><span class="num">3</span>ఫంక్షన్ నుండి పాయింటర్ రిటర్న్ చేసేటప్పుడు డేంజర్ ☠️</div>
     <div class="section-body">
       <p class="text-prose">
         When a function returns a pointer (<code>Type* myFunc()</code>), what memory address is it returning?
@@ -539,7 +539,7 @@ int main(void) {
       </div>
 
       <div class="deep-dive-card">
-        <h3>✅ The 3 Professional Ways to Return Pointers in C:</h3>
+        <h3>✅ పాయింటర్స్ ని సేఫ్ గా రిటర్న్ చేయడానికి 3 పద్ధతులు:</h3>
         <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
           1. <strong>Caller-Provided Buffer (Safest &amp; Most Common):</strong> Caller allocates the memory and passes the pointer to the function to populate: <code>void fillData(int *outBuf, int size);</code><br>
           2. <strong>Dynamic Heap Memory (<code>malloc</code>):</strong> Heap memory allocated via <code>malloc()</code> persists across function returns until explicitly released via <code>free()</code>.<br>
@@ -599,30 +599,30 @@ int main(void) {
 
 // ── BUILD LESSON 25: Array/String Pointer Parameters & const Safety ───────
 function buildLesson25() {
-  const title = "C Pointer Parameters: Passing Arrays, Strings & const Memory Safety";
-  const desc = "Comprehensive textbook-grade masterclass on Pointer Parameters in C (Phase 10 Part 2): Passing 1D/2D arrays via pointers, mutable string buffers vs read-only const char* parsers, const pointer qualifiers, and returning multiple values from a function via output pointer parameters.";
+  const title = "C Pointer Parameters: Passing Arrays, Strings & const (తెలుగులో)";
+  const desc = "C Pointer Parameters (Phase 10 Part 2): Arrays మరియు Strings ని ఫంక్షన్స్ కి ఎలా పాస్ చేయాలి, const వాడి మన డేటాని వేరే వాళ్ళు మార్చకుండా ఎలా కాపాడుకోవాలి, ఒక ఫంక్షన్ నుండి 2, 3 ఆన్సర్స్ ఒకేసారి ఎలా రిటర్న్ చేయాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "25-c-pointer-parameters-arrays-and-const-protection.html";
   const subtopics = "Passing 1D/2D Arrays to Functions · Passing Strings (char* vs const char*) · const Pointer Parameters · Returning Multiple Values via Output Pointers";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 10 (Chapter 25): C Pointer Parameters — Passing Arrays, Strings & const Memory Safety Masterclass</strong>! When passing massive datasets—such as 50,000 sensor readings or large text paragraphs—into functions, pointers eliminate memory copying overhead. However, giving functions raw pointer access to caller memory creates the risk of accidental data corruption. In this exhaustive textbook-grade guide, you will master passing arrays and strings via pointer parameters, learn how to enforce iron-clad read-only memory safety using <code>const</code> pointer qualifiers, and discover how functions can return multiple results simultaneously via <strong>Output Pointer Parameters</strong>.</p>
+      <p><strong>Phase 10 (Chapter 25): Arrays, Strings & const Pointers Masterclass</strong> కు స్వాగతం! ఒక లక్ష నంబర్స్ ఉన్న Array ని ఫంక్షన్ కి పంపించాలంటే, పాయింటర్స్ లేకపోతే కంపైలర్ ఆ లక్ష నంబర్స్ ని డూప్లికేట్ చేసి టైం మరియు మెమరీ వేస్ట్ చేస్తుంది. కానీ పాయింటర్స్ వాడితే, జస్ట్ ఆ Array అడ్రస్ ఇస్తే సరిపోతుంది. కానీ ఇలా అడ్రస్ ఇవ్వడం వల్ల వాళ్ళు మన డేటాని మార్చే ఛాన్స్ ఉంది. ఈ గైడ్ లో, మన డేటాని సేఫ్ గా <code>const</code> వాడి ఎలా పంపించాలి, మరియు మామూలుగా ఫంక్షన్ ఒకే వాల్యూ రిటర్న్ చేస్తుంది కదా.. అలా కాకుండా పాయింటర్స్ వాడి ఒకేసారి 3, 4 వాల్యూస్ ఎలా రిటర్న్ చేయాలో (Output Parameters) తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. Passing Strings: Mutable char* vs Read-Only const char* -->
-    <div class="section-title"><span class="num">1</span>Passing Strings: Mutable char* vs Read-Only const char*</div>
+    <div class="section-title"><span class="num">1</span>Strings ని పంపించడం: char* కి const char* కి తేడా?</div>
     <div class="section-body">
       <p class="text-prose">
-        When passing text to a function, you must strictly declare your intent using the <code>const</code> qualifier:
+        ఒక పదాన్ని (String ని) ఫంక్షన్ కి పంపించేటప్పుడు, మనం <code>const</code> వాడాలా వద్దా అనేది ఈ క్రింది విధంగా డిసైడ్ చేసుకోవాలి:
       </p>
 
       <table class="tbl spec-table">
-        <tr><th>Parameter Signature</th><th>Intent &amp; Capability</th><th>Can Mutate Caller String?</th><th>Example Use Case</th></tr>
+        <tr><th>ఫంక్షన్ లో ఎలా రాస్తాం?</th><th>దీని పర్పస్ ఏంటి?</th><th>మనం పంపిన పదాన్ని మార్చగలదా?</th><th>ఎప్పుడు వాడతారు?</th></tr>
         <tr>
           <td><code>void process(char* str)</code></td>
-          <td><strong>Mutator:</strong> Modifies text in-place in RAM.</td>
-          <td>✅ <strong>YES</strong></td>
-          <td><code>toUpper()</code>, <code>reverse()</code>, <code>trim()</code></td>
+          <td><strong>మార్చడానికి:</strong> పదాన్ని మోడిఫై చేస్తుంది.</td>
+          <td>✅ <strong>ఎస్ మార్చగలదు</strong></td>
+          <td>పదాన్ని రివర్స్ చేయడానికి, కాపిటల్ లెటర్స్ లోకి మార్చడానికి</td>
         </tr>
         <tr>
           <td><code>void inspect(const char* str)</code></td>
@@ -634,7 +634,7 @@ function buildLesson25() {
     </div>
 
     <!-- 2. Returning Multiple Values via Output Pointers -->
-    <div class="section-title"><span class="num">2</span>Returning Multiple Results via Output Pointer Parameters ⭐</div>
+    <div class="section-title"><span class="num">2</span>ఫంక్షన్ నుండి ఒకేసారి 3, 4 ఆన్సర్స్ ఎలా రిటర్న్ చేయాలి? ⭐</div>
     <div class="section-body">
       <p class="text-prose">
         In C, the <code>return</code> statement can only send back a single primitive value. 
@@ -733,21 +733,21 @@ int main(void) {
 
 // ── BUILD LESSON 26: Function Pointers, Callbacks & Event Systems ──────────
 function buildLesson26() {
-  const title = "C Function Pointers, Callbacks & Event-Driven Architecture Masterclass";
-  const desc = "Comprehensive textbook-grade masterclass on Function Pointers and Callbacks in C (Phase 10 Part 3): Passing function pointers into functions, callback design patterns, custom sorting with qsort comparators, predicate filtering pipelines, jump table dispatchers, and state machine architectures.";
+  const title = "C Function Pointers, Callbacks & Event-Driven (తెలుగులో)";
+  const desc = "C Function Pointers & Callbacks (Phase 10 Part 3): ఫంక్షన్ కి వేరియబుల్ లాగే ఇంకో ఫంక్షన్ ని ఆర్గ్యుమెంట్ గా ఎలా పంపాలి (Callbacks), qsort లో కస్టమ్ సార్టింగ్ ఎలా చేయాలి, మరియు Jump Tables వాడి ప్రోగ్రామ్ ని సూపర్ ఫాస్ట్ గా ఎలా రన్ చేయాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "26-c-function-pointers-callbacks-and-event-systems.html";
   const subtopics = "Function Pointer Parameters · Callback Architecture · Custom Sorting Comparators · Predicate Filters · Jump Tables & State Machines";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 10 (Chapter 26): C Function Pointers, Callbacks & Event-Driven Architecture Masterclass</strong>! In high-level computer science, higher-order functions (functions that accept other functions as arguments) form the backbone of modern event-driven architectures, GUI button listeners, network packet hooks, and sorting algorithms. In C, <strong>Function Pointers enable higher-order callback programming directly in hardware machine code</strong>. In this exhaustive textbook-grade guide, you will master the syntax of function pointer parameters, build generic callback filter engines, implement standard C library <code>qsort</code> comparators, and construct high-speed $O(1)$ Jump Table state machines.</p>
+      <p><strong>Phase 10 (Chapter 26): Function Callbacks & Architecture Masterclass</strong> కు స్వాగతం! జావాస్క్రిప్ట్ లాంటి అడ్వాన్స్డ్ లాంగ్వేజెస్ లో బటన్ నొక్కగానే ఒక ఫంక్షన్ ఆటోమేటిక్ గా రన్ అవుతుంది కదా (దాన్నే Callbacks అంటారు). మరి C లాంటి బేసిక్ లాంగ్వేజ్ లో అలా ఎలా చేస్తారు? అక్కడే మనకు <strong>Function Pointers</strong> వస్తాయి! ఒక ఫంక్షన్ కి వేరియబుల్ ని కాకుండా ఇంకో ఫంక్షన్ అడ్రస్ నే ఆర్గ్యుమెంట్ గా పంపించొచ్చు. ఈ గైడ్ లో, ఈ Callbacks ఎలా రన్ అవుతాయి, C లైబ్రరీలో ఉన్న <code>qsort</code> కి మన సొంత లాజిక్ ఎలా ఇవ్వాలి, మరియు పెద్ద పెద్ద <code>if-else</code> లు వాడకుండా Jump Tables వాడి సిస్టమ్స్ ని ఎలా ఫాస్ట్ చేయాలో తెలుగులో డీటెయిల్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. What is a Callback Function in C? -->
-    <div class="section-title"><span class="num">1</span>What is a Callback Function? The Inversion of Control</div>
+    <div class="section-title"><span class="num">1</span>Callback అంటే ఏంటి? ఇది ఎలా పనిచేస్తుంది?</div>
     <div class="section-body">
       <p class="text-prose">
-        A <strong>Callback</strong> is a function that is passed as an argument to another function, with the expectation that the receiving function will "call back" (execute) that logic at the appropriate time:
+        <strong>Callback</strong> అంటే ఏం లేదు, ఒక ఫంక్షన్ లోకి ఇంకొక ఫంక్షన్ ని ఆర్గ్యుమెంట్ గా పంపించడం. ఆ మొదటి ఫంక్షన్ కి ఎప్పుడు అవసరమైతే అప్పుడు ఆ రెండో ఫంక్షన్ ని రన్ చేసుకుంటుంది (Call బ్యాక్ చేస్తుంది):
       </p>
 
       <div class="memory-diagram">
@@ -762,7 +762,7 @@ function buildLesson26() {
     </div>
 
     <!-- 2. Generic Callback Filtering Engine -->
-    <div class="section-title"><span class="num">2</span>Generic Callback Predicate Filtering Engine ⭐</div>
+    <div class="section-title"><span class="num">2</span>మన సొంత Callback ఫిల్టర్ ని తయారు చేద్దాం ⭐</div>
     <div class="section-body">
       <div class="code-block">
         <div class="code-block-header">
@@ -803,10 +803,10 @@ int main(void) {
     </div>
 
     <!-- 3. Jump Tables & Dispatchers -->
-    <div class="section-title"><span class="num">3</span>Jump Tables &amp; O(1) Fast State Machine Dispatchers</div>
+    <div class="section-title"><span class="num">3</span>Jump Tables: if-else కన్నా సూపర్ ఫాస్ట్!</div>
     <div class="section-body">
       <p class="text-prose">
-        Instead of using slow, lengthy <code>if-else</code> ladders or large <code>switch</code> blocks, high-performance operating systems (such as Linux syscall dispatchers) store function pointers inside an <strong>Array of Function Pointers (Jump Table)</strong> for instantaneous $O(1)$ constant-time execution:
+        100 కండిషన్స్ ఉన్నప్పుడు <code>if-else</code> లేదా <code>switch</code> వాడితే చెక్ చేయడానికి చాలా టైం పడుతుంది. అందుకే ఆపరేటింగ్ సిస్టమ్స్ (OS) లో ఫంక్షన్ పాయింటర్స్ ని ఒక <strong>Array లో పెట్టి డైరెక్ట్ గా కాల్ చేస్తారు (దీన్నే Jump Table అంటారు)</strong>. దీనివల్ల 1 మిల్లీ సెకండ్ లోపే పని అయిపోతుంది:
       </p>
 
       <div class="concept-box">
@@ -1017,7 +1017,7 @@ function buildBlogCHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

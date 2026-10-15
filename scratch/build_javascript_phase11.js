@@ -9,125 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
+    title: 'Object-Oriented Programming (OOP)',
+    icon: '🏗️',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions Mastery',
-    icon: '🧩',
-    desc: 'Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions, Closures & this (Masterclass)', subtopics: 'Declaration vs Expression · Arrow Syntax · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'DOM Manipulation',
-    icon: '🌐',
-    desc: 'DOM ante enti?, Selecting elements (getElementById, querySelector, querySelectorAll), textContent vs innerHTML, changing styles, classList (add, remove, toggle), reading input values, creating & appending elements, removing elements, data attributes, DOM traversal (parent, children, closest), dynamic lists, and 4 interactive projects.',
-    lessons: [
-      { num: 14, file: 'dom.html', title: '14. DOM Manipulation & Web Interactivity', subtopics: 'DOM ante enti? · Selecting Elements · textContent vs innerHTML · Styles & classList · createElement & append · Data Attributes · DOM Traversal & closest · 4 Interactive Projects' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Asynchronous JavaScript & APIs',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, Error Handling with try-catch-finally, and LocalStorage.',
-    lessons: [
-      { num: 15, file: 'promises.html', title: '15. Promises & Async/Await (Masterclass)', subtopics: 'Event Loop · Call Stack · Promises · async/await · Fetch API' },
-      { num: 16, file: 'exceptions.html', title: '16. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -243,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -432,329 +400,113 @@ function buildLesson14() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 11: DOM Manipulation</strong>! <strong>DOM (Document Object Model)</strong> webpage structure ni JavaScript interact cheyagalige <em>in-memory tree representation</em> ga provide chesthundhi. HTML document browser lo load avvagane, browser static HTML tags ni JavaScript Objects ga convert chesi <strong>Node Tree Hierarchy</strong> ni construct chesthundhi. In this comprehensive masterclass guide, you will master element selectors (<code>getElementById</code>, <code>querySelector</code>, <code>querySelectorAll</code>), changing text, HTML, styles and classes (<code>classList</code>), reading form inputs, dynamic element creation (<code>createElement</code>, <code>append</code>, <code>remove</code>), data attributes (<code>dataset</code>), DOM traversal (<code>parentElement</code>, <code>closest</code>), dynamic list rendering, and build 4 interactive browser UI projects.</p>
+      <p>HTML పేజీలోని ఎలిమెంట్స్ ని (Headings, Buttons, Images, Divs) JavaScript ఉపయోగించి డైనమిక్ గా మార్చడానికి <strong>DOM (Document Object Model)</strong> వాడతాం. వెబ్ సైట్ లో బటన్ కొట్టగానే రంగు మారడం, కొత్త మెసేజ్ రావడానికి DOM మేనిప్యులేషన్ అత్యంత అవసరం. ఈ చాప్టర్ లో Element Selection, Content Modification, Dynamic Style Changes, మరియు New Elements Creation ల గురించి క్లియర్ గా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. DOM Ante Enti? -->
-    <div class="section-title"><span class="num">1</span>DOM Ante Enti? (Tree Architecture & In-Memory Representation)</div>
-    <div class="section-body">
-      <p>Browser HTML document ni parse chesi memory lo create chese hierarchical tree structure ni <strong>DOM (Document Object Model)</strong> antaru. Dheenilo prati HTML tag, attribute, text oka <strong>Node Object</strong> ga untundhi. JavaScript ee DOM nodes ni access chesi webpage content, layout, mariyu styles ni dynamically live ga update cheyyagaladhu:</p>
-
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#58a6ff; line-height:1.8;">
-        window<br>
-        └── document (Document Object)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;└── &lt;html&gt;<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── &lt;head&gt; (title, meta, links)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── &lt;body&gt;<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── &lt;h1 id="title"&gt;Old Title&lt;/h1&gt;<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── &lt;button id="changeButton"&gt;Change Title&lt;/button&gt;
-      </div>
-    </div>
-
-    <!-- 2. Selecting Elements -->
-    <div class="section-title"><span class="num">2</span>Selecting Elements (getElementById vs querySelector vs querySelectorAll)</div>
-    <div class="section-body">
-      <table class="tbl">
-        <tr><th>Method</th><th>Selector Syntax</th><th>Return Type</th><th>Description</th></tr>
-        <tr>
-          <td><strong><code>document.getElementById('id')</code></strong></td>
-          <td>Only ID string: <code>'title'</code></td>
-          <td>Single <code>Element</code> or <code>null</code></td>
-          <td>Fastest selector by unique ID.</td>
-        </tr>
-        <tr>
-          <td><strong><code>document.querySelector('css')</code></strong> ⭐ Recommended</td>
-          <td>CSS Selector: <code>'#title'</code>, <code>'.btn'</code>, <code>'div &gt; p'</code></td>
-          <td><strong>FIRST matching Element</strong> or <code>null</code></td>
-          <td>Modern universal selector for any CSS query.</td>
-        </tr>
-        <tr>
-          <td><strong><code>document.querySelectorAll('css')</code></strong></td>
-          <td>CSS Selector: <code>'.item'</code></td>
-          <td><strong>Static <code>NodeList</code></strong> (all matches)</td>
-          <td>Returns collection of all matches. Supports <code>.forEach()</code>.</td>
-        </tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">HTML & JavaScript — Title Changer Example</span>
-          <a class="try-btn" href="/online-html-editor.html">▶ Try in HTML/JS Editor</a>
-        </div>
-        <pre><code>&lt;!-- HTML Structure --&gt;
-&lt;h1 id="title"&gt;Old Title&lt;/h1&gt;
-&lt;button id="changeButton"&gt;Change Title&lt;/button&gt;
-
-&lt;script&gt;
-// Select elements
-const title = document.querySelector("#title");
-const button = document.querySelector("#changeButton");
-
-// Attach click event listener
-button.addEventListener("click", () => {
-    title.textContent = "New Title";
-    title.style.color = "#f7df1e";
-});
-&lt;/script&gt;</code></pre>
-      </div>
-    </div>
-
-    <!-- 3. Changing Text, HTML & Security -->
-    <div class="section-title"><span class="num">3</span>Changing Text & HTML: textContent vs innerHTML</div>
-    <div class="section-body">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
-          <strong style="color:#3fb950;">1. textContent (⭐ Safe & Fast)</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Element lopali raw plain text ni update chesthundi. HTML tags ni text gane treat chesthundi, preventing <strong>XSS (Cross-Site Scripting)</strong> attacks!</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px;">
-          <strong style="color:#ff7b72;">2. innerHTML (⚠️ Use with Caution)</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">HTML tags ni parse chesi render chesthundi (e.g. <code>&lt;strong&gt;Bold&lt;/strong&gt;</code>). User input ni direct ga innerHTML lo inject cheyyakudadhu!</p>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — textContent vs innerHTML</span>
-        </div>
-        <pre><code>"use strict";
-
-const box = document.querySelector("#box");
-
-// 1. Safe plain text
-box.textContent = "Welcome to JavaScript 2026!";
-
-// 2. Rich HTML Rendering
-box.innerHTML = "&lt;span style='color: #f7df1e;'&gt;Welcome&lt;/span&gt; to &lt;strong&gt;Our Compiler&lt;/strong&gt;!";</code></pre>
-      </div>
-    </div>
-
-    <!-- 4. Changing Styles & classList -->
-    <div class="section-title"><span class="num">4</span>Changing Styles & classList (add, remove, toggle, contains)</div>
-    <div class="section-body">
-      <p>Inline styles rayadam badhulu CSS classes ni <strong><code>classList</code></strong> API tho manage cheyyadam best industry practice:</p>
-
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><code>element.classList.add("active", "highlight")</code> — Adds classes.</li>
-        <li><code>element.classList.remove("hidden")</code> — Removes class.</li>
-        <li><code>element.classList.toggle("dark-mode")</code> — Adds if missing, removes if present (perfect for theme switchers!).</li>
-        <li><code>element.classList.contains("active")</code> — Returns boolean <code>true</code>/<code>false</code>.</li>
-      </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — classList in Action</span>
-        </div>
-        <pre><code>"use strict";
-
-const card = document.querySelector(".card");
-
-// Toggle card expansion
-card.classList.toggle("expanded");
-
-if (card.classList.contains("expanded")) {
-    console.log("Card is currently open!");
-}</code></pre>
-      </div>
-    </div>
-
-    <!-- 5. Creating, Appending & Removing Elements -->
-    <div class="section-title"><span class="num">5</span>Creating, Appending & Removing Elements (DOM Tree Mutations)</div>
-    <div class="section-body">
-      <table class="tbl">
-        <tr><th>Method</th><th>Description</th><th>Example</th></tr>
-        <tr><td><strong><code>document.createElement(tag)</code></strong></td><td>Creates new unattached DOM element node</td><td><code>const div = document.createElement('div');</code></td></tr>
-        <tr><td><strong><code>parent.append(...nodes)</code></strong></td><td>Inserts nodes/text at <strong>END</strong> of parent (ES6 ⭐)</td><td><code>list.append(newLi);</code></td></tr>
-        <tr><td><strong><code>parent.prepend(...nodes)</code></strong></td><td>Inserts nodes at <strong>START</strong> of parent</td><td><code>list.prepend(newLi);</code></td></tr>
-        <tr><td><strong><code>element.remove()</code></strong></td><td>Removes the element directly from DOM tree</td><td><code>item.remove();</code></td></tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Dynamic Element Creation</span>
-        </div>
-        <pre><code>"use strict";
-
-const container = document.querySelector("#list-container");
-
-// 1. Create element
-const newCard = document.createElement("div");
-newCard.className = "item-card";
-newCard.textContent = "New Dynamic Module";
-
-// 2. Set dataset attribute
-newCard.dataset.moduleId = "mod_42";
-
-// 3. Append to parent
-container.append(newCard);
-
-// 4. Delete after 5 seconds
-// newCard.remove();</code></pre>
-      </div>
-    </div>
-
-    <!-- 6. Attributes, Data Attributes & DOM Traversal -->
-    <div class="section-title"><span class="num">6</span>Data Attributes (dataset) & DOM Traversal (closest)</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Data Attributes (<code>data-*</code>):</strong> Custom metadata stored on HTML tags: <code>&lt;button data-user-id="101" data-action="delete"&gt;</code> $\rightarrow$ read with <code>button.dataset.userId</code> and <code>button.dataset.action</code>.</li>
-        <li><strong>DOM Traversal:</strong>
-          <ul>
-            <li><code>el.parentElement</code> — Immediate parent element.</li>
-            <li><code>el.children</code> — Direct child elements.</li>
-            <li><code>el.closest('.target-selector')</code> ⭐ — Traverses UPwards from current element to find closest matching ancestor (ideal for event delegation!).</li>
-          </ul>
-        </li>
+    <div class="callout">
+      <div class="callout-title">🧠 రియల్ లైఫ్ అనలాజీ: మన శరీరంలో నాడీ వ్యవస్థ (Nervous System)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">వెబ్ పేజీకి:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>HTML:</strong> అస్థిపంజరం (Skeleton structure)</li>
+        <li><strong>CSS:</strong> చర్మం మరియు దుస్తులు (Design & Clothes)</li>
+        <li><strong>JavaScript (via DOM):</strong> నాడీ వ్యవస్థ. మెదడు చెప్పినట్లు చేతులు, కాళ్ళు ఎలా కదులుతాయో, JS ద్వారా HTML ఎలిమెంట్స్ ని అలా కదపవచ్చు!</li>
       </ul>
     </div>
 
-    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
-    <div class="section-title"><span class="num">7</span>4 Interactive Real-World Browser Projects</div>
+    <div class="section-title"><span class="num">1</span>Selecting DOM Elements</div>
     <div class="section-body">
-      <p>Mastering DOM manipulation through 4 complete production components:</p>
-
-      <!-- Project 1: Dynamic Todo / Task Manager -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: Dynamic Task Manager (Create, Toggle, Delete)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">HTML + JavaScript — Interactive Todo List</span>
-            <a class="try-btn" href="/online-html-editor.html">▶ Try in Editor</a>
-          </div>
-          <pre><code>&lt;!-- HTML --&gt;
-&lt;input type="text" id="taskInput" placeholder="Enter new task..."&gt;
-&lt;button id="addTaskBtn"&gt;Add Task&lt;/button&gt;
-&lt;ul id="taskList"&gt;&lt;/ul&gt;
-
-&lt;script&gt;
-const taskInput = document.querySelector("#taskInput");
-const addTaskBtn = document.querySelector("#addTaskBtn");
-const taskList = document.querySelector("#taskList");
-
-addTaskBtn.addEventListener("click", () => {
-    const text = taskInput.value.trim();
-    if (!text) return alert("Please enter task name!");
-
-    // 1. Create LI element
-    const li = document.createElement("li");
-    li.textContent = text;
-    li.style.cursor = "pointer";
-
-    // 2. Create Delete button
-    const delBtn = document.createElement("button");
-    delBtn.textContent = " ❌";
-    delBtn.style.marginLeft = "10px";
-
-    // Toggle complete
-    li.addEventListener("click", (e) => {
-        if (e.target !== delBtn) li.style.textDecoration = li.style.textDecoration === "line-through" ? "none" : "line-through";
-    });
-
-    // Delete item
-    delBtn.addEventListener("click", () => li.remove());
-
-    li.append(delBtn);
-    taskList.append(li);
-    taskInput.value = ""; // Clear input
-});
-&lt;/script&gt;</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: Dark/Light Mode Theme Switcher -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Dark/Light Mode Switcher with classList.toggle</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Theme Toggle</span>
-          </div>
-          <pre><code>const themeToggleBtn = document.querySelector("#themeToggle");
-
-themeToggleBtn.addEventListener("click", () => {
-    document.body.classList.toggle("light-theme");
-    const isLight = document.body.classList.contains("light-theme");
-    themeToggleBtn.textContent = isLight ? "🌙 Dark Mode" : "☀️ Light Mode";
-    localStorage.setItem("user-theme", isLight ? "light" : "dark");
-});</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Live Character & Word Counter -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: Live Character & Word Counter for Textarea</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Live Input Analytics</span>
-          </div>
-          <pre><code>const textarea = document.querySelector("#editor");
-const charCountDisplay = document.querySelector("#charCount");
-const wordCountDisplay = document.querySelector("#wordCount");
-
-textarea.addEventListener("input", () => {
-    const text = textarea.value;
-    charCountDisplay.textContent = text.length;
-
-    const words = text.trim() ? text.trim().split(/\\s+/).length : 0;
-    wordCountDisplay.textContent = words;
-});</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Filterable Product Catalog Grid -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Filterable Product Catalog via data-* attributes</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Catalog Filter</span>
-          </div>
-          <pre><code>function filterProducts(category) {
-    const allProducts = document.querySelectorAll(".product-card");
-
-    allProducts.forEach(card => {
-        const itemCategory = card.dataset.category;
-        if (category === "all" || itemCategory === category) {
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
-        }
-    });
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Test dynamic element selection and event handling in our online HTML/JS Editor:</p>
+      <p>HTML ఎలిమెంట్స్ ని JavaScript లోకి తీసుకోవడానికి ప్రధానంగా <strong><code>querySelector()</code></strong> మరియు <strong><code>querySelectorAll()</code></strong> వాడతాం:</p>
       
+      <table class="tbl">
+        <tr><th>Selection Method</th><th>వివరణ (Description)</th><th>ఉదాహరణ (Example)</th></tr>
+        <tr><td><code>document.getElementById("id")</code></td><td>ID ఆధారంగా ఒకే ఎలిమెంట్ ని ఎంచుకుంటుంది</td><td><code>document.getElementById("mainTitle")</code></td></tr>
+        <tr><td><code>document.querySelector("css")</code></td><td>CSS Selector (.class, #id, tag) ద్వారా <strong>మొదటి</strong> ఎలిమెంట్ ని ఎంచుకుంటుంది</td><td><code>document.querySelector(".btn-submit")</code></td></tr>
+        <tr><td><code>document.querySelectorAll("css")</code></td><td>CSS Selector కి మ్యాచ్ అయ్యే <strong>అన్ని ఎలిమెంట్స్ ని (NodeList)</strong> ఎంచుకుంటుంది</td><td><code>document.querySelectorAll(".card")</code></td></tr>
+      </table>
+    </div>
+
+    <div class="section-title"><span class="num">2</span>Modifying Text, HTML & Styles</div>
+    <div class="section-body">
+      <p>ఎలిమెంట్ దొరికిన తర్వాత దాని లోపలి టెక్స్ట్ ని లేదా CSS ని సులభంగా మార్చవచ్చు:</p>
+
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">HTML + JavaScript</span>
-          <a class="try-btn" href="/online-html-editor.html">▶ Open HTML/JS Editor</a>
+          <span class="lang-tag">JavaScript — DOM Modification</span>
         </div>
-        <pre><code>&lt;h1 id="title"&gt;Old Title&lt;/h1&gt;
-&lt;button id="changeButton"&gt;Change Title&lt;/button&gt;
+        <pre><code>// 1. Text & HTML మార్చడం
+let heading = document.querySelector("#title");
+heading.textContent = "నమస్తే వెబ్‌సైట్!"; // కేవలం టెక్స్ట్ ని మారుస్తుంది
+heading.innerHTML = "నమస్తే &lt;span style='color:yellow;'&gt;వెబ్‌సైట్!&lt;/span&gt;"; // HTML ట్యాగ్స్ తో మారుస్తుంది
 
-&lt;script&gt;
-const title = document.querySelector("#title");
-const button = document.querySelector("#changeButton");
+// 2. CSS Styles మార్చడం (camelCase వాడాలి)
+let box = document.querySelector(".box");
+box.style.backgroundColor = "blue";
+box.style.padding = "20px";
+box.style.borderRadius = "10px";
 
-button.addEventListener("click", () => {
-    title.textContent = "New Title";
-});
-&lt;/script&gt;</code></pre>
+// 3. Class List మేనిప్యులేషన్ (అత్యంత సిఫార్సు చేయబడిన పద్ధతి)
+box.classList.add("active");
+box.classList.remove("hidden");
+box.classList.toggle("dark-mode"); // ఉంటే తీసివేస్తుంది, లేకపోతే చేరుస్తుంది</code></pre>
       </div>
-      <a class="run-btn" href="/online-html-editor.html">Open in HTML/CSS/JS Editor →</a>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
+    <div class="section-title"><span class="num">3</span>Creating & Appending New Elements</div>
+    <div class="section-body">
+      <p>డైనమిక్ గా కొత్త HTML ఎలిమెంట్స్ ని క్రియేట్ చేసి పేజీలో అమర్చడం:</p>
 
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Create & Append Elements</span>
+        </div>
+        <pre><code>// 1. కొత్త &lt;li&gt; ఎలిమెంట్ ని క్రియేట్ చేయడం
+let newItem = document.createElement("li");
+newItem.textContent = "కొత్త టాస్క్ 📝";
+newItem.classList.add("task-item");
+
+// 2. పేజీలోని &lt;ul&gt; కి జోడించడం
+let todoList = document.querySelector("#todoList");
+todoList.appendChild(newItem);
+
+// 3. ఒక ఎలిమెంట్ ని తొలగించడం
+// newItem.remove();</code></pre>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li><code>textContent</code> కి బదులు <code>innerHTML</code> ని యూజర్ ఇన్ పుట్ తో వాడటం వల్ల XSS (Cross Site Scripting) హెకింగ్ కి గురయ్యే ప్రమాదం ఉంది. కేవలం టెక్స్ట్ కి <code>textContent</code> నే వాడాలి.</li>
+        <li>JS లో CSS ప్రాపర్టీస్ camelCase లో ఉంటాయి (Ex: <code>background-color</code> కి బదులు <code>backgroundColor</code> రాయాలి).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>Practice Questions & Answers</div>
+    <div class="section-body">
+      <details>
+        <summary>Q1. <code>querySelector()</code> మరియు <code>querySelectorAll()</code> ల తేడా ఏంటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>querySelector()</code> మ్యాచ్ అయ్యే మొదటి ఎలిమెంట్ ని మాత్రమే ఇస్తుంది. <code>querySelectorAll()</code> మ్యాచ్ అయ్యే అన్ని ఎలిమెంట్స్ ల NodeList (అర్రే లాంటి నిర్మాణం) ని ఇస్తుంది.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q2. ఒక Element కి Class ఉందో లేదో చెక్ చేయడం ఎలా?</summary>
+        <div class="faq-ans">
+          <p><strong>కోడ్:</strong> <code>element.classList.contains("active")</code> (ఇది <code>true/false</code> ఇస్తుంది).</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>ఎలిమెంట్స్ ని ఎంచుకోవడానికి <code>querySelector()</code> వాడండి.</li>
+        <li>Classes ని మేనేజ్ చేయడానికి <code>classList.add/remove/toggle</code> వాడండి.</li>
+        <li>కొత్త ఎలిమెంట్స్ క్రియేట్ చేయడానికి <code>document.createElement()</code> వాడండి.</li>
+      </ul>
+    </div>
+`;
   const html = wrapJSLessonPage(title, desc, filename, 14, subtopics, contentBody, 'functions.html', '13. Functions & Closures', 'promises.html', 'Phase 12: Promises & Async/Await');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -851,7 +603,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

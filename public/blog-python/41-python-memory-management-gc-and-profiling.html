@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Memory, GC & Profiling — Python 3 Tutorial | Our Compiler</title>
-  <meta name="description" content="Master the internal CPython memory architecture and performance optimization: shallow vs deep copying, PyObject structure, reference counting mechanics, cyclic garbage collection (gc module), microbenchmarks with timeit, bottlenecks with cProfile, and idiomatic Pythonic style (EAFP)." />
-  <meta name="keywords" content="python tutorial, learn python, python memory, gc & profiling, python online compiler, python automation, web scraping, python testing" />
+  <title>Memory Management, GC & Profiling (తెలుగులో) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="పైథాన్ మెమరీని ఎలా వాడుకుంటుంది? డీప్ కాపీ అంటే ఏంటి? Reference Counting, Garbage Collection (GC) అంటే ఏంటి? కోడ్ ఎంత ఫాస్ట్ గా రన్ అవుతుందో చెక్ చేసే `timeit` గురించి నేర్చుకుందాం." />
+  <meta name="keywords" content="python tutorial, learn python, memory management, gc & profiling (తెలుగులో), python online compiler, python automation, web scraping, python testing" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-python/41-python-memory-management-gc-and-profiling.html" />
@@ -20,8 +20,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Python Memory, GC & Profiling — Python 3 Master Tutorial",
-  "description": "Master the internal CPython memory architecture and performance optimization: shallow vs deep copying, PyObject structure, reference counting mechanics, cyclic garbage collection (gc module), microbenchmarks with timeit, bottlenecks with cProfile, and idiomatic Pythonic style (EAFP).",
+  "headline": "Memory Management, GC & Profiling (తెలుగులో) — Python 3 Master Tutorial",
+  "description": "పైథాన్ మెమరీని ఎలా వాడుకుంటుంది? డీప్ కాపీ అంటే ఏంటి? Reference Counting, Garbage Collection (GC) అంటే ఏంటి? కోడ్ ఎంత ఫాస్ట్ గా రన్ అవుతుందో చెక్ చేసే `timeit` గురించి నేర్చుకుందాం.",
   "articleSection": "Phase 8: Advanced Python",
   "author": {
     "@type": "Organization",
@@ -44,26 +44,18 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is the Global Interpreter Lock (GIL) in CPython?",
+      "name": "GIL (Global Interpreter Lock) అంటే ఏంటి?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The GIL is a mutex lock in CPython that ensures only one native CPU thread executes Python bytecode at a time, protecting CPython's reference count memory management from race conditions."
+        "text": "పైథాన్ (CPython) లో ఒకే టైమ్ లో రెండు త్రెడ్స్ (Threads) మెమరీని మార్చకుండా, సేఫ్ గా ఉండటానికి లాక్ వేస్తుంది. దీనివల్లే పైథాన్ మల్టీ-త్రెడింగ్ కొంచెం స్లోగా ఉంటుంది."
       }
     },
     {
       "@type": "Question",
-      "name": "What is the difference between EAFP and LBYL?",
+      "name": "చిన్న నెంబర్స్ మెమరీ గురించి సీక్రెట్ ఏంటి?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "LBYL (Look Before You Leap) tests preconditions with if-statements before executing. EAFP (Easier to Ask for Forgiveness than Permission) assumes valid state and catches exceptions with try-except, which is faster for the common success path in Python."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why are small integers (-5 to 256) cached in CPython memory?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "CPython pre-allocates an internal global array for integers between -5 and 256 because they are used constantly for loop counters and indexing, saving millions of allocation CPU cycles."
+        "text": "పైథాన్ -5 నుంచి 256 వరకు ఉన్న నెంబర్స్ ని ముందుగానే మెమరీలో ఒకేచోట సేవ్ చేసి పెట్టుకుంటుంది. అందుకే ఆ నెంబర్స్ కి కొత్త మెమరీ అవ్వదు, ఉన్నదాన్నే ఇస్తుంది (చాలా ఫాస్ట్)."
       }
     }
   ]
@@ -205,8 +197,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-python">
 
@@ -548,7 +538,7 @@
       <span class="current">Chapter 41: 41. Memory, GC & Profiling</span>
     </div>
 
-    <h1 class="page-title">Python Memory, GC & Profiling</h1>
+    <h1 class="page-title">Memory Management, GC & Profiling (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">🐍 Python 3.12+</span>
@@ -564,24 +554,18 @@
     </div>
 
     <div class="intro-box">
-      Master the internal CPython memory architecture and performance optimization: shallow vs deep copying, PyObject structure, reference counting mechanics, cyclic garbage collection (gc module), microbenchmarks with timeit, bottlenecks with cProfile, and idiomatic Pythonic style (EAFP).
+      పైథాన్ మెమరీని ఎలా వాడుకుంటుంది? డీప్ కాపీ అంటే ఏంటి? Reference Counting, Garbage Collection (GC) అంటే ఏంటి? కోడ్ ఎంత ఫాస్ట్ గా రన్ అవుతుందో చెక్ చేసే `timeit` గురించి నేర్చుకుందాం.
     </div>
 
 
-    <div class="section-title"><span class="num">1</span>Shallow Copy vs Deep Copy (copy module)</div>
+    <div class="section-title"><span class="num">1</span>Shallow Copy vs Deep Copy (కాపీ చేయడంలో తేడాలు)</div>
     <div class="section-body">
-      <p>Understanding object copying is fundamental to preventing silent data corruption:</p>
+      <p>లిస్ట్స్ లో ఒకదాన్ని కాపీ చేసేటప్పుడు చాలా జాగ్రత్తగా ఉండాలి, లేకపోతే తెలియకుండానే ఒకదాని డేటా ఇంకొకటి మార్చేస్తుంది:</p>
         <ul>
-          <li><strong>Reference Assignment (<code>b = a</code>):</strong> Zero copying. Both names point to the <strong>exact same memory address</strong> (<code>id(a) == id(b)</code>).</li>
-          <li><strong>Shallow Copy (<code>copy.copy(a)</code> or <code>a.copy()</code>):</strong> Creates a new outer container, but child elements are still references to original nested objects!</li>
-          <li><strong>Deep Copy (<code>copy.deepcopy(a)</code>):</strong> Recursively clones the outer container AND all nested child lists/dictionaries into completely independent memory objects!</li>
+          <li><strong>మామూలు Assignment (<code>b = a</code>):</strong> అసలు కాపీ అవ్వదు. రెండు పేర్లు ఒకే మెమరీ అడ్రెస్స్ ని చూపిస్తాయి.</li>
+          <li><strong>Shallow Copy (<code>copy.copy()</code>):</strong> బయట ఉన్న లిస్ట్ వరకే కొత్త కాపీ క్రియేట్ అవుతుంది, కానీ లోపల ఉన్న చిన్న లిస్ట్స్ పాతవి అతుక్కునే ఉంటాయి.</li>
+          <li><strong>Deep Copy (<code>copy.deepcopy()</code>):</strong> బయట లిస్ట్ తో పాటు, లోపల ఉన్న ప్రతి చిన్న లిస్ట్ కి కొత్త మెమరీ ఇస్తుంది (పూర్తిగా సేఫ్).</li>
         </ul>
-        <div class="diagram-box">┌────────────────────────────────────────────────────────┐
-│  Original: matrix = [[1, 2], [3, 4]]                   │
-├────────────────────────────────────────────────────────┤
-│  Shallow Copy: Clones outer list; inner sublists shared│
-│  Deep Copy:    Recursively duplicates all inner lists  │
-└────────────────────────────────────────────────────────┘</div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Shallow Copy vs Deep Copy Demonstration</div>
@@ -592,36 +576,31 @@
           </div>
           <pre><code>import copy
 
-# Nested data structure:
+# ఒక లిస్ట్ లోపల ఇంకో లిస్ట్ (Nested):
 original = [[1, 2], [3, 4]]
 
 shallow = copy.copy(original)
 deep = copy.deepcopy(original)
 
-# Modify nested element in original list:
+# అసలు లిస్ట్ లోపల మార్చుదాం:
 original[0][0] = 999
 
-print("Original list after mutation:   ", original) # [[999, 2], [3, 4]]
-print("Shallow copy (INNER CORRUPTED!):", shallow)  # [[999, 2], [3, 4]] (Shares inner sublist!)
-print("Deep copy (SAFE & ISOLATED!):    ", deep)     # [[1, 2], [3, 4]] (Completely untouched!)</code></pre>
+print("Original list:                 ", original) # [[999, 2], [3, 4]]
+print("Shallow copy (లోపల మారిపోయింది!):", shallow)  # [[999, 2], [3, 4]] (లోపల లిస్ట్ సేమ్)
+print("Deep copy (పూర్తిగా సేఫ్!):      ", deep)     # [[1, 2], [3, 4]] (కొత్త మెమరీ)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 When to use Deep Copy:</strong>
-          <p style="margin-top:6px;">Always use <code>copy.deepcopy()</code> when cloning complex nested structures (like state dictionaries, game boards, or JSON configs) to prevent unintended side effects.</p>
+          <strong style="color:#10b981;">🔍 ఎప్పుడు ఏది వాడాలి?:</strong>
+          <p style="margin-top:6px;">సింగిల్ డైమెన్షన్ లిస్ట్ కి <code>copy()</code> సరిపోతుంది. కానీ లోపల డిక్షనరీలు, లిస్టులు ఉంటే కచ్చితంగా <code>copy.deepcopy()</code> నే వాడాలి.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">2</span>CPython Memory Management: Reference Counting & PyObject</div>
+    <div class="section-title"><span class="num">2</span>పైథాన్ మెమరీ సీక్రెట్: Reference Counting</div>
     <div class="section-body">
-      <p>In standard CPython, every object is represented by a C struct called <code>PyObject</code> containing:</p>
-        <ol>
-          <li><code>ob_refcnt</code>: The <strong>Reference Count</strong> tracking how many variables point to this object.</li>
-          <li><code>ob_type</code>: Pointer to the object's data type descriptor.</li>
-          <li>Value payload.</li>
-        </ol>
-        <p><strong>Immediate Deallocation:</strong> As soon as an object's reference count drops to <code>0</code> (e.g. when a variable goes out of scope or <code>del x</code> is executed), CPython <strong>immediately reclaims the memory on the spot</strong>!</p>
+      <p>పైథాన్ లోపల ప్రతి ఆబ్జెక్ట్ కి ఒక <strong>Reference Count (రెఫ్ కౌంట్)</strong> ఉంటుంది. అంటే ఆ ఆబ్జెక్ట్ ని ఎన్ని వేరియబుల్స్ వాడుకుంటున్నాయి అనే నెంబర్.</p>
+        <p>ఒకవేళ ఆ నెంబర్ <code>0</code> అయిపోతే, పైథాన్ ఆటోమాటిక్ గా ఆ మెమరీని డిలీట్ చేసేస్తుంది!</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Inspecting CPython Reference Counting with sys.getrefcount</div>
@@ -632,37 +611,32 @@ print("Deep copy (SAFE & ISOLATED!):    ", deep)     # [[1, 2], [3, 4]] (Complet
           </div>
           <pre><code>import sys
 
-# 1. Create a fresh list object:
+# 1. కొత్త లిస్ట్ తయారు చేద్దాం:
 sample = [1, 2, 3]
 
-# sys.getrefcount() returns current reference count (includes temporary call ref):
-print("Reference count for 'sample':", sys.getrefcount(sample) - 1) # 1
+# sys.getrefcount() ఎన్ని రెఫరెన్స్ లు ఉన్నాయో చెప్తుంది:
+print("sample కి ఉన్న రిఫరెన్స్ లు:", sys.getrefcount(sample) - 1) # 1
 
-# 2. Add another reference pointer:
+# 2. ఇంకో పేరు పెడదాం (రెండు వేరియబుల్స్ ఒకే దాన్ని చూపిస్తున్నాయి):
 alias_ptr = sample
-print("After creating 'alias_ptr':  ", sys.getrefcount(sample) - 1) # 2
+print("alias_ptr ఇచ్చాక:       ", sys.getrefcount(sample) - 1) # 2
 
-# 3. Delete one reference:
+# 3. ఒక వేరియబుల్ డిలీట్ చేద్దాం:
 del alias_ptr
-print("After 'del alias_ptr':       ", sys.getrefcount(sample) - 1) # 1</code></pre>
+print("ఒకటి డిలీట్ చేసాక:        ", sys.getrefcount(sample) - 1) # 1 (ఇంకా sample ఉంది కాబట్టి డిలీట్ అవ్వదు)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 sys.getrefcount note:</strong>
-          <p style="margin-top:6px;">We subtract 1 because passing <code>sample</code> as an argument to <code>sys.getrefcount()</code> temporarily increases the reference count by 1 during the function call.</p>
+          <strong style="color:#10b981;">🔍 -1 ఎందుకు చేశాం?:</strong>
+          <p style="margin-top:6px;">ఫంక్షన్ లోపలికి పంపినప్పుడు టెంపరరీగా అది కూడా ఒక పేరు ఇచ్చుకుంటుంది కాబట్టి, అసలు నెంబర్ కోసం -1 చేస్తాం.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">3</span>Generational Garbage Collector (Handling Cyclic References)</div>
+    <div class="section-title"><span class="num">3</span>Garbage Collector (సైకిల్స్ లో ఇరుక్కుంటే?)</div>
     <div class="section-body">
-      <p>Reference counting alone has a major fatal flaw: <strong>Circular References</strong> (Object A points to Object B, and Object B points to Object A). Even if you delete both external variables, their reference count never drops to 0!</p>
-        <p>To resolve this, CPython includes a <strong>Cyclic Generational Garbage Collector (GC)</strong> that runs in the background:</p>
-        <ul>
-          <li><strong>Generation 0 (Youngest):</strong> Newly allocated objects. Collected very frequently.</li>
-          <li><strong>Generation 1:</strong> Objects surviving Gen 0 collections.</li>
-          <li><strong>Generation 2 (Oldest):</strong> Long-lived objects surviving Gen 1. Collected rarely.</li>
-        </ul>
+      <p>రిఫరెన్స్ కౌంటింగ్ లో ఒక పెద్ద ప్రాబ్లమ్ ఉంది. ఆబ్జెక్ట్ A ని B చూపిస్తూ, B ని A చూపిస్తే (Circular Reference), బయట నుంచి రెండూ డిలీట్ చేసినా వాటి కౌంట్ 0 అవ్వదు. అలాంటప్పుడు <strong>Garbage Collector (GC)</strong> వస్తుంది.</p>
+        <p>దీన్ని ఇది బ్యాక్ గ్రౌండ్ లో రన్ అయ్యి, ఇలా ఒకదానికొకటి అతుక్కుని వృధాగా పడి ఉన్నవాటిని వెతికి మరీ మెమరీలోంచి తీసేస్తుంది.</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Circular Reference Cycles and the gc Module</div>
@@ -673,7 +647,7 @@ print("After 'del alias_ptr':       ", sys.getrefcount(sample) - 1) # 1</code></
           </div>
           <pre><code>import gc
 
-# 1. Create a circular reference cycle:
+# 1. ఒకదానికొకటి లింక్ చేసుకునేలా క్లాస్ రాద్దాం:
 class Node:
     def __init__(self, name):
         self.name = name
@@ -682,32 +656,28 @@ class Node:
 node1 = Node("A")
 node2 = Node("B")
 
-node1.partner = node2 # node1 points to node2
-node2.partner = node1 # node2 points to node1 (CYCLE!)
+node1.partner = node2 # A, B ని చూపిస్తోంది
+node2.partner = node1 # B, A ని చూపిస్తోంది (ఇరుక్కుపోయాయి!)
 
-# Delete external variables:
+# బయట నుంచి పేర్లు డిలీట్ చేద్దాం:
 del node1
 del node2
 
-# 2. Force manual garbage collection cycle to detect and destroy isolated cycles:
+# 2. గూఢచారి (Garbage Collector) ని పంపి వెతికిద్దాం:
 unreachable_objects = gc.collect()
-print(f"🧹 Garbage Collector cleaned up {unreachable_objects} circular reference objects!")</code></pre>
+print(f"🧹 Garbage Collector {unreachable_objects} వృధా ఆబ్జెక్ట్స్ ని డిలీట్ చేసింది!")</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Weak References:</strong>
-          <p style="margin-top:6px;">To prevent circular reference leaks in trees and caches, use the standard library <code>weakref</code> module, which creates non-owning reference pointers that do not increment <code>ob_refcnt</code>.</p>
+          <strong style="color:#10b981;">🔍 ఎప్పుడు వాడాలి?:</strong>
+          <p style="margin-top:6px;">మామూలుగా GC ఆటోమాటిక్ గా బ్యాక్ గ్రౌండ్ లో రన్ అవుతుంది. మనం దీన్ని మాన్యువల్ గా రన్ చేయాల్సిన అవసరం లేదు.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">4</span>Performance Profiling: timeit & cProfile</div>
+    <div class="section-title"><span class="num">4</span>ఫాస్ట్ గా ఏది పనిచేస్తుందో చెక్ చేయడం (timeit)</div>
     <div class="section-body">
-      <p>Never guess where performance bottlenecks lie — profile and measure them!</p>
-        <ul>
-          <li><strong><code>timeit</code>:</strong> Precision micro-benchmarking tool for comparing short code snippets over thousands of runs.</li>
-          <li><strong><code>cProfile</code>:</strong> Deterministic profiler that counts every function call, time per call, and cumulative bottlenecks across an entire application.</li>
-        </ul>
+      <p>ఒక పని చేయడానికి ఏ కోడ్ ఫాస్ట్ గా ఉందో చెక్ చేయాలంటే మనం <strong><code>timeit</code></strong> వాడతాం. ఇది కోడ్ ని వేలసార్లు రన్ చేసి కరెక్ట్ ఆవరేజ్ టైమ్ చెప్తుంది.</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Performance Benchmarking and Idiomatic Pythonic Coding</div>
@@ -718,41 +688,39 @@ print(f"🧹 Garbage Collector cleaned up {unreachable_objects} circular referen
           </div>
           <pre><code>import timeit
 
-# Microbenchmark: List Comprehension vs map() for string conversion:
+# స్ట్రింగ్స్ లోకి మార్చడానికి లిస్ట్ కాంప్రహెన్షన్ బెస్ట్ ఆ? map() బెస్ట్ ఆ?:
 time_comp = timeit.timeit('[str(x) for x in range(1000)]', number=10_000)
 time_map = timeit.timeit('list(map(str, range(1000)))', number=10_000)
 
-print(f"⚡ List Comprehension (10k runs): {time_comp:.4f} seconds")
-print(f"⚡ map(str, ...)       (10k runs): {time_map:.4f} seconds")
+print(f"⚡ List Comprehension (10k సార్లు): {time_comp:.4f} seconds")
+print(f"⚡ map(str, ...)       (10k సార్లు): {time_map:.4f} seconds")
 
-# Pythonic Design Philosophy: EAFP vs LBYL
-# EAFP: "Easier to Ask for Forgiveness than Permission" (try-except) -> The Python Way!
-# LBYL: "Look Before You Leap" (if-else checks)
+# పైథాన్ స్టైల్ (EAFP - ఏది జరిగినా చూసుకుందాం):
 user_profile = {"name": "Balaji"}
 
-# The Pythonic EAFP pattern:
+# పదే పదే చెక్ చేయకుండా (EAFP), డైరెక్ట్ గా ట్రై చేసి ఎర్రర్ వస్తే హ్యాండిల్ చేయడం బెస్ట్:
 try:
     email = user_profile["email"]
 except KeyError:
     email = "default@example.com"
-print("User Email (EAFP):", email)</code></pre>
+print("User Email (EAFP వాడుతూ):", email)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 EAFP Advantage:</strong>
-          <p style="margin-top:6px;">EAFP avoids redundant lookups (checking <code>if "email" in user_profile</code> and then accessing <code>user_profile["email"]</code> requires TWO hash lookups; EAFP performs only ONE!).</p>
+          <strong style="color:#10b981;">🔍 EAFP లాభం:</strong>
+          <p style="margin-top:6px;"><code>if "email" in user</code> అని చెక్ చేసి మళ్ళీ <code>user["email"]</code> తీసుకుంటే రెండు సార్లు వెతకాలి. EAFP వాడితే డైరెక్ట్ గా ఒకసారే తీసుకుంటుంది.</p>
         </div>
     </div>
   
 
     <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfall: Assuming "del obj" Directly Frees Memory from the Operating System</div>
-      <p>"del obj" merely decrements the object's reference count and deletes the variable name from the local namespace. If other references exist, or if CPython's memory allocator (PyMalloc) pools the memory, the RAM is retained for future Python allocations rather than returned to the OS.</p>
+      <div class="callout-title">⚠️ Common Developer Pitfall: del వాడితే మెమరీ ఫ్రీ అయిపోతుందని అనుకోవడం</div>
+      <p>del వాడితే వేరియబుల్ పేరు మాత్రమే పోతుంది. ఆ ఆబ్జెక్ట్ ని ఇంకెవరైనా వాడుకుంటూ ఉంటే అది డిలీట్ అవ్వదు. పైథాన్ దాన్ని తీసేసినా, OS కి వెంటనే ఆ మెమరీ తిరిగి ఇవ్వదు, తర్వాత పైథాన్ వాడుకోవడానికి ఉంచుకుంటుంది.</p>
     </div>
 
     <div class="try-box">
       <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p>Use timeit to benchmark whether checking membership in a set ("999 in my_set") is faster than in a list ("999 in my_list") with 1,000 numbers.</p>
+      <p>ఒక సెట్ లో నెంబర్ ఉందో లేదో చెక్ చేయడం ఫాస్టా? లిస్ట్ లో ఫాస్టా? timeit వాడి చెక్ చేయండి.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">Python 3 Practice Challenge</span>
@@ -768,9 +736,9 @@ my_set = set(range(1000))
 t_list = timeit.timeit('999 in my_list', setup=setup_code, number=100_000)
 t_set = timeit.timeit('999 in my_set', setup=setup_code, number=100_000)
 
-print(f"List 'in' check (100k runs): {t_list:.5f} sec")
-print(f"Set 'in' check  (100k runs): {t_set:.5f} sec")
-print(f"🚀 Set is {t_list/t_set:.1f}x FASTER due to O(1) hash lookup!")</code></pre>
+print(f"List 'in' check (100k సార్లు): {t_list:.5f} sec")
+print(f"Set 'in' check  (100k సార్లు): {t_set:.5f} sec")
+print(f"🚀 Set అనేది లిస్ట్ కంటే {t_list/t_set:.1f} రెట్లు ఫాస్ట్!")</code></pre>
       </div>
       <a class="run-btn" href="/online-python-compiler.html">Run This Challenge in Online Python IDE →</a>
     </div>
@@ -778,20 +746,14 @@ print(f"🚀 Set is {t_list/t_set:.1f}x FASTER due to O(1) hash lookup!")</code>
     <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the Global Interpreter Lock (GIL) in CPython?</h4>
-      <p>The GIL is a mutex lock in CPython that ensures only one native CPU thread executes Python bytecode at a time, protecting CPython's reference count memory management from race conditions.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> GIL (Global Interpreter Lock) అంటే ఏంటి?</h4>
+      <p>పైథాన్ (CPython) లో ఒకే టైమ్ లో రెండు త్రెడ్స్ (Threads) మెమరీని మార్చకుండా, సేఫ్ గా ఉండటానికి లాక్ వేస్తుంది. దీనివల్లే పైథాన్ మల్టీ-త్రెడింగ్ కొంచెం స్లోగా ఉంటుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the difference between EAFP and LBYL?</h4>
-      <p>LBYL (Look Before You Leap) tests preconditions with if-statements before executing. EAFP (Easier to Ask for Forgiveness than Permission) assumes valid state and catches exceptions with try-except, which is faster for the common success path in Python.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Why are small integers (-5 to 256) cached in CPython memory?</h4>
-      <p>CPython pre-allocates an internal global array for integers between -5 and 256 because they are used constantly for loop counters and indexing, saving millions of allocation CPU cycles.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> చిన్న నెంబర్స్ మెమరీ గురించి సీక్రెట్ ఏంటి?</h4>
+      <p>పైథాన్ -5 నుంచి 256 వరకు ఉన్న నెంబర్స్ ని ముందుగానే మెమరీలో ఒకేచోట సేవ్ చేసి పెట్టుకుంటుంది. అందుకే ఆ నెంబర్స్ కి కొత్త మెమరీ అవ్వదు, ఉన్నదాన్నే ఇస్తుంది (చాలా ఫాస్ట్).</p>
     </div>
   
 
@@ -820,6 +782,5 @@ print(f"🚀 Set is {t_list/t_set:.1f}x FASTER due to O(1) hash lookup!")</code>
 </div>
 
 <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Multidimensional & Jagged Arrays Masterclass — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering multi-dimensional data structures in Java: the internal "array of arrays" memory architecture, 2D matrix representations, nested row-column iterations, matrix arithmetic (addition, scalar multiplication, transposition), non-uniform Jagged (Ragged) arrays, and deep array inspection utilities." />
-  <meta name="keywords" content="java multidimensional & jagged arrays masterclass, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Multidimensional & Jagged Arrays (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="ఒక టేబుల్ లాంటి డేటాని (Rows & Columns) స్టోర్ చేయాలంటే 2D Arrays వాడతాం. కానీ జావాలో 2D Arrays వేరే లాంగ్వేజెస్ లాగా ఉండవు, ఇదొక "Array of Arrays". ఈ మ్యాట్రిక్స్ ని ఎలా క్రియేట్ చేయాలి? రెండు మ్యాట్రిక్స్ ని కలపడం (Addition), రివర్స్ చేయడం (Transpose) మరియు ఒక్కో అడ్డువరుస ఒక్కో సైజులో ఉండే స్పెషల్ `Jagged Arrays` గురించి ఇక్కడ డీటెయిల్ గా నేర్చుకుందాం." />
+  <meta name="keywords" content="java multidimensional & jagged arrays (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/31-java-multidimensional-and-jagged-arrays.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 31: 31. 2D & Jagged Arrays</span>
     </div>
 
-    <h1 class="page-title">Java Multidimensional & Jagged Arrays Masterclass</h1>
+    <h1 class="page-title">Java Multidimensional & Jagged Arrays (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,50 +541,50 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering multi-dimensional data structures in Java: the internal "array of arrays" memory architecture, 2D matrix representations, nested row-column iterations, matrix arithmetic (addition, scalar multiplication, transposition), non-uniform Jagged (Ragged) arrays, and deep array inspection utilities.</p>
+      <p>ఒక టేబుల్ లాంటి డేటాని (Rows & Columns) స్టోర్ చేయాలంటే 2D Arrays వాడతాం. కానీ జావాలో 2D Arrays వేరే లాంగ్వేజెస్ లాగా ఉండవు, ఇదొక "Array of Arrays". ఈ మ్యాట్రిక్స్ ని ఎలా క్రియేట్ చేయాలి? రెండు మ్యాట్రిక్స్ ని కలపడం (Addition), రివర్స్ చేయడం (Transpose) మరియు ఒక్కో అడ్డువరుస ఒక్కో సైజులో ఉండే స్పెషల్ `Jagged Arrays` గురించి ఇక్కడ డీటెయిల్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. What is a 2D Array? ("Array of Arrays" in Java)</h2>
+      <h2>1. 2D Array అంటే ఏంటి? (Array of Arrays)</h2>
       <div class="theory-text">
-        <p>In C and C++, a 2D array is stored as a single contiguous, flat 2D block of memory.</p>
-<p>In Java, <strong>there is no true flat 2D array</strong>. Instead, a 2D array is an <strong>"Array of Arrays"</strong>:<br>- The outer array is an array of <strong>reference variables</strong> (row pointers).<br>- Each reference points to an independent, contiguous 1D array representing that row!</p>
+        <p>C, C++ లో 2D అరే క్రియేట్ చేస్తే, మెమరీలో ఒక పెద్ద బ్లాక్ లాగా స్క్వేర్ షేప్ లో అరేంజ్ అవుతుంది.</p>
+<p>కానీ జావాలో అలా ఉండదు. జావాలో 2D Array అనేది నిజానికి <strong>"అరేల లోపల అరేలు" (Array of Arrays)</strong>:<br>- ఫస్ట్ ఒక మెయిన్ అరే ఉంటుంది, అది అడ్డువరుసల (Rows) అడ్రెస్ లని సేవ్ చేసుకుంటుంది.<br>- ఆ మెయిన్ అరే లోని ప్రతి డబ్బా.. ఇంకొక సపరేట్ 1D అరే కి పాయింట్ చేస్తూ ఉంటుంది!</p>
 <div class="code-block"><pre><code>int[][] matrix = new int[3][4];
-<p>STACK                    HEAP MEMORY<br>  +--------+              +-----------------------+<br>  | matrix | -----------&gt; | [0] | [1] | [2] (Row References)<br>  +--------+              +---|---|---|-----------+<br>                              |   |   |<br>             +----------------+   |   +----------------+<br>             v                    v                    v<br>      +---------------+    +---------------+    +---------------+<br>      | 0 | 0 | 0 | 0 |    | 0 | 0 | 0 | 0 |    | 0 | 0 | 0 | 0 | (Row 0, 1, 2)<br>      +---------------+    +---------------+    +---------------+</code></pre></div></p>
+<p>STACK                    HEAP MEMORY<br>  +--------+              +-----------------------+<br>  | matrix | -----------&gt; | [0] | [1] | [2] (ఈ మూడు Rows అడ్రెస్ లు)<br>  +--------+              +---|---|---|-----------+<br>                              |   |   |<br>             +----------------+   |   +----------------+<br>             v                    v                    v<br>      +---------------+    +---------------+    +---------------+<br>      | 0 | 0 | 0 | 0 |    | 0 | 0 | 0 | 0 |    | 0 | 0 | 0 | 0 | (ఇవి అసలు డేటా - Row 0, 1, 2)<br>      +---------------+    +---------------+    +---------------+</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Declaring and Initializing 2D Arrays</h2>
+      <h2>2. 2D Arrays ని క్రియేట్ చేయడం</h2>
       <div class="theory-text">
-        <p>1. <strong>Dynamic Matrix Allocation:</strong><br><div class="code-block"><pre><code>int[][] grid = new int[3][3]; // 3 rows, 3 columns (all initialized to 0)</code></pre></div></p>
-<p>2. <strong>Inline Matrix Literals:</strong><br><div class="code-block"><pre><code>int[][] matrix = {<br>    {1, 2, 3},<br>    {4, 5, 6},<br>    {7, 8, 9}<br>};</code></pre></div></p>
-<p>3. <strong>Accessing & Dimension Rules:</strong><br>- <strong>Number of Rows:</strong> <code>matrix.length</code> (e.g. 3)<br>- <strong>Number of Columns in Row <code>i</code>:</strong> <code>matrix[i].length</code> (e.g. 3)<br>- <strong>Element Access:</strong> <code>matrix[row][col]</code> (e.g. <code>matrix[1][2]</code> is 6)</p>
+        <p>1. <strong>సైజు చెప్పి క్రియేట్ చేయడం:</strong><br><div class="code-block"><pre><code>int[][] grid = new int[3][3]; // 3 అడ్డువరుసలు, 3 నిలువు వరుసలు (అన్నీ 0 లతో నిండిపోతాయి)</code></pre></div></p>
+<p>2. <strong>డైరెక్ట్ గా వాల్యూస్ ఇవ్వడం (Inline):</strong><br><div class="code-block"><pre><code>int[][] matrix = {<br>    {1, 2, 3},<br>    {4, 5, 6},<br>    {7, 8, 9}<br>};</code></pre></div></p>
+<p>3. <strong>ఎలా యాక్సెస్ చేయాలి?</strong><br>- <strong>ఎన్ని Rows ఉన్నాయి?:</strong> <code>matrix.length</code> (ఇక్కడ 3 వస్తుంది)<br>- <strong>ఒక్కో Row లో ఎన్ని కాల్స్ ఉన్నాయి?:</strong> <code>matrix[0].length</code> (ఇది కూడా 3 వస్తుంది)<br>- <strong>లోపల ఉన్న నంబర్ కావాలంటే:</strong> <code>matrix[row][col]</code> (ఉదాహరణకి <code>matrix[1][2]</code> అంటే 6 వస్తుంది)</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Matrix Arithmetic: Addition and Transposition</h2>
+      <h2>3. మ్యాట్రిక్స్ మ్యాథ్స్: ఎడిషన్ (Addition) & ట్రాన్స్పోస్ (Transpose)</h2>
       <div class="theory-text">
-        <p>1. <strong>Matrix Addition ($C[i][j] = A[i][j] + B[i][j]$):</strong><br>Two matrices must have identical dimensions ($R \times C$). Each cell in the result matrix is the arithmetic sum of corresponding cells.</p>
-<p>2. <strong>Matrix Transpose:</strong><br>Flipping a matrix over its diagonal, swapping row and column indices:<br>$$\text{Transpose}[col][row] = \text{Original}[row][col]$$</p>
+        <p>1. <strong>మ్యాట్రిక్స్ ఎడిషన్ ($C[i][j] = A[i][j] + B[i][j]$):</strong><br>రెండు మ్యాట్రిక్స్ ని కలపాలంటే, కచ్చితంగా రెండిటి సైజులు ఒకేలా ఉండాలి. అప్పుడు ఒకదానిలో ఉన్న సేమ్ పొజిషన్ వాల్యూ ని, ఇంకోదానిలో సేమ్ పొజిషన్ తో కలిపేస్తాం.</p>
+<p>2. <strong>మ్యాట్రిక్స్ ట్రాన్స్పోస్ (Transpose):</strong><br>ట్రాన్స్పోస్ అంటే అడ్డువరుసలను నిలువువరుసలుగా మార్చడం. అంటే Row ని Column కింద, Column ని Row కింద రాయడం అన్నమాట:<br>$$\text{Transpose}[col][row] = \text{Original}[row][col]$$</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Jagged (Ragged) Arrays Architecture</h2>
+      <h2>4. జాగెడ్ అరేస్ (Jagged / Ragged Arrays) అంటే ఏంటి?</h2>
       <div class="theory-text">
-        <p>Because a 2D array in Java is an array of references, <strong>each row can have a different number of columns</strong>! This is known as a <strong>Jagged (or Ragged) Array</strong>.</p>
-<p><strong>Why use Jagged Arrays?</strong><br>To save memory when rows have varying data lengths (e.g. recording the number of tickets sold on each day of the week, where Friday has 10 entries and Monday has 2).</p>
-<div class="code-block"><pre><code>// 1. Declare row container without specifying column sizes:
+        <p>జావాలో 2D అరే అనేది "అరేల లోపల అరేలు" కాబట్టి, <strong>ప్రతి Row ఒకే సైజులో ఉండాల్సిన అవసరం లేదు</strong>! ఇలా ఒక్కో అడ్డువరుస ఒక్కో సైజులో ఉంటే దాన్నే <strong>Jagged Array</strong> అంటారు.</p>
+<p><strong>ఎందుకు వాడతారు?</strong><br>మెమరీ సేవ్ చేయడానికి! ఉదాహరణకి ఒక థియేటర్ లో మండే రోజు 2 టికెట్స్, ఫ్రైడే రోజు 10 టికెట్స్ అమ్ముడుపోయాయి అనుకోండి. అన్ని రోజులకీ 10 గదులు క్రియేట్ చేస్తే మెమరీ వేస్ట్ కదా. దానికి ఇది వాడతారు:</p>
+<div class="code-block"><pre><code>// 1. ముందు Rows మాత్రమే ఇస్తాం, Columns సైజు ఖాళీగా వదిలేస్తాం:
 int[][] jagged = new int[3][];
-<p>// 2. Allocate each row with custom length:<br>jagged[0] = new int[2]; // Row 0 has 2 columns<br>jagged[1] = new int[4]; // Row 1 has 4 columns<br>jagged[2] = new int[1]; // Row 2 has 1 column</code></pre></div></p>
-<div class="code-block"><pre><code>Jagged Memory Layout:
+<p>// 2. ఇప్పుడు ఒక్కో Row కి మనకిష్టమొచ్చిన సైజు ఇచ్చుకుంటాం:<br>jagged[0] = new int[2]; // ఫస్ట్ Row లో 2 గదులే ఉంటాయి<br>jagged[1] = new int[4]; // సెకండ్ Row లో 4 గదులు<br>jagged[2] = new int[1]; // థర్డ్ Row లో 1 గది మాత్రమే</code></pre></div></p>
+<div class="code-block"><pre><code>మెమరీలో ఇలా ఉంటాయి:
   jagged[0] -&gt; [ 10, 20 ]
   jagged[1] -&gt; [ 30, 40, 50, 60 ]
   jagged[2] -&gt; [ 70 ]</code></pre></div>
@@ -593,9 +593,9 @@ int[][] jagged = new int[3][];
   
 
     <section class="lesson-section">
-      <h2>5. Deep Array Inspection: Arrays.deepToString()</h2>
+      <h2>5. 2D అరేస్ ని ప్రింట్ చేయడం (deepToString)</h2>
       <div class="theory-text">
-        <p>When printing or comparing multidimensional arrays:<br>- <code>Arrays.toString(matrix)</code> prints memory address hashes of row arrays (<code>"[[I@1b6d3586, [I@4554617c]"</code>).<br>- <strong><code>Arrays.deepToString(matrix)</code>:</strong> Recursively inspects inner arrays and formats the full matrix cleanly: <code>"[[1, 2], [3, 4]]"</code>.<br>- <strong><code>Arrays.deepEquals(m1, m2)</code>:</strong> Performs deep recursive value equality on multidimensional structures.</p>
+        <p>నార్మల్ 1D అరేస్ ని <code>Arrays.toString()</code> తో ప్రింట్ చేసాం. కానీ 2D అరేస్ కి ఇది వాడితే మళ్ళీ పిచ్చి అడ్రెస్ లు వస్తాయి.<br>- <strong><code>Arrays.deepToString(matrix)</code>:</strong> ఇది లోపల ఎన్ని అరేలున్నా సరే, అన్నింటి లోపలికి వెళ్లి పర్ఫెక్ట్ గా లిస్ట్ లాగా (ఉదా: <code>"[[1, 2], [3, 4]]"</code>) ప్రింట్ చేసి ఇస్తుంది.<br>- <strong><code>Arrays.deepEquals(m1, m2)</code>:</strong> రెండు 2D మ్యాట్రిక్స్ లు సేమ్ ఉన్నాయా లేదా అని లోపలికెళ్లి మరీ చెక్ చేస్తుంది.</p>
       </div>
     </section>
   
@@ -615,7 +615,7 @@ int[][] jagged = new int[3][];
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1. 2D Matrix Declaration & Traversal ===");
+        System.out.println("=== 1. 2D మ్యాట్రిక్స్ క్రియేషన్ & ప్రింటింగ్ ===");
         int[][] matrixA = {
             {1, 2, 3},
             {4, 5, 6},
@@ -628,24 +628,24 @@ public class Main {
             {3, 2, 1}
         };
 
-        // Traversal using nested for loops
+        // డబుల్ ఫర్ లూప్ వాడి మ్యాట్రిక్స్ లాగా ప్రింట్ చేస్తున్నాం
         System.out.println("Matrix A:");
         for (int r = 0; r &lt; matrixA.length; r++) {
             for (int c = 0; c &lt; matrixA[r].length; c++) {
-                System.out.printf("%3d ", matrixA[r][c]);
+                System.out.printf("%3d ", matrixA[r][c]); // %3d అంటే నీట్ గా గ్యాప్ ఇచ్చి రాస్తుంది
             }
-            System.out.println();
+            System.out.println(); // ఒక్కో అడ్డువరుస అయ్యాక కింద లైన్ కి వెళ్లాలి
         }
 
         System.out.println("
-=== 2. Matrix Addition (A + B) ===");
+=== 2. రెండు మ్యాట్రిక్స్ ని కలపడం (A + B) ===");
         int rows = matrixA.length;
         int cols = matrixA[0].length;
-        int[][] sumMatrix = new int[rows][cols];
+        int[][] sumMatrix = new int[rows][cols]; // రిజల్ట్ కోసం కొత్త అరే
 
         for (int r = 0; r &lt; rows; r++) {
             for (int c = 0; c &lt; cols; c++) {
-                sumMatrix[r][c] = matrixA[r][c] + matrixB[r][c];
+                sumMatrix[r][c] = matrixA[r][c] + matrixB[r][c]; // కరస్పాండింగ్ సెల్స్ ని కలిపాం
             }
         }
 
@@ -657,28 +657,29 @@ public class Main {
         }
 
         System.out.println("
-=== 3. Matrix Transpose ===");
-        int[][] transpose = new int[cols][rows];
+=== 3. మ్యాట్రిక్స్ ట్రాన్స్పోస్ (Transpose) ===");
+        int[][] transpose = new int[cols][rows]; // Rows, Cols రివర్స్ అయ్యాయి
         for (int r = 0; r &lt; rows; r++) {
             for (int c = 0; c &lt; cols; c++) {
-                transpose[c][r] = matrixA[r][c];
+                transpose[c][r] = matrixA[r][c]; // r, c ని c, r కింద మార్చాం
             }
         }
-        System.out.println("Transpose of Matrix A:");
+        System.out.println("Matrix A ని ట్రాన్స్పోస్ చేస్తే:");
         for (int[] row : transpose) {
             System.out.println(Arrays.toString(row));
         }
 
         System.out.println("
-=== 4. Jagged Array Demonstration ===");
-        int[][] jagged = new int[3][];
+=== 4. జాగెడ్ అరే (Jagged Array) డెమో ===");
+        int[][] jagged = new int[3][]; // 3 Rows, కాకపోతే Columns ఎన్నో చెప్పలేదు
         jagged[0] = new int[]{10, 20};
         jagged[1] = new int[]{30, 40, 50, 60};
         jagged[2] = new int[]{70, 80, 90};
 
-        System.out.println("Jagged Array Deep View: " + Arrays.deepToString(jagged));
+        System.out.println("Jagged Array ఒకే లైన్లో (deepToString): " + Arrays.deepToString(jagged));
+        
         for (int r = 0; r &lt; jagged.length; r++) {
-            System.out.print("Row " + r + " (len " + jagged[r].length + "): ");
+            System.out.print("Row " + r + " (సైజు " + jagged[r].length + "): ");
             for (int c = 0; c &lt; jagged[r].length; c++) {
                 System.out.print(jagged[r][c] + " ");
             }
@@ -690,28 +691,28 @@ public class Main {
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. 2D Matrix Declaration & Traversal ===
+        <div class="output-content">=== 1. 2D మ్యాట్రిక్స్ క్రియేషన్ & ప్రింటింగ్ ===
 Matrix A:
   1   2   3 
   4   5   6 
   7   8   9 
 
-=== 2. Matrix Addition (A + B) ===
+=== 2. రెండు మ్యాట్రిక్స్ ని కలపడం (A + B) ===
  10  10  10 
  10  10  10 
  10  10  10 
 
-=== 3. Matrix Transpose ===
-Transpose of Matrix A:
+=== 3. మ్యాట్రిక్స్ ట్రాన్స్పోస్ (Transpose) ===
+Matrix A ని ట్రాన్స్పోస్ చేస్తే:
 [1, 4, 7]
 [2, 5, 8]
 [3, 6, 9]
 
-=== 4. Jagged Array Demonstration ===
-Jagged Array Deep View: [[10, 20], [30, 40, 50, 60], [70, 80, 90]]
-Row 0 (len 2): 10 20 
-Row 1 (len 4): 30 40 50 60 
-Row 2 (len 3): 70 80 90</div>
+=== 4. జాగెడ్ అరే (Jagged Array) డెమో ===
+Jagged Array ఒకే లైన్లో (deepToString): [[10, 20], [30, 40, 50, 60], [70, 80, 90]]
+Row 0 (సైజు 2): 10 20 
+Row 1 (సైజు 4): 30 40 50 60 
+Row 2 (సైజు 3): 70 80 90</div>
       </div>
 
       <div class="explain-card">
@@ -719,31 +720,31 @@ Row 2 (len 3): 70 80 90</div>
         
     <div class="explain-item">
       <code class="code-token">int[][] matrixA = { {1,2,3}, {4,5,6}, {7,8,9} };</code>
-      <p>Initializes a 3x3 matrix where each row is an independent 3-element integer array.</p>
+      <p>3x3 మ్యాట్రిక్స్ ని డైరెక్ట్ గా క్రియేట్ చేసాం. ఇవి ఇంటర్నల్ గా 3 వేరు వేరు 1D అరేలు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">sumMatrix[r][c] = matrixA[r][c] + matrixB[r][c];</code>
-      <p>Adds values from corresponding cell coordinates and stores them in the sum matrix.</p>
+      <p>రెండు అరేల్లో ఉన్న సేమ్ అడ్రెస్ వాల్యూస్ ని కలిపి కొత్త మ్యాట్రిక్స్ లో సేమ్ ప్లేస్ లో పెట్టాం.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">transpose[c][r] = matrixA[r][c];</code>
-      <p>Swaps row and column coordinates to flip the matrix across its main diagonal.</p>
+      <p>అడ్డువరుస (Row), నిలువు వరుసని (Column) మార్చేసి మ్యాట్రిక్స్ ని ఉల్టా తిప్పాం.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">int[][] jagged = new int[3][];</code>
-      <p>Declares an outer array holding 3 row references, allowing each row to have custom length.</p>
+      <p>కేవలం అడ్డువరుసలు (Rows) మాత్రమే చెప్పి కాలమ్స్ ని ఖాళీ వదిలేసాం, దీనివల్ల ఒక్కో రో కి ఒక్కో సైజు ఇచ్చుకోవచ్చు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">Arrays.deepToString(jagged);</code>
-      <p>Recursively formats multidimensional arrays into clean bracketed text.</p>
+      <p>2D లేదా 3D అరేస్ ని ఒకే లైన్ లో బ్రాకెట్స్ తో నీట్ గా ప్రింట్ చేయడానికి ఇది బెస్ట్ ఆప్షన్.</p>
     </div>
   
       </div>
@@ -762,13 +763,13 @@ Row 2 (len 3): 70 80 90</div>
         </div>
         <pre><code>public class PracticalApplication {
     public static void main(String[] args) {
-        // Industry Simulation: Cinema Theater Seat Reservation Grid
-        // 0 = Available, 1 = Booked
+        // రియల్ టైమ్ సినారియో: సినిమా థియేటర్ సీటింగ్ సిస్టమ్
+        // 0 = సీట్ ఖాళీగా ఉంది, 1 = సీట్ బుక్ అయ్యింది
         int[][] theaterSeats = {
             {0, 1, 0, 0, 1},
             {1, 1, 1, 0, 0},
             {0, 0, 0, 0, 0},
-            {1, 1, 1, 1, 1}
+            {1, 1, 1, 1, 1} // ఈ రౌ లో అన్నీ బుక్ అయ్యాయి
         };
 
         int totalSeats = 0;
@@ -781,23 +782,24 @@ Row 2 (len 3): 70 80 90</div>
             }
         }
 
+        // ఆక్యూపెన్సీ పర్సంటేజ్ క్యాలిక్యులేట్ చేస్తున్నాం
         double occupancyRate = ((double) bookedSeats / totalSeats) * 100;
-        System.out.println("=== Cinema Seating & Occupancy Audit ===");
-        System.out.println("Total Seats     : " + totalSeats);
-        System.out.println("Booked Seats    : " + bookedSeats);
-        System.out.println("Available Seats : " + (totalSeats - bookedSeats));
-        System.out.printf("Occupancy Rate  : %.1f%%%n", occupancyRate);
+        System.out.println("=== సినిమా థియేటర్ ఆక్యూపెన్సీ రిపోర్ట్ ===");
+        System.out.println("మొత్తం సీట్లు     : " + totalSeats);
+        System.out.println("బుక్ అయినవి      : " + bookedSeats);
+        System.out.println("ఖాళీగా ఉన్నవి     : " + (totalSeats - bookedSeats));
+        System.out.printf("ఆక్యూపెన్సీ రేట్  : %.1f%%%n", occupancyRate);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== Cinema Seating & Occupancy Audit ===
-Total Seats     : 20
-Booked Seats    : 10
-Available Seats : 10
-Occupancy Rate  : 50.0%</div>
+        <div class="output-content">=== సినిమా థియేటర్ ఆక్యూపెన్సీ రిపోర్ట్ ===
+మొత్తం సీట్లు     : 20
+బుక్ అయినవి      : 10
+ఖాళీగా ఉన్నవి     : 10
+ఆక్యూపెన్సీ రేట్  : 50.0%</div>
       </div>
     </section>
 
@@ -806,16 +808,16 @@ Occupancy Rate  : 50.0%</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using <code>matrix[col][row]</code> instead of <code>matrix[row][col]</code>, leading to index mix-ups or out-of-bounds exceptions.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">మాటిమాటికి <code>matrix[col][row]</code> అని రివర్స్ లో వాడటం. జావాలో ఎప్పుడైనా ముందు <code>row</code> ఆ తర్వాతే <code>col</code> రావాలి (<code>matrix[row][col]</code>). లేకపోతే ఎర్రర్స్ వస్తాయి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Assuming all rows in a 2D array have the same length (calling <code>matrix[0].length</code> for all rows in a jagged array).</li>
+    <li style="margin-bottom:8px; line-height:1.6;">జాగెడ్ అరేస్ వాడేటప్పుడు అన్ని అడ్డువరుసలు ఒకే సైజు ఉంటాయని అనుకోవడం. అప్పుడు లూప్స్ లో <code>matrix[0].length</code> వాడితే క్రాష్ అవుతుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Calling <code>Arrays.toString(matrix)</code> for 2D arrays instead of <code>Arrays.deepToString(matrix)</code>.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">2D అరేస్ ని ప్రింట్ చేయడానికి <code>Arrays.toString(matrix)</code> వాడటం. ఇది కేవలం 1D అరేస్ కే పనిచేస్తుంది. 2D కి <code>Arrays.deepToString()</code> వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Forgetting that <code>new int[3][]</code> leaves all row references <code>null</code> until individually allocated.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>new int[3][]</code> అని క్రియేట్ చేసిన వెంటనే ఆ 3 గదులకి డైరెక్ట్ గా వాల్యూస్ యాడ్ చేద్దాం అనుకోవడం. ముందు ఆ గదుల్లో కొత్త అరేలు న్యూక్రియేట్ చేసిన తర్వాతే యాడ్ చేయాలి.</li>
   
       </ul>
     </div>
@@ -832,9 +834,9 @@ Occupancy Rate  : 50.0%</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Given a square matrix, write a program to calculate:
-// 1. Primary diagonal sum (top-left to bottom-right).
-// 2. Secondary diagonal sum (top-right to bottom-left).
+// ఒక 3x3 స్క్వేర్ మ్యాట్రిక్స్ లో ఇవి కనుక్కోవాలి:
+// 1. ప్రైమరీ డయాగనల్ (Primary diagonal) మొత్తం (టాప్-లెఫ్ట్ నుంచి బాటమ్-రైట్ కి ఉన్న నంబర్స్ కలపాలి).
+// 2. సెకండరీ డయాగనల్ (Secondary diagonal) మొత్తం (టాప్-రైట్ నుంచి బాటమ్-లెఫ్ట్ కి).
 
 public class Challenge {
     public static void main(String[] args) {
@@ -849,12 +851,12 @@ public class Challenge {
         int secondarySum = 0;
         
         for (int i = 0; i &lt; n; i++) {
-            primarySum += matrix[i][i];
-            secondarySum += matrix[i][n - 1 - i];
+            primarySum += matrix[i][i]; // [0][0], [1][1], [2][2]
+            secondarySum += matrix[i][n - 1 - i]; // [0][2], [1][1], [2][0]
         }
         
-        System.out.println("Primary Diagonal Sum   : " + primarySum);   // 1 + 5 + 9 = 15
-        System.out.println("Secondary Diagonal Sum : " + secondarySum); // 3 + 5 + 7 = 15
+        System.out.println("ప్రైమరీ డయాగనల్ మొత్తం   : " + primarySum);   // 1 + 5 + 9 = 15
+        System.out.println("సెకండరీ డయాగనల్ మొత్తం : " + secondarySum); // 3 + 5 + 7 = 15
     }
 }</code></pre>
       </div>
@@ -865,20 +867,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why are 2D arrays not contiguous in memory in Java?</h4>
-      <p>Because Java implements 2D arrays as an "Array of References" to 1D arrays. Each row is a separate object allocated independently on the Heap, which enables flexible features like Jagged Arrays.</p>
+      <h4>❓ జావాలో 2D అరేస్ అన్నీ మెమరీలో ఒకే బ్లాక్ లాగా వరుసగా ఎందుకు ఉండవు?</h4>
+      <p>ఎందుకంటే జావా 2D అరేస్ ని "అరేల లోపల అరేలు" గా డిజైన్ చేసింది. ఇలా చేయడం వల్ల ఒక్కో Row కి ఒక్కో సైజు ఇచ్చుకునే ఫెసిలిటీ (Jagged Arrays) వచ్చింది. ఇది మెమరీని చాలా సేవ్ చేస్తుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the difference between Arrays.toString() and Arrays.deepToString()?</h4>
-      <p>`Arrays.toString()` only formats 1D arrays. For 2D or 3D arrays, it prints object memory references for the inner arrays. `Arrays.deepToString()` recursively navigates all dimensions and prints all inner values.</p>
+      <h4>❓ Arrays.toString() కి Arrays.deepToString() కి తేడా ఏంటి?</h4>
+      <p>`Arrays.toString()` అనేది కేవలం సింగిల్ (1D) అరేస్ ని మాత్రమే ప్రింట్ చేస్తుంది. ఒకవేళ 2D ఇస్తే, అందులో ఉన్న సబ్-అరేల అడ్రెస్ లని ప్రింట్ చేస్తుంది తప్ప వాల్యూస్ ని కాదు. `deepToString()` అయితే ఎన్ని లోపల అరేలున్నా వాటి లోపలికెళ్లి మరీ వాల్యూస్ ని తీసుకొస్తుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Can a 3D array have jagged dimensions in Java?</h4>
-      <p>Yes. Any N-dimensional array in Java is a hierarchy of reference arrays, so each sub-dimension can have varying lengths.</p>
+      <h4>❓ 3D అరేస్ లో కూడా జాగ్రడ్ డైమెన్షన్స్ పెట్టుకోవచ్చా?</h4>
+      <p>కచ్చితంగా! జావాలో ఏ డైమెన్షన్ అరే అయినా సరే "అరేల లోపల అరేలే". కాబట్టి 3D, 4D దేంట్లో అయినా ఒక్కో డైమెన్షన్ కి వేరే వేరే సైజులు ఇచ్చుకోవచ్చు.</p>
     </div>
   
     </section>
@@ -888,19 +890,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Java 2D arrays are implemented as "Arrays of Arrays" where an outer array holds references to row arrays.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">జావాలో 2D అరే అంటే మెమరీలో ఒకే బ్లాక్ కాదు, అదొక "Array of Arrays".</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Access elements using <code>matrix[row][col]</code>; row count is <code>matrix.length</code> and column count is <code>matrix[r].length</code>.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">వేరే వాల్యూస్ తీయాలంటే <code>matrix[row][col]</code> వాడతాం. Row సైజు కావాలంటే <code>matrix.length</code>.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Jagged Arrays allow each row to have custom, non-uniform column sizes to minimize memory waste.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఒక్కో అడ్డువరుస ఒక్కో సైజులో ఉండేలా క్రియేట్ చేయడాన్నే Jagged Arrays అంటారు. ఇది మెమరీ సేవ్ చేస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Use <code>Arrays.deepToString()</code> to format and print multidimensional arrays.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">2D మ్యాట్రిక్స్ ని బ్రాకెట్స్ లో నీట్ గా ప్రింట్ చేయడానికి <code>Arrays.deepToString()</code> వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Matrix transpose flips coordinates via <code>transpose[col][row] = original[row][col]</code>.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ట్రాన్స్పోస్ అంటే అడ్డువరుసలని నిలువు వరుసలుగా మార్చడం (<code>transpose[c][r] = orig[r][c]</code>).</li>
   
       </ul>
     </div>

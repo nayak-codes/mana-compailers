@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Operator Overloading, Friend Functions & Stream Operators Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive C++ guide on Operator Overloading (Phase 12): arithmetic, comparison, assignment, stream insertion/extraction, friend functions, prefix/postfix, index operator, and C++20 spaceship operator." />
-  <meta name="keywords" content="c++ tutorial, c++ operator overloading, friend functions & stream operators masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Operator Overloading & Friend Functions (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో Operators (+, -, *) ని మన సొంత క్లాసెస్ కోసం ఎలా ఓవర్‌లోడ్ చేయాలి? Friend Functions ద్వారా ప్రైవేట్ డేటాని ఎలా యాక్సెస్ చేయాలో పూర్తి స్థాయి డీప్ ఎక్స్‌ప్లనేషన్ తో చూద్దాం." />
+  <meta name="keywords" content="c++ tutorial, operator overloading & friend functions (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/12-cpp-operator-overloading-friend-functions-and-stream-operators.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -490,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 12: C++ Operator Overloading, Friend Functions & Stream Operators Masterclass</span>
+      <span class="current">Lesson 12: Operator Overloading & Friend Functions (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Operator Overloading, Friend Functions & Stream Operators Masterclass</h1>
+    <h1 class="page-title">Operator Overloading & Friend Functions (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 12</span>
@@ -501,177 +478,132 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Overloading +, -, *, == · Assignment & Compound Assignment · operator<< stream · Friend Functions · Prefix & Postfix ++ · operator[] · C++20 Spaceship <=></span>
+      <span>Operator Overloading (+, -) · Friend Functions · cin/cout Overloading · Encapsulation Bypass</span>
     </div>
-<div class="intro-box">
-  <p>Welcome to <strong>Phase 12: Operator Overloading</strong>! C++ allows user-defined types to define the behavior of built-in operators (<code>+</code>, <code>-</code>, <code>==</code>, <code>&lt;&lt;</code>, <code>[]</code>, etc.) making classes feel as natural as built-in types. This is the basis for <code>std::string</code>, <code>std::vector</code>, and smart pointer syntax.</p>
-</div>
 
-<div class="section-title"><span class="num">1</span>What is Operator Overloading?</div>
-<div class="section-body">
-  <p class="text-prose">Operator overloading is defining a special function named <code>operator@</code> (where @ is the operator symbol) that C++ calls when the operator is used on objects of your class. It does NOT change operator precedence, associativity, or arity.</p>
-  <table class="tbl spec-table">
-    <thead><tr><th>Operator</th><th>Implementation</th><th>Notes</th></tr></thead>
-    <tbody>
-      <tr><td><code>+</code>, <code>-</code>, <code>*</code></td><td>Member or non-member</td><td>Return by value (new object)</td></tr>
-      <tr><td><code>==</code>, <code>!=</code>, <code>&lt;</code></td><td>Non-member preferred</td><td>Return <code>bool</code></td></tr>
-      <tr><td><code>=</code></td><td>Member only</td><td>Return <code>T&amp;</code> (self)</td></tr>
-      <tr><td><code>[]</code></td><td>Member only</td><td>Return reference (r/w) and const reference (read)</td></tr>
-      <tr><td><code>&lt;&lt;</code>, <code>&gt;&gt;</code></td><td>Non-member friend</td><td>Return <code>std::ostream&amp;</code></td></tr>
-      <tr><td><code>++</code> prefix</td><td>Member: <code>T&amp; operator++()</code></td><td>Increment then return self</td></tr>
-      <tr><td><code>++</code> postfix</td><td>Member: <code>T operator++(int)</code></td><td>Copy, increment, return old copy</td></tr>
-    </tbody>
-  </table>
-</div>
+    <div class="intro-box">
+      <p>మామూలుగా అయితే <code>int a = 5, b = 10;</code> అని తీసుకుని <code>a + b</code> అని కూడితే 15 వస్తుంది. ఎందుకంటే ఆ <code>+</code> (ప్లస్) అనే ఆపరేటర్ కి నంబర్స్ ని ఎలా కూడాలో తెలుసు. కానీ మీ దగ్గర <code>Vector3D</code> (X, Y, Z కోఆర్డినేట్స్) అనే ఒక సొంత క్లాస్ ఉందనుకోండి. రెండు వెక్టార్ ఆబ్జెక్ట్స్ ని <code>v1 + v2</code> అని రాస్తే కంపైలర్ కి పిచ్చెక్కుతుంది! ఎందుకంటే రెండు బాక్సులని ఎలా కూడాలో దానికి తెలీదు. ఇలా మనకు నచ్చిన క్లాసెస్ కి ఆపరేటర్స్ ని కొత్తగా నేర్పించడాన్నే <strong>Operator Overloading (ఆపరేటర్ ఓవర్‌లోడింగ్)</strong> అంటారు. దీనితో పాటు, ప్రైవేట్ రూమ్ లో ఉన్న సీక్రెట్స్ ని యాక్సెస్ చేయడానికి వాడే <strong>Friend Functions</strong> గురించి కూడా డీప్ గా నేర్చుకుందాం.</p>
+    </div>
 
-<div class="section-title"><span class="num">2</span>Complete Vector2D Example with Full Operator Suite</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Operator Overloading (Vector2D)</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;cmath&gt;
-#include &lt;stdexcept&gt;
+    <div class="section-title"><span class="num">1</span> అసలు Operator Overloading అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ప్రోగ్రామింగ్ లో మనం మ్యాథ్స్ లో వాడే సింబల్స్ (<code>+, -, *, ==, <<</code>) అన్నీ బేసిక్ డేటా టైప్స్ (int, float) కి మాత్రమే పనిచేస్తాయి. కానీ C++ లో మనకు ఉన్న ఒక సూపర్ పవర్ ఏంటంటే, ఈ సింబల్స్ ని మన క్లాసెస్ (ఉదాహరణకు Complex Numbers, Matrices, 3D Vectors) కి అప్లై చేసేలా వాటి మీనింగ్ ని మార్చొచ్చు. దీన్నే ఓవర్‌లోడింగ్ అంటారు.
+      </p>
 
-class Vector2D {
-    double x_, y_;
+      <div class="deep-dive-card">
+        <h3>🎮 రియల్ లైఫ్ స్టోరీ: వీడియో గేమ్ లో హెల్త్ ప్యాక్ సిస్టమ్</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          మీరు ఒక పబ్ జి (PUBG) లాంటి గేమ్ ఆడుతున్నారు. అందులో ప్లేయర్ కి సంబంధించిన హెల్త్, బుల్లెట్స్ ఒక క్లాస్ (PlayerStatus) లో ఉంటాయి. మీరు ఒక హెల్త్ కిట్ (HealthKit) ని పిక్ చేసుకోగానే, మీ ప్లేయర్ స్టేటస్ పెరగాలి.<br><br>
+          C++ లో మనం <code>PlayerStatus + HealthKit</code> అని రాసేలా కంపైలర్ కి నేర్పించొచ్చు! అప్పుడు కంపైలర్ ఆ <code>+</code> సింబల్ ని చూసినప్పుడు, ఒక ఫంక్షన్ ని కాల్ చేసి ఆ హెల్త్ కిట్ లో ఉన్న 50 HP ని ప్లేయర్ కి ఆటోమేటిక్ గా యాడ్ చేస్తుంది. దీనివల్ల గేమ్ డెవలపర్స్ <code>addHealth(50)</code> లాంటి బోర్ కొట్టే ఫంక్షన్స్ రాయకుండా, డైరెక్ట్ గా మ్యాథ్స్ లాగా <code>player += health_kit;</code> అని రాసుకుంటూ వెళ్ళిపోతారు. కోడ్ చదవడానికి చాలా అద్భుతంగా ఉంటుంది!
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Friend Functions (ఫ్రెండ్ ఫంక్షన్స్) ఎందుకు వాడాలి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        క్లాస్ లోపల <code>private</code> గా ఉన్న డేటాని బయట నుండి ఏ ఫంక్షన్ యాక్సెస్ చేయలేదని మనం గతంలో నేర్చుకున్నాం (Encapsulation). కానీ కొన్ని ప్రత్యేక పరిస్థితుల్లో వేరే క్లాస్ లో ఉన్న ఫంక్షన్ గానీ, లేదా బయట ఉన్న ఒక గ్లోబల్ ఫంక్షన్ గానీ మన ప్రైవేట్ డేటాని ముట్టుకోవాల్సి వస్తుంది.
+      </p>
+      <p class="text-prose">
+        అప్పుడు మనం ఆ ఫంక్షన్ పేరుకి ముందు <strong><code>friend</code></strong> అని మన క్లాస్ లోపల ఒక డిక్లరేషన్ ఇస్తాము. దీని అర్థం ఏంటంటే, "కంపైలర్ గారూ, ఈ ఫంక్షన్ నా బెస్ట్ ఫ్రెండ్, వీడికి నా ప్రైవేట్ లాకర్ పాస్వర్డ్ ఇచ్చేస్తున్నా, అడ్డుకోకండి" అని చెప్పడం. ముఖ్యంగా <code><<</code> (cout) ని ఓవర్ లోడ్ చేసేటప్పుడు ఈ ఫ్రెండ్ ఫంక్షన్స్ ని కచ్చితంగా వాడాలి.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Operator Overloading)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో రెండు 2D పాయింట్స్ (x, y) ని <code>+</code> ఆపరేటర్ వాడి ఎలా కూడుతున్నామో, దాన్ని డైరెక్ట్ గా <code>cout</code> తో ఎలా ప్రింట్ చేస్తున్నామో క్లియర్ గా గమనించండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — Operator + & cout Overloading</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class Point {
+private:
+    int x, y;
+
 public:
-    Vector2D(double x = 0, double y = 0) : x_{x}, y_{y} {}
-
-    // Arithmetic operators (member)
-    Vector2D operator+(const Vector2D&amp; other) const {
-        return {x_ + other.x_, y_ + other.y_};
-    }
-    Vector2D operator-(const Vector2D&amp; other) const {
-        return {x_ - other.x_, y_ - other.y_};
-    }
-    Vector2D operator*(double scalar) const {
-        return {x_ * scalar, y_ * scalar};
+    // కన్‌స్ట్రక్టర్ (వాల్యూస్ సెట్ చేయడానికి)
+    Point(int xVal = 0, int yVal = 0) {
+        x = xVal;
+        y = yVal;
     }
 
-    // Compound assignment
-    Vector2D&amp; operator+=(const Vector2D&amp; other) {
-        x_ += other.x_; y_ += other.y_;
-        return *this;
+    // 1. Operator '+' ని ఓవర్‌లోడ్ చేస్తున్నాం
+    // పక్కన ఉన్న ఇంకొక Point ని తీసుకుని, రెండిటినీ కూడి కొత్త Point ఇస్తుంది
+    Point operator+(const Point& other) {
+        Point result;
+        result.x = this->x + other.x;
+        result.y = this->y + other.y;
+        return result;
     }
 
-    // Comparison
-    bool operator==(const Vector2D&amp; other) const {
-        return x_ == other.x_ &amp;&amp; y_ == other.y_;
-    }
-    bool operator!=(const Vector2D&amp; other) const {
-        return !(*this == other);
-    }
-
-    // Prefix increment
-    Vector2D&amp; operator++() {
-        ++x_; ++y_;
-        return *this;
-    }
-
-    // Postfix increment (dummy int parameter)
-    Vector2D operator++(int) {
-        Vector2D old = *this;
-        ++(*this);
-        return old;
-    }
-
-    // Index operator
-    double&amp; operator[](int idx) {
-        if (idx == 0) return x_;
-        if (idx == 1) return y_;
-        throw std::out_of_range("Vector2D: index must be 0 or 1");
-    }
-    const double&amp; operator[](int idx) const {
-        if (idx == 0) return x_;
-        if (idx == 1) return y_;
-        throw std::out_of_range("Vector2D: index must be 0 or 1");
-    }
-
-    double magnitude() const { return std::sqrt(x_*x_ + y_*y_); }
-
-    // Friend: Stream insertion (non-member accessing private data)
-    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Vector2D&amp; v) {
-        return os &lt;&lt; "(" &lt;&lt; v.x_ &lt;&lt; ", " &lt;&lt; v.y_ &lt;&lt; ")";
-    }
-
-    // Friend: scalar * vector (reversed operand order)
-    friend Vector2D operator*(double scalar, const Vector2D&amp; v) {
-        return v * scalar;
+    // 2. Operator '<<' ని ఓవర్‌లోడ్ చేస్తున్నాం (cout కోసం)
+    // ఇది గ్లోబల్ ఫంక్షన్ కాబట్టి friend అని ఇచ్చాం (ప్రైవేట్ x, y చదవడానికి)
+    friend std::ostream& operator<<(std::ostream& out, const Point& p) {
+        out << "(" << p.x << ", " << p.y << ")";
+        return out;
     }
 };
 
 int main() {
-    Vector2D a{3.0, 4.0}, b{1.0, 2.0};
-
-    std::cout &lt;&lt; "a        = " &lt;&lt; a &lt;&lt; "
-";
-    std::cout &lt;&lt; "b        = " &lt;&lt; b &lt;&lt; "
-";
-    std::cout &lt;&lt; "a + b    = " &lt;&lt; (a + b) &lt;&lt; "
-";
-    std::cout &lt;&lt; "a - b    = " &lt;&lt; (a - b) &lt;&lt; "
-";
-    std::cout &lt;&lt; "a * 2    = " &lt;&lt; (a * 2.0) &lt;&lt; "
-";
-    std::cout &lt;&lt; "3 * a    = " &lt;&lt; (3.0 * a) &lt;&lt; "
-";
-    std::cout &lt;&lt; "|a|      = " &lt;&lt; a.magnitude() &lt;&lt; "
-";
-    std::cout &lt;&lt; "a == b   = " &lt;&lt; std::boolalpha &lt;&lt; (a == b) &lt;&lt; "
-";
-    std::cout &lt;&lt; "a[0]     = " &lt;&lt; a[0] &lt;&lt; "
-";
-
-    Vector2D c = a;
-    std::cout &lt;&lt; "c++ (post) = " &lt;&lt; c++ &lt;&lt; "  then c = " &lt;&lt; c &lt;&lt; "
-";
-    std::cout &lt;&lt; "++c (pre)  = " &lt;&lt; ++c &lt;&lt; "
-";
+    Point p1(10, 20);
+    Point p2(5, 15);
+    
+    // డైరెక్ట్ గా మ్యాథ్స్ లాగా రెండు ఆబ్జెక్ట్స్ ని కూడుతున్నాం! (Operator + magic)
+    Point p3 = p1 + p2;
+    
+    // డైరెక్ట్ గా ఆబ్జెక్ట్ ని ప్రింట్ చేస్తున్నాం! (Operator << magic)
+    std::cout << "Result Point: " << p3 << std::endl;
+    
     return 0;
 }</code></pre>
-  </div>
-</div>
+      </div>
+    </div>
 
-<div class="section-title"><span class="num">3</span>Friend Functions &amp; Rules / Limitations</div>
-<div class="section-body">
-  <div class="concept-box">
-    <h4>When to use friend non-member operators:</h4>
-    <p>• Use <code>friend</code> for symmetric operators (<code>+</code>, <code>==</code>) so both sides get equal treatment.</p>
-    <p>• Use <code>friend</code> for <code>operator&lt;&lt;</code> and <code>operator&gt;&gt;</code> since <code>ostream</code> is on the left side.</p>
-  </div>
-  <div class="concept-box">
-    <h4>Operators that CANNOT be overloaded:</h4>
-    <p><code>::</code> (scope resolution) &nbsp; <code>.</code> (member access) &nbsp; <code>.*</code> (pointer-to-member) &nbsp; <code>?:</code> (ternary) &nbsp; <code>sizeof</code> &nbsp; <code>alignof</code></p>
-  </div>
-  <div class="concept-box">
-    <h4>C++20 — Spaceship operator <code>&lt;=&gt;</code>:</h4>
-    <p>Defining <code>auto operator&lt;=&gt;(const T&amp;) const = default;</code> automatically generates all 6 comparison operators (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>==</code>, <code>!=</code>).</p>
-  </div>
-</div>
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>Point operator+(const Point&amp; other)</code>: మనం <code>p1 + p2</code> అని రాయగానే, కంపైలర్ <code>p1.operator+(p2)</code> అని మార్చి ఫంక్షన్ ని పిలుస్తుంది. అప్పుడు <code>this-&gt;x</code> అనేది p1 యొక్క x ని (10), <code>other.x</code> అనేది p2 యొక్క x ని (5) కూడి రిజల్ట్ (15) పంపుతుంది.</li>
+        <li><code>friend std::ostream&amp; operator&lt;&lt;</code>: మామూలుగా <code>cout</code> కి మన <code>Point</code> ఆబ్జెక్ట్ లో ఏముందో తెలీదు. కాబట్టి మనం ఈ ఫ్రెండ్ ఫంక్షన్ రాసి, అందులో బ్రాకెట్స్ పెట్టి ఫార్మాట్ <code>(x, y)</code> గా మార్చి అవుట్పుట్ స్ట్రీమ్ (out) లోకి తోసాము. ఇది రాయకపోతే మీరు <code>cout &lt;&lt; p3;</code> అని రాసినప్పుడు భయంకరమైన ఎర్రర్ వస్తుంది.</li>
+      </ul>
+    </div>
 
-<div class="section-title"><span class="num">4</span>Technical FAQs</div>
-<div class="section-body">
-  <div class="faq-grid">
-    <div class="faq-item"><h4>Q1: Should operator+ be a member or non-member?</h4><p>Prefer non-member (or friend) for symmetric binary operators like <code>+</code>. This allows implicit conversions on both operands.</p></div>
-    <div class="faq-item"><h4>Q2: What is the return type of operator=?</h4><p>Always return <code>T&amp;</code> (reference to *this). This enables chaining: <code>a = b = c;</code>.</p></div>
-    <div class="faq-item"><h4>Q3: Difference between prefix and postfix ++?</h4><p>Prefix <code>operator++()</code> has no parameters and returns reference to modified object. Postfix <code>operator++(int)</code> has a dummy <code>int</code> parameter, saves a copy, increments, returns old copy.</p></div>
-    <div class="faq-item"><h4>Q4: Can I overload operator&& or operator||?</h4><p>Technically yes, but avoid it! Overloaded <code>&amp;&amp;</code> and <code>||</code> lose their short-circuit evaluation property — both operands are always evaluated.</p></div>
-    <div class="faq-item"><h4>Q5: What is the conversion operator?</h4><p><code>operator bool() const</code> defines implicit conversion to bool, used for <code>if (myObj)</code> checks. Mark it <code>explicit</code> to prevent accidental implicit conversions.</p></div>
-  </div>
-</div>
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: C++ లో ఏ ఏ ఆపరేటర్స్ ని మనం మార్చలేము (Cannot Overload)?</h4>
+          <p>చాలా మటుకు అన్నిటినీ మార్చొచ్చు కానీ, కొన్నింటిని కంపైలర్ టచ్ చేయనివ్వదు. అవి: డాట్ ఆపరేటర్ (<code>.</code>), స్కోప్ రిజల్యూషన్ ఆపరేటర్ (<code>::</code>), టెర్నరీ ఆపరేటర్ (<code>?:</code>), మరియు <code>sizeof</code> ఆపరేటర్. వీటి మీనింగ్ మారిపోతే మొత్తం C++ పునాది కదిలిపోతుంది కాబట్టి వీటిని లాక్ చేసారు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ఒక క్లాస్ లో వందలాది ఫ్రెండ్ ఫంక్షన్స్ వాడొచ్చా? ఇది మంచిదేనా?</h4>
+          <p>వాడొచ్చు, కానీ అది <strong>"Very Bad Design"</strong> అవుతుంది! ఎందుకంటే ఎన్‌క్యాప్సులేషన్ ముఖ్య ఉద్దేశ్యమే డేటాని దాచిపెట్టి కాపాడటం. మీరు ఎవరికి పడితే వాళ్ళకి ఫ్రెండ్ షిప్ ఇచ్చేసి ప్రైవేట్ డేటాని ఓపెన్ చేస్తే, దాన్ని హాక్ చేయడం లేదా తప్పు వాల్యూస్ సెట్ చేయడం చాలా ఈజీ అవుతుంది. కేవలం <code>cin / cout</code> ఓవర్ లోడింగ్ లాంటి అత్యవసర సమయాల్లో మాత్రమే ఫ్రెండ్ ని వాడాలి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: జావా లాంటి లాంగ్వేజెస్ లో ఆపరేటర్ ఓవర్‌లోడింగ్ ఎందుకు లేదు?</h4>
+          <p>జావా తయారు చేసిన జేమ్స్ గోస్లింగ్ ఏమనుకున్నాడంటే, "ఆపరేటర్ ఓవర్‌లోడింగ్ వాడితే కోడ్ చూడటానికి సింపుల్ గా అనిపిస్తుంది కానీ, బ్యాక్ గ్రౌండ్ లో ఏ భారీ ఫంక్షన్ రన్ అవుతుందో డెవలపర్ కి తెలీక కన్ఫ్యూజ్ అవుతాడు" అని దాన్ని తీసేసాడు. జావాలో మీరు <code>p1.add(p2)</code> అని మ్యాన్యువల్ గా ఫంక్షన్స్ రాయాల్సిందే. కానీ C++, C# మరియు పైథాన్ లో ఈ ఓవర్‌లోడింగ్ ఫీచర్ ఉంది.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="11-cpp-inheritance-virtual-functions-and-runtime-polymorphism.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">11. Inheritance, Virtual Functions & Runtime Polymorphism</span>
+    <span class="title">11. Inheritance & Virtual Functions</span>
   </a>
   <a href="13-cpp-templates-function-class-specialization-and-concepts.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">13. Templates, Specialization, Variadic & Concepts</span>
+    <span class="title">13. Templates & Concepts</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

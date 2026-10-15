@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitwise AND, OR, XOR, NOT (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ లో హార్డ్వేర్ తో డైరెక్ట్ గా మాట్లాడాలంటే Bitwise ఆపరేటర్స్ ఎలా వాడాలి? 0s మరియు 1s (బైనరీ లెవల్) లో AND (&), OR (|), XOR (^), NOT (~) ఎలా పనిచేస్తాయో రియల్ యానిమేటెడ్ ఎగ్జాంపుల్స్ తో చూద్దాం." />
+  <meta name="keywords" content="c tutorial, bitwise and, or, xor, not (తెలుగులో), void pointers, bitwise operators c, left shift right shift, bit masking c, bit fields c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/44-c-bitwise-and-or-xor-not-operators.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 15: Advanced Pointers -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Advanced Pointers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/41-c-double-pointers-and-memory-addresses.html">41. Double Pointers (**) & Memory Addresses</a>
+        <a href="/blog-c/42-c-function-pointers-and-callbacks.html">42. Function Pointers & Callbacks</a>
+        <a href="/blog-c/43-c-void-pointers-and-generic-programming.html">43. Void Pointers & Generic Programming</a>
+      </div>
+
+      <!-- Phase 16: Bitwise & Low-Level -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Bitwise & Low-Level</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/44-c-bitwise-and-or-xor-not-operators.html" class="active">44. Bitwise AND, OR, XOR, NOT</a>
+        <a href="/blog-c/45-c-shift-operators-and-fast-math.html">45. Shift Operators (<<, >>) & Fast Math</a>
+        <a href="/blog-c/46-c-bit-masking-flags-and-hardware-registers.html">46. Bit Masking, Flags & Hardware Registers</a>
+        <a href="/blog-c/47-c-bit-fields-and-struct-packing.html">47. Bit Fields & Struct Packing</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 44: Bitwise AND, OR, XOR, NOT (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Bitwise AND, OR, XOR, NOT (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 44</span>
+      <span class="badge">📂 Phase 16: Bitwise & Low-Level</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Binary Number System · Bitwise AND (&) · OR (|) · XOR (^) · NOT (~) · Hardware Control</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఇంతవరకు మనం రాసిన మ్యాథ్స్ (<code>+</code>, <code>-</code>) అంతా డెసిమల్ (మనుషులు వాడే 10, 20) నంబర్స్ మీదే జరిగింది. కానీ కంప్యూటర్ లోపల సిపియు కి తెలిసింది కేవలం కరెంట్ ఆన్ (1) లేదా కరెంట్ ఆఫ్ (0) మాత్రమే! మీరు హార్డ్వేర్ చిప్స్ ప్రోగ్రామింగ్ చేయాలన్నా (Embedded C), లేదా మైక్రోకంట్రోలర్ లో ఒక సెన్సార్ ని ఆన్ చేయాలన్నా <strong>Bitwise Operators</strong> వాడాల్సిందే! ఇవి డైరెక్ట్ గా RAM లో ఉన్న బిట్స్ (0s & 1s) లోపలికి చొచ్చుకుని వెళ్లి ఆపరేషన్స్ చేస్తాయి. ఇవి ఎలా పనిచేస్తాయో ఈరోజు క్రిస్టల్ క్లియర్ గా తెలుసుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> బిట్స్ (Bits) అంటే ఏంటి? (The Matrix)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఒక నంబర్ 5 ని మీరు కంప్యూటర్ కి ఇస్తే, అది బైనరీ లోకి <code>0101</code> గా మారుతుంది. 3 ని ఇస్తే <code>0011</code> గా మారుతుంది. బిట్ వైజ్ ఆపరేటర్స్ డైరెక్ట్ గా ఆ బైనరీ డిజిట్స్ ని (వరుసగా నిలబెట్టి) క్యాలిక్యులేట్ చేస్తాయి.
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>🔌 రియల్ లైఫ్ స్టోరీ: స్విచ్ బోర్డ్ & బల్బ్స్ (The Logic Gates)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          ఒక రూమ్ లో రెండు స్విచ్ లు ఉన్నాయి. ఆ రెండూ ఒకే బల్బ్ కి కనెక్ట్ అయ్యి ఉన్నాయి అనుకోండి.<br><br>
+          <strong>AND (<code>&amp;</code>) - స్ట్రిక్ట్ మేనేజర్:</strong> రెండు స్విచ్ లు (1 మరియు 1) ఆన్ లో ఉంటేనే బల్బ్ వెలుగుతుంది. ఏ ఒక్కటి ఆఫ్ (0) అయినా బల్బ్ వెలగదు. (ఉదాహరణ: యూజర్ నేమ్ అండ్ పాస్వర్డ్ రెండు కరెక్ట్ అయితేనే లాగిన్).<br><br>
+          <strong>OR (<code>|</code>) - ఫ్రెండ్లీ మేనేజర్:</strong> ఏ ఒక్క స్విచ్ ఆన్ (1) అయినా చాలు బల్బ్ వెలుగుతుంది. రెండూ ఆఫ్ అయితేనే వెలగదు.<br><br>
+          <strong>XOR (<code>^</code>) - ఆడ్ మ్యాన్ అవుట్:</strong> రెండు స్విచ్ లు వేర్వేరుగా (ఒకటి ఆన్, ఇంకోటి ఆఫ్) ఉంటేనే బల్బ్ వెలుగుతుంది. రెండు ఆన్ ఉన్నా ఆఫ్ అయిపోతుంది! ఇది ఎన్క్రిప్షన్ (పాస్వర్డ్స్ హైడ్ చేయడం) లో ఎక్కువగా వాడతారు.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> మ్యాథ్స్ వర్సెస్ బిట్ వైజ్ (The Magic)</div>
+    <div class="section-body">
+      <div class="memory-diagram">
+ఉదాహరణకు 5 & 3 (AND) చేద్దాం:
+
+  5  బైనరీ లో ->  0 1 0 1
+  3  బైనరీ లో ->  0 0 1 1
+  -----------------------
+  AND (&) రిజల్ట్->  0 0 0 1  (రెండూ 1 ఉంటేనే 1 వస్తుంది)
+  
+అంటే 5 & 3 రిజల్ట్ = 1 అన్నమాట!</div>
+      <p class="text-prose">
+        <strong>NOT (<code>~</code>) ఆపరేటర్:</strong> ఇది సింగిల్ స్విచ్ ని ఫ్లిప్ చేస్తుంది. అంటే 1 ఉంటే 0 చేస్తుంది, 0 ఉంటే 1 చేస్తుంది (Invert).
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Bitwise in Action)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో 5 మరియు 3 కి AND, OR, XOR లు అప్లై చేసినప్పుడు ఫైనల్ అవుట్పుట్ ఏమొస్తుందో కంపైలర్ ద్వారా లైవ్ గా చూద్దాం.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Bitwise Operators</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int a = 5;  // బైనరీ: 0000 0101
+    int b = 3;  // బైనరీ: 0000 0011
+    
+    printf("--- Bitwise Operations ---\n");
+    printf("a = %d (0101), b = %d (0011)\n\n", a, b);
+    
+    // 1. Bitwise AND (&)
+    int and_result = a & b; 
+    printf("a & b (AND) = %d  -> [0001]\n", and_result); // 1
+    
+    // 2. Bitwise OR (|)
+    int or_result = a | b;
+    printf("a | b (OR)  = %d  -> [0111]\n", or_result);  // 7
+    
+    // 3. Bitwise XOR (^)
+    int xor_result = a ^ b;
+    printf("a ^ b (XOR) = %d  -> [0110]\n", xor_result); // 6
+    
+    // 4. Bitwise NOT (~)
+    // నెగటివ్ నంబర్స్ ని 2's Complement లో రిప్రజెంట్ చేస్తారు కాబట్టి -6 వస్తుంది
+    int not_result = ~a;
+    printf("~a    (NOT) = %d -> [1111 1010]\n", not_result); // -6
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>a | b</code>: 0101 మరియు 0011 కి మధ్య <code>OR</code>. ఏ ఒక్కటి 1 ఉన్నా ఆన్సర్ 1 కాబట్టి, <code>0111</code> వస్తుంది. బైనరీ లో 0111 అంటే డెసిమల్ లో 7.</li>
+        <li><code>a ^ b</code>: XOR ఆపరేటర్. 0101 మరియు 0011 లో సేమ్ ఉన్నవి 0 అయిపోతాయి, డిఫరెంట్ ఉన్నవి 1 అవుతాయి. కాబట్టి <code>0110</code> వస్తుంది. దాన్ని ప్రింట్ చేస్తే 6 వచ్చింది.</li>
+        <li><code>~a</code>: NOT ఆపరేటర్. 5 అంటే <code>0000 0101</code> (32-bit లో). దాన్ని అంతా ఫ్లిప్ చేస్తే <code>1111...1010</code> అవుతుంది. C కంపైలర్ ఫస్ట్ బిట్ 1 ఉంటే దాన్ని మైనస్ (Negative) వాల్యూ గా తీసుకుంటుంది (2's complement ప్రకారం). కాబట్టి అది -6 అవుతుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: లాజికల్ <code>&amp;&amp;</code> కి, బిట్ వైజ్ <code>&amp;</code> కి తేడా ఏంటి?</h4>
+          <p>చాలా మంది కన్ఫ్యూజ్ అవుతారు! లాజికల్ <code>&amp;&amp;</code> (డబుల్) అనేది ఒక కండిషన్ (if) ట్రూ నా ఫాల్స్ నా అని మాత్రమే చెక్ చేస్తుంది. కానీ సింగిల్ <code>&amp;</code> అనేది లోపల ఉన్న బైనరీ 0s అండ్ 1s లోకి దూరి ఒక కొత్త నంబర్ ని జనరేట్ చేస్తుంది. <code>if(5 &amp;&amp; 3)</code> అంటే ట్రూ, కానీ <code>5 &amp; 3</code> అంటే 1 అనే నంబర్ వస్తుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: ఒక నంబర్ ఈవెన్ (Even) ఆ ఆడ్ (Odd) ఆ అని మోడ్యులో (%) లేకుండా ఎలా చెప్పాలి?</h4>
+          <p>దీనికి బిట్ వైజ్ అండ్ (<code>&amp;</code>) సూపర్ ట్రిక్! <code>if (num &amp; 1)</code> అని రాస్తే చాలు. ఏ నంబర్ కి అయినా లాస్ట్ బైనరీ బిట్ 1 ఉంటే అది ఆడ్ నంబర్, 0 ఉంటే ఈవెన్ నంబర్. మోడ్యులో (<code>%2</code>) వాడటం కన్నా ఇది 10 రెట్లు ఫాస్ట్ గా కంపైల్ అవుతుంది!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: మూడో వేరియబుల్ లేకుండా రెండు నంబర్స్ ని మార్చడం (Swap) ఎలా?</h4>
+          <p>ఇది ఇంటర్వ్యూలలో ఫేమస్ క్వశ్చన్. మీరు XOR (<code>^</code>) ఆపరేటర్ వాడి మ్యాజిక్ చేయొచ్చు! <code>a = a ^ b; b = a ^ b; a = a ^ b;</code> అని రాస్తే <code>a</code> లోకి <code>b</code> వాల్యూ, <code>b</code> లోకి <code>a</code> వాల్యూ ఆటోమేటిక్ గా స్వాప్ అయిపోతాయి (ఎక్స్ట్రా మెమరీ అవసరం లేకుండా).</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="43-c-void-pointers-and-generic-programming.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">43. Void Pointers</span>
+      </a>
+
+      
+      <a href="45-c-shift-operators-and-fast-math.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">45. Shift Operators & Fast Math</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

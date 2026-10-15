@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modern Java Switch Expressions (Java 14+) & Condition Pitfalls — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering modern Java 14+ enhanced switch expressions: replacing verbose break statements with concise arrow (->) syntax, returning direct values, utilizing the yield keyword for multi-line logic, and avoiding the top 10 common conditional anti-patterns in enterprise code." />
-  <meta name="keywords" content="modern java switch expressions (java 14+) & condition pitfalls, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Modern Java Switch Expressions (Java 14+) & Condition Pitfalls (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా 14 లో switch స్టేట్మెంట్ ని పూర్తిగా మార్చేశారు! పాత switch లో ఉన్న ప్రాబ్లమ్స్ (break మర్చిపోవడం లాంటివి) లేకుండా, చాలా షార్ట్ గా Arrow (->) సింటాక్స్ తో ఎలా రాయాలో చూద్దాం. అలాగే డెవలపర్స్ కామన్ గా చేసే if-else తప్పులు (Anti-patterns) ఎలా అవాయిడ్ చేయాలో నేర్చుకుందాం." />
+  <meta name="keywords" content="modern java switch expressions (java 14+) & condition pitfalls (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/18-java-modern-switch-expressions-and-pitfalls.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 18: 18. Modern Switch & Pitfalls</span>
     </div>
 
-    <h1 class="page-title">Modern Java Switch Expressions (Java 14+) & Condition Pitfalls</h1>
+    <h1 class="page-title">Modern Java Switch Expressions (Java 14+) & Condition Pitfalls (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,39 +541,38 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering modern Java 14+ enhanced switch expressions: replacing verbose break statements with concise arrow (->) syntax, returning direct values, utilizing the yield keyword for multi-line logic, and avoiding the top 10 common conditional anti-patterns in enterprise code.</p>
+      <p>జావా 14 లో switch స్టేట్మెంట్ ని పూర్తిగా మార్చేశారు! పాత switch లో ఉన్న ప్రాబ్లమ్స్ (break మర్చిపోవడం లాంటివి) లేకుండా, చాలా షార్ట్ గా Arrow (->) సింటాక్స్ తో ఎలా రాయాలో చూద్దాం. అలాగే డెవలపర్స్ కామన్ గా చేసే if-else తప్పులు (Anti-patterns) ఎలా అవాయిడ్ చేయాలో నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The Evolution: Traditional switch vs Modern switch Expressions (Java 14+)</h2>
+      <h2>1. ఏంటి మార్పు? పాత switch కీ, కొత్త switch కీ తేడా.</h2>
       <div class="theory-text">
-        <p>In <strong>Java 14</strong>, Java revolutionized the <code>switch</code> construct by turning it into a <strong>First-Class Expression</strong> (meaning it can directly compute and return a value to a variable).</p>
-<h3>Key Advantages of Modern Switch Expressions:</h3>1. <strong>Arrow Syntax (<code>-></code>):</strong> Eliminates the need for <code>break</code> statements! No more accidental fall-through bugs.
-2. <strong>Direct Value Assignment:</strong> Assign the evaluated switch result directly to a variable.
-3. <strong>Comma-Separated Multiple Labels:</strong> Group multiple cases on a single line (<code>case 1, 2, 3 -> ...</code>).
-4. <strong>Exhaustiveness Guarantee:</strong> The compiler forces you to cover all possible values (or provide a <code>default</code>), preventing unhandled edge cases.
+        <p><strong>Java 14</strong> నుంచి, జావా <code>switch</code> ని ఒక <strong>Expression</strong> గా మార్చేసింది (అంటే అందులోంచి డైరెక్ట్ గా వాల్యూస్ ని బయటకి పంపించి ఒక వేరియబుల్ లో స్టోర్ చేయొచ్చు).</p>
+<h3>కొత్త Switch అడ్వాంటేజెస్:</h3>1. <strong>Arrow సింటాక్స్ (<code>-></code>):</strong> ఇక్కడ <code>break</code> రాయాల్సిన అవసరమే లేదు! కాబట్టి కింది లైన్స్ లోకి పొరపాటున వెళ్లిపోవడం (Fall-through బగ్స్) అస్సలు ఉండవు.
+2. <strong>డైరెక్ట్ గా వాల్యూ అసైన్ చేయడం:</strong> వచ్చిన రిజల్ట్ ని ఒకేసారి వేరియబుల్ లో స్టోర్ చేసుకోవచ్చు.
+3. <strong>కామా (,) తో మల్టిపుల్ లేబుల్స్:</strong> ఒకే లాజిక్ ఉన్న వాటిని కామా పెట్టి ఒకే లైన్ లో రాసేయొచ్చు (<code>case 1, 2, 3 -> ...</code>).
+4. <strong>ఆటోమెటిక్ చెకింగ్:</strong> మనం ఏ కండిషన్ అన్నా మిస్ అయితే జావానే వార్నింగ్ ఇచ్చి ఆపేస్తుంది.
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Modern Switch Expression Syntax & Examples</h2>
+      <h2>2. మోడ్రన్ Switch సింటాక్స్ & ఎగ్జాంపుల్స్</h2>
       <div class="theory-text">
-        <h3>1. Basic Arrow Syntax</h3><div class="code-block"><pre><code>String dayType = switch (day) {
-    case 1, 2, 3, 4, 5 -&gt; "Weekday";
-    case 6, 7           -&gt; "Weekend";
-    default             -&gt; "Invalid Day";
-};</code></pre></div>
-<h3>2. Multi-line Logic with the <code>yield</code> Keyword</h3>If a case requires multiple statements or calculations before returning a value, enclose it in curly braces <code>{}</code> and use the <strong><code>yield</code></strong> keyword to return the value:
+        <h3>1. బేసిక్ Arrow (<code>-></code>) సింటాక్స్</h3><div class="code-block"><pre><code>String dayType = switch (day) {
+    case 1, 2, 3, 4, 5 -&gt; "వర్కింగ్ డే"; // బ్రేక్ అవసరం లేదు, డైరెక్ట్ వాల్యూ ఇస్తున్నాం
+    case 6, 7           -&gt; "వీకెండ్";
+    default             -&gt; "ఇన్వాలిడ్ రోజు";
+}; // వేరియబుల్ కి అసైన్ చేస్తున్నాం కాబట్టి ఇక్కడ సెమికోలన్ (;) కచ్చితంగా ఉండాలి.</code></pre></div>
+<h3>2. రెండు మూడు లైన్స్ రాయాలంటే <code>yield</code> వాడాలి</h3>ఒకవేళ మీరు డైరెక్ట్ గా వాల్యూ ఇవ్వకుండా, లోపల ఇంకేదన్నా లాజిక్ చేసి అప్పుడు వాల్యూ పంపించాలంటే బ్రాకెట్స్ <code>{}</code> పెట్టి, రిటర్న్ చేయడానికి <strong><code>yield</code></strong> అనే కీవర్డ్ వాడాలి:
 <div class="code-block"><pre><code>double discount = switch (customerTier) {
     case "PLATINUM" -&gt; 0.25;
     case "GOLD"     -&gt; 0.15;
-    case "SILVER"   -&gt; 0.05;
     case "REGULAR"  -&gt; {
-        System.out.println("Applying standard seasonal rebate...");
-        yield 0.02; // Returns 0.02 from the block
+        System.out.println("నార్మల్ కస్టమర్స్ కి కూడా ఆఫర్ ఇస్తున్నాం...");
+        yield 0.02; // ఇక్కడినుంచి 0.02 వాల్యూని పైకి పంపిస్తున్నాం
     }
     default -&gt; 0.0;
 };</code></pre></div>
@@ -582,22 +581,22 @@
   
 
     <section class="lesson-section">
-      <h2>3. Side-by-Side Comparison</h2>
+      <h2>3. పాత దానికి, కొత్త దానికి కంపారిజన్</h2>
       <div class="theory-text">
-        <div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>Feature</th><th>Traditional switch (Java 1.0 - 13)</th><th>Modern switch Expression (Java 14+ LTS)</th></tr></thead><tbody><tr><td>**Construct Type**</td></tr></tbody></table></div>
- Statement only (does not return values). | Expression (returns a value) or Statement. |
-| <strong>Fall-Through Risk</strong> | High (missing <code>break</code> falls through). | <strong>Zero</strong> (Arrow <code>-></code> never falls through). |
-| <strong>Syntax Style</strong> | <code>case VAL: stmt; break;</code> | <code>case VAL -> result;</code> |
-| <strong>Multiple Labels</strong> | Stacked <code>case 1: case 2:</code> | Comma-separated: <code>case 1, 2, 3 -></code> |
-| <strong>Block Returns</strong> | Re-assign variable and <code>break</code>. | Use <strong><code>yield</code></strong> keyword. |
+        <div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>ఫీచర్</th><th>పాత switch (Java 1 - 13)</th><th>కొత్త మోడ్రన్ switch (Java 14+)</th></tr></thead><tbody><tr><td>**ఏం చేస్తుంది?**</td></tr></tbody></table></div>
+ జస్ట్ కోడ్ రన్ చేస్తుంది, వాల్యూస్ తిరిగి ఇవ్వదు. | వాల్యూస్ ని డైరెక్ట్ గా రిటర్న్ చేస్తుంది. |
+| <strong>Fall-Through బగ్స్</strong> | చాలా ఎక్కువ (break మర్చిపోతే అంతే). | <strong>జీరో</strong> (Arrow <code>-></code> వాడితే కిందకి అసలు వెళ్ళదు). |
+| <strong>ఎలా రాస్తాం?</strong> | <code>case VAL: లాజిక్; break;</code> | <code>case VAL -> రిజల్ట్;</code> |
+| <strong>ఎక్కువ కండిషన్స్ కి</strong> | కింద కింద రాయాలి <code>case 1: case 2:</code> | కామాతో రాయొచ్చు <code>case 1, 2, 3 -></code> |
+| <strong>మల్టిపుల్ లైన్స్ కి</strong> | వేరియబుల్ ని మార్చి <code>break</code> రాయాలి. | <strong><code>yield</code></strong> వాడాలి. |
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Top 5 Common Condition Anti-Patterns & How to Avoid Them</h2>
+      <h2>4. కోడింగ్ లో కామన్ గా చేసే 5 తప్పులు (Anti-Patterns) & వాటి సొల్యూషన్స్</h2>
       <div class="theory-text">
-        <p>1. <strong>The Boolean Redundancy Trap:</strong><br>   - ❌ *Anti-Pattern:* <code>if (isLoggedIn == true)</code><br>   - ✅ *Clean Code:* <code>if (isLoggedIn)</code><br>2. <strong>The Inverted Null Bug:</strong><br>   - ❌ *Anti-Pattern:* <code>if (user.getRole().equals("ADMIN"))</code> (Crashes if role is null!)<br>   - ✅ *Clean Code:* <code>if ("ADMIN".equals(user.getRole()))</code><br>3. <strong>The Dangling Else Ambiguity:</strong><br>   - Always enclose nested <code>if</code> statements inside explicit curly braces <code>{}</code> to ensure <code>else</code> attaches to the intended <code>if</code>.<br>4. <strong>Integer Division in Conditions:</strong><br>   - ❌ *Anti-Pattern:* <code>if (score / 100 > 0.5)</code> (Integer math truncates to 0!)<br>   - ✅ *Clean Code:* <code>if (score / 100.0 > 0.5)</code><br>5. <strong>Deeply Nested "Arrow Code":</strong><br>   - ❌ 5 levels of nested <code>if</code> blocks make code unmaintainable.<br>   - ✅ Use <strong>Guard Clauses (Early Return)</strong>:<br>     <div class="code-block"><pre><code>if (!isAuthenticated) return "Access Denied";<br>     if (!hasFunds) return "Insufficient Balance";<br>     // Process main logic cleanly here...</code></pre></div></p>
+        <p>1. <strong>డబుల్ బూలియన్ చెకింగ్ (Boolean Redundancy Trap):</strong><br>   - ❌ *తప్పు:* <code>if (isLoggedIn == true)</code> (బూలియన్ కి మళ్ళీ true అని రాయక్కర్లేదు)<br>   - ✅ *కరెక్ట్:* <code>if (isLoggedIn)</code><br>2. <strong>Null తో క్రాష్ అయ్యే బగ్ (The Inverted Null Bug):</strong><br>   - ❌ *తప్పు:* <code>if (user.getRole().equals("ADMIN"))</code> (ఒకవేళ role null ఉంటే క్రాష్ అవుతుంది!)<br>   - ✅ *కరెక్ట్:* <code>if ("ADMIN".equals(user.getRole()))</code><br>3. <strong>ఇంటిజర్ డివిజన్ మిస్టేక్ (Integer Division in Conditions):</strong><br>   - ❌ *తప్పు:* <code>if (score / 100 > 0.5)</code> (score ఇంటిజర్ కాబట్టి డెసిమల్స్ కట్ అయిపోయి 0 అయిపోతుంది, సో కండిషన్ ఎప్పటికీ పాస్ అవ్వదు!)<br>   - ✅ *కరెక్ట్:* <code>if (score / 100.0 > 0.5)</code><br>4. <strong>అతిగా లోపలికి వెళ్లడం (Deeply Nested "Arrow Code"):</strong><br>   - ❌ if లోపల ఇంకో if, దాని లోపల ఇంకో if.. ఇలా 5, 6 రాసుకుంటూ వెళ్తే చదవడానికి కష్టంగా ఉంటుంది.<br>   - ✅ దానికి బదులు <strong>Guard Clauses (Early Return)</strong> వాడాలి:<br>     <div class="code-block"><pre><code>if (!isAuthenticated) return "యాక్సెస్ లేదు";<br>     if (!hasFunds) return "బ్యాలెన్స్ లేదు";<br>     // ఇప్పుడు మెయిన్ లాజిక్ ప్రశాంతంగా రాసుకోవచ్చు...</code></pre></div></p>
       </div>
     </section>
   
@@ -619,34 +618,34 @@
 
         System.out.println("=== Modern Java 14+ Switch Expressions ===");
 
-        // 1. Switch Expression assigning directly to a variable with arrow syntax
+        // 1. డైరెక్ట్ గా వాల్యూస్ అసైన్ చేయడం (Arrow సింటాక్స్)
         int fiscalQuarter = switch (quarterMonth) {
             case "JANUARY", "FEBRUARY", "MARCH"     -&gt; 1;
-            case "APRIL", "MAY", "JUNE"             -&gt; 2;
+            case "APRIL", "MAY", "JUNE"             -&gt; 2; // ఇది మ్యాచ్ అయ్యింది కాబట్టి డైరెక్ట్ గా 2 వెళ్ళిపోతుంది
             case "JULY", "AUGUST", "SEPTEMBER"      -&gt; 3;
             case "OCTOBER", "NOVEMBER", "DECEMBER"  -&gt; 4;
             default -&gt; 0;
         };
 
-        System.out.println("Month: " + quarterMonth + " belongs to Q" + fiscalQuarter);
+        System.out.println("నెల: " + quarterMonth + " అనేది క్వార్టర్ Q" + fiscalQuarter + " కి వస్తుంది");
 
-        // 2. Multi-statement block using the 'yield' keyword
+        // 2. రెండు మూడు లైన్స్ కోసం 'yield' వాడటం
         String priorityLevel = "HIGH";
         int responseTimeHours = switch (priorityLevel) {
             case "CRITICAL" -&gt; 1;
             case "HIGH"     -&gt; {
-                System.out.println("[Log] High-priority incident escalated to On-Call Engineer.");
-                yield 4; // Returns 4 hours SLA
+                System.out.println("[లాగ్] హై-ప్రయారిటీ.. వెంటనే టీమ్ కి మెసేజ్ పంపాం.");
+                yield 4; // 4 గంటల్లో సాల్వ్ చేయాలి అని వాల్యూ పంపిస్తున్నాం
             }
             case "MEDIUM"   -&gt; 12;
             case "LOW"      -&gt; 24;
             default         -&gt; {
-                System.out.println("[Log] Unknown priority. Defaulting to standard SLA.");
+                System.out.println("[లాగ్] ప్రయారిటీ తెలీదు.. డీఫాల్ట్ టైమ్ సెట్ చేసాం.");
                 yield 48;
             }
         };
 
-        System.out.println("Incident SLA Response Time: " + responseTimeHours + " Hours");
+        System.out.println("మీ ఇష్యూకి టైమ్ లిమిట్ (SLA): " + responseTimeHours + " గంటలు");
     }
 }</code></pre>
       </div>
@@ -654,9 +653,9 @@
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
         <div class="output-content">=== Modern Java 14+ Switch Expressions ===
-Month: APRIL belongs to Q2
-[Log] High-priority incident escalated to On-Call Engineer.
-Incident SLA Response Time: 4 Hours</div>
+నెల: APRIL అనేది క్వార్టర్ Q2 కి వస్తుంది
+[లాగ్] హై-ప్రయారిటీ.. వెంటనే టీమ్ కి మెసేజ్ పంపాం.
+మీ ఇష్యూకి టైమ్ లిమిట్ (SLA): 4 గంటలు</div>
       </div>
 
       <div class="explain-card">
@@ -664,19 +663,19 @@ Incident SLA Response Time: 4 Hours</div>
         
     <div class="explain-item">
       <code class="code-token">int fiscalQuarter = switch (quarterMonth) { ... };</code>
-      <p>Modern switch expression computing and directly returning an integer value to fiscalQuarter (note the ending semicolon ;).</p>
+      <p>కొత్త switch లో రిజల్ట్ వస్తుంది కాబట్టి డైరెక్ట్ గా వేరియబుల్ కి అసైన్ చేసాం (చివర్లో సెమికోలన్ ; పెట్టాలి).</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">case "APRIL", "MAY", "JUNE" -&gt; 2;</code>
-      <p>Comma-separated multi-case label returning value 2 without requiring break statements.</p>
+      <p>కామా వాడి ఒకే లైన్ లో రాసేసాం. break రాయాల్సిన పనే లేదు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">yield 4;</code>
-      <p>The yield keyword returns the computed integer 4 from a multi-line code block.</p>
+      <p>బ్రాకెట్స్ వాడినప్పుడు రిటర్న్ చేయడానికి yield వాడాలి.</p>
     </div>
   
       </div>
@@ -698,36 +697,34 @@ Incident SLA Response Time: 4 Hours</div>
         String customerTier = "GOLD";
         double orderAmount   = 5000.00;
 
-        // Compute discount rate using Modern Switch Expression
+        // కొత్త Switch Expression వాడి డిస్కౌంట్ కనుక్కోవడం
         double discountRate = switch (customerTier) {
-            case "VIP", "PLATINUM" -&gt; 0.20; // 20% Discount
-            case "GOLD"            -&gt; 0.15; // 15% Discount
-            case "SILVER"          -&gt; 0.10; // 10% Discount
-            case "BRONZE"          -&gt; 0.05; // 5% Discount
-            default                -&gt; 0.00; // No Discount
+            case "VIP", "PLATINUM" -&gt; 0.20; // 20% డిస్కౌంట్
+            case "GOLD"            -&gt; 0.15; // 15% డిస్కౌంట్
+            case "SILVER"          -&gt; 0.10; // 10% డిస్కౌంట్
+            case "BRONZE"          -&gt; 0.05; // 5% డిస్కౌంట్
+            default                -&gt; 0.00; // డిస్కౌంట్ లేదు
         };
 
         double discountAmount = orderAmount * discountRate;
         double finalPayable   = orderAmount - discountAmount;
 
-        System.out.println("=== E-Commerce Checkout Summary ===");
-        System.out.printf("Customer Tier   : %s%n", customerTier);
-        System.out.printf("Original Order  : ₹%,.2f%n", orderAmount);
-        System.out.printf("Applied Discount: %.0f%%%n", (discountRate * 100));
-        System.out.printf("Savings Amount  : ₹%,.2f%n", discountAmount);
-        System.out.printf("Final Total Due : ₹%,.2f%n", finalPayable);
+        System.out.println("--- ఫైనల్ బిల్ ---");
+        System.out.printf("అసలు అమౌంట్ : ₹%,.2f%n", orderAmount);
+        System.out.printf("డిస్కౌంట్ (-%d%%): ₹%,.2f%n", (int)(discountRate * 100), discountAmount);
+        System.out.println("-----------------");
+        System.out.printf("కట్టాల్సింది : ₹%,.2f%n", finalPayable);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== E-Commerce Checkout Summary ===
-Customer Tier   : GOLD
-Original Order  : ₹5,000.00
-Applied Discount: 15%
-Savings Amount  : ₹750.00
-Final Total Due : ₹4,250.00</div>
+        <div class="output-content">--- ఫైనల్ బిల్ ---
+అసలు అమౌంట్ : ₹5,000.00
+డిస్కౌంట్ (-15%): ₹750.00
+-----------------
+కట్టాల్సింది : ₹4,250.00</div>
       </div>
     </section>
 
@@ -736,13 +733,13 @@ Final Total Due : ₹4,250.00</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Forgetting the semicolon after a switch expression: "int x = switch (y) { ... };" requires a semicolon at the end of the curly brace because it is an assignment statement.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">సెమికోలన్ (;) మర్చిపోవడం: పాత switch కి చివర సెమికోలన్ అవసరం లేదు, కానీ కొత్త switch ఒక Expression కాబట్టి చివర్లో బ్రాకెట్ క్లోజ్ చేసాక కచ్చితంగా ";" పెట్టాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Mixing colon (:) and arrow (->) syntax in the same switch: Java forbids mixing old-style "case 1:" and new-style "case 2 ->" within the same switch block.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">Arrow వాడి మళ్ళీ break రాయడం: Arrow (->) వాడితే ఆటోమాటిక్ గా బ్రేక్ అయిపోతుంది, మళ్ళీ లోపల break రాస్తే ఎర్రర్ వస్తుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Using "return" instead of "yield" inside a switch expression block: "return" exits the entire enclosing method; "yield" returns a value only from the switch branch.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">return కి బదులు yield మర్చిపోవడం: బ్రాకెట్స్ వాడినప్పుడు ఫంక్షన్స్ లో లాగా "return 4;" అని రాస్తే ఒప్పుకోదు, switch లోపల "yield 4;" అని మాత్రమే రాయాలి.</li>
   
       </ul>
     </div>
@@ -759,18 +756,18 @@ Final Total Due : ₹4,250.00</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Refactor the following traditional switch into a Modern Switch Expression using -&gt; arrow syntax:
-// String trafficLight = "YELLOW";
-// Output action:
-// - "RED" -&gt; "STOP"
-// - "YELLOW" -&gt; "PREPARE TO STOP"
-// - "GREEN" -&gt; "GO"
-// - default -&gt; "INVALID SIGNAL"
+// ఒక ట్రాఫిక్ సిగ్నల్ లాజిక్ రాయండి: 
+// String color = "RED"; 
+// కొత్త switch (-&gt;) వాడి:
+// "RED" కి -&gt; "ఆగండి"
+// "YELLOW" కి -&gt; "రెడీ అవ్వండి"
+// "GREEN" కి -&gt; "వెళ్లండి"
+// అని రిటర్న్ చేసి ఒక String వేరియబుల్ (action) లో స్టోర్ చేయండి.
 
 public class Main {
     public static void main(String[] args) {
-        String trafficLight = "YELLOW";
-        // TODO: Use Modern switch expression to assign action to a String variable
+        String color = "RED";
+        // TODO: లాజిక్ రాయండి
         
     }
 }</code></pre>
@@ -782,20 +779,14 @@ public class Main {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why was the "yield" keyword introduced instead of reusing "return"?</h4>
-      <p>Because "return" in Java has always meant "exit the current method and return a value". If switch expressions used return, it would create confusion between exiting the method vs returning from the switch expression. "yield" clearly signifies yielding a value from a block.</p>
+      <h4>❓ పాత switch కి, కొత్త దానికి స్పీడ్ లో తేడా ఉంటుందా?</h4>
+      <p>స్పీడ్ లో పెద్ద తేడా ఉండదు, ఇంటర్నల్ గా కంపైలర్ రెండింటినీ ఒకేలాగా రన్ చేస్తుంది. కానీ డెవలపర్స్ బగ్స్ లేకుండా ఈజీగా, ఫాస్ట్ గా కోడ్ రాయడానికి ఇది చాలా హెల్ప్ అవుతుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Does modern switch require a "default" branch when switching on Enums?</h4>
-      <p>If your switch expression explicitly covers EVERY single constant declared in the enum, the compiler knows the switch is exhaustive and does NOT require a default branch!</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ Can modern switch expressions be used in older Java versions (like Java 8 or 11)?</h4>
-      <p>No. Modern switch expressions were finalized in Java 14. Projects running Java 8 or 11 must use the traditional switch statement with break.</p>
+      <h4>❓ నేను ఇంకా పాత switch వాడుకోవచ్చా?</h4>
+      <p>వాడుకోవచ్చు. జావా పాత ఫీచర్స్ ని ఎప్పుడూ తీసేయదు. కానీ ఇండస్ట్రీ లోకి వెళ్ళినప్పుడు అందరూ ఈ కొత్త దన్నే వాడుతుంటారు కాబట్టి ఇది నేర్చుకోవడం బెటర్.</p>
     </div>
   
     </section>
@@ -805,16 +796,16 @@ public class Main {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Java 14+ switch expressions support arrow syntax (->) with zero fall-through risk.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Java 14 లో వచ్చిన కొత్త switch తో వాల్యూస్ ని డైరెక్ట్ గా అసైన్ చేయొచ్చు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Group multiple case labels on one line separated by commas.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Arrow (->) సింటాక్స్ వల్ల break రాయాల్సిన పనేలేదు, బగ్స్ తగ్గిపోతాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Use the yield keyword to return values from multi-statement code blocks.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">మల్టిపుల్ లైన్స్ రాసినప్పుడు రిటర్న్ చేయడానికి yield వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Avoid boolean redundancy (use if (flag) instead of if (flag == true)).</li>
+    <li style="margin-bottom:6px; line-height:1.5;">కోడ్ రాసేటప్పుడు Yoda కండిషన్స్ లాంటివి వాడి బగ్స్ ని ముందే ఆపేయాలి.</li>
   
       </ul>
     </div>

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java StringBuilder, StringBuffer & String Formatting Masterclass — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering high-performance mutable string manipulation and modern text formatting in Java: understanding why repeated String concatenation causes memory bottlenecks, the internal dynamic array architecture of StringBuilder, thread-safe StringBuffer, precision string formatting specifiers, and Java Text Blocks." />
-  <meta name="keywords" content="java stringbuilder, stringbuffer & string formatting masterclass, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java StringBuilder, StringBuffer & String Formatting (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="స్ట్రింగ్స్ ని లూప్ లో పెట్టి కలపడం వల్ల (Concatenation) యాప్ ఎందుకు స్లో అవుతుంది? దానికి సొల్యూషన్ గా వచ్చిన `StringBuilder` మరియు `StringBuffer` అంటే ఏంటి? వాటితో స్ట్రింగ్స్ ని మార్చడం ఎంత ఈజీ? అలాగే అవుట్పుట్ ని నీట్ గా టేబుల్స్ లాగా ఫార్మాట్ చేయడానికి `String.format()` మరియు కొత్తగా వచ్చిన Text Blocks (`"""`) గురించి నేర్చుకుందాం." />
+  <meta name="keywords" content="java stringbuilder, stringbuffer & string formatting (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/26-java-stringbuilder-stringbuffer-and-formatting.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 26: 26. StringBuilder & Formatting</span>
     </div>
 
-    <h1 class="page-title">Java StringBuilder, StringBuffer & String Formatting Masterclass</h1>
+    <h1 class="page-title">Java StringBuilder, StringBuffer & String Formatting (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,84 +541,79 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering high-performance mutable string manipulation and modern text formatting in Java: understanding why repeated String concatenation causes memory bottlenecks, the internal dynamic array architecture of StringBuilder, thread-safe StringBuffer, precision string formatting specifiers, and Java Text Blocks.</p>
+      <p>స్ట్రింగ్స్ ని లూప్ లో పెట్టి కలపడం వల్ల (Concatenation) యాప్ ఎందుకు స్లో అవుతుంది? దానికి సొల్యూషన్ గా వచ్చిన `StringBuilder` మరియు `StringBuffer` అంటే ఏంటి? వాటితో స్ట్రింగ్స్ ని మార్చడం ఎంత ఈజీ? అలాగే అవుట్పుట్ ని నీట్ గా టేబుల్స్ లాగా ఫార్మాట్ చేయడానికి `String.format()` మరియు కొత్తగా వచ్చిన Text Blocks (`"""`) గురించి నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The String Concatenation Problem in Loops</h2>
+      <h2>1. స్ట్రింగ్స్ ని లూప్ లో కలిపితే వచ్చే ప్రాబ్లమ్ (O(N^2))</h2>
       <div class="theory-text">
-        <p>Because <code>String</code> is immutable, every time you use the <code>+</code> operator to concatenate strings in a loop, Java creates a <strong>brand-new String object and copies all previous characters</strong>:</p>
-<div class="code-block"><pre><code>// HIGHLY INEFFICIENT ANTI-PATTERN:
+        <p>స్ట్రింగ్ ని ఎవరూ మార్చలేరు (Immutable) అని ముందే తెలుసుకున్నాం. కాబట్టి మీరు <code>+</code> వాడి రెండు స్ట్రింగ్స్ ని కలిపిన ప్రతిసారీ.. జావా ఒక <strong>కొత్త స్ట్రింగ్ ని క్రియేట్ చేసి పాత అక్షరాలను కాపీ చేస్తుంది</strong>:</p>
+<div class="code-block"><pre><code>// ఇది చాలా తప్పు పద్ధతి (మెమరీ వేస్ట్):
 String result = "";
 for (int i = 0; i &lt; 10000; i++) {
-    result += i; // Allocates 10,000 temporary objects! Time complexity: O(N^2)
+    result += i; // ఇది రన్ అయిన ప్రతిసారీ 10,000 టెంపరరీ ఆబ్జెక్ట్స్ క్రియేట్ అవుతాయి!
 }</code></pre></div>
-For N = 100,000 iterations, standard string concatenation can take <strong>over 15 seconds</strong> and trigger massive Garbage Collection pauses.
-<p><strong>The Solution:</strong> Use <strong><code>StringBuilder</code></strong>, which maintains a <strong>mutable internal buffer</strong> in memory. Appending to a <code>StringBuilder</code> runs in amortized <strong>O(1) constant time</strong> and takes <strong>less than 5 milliseconds</strong> for 100,000 iterations!</p>
+దీన్ని లక్ష సార్లు రన్ చేస్తే, జావా మెమరీ ఫుల్ అయ్యి <strong>15 సెకన్లకి పైగా టైమ్</strong> తీసుకుంటుంది!
+<p><strong>సొల్యూషన్:</strong> దీనికోసమే <strong><code>StringBuilder</code></strong> ని తీసుకొచ్చారు. ఇది ఒక ప్లాస్టిక్ డబ్బా లాంటిది. కొత్త ఆబ్జెక్ట్స్ ని క్రియేట్ చేయకుండా ఉన్నదానిలోనే కలుపుకుంటూ వెళ్తుంది. లక్ష సార్లు రన్ చేయడానికి దీనికి <strong>5 మిల్లీ సెకన్లు</strong> మాత్రమే పడుతుంది!</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. StringBuilder Architecture & Dynamic Capacity Growth</h2>
+      <h2>2. StringBuilder సైజు ఎలా పెరుగుతుంది? (Capacity)</h2>
       <div class="theory-text">
-        <p>A <code>StringBuilder</code> encapsulates a resizable character array:<br>- <strong>Default Initial Capacity:</strong> 16 characters.<br>- <strong>Custom Capacity:</strong> <code>new StringBuilder(100)</code> creates an initial buffer of 100 characters.<br>- <strong>Growth Formula:</strong> When the buffer fills up, it automatically reallocates a larger array using the formula:<br>New Capacity = (Old Capacity * 2) + 2</p>
-<div class="code-block"><pre><code>Initial Buffer (Capacity = 16):
-  ['J']['a']['v']['a'][ ][ ][ ][ ][ ][ ][ ][ ][ ][ ][ ][ ]  (Length = 4)
-<p>After Appending 20 more characters:<br>  New Capacity = (16 * 2) + 2 = 34<br>  ['J']['a']['v']['a'][' ']['2']['1']['.']['.']['.'][ ... ] (Length = 24)</code></pre></div></p>
+        <p><code>StringBuilder</code> ఇంటర్నల్ గా ఒక అక్షరాల అరే (Array) ని మైంటైన్ చేస్తుంది:<br>- <strong>స్టార్టింగ్ కెపాసిటీ (Capacity):</strong> బై డీఫాల్ట్ గా 16 అక్షరాలకు సరిపడా ఖాళీ ప్లేస్ ఇస్తుంది.<br>- <strong>కస్టమ్ కెపాసిటీ:</strong> <code>new StringBuilder(100)</code> అంటే ముందే 100 క్యారెక్టర్స్ కి ప్లేస్ రిజర్వ్ చేసుకోవచ్చు.<br>- <strong>ఆటోమాటిక్ గా పెరగడం:</strong> ఒకవేళ ఆ 16 ప్లేసులు ఫుల్ అయిపోతే.. వెంటనే పాత సైజు కి డబుల్ చేసి దానికి ఇంకో 2 కలుపుతుంది:<br>కొత్త సైజు = (పాత సైజు * 2) + 2</p>
+<div class="code-block"><pre><code>స్టార్టింగ్ బఫర్ (సైజు = 16):
+  ['J']['a']['v']['a'][ ][ ][ ][ ][ ][ ][ ][ ][ ][ ][ ][ ]  (వాడింది 4)
+<p>ఇంకో 20 అక్షరాలు కలిపితే ఏమవుతుంది?:<br>  కొత్త సైజు = (16 * 2) + 2 = 34 వస్తుంది (ఆటోమాటిక్ గా)<br>  ['J']['a']['v']['a'][' ']['2']['1']['.']['.']['.'][ ... ]</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Essential StringBuilder Methods</h2>
+      <h2>3. StringBuilder లో ముఖ్యమైన మెథడ్స్</h2>
       <div class="theory-text">
         <div class="ref-table-wrap">
   <table class="ref-table">
     <thead>
       <tr>
-        <th>Method</th>
-        <th>Description</th>
-        <th>Example</th>
+        <th>మెథడ్</th>
+        <th>ఏం చేస్తుంది?</th>
+        <th>ఎగ్జాంపుల్</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><code>append(data)</code></td>
-        <td>Appends any primitive or object to the end of the buffer.</td>
+        <td><code>append(డేటా)</code></td>
+        <td>స్ట్రింగ్ చివర్లో మనం ఇచ్చిన డేటాని కలుపుతుంది.</td>
         <td><code>sb.append(" Java ").append(21);</code></td>
       </tr>
       <tr>
-        <td><code>insert(int offset, data)</code></td>
-        <td>Inserts data at the specified index, shifting remaining characters right.</td>
+        <td><code>insert(ఇండెక్స్, డేటా)</code></td>
+        <td>మనం చెప్పిన పొజిషన్ లోకి టెక్స్ట్ ని దూరేలా చేస్తుంది.</td>
         <td><code>sb.insert(0, "START: ");</code></td>
       </tr>
       <tr>
-        <td><code>delete(int start, int end)</code></td>
-        <td>Removes characters in the range <code>[start, end)</code>.</td>
+        <td><code>delete(start, end)</code></td>
+        <td>మధ్యలో ఉన్న టెక్స్ట్ ని కట్ చేసి తీసేస్తుంది.</td>
         <td><code>sb.delete(0, 7);</code></td>
       </tr>
       <tr>
-        <td><code>deleteCharAt(int index)</code></td>
-        <td>Deletes a single character at the specified index.</td>
-        <td><code>sb.deleteCharAt(sb.length() - 1);</code></td>
-      </tr>
-      <tr>
         <td><code>reverse()</code></td>
-        <td>Reverses the entire character sequence in-place.</td>
+        <td>మొత్తం స్ట్రింగ్ ని రివర్స్ చేస్తుంది.</td>
         <td><code>sb.reverse();</code></td>
       </tr>
       <tr>
-        <td><code>setCharAt(int idx, char ch)</code></td>
-        <td>Replaces a single character at the index without reallocating.</td>
+        <td><code>setCharAt(idx, char)</code></td>
+        <td>ఒక్క అక్షరాన్ని మాత్రమే మారుస్తుంది.</td>
         <td><code>sb.setCharAt(0, 'X');</code></td>
       </tr>
       <tr>
         <td><code>toString()</code></td>
-        <td>Converts the mutable buffer into an immutable <code>String</code>.</td>
-        <td><code>String finalStr = sb.toString();</code></td>
+        <td>ఫైనల్ గా ఆ డబ్బాలో ఉన్నదాన్ని నార్మల్ String లాగా మార్చేస్తుంది.</td>
+        <td><code>String text = sb.toString();</code></td>
       </tr>
     </tbody>
   </table>
@@ -628,13 +623,13 @@ For N = 100,000 iterations, standard string concatenation can take <strong>over 
   
 
     <section class="lesson-section">
-      <h2>4. String vs StringBuilder vs StringBuffer Comparison</h2>
+      <h2>4. String vs StringBuilder vs StringBuffer తేడాలు</h2>
       <div class="theory-text">
         <div class="ref-table-wrap">
   <table class="ref-table">
     <thead>
       <tr>
-        <th>Feature</th>
+        <th>ఫీచర్</th>
         <th><code>String</code></th>
         <th><code>StringBuilder</code></th>
         <th><code>StringBuffer</code></th>
@@ -642,40 +637,34 @@ For N = 100,000 iterations, standard string concatenation can take <strong>over 
     </thead>
     <tbody>
       <tr>
-        <td><strong>Mutability</strong></td>
-        <td>Immutable (Cannot be changed)</td>
-        <td>Mutable (Modifies in-place)</td>
-        <td>Mutable (Modifies in-place)</td>
+        <td><strong>మార్చొచ్చా? (Mutable)</strong></td>
+        <td>మార్చలేము (Immutable)</td>
+        <td>మార్చొచ్చు (Mutable)</td>
+        <td>మార్చొచ్చు (Mutable)</td>
       </tr>
       <tr>
-        <td><strong>Thread Safety</strong></td>
-        <td>Thread-Safe (Immutable)</td>
-        <td><strong>Not Thread-Safe</strong> (No locks)</td>
-        <td><strong>Thread-Safe</strong> (Synchronized methods)</td>
+        <td><strong>Thread Safety (సేఫేనా?)</strong></td>
+        <td>Thread-Safe</td>
+        <td><strong>Thread-Safe కాదు</strong> (లాక్స్ లేవు)</td>
+        <td><strong>Thread-Safe</strong> (లాక్స్ ఉంటాయి)</td>
       </tr>
       <tr>
-        <td><strong>Performance</strong></td>
-        <td>Slow for multiple concats (O(N^2))</td>
-        <td><strong>Fastest</strong> (Single-threaded)</td>
-        <td>Slower than StringBuilder (Lock overhead)</td>
+        <td><strong>స్పీడ్</strong></td>
+        <td>చాలా స్లో (లూప్స్ లో)</td>
+        <td><strong>సూపర్ ఫాస్ట్</strong></td>
+        <td>కాస్త స్లో (లాక్స్ ఉండటం వల్ల)</td>
       </tr>
       <tr>
-        <td><strong>Storage</strong></td>
-        <td>SCP or Heap</td>
+        <td><strong>మెమరీ</strong></td>
+        <td>SCP లేదా Heap</td>
         <td>Heap</td>
         <td>Heap</td>
       </tr>
       <tr>
-        <td><strong>Introduced</strong></td>
-        <td>Java 1.0</td>
-        <td>Java 5</td>
-        <td>Java 1.0 (Legacy)</td>
-      </tr>
-      <tr>
-        <td><strong>Best Use Case</strong></td>
-        <td>Constants, map keys, fixed strings</td>
-        <td><strong>Loops, string construction</strong></td>
-        <td>Multi-threaded shared buffers</td>
+        <td><strong>ఎప్పుడు వాడాలి?</strong></td>
+        <td>నార్మల్ టెక్స్ట్ కి, మ్యాప్ కీస్ కి</td>
+        <td><strong>లూప్స్ లో టెక్స్ట్ ని కలిపేటప్పుడు</strong></td>
+        <td>మల్టీ-త్రెడింగ్ ఉన్నప్పుడు మాత్రమే</td>
       </tr>
     </tbody>
   </table>
@@ -685,13 +674,13 @@ For N = 100,000 iterations, standard string concatenation can take <strong>over 
   
 
     <section class="lesson-section">
-      <h2>5. Professional String Formatting (String.format & printf)</h2>
+      <h2>5. టెక్స్ట్ ని ప్రొఫెషనల్ గా డిజైన్ చేయడం (String Formatting)</h2>
       <div class="theory-text">
-        <p>Java provides precision string formatting using format specifiers:</p>
-<div class="code-block"><pre><code>String message = String.format("Product: %-12s | Price: $%7.2f | Qty: %03d", "Laptop", 899.954, 5);
-// Result: "Product: Laptop       | Price: $ 899.95 | Qty: 005"</code></pre></div>
-<p><strong>Core Format Specifiers:</strong><br>- <strong><code>%s</code></strong>: String value<br>- <strong><code>%d</code></strong>: Decimal integer<br>- <strong><code>%f</code></strong>: Floating-point number (e.g. <code>%.2f</code> rounds to 2 decimal places)<br>- <strong><code>%c</code></strong>: Character<br>- <strong><code>%b</code></strong>: Boolean<br>- <strong><code>%n</code></strong>: Platform-independent newline<br>- <strong><code>%-15s</code></strong>: Left-align string with 15-character column width<br>- <strong><code>%05d</code></strong>: Zero-pad integer to 5 digits (e.g. <code>00042</code>)</p>
-<p><strong>Modern Java 15+ Text Blocks (<code>"""</code>):</strong><br><div class="code-block"><pre><code>String json = """<br>    {<br>        "course": "%s",<br>        "version": %d,<br>        "active": true<br>    }<br>    """.formatted("Java Masterclass", 21);</code></pre></div></p>
+        <p>అవుట్పుట్ ని నీట్ గా టేబుల్స్ లాగా చూపించాలంటే String formatting వాడతాం:</p>
+<div class="code-block"><pre><code>String message = String.format("ప్రొడక్ట్: %-12s | ధర: $%7.2f | క్వాంటిటీ: %03d", "Laptop", 899.954, 5);
+// రిజల్ట్: "ప్రొడక్ట్: Laptop       | ధర: $ 899.95 | క్వాంటిటీ: 005"</code></pre></div>
+<p><strong>వాడే కోడ్స్ ఇవే:</strong><br>- <strong><code>%s</code></strong>: స్ట్రింగ్ కోసం<br>- <strong><code>%d</code></strong>: నార్మల్ నంబర్స్ కి (int)<br>- <strong><code>%f</code></strong>: పాయింట్స్ ఉన్న నంబర్స్ కి (<code>%.2f</code> అంటే పాయింట్ తర్వాత 2 నంబర్స్ ఏ వస్తాయి)<br>- <strong><code>%-15s</code></strong>: లెఫ్ట్ సైడ్ కరెక్ట్ గా 15 స్పేస్ లతో సెట్ అవ్వడానికి<br>- <strong><code>%05d</code></strong>: నంబర్ ముందు జీరోలు యాడ్ చేయడానికి (ఉదా: <code>00042</code>)</p>
+<p><strong>కొత్త Java 15+ Text Blocks (<code>"""</code>):</strong><br>HTML లాంటి పెద్ద పెద్ద కోడ్స్ రాసేటప్పుడు జావాలో మల్టిపుల్ లైన్స్ కోసం 3 కొటేషన్స్ వాడొచ్చు:<br><div class="code-block"><pre><code>String html = """<br>    &lt;div class="card"&gt;<br>        &lt;h2&gt;%s&lt;/h2&gt;<br>        &lt;p&gt;వయసు: %d&lt;/p&gt;<br>    &lt;/div&gt;<br>    """.formatted("రవి", 25);</code></pre></div></p>
       </div>
     </section>
   
@@ -709,55 +698,53 @@ For N = 100,000 iterations, standard string concatenation can take <strong>over 
         </div>
         <pre><code>public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1. StringBuilder Core Operations ===");
+        System.out.println("=== 1. StringBuilder ఆపరేషన్స్ ===");
         StringBuilder sb = new StringBuilder("Java");
 
         sb.append(" Programming").append(" 2026");
-        System.out.println("After append()        : " + sb);
+        System.out.println("append() వాడాక        : " + sb);
 
         sb.insert(0, "Modern ");
-        System.out.println("After insert()        : " + sb);
+        System.out.println("insert() వాడాక        : " + sb);
 
         sb.setCharAt(0, 'm');
-        System.out.println("After setCharAt()     : " + sb);
+        System.out.println("setCharAt() వాడాక     : " + sb);
 
-        sb.delete(0, 7); // Removes "modern "
-        System.out.println("After delete()        : " + sb);
+        sb.delete(0, 7); // "modern " ని కట్ చేసాం
+        System.out.println("delete() వాడాక        : " + sb);
 
         StringBuilder pal = new StringBuilder("RADAR");
-        System.out.println("Is RADAR Palindrome   : " + pal.toString().equals(pal.reverse().toString()));
+        // పాలిండ్రోమ్ చెక్ చేయడం ఎంత ఈజీనో చూడండి
+        System.out.println("RADAR పాలిండ్రోమా?      : " + pal.toString().equals(pal.reverse().toString()));
 
         System.out.println("
-=== 2. StringBuilder Performance vs String + ===");
+=== 2. StringBuilder vs నార్మల్ String స్పీడ్ టెస్ట్ ===");
         long start = System.currentTimeMillis();
         StringBuilder fastBuilder = new StringBuilder();
         for (int i = 1; i &lt;= 10000; i++) {
             fastBuilder.append(i);
         }
         long duration = System.currentTimeMillis() - start;
-        System.out.println("StringBuilder 10k items built in: " + duration + " ms");
-        System.out.println("Total Buffer Capacity           : " + fastBuilder.capacity());
-        System.out.println("Total Length                    : " + fastBuilder.length());
+        System.out.println("10,000 సార్లు కలపడానికి పట్టిన టైమ్ : " + duration + " ms (మిల్లీ సెకన్లు)");
+        System.out.println("ఫైనల్ గా బఫర్ సైజు (Capacity)     : " + fastBuilder.capacity());
 
         System.out.println("
-=== 3. Professional String Formatting ===");
-        String item = "Mechanical Keyboard";
+=== 3. ప్రొఫెషనల్ String Formatting ===");
+        String item = "మెకానికల్ కీబోర్డ్";
         double price = 129.998;
         int stock = 7;
-        boolean inStock = true;
 
-        String formattedRow = String.format("| %-22s | Price: $%7.2f | Stock: %03d | Available: %b |",
-                item, price, stock, inStock);
+        String formattedRow = String.format("| %-20s | ధర: $%7.2f | స్టాక్: %03d |", item, price, stock);
         System.out.println(formattedRow);
 
         System.out.println("
-=== 4. Modern Java Text Block ===");
+=== 4. Modern Java Text Block (Java 15+) ===");
         String htmlTemplate = """
             &lt;div class="user-card"&gt;
               &lt;h3&gt;%s&lt;/h3&gt;
-              &lt;p&gt;Status: &lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt;
+              &lt;p&gt;స్టేటస్: &lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt;
             &lt;/div&gt;
-            """.formatted("Balaji Rao", "Active Developer");
+            """.formatted("బాలాజీ రావు", "యాక్టివ్ డెవలపర్");
         System.out.println(htmlTemplate);
     }
 }</code></pre>
@@ -765,25 +752,24 @@ For N = 100,000 iterations, standard string concatenation can take <strong>over 
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. StringBuilder Core Operations ===
-After append()        : Java Programming 2026
-After insert()        : Modern Java Programming 2026
-After setCharAt()     : modern Java Programming 2026
-After delete()        : Java Programming 2026
-Is RADAR Palindrome   : true
+        <div class="output-content">=== 1. StringBuilder ఆపరేషన్స్ ===
+append() వాడాక        : Java Programming 2026
+insert() వాడాక        : Modern Java Programming 2026
+setCharAt() వాడాక     : modern Java Programming 2026
+delete() వాడాక        : Java Programming 2026
+RADAR పాలిండ్రోమా?      : true
 
-=== 2. StringBuilder Performance vs String + ===
-StringBuilder 10k items built in: 2 ms
-Total Buffer Capacity           : 39712
-Total Length                    : 38890
+=== 2. StringBuilder vs నార్మల్ String స్పీడ్ టెస్ట్ ===
+10,000 సార్లు కలపడానికి పట్టిన టైమ్ : 2 ms (మిల్లీ సెకన్లు)
+ఫైనల్ గా బఫర్ సైజు (Capacity)     : 39712
 
-=== 3. Professional String Formatting ===
-| Mechanical Keyboard    | Price: $ 130.00 | Stock: 007 | Available: true |
+=== 3. ప్రొఫెషనల్ String Formatting ===
+| మెకానికల్ కీబోర్డ్              | ధర: $ 130.00 | స్టాక్: 007 |
 
-=== 4. Modern Java Text Block ===
+=== 4. Modern Java Text Block (Java 15+) ===
 &lt;div class="user-card"&gt;
-  &lt;h3&gt;Balaji Rao&lt;/h3&gt;
-  &lt;p&gt;Status: &lt;strong&gt;Active Developer&lt;/strong&gt;&lt;/p&gt;
+  &lt;h3&gt;బాలాజీ రావు&lt;/h3&gt;
+  &lt;p&gt;స్టేటస్: &lt;strong&gt;యాక్టివ్ డెవలపర్&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;</div>
       </div>
 
@@ -791,32 +777,26 @@ Total Length                    : 38890
         <h3>🔍 Line-by-Line Code Explanation</h3>
         
     <div class="explain-item">
-      <code class="code-token">StringBuilder sb = new StringBuilder("Java");</code>
-      <p>Initializes a mutable character buffer preloaded with "Java" and initial capacity of 20 (16 + 4).</p>
-    </div>
-  
-
-    <div class="explain-item">
       <code class="code-token">sb.append(" Programming").append(" 2026");</code>
-      <p>Chains multiple append() calls, modifying the buffer directly in O(1) time without allocating new objects.</p>
+      <p>ఇలా డాట్ పెట్టుకుంటూ కలుపుకుంటూ వెళ్లొచ్చు (దీన్నే Method Chaining అంటారు). ఇది చాలా ఫాస్ట్.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">pal.reverse();</code>
-      <p>Reverses the sequence in-place by swapping characters from ends toward the center.</p>
+      <p>మనం ఎలాంటి కష్టం పడకుండా జస్ట్ reverse() అని పిలవగానే మొత్తం టెక్స్ట్ ఉల్టా అయిపోతుంది.</p>
     </div>
   
 
     <div class="explain-item">
-      <code class="code-token">String.format("| %-22s | Price: $%7.2f | ...")</code>
-      <p>Formats data into structured columnar text: %-22s left-aligns with 22 spaces; %.2f rounds to 2 decimals.</p>
+      <code class="code-token">String.format("| %-20s | ధర: $%7.2f ...")</code>
+      <p>%-20s అంటే 20 క్యారెక్టర్స్ కి సరిపడా స్పేస్ వదిలి లెఫ్ట్ సైడ్ పెడుతుంది, %.2f అంటే పాయింట్ తర్వాత 2 నంబర్స్ ఉంచుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">htmlTemplate.formatted(...)</code>
-      <p>Java 15+ instance method that applies format arguments directly to multiline text blocks.</p>
+      <p>Java 15 లో వచ్చిన ఫీచర్. మల్టీ-లైన్ టెక్స్ట్ లో ఎక్కడెక్కడ %s ఉందో అక్కడికి మనం ఇచ్చిన డేటాని పంపుతుంది.</p>
     </div>
   
       </div>
@@ -835,34 +815,28 @@ Total Length                    : 38890
         </div>
         <pre><code>public class PracticalApplication {
     public static void main(String[] args) {
-        // Industry Simulation: High-Speed Invoice Line Item Generator
-        String[] products = {"Cloud Server Hosting", "SSL Certificate", "Domain Registration", "Managed Database"};
-        double[] prices = {149.50, 49.00, 14.99, 89.00};
-        int[] quantities = {2, 1, 3, 1};
+        // రియల్ టైమ్ సినారియో: బిల్లింగ్ ఇన్వాయిస్ జనరేట్ చేయడం
+        String[] products = {"క్లౌడ్ సర్వర్", "SSL సర్టిఫికెట్", "డొమైన్ రిజిస్ట్రేషన్"};
+        double[] prices = {149.50, 49.00, 14.99};
+        int[] quantities = {2, 1, 3};
 
         StringBuilder invoice = new StringBuilder();
-        invoice.append("========================================================
-");
-        invoice.append(String.format(" %-24s | %-6s | %-9s | %-10s
-", "ITEM DESCRIPTION", "QTY", "UNIT", "TOTAL"));
-        invoice.append("========================================================
-");
+        invoice.append("========================================================\n");
+        invoice.append(String.format(" %-20s | %-6s | %-9s | %-10s\n", "ఐటెమ్ పేరు", "క్వాంటిటీ", "ఒకటి ధర", "మొత్తం"));
+        invoice.append("========================================================\n");
 
         double grandTotal = 0;
         for (int i = 0; i &lt; products.length; i++) {
             double total = prices[i] * quantities[i];
             grandTotal += total;
-            invoice.append(String.format(" %-24s | %-6d | $%7.2f | $%8.2f
-",
+            // టేబుల్ ఫార్మాట్ లో యాడ్ చేస్తున్నాం
+            invoice.append(String.format(" %-22s | %-9d | $%7.2f | $%8.2f\n",
                     products[i], quantities[i], prices[i], total));
         }
 
-        invoice.append("--------------------------------------------------------
-");
-        invoice.append(String.format(" %-40s   $%8.2f
-", "GRAND TOTAL:", grandTotal));
-        invoice.append("========================================================
-");
+        invoice.append("--------------------------------------------------------\n");
+        invoice.append(String.format(" %-43s $%8.2f\n", "గ్రాండ్ టోటల్:", grandTotal));
+        invoice.append("========================================================\n");
 
         System.out.println(invoice.toString());
     }
@@ -872,14 +846,13 @@ Total Length                    : 38890
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
         <div class="output-content">========================================================
- ITEM DESCRIPTION         | QTY    | UNIT      | TOTAL     
+ ఐటెమ్ పేరు             | క్వాంటిటీ   | ఒకటి ధర      | మొత్తం     
 ========================================================
- Cloud Server Hosting     | 2      | $ 149.50 | $  299.00
- SSL Certificate          | 1      | $  49.00 | $   49.00
- Domain Registration      | 3      | $  14.99 | $   44.97
- Managed Database         | 1      | $  89.00 | $   89.00
+ క్లౌడ్ సర్వర్                | 2         | $ 149.50 | $  299.00
+ SSL సర్టిఫికెట్            | 1         | $  49.00 | $   49.00
+ డొమైన్ రిజిస్ట్రేషన్           | 3         | $  14.99 | $   44.97
 --------------------------------------------------------
- GRAND TOTAL:                                 $  481.97
+ గ్రాండ్ టోటల్:                                     $  392.97
 ========================================================</div>
       </div>
     </section>
@@ -889,16 +862,13 @@ Total Length                    : 38890
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using String + inside loops containing hundreds of iterations, causing catastrophic memory overhead and slowdowns.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">లూప్ లోపల నార్మల్ గా <code>+</code> వాడి స్ట్రింగ్స్ ని కలపడం. అది యాప్ ని క్రాష్ చేసేంత మెమరీని లాగేసుకుంటుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Calling sb.equals(sb2) on two StringBuilder instances. StringBuilder does NOT override equals(), so it compares memory references! Use sb.toString().equals(sb2.toString()).</li>
+    <li style="margin-bottom:8px; line-height:1.6;">రెండు StringBuilder లని <code>sb1.equals(sb2)</code> అని వాడటం. StringBuilder క్లాస్ లో equals మెథడ్ లేదు, కాబట్టి అది డైరెక్ట్ అడ్రెస్స్ లని చెక్ చేసి ఎప్పుడూ false ఇస్తుంది. కరెక్ట్ గా చేయాలంటే <code>sb1.toString().equals(sb2.toString())</code> అని వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Confusing StringBuilder with StringBuffer: in 99% of single-threaded code, StringBuilder is faster and should be preferred.</li>
-  
-
-    <li style="margin-bottom:8px; line-height:1.6;">Using %d format specifier for a double variable or %f for an int, causing IllegalFormatConversionException.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>%d</code> ని డెసిమల్ నంబర్స్ (double) కి వాడటం. ఇంటిజర్స్ కి <code>%d</code>, డబుల్/ఫ్లోట్ కి <code>%f</code> వాడాలి, రివర్స్ వాడితే ఎర్రర్ వస్తుంది.</li>
   
       </ul>
     </div>
@@ -915,14 +885,13 @@ Total Length                    : 38890
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Write a program using StringBuilder to:
-// 1. Take a sentence "Java is an amazing programming language".
-// 2. Reverse each individual word in the sentence while maintaining original word order.
-// Target Output: "avaJ si na gnizama gnimmargorp egaugnal"
+// ఒక వాక్యాన్ని తీసుకోండి: "Java is an amazing language"
+// StringBuilder వాడి ప్రతి పదాన్ని అదే ప్లేస్ లో రివర్స్ చేయండి.
+// అవుట్పుట్: "avaJ si na gnizama egaugnal"
 
 public class Challenge {
     public static void main(String[] args) {
-        String sentence = "Java is an amazing programming language";
+        String sentence = "Java is an amazing language";
         String[] words = sentence.split(" ");
         StringBuilder result = new StringBuilder();
 
@@ -934,8 +903,8 @@ public class Challenge {
             }
         }
 
-        System.out.println("Original : " + sentence);
-        System.out.println("Reversed : " + result.toString());
+        System.out.println("ఒరిజినల్ : " + sentence);
+        System.out.println("రివర్స్   : " + result.toString());
     }
 }</code></pre>
       </div>
@@ -946,20 +915,14 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ When should I use StringBuilder vs StringBuffer?</h4>
-      <p>Use StringBuilder in 99% of application code (loops, local variables, single-threaded methods) because it has no synchronization lock overhead. Use StringBuffer only when multiple threads write to the same shared buffer simultaneously.</p>
+      <h4>❓ StringBuilder కి StringBuffer కి తేడా ఏంటి?</h4>
+      <p>రెండూ ఒకేలాగా పనిచేస్తాయి. కానీ StringBuffer లో లాక్స్ ఉంటాయి (Synchronized), ఇది పాతది, స్లో గా ఉంటుంది. సింగిల్ త్రెడ్ లో వాడేటప్పుడు ఎప్పుడూ ఫాస్ట్ గా ఉండే StringBuilder మాత్రమే వాడాలి.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Why does Java compiler convert simple String concatenation into StringBuilder?</h4>
-      <p>For single-line statements like String s = a + b + c;, the compiler automatically optimizes it into new StringBuilder().append(a).append(b).append(c).toString(). However, inside loops, the compiler creates a new StringBuilder on every single iteration, which is why you must explicitly instantiate a single StringBuilder outside the loop.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ What is the default initial capacity of StringBuilder and how does it grow?</h4>
-      <p>Default initial capacity is 16 characters. When exceeded, it allocates a new array of size (oldCapacity * 2) + 2 and copies the characters across.</p>
+      <h4>❓ నార్మల్ గా a + b + c రాస్తే కంపైలర్ ఏమైనా ఆప్టిమైజ్ చేస్తుందా?</h4>
+      <p>అవును, ఒకే లైన్ లో రాస్తే కంపైలర్ దాన్ని ఆటోమాటిక్ గా StringBuilder కింద మారుస్తుంది. కానీ లూప్ లోపల వాడినప్పుడు మాత్రం ఆప్టిమైజ్ చేయలేదు, అందుకే లూప్స్ కి మనమే మ్యాన్యువల్ గా రాయాలి.</p>
     </div>
   
     </section>
@@ -969,19 +932,16 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">String concatenation with + in loops is O(N^2) and causes memory churn; use StringBuilder for O(N) efficiency.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">లూప్స్ లో స్ట్రింగ్స్ ని కలపడానికి ఎప్పుడూ StringBuilder ఏ వాడాలి (చాలా ఫాస్ట్).</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">StringBuilder provides in-place mutable methods: append(), insert(), delete(), and reverse().</li>
+    <li style="margin-bottom:6px; line-height:1.5;">StringBuilder లో append(), insert(), delete(), reverse() లాంటి మంచి ఫీచర్స్ ఉన్నాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">StringBuffer is synchronized (thread-safe) but slower than StringBuilder.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">టేబుల్స్ లాగా నీట్ గా చూపించడానికి String.format() వాడుతారు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">String.format() and printf() use specifiers like %-15s, %.2f, and %05d for precision formatting.</li>
-  
-
-    <li style="margin-bottom:6px; line-height:1.5;">Java Text Blocks (""") simplify multiline strings with automated indentation trimming.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">మల్టీ-లైన్ టెక్స్ట్ కి, HTML కి Java 15 లో వచ్చిన 3 కొటేషన్స్ (""") బెస్ట్ ఆప్షన్.</li>
   
       </ul>
     </div>

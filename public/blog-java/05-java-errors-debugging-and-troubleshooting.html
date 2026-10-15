@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Error Types, Stack Traces & Debugging — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering the art of troubleshooting Java software: identifying the three distinct error categories (Compile-time, Runtime, and Logical bugs), dissecting JVM stack traces with surgical precision, and building defensive debugging habits." />
-  <meta name="keywords" content="java error types, stack traces & debugging, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Error Types, Stack Traces & Debugging (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="కోడ్ రాసేటప్పుడు ఎర్రర్స్ రావడం కామన్. జావాలో మెయిన్ గా 3 రకాల ఎర్రర్స్ ఉంటాయి (Compile-time, Runtime, Logical). అసలు స్టాక్ ట్రేస్ (Stack Trace) ని ఎలా చదవాలో, బగ్స్ ని ఈజీగా ఎలా పట్టుకోవాలో ఈ చాప్టర్ లో నేర్చుకుందాం." />
+  <meta name="keywords" content="java error types, stack traces & debugging (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/05-java-errors-debugging-and-troubleshooting.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 5: 5. Errors & Debugging</span>
     </div>
 
-    <h1 class="page-title">Java Error Types, Stack Traces & Debugging</h1>
+    <h1 class="page-title">Java Error Types, Stack Traces & Debugging (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,70 +541,65 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering the art of troubleshooting Java software: identifying the three distinct error categories (Compile-time, Runtime, and Logical bugs), dissecting JVM stack traces with surgical precision, and building defensive debugging habits.</p>
+      <p>కోడ్ రాసేటప్పుడు ఎర్రర్స్ రావడం కామన్. జావాలో మెయిన్ గా 3 రకాల ఎర్రర్స్ ఉంటాయి (Compile-time, Runtime, Logical). అసలు స్టాక్ ట్రేస్ (Stack Trace) ని ఎలా చదవాలో, బగ్స్ ని ఈజీగా ఎలా పట్టుకోవాలో ఈ చాప్టర్ లో నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The 3 Primary Error Classifications in Java</h2>
+      <h2>1. జావాలో 3 రకాల ఎర్రర్స్</h2>
       <div class="theory-text">
-        <p>Every software bug in Java falls into one of three distinct lifecycle categories:</p>
+        <p>మనం చేసే తప్పులు మెయిన్ గా 3 కేటగిరీల కిందకి వస్తాయి:</p>
 <div class="code-block"><pre><code>+-----------------------------------------------------------------------------------+
-|                        JAVA ERROR HIERARCHY & LIFECYCLE                           |
+|                        JAVA ERROR HIERARCHY (ఎర్రర్స్ రకాలు)                          |
 +-----------------------------------------------------------------------------------+
-| 1. COMPILE-TIME ERRORS (Syntax & Type Violations)                                 |
-|    - Caught by: javac compiler BEFORE code can ever run                           |
-|    - Examples : Missing semicolon, type mismatch (int x = "hello"),               |
-|                 unclosed braces {}, referencing undeclared variables              |
-|    - Severity : High compile blocker, but easy to find with line numbers          |
+| 1. COMPILE-TIME ERRORS (గ్రామర్ తప్పులు)                                            |
+|    - ఎవరు పట్టుకుంటారు?: మనం రన్ చేయకముందే javac కంపైలర్ పట్టుకుంటుంది.                 |
+|    - ఎగ్జాంపుల్ : సెమికోలన్ (;) మర్చిపోవడం, బ్రాకెట్స్ సరిగ్గా క్లోజ్ చేయకపోవడం లాంటివి.            |
+|    - ఎలా ఉంటుంది?: ఏ లైన్ లో తప్పుందో క్లియర్ గా చూపిస్తుంది కాబట్టి సాల్వ్ చేయడం ఈజీ.        |
 +-----------------------------------------------------------------------------------+
-| 2. RUNTIME ERRORS & EXCEPTIONS (Crashes During Execution)                         |
-|    - Caught by: JVM runtime during program execution                              |
-|    - Examples : NullPointerException, ArithmeticException (/ by zero),            |
-|                 ArrayIndexOutOfBoundsException, ClassCastException               |
-|    - Severity : Dangerous in production; generates a detailed JVM Stack Trace     |
+| 2. RUNTIME ERRORS & EXCEPTIONS (క్రాష్ అవ్వడం)                                        |
+|    - ఎవరు పట్టుకుంటారు?: కోడ్ రన్ అవుతున్నప్పుడు మధ్యలో JVM ఆపేస్తుంది.                     |
+|    - ఎగ్జాంపుల్ : ఒక నెంబర్ ని సున్నా (0) తో డివైడ్ చేయడం, లేని ఫైల్ ని ఓపెన్ చేయాలని చూడటం.   |
+|    - ఎలా ఉంటుంది?: ఇది చాలా డేంజర్, యాప్ మొత్తం క్లోజ్ అయిపోయి ఎర్రర్ మెసేజ్ (Stack Trace) వస్తుంది. |
 +-----------------------------------------------------------------------------------+
-| 3. LOGICAL ERRORS (Silent Calculation & Business Logic Bugs)                      |
-|    - Caught by: Automated Unit Tests (JUnit) or thorough human QA verification    |
-|    - Examples : Using + instead of *, off-by-one loop conditions (&lt; vs &lt;=),       |
-|                 faulty if-else branches, flawed financial tax formulas            |
-|    - Severity : Most dangerous; the code compiles and runs without crashing,      |
-|                 but produces WRONG or corrupt output!                             |
+| 3. LOGICAL ERRORS (లాజిక్ తప్పులు)                                                   |
+|    - ఎవరు పట్టుకుంటారు?: కంపైలర్ పట్టుకోలేదు, రన్ టైమ్ లో యాప్ క్రాష్ అవ్వదు.. మనమే చూసుకోవాలి.  |
+|    - ఎగ్జాంపుల్ : ఫార్ములాలో ప్లస్ (+) బదులు మైనస్ (-) పెట్టడం.                             |
+|    - ఎలా ఉంటుంది?: అంతా పర్ఫెక్ట్ గా రన్ అవుతుంది కానీ వచ్చే ఆన్సర్/రిజల్ట్ తప్పు వస్తుంది!      |
 +-----------------------------------------------------------------------------------+</code></pre></div>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Anatomy of a Java JVM Stack Trace</h2>
+      <h2>2. Stack Trace ని ఎలా చదవాలి?</h2>
       <div class="theory-text">
-        <p>When a runtime exception crashes a Java application, the JVM prints a <strong>Stack Trace</strong> to the standard error stream. Learning to read stack traces from top to bottom is the single most important skill for a Java developer:</p>
+        <p>మన ప్రోగ్రామ్ మధ్యలో క్రాష్ అయినప్పుడు టెర్మినల్ లో ఒక పెద్ద ఎర్రర్ మెసేజ్ వస్తుంది. దీన్నే <strong>Stack Trace</strong> అంటారు. దీన్ని పైనుంచి కిందకు కరెక్ట్ గా చదవడం వస్తే 90% బగ్స్ ని ఈజీగా సాల్వ్ చేయొచ్చు:</p>
 <div class="code-block"><pre><code>Exception in thread "main" java.lang.ArithmeticException: / by zero
     at Calculator.divide(Calculator.java:14)
-    at OrderProcessor.calculatePerItemCost(OrderProcessor.java:28)
+    at OrderProcessor.calculateCost(OrderProcessor.java:28)
     at Main.main(Main.java:8)</code></pre></div>
-<h3>How to Deconstruct This Stack Trace:</h3>1. <strong>Thread Name:</strong> <code>Exception in thread "main"</code> tells you which concurrent thread crashed.
-2. <strong>Exception Class:</strong> <code>java.lang.ArithmeticException</code> indicates the exact exception category.
-3. <strong>Error Message:</strong> <code>/: by zero</code> explains why the JVM aborted the operation.
-4. <strong>Call Stack (Bottom to Top):</strong>
-   - <code>Main.main(Main.java:8)</code>: Execution started at line 8 of <code>Main.java</code>.
-   - <code>OrderProcessor.calculatePerItemCost(OrderProcessor.java:28)</code>: Line 8 called <code>calculatePerItemCost()</code> at line 28 of <code>OrderProcessor.java</code>.
-   - <code>Calculator.divide(Calculator.java:14)</code>: The exact crash point occurred at line 14 of <code>Calculator.java</code> inside the <code>divide()</code> method!
+<h3>దీన్ని ఎలా అర్థం చేసుకోవాలి?:</h3>1. <strong>ఏ థ్రెడ్ లో జరిగింది?:</strong> <code>Exception in thread "main"</code> అంటే మెయిన్ ప్రోగ్రామ్ రన్ అవుతున్నప్పుడే క్రాష్ అయ్యింది.
+2. <strong>ఏం ఎర్రర్?:</strong> <code>java.lang.ArithmeticException</code> (మ్యాథ్స్ లో ఏదో తప్పు జరిగింది).
+3. <strong>ఎందుకు వచ్చింది?:</strong> <code>/: by zero</code> (ఏదో నెంబర్ ని సున్నాతో డివైడ్ చేసాం).
+4. <strong>కిందనుంచి పైకి చదవాలి:</strong>
+   - <code>Main.java:8</code>: ఫస్ట్ 8వ లైన్ లో ప్రోగ్రామ్ స్టార్ట్ అయ్యింది.
+   - అక్కడినుంచి <code>OrderProcessor.java:28</code> లైన్ కి వెళ్ళింది.
+   - అక్కడినుంచి <code>Calculator.java:14</code> వ లైన్ లో ఉన్న <code>divide()</code> ఫంక్షన్ లోపలికి వెళ్లి.. అక్కడ క్రాష్ అయ్యింది! (సో, ప్రాబ్లమ్ ఆ 14 వ లైన్ లోనే ఉంది).
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Common Compile-Time vs Runtime Errors</h2>
+      <h2>3. కామన్ గా వచ్చే ఎర్రర్స్ లిస్ట్</h2>
       <div class="theory-text">
-        <div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>Error Name</th><th>Type</th><th>Cause</th><th>Quick Fix</th></tr></thead><tbody><tr><td>**`cannot find symbol`**</td></tr></tbody></table></div>
- Compile-Time | Variable or method name misspelled, or missing import statement. | Check spelling and verify the correct <code>import</code> package is added. |
-| <strong><code>incompatible types</code></strong> | Compile-Time | Assigning a data type to an incompatible variable (e.g. <code>int x = "text"</code>). | Apply explicit type casting or adjust the variable type. |
-| <strong><code>missing return statement</code></strong>| Compile-Time | A method declared with a non-void return type fails to return a value on all code paths. | Ensure every <code>if-else</code> branch returns a valid value. |
-| <strong><code>NullPointerException</code></strong> | Runtime | Attempting to call a method or access a field on an uninitialized (<code>null</code>) object reference. | Check for null with <code>if (obj != null)</code> or use <code>Optional<T></code>. |
-| <strong><code>ArrayIndexOutOfBoundsException</code></strong> | Runtime | Accessing an array index that is negative or <code>>= array.length</code>. | Keep loop conditions within <code>0</code> to <code>array.length - 1</code>. |
-| <strong><code>ArithmeticException</code></strong> | Runtime | Performing integer division by zero (<code>10 / 0</code>). | Guard against zero divisor before executing division. |
+        <div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>ఎర్రర్ పేరు</th><th>ఏ రకం?</th><th>ఎందుకొస్తుంది?</th><th>ఎలా సాల్వ్ చేయాలి?</th></tr></thead><tbody><tr><td>**`cannot find symbol`**</td></tr></tbody></table></div>
+ Compile-Time | ఆ పేరుతో అసలు వేరియబుల్ లేకపోవడం లేదా స్పెల్లింగ్ తప్పుండటం. | స్పెల్లింగ్ చెక్ చేయండి లేదా ఆ వేరియబుల్ ని క్రియేట్ చేయండి. |
+| <strong><code>incompatible types</code></strong> | Compile-Time | నెంబర్ పెట్టాల్సిన చోట టెక్స్ట్ (String) ఇస్తే. | టైప్ ని కరెక్ట్ గా మార్చండి (Type casting). |
+| <strong><code>NullPointerException</code></strong> | Runtime | వేరియబుల్ లో ఏ డేటా (null) లేకముందే దాన్ని వాడాలని చూస్తే. | ఆ వేరియబుల్ లో నిజంగా డేటా ఉందా లేదా అని <code>!= null</code> తో చెక్ చేయండి. |
+| <strong><code>ArrayIndexOutOfBounds</code></strong>| Runtime | అర్రే లో 5 ఐటమ్స్ ఉంటే, 6వ ఐటమ్ ని అడిగితే. | లూప్ కరెక్ట్ గా అర్రే సైజ్ వరకే ఉందో లేదో చెక్ చేసుకోండి. |
+| <strong><code>ArithmeticException</code></strong> | Runtime | ఏ నెంబర్ ని అయినా సున్నా (0) తో భాగిస్తే (<code>10 / 0</code>). | డివైడ్ చేసేముందు ఆ నెంబర్ 0 కాదని చెక్ చేసుకోండి. |
       </div>
     </section>
   
@@ -622,38 +617,38 @@
         </div>
         <pre><code>public class Main {
     public static void main(String[] args) {
-        System.out.println("--- Demonstrating Safe Error Handling in Java ---");
+        System.out.println("--- ఎర్రర్స్ రాకుండా కోడ్ రాయడం (Defensive Programming) ---");
 
         int dividend = 100;
         int divisor  = 0;
 
-        // Defensive Programming: Checking divisor before division to prevent runtime crash
+        // 1. సున్నాతో డివైడ్ చేస్తే క్రాష్ అవుతుంది కాబట్టి, ముందే చెక్ చేస్తున్నాం:
         if (divisor != 0) {
             int result = dividend / divisor;
-            System.out.println("Result: " + result);
+            System.out.println("రిజల్ట్: " + result);
         } else {
-            System.out.println("[Handled Error]: Divisor cannot be 0. Division aborted safely.");
+            System.out.println("[హ్యాండిల్ చేశాం]: సున్నాతో డివైడ్ చేయలేం. క్రాష్ అవ్వకుండా ఆపాం.");
         }
 
-        // Handling potential Null References safely
+        // 2. ఖాళీగా ఉన్నదాని (null) మీద ఫంక్షన్స్ కాల్ చేస్తే NullPointerException వస్తుంది:
         String username = null;
         if (username != null) {
-            System.out.println("User Length: " + username.length());
+            System.out.println("పేరు పొడవు: " + username.length());
         } else {
-            System.out.println("[Handled Error]: Username object is null. Defaulting to 'Guest'.");
+            System.out.println("[హ్యాండిల్ చేశాం]: పేరు లేదు (null). డిఫాల్ట్ గా 'Guest' అని పెడుతున్నాం.");
         }
 
-        System.out.println("Application completed gracefully without crashing!");
+        System.out.println("క్రాష్ అవ్వకుండా ప్రోగ్రామ్ సేఫ్ గా కంప్లీట్ అయ్యింది!");
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">--- Demonstrating Safe Error Handling in Java ---
-[Handled Error]: Divisor cannot be 0. Division aborted safely.
-[Handled Error]: Username object is null. Defaulting to 'Guest'.
-Application completed gracefully without crashing!</div>
+        <div class="output-content">--- ఎర్రర్స్ రాకుండా కోడ్ రాయడం (Defensive Programming) ---
+[హ్యాండిల్ చేశాం]: సున్నాతో డివైడ్ చేయలేం. క్రాష్ అవ్వకుండా ఆపాం.
+[హ్యాండిల్ చేశాం]: పేరు లేదు (null). డిఫాల్ట్ గా 'Guest' అని పెడుతున్నాం.
+క్రాష్ అవ్వకుండా ప్రోగ్రామ్ సేఫ్ గా కంప్లీట్ అయ్యింది!</div>
       </div>
 
       <div class="explain-card">
@@ -661,19 +656,13 @@ Application completed gracefully without crashing!</div>
         
     <div class="explain-item">
       <code class="code-token">if (divisor != 0)</code>
-      <p>Defensive validation check preventing an ArithmeticException (/ by zero) runtime crash.</p>
+      <p>క్రాష్ (ArithmeticException) అవ్వకుండా ముందే సేఫ్ గా చెక్ చేస్తున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">if (username != null)</code>
-      <p>Null safety check ensuring no NullPointerException is triggered when accessing object methods.</p>
-    </div>
-  
-
-    <div class="explain-item">
-      <code class="code-token">System.out.println("Application completed...")</code>
-      <p>Proof that the application continued executing safely because error conditions were handled defensively.</p>
+      <p>జావాలో ఎక్కువగా వచ్చే NullPointerException రాకుండా ముందే ఆపుతున్నాం.</p>
     </div>
   
       </div>
@@ -690,35 +679,35 @@ Application completed gracefully without crashing!</div>
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>// Demonstrating a Logical Error vs Corrected Logic
+        <pre><code>// లాజికల్ ఎర్రర్ (Logical Error) కి బెస్ట్ ఎగ్జాంపుల్
 public class Main {
     public static void main(String[] args) {
         double subtotal = 1000.0;
-        double discountPercentage = 10; // 10% discount intended
+        double discount = 10; // 10% డిస్కౌంట్ ఇద్దాం అనుకున్నాం
 
-        // 1. THE LOGICAL BUG:
-        // Intended formula: subtotal - (subtotal * (discountPercentage / 100))
-        // Buggy formula below due to integer division (10 / 100 = 0 in integer math!)
-        double buggyDiscount = subtotal * (10 / 100); // Evaluates to 1000 * 0 = 0.0
+        // 1. ఇక్కడ లాజిక్ తప్పు (BUG):
+        // జావాలో రెండు నెంబర్స్ (10, 100) ఇంటిజర్స్ అయితే.. రిజల్ట్ కూడా ఇంటిజరే వస్తుంది.
+        // అంటే (10 / 100) క్యాలిక్యులేట్ చేస్తే 0.1 కాకుండా 0 వస్తుంది!
+        double buggyDiscount = subtotal * (10 / 100); // 1000 * 0 = 0
         double buggyFinalPrice = subtotal - buggyDiscount;
 
-        // 2. THE CORRECTED LOGIC:
-        // Using floating-point literal 100.0 to force floating-point division
-        double correctDiscount = subtotal * (discountPercentage / 100.0);
+        // 2. కరెక్ట్ లాజిక్:
+        // కనీసం ఒక నెంబర్ పక్కన .0 (100.0) అని పెడితే అది డెసిమల్ లాగా క్యాలిక్యులేట్ అవుతుంది (0.1 వస్తుంది).
+        double correctDiscount = subtotal * (discount / 100.0);
         double correctFinalPrice = subtotal - correctDiscount;
 
-        System.out.println("Subtotal Amount    : ₹" + subtotal);
-        System.out.println("Buggy Final Price  : ₹" + buggyFinalPrice + " (Discount failed!)");
-        System.out.println("Correct Final Price: ₹" + correctFinalPrice + " (10% applied correctly)");
+        System.out.println("బిల్ అమౌంట్    : ₹" + subtotal);
+        System.out.println("బగ్ ఉన్న రిజల్ట్ : ₹" + buggyFinalPrice + " (డిస్కౌంట్ అప్లై అవ్వలేదు!)");
+        System.out.println("కరెక్ట్ రిజల్ట్ : ₹" + correctFinalPrice + " (10% డిస్కౌంట్ అప్లై అయ్యింది)");
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">Subtotal Amount    : ₹1000.0
-Buggy Final Price  : ₹1000.0 (Discount failed!)
-Correct Final Price: ₹900.0 (10% applied correctly)</div>
+        <div class="output-content">బిల్ అమౌంట్    : ₹1000.0
+బగ్ ఉన్న రిజల్ట్ : ₹1000.0 (డిస్కౌంట్ అప్లై అవ్వలేదు!)
+కరెక్ట్ రిజల్ట్ : ₹900.0 (10% డిస్కౌంట్ అప్లై అయ్యింది)</div>
       </div>
     </section>
 
@@ -727,13 +716,13 @@ Correct Final Price: ₹900.0 (10% applied correctly)</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Integer division trap: Writing (10 / 100) evaluates to 0 because both operands are integers. Always use 10.0 / 100.0 for decimal calculations.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">ఇంటిజర్ మ్యాథ్స్ తప్పులు: పైన చూసినట్టు (10 / 100) ఇస్తే 0 వస్తుంది. కచ్చితంగా డెసిమల్స్ కావాలంటే 10.0 / 100.0 అని వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Off-by-one loop errors: Using "for (int i = 0; i <= array.length; i++)" throws ArrayIndexOutOfBoundsException on the last iteration because valid indexes end at length - 1.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">లూప్స్ లో తప్పులు (Off-by-one): లూప్ రాసేటప్పుడు <= length అని ఇస్తే అర్రే సైజు దాటిపోయి ఎర్రర్ వస్తుంది. ఎప్పుడూ < length మాత్రమే వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Ignoring compiler warnings: Modern IDE warnings highlight unclosed resources, unused variables, and probable null pointer dereferences before they cause production outages.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">కంపైలర్ వార్నింగ్స్ ని ఇగ్నోర్ చేయడం: మీ ఎడిటర్ లో ఏదైనా ఎల్లో కలర్ గీత వస్తే దాన్ని లైట్ తీసుకోకండి. అది ఫ్యూచర్ లో క్రాష్ అయ్యే బగ్ కి వార్నింగ్ అయి ఉండొచ్చు.</li>
   
       </ul>
     </div>
@@ -750,18 +739,15 @@ Correct Final Price: ₹900.0 (10% applied correctly)</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// The following code contains 3 distinct errors:
-// 1. A Syntax error
-// 2. A Runtime error potential
-// 3. A Logical bug in average calculation
-// Identify and fix all 3 bugs so the program compiles and outputs the exact average 85.0.
+// ఈ కింది కోడ్ లో 3 తప్పులు ఉన్నాయి (సింటాక్స్ తప్పు, రన్ టైమ్ తప్పు, లాజిక్ తప్పు).
+// ఆ మూడింటినీ కనిపెట్టి కరెక్ట్ ఆన్సర్ 85.0 వచ్చేలా చేయండి.
 
 public class Main {
     public static void main(String[] args) {
         int score1 = 80;
         int score2 = 90;
         
-        // Fix the bugs below:
+        // తప్పులు ఇక్కడే ఉన్నాయి, కరెక్ట్ చేయండి:
         // double avg = (score1 + score2) / 2
         // System.out.println("Average: " + avg);
     }
@@ -774,20 +760,14 @@ public class Main {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ What is the difference between an Error and an Exception in Java?</h4>
-      <p>Both inherit from Throwable. "Error" (e.g. OutOfMemoryError, StackOverflowError) represents serious hardware or JVM failure that normal applications cannot recover from. "Exception" (e.g. NullPointerException, IOException) represents recoverable conditions that programs can catch and handle.</p>
+      <h4>❓ Java లో "Error" కీ, "Exception" కీ తేడా ఏంటి?</h4>
+      <p>సిస్టమ్ లో RAM అయిపోవడం లాంటివి జరిగితే వాటిని Error అంటారు, మన ప్రోగ్రామ్ వాటిని ఏం చేయలేదు. కానీ మన కోడ్ లో ఏమైనా తప్పు జరిగితే (ఉదా: సున్నాతో డివైడ్ చేయడం) వాటిని Exception అంటారు, మనం కోడ్ తో వాటిని హ్యాండిల్ చేసి క్రాష్ అవ్వకుండా కాపాడొచ్చు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ How do I read a stack trace when it has 50 lines?</h4>
-      <p>Look for the "Caused by:" clause at the bottom of the trace, and find the first line referencing a file in your own project package (ignore internal JVM or framework library lines).</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ What tool catches logical errors automatically?</h4>
-      <p>Automated unit testing frameworks like JUnit 5 combined with code coverage tools (JaCoCo) allow you to assert expected outputs against actual outputs for hundreds of edge cases.</p>
+      <h4>❓ స్టాక్ ట్రేస్ 50 లైన్లు ఉంటే ఎలా చదవాలి?</h4>
+      <p>మొత్తం చదవాల్సిన పనిలేదు. కింద "Caused by:" అని ఎక్కడ ఉందో చూసి, అందులో మన ఫైల్ పేరు (ఉదా: Main.java) ఎక్కడుందో వెతికితే చాలు. మిగతావన్నీ జావా లోపల ఉండే లైబ్రరీల లైన్స్, వాటితో మనకు పనిలేదు.</p>
     </div>
   
     </section>
@@ -797,16 +777,16 @@ public class Main {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Compile-time errors occur during javac execution and block class file generation.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Compile-time ఎర్రర్స్ ని కంపైలర్ పట్టుకుంటుంది, ఇవి ఉంటే అసలు యాప్ రన్ అవ్వదు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Runtime errors crash the running application and produce a JVM stack trace.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Runtime ఎర్రర్స్ వస్తే యాప్ మధ్యలో క్రాష్ అయిపోయి Stack Trace ని ప్రింట్ చేస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Logical errors produce incorrect business calculations without crashing the program.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Logical ఎర్రర్స్ ఉంటే యాప్ క్రాష్ అవ్వదు కానీ, వచ్చే రిజల్ట్ తప్పు వస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Always read stack traces from top to bottom, focusing on the root cause and line number.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">స్టాక్ ట్రేస్ ని ఎప్పుడూ కిందనుంచి పైకి చదవాలి.</li>
   
       </ul>
     </div>

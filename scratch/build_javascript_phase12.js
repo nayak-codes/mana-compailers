@@ -9,135 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
+    title: 'Object-Oriented Programming (OOP)',
+    icon: '🏗️',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions Mastery',
-    icon: '🧩',
-    desc: 'Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions, Closures & this (Masterclass)', subtopics: 'Declaration vs Expression · Arrow Syntax · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'DOM Manipulation',
-    icon: '🌐',
-    desc: 'DOM ante enti?, Selecting elements (getElementById, querySelector, querySelectorAll), textContent vs innerHTML, changing styles, classList (add, remove, toggle), reading input values, creating & appending elements, removing elements, data attributes, DOM traversal (parent, children, closest), dynamic lists, and 4 interactive projects.',
-    lessons: [
-      { num: 14, file: 'dom.html', title: '14. DOM Manipulation & Web Interactivity', subtopics: 'DOM ante enti? · Selecting Elements · textContent vs innerHTML · Styles & classList · createElement & append · Data Attributes · DOM Traversal & closest · 4 Interactive Projects' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Events & Forms',
-    icon: '🎯',
-    desc: 'Browser events, addEventListener, click, dblclick, mouse events, keyboard events, input & change, submit event, focus & blur, event object, event bubbling vs capturing, event delegation, preventDefault, form validation, error messages, and 6 full projects.',
-    lessons: [
-      { num: 15, file: 'events-and-forms.html', title: '15. Browser Events, Forms & Event Delegation', subtopics: 'addEventListener · Click, Mouse & Keyboard · Input vs Change · Submit & preventDefault() · Bubbling & Delegation · Form Validation · 6 Complete Projects' }
-    ]
-  },
-  {
-    id: 'phase13',
-    tag: 'Phase 13',
-    title: 'Asynchronous JavaScript & APIs',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, Error Handling with try-catch-finally, and LocalStorage.',
-    lessons: [
-      { num: 16, file: 'promises.html', title: '16. Promises & Async/Await (Masterclass)', subtopics: 'Event Loop · Call Stack · Promises · async/await · Fetch API' },
-      { num: 17, file: 'exceptions.html', title: '17. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -253,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -442,334 +400,96 @@ function buildLesson15() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 12: Events and Forms</strong>! In modern web applications, <strong>Browser Events</strong> serve as notifications for user interactions (clicks, keyboard strokes, typing, mouse hovers, form submissions, scrolling) or browser lifecycle changes. In this comprehensive masterclass guide, you will learn how to handle events with <code>addEventListener()</code>, master the Event Object (<code>e.target</code>, <code>e.currentTarget</code>), understand <strong>Event Bubbling vs Capturing</strong>, leverage high-performance <strong>Event Delegation</strong>, prevent default browser actions with <code>e.preventDefault()</code>, build robust real-time <strong>Form Validation</strong> engines, and construct 6 complete interactive web applications.</p>
+      <p>వెబ్‌సైట్ లో యూజర్ జరిపే చర్యలపై (User Actions — బటన్ క్లిక్ చేయడం, కీబోర్డ్ టైప్ చేయడం, ఫారం సబ్మిట్ చేయడం) స్పందించడానికి <strong>Events & Event Listeners</strong> వాడతాం. ఈ చాప్టర్ లో <code>addEventListener</code>, Event Object (<code>e.target</code>), ఫారమ్స్ సబ్మిషన్ మరియు <code>preventDefault()</code> ల గురించి స్పష్టంగా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. Events Ante Enti & addEventListener -->
-    <div class="section-title"><span class="num">1</span>Events Ante Enti? & addEventListener()</div>
-    <div class="section-body">
-      <p>User mouse tho click chesinappudu, keyboard lo key press chesinappudu, or form submit chesinappudu browser generate chese signals ni <strong>Events</strong> antaru. JavaScript ee events ni <strong><code>addEventListener(eventType, handlerCallback, options)</code></strong> dwara listen chesthundhi:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — addEventListener Syntax</span>
-        </div>
-        <pre><code>// element.addEventListener(event, callbackFunction)
-const btn = document.querySelector("#submitBtn");
-
-btn.addEventListener("click", (e) => {
-    console.log("Button clicked at coordinates:", e.clientX, e.clientY);
-});</code></pre>
-      </div>
+    <div class="callout">
+      <div class="callout-title">🔔 రియల్ లైఫ్ అనలాజీ: ఇంటి కాలింగ్ బెల్ (Calling Bell)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">మీ ఇంటి ముందు ఒక కాలింగ్ బెల్ ఉంది:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>Event (చర్య):</strong> విజిటర్ బెల్ బటన్ ప్రెస్ చేయడం (Click Event).</li>
+        <li><strong>Event Listener (చెవి రంధ్రం):</strong> బెల్ శబ్దం కోసం ఎదురుచూడటం.</li>
+        <li><strong>Event Handler (స్పందన):</strong> బెల్ మోగగానే మీరు వెళ్ళి తలుపు తీయడం (Callback Function).</li>
+      </ul>
     </div>
 
-    <!-- 2. Master Event Categories Table -->
-    <div class="section-title"><span class="num">2</span>Master Browser Event Categories</div>
+    <div class="section-title"><span class="num">1</span>addEventListener Syntax & Common Events</div>
     <div class="section-body">
+      <p>ఎలిమెంట్ కి ఈవెంట్ ని లింక్ చేయడానికి <strong><code>addEventListener("event", callback)</code></strong> వాడతాం:</p>
+
       <table class="tbl">
-        <tr><th>Category</th><th>Event Names</th><th>When does it trigger?</th></tr>
-        <tr>
-          <td><strong>Mouse Events</strong></td>
-          <td><code>'click'</code>, <code>'dblclick'</code>, <code>'mouseenter'</code>, <code>'mouseleave'</code>, <code>'mousemove'</code></td>
-          <td>Clicking, double-clicking, cursor entering or hovering over an element.</td>
-        </tr>
-        <tr>
-          <td><strong>Keyboard Events</strong></td>
-          <td><code>'keydown'</code>, <code>'keyup'</code></td>
-          <td>Key is pressed down or released. Read <code>e.key</code> (e.g. <code>"Enter"</code>, <code>"Escape"</code>).</td>
-        </tr>
-        <tr>
-          <td><strong>Input & Change</strong></td>
-          <td><code>'input'</code>, <code>'change'</code></td>
-          <td><code>'input'</code> triggers immediately on every typed letter; <code>'change'</code> triggers when input loses focus after value change.</td>
-        </tr>
-        <tr>
-          <td><strong>Form Events</strong></td>
-          <td><code>'submit'</code>, <code>'reset'</code></td>
-          <td>User clicks submit button or hits Enter in a form.</td>
-        </tr>
-        <tr>
-          <td><strong>Focus Events</strong></td>
-          <td><code>'focus'</code>, <code>'blur'</code></td>
-          <td><code>'focus'</code> occurs when input is highlighted; <code>'blur'</code> occurs when user clicks away.</td>
-        </tr>
+        <tr><th>Event Name</th><th>ఎప్పుడు జరుగుతుంది (Trigger)</th><th>ఉదాహరణ వాడకం</th></tr>
+        <tr><td><code>click</code></td><td>యూజర్ ఎలిమెంట్ పై క్లిక్ చేసినప్పుడు</td><td>బటన్ క్లిక్, లింక్ క్లిక్</td></tr>
+        <tr><td><code>submit</code></td><td>ఫారమ్ ని సబ్మిట్ చేసినప్పుడు</td><td>Login / Register Forms</td></tr>
+        <tr><td><code>input</code></td><td>ఇన్ పుట్ ఫీల్డ్ లో టైప్ చేస్తున్న ప్రతిసారీ</td><td>Search suggestions, Live character count</td></tr>
+        <tr><td><code>change</code></td><td>Dropdown లేదా Radio లో వాల్యూ మారినప్పుడు</td><td>Select country dropdown</td></tr>
+        <tr><td><code>keydown</code></td><td>కీబోర్డ్ లో కీ నొక్కినప్పుడు</td><td>Enter ప్రెస్ చేసి మెసేజ్ పంపడం</td></tr>
       </table>
     </div>
 
-    <!-- 3. Event Object, e.target vs e.currentTarget -->
-    <div class="section-title"><span class="num">3</span>The Event Object (e.target vs e.currentTarget)</div>
+    <div class="section-title"><span class="num">2</span>Event Object & Form Handling (e.preventDefault)</div>
     <div class="section-body">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:16px;">
-          <strong style="color:#58a6ff;">1. e.target (The Actual Trigger)</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">User nijamga ae specific inner element ni click chesado aa exact DOM node ki point chesthundi (e.g. inner icon inside a button).</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
-          <strong style="color:#3fb950;">2. e.currentTarget (The Listener Owner)</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Ae parent element ki <code>addEventListener</code> attach chesamo aa container element ki point chesthundhi (equivalent to <code>this</code>).</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. Event Bubbling, Capturing & Delegation -->
-    <div class="section-title"><span class="num">4</span>Event Propagation Pipeline & Event Delegation ⭐</div>
-    <div class="section-body">
-      <p>HTML element meedha event trigger avvagane 3 phases jaruguthayi:</p>
-      <ol style="margin-left:22px; color:var(--text2); font-size:14px; line-height:1.8;">
-        <li><strong>Capturing Phase:</strong> Event Window nunchi Document $\rightarrow$ Body $\rightarrow$ Parent $\rightarrow$ Target daka kindhaki travel avthundhi.</li>
-        <li><strong>Target Phase:</strong> Clicked element daggara event trigger avthundhi.</li>
-        <li><strong>Bubbling Phase (Default):</strong> Event Target nunchi Parent $\rightarrow$ Body $\rightarrow$ Window daka పైకి bubble avthundhi.</li>
-      </ol>
-
-      <div class="callout">
-        <div class="callout-title">⚡ The Power of Event Delegation</div>
-        <p>100 list items unte 100 listeners pettakunda, common parent <code>&lt;ul&gt;</code> ki **single event listener** petti <code>e.target.closest('li')</code> tho identify cheyyadanni **Event Delegation** antaru. Memory consumption massive ga taggutundi!</p>
-      </div>
+      <p>ఫారమ్ సబ్మిట్ చేసినప్పుడు బ్రౌజర్ పేజీ రిఫ్రెష్ అయిపోతుంది. దాన్ని అడ్డుకోవడానికి <strong><code>e.preventDefault()</code></strong> వాడతాం.</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Event Delegation in Action</span>
+          <span class="lang-tag">JavaScript — Event Listener & Form Submit</span>
         </div>
-        <pre><code>"use strict";
+        <pre><code>// HTML Elements: &lt;form id="loginForm"&gt;, &lt;input id="username"&gt;
 
-const list = document.querySelector("#todoList");
+let form = document.querySelector("#loginForm");
+let usernameInput = document.querySelector("#username");
 
-// Single listener on parent UL handling all children (even future added items!)
-list.addEventListener("click", (e) => {
-    const deleteBtn = e.target.closest(".delete-btn");
-    if (deleteBtn) {
-        const item = deleteBtn.closest("li");
-        item.remove(); // Delete item
-    }
-});</code></pre>
-      </div>
-    </div>
-
-    <!-- 5. preventDefault & Form Validation -->
-    <div class="section-title"><span class="num">5</span>preventDefault() & Robust Form Validation</div>
-    <div class="section-body">
-      <p>HTML forms submit chesinappudu browser default ga entire page ni reload chesthundhi. Single Page Applications (SPA) lo <strong><code>e.preventDefault()</code></strong> call chesi page reload ni prevent chesi, JavaScript tho data validate cheyyali:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Form Submission & Validation</span>
-        </div>
-        <pre><code>"use strict";
-
-const form = document.querySelector("#loginForm");
-const emailInput = document.querySelector("#email");
-const passwordInput = document.querySelector("#password");
-const errorBox = document.querySelector("#errorMessage");
-
-form.addEventListener("submit", (e) => {
-    e.preventDefault(); // 1. Stop default page reload!
-
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-
-    // 2. Validate
-    if (!email || !email.includes("@")) {
-        errorBox.textContent = "❌ Please enter a valid email address!";
-        emailInput.style.borderColor = "#ff7b72";
-        return;
-    }
-
-    if (password.length < 6) {
-        errorBox.textContent = "❌ Password must be at least 6 characters!";
-        passwordInput.style.borderColor = "#ff7b72";
-        return;
-    }
-
-    // 3. Success
-    errorBox.textContent = "✅ Login Successful! Redirecting...";
-    errorBox.style.color = "#3fb950";
-    form.reset(); // Clear form
-});</code></pre>
-      </div>
-    </div>
-
-    <!-- 6 COMPLETE REAL-WORLD PROJECTS -->
-    <div class="section-title"><span class="num">6</span>6 Complete Real-World Web Projects</div>
-    <div class="section-body">
-      <p>Mastering events & forms through 6 production-grade browser components:</p>
-
-      <!-- Project 1: Login Form -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: Interactive Login Form with Live Error Feedback</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">HTML + JS — Login Form</span>
-            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
-          </div>
-          <pre><code>&lt;form id="authForm" style="max-width:320px; display:flex; flex-direction:column; gap:10px;"&gt;
-  &lt;input type="email" id="authEmail" placeholder="Email Address" required&gt;
-  &lt;input type="password" id="authPassword" placeholder="Password" required&gt;
-  &lt;button type="submit"&gt;Sign In&lt;/button&gt;
-  &lt;div id="authAlert" style="font-size:13px;"&gt;&lt;/div&gt;
-&lt;/form&gt;
-
-&lt;script&gt;
-document.querySelector("#authForm").addEventListener("submit", (e) => {
+form.addEventListener("submit", function(e) {
+    // 1. పేజీ రిఫ్రెష్ అవ్వకుండా అడ్డుకోవడం
     e.preventDefault();
-    const email = document.querySelector("#authEmail").value;
-    const alertBox = document.querySelector("#authAlert");
-    alertBox.innerHTML = '&lt;span style="color:#3fb950;"&gt;Welcome back, ' + email + '!&lt;/span&gt;';
-});
-&lt;/script&gt;</code></pre>
-        </div>
-      </div>
 
-      <!-- Project 2: Contact Form -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Contact Form with Reset Handler</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Contact Form</span>
-          </div>
-          <pre><code>const contactForm = document.querySelector("#contactForm");
+    // 2. యూజర్ ఎంటర్ చేసిన టెక్స్ట్ ని పొందడం
+    let name = usernameInput.value.trim();
 
-contactForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const formData = new FormData(contactForm);
-    console.log("Submitted Message from:", formData.get("name"), formData.get("message"));
-    alert("Thank you! Your message has been received.");
-    contactForm.reset();
+    if (name === "") {
+        alert("దయచేసి పేరు ఎంటర్ చేయండి!");
+    } else {
+        alert("నమస్తే " + name + "! Login successful 🎉");
+    }
 });</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Delegation To-Do List -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: Production To-Do List with Event Delegation</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">HTML + JS — Delegation Todo</span>
-            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
-          </div>
-          <pre><code>&lt;input type="text" id="newTodo" placeholder="Add task..."&gt;
-&lt;button id="addBtn"&gt;Add&lt;/button&gt;
-&lt;ul id="todoContainer"&gt;&lt;/ul&gt;
-
-&lt;script&gt;
-const input = document.querySelector("#newTodo");
-const container = document.querySelector("#todoContainer");
-
-document.querySelector("#addBtn").addEventListener("click", () => {
-    if (!input.value.trim()) return;
-    const li = document.createElement("li");
-    li.innerHTML = input.value + ' &lt;button class="del"&gt;❌&lt;/button&gt;';
-    container.append(li);
-    input.value = "";
-});
-
-// Single Event Delegation Listener on Parent
-container.addEventListener("click", (e) => {
-    if (e.target.classList.contains("del")) {
-        e.target.parentElement.remove();
-    }
-});
-&lt;/script&gt;</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Live Search Filter -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Real-Time Live Search Filter</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">HTML + JS — Live Search</span>
-            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
-          </div>
-          <pre><code>&lt;input type="text" id="searchBox" placeholder="Search framework..."&gt;
-&lt;ul id="frameworkList"&gt;
-  &lt;li&gt;React.js&lt;/li&gt;
-  &lt;li&gt;Next.js&lt;/li&gt;
-  &lt;li&gt;Vue.js&lt;/li&gt;
-  &lt;li&gt;Angular&lt;/li&gt;
-  &lt;li&gt;Node.js&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script&gt;
-const searchBox = document.querySelector("#searchBox");
-const items = document.querySelectorAll("#frameworkList li");
-
-searchBox.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase();
-    items.forEach(li => {
-        const text = li.textContent.toLowerCase();
-        li.style.display = text.includes(query) ? "block" : "none";
-    });
-});
-&lt;/script&gt;</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 5: Live Character Counter -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 5: Character Counter with 200 Max Limit</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">HTML + JS — Character Counter</span>
-          </div>
-          <pre><code>&lt;textarea id="tweetBox" maxlength="200" placeholder="What's happening?"&gt;&lt;/textarea&gt;
-&lt;div id="charStatus"&gt;200 characters remaining&lt;/div&gt;
-
-&lt;script&gt;
-const tweetBox = document.querySelector("#tweetBox");
-const charStatus = document.querySelector("#charStatus");
-const MAX_CHARS = 200;
-
-tweetBox.addEventListener("input", () => {
-    const remaining = MAX_CHARS - tweetBox.value.length;
-    charStatus.textContent = remaining + " characters remaining";
-    charStatus.style.color = remaining < 20 ? "#ff7b72" : "#3fb950";
-});
-&lt;/script&gt;</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 6: Interactive Quiz App -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 6: Interactive Quiz App Engine</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">HTML + JS — Interactive Quiz</span>
-            <a class="try-btn" href="/online-html-editor.html">▶ Open in Editor</a>
-          </div>
-          <pre><code>&lt;div id="quizCard"&gt;
-  &lt;h3&gt;Which keyword declares a block-scoped constant?&lt;/h3&gt;
-  &lt;button class="quiz-opt" data-correct="false"&gt;var&lt;/button&gt;
-  &lt;button class="quiz-opt" data-correct="true"&gt;const&lt;/button&gt;
-  &lt;button class="quiz-opt" data-correct="false"&gt;let&lt;/button&gt;
-  &lt;div id="quizResult" style="margin-top:10px; font-weight:700;"&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;script&gt;
-document.querySelector("#quizCard").addEventListener("click", (e) => {
-    if (e.target.classList.contains("quiz-opt")) {
-        const isCorrect = e.target.dataset.correct === "true";
-        const result = document.querySelector("#quizResult");
-        if (isCorrect) {
-            result.textContent = "🎉 Correct Answer! 'const' is block-scoped.";
-            result.style.color = "#3fb950";
-        } else {
-            result.textContent = "❌ Wrong Answer! Try again.";
-            result.style.color = "#ff7b72";
-        }
-    }
-});
-&lt;/script&gt;</code></pre>
-        </div>
       </div>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li><code>addEventListener("click", handleClick())</code> అని ఫంక్షన్ పక్కన Parentheses <code>()</code> పెడితే పేజీ లోడ్ కాగానే ఫంక్షన్ రన్ అయిపోతుంది! కేవలం ఫంక్షన్ పేరు మాత్రమే ఇవ్వాలి: <code>addEventListener("click", handleClick)</code>.</li>
+        <li>Form లో సబ్మిట్ ఈవెంట్ కి <code>e.preventDefault()</code> రాయడం మర్చిపోతే డేటా పోయి పేజీ రిఫ్రెష్ అయిపోతుంది.</li>
+      </ul>
     </div>
-  `;
 
+    <div class="section-title"><span class="num">3</span>Practice Questions & Answers</div>
+    <div class="section-body">
+      <details>
+        <summary>Q1. <code>e.target</code> అంటే ఏమిటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>e.target</code> అనేది ఈవెంట్ జరిగిన నిర్దిష్టమైన HTML ఎలిమెంట్ ని సూచిస్తుంది. (Ex: <code>e.target.value</code> ద్వారా ఇన్ పుట్ లో ఉన్న టెక్స్ట్ ని పొందవచ్చు).</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q2. <code>input</code> ఈవెంట్ కి <code>change</code> ఈవెంట్ కి తేడా ఏంటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>input</code> ప్రతి అక్షరం టైప్ చేయగానే వెంటనే ఫైర్ అవుతుంది. <code>change</code> యూజర్ టైపింగ్ పూర్తి చేసి బాక్స్ బయట క్లిక్ చేసినప్పుడు (Blur అయినప్పుడు) మాత్రమే ఫైర్ అవుతుంది.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>చర్యలపై స్పందించడానికి <code>addEventListener()</code> వాడండి.</li>
+        <li>ఫారమ్ రిఫ్రెష్ ని అడ్డుకోవడానికి <code>e.preventDefault()</code> వాడండి.</li>
+        <li>ఈవెంట్ సమాచారం కోసం Event Object <code>(e)</code> ని వాడండి.</li>
+      </ul>
+    </div>
+`;
   const html = wrapJSLessonPage(title, desc, filename, 15, subtopics, contentBody, 'dom.html', '14. DOM Manipulation', 'promises.html', 'Phase 13: Promises & Async');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -866,7 +586,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

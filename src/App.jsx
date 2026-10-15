@@ -2541,9 +2541,7 @@ const LANG_CARDS = [
   { id: 'c',        label: 'C Compiler',             accentColor: '#659AD3', bgGlow: 'rgba(101,154,211,0.18)' },
   { id: 'cpp17',    label: 'C++ Compiler',           accentColor: '#9C033A', bgGlow: 'rgba(156,3,58,0.18)' },
   { id: 'nodejs',   label: 'JavaScript Compiler',    accentColor: '#F0DB4F', bgGlow: 'rgba(240,219,79,0.15)' },
-  { id: 'csharp',   label: 'C# Compiler',            accentColor: '#9B4F96', bgGlow: 'rgba(155,79,150,0.18)' },
   { id: 'go',       label: 'Go Compiler',            accentColor: '#00ACD7', bgGlow: 'rgba(0,172,215,0.18)' },
-  { id: 'rust',     label: 'Rust Compiler',          accentColor: '#CE412B', bgGlow: 'rgba(206,65,43,0.18)' },
   { id: 'php',      label: 'PHP Compiler',           accentColor: '#8892BF', bgGlow: 'rgba(136,146,191,0.18)' },
   { id: 'ruby',     label: 'Ruby Compiler',          accentColor: '#E82D09', bgGlow: 'rgba(232,45,9,0.18)' },
 ]
@@ -2829,7 +2827,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
               { icon: '⚡', title: 'Lightning Fast Execution', desc: 'Docker-isolated containers execute your code in under 2 seconds on average — no cold starts, no waiting.', color: '#f1e05a' },
               { icon: '📝', title: 'Monaco Code Editor', desc: 'The same engine powering VS Code — full syntax highlighting, auto-complete, and smart indentation.', color: '#58a6ff' },
               { icon: '🔒', title: 'Privacy First', desc: 'Your code is never stored. Complete sandbox isolation and zero tracking — guaranteed.', color: '#3fb950' },
-              { icon: '🌍', title: '9 Languages Supported', desc: 'Python, Java, C, C++, JavaScript, Go, Rust, PHP, Ruby — one platform for every stack.', color: '#f74c00' },
+              { icon: '🌍', title: 'Languages Supported', desc: 'Python, Java, C, C++, JavaScript, Go, PHP, Ruby, HTML — one platform for every stack.', color: '#f74c00' },
               { icon: '📱', title: 'Works on Any Device', desc: 'Fully responsive design — works flawlessly on desktop, tablet, and mobile with an adaptive layout.', color: '#d2a8ff' },
               { icon: '✨', title: 'Zero Setup Required', desc: 'Open your browser, choose a language, and start. No terminal, no installation, no frustration.', color: '#f0a500' },
             ].map((f, i) => (
@@ -2977,8 +2975,8 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
                   { icon: '☕', label: 'Java', lang: 'java' },
                   { icon: '⚙️', label: 'C / C++', lang: 'cpp17' },
                   { icon: '🟨', label: 'JavaScript', lang: 'nodejs' },
-                  { icon: '🦀', label: 'Rust', lang: 'rust' },
                   { icon: '🐹', label: 'Go', lang: 'go' },
+                  { icon: '🐘', label: 'PHP', lang: 'php' },
                 ].map(l => (
                   <li key={l.lang}>
                     <a href={`/?lang=${l.lang}`}

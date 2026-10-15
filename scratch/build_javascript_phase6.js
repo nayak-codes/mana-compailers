@@ -9,109 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Functions & Arrow Syntax',
-    icon: '🧩',
-    desc: 'Function declarations, function expressions, arrow functions, default parameters, rest parameters, return statements, and pure functions.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'functions.html', title: '10. Functions & Arrow Syntax', subtopics: 'Declaration vs Expression · Arrow Syntax · Default Params · Rest (...) · Return Values' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Arrays & Objects',
-    icon: '📊',
-    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
-    lessons: [
-      { num: 11, file: 'arrays.html', title: '11. Arrays & Iteration Methods', subtopics: 'Mutating Methods · map, filter, reduce · Array Spread' },
-      { num: 12, file: 'objects.html', title: '12. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · JSON Parsing' },
-      { num: 13, file: 'es6-features.html', title: '13. ES6+ Destructuring & Spread', subtopics: 'Array & Object Destructuring · Spread/Rest (...) · Nullish Coalescing (??)' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Advanced Functions & OOP',
+    title: 'Object-Oriented Programming (OOP)',
     icon: '🏗️',
-    desc: 'Lexical scope, closures, higher-order functions, Object-Oriented JS, prototypes, ES6 classes, and this keyword binding.',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 14, file: 'closures.html', title: '14. Closures & Higher-Order Functions', subtopics: 'Lexical Scope · Closures · Currying · Callbacks' },
-      { num: 15, file: 'oop.html', title: '15. OOP: Classes & Prototypes', subtopics: 'Prototypes & Inheritance · ES6 Classes · this Keyword Binding' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Asynchronous JavaScript & DOM',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, DOM manipulation, and LocalStorage.',
-    lessons: [
-      { num: 16, file: 'promises.html', title: '16. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise · async/await · Fetch API' },
-      { num: 17, file: 'exceptions.html', title: '17. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' },
-      { num: 18, file: 'dom.html', title: '18. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -227,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -416,334 +400,108 @@ function buildLesson9() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 6: Strings Mastery</strong>! In JavaScript, text is handled through <strong>Strings</strong>. Strings in JavaScript are immutable sequences of UTF-16 character code units. In this masterclass guide, you will learn how to create strings using single quotes, double quotes, and modern ES6 <strong>Template Literals</strong>, master over 15 built-in string manipulation methods, understand character indexing, escaping, slicing, string replacement, palindrome verification, and build 5 interactive text-processing mini-projects.</p>
+      <p>టెక్స్ట్ డేటా (పేర్లు, మెసేజ్ లు, ఇమెయిళ్ళు) తో పనిచేయడానికి <strong>Strings</strong> వాడతాం. జావాస్క్రిప్ట్ లో స్ట్రింగ్స్ ని ఎలా క్రియేట్ చేయాలి, వాటిపై వివిధ మెథడ్స్ (<code>slice</code>, <code>replace</code>, <code>split</code>, <code>includes</code>) ఎలా వాడాలి, మరియు ES6 Template Literals ల గురించి ఈ పాఠంలో లోతుగా తెలుసుకుందాం!</p>
     </div>
 
-    <!-- 1. Creating Strings, Quotes & Template Literals -->
-    <div class="section-title"><span class="num">1</span>Creating Strings (Single, Double Quotes & Template Literals)</div>
-    <div class="section-body">
-      <p>JavaScript lo strings create cheyyadaniki 3 approaches unnaayi:</p>
-
-      <table class="tbl">
-        <tr><th>String Delimiter</th><th>Syntax</th><th>Key Features</th></tr>
-        <tr>
-          <td><strong>1. Single Quotes</strong></td>
-          <td><code>'Hello World'</code></td>
-          <td>Classic literal. Useful when string contains double quotes.</td>
-        </tr>
-        <tr>
-          <td><strong>2. Double Quotes</strong></td>
-          <td><code>"Hello World"</code></td>
-          <td>Classic literal. Useful when string contains apostrophes.</td>
-        </tr>
-        <tr>
-          <td><strong>3. Template Literals</strong> (ES6 ⭐)</td>
-          <td><code>\`Hello \${name}\`</code></td>
-          <td>Supports <strong>String Interpolation (\`\${expression}\`)</strong>, multi-line strings, and embedded JavaScript code without concatenation.</td>
-        </tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Quotes & Template Literals</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const language = "JavaScript";
-
-console.log(language.length);
-console.log(language.toUpperCase());
-console.log(language.includes("Script"));
-console.log(\`I am learning \${language}\`);</code></pre>
-      </div>
+    <div class="callout">
+      <div class="callout-title">📿 రియల్ లైఫ్ అనలాజీ: పూల దండ (Necklace of Character Beads)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">ఒక స్ట్రింగ్ ని ఒక పూల దండలా ఊహించుకోండి. అందులోని ప్రతి పువ్వుకు (అక్షరానికి) 0 నుండి మొదలయ్యే ఒక సంఖ్య (Index) ఉంటుంది:</p>
+      <p style="margin-top: 8px; font-family: monospace; color: #f7df1e; font-size: 16px;">"MANA" -> M(0), A(1), N(2), A(3)</p>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">మొదటి అక్షరం ఎప్పుడూ Index 0 లో ఉంటుంది, చివరి అక్షరం <code>length - 1</code> లో ఉంటుంది.</p>
     </div>
 
-    <!-- 2. String Length & Character Indexing -->
-    <div class="section-title"><span class="num">2</span>String Length, Indexing & charAt()</div>
+    <div class="section-title"><span class="num">1</span>String Creation & Immutability (మార్చలేని తత్వం)</div>
     <div class="section-body">
-      <p>Strings are zero-indexed (first character index is <code>0</code>):</p>
+      <p>స్ట్రింగ్స్ ని Double Quotes <code>"..."</code>, Single Quotes <code>'...'</code>, లేదా Backticks <code>&#96;...&#96;</code> ద్వారా క్రియేట్ చేయవచ్చు.</p>
       
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><code>str.length</code> — Total number of characters (property, not a method).</li>
-        <li><code>str[0]</code> — Bracket notation to read character at index 0.</li>
-        <li><code>str.charAt(0)</code> — Method to read character at index 0 (returns empty string <code>""</code> if out of bounds, unlike <code>undefined</code>).</li>
-        <li><code>str.at(-1)</code> — Modern ES2022 method supporting negative indices (last character).</li>
-      </ul>
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ String Immutability అంటే ఏమిటి?</div>
+        <p>JavaScript లో స్ట్రింగ్స్ <strong>Immutable (మార్చలేనివి)</strong>. అంటే ఒకసారి స్ట్రింగ్ క్రియేట్ అయ్యాక, అందులోని ఒక అక్షరాన్ని మార్చలేము! <code>str[0] = 'X'</code> అని రాస్తే అది మారదు. ఏదైనా మార్పు చేస్తే కొత్త స్ట్రింగ్ క్రియేట్ అవుతుంది తప్ప పాతది మారదు.</p>
+      </div>
     </div>
 
-    <!-- 3. Essential String Methods -->
-    <div class="section-title"><span class="num">3</span>Essential String Methods Master Table</div>
+    <div class="section-title"><span class="num">2</span>Essential String Methods</div>
     <div class="section-body">
+      <p>డెవలపర్లు ప్రతిరోజూ వాడే ప్రధానమైన String Methods ఇవే:</p>
+
       <table class="tbl">
-        <tr><th>Method</th><th>Description</th><th>Example</th><th>Result</th></tr>
-        <tr><td><code>toUpperCase()</code></td><td>Converts string to uppercase.</td><td><code>"js".toUpperCase()</code></td><td><code>"JS"</code></td></tr>
-        <tr><td><code>toLowerCase()</code></td><td>Converts string to lowercase.</td><td><code>"JS".toLowerCase()</code></td><td><code>"js"</code></td></tr>
-        <tr><td><code>trim()</code></td><td>Removes whitespace from both ends.</td><td><code>"  hi  ".trim()</code></td><td><code>"hi"</code></td></tr>
-        <tr><td><code>includes(sub)</code></td><td>Checks if substring exists (boolean).</td><td><code>"JavaScript".includes("Script")</code></td><td><code>true</code></td></tr>
-        <tr><td><code>startsWith(sub)</code></td><td>Checks if string starts with substring.</td><td><code>"Hello".startsWith("He")</code></td><td><code>true</code></td></tr>
-        <tr><td><code>endsWith(sub)</code></td><td>Checks if string ends with substring.</td><td><code>"image.png".endsWith(".png")</code></td><td><code>true</code></td></tr>
-        <tr><td><code>indexOf(sub)</code></td><td>Returns first index of match (or -1).</td><td><code>"developer".indexOf("el")</code></td><td><code>3</code></td></tr>
-        <tr><td><code>split(delim)</code></td><td>Splits string into array of strings.</td><td><code>"a,b,c".split(",")</code></td><td><code>["a", "b", "c"]</code></td></tr>
-        <tr><td><code>repeat(count)</code></td><td>Repeats string N times.</td><td><code>"⭐".repeat(3)</code></td><td><code>"⭐⭐⭐"</code></td></tr>
+        <tr><th>Method</th><th>వివరణ (Description)</th><th>ఉదాహరణ (Example)</th><th>రిజల్ట్ (Result)</th></tr>
+        <tr><td><code>length</code></td><td>స్ట్రింగ్ లోని మొత్తం అక్షరాల సంఖ్య</td><td><code>"Mana".length</code></td><td><code>4</code></td></tr>
+        <tr><td><code>toUpperCase()</code></td><td>అన్ని అక్షరాలను పెద్దబలాలు (Capital letters) గా మారుస్తుంది</td><td><code>"hi".toUpperCase()</code></td><td><code>"HI"</code></td></tr>
+        <tr><td><code>toLowerCase()</code></td><td>అన్ని అక్షరాలను చిన్నబలాలు గా మారుస్తుంది</td><td><code>"HI".toLowerCase()</code></td><td><code>"hi"</code></td></tr>
+        <tr><td><code>trim()</code></td><td>ముందు, వెనుక ఉన్న అనవసర స్పేస్ లను తొలగిస్తుంది</td><td><code>" hi ".trim()</code></td><td><code>"hi"</code></td></tr>
+        <tr><td><code>slice(start, end)</code></td><td>కావలసిన భాగాన్ని కట్ చేసి ఇస్తుంది (end ని వదిలేస్తుంది)</td><td><code>"JavaScript".slice(0, 4)</code></td><td><code>"Java"</code></td></tr>
+        <tr><td><code>replace(old, new)</code></td><td>పాత పదాన్ని కొత్త పదంతో మారుస్తుంది</td><td><code>"Hello JS".replace("JS", "World")</code></td><td><code>"Hello World"</code></td></tr>
+        <tr><td><code>includes(text)</code></td><td>ఆ పదం ఉందో లేదో <code>true/false</code> ఇస్తుంది</td><td><code>"JavaScript".includes("Script")</code></td><td><code>true</code></td></tr>
+        <tr><td><code>split(delim)</code></td><td>స్ట్రింగ్ ని ముక్కలు చేసి Array గా మారుస్తుంది</td><td><code>"a,b,c".split(",")</code></td><td><code>["a", "b", "c"]</code></td></tr>
       </table>
     </div>
 
-    <!-- 4. Slicing: slice() vs substring() -->
-    <div class="section-title"><span class="num">4</span>Extracting Text: slice() vs substring()</div>
+    <div class="section-title"><span class="num">3</span>ES6 Template Literals (Backticks &#96;...&#96;)</div>
     <div class="section-body">
-      <table class="tbl">
-        <tr><th>Feature</th><th><code>slice(start, end)</code> ⭐ Recommended</th><th><code>substring(start, end)</code></th></tr>
-        <tr><td><strong>Negative Indices</strong></td><td>✅ Counts backward from end: <code>"Hello".slice(-2) // "lo"</code></td><td>❌ Treats negative index as <code>0</code></td></tr>
-        <tr><td><strong>start > end</strong></td><td>Returns empty string <code>""</code></td><td>Swaps indices automatically</td></tr>
-      </table>
+      <p>పాత రోజుల్లో స్ట్రింగ్స్ ని కలపడానికి ప్లస్ <code>+</code> వాడేవాళ్ళం. కానీ ES6 లో <strong>Backticks (&#96;...&#96;)</strong> సహాయంతో <strong>Template Literals</strong> వచ్చాయి. వీటితో వేరియబుల్స్ ని నేరుగా <code>&#36;{variable}</code> అని కలపవచ్చు మరియు మల్టీ-లైన్ టెక్స్ట్ సులభంగా రాయవచ్చు!</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — slice vs substring</span>
+          <span class="lang-tag">JavaScript — Template Literals & Methods</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-const message = "JavaScript Masterclass 2026";
+let name = "Balaji";
+let role = "Developer";
 
-console.log("slice(0, 10):", message.slice(0, 10));     // "JavaScript"
-console.log("slice(-4):", message.slice(-4));           // "2026"
-console.log("substring(0, 10):", message.substring(0, 10)); // "JavaScript"</code></pre>
+// 1. Template Literals (కలిపి రాయడం)
+let msg = "నమస్తే " + name + "! మీరు ఒక క్లవర్ " + role + ".";
+console.log(msg);
+
+// 2. String Slicing & Splitting
+let email = "  user@gmail.com  ";
+let cleanEmail = email.trim(); // స్పేస్ లు పోయాయి
+console.log("Clean Email:", cleanEmail);
+
+let parts = cleanEmail.split("@");
+console.log("Username:", parts[0]); // user
+console.log("Domain:", parts[1]);   // gmail.com</code></pre>
       </div>
     </div>
 
-    <!-- 5. Replacing Text: replace() vs replaceAll() -->
-    <div class="section-title"><span class="num">5</span>Replacing Text: replace() vs replaceAll()</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><code>str.replace("old", "new")</code> — Replaces ONLY the first match.</li>
-        <li><code>str.replaceAll("old", "new")</code> — Replaces ALL occurrences in the entire string (ES2021).</li>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li><code>slice(0, 4)</code> వాడినప్పుడు 4 వ ఇండెక్స్ రాదు, కేవలం 0, 1, 2, 3 మాత్రమే వస్తాయి (End index is exclusive).</li>
+        <li><code>replace()</code> మొదటి సారి వచ్చిన పదాన్ని మాత్రమే మారుస్తుంది. అన్ని పదాలు మారాలంటే <code>replaceAll()</code> వాడాలి.</li>
       </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — replace vs replaceAll</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const sentence = "Java is great, Java is fast, Java is everywhere!";
-
-console.log("replace():", sentence.replace("Java", "JavaScript"));
-// Only first "Java" changed!
-
-console.log("replaceAll():", sentence.replaceAll("Java", "JavaScript"));
-// All 3 "Java" occurrences replaced with "JavaScript"!</code></pre>
-      </div>
     </div>
 
-    <!-- 6. Escape Characters & Palindromes -->
-    <div class="section-title"><span class="num">6</span>Escape Characters & Palindrome Checking</div>
+    <div class="section-title"><span class="num">4</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <p>Special characters ni strings lo embed cheyyadaniki backslash <code>\\</code> escape character vadathamu:</p>
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><code>\\n</code> — New Line</li>
-        <li><code>\\t</code> — Tab Indent</li>
-        <li><code>\\'</code> or <code>\\"</code> — Quotation marks inside literal</li>
-        <li><code>\\\\</code> — Literal backslash character</li>
+      <details>
+        <summary>Q1. <code>"JavaScript".slice(-6)</code> రాస్తే ఏం వస్తుంది?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>"Script"</code>.</p>
+          <p><strong>వివరణ:</strong> <code>slice</code> లో నెగెటివ్ నంబర్ ఇస్తే స్ట్రింగ్ చివర నుండి లెక్కపెడుతుంది.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q2. ఒక స్ట్రింగ్ ని రివర్స్ (Reverse) చేయడం ఎలా?</summary>
+        <div class="faq-ans">
+          <p><strong>కోడ్:</strong> <code>str.split('').reverse().join('')</code></p>
+          <p><strong>వివరణ:</strong> ముందుగా <code>split('')</code> ద్వారా అర్రేగా మార్చి, <code>reverse()</code> చేసి, ఆపై <code>join('')</code> తో మళ్ళీ స్ట్రింగ్ గా మారుస్తాం!</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>స్ట్రింగ్స్ Immutable. ఏ మార్పు చేసినా కొత్త స్ట్రింగ్ వస్తుంది.</li>
+        <li>సులభంగా వేరియబుల్స్ కలపడానికి Backticks (<code>&#96;...&#96;</code>) వాడండి.</li>
+        <li>ముక్కలు చేయడానికి <code>split()</code>, కట్ చేయడానికి <code>slice()</code> వాడండి.</li>
       </ul>
-
-      <h4 style="color:#f7df1e; margin-top:16px;">Palindrome Algorithm</h4>
-      <p>Oka word/sentence mundhu nunchi or venuka nunchi chadivina okela unte dheenini <strong>Palindrome</strong> antaru (e.g. <em>"madam"</em>, <em>"racecar"</em>):</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Palindrome Checker</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-function isPalindrome(str) {
-    // 1. Sanitize: lowercase and remove non-alphanumeric chars
-    const cleaned = str.toLowerCase().replaceAll(" ", "");
-    
-    // 2. Reverse string using split-reverse-join
-    const reversed = cleaned.split("").reverse().join("");
-    
-    // 3. Compare
-    return cleaned === reversed;
-}
-
-console.log("is 'racecar' Palindrome?", isPalindrome("racecar")); // true
-console.log("is 'madam' Palindrome?", isPalindrome("madam"));     // true
-console.log("is 'javascript' Palindrome?", isPalindrome("javascript")); // false</code></pre>
-      </div>
     </div>
-
-    <!-- 5 MINI PROJECTS -->
-    <div class="section-title"><span class="num">7</span>5 Text-Processing Mini Projects</div>
-    <div class="section-body">
-      <p>Mastering string processing through 5 real-world applications:</p>
-
-      <!-- Project 1: Word Counter -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: Word Counter</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Word Counter</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function countWords(text) {
-    if (!text.trim()) return 0;
-    // Split by one or more whitespace characters
-    const words = text.trim().split(/\\s+/);
-    return words.length;
-}
-
-const article = "JavaScript is a versatile language powering the modern web and cloud APIs.";
-console.log("Total Words:", countWords(article)); // 12</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: Character Counter -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Character Counter & Analytics</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Character Counter</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function analyzeText(text) {
-    const totalChars = text.length;
-    const withoutSpaces = text.replaceAll(" ", "").length;
-    const spacesCount = totalChars - withoutSpaces;
-    
-    return {
-        totalCharacters: totalChars,
-        charactersWithoutSpaces: withoutSpaces,
-        spaces: spacesCount
-    };
-}
-
-console.log(analyzeText("Our Compiler 2026 Platform"));</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Palindrome Checker -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: Advanced Palindrome Checker (Phrases)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Palindrome Project</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function checkPhrasePalindrome(phrase) {
-    const clean = phrase.toLowerCase().replace(/[^a-z0-9]/g, "");
-    const rev = clean.split("").reverse().join("");
-    return clean === rev;
-}
-
-console.log("A man, a plan, a canal: Panama ->", checkPhrasePalindrome("A man, a plan, a canal: Panama")); // true
-console.log("Hello World ->", checkPhrasePalindrome("Hello World")); // false</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Username Validator -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Username Validator</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Username Validator</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function validateUsername(username) {
-    // Rule 1: Length between 4 and 15
-    if (username.length < 4 || username.length > 15) {
-        return "❌ Username must be between 4 and 15 characters.";
-    }
-    
-    // Rule 2: Cannot contain spaces
-    if (username.includes(" ")) {
-        return "❌ Username cannot contain spaces.";
-    }
-    
-    // Rule 3: Must start with a letter
-    const firstChar = username[0].toLowerCase();
-    if (firstChar < 'a' || firstChar > 'z') {
-        return "❌ Username must start with a letter.";
-    }
-    
-    return "✅ Valid Username: @" + username;
-}
-
-console.log(validateUsername("ravi_dev"));     // Valid
-console.log(validateUsername("123ravi"));      // Invalid start
-console.log(validateUsername("ravi nayak"));   // Contains spaces</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 5: Password Strength Checker -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 5: Password Strength Checker</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Password Strength</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function checkPasswordStrength(password) {
-    let score = 0;
-    
-    if (password.length >= 8) score++;
-    if (/[A-Z]/.test(password)) score++; // Has Uppercase
-    if (/[a-z]/.test(password)) score++; // Has Lowercase
-    if (/[0-9]/.test(password)) score++; // Has Number
-    if (/[^A-Za-z0-9]/.test(password)) score++; // Has Special Char
-    
-    if (score <= 2) return "🔴 WEAK Password (Add numbers & symbols)";
-    if (score <= 4) return "🟡 MEDIUM Password (Good, but can be stronger)";
-    return "🟢 STRONG Password (Excellent security!)";
-}
-
-console.log("pass123:", checkPasswordStrength("pass123"));
-console.log("Ravi@2026#Secure:", checkPasswordStrength("Ravi@2026#Secure"));</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Try It Yourself Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this string processing snippet in our live compiler:</p>
-      
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript Strings</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const language = "JavaScript";
-
-console.log("Length:", language.length);
-console.log("Uppercase:", language.toUpperCase());
-console.log("Includes 'Script':", language.includes("Script"));
-console.log(\`I am learning \${language}\`);</code></pre>
-      </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
-    </div>
-
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 9, subtopics, contentBody, 'loops.html', '8. Loops & Control Flow', 'functions.html', 'Phase 7: Functions');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -840,7 +598,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

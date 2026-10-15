@@ -5,10 +5,8 @@ export const LANGUAGES = [
   { id: 'cpp17',    label: 'C++',        monacoLang: 'cpp',        icon: '⚡', logo: '/logos/cpp.svg', ext: 'cpp',  jVersion: '1' },
   { id: 'nodejs',   label: 'JavaScript', monacoLang: 'javascript', icon: '🟨', logo: '/logos/javascript.svg', ext: 'js',   jVersion: '4' },
   { id: 'go',       label: 'Go',         monacoLang: 'go',         icon: '🐹', logo: '/logos/go.svg', ext: 'go',   jVersion: '4' },
-  { id: 'rust',     label: 'Rust',       monacoLang: 'rust',       icon: '🦀', logo: '/logos/rust.svg', ext: 'rs',   jVersion: '4' },
   { id: 'php',      label: 'PHP',        monacoLang: 'php',        icon: '🐘', logo: '/logos/php.svg', ext: 'php',  jVersion: '4' },
   { id: 'ruby',     label: 'Ruby',       monacoLang: 'ruby',       icon: '💎', logo: '/logos/ruby.svg', ext: 'rb',   jVersion: '4' },
-  { id: 'csharp',   label: 'C#',         monacoLang: 'csharp',     icon: '🔷', logo: '/logos/csharp.svg', ext: 'cs',   jVersion: '4' },
   { id: 'html',     label: 'HTML/CSS/JS',monacoLang: 'html',       icon: '🌐', logo: '/logos/html.svg', ext: 'html', jVersion: '1' },
 ]
 

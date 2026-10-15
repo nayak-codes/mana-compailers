@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java String Fundamentals & String Constant Pool (SCP) — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Comprehensive deep dive into Java Strings: understanding the java.lang.String class, the internal difference between String literals and heap objects, the String Constant Pool (SCP) memory region, why strings are immutable in Java, compact string architecture in modern JVMs, and fundamental 0-based character indexing." />
-  <meta name="keywords" content="java string fundamentals & string constant pool (scp), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java String Fundamentals & String Constant Pool (SCP) (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="జావాలో Strings అంటే ఏంటి? `String` క్లాస్ వెనుక ఉన్న అసలు సీక్రెట్ ఏంటి? స్ట్రింగ్స్ ని నార్మల్ గా క్రియేట్ చేయడానికి, `new` వాడి క్రియేట్ చేయడానికి తేడా ఏంటి? **String Constant Pool (SCP)** ఎలా పనిచేస్తుంది? స్ట్రింగ్స్ ని ఎందుకు మార్చలేం (Immutable)? లాంటి అడ్వాన్స్డ్ కాన్సెప్ట్స్ ని ఈ చాప్టర్ లో డీటెయిల్డ్ గా నేర్చుకుందాం." />
+  <meta name="keywords" content="java string fundamentals & string constant pool (scp) (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/23-java-string-fundamentals-and-memory-architecture.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 23: 23. String Fundamentals & SCP</span>
     </div>
 
-    <h1 class="page-title">Java String Fundamentals & String Constant Pool (SCP)</h1>
+    <h1 class="page-title">Java String Fundamentals & String Constant Pool (SCP) (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,30 +541,30 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Comprehensive deep dive into Java Strings: understanding the java.lang.String class, the internal difference between String literals and heap objects, the String Constant Pool (SCP) memory region, why strings are immutable in Java, compact string architecture in modern JVMs, and fundamental 0-based character indexing.</p>
+      <p>జావాలో Strings అంటే ఏంటి? `String` క్లాస్ వెనుక ఉన్న అసలు సీక్రెట్ ఏంటి? స్ట్రింగ్స్ ని నార్మల్ గా క్రియేట్ చేయడానికి, `new` వాడి క్రియేట్ చేయడానికి తేడా ఏంటి? **String Constant Pool (SCP)** ఎలా పనిచేస్తుంది? స్ట్రింగ్స్ ని ఎందుకు మార్చలేం (Immutable)? లాంటి అడ్వాన్స్డ్ కాన్సెప్ట్స్ ని ఈ చాప్టర్ లో డీటెయిల్డ్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. What is a String in Java?</h2>
+      <h2>1. జావాలో String అంటే ఏంటి?</h2>
       <div class="theory-text">
-        <p>In computer programming, text is the primary medium through which humans interact with software. In Java, textual data is represented by the <code>java.lang.String</code> class.<br>Unlike primitive data types (<code>int</code>, <code>double</code>, <code>char</code>, <code>boolean</code>) which store raw binary bits directly in Stack memory, a <code>String</code> is a <strong>Reference Type (Object)</strong>.</p>
-<p>A <code>String</code> object represents an <strong>immutable, ordered sequence of Unicode characters</strong>.</p>
+        <p>సాధారణంగా నంబర్స్ ని స్టోర్ చేయడానికి <code>int</code>, <code>double</code> వాడతాం, అవి డైరెక్ట్ గా స్టాక్ మెమరీలో సేవ్ అవుతాయి (వాటినే Primitive Data Types అంటారు).<br>కానీ టెక్స్ట్ ని స్టోర్ చేయడానికి వాడే <strong><code>String</code></strong> అనేది మామూలు డేటా టైప్ కాదు. జావాలో అదొక <strong>Reference Type (Object)</strong>. ఇంటర్నల్ గా ఇది <code>java.lang.String</code> అనే క్లాస్!</p>
+<p><code>String</code> అనేది అక్షరాల కలయిక (sequence of characters). దీన్ని క్రియేట్ చేశాక మార్చలేం (Immutable).</p>
 <div class="code-block"><pre><code>Primitive Type:
-  [ int age = 21 ]  ===&gt; Stack Memory holds literal value: 21
-<p>Reference Type:<br>  [ String name = "Ravi" ] ===&gt; Stack holds Reference Address: 0x4F12<br>                                     |<br>                                     v<br>                                Heap / SCP Memory: ['R', 'a', 'v', 'i']</code></pre></div></p>
-<p>Because strings are used in virtually every line of enterprise Java code (database queries, JSON payloads, HTTP headers, authentication tokens), Java provides first-class language support for strings, allowing you to create them using double quotes without explicitly calling <code>new</code>.</p>
+  [ int age = 21 ]  ===&gt; స్టాక్ మెమరీలో డైరెక్ట్ గా వాల్యూ ఉంటుంది: 21
+<p>Reference Type:<br>  [ String name = "Ravi" ] ===&gt; స్టాక్ లో కేవలం అడ్రెస్ (Reference) మాత్రమే ఉంటుంది: 0x4F12<br>                                     |<br>                                     v<br>                                Heap / SCP మెమరీలో డేటా ఉంటుంది: ['R', 'a', 'v', 'i']</code></pre></div></p>
+<p>ప్రతి సాఫ్ట్వేర్ లో పాస్వర్డ్స్, డేటాబేస్ క్వెరీలు, యూజర్ నేమ్స్.. అన్నీ స్ట్రింగ్స్ లోనే ఉంటాయి. కాబట్టి జావా దీన్ని చాలా స్పెషల్ గా ట్రీట్ చేసి, <code>new</code> కీవర్డ్ వాడకుండానే డబుల్ కొటేషన్స్ <code>" "</code> తో డైరెక్ట్ గా క్రియేట్ చేసే ఫెసిలిటీ ఇచ్చింది.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Creating Strings: String Literals vs new String()</h2>
+      <h2>2. Strings ని క్రియేట్ చేయడం: Literal vs new String()</h2>
       <div class="theory-text">
-        <p>There are two primary ways to create a string object in Java:</p>
-<p>1. <strong>Using a String Literal:</strong><br><div class="code-block"><pre><code>String s1 = "Java";<br>String s2 = "Java";</code></pre></div><br>When you create a string literal, the JVM checks the <strong>String Constant Pool (SCP)</strong> located inside the Heap memory:<br>- If <code>"Java"</code> already exists in the SCP, no new object is created. The JVM simply returns a reference to the existing instance.<br>- Both <code>s1</code> and <code>s2</code> point to the <strong>exact same memory location</strong> (<code>s1 == s2</code> is <code>true</code>).</p>
-<p>2. <strong>Using the <code>new</code> Keyword:</strong><br><div class="code-block"><pre><code>String s3 = new String("Java");</code></pre></div><br>When you use <code>new String("Java")</code>:<br>- The JVM forces the creation of a <strong>new, distinct Object in the general Heap memory</strong>, outside the SCP.<br>- It also ensures <code>"Java"</code> exists in the SCP.<br>- Therefore, <code>s1 == s3</code> evaluates to <code>false</code> because they reside at different memory addresses!</p>
+        <p>జావాలో స్ట్రింగ్స్ ని రెండు రకాలుగా క్రియేట్ చేయొచ్చు:</p>
+<p>1. <strong>String Literal (డైరెక్ట్ గా ఇవ్వడం):</strong><br><div class="code-block"><pre><code>String s1 = "Java";<br>String s2 = "Java";</code></pre></div><br>ఇలా డైరెక్ట్ గా రాసినప్పుడు.. జావా వెంటనే మెమరీలో ఉన్న <strong>String Constant Pool (SCP)</strong> అనే స్పెషల్ ఏరియాలో చెక్ చేస్తుంది:<br>- ఒకవేళ అక్కడ ముందే <code>"Java"</code> ఉంటే, మళ్ళీ కొత్తగా క్రియేట్ చేయకుండా పాత దాని అడ్రెస్ నే <code>s2</code> కి కూడా ఇస్తుంది.<br>- కాబట్టి ఇక్కడ <code>s1</code> మరియు <code>s2</code> రెండూ ఒకే మెమరీ అడ్రెస్ ని పాయింట్ చేస్తుంటాయి (<code>s1 == s2</code> చెక్ చేస్తే <code>true</code> వస్తుంది).</p>
+<p>2. <strong><code>new</code> కీవర్డ్ వాడితే:</strong><br><div class="code-block"><pre><code>String s3 = new String("Java");</code></pre></div><br>మీరు <code>new</code> వాడినప్పుడు జావా మీ మాట విని.. SCP లో ముందే ఉన్నా సరే, దాన్ని పట్టించుకోకుండా జనరల్ <strong>Heap మెమరీలో కొత్తగా ఇంకో ఆబ్జెక్ట్ ని క్రియేట్ చేస్తుంది</strong>.<br>- అందుకే <code>s1 == s3</code> చెక్ చేస్తే <code>false</code> వస్తుంది! ఎందుకంటే రెండిటి అడ్రెస్ లు వేరు.</p>
 <div class="code-block"><pre><code>HEAP MEMORY
  +-------------------------------------------------------+
  |                                                       |
@@ -588,46 +588,46 @@
   
 
     <section class="lesson-section">
-      <h2>3. String Interning: The intern() Method</h2>
+      <h2>3. String Interning: `intern()` మెథడ్ ఎందుకు వాడాలి?</h2>
       <div class="theory-text">
-        <p>If you have a heap string object created via <code>new String()</code> or dynamic concatenation and you want to point to the canonical SCP instance to save memory, you can call the <strong><code>intern()</code></strong> method:</p>
+        <p>మీరు <code>new String()</code> వాడి మెమరీ వేస్ట్ చేసి ఒక ఆబ్జెక్ట్ క్రియేట్ చేశారనుకోండి. దాన్ని మళ్ళీ SCP లో ఉన్న సేమ్ వాల్యూ కి పాయింట్ చేయాలి అంటే <strong><code>intern()</code></strong> వాడొచ్చు:</p>
 <div class="code-block"><pre><code>String heapStr = new String("Java");
-String poolStr = heapStr.intern(); // Returns SCP reference
-<p>System.out.println(heapStr == "Java"); // false (Heap vs SCP)<br>System.out.println(poolStr == "Java"); // true  (Both are in SCP)</code></pre></div></p>
-<p><strong>Why Interning Matters in Industry:</strong><br>When reading millions of duplicate records from large CSVs or JSON files (e.g. state names like "California", country codes like "USA"), interning duplicate strings allows millions of references to share a single SCP object, drastically reducing Heap memory consumption.</p>
+String poolStr = heapStr.intern(); // ఇది SCP లో ఉన్న "Java" అడ్రెస్ ని తెచ్చి ఇస్తుంది
+<p>System.out.println(heapStr == "Java"); // false (ఒకటి Heap, ఇంకోటి SCP)<br>System.out.println(poolStr == "Java"); // true  (రెండు SCP లోవే)</code></pre></div></p>
+<p><strong>రియల్ టైమ్ లో ఎందుకు వాడతారు?</strong><br>ఒక కోటి మంది డేటాలో 30 లక్షల మందికి స్టేట్ "TELANGANA" అని ఉందనుకోండి. ప్రతివాడికి వేరే వేరే స్ట్రింగ్ క్రియేట్ చేస్తే మెమరీ ఫుల్ అయిపోతుంది. అదే <code>intern()</code> వాడితే ఆ 30 లక్షల మంది ఒకే SCP ఆబ్జెక్ట్ ని పాయింట్ చేస్తారు. దీనివల్ల ర్యామ్ (RAM) చాలా సేవ్ అవుతుంది!</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Why are Strings Immutable in Java? (4 Core Reasons)</h2>
+      <h2>4. Strings ని ఎందుకు మార్చలేము? (Immutability - 4 కారణాలు)</h2>
       <div class="theory-text">
-        <p>Once a <code>String</code> object is created in Java, its character sequence <strong>can NEVER be modified</strong>. Any method that appears to modify a string (like <code>toUpperCase()</code>, <code>concat()</code>, <code>replace()</code>) actually allocates and returns a <strong>brand-new String object</strong> in memory.</p>
+        <p>జావాలో ఒకసారి స్ట్రింగ్ ఆబ్జెక్ట్ క్రియేట్ అయ్యాక, దాన్ని <strong>ఎవరూ, ఎప్పటికీ మార్చలేరు</strong>. మీరు <code>toUpperCase()</code> గానీ, <code>concat()</code> గానీ వాడినా.. అది పాత దాన్ని మార్చదు, కొత్త స్ట్రింగ్ ని క్రియేట్ చేసి ఇస్తుంది!</p>
 <div class="code-block"><pre><code>String str = "Hello";
-str.concat(" World"); // Modifies nothing on str!
-System.out.println(str); // Still prints "Hello"
-<p>str = str.concat(" World"); // Explicitly reassigning reference to the new object<br>System.out.println(str); // Prints "Hello World"</code></pre></div></p>
-<p><strong>Why did Java designers make String immutable?</strong><br>1. <strong>String Constant Pool (SCP) Sharing:</strong> If strings were mutable, changing the value through reference <code>s1</code> would silently corrupt the value for <code>s2</code> and all other threads sharing that pool object!<br>2. <strong>Security:</strong> Strings are used for database connection URLs, usernames, passwords, file paths, and network sockets. If a string were mutable, an attacker could pass a valid file path to a verification method and mutate it to access <code>/etc/passwd</code> before the file is opened (Time-of-Check to Time-of-Use vulnerability).<br>3. <strong>Thread Safety:</strong> Because string objects cannot be changed by any thread, multiple concurrent threads can share strings without synchronization locks, completely eliminating race conditions.<br>4. <strong>HashCode Caching:</strong> Because the content is fixed forever, Java calculates the <code>hashCode</code> of a string <strong>only once</strong> on first use and caches it in a private field <code>hash</code>. This makes <code>String</code> exceptionally fast when used as keys in <code>HashMap</code> and <code>HashSet</code>.</p>
+str.concat(" World"); // పాత str కి ఏమీ అవ్వదు!
+System.out.println(str); // ఇంకా "Hello" అనే ఉంటుంది
+<p>str = str.concat(" World"); // ఇక్కడ కొత్తగా వచ్చిన దాన్ని మళ్ళీ str కి సేవ్ చేశాం<br>System.out.println(str); // అప్పుడు "Hello World" వస్తుంది</code></pre></div></p>
+<p><strong>జావా దీన్ని ఎందుకు ఇలా డిజైన్ చేసింది?</strong><br>1. <strong>SCP షేరింగ్:</strong> వందల వేరియబుల్స్ ఒకే SCP ఆబ్జెక్ట్ ని వాడుతుంటాయి. ఒకవేళ స్ట్రింగ్ ని మార్చే ఆప్షన్ ఇస్తే, ఒకడు మారిస్తే ఆ ఎఫెక్ట్ అందరి మీద పడుతుంది!<br>2. <strong>సెక్యూరిటీ:</strong> పాస్వర్డ్స్, ఫైల్ పాత్స్ అన్నీ స్ట్రింగ్స్ లోనే ఉంటాయి. యాప్ రన్ అవుతున్నప్పుడు వాటిని హ్యాకర్స్ ఈజీగా మార్చేయకుండా ఉండటానికి ఇదొక సేఫ్టీ ఫీచర్.<br>3. <strong>Thread Safety:</strong> స్ట్రింగ్ ని ఎలాగూ ఎవరూ మార్చలేరు కాబట్టి, మల్టీ-త్రెడింగ్ యాప్స్ లో లాక్స్ వేయాల్సిన పనేలేదు, ఎవరైనా ఎప్పుడైనా వాడుకోవచ్చు.<br>4. <strong>HashCode క్యాషింగ్:</strong> స్ట్రింగ్ ఎప్పటికీ మారదు కాబట్టి, జావా దాని <code>hashCode</code> ని ఒక్కసారి క్యాలిక్యులేట్ చేసి సేవ్ చేసుకుంటుంది. అందుకే <code>HashMap</code> లో కీస్ గా Strings వాడితే యాప్ సూపర్ ఫాస్ట్ గా పనిచేస్తుంది.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. Compact Strings Architecture (Java 9+)</h2>
+      <h2>5. కాంపాక్ట్ స్ట్రింగ్స్ (Java 9 తర్వాత వచ్చిన మ్యాజిక్)</h2>
       <div class="theory-text">
-        <p>Historically in Java 8 and earlier, strings were internally stored as an array of 16-bit characters: <code>char[] value</code>. Because most enterprise strings contain alphanumeric ASCII characters (requiring only 8 bits / 1 byte), half of the memory was wasted with zero-padding bytes.</p>
-<p>Starting in <strong>Java 9 LTS</strong>, Java introduced <strong>Compact Strings (JEP 254)</strong>:<br><div class="code-block"><pre><code>// Internal representation in java.lang.String (Java 9+):<br>private final byte[] value;<br>private final byte coder; // 0 for LATIN1 (1 byte/char), 1 for UTF-16 (2 bytes/char)</code></pre></div><br>- If the string contains only Latin-1 characters (English letters, numbers, common symbols), the JVM encodes it as <strong>1 byte per character</strong>.<br>- If any character requires Unicode (such as emojis or Telugu/Japanese scripts), the coder switches to UTF-16 (<strong>2 bytes per character</strong>).<br>This automatic internal optimization reduced overall JVM heap footprint by 15% to 30% across real-world enterprise applications with zero code changes!</p>
+        <p>పాత జావాలో (Java 8 వరకు) స్ట్రింగ్స్ ని <code>char[]</code> వాడి స్టోర్ చేసేవాళ్లు. ఒక్కో క్యారెక్టర్ కి 2 బైట్స్ (16 bits) మెమరీ తీసుకునేది. కానీ మనం రాసే కోడ్ లో 99% ఇంగ్లీష్ అక్షరాలే ఉంటాయి. వాటికి 1 బైట్ చాలు, మిగతా 1 బైట్ ఎప్పుడూ వేస్ట్ అవుతూనే ఉండేది.</p>
+<p>అందుకే <strong>Java 9</strong> లో <strong>Compact Strings (JEP 254)</strong> అనే ఫీచర్ తెచ్చారు:<br><div class="code-block"><pre><code>// Java 9+ లో స్ట్రింగ్ ఇంటర్నల్ కోడ్ ఇలా ఉంటుంది:<br>private final byte[] value;<br>private final byte coder; // 0 అంటే ఇంగ్లీష్ (1 byte/char), 1 అంటే వేరే భాష (2 bytes/char)</code></pre></div><br>- మొత్తం ఇంగ్లీష్/నార్మల్ సింబల్స్ ఉంటే.. జావా ఒక్కో అక్షరానికి <strong>1 బైట్</strong> మాత్రమే తీసుకుంటుంది.<br>- అందులో ఒక్క తెలుగు అక్షరం గానీ, ఎమోజీ గానీ ఉన్నా.. అప్పుడు ఆటోమాటిక్ గా <strong>2 బైట్స్ (UTF-16)</strong> కి మారుతుంది.<br>దీనివల్ల మనం కోడ్ లో ఎలాంటి మార్పు చేయకపోయినా.. పెద్ద పెద్ద కంపెనీల యాప్స్ లో 15% నుంచి 30% వరకు మెమరీ సేవ్ అయ్యింది!</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>6. String Indexing, length(), and charAt()</h2>
+      <h2>6. Indexing: అక్షరాలని ఎలా లాగాలి? (length & charAt)</h2>
       <div class="theory-text">
-        <p>Strings in Java use <strong>0-based indexing</strong>. The first character is located at index <code>0</code>, and the last character is at index <code>length() - 1</code>.</p>
-<div class="code-block"><pre><code>String:   "J   a   v   a"
- Index:     0   1   2   3   (length = 4)</code></pre></div>
-<p>- <strong><code>length()</code>:</strong> Returns the total number of characters in the string. (Notice the parentheses <code>()</code>, unlike arrays which use the property <code>.length</code>).<br>- <strong><code>charAt(int index)</code>:</strong> Returns the <code>char</code> at the specified index.<br>- <strong>Bounds Rule:</strong> If you provide an index <code>&lt; 0</code> or <code>&gt;= length()</code>, Java throws a <strong><code>StringIndexOutOfBoundsException</code></strong> at runtime.</p>
+        <p>జావాలో స్ట్రింగ్స్ అన్నీ <strong>0-based indexing</strong> తో పనిచేస్తాయి. అంటే మొదటి అక్షరం 0 దగ్గర ఉంటుంది, లాస్ట్ అక్షరం <code>length() - 1</code> దగ్గర ఉంటుంది.</p>
+<div class="code-block"><pre><code>స్ట్రింగ్:   "J   a   v   a"
+ ఇండెక్స్:     0   1   2   3   (మొత్తం కౌంట్: 4)</code></pre></div>
+<p>- <strong><code>length()</code>:</strong> ఆ స్ట్రింగ్ లో ఎన్ని అక్షరాలున్నాయో చెప్తుంది. (అరేస్ లో అయితే <code>length</code> అని బ్రాకెట్స్ లేకుండా రాస్తాం, కానీ ఇక్కడ <code>length()</code> అని కచ్చితంగా బ్రాకెట్స్ ఉండాలి).<br>- <strong><code>charAt(int index)</code>:</strong> మీకు కావాల్సిన ఇండెక్స్ దగ్గర ఏ అక్షరం ఉందో ఇస్తుంది.<br>- <strong>చెక్ చేసుకోండి:</strong> మీరు స్ట్రింగ్ సైజు కంటే పెద్ద నంబర్ ఇస్తే, జావా వెంటనే క్రాష్ అయ్యి <strong><code>StringIndexOutOfBoundsException</code></strong> ఇస్తుంది.</p>
       </div>
     </section>
   
@@ -649,35 +649,35 @@ System.out.println(str); // Still prints "Hello"
         String s1 = "Java";
         String s2 = "Java";
         String s3 = new String("Java");
-        String s4 = s3.intern(); // Get reference from SCP
+        String s4 = s3.intern(); // SCP లో ఉన్నది తెచ్చుకోవడం
 
-        // Reference equality checks (Address comparison)
-        System.out.println("s1 == s2 (Both in SCP)       : " + (s1 == s2)); // true
+        // అడ్రెస్స్ లు సమానమా కాదా చెక్ చేస్తున్నాం (==)
+        System.out.println("s1 == s2 (రెండు SCP లోవే)       : " + (s1 == s2)); // true
         System.out.println("s1 == s3 (SCP vs Heap)       : " + (s1 == s3)); // false
         System.out.println("s1 == s4 (SCP vs intern())   : " + (s1 == s4)); // true
 
-        // Content equality checks
-        System.out.println("s1.equals(s3) (Content)      : " + s1.equals(s3)); // true
+        // అడ్రెస్ తో పనిలేదు, లోపల ఉన్నది ఒకటేనా? (equals)
+        System.out.println("s1.equals(s3) (కంటెంట్ చెక్)    : " + s1.equals(s3)); // true
 
         System.out.println("
-=== 2. Proof of String Immutability ===");
+=== 2. స్ట్రింగ్స్ ని మార్చలేం అనడానికి ప్రూఫ్ ===");
         String original = "Hello";
-        original.concat(" World"); // Return value discarded!
-        System.out.println("Original after concat()      : " + original); // "Hello"
+        original.concat(" World"); // దీని రిజల్ట్ ని మనం ఏ వేరియబుల్ కీ ఇవ్వలేదు!
+        System.out.println("concat() వాడిన తర్వాత          : " + original); // "Hello"
 
-        original = original.concat(" World"); // Explicit reassignment
-        System.out.println("Original after reassignment  : " + original); // "Hello World"
+        original = original.concat(" World"); // మళ్ళీ original కే అసైన్ చేసాం
+        System.out.println("మళ్ళీ అసైన్ చేసిన తర్వాత         : " + original); // "Hello World"
 
         System.out.println("
-=== 3. String Indexing & Traversal ===");
+=== 3. String Indexing (అక్షరాలని బయటికి తీయడం) ===");
         String greeting = "Java 21";
-        System.out.println("String text                  : "" + greeting + """);
-        System.out.println("Total Length                 : " + greeting.length());
-        System.out.println("Character at index 0         : " + greeting.charAt(0));
-        System.out.println("Character at index 5         : " + greeting.charAt(5));
-        System.out.println("Last Character               : " + greeting.charAt(greeting.length() - 1));
+        System.out.println("ఒరిజినల్ స్ట్రింగ్               : "" + greeting + """);
+        System.out.println("మొత్తం అక్షరాలు (Length)        : " + greeting.length());
+        System.out.println("మొదటి అక్షరం (index 0)         : " + greeting.charAt(0));
+        System.out.println("index 5 దగ్గర ఉన్నది           : " + greeting.charAt(5));
+        System.out.println("చివరి అక్షరం                   : " + greeting.charAt(greeting.length() - 1));
 
-        System.out.print("Iterating characters via loop: ");
+        System.out.print("లూప్ వేసి ప్రింట్ చేస్తే: ");
         for (int i = 0; i &lt; greeting.length(); i++) {
             System.out.print("[" + i + "]=" + greeting.charAt(i) + " ");
         }
@@ -689,22 +689,22 @@ System.out.println(str); // Still prints "Hello"
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
         <div class="output-content">=== 1. String Literals vs new String() ===
-s1 == s2 (Both in SCP)       : true
+s1 == s2 (రెండు SCP లోవే)       : true
 s1 == s3 (SCP vs Heap)       : false
 s1 == s4 (SCP vs intern())   : true
-s1.equals(s3) (Content)      : true
+s1.equals(s3) (కంటెంట్ చెక్)    : true
 
-=== 2. Proof of String Immutability ===
-Original after concat()      : Hello
-Original after reassignment  : Hello World
+=== 2. స్ట్రింగ్స్ ని మార్చలేం అనడానికి ప్రూఫ్ ===
+concat() వాడిన తర్వాత          : Hello
+మళ్ళీ అసైన్ చేసిన తర్వాత         : Hello World
 
-=== 3. String Indexing & Traversal ===
-String text                  : "Java 21"
-Total Length                 : 7
-Character at index 0         : J
-Character at index 5         : 2
-Last Character               : 1
-Iterating characters via loop: [0]=J [1]=a [2]=v [3]=a [4]=  [5]=2 [6]=1</div>
+=== 3. String Indexing (అక్షరాలని బయటికి తీయడం) ===
+ఒరిజినల్ స్ట్రింగ్               : "Java 21"
+మొత్తం అక్షరాలు (Length)        : 7
+మొదటి అక్షరం (index 0)         : J
+index 5 దగ్గర ఉన్నది           : 2
+చివరి అక్షరం                   : 1
+లూప్ వేసి ప్రింట్ చేస్తే: [0]=J [1]=a [2]=v [3]=a [4]=  [5]=2 [6]=1</div>
       </div>
 
       <div class="explain-card">
@@ -712,31 +712,31 @@ Iterating characters via loop: [0]=J [1]=a [2]=v [3]=a [4]=  [5]=2 [6]=1</div>
         
     <div class="explain-item">
       <code class="code-token">String s1 = "Java"; String s2 = "Java";</code>
-      <p>Creates a single "Java" literal in the String Constant Pool (SCP). Both s1 and s2 point to the identical memory address.</p>
+      <p>డైరెక్ట్ గా రాసాం కాబట్టి రెండు ఒకే SCP ఆబ్జెక్ట్ ని పాయింట్ చేస్తాయి.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">String s3 = new String("Java");</code>
-      <p>Explicitly allocates a new distinct String object in Heap memory, separate from the SCP pool.</p>
+      <p>new వాడాం కాబట్టి, సపరేట్ గా వేరే మెమరీలో స్టోర్ అవుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">String s4 = s3.intern();</code>
-      <p>Calls intern() to retrieve the canonical pooled string from the SCP, making s4 point to the exact same reference as s1.</p>
+      <p>intern() వాడటం వల్ల, SCP లో ఉన్న "Java" అడ్రెస్ ని వెతుక్కుని మరి తెచ్చి s4 లో పెట్టింది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">original.concat(" World");</code>
-      <p>Demonstrates immutability: concat() generates a new string "Hello World" in memory, but leaves the "original" variable pointing to "Hello".</p>
+      <p>కొత్త స్ట్రింగ్ ని క్రియేట్ చేసింది గాని, దాన్ని మనం ఏ వేరియబుల్ లో స్టోర్ చేసుకోలేదు, కాబట్టి original అలాగే ఉంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">greeting.charAt(i);</code>
-      <p>Retrieves the character at index i (0 to length - 1) in constant O(1) time.</p>
+      <p>i పొజిషన్ లో ఏ అక్షరం ఉందో అది ఇస్తుంది. స్ట్రింగ్స్ ఎప్పుడూ జీరో నుంచే స్టార్ట్ అవుతాయి.</p>
     </div>
   
       </div>
@@ -755,38 +755,38 @@ Iterating characters via loop: [0]=J [1]=a [2]=v [3]=a [4]=  [5]=2 [6]=1</div>
         </div>
         <pre><code>public class PracticalApplication {
     public static void main(String[] args) {
-        // Industry Simulation: High-throughput memory deduplication via interning
+        // రియల్ టైమ్ ఇష్యూ: ఒకే కేటగిరీ లక్షల సార్లు రిపీట్ అయినప్పుడు ర్యామ్ సేవ్ చేయడం
         String rawCategory1 = new String("ELECTRONICS");
         String rawCategory2 = new String("ELECTRONICS");
         String rawCategory3 = new String("ELECTRONICS");
 
-        // Without interning: 3 distinct heap objects consuming unnecessary RAM
-        System.out.println("Before Interning:");
+        // intern() వాడకపోతే 3 వేరు వేరుగా ఉండి మెమరీ వేస్ట్ అవుతుంది
+        System.out.println("Intern వాడకముందు:");
         System.out.println("Obj 1 == Obj 2 : " + (rawCategory1 == rawCategory2)); // false
 
-        // With interning: all references point to single pooled constant
+        // intern() వాడితే అన్నీ ఒకటే SCP ఆబ్జెక్ట్ ని పాయింట్ చేస్తాయి
         String pooled1 = rawCategory1.intern();
         String pooled2 = rawCategory2.intern();
         String pooled3 = rawCategory3.intern();
 
         System.out.println("
-After Interning (Memory Deduplication):");
+Intern వాడిన తర్వాత (Memory Deduplication):");
         System.out.println("Pooled 1 == Pooled 2 : " + (pooled1 == pooled2)); // true
         System.out.println("Pooled 2 == Pooled 3 : " + (pooled2 == pooled3)); // true
-        System.out.println("Canonical Category   : " + pooled1);
+        System.out.println("ఫైనల్ కేటగిరీ          : " + pooled1);
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">Before Interning:
+        <div class="output-content">Intern వాడకముందు:
 Obj 1 == Obj 2 : false
 
-After Interning (Memory Deduplication):
+Intern వాడిన తర్వాత (Memory Deduplication):
 Pooled 1 == Pooled 2 : true
 Pooled 2 == Pooled 3 : true
-Canonical Category   : ELECTRONICS</div>
+ఫైనల్ కేటగిరీ          : ELECTRONICS</div>
       </div>
     </section>
 
@@ -795,16 +795,13 @@ Canonical Category   : ELECTRONICS</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Using == to check if two strings have the same text content. == checks memory addresses; always use .equals().</li>
+    <li style="margin-bottom:8px; line-height:1.6;">పాస్వర్డ్స్, యూజర్ నేమ్స్ సేమ్ ఉన్నాయా లేదా అని చెక్ చేయడానికి <code>==</code> వాడటం. <code>==</code> అనేది కేవలం అడ్రెస్ ని మాత్రమే చెక్ చేస్తుంది. ఎప్పుడైనా <code>.equals()</code> మాత్రమే వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Forgetting that strings are immutable and writing str.toUpperCase(); without assigning the result back (str = str.toUpperCase();).</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>str.toUpperCase()</code> అని రాసి వదిలేయడం. స్ట్రింగ్స్ ని మార్చలేం కాబట్టి, వచ్చిన రిజల్ట్ ని మళ్ళీ వేరియబుల్ కి సేవ్ చేసుకోవాలి (<code>str = str.toUpperCase();</code>).</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Accessing str.charAt(str.length()) instead of str.charAt(str.length() - 1), causing StringIndexOutOfBoundsException.</li>
-  
-
-    <li style="margin-bottom:8px; line-height:1.6;">Confusing String.length() (a method with parentheses) with Array.length (a property without parentheses).</li>
+    <li style="margin-bottom:8px; line-height:1.6;">చివరి అక్షరం కావాలని <code>str.charAt(str.length())</code> వాడటం. అక్షరాలు జీరో నుంచి స్టార్ట్ అవుతాయి కాబట్టి ఎప్పుడూ <code>str.length() - 1</code> వాడాలి.</li>
   
       </ul>
     </div>
@@ -821,20 +818,20 @@ Canonical Category   : ELECTRONICS</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Given a string "DEVELOPER", write a program to:
-// 1. Print the first character and the last character.
-// 2. Print the character at the exact middle index.
-// 3. Print the string in reverse order using a for loop and charAt().
+// మీ దగ్గర "DEVELOPER" అనే పదం ఉంది:
+// 1. మొదటి అక్షరం, చివరి అక్షరం ప్రింట్ చేయండి.
+// 2. ఎగ్జాక్ట్ గా మధ్యలో ఉన్న అక్షరం ప్రింట్ చేయండి.
+// 3. లూప్ వేసి ఆ పదాన్ని రివర్స్ లో ప్రింట్ చేయండి (REPOLEVED అని రావాలి).
 
 public class Challenge {
     public static void main(String[] args) {
         String word = "DEVELOPER";
         
-        System.out.println("First: " + word.charAt(0));
-        System.out.println("Last: " + word.charAt(word.length() - 1));
-        System.out.println("Middle: " + word.charAt(word.length() / 2));
+        System.out.println("మొదటిది: " + word.charAt(0));
+        System.out.println("చివరిది: " + word.charAt(word.length() - 1));
+        System.out.println("మధ్యలో ఉన్నది: " + word.charAt(word.length() / 2));
         
-        System.out.print("Reversed: ");
+        System.out.print("రివర్స్: ");
         for (int i = word.length() - 1; i &gt;= 0; i--) {
             System.out.print(word.charAt(i));
         }
@@ -849,20 +846,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Where is the String Constant Pool (SCP) located in modern JVMs?</h4>
-      <p>Prior to Java 7, the SCP was located in the PermGen space. Since Java 7 and continuing in Java 8-21+, the SCP is located inside the main Heap Memory, allowing it to be garbage collected when strings are no longer referenced.</p>
+      <h4>❓ SCP (String Constant Pool) అనేది మెమరీలో ఎక్కడ ఉంటుంది?</h4>
+      <p>జావా 7 కు ముందు ఇది PermGen అనే సపరేట్ మెమరీలో ఉండేది. కానీ జావా 7 తర్వాత దాన్ని మెయిన్ Heap మెమరీ లోకే మార్చేశారు. దీనివల్ల వాడని స్ట్రింగ్స్ ని గార్బేజ్ కలెక్టర్ (GC) ఈజీగా క్లీన్ చేస్తుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Why does String have a private final byte[] value instead of char[] in Java 9+?</h4>
-      <p>To implement Compact Strings (JEP 254). Most enterprise strings contain only Latin-1 characters which require only 1 byte (8 bits) per character instead of 2 bytes (16 bits) in UTF-16, cutting overall string memory usage by nearly 50%.</p>
+      <h4>❓ Java 9 తర్వాత char[] తీసేసి byte[] ఎందుకు పెట్టారు?</h4>
+      <p>ముందే చెప్పినట్టు Compact Strings ఫీచర్ కోసం. ఇంగ్లీష్ అక్షరాలకు 2 బైట్స్ వాడటం వేస్ట్ అని, 1 బైట్ వాడి మెమరీని దాదాపు సగం సేవ్ చేయడానికి ఇలా మార్చారు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ How many objects are created by String s = new String("Java");?</h4>
-      <p>Two objects: One object is created in the String Constant Pool (SCP) for the literal "Java" (if not already present), and one new object is created in the general Heap memory referenced by s.</p>
+      <h4>❓ String s = new String("Java"); రాస్తే మెమరీలో ఎన్ని ఆబ్జెక్ట్స్ క్రియేట్ అవుతాయి?</h4>
+      <p>రెండు! ఒకటి "Java" అనే లిటరల్ కోసం SCP లో క్రియేట్ అవుతుంది (ఒకవేళ ముందే లేకపోతే). ఇంకోటి new వాడినందుకు Heap లో క్రియేట్ అవుతుంది.</p>
     </div>
   
     </section>
@@ -872,22 +869,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">A String in Java is an immutable reference type representing a sequence of Unicode characters.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">జావాలో String అనేది ప్రిమిటివ్ కాదు, అదొక క్లాస్. దాన్ని క్రియేట్ చేశాక మార్చలేము (Immutable).</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">String literals are automatically cached in the String Constant Pool (SCP) inside Heap memory.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">డైరెక్ట్ గా క్రియేట్ చేసిన స్ట్రింగ్స్ అన్నీ SCP (String Constant Pool) లో స్టోర్ అవుతాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">new String("text") forces the creation of a distinct heap object outside the pool.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">new వాడి క్రియేట్ చేసినవి Heap లో స్టోర్ అవుతాయి. intern() వాడితే SCP లో ఉన్న అడ్రెస్ వస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Immutability ensures thread safety, security, SCP reusability, and fast cached hashCode() lookups.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Immutability వల్ల సెక్యూరిటీ, త్రెడ్-సేఫ్టీ, మెమరీ సేవింగ్స్ చాలా బాగుంటాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Compact Strings in Java 9+ use byte[] with a coder byte to dynamically save 50% memory on Latin-1 text.</li>
-  
-
-    <li style="margin-bottom:6px; line-height:1.5;">Strings are 0-indexed; use length() for character count and charAt(index) for character retrieval.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">Java 9+ లో ఉన్న కాంపాక్ట్ స్ట్రింగ్స్ ఇంగ్లీష్ అక్షరాలకి సగం మెమరీనే వాడుకుంటాయి.</li>
   
       </ul>
     </div>

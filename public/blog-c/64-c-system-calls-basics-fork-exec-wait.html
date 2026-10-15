@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Calls (fork, exec, wait) (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ తో డైరెక్ట్ గా ఆపరేటింగ్ సిస్టమ్ (OS) తో ఎలా మాట్లాడాలి? ఒక యాప్ రన్ అవుతుండగానే దాన్ని డూప్లికేట్ (fork) చేసి, అందులో నుండి ఇంకో యాప్ ని (exec) ఎలా ఓపెన్ చేయాలో ఈ సిస్టమ్ ప్రోగ్రామింగ్ బేసిక్స్ లో చూద్దాం." />
+  <meta name="keywords" content="c tutorial, system calls (fork, exec, wait) (తెలుగులో), dynamic programming c, system calls c, fork exec wait, final project c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/64-c-system-calls-basics-fork-exec-wait.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 20: Algorithms & Final -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 20</span>
+            <span class="phase-title">Algorithms & Final</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">6 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/60-c-searching-linear-and-binary-search.html">60. Linear & Binary Search</a>
+        <a href="/blog-c/61-c-sorting-1-bubble-selection-insertion.html">61. Sorting (Bubble, Selection, Insertion)</a>
+        <a href="/blog-c/62-c-sorting-2-merge-sort-quick-sort.html">62. Sorting (Merge & Quick Sort)</a>
+        <a href="/blog-c/63-c-dynamic-programming-basics.html">63. Dynamic Programming Basics</a>
+        <a href="/blog-c/64-c-system-calls-basics-fork-exec-wait.html" class="active">64. System Calls (fork, exec, wait)</a>
+        <a href="/blog-c/65-c-building-a-mini-c-project.html">65. C Master Project & Conclusion</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 64: System Calls (fork, exec, wait) (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">System Calls (fork, exec, wait) (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 64</span>
+      <span class="badge">📂 Phase 20: Algorithms & Final</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>System Calls Basics · fork() for Child Process · exec() Family · wait() Status</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>మామూలుగా మనం రాసే <code>printf</code>, <code>scanf</code> ఇవన్నీ ఒక లైబ్రరీ లో ఉన్న ఫంక్షన్స్ మాత్రమే. కానీ అవి మీ కీబోర్డ్ నుండి డేటా ఎలా తెస్తున్నాయి? డైరెక్ట్ గా ఆపరేటింగ్ సిస్టమ్ (OS - విండోస్ లేదా లైనక్స్) ని పర్మిషన్ అడుగుతాయి. దాన్నే <strong>System Call (సిస్టమ్ కాల్)</strong> అంటారు. C లాంగ్వేజ్ అనేది సిస్టమ్ ప్రోగ్రామింగ్ కి రారాజు! ఒక ప్రాసెస్ (App) రన్ అవుతుండగానే దాన్ని రెండుగా చీల్చడం (fork), లేదా ఒక ప్రాసెస్ ని చంపి ఆ ప్లేస్ లో ఇంకో యాప్ ని ఓపెన్ చేయడం (exec) లాంటివి C తో ఎలా చేయాలో ఈరోజు డీప్ గా నేర్చుకుందాం. <em>గమనిక: ఈ ఫంక్షన్స్ అన్నీ POSIX (Linux/Mac) సిస్టమ్స్ కే బాగా పనిచేస్తాయి.</em></p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> సిస్టమ్ కాల్ అంటే ఏంటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీ కోడ్ (User Mode) లో రన్ అవుతుంది. కానీ RAM, హార్డ్ డిస్క్, ప్రాసెసర్స్ అన్నీ OS (Kernel Mode) కంట్రోల్ లో ఉంటాయి. మీరు ఒక ఫైల్ ఓపెన్ చేయాలన్నా, ఇంటర్నెట్ కి కనెక్ట్ అవ్వాలన్నా, డైరెక్ట్ గా వెళ్ళలేరు. ఒక గేట్ (System Call) గుండా పర్మిషన్ అడిగి వెళ్ళాలి.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> మాయా అస్త్రాలు: <code>fork()</code> మరియు <code>exec()</code></div>
+    <div class="section-body">
+      <div class="deep-dive-card">
+        <h3>🧬 రియల్ లైఫ్ స్టోరీ: ఒక మనిషి రెండు అవ్వడం (Amoeba)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          <strong>1. <code>fork()</code> - క్లోనింగ్ మ్యాజిక్:</strong> ఒక ప్రోగ్రామ్ రన్ అవుతుండగా <code>fork()</code> అని పిలవగానే, అమీబా లాగా ఆ ప్రోగ్రామ్ రెండు ముక్కలు అయిపోతుంది! ఒరిజినల్ దాన్ని <strong>Parent Process</strong> అని, కొత్తదాన్ని <strong>Child Process</strong> అని అంటారు. రెండూ ఒకే కోడ్ ని ఒకేసారి (ప్యారలల్ గా) నెక్స్ట్ లైన్ నుండి రన్ చేస్తాయి!<br><br>
+          <strong>2. <code>exec()</code> - ఆత్మ మారడం:</strong> ఆ పుట్టిన చైల్డ్ ప్రాసెస్ ఏం చేస్తుందంటే, "నాకు ఈ పాత కోడ్ వద్దు" అని చెప్పి, ఆ ప్లేస్ లోకి వేరే ప్రోగ్రామ్ (ఉదా: క్రోమ్ బ్రౌజర్) ని లోడ్ చేస్తుంది (<code>exec</code>). అంటే కోడ్ ఆత్మ మారుతుందన్నమాట!
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Fork Demo)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో <code>fork()</code> వాడి ఒకే కోడ్ ని రెండుగా విడగొట్టి, ఎవరు పేరెంట్, ఎవరు చైల్డ్ అని ఎలా కనుక్కున్నామో చూడండి. (విండోస్ లో ఇది నేటివ్ గా పనిచేయదు, Linux ఆన్లైన్ కంపైలర్ వాడండి).
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — fork() System Call (Linux)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;   // fork() కోసం
+#include &lt;sys/wait.h&gt; // wait() కోసం
+
+int main() {
+    printf("--- Welcome to System Calls ---\n");
+    printf("[Main] I am the single parent process.\n\n");
+    
+    // 1. మ్యాజిక్! ఇక్కడ కోడ్ రెండుగా చీలిపోతుంది
+    pid_t pid = fork();
+    
+    if (pid < 0) {
+        printf("Fork Failed!\n");
+    } 
+    else if (pid == 0) {
+        // ఇది కేవలం చైల్డ్ (కొత్త ప్రాసెస్) లో మాత్రమే రన్ అవుతుంది!
+        // ఎందుకంటే చైల్డ్ కి ఎప్పుడూ pid = 0 ఇస్తుంది OS.
+        printf("  -> [Child] Hello! I was just born! (My PID is 0)\n");
+        printf("  -> [Child] I am doing my homework...\n");
+        // చైల్డ్ పని అయిపోయాక ఎగ్జిట్ అవుతుంది
+    } 
+    else {
+        // ఇది కేవలం పేరెంట్ (పాత ప్రాసెస్) లో మాత్రమే రన్ అవుతుంది!
+        // పేరెంట్ కి తన చైల్డ్ యొక్క ఒరిజినల్ ఐడీ వస్తుంది.
+        printf("[Parent] I just created a child! (Child ID: %d)\n", pid);
+        
+        // 2. చైల్డ్ పని పూర్తయ్యేదాకా పేరెంట్ వెయిట్ చేయాలి
+        printf("[Parent] Waiting for child to finish...\n");
+        wait(NULL); // చైల్డ్ ఆత్మహత్య (exit) చేసుకునే దాకా హోల్డ్!
+        
+        printf("[Parent] Child finished its job. Now I can exit.\n");
+    }
+    
+    // గమనిక: ఇక్కడ ఉన్న లాస్ట్ లైన్ ఇద్దరికీ కామన్ గా రన్ అవుతుంది
+    printf("--- Code execution finished! ---\n");
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>fork()</code>: ఈ లైన్ పిలవగానే, OS ఈ మొత్తం యాప్ కి ఒక డూప్లికేట్ క్లోన్ (Clone) ని సృష్టిస్తుంది. ఇప్పటినుండి పేరెంట్, చైల్డ్ ఇద్దరూ విడివిడిగా (Parallel గా) కింద లైన్స్ ని ఎగ్జిక్యూట్ చేస్తారు.</li>
+        <li><code>if (pid == 0)</code>: మరి ఆ రన్ అయ్యేది నేనా లేక నా క్లోన్ ఆ అని తెలుసుకోవడం ఎలా? OS ఒక ట్రిక్ పెట్టింది. చైల్డ్ లో <code>pid</code> వాల్యూ 0 ఉంటుంది. పేరెంట్ లో <code>pid</code> వాల్యూ చైల్డ్ యొక్క రియల్ ఐడీ (ఉదా: 3456) ఉంటుంది. దీన్ని బట్టి ఇఫ్-ఎల్స్ (if-else) లో రెండు వేరువేరు పనులు చేస్తాం!</li>
+        <li><code>wait(NULL)</code>: ఒకవేళ పేరెంట్ వెయిట్ చేయకుండా చనిపోతే (exit), అప్పుడు ఆ చైల్డ్ అనాధ అయిపోతాడు! దాన్నే <strong>Orphan Process</strong> అంటారు. అలా కాకుండా చైల్డ్ చనిపోయాక పేరెంట్ దాన్ని క్లీన్ చేయకపోతే దాన్ని <strong>Zombie Process</strong> అంటారు! అందుకే వెయిట్ కచ్చితంగా వాడాలి.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: <code>fork()</code> కి, Threads (pthreads) కి తేడా ఏంటి?</h4>
+          <p>చాలా డిఫరెన్స్ ఉంది! త్రెడ్స్ అంటే ఒకే ఇంట్లో ఉన్న ఇద్దరు మనుషులు లాంటి వాళ్ళు (వాళ్ళిద్దరూ ఒకే మెమరీ ని షేర్ చేసుకుంటారు, ఒకడు వేరియబుల్ మారిస్తే ఇంకొకడికి కనబడుతుంది). కానీ <code>fork</code> అంటే పక్కిల్లు! చైల్డ్ కి సపరేట్ మెమరీ కాపీ వస్తుంది. వాడు వేరియబుల్ మారిస్తే పేరెంట్ కి అసలు కనబడదు.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: టెర్మినల్ (Command Prompt) ఎలా పనిచేస్తుంది?</h4>
+          <p>మీరు టెర్మినల్ లో <code>ls</code> అని కమాండ్ టైప్ చేయగానే ఏం జరుగుతుందో తెలుసా? టెర్మినల్ యాప్ తనని తాను <code>fork()</code> చేసుకుని ఒక చైల్డ్ ని పుట్టిస్తుంది. ఆ చైల్డ్ ఏం చేస్తుందంటే <code>exec("ls")</code> అని పిలుస్తుంది. అప్పుడు ఆ చైల్డ్ కాస్తా <code>ls</code> ప్రోగ్రామ్ గా మారిపోయి అవుట్పుట్ ఇస్తుంది. పేరెంట్ అయిన టెర్మినల్ <code>wait()</code> చేస్తూ ఉంటుంది. అదీ మ్యాజిక్!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: <code>fork()</code> ని ఒక లూప్ లో 3 సార్లు (<code>for(i=0;i<3) fork();</code>) పిలిస్తే ఏమవుతుంది?</h4>
+          <p>ఇది ఒక క్లాసిక్ C పజిల్! ఫస్ట్ ఒక పేరెంట్ ఉంటుంది, వాడు ఒక చైల్డ్ ని కంటాడు (మొత్తం 2). నెక్స్ట్ లూప్ లో ఆ ఇద్దరూ తలా ఒకరిని కంటారు (మొత్తం 4). మూడో లూప్ లో ఆ నలుగురూ తలా ఒకరిని కంటారు (మొత్తం 8). సో టోటల్ ప్రాసెస్ లు 2^3 = 8 రన్ అవుతాయి (ఒక పేరెంట్ + 7 చిల్డ్రన్)!</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="63-c-dynamic-programming-basics.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">63. Dynamic Programming</span>
+      </a>
+
+      
+      <a href="65-c-building-a-mini-c-project.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">65. C Master Conclusion</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

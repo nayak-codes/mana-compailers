@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Exceptions & Error Handling — Python 3 Tutorial | Our Compiler</title>
-  <meta name="description" content="Master robust defensive programming in Python: understanding syntax errors vs runtime exceptions, the complete 4-clause try-except-else-finally lifecycle, exception hierarchy, custom exception classes, and writing actionable error messages." />
-  <meta name="keywords" content="python tutorial, learn python, python exceptions & error handling, python online compiler, python automation, web scraping, python testing" />
+  <title>Python Exceptions & Error Handling (తెలుగులో) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python లో ఎర్రర్స్ వస్తే కోడ్ ఆగిపోకుండా ఎలా కాపాడుకోవాలి? try-except బ్లాక్స్, ఎర్రర్ రావడం (Exceptions), మన సొంత ఎర్రర్స్ క్రియేట్ చేయడం గురించి పూర్తిగా నేర్చుకుందాం." />
+  <meta name="keywords" content="python tutorial, learn python, python exceptions & error handling (తెలుగులో), python online compiler, python automation, web scraping, python testing" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-python/25-python-exceptions-and-error-handling.html" />
@@ -20,8 +20,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Python Exceptions & Error Handling — Python 3 Master Tutorial",
-  "description": "Master robust defensive programming in Python: understanding syntax errors vs runtime exceptions, the complete 4-clause try-except-else-finally lifecycle, exception hierarchy, custom exception classes, and writing actionable error messages.",
+  "headline": "Python Exceptions & Error Handling (తెలుగులో) — Python 3 Master Tutorial",
+  "description": "Python లో ఎర్రర్స్ వస్తే కోడ్ ఆగిపోకుండా ఎలా కాపాడుకోవాలి? try-except బ్లాక్స్, ఎర్రర్ రావడం (Exceptions), మన సొంత ఎర్రర్స్ క్రియేట్ చేయడం గురించి పూర్తిగా నేర్చుకుందాం.",
   "articleSection": "Phase 6: Exception and File Handling",
   "author": {
     "@type": "Organization",
@@ -44,26 +44,18 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is the difference between else and finally in try-except?",
+      "name": "else కి finally కి తేడా ఏంటి?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The else block runs ONLY if the try block succeeds with zero exceptions. The finally block runs unconditionally 100% of the time, even if an unhandled exception occurred or a return statement was executed."
+        "text": "try లో ఎర్రర్ రాకుండా అంతా సక్సెస్ అయితేనే else రన్ అవుతుంది. కానీ finally అలా కాదు, ఎర్రర్ వచ్చినా, రాకపోయినా లాస్ట్ లో ఖచ్చితంగా గ్యారెంటీగా రన్ అవుతుంది."
       }
     },
     {
       "@type": "Question",
-      "name": "Why should custom exceptions inherit from Exception and not BaseException?",
+      "name": "catch బ్లాక్ లోనే మళ్ళీ ఎర్రర్ వస్తే ఏమవుతుంది?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "BaseException is the root of system-level exits like KeyboardInterrupt and SystemExit. Inheriting from Exception ensures your errors represent application issues without interfering with process termination."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I re-raise the currently active exception?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Inside an except block, simply write \"raise\" with no arguments. Python will re-raise the active exception up the call stack with its full original traceback intact."
+        "text": "except బ్లాక్ లో కూడా ఎర్రర్ వస్తే ప్రోగ్రామ్ అక్కడే క్రాష్ అవుతుంది. పైథాన్ దాన్ని ఆపలేదు."
       }
     }
   ]
@@ -205,8 +197,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-python">
 
@@ -548,7 +538,7 @@
       <span class="current">Chapter 25: 25. Exception Handling</span>
     </div>
 
-    <h1 class="page-title">Python Exceptions & Error Handling</h1>
+    <h1 class="page-title">Python Exceptions & Error Handling (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">🐍 Python 3.12+</span>
@@ -564,30 +554,30 @@
     </div>
 
     <div class="intro-box">
-      Master robust defensive programming in Python: understanding syntax errors vs runtime exceptions, the complete 4-clause try-except-else-finally lifecycle, exception hierarchy, custom exception classes, and writing actionable error messages.
+      Python లో ఎర్రర్స్ వస్తే కోడ్ ఆగిపోకుండా ఎలా కాపాడుకోవాలి? try-except బ్లాక్స్, ఎర్రర్ రావడం (Exceptions), మన సొంత ఎర్రర్స్ క్రియేట్ చేయడం గురించి పూర్తిగా నేర్చుకుందాం.
     </div>
 
 
-    <div class="section-title"><span class="num">1</span>Syntax Errors vs Runtime Exceptions & The Exception Hierarchy</div>
+    <div class="section-title"><span class="num">1</span>Syntax Errors vs Runtime Exceptions</div>
     <div class="section-body">
-      <p>In Python, defects in code fall into two distinct categories:</p>
+      <p>పైథాన్ లో బగ్స్ (తప్పులు) రెండు రకాలుగా వస్తాయి:</p>
         <ol>
-          <li><strong>Syntax Errors (Compile-Time):</strong> Occur during the parsing stage before the program begins executing. If your code contains a missing colon (<code>if x == 5</code>) or mismatched parenthesis, Python immediately halts with a <code>SyntaxError</code> or <code>IndentationError</code>. <strong>Syntax errors cannot be caught with try-except</strong>.</li>
-          <li><strong>Exceptions (Runtime):</strong> Occur while a syntactically valid program is actively executing. For example, dividing by zero (<code>ZeroDivisionError</code>), accessing a missing dictionary key (<code>KeyError</code>), or opening a non-existent file (<code>FileNotFoundError</code>).</li>
+          <li><strong>Syntax Errors (గ్రామర్ తప్పులు):</strong> మీరు కోడ్ లో <code>:</code> (కోలన్) మర్చిపోయినా, బ్రాకెట్ క్లోజ్ చేయకపోయినా ఇవి వస్తాయి. కోడ్ రన్ అవ్వకముందే పైథాన్ ఆపేస్తుంది (<code>SyntaxError</code>). వీటిని మనం <code>try-except</code> తో ఆపలేం. మీరు కరెక్ట్ చేయాల్సిందే.</li>
+          <li><strong>Exceptions (రన్ టైమ్ లో వచ్చేవి):</strong> మీ కోడ్ కరెక్ట్ గానే ఉన్నా, రన్ అయ్యేటప్పుడు వచ్చే ఎర్రర్స్. ఉదాహరణకి నెంబర్ ని సున్నా (0) తో భాగిస్తే వచ్చే <code>ZeroDivisionError</code> లేదా లేని ఫైల్ ఓపెన్ చేస్తే వచ్చే <code>FileNotFoundError</code>. వీటిని మనం ఆపి కోడ్ ముందుకు వెళ్లేలా చేయొచ్చు.</li>
         </ol>
-        <p><strong>The Python Exception Class Hierarchy:</strong> All built-in exceptions in Python form an inheritance tree rooted at <code>BaseException</code>:</p>
+        <p><strong>The Exception Hierarchy (వంశవృక్షం):</strong> పైథాన్ లో అన్ని ఎర్రర్స్ కి ఒక పేరెంట్ ఉంటుంది:</p>
         <div class="diagram-box">┌────────────────────────────────────────────────────────┐
-│  BaseException                                         │
-│  ├── SystemExit, KeyboardInterrupt (Ctrl+C), GeneratorExit│
-│  └── Exception (The root for all application errors)   │
-│      ├── ArithmeticError (ZeroDivisionError, Overflow)  │
+│  BaseException (తాతయ్య)                                │
+│  ├── SystemExit, KeyboardInterrupt (Ctrl+C)            │
+│  └── Exception (తండ్రి - మన యాప్ ఎర్రర్స్ కి)          │
+│      ├── ArithmeticError (ZeroDivisionError)           │
 │      ├── LookupError (IndexError, KeyError)            │
-│      ├── TypeError, ValueError, NameError               │
-│      └── OSError (FileNotFoundError, PermissionError)   │
+│      ├── TypeError, ValueError                         │
+│      └── OSError (FileNotFoundError)                   │
 └────────────────────────────────────────────────────────┘</div>
         <div class="callout" style="margin:16px 0;">
-          <strong style="color:#ef4444;">⚠️ Rule: Never Catch BaseException Directly:</strong><br>
-          Always inherit your custom exceptions from <code>Exception</code> (not <code>BaseException</code>). Catching <code>BaseException</code> will unintentionally block user keyboard interrupts (<code>Ctrl+C</code> / <code>KeyboardInterrupt</code>) and graceful system shutdowns.
+          <strong style="color:#ef4444;">⚠️ రూల్: ఎప్పుడూ BaseException ని క్యాచ్ చేయకండి:</strong><br>
+          మనం ఎప్పుడూ <code>Exception</code> ని మాత్రమే క్యాచ్ చేయాలి. <code>BaseException</code> ని క్యాచ్ చేస్తే, యూజర్ <code>Ctrl+C</code> నొక్కి ఆపాలనుకున్నా మీ కోడ్ ఆపకుండా ఇబ్బంది పెడుతుంది.
         </div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
@@ -597,7 +587,7 @@
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Inspecting the Exception Class Hierarchy at runtime:
+          <pre><code># రన్ టైమ్ లో ఈ ఎర్రర్స్ ఏ గ్రూప్ కి చెందుతాయో చూద్దాం:
 print("Is ZeroDivisionError an ArithmeticError?", issubclass(ZeroDivisionError, ArithmeticError))
 print("Is KeyError a LookupError?", issubclass(KeyError, LookupError))
 print("Is FileNotFoundError an OSError?", issubclass(FileNotFoundError, OSError))
@@ -605,38 +595,21 @@ print("Is ArithmeticError an Exception?", issubclass(ArithmeticError, Exception)
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Inheritance Polymorphism:</strong>
-          <p style="margin-top:6px;">Because <code>KeyError</code> inherits from <code>LookupError</code>, catching <code>except LookupError:</code> will catch both <code>KeyError</code> and <code>IndexError</code> with a single handler!</p>
+          <strong style="color:#10b981;">🔍 Inheritance సీక్రెట్:</strong>
+          <p style="margin-top:6px;"><code>KeyError</code> అనేది <code>LookupError</code> గ్రూప్ లో ఉంటుంది కాబట్టి, మనం <code>except LookupError:</code> అని రాస్తే చాలు, అది రెండు రకాల ఎర్రర్స్ (IndexError, KeyError) ని ఒకేసారి క్యాచ్ చేస్తుంది!</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">2</span>The 4-Clause Lifecycle: try, except, else, finally</div>
+    <div class="section-title"><span class="num">2</span>ది కంప్లీట్ ఫ్లో: try, except, else, finally</div>
     <div class="section-body">
-      <p>A complete, professional error handling block in Python can utilize up to <strong>four distinct clauses</strong>:</p>
+      <p>ప్రొఫెషనల్ పైథాన్ కోడ్ లో ఎర్రర్ హ్యాండ్లింగ్ కి 4 బ్లాక్స్ ఉంటాయి:</p>
         <ul>
-          <li><strong><code>try</code>:</strong> Encloses the risky code that might raise an exception.</li>
-          <li><strong><code>except ExceptionType as err</code>:</strong> Executes ONLY if a matching exception occurs inside the try block.</li>
-          <li><strong><code>else</code>:</strong> Executes ONLY if the try block completed <strong>successfully with ZERO exceptions</strong>. (Keeps try blocks minimal!).</li>
-          <li><strong><code>finally</code>:</strong> Executes <strong>unconditionally 100% of the time</strong>, regardless of whether an exception occurred, was caught, or if a <code>return</code> statement was encountered. Used for critical cleanup (closing database connections, releasing file locks).</li>
+          <li><strong><code>try</code>:</strong> ఎర్రర్ రావచ్చు అని డౌట్ ఉన్న రిస్కీ కోడ్ ని ఇందులో రాస్తాం.</li>
+          <li><strong><code>except</code>:</strong> <code>try</code> లో ఎర్రర్ వస్తేనే ఈ కోడ్ రన్ అవుతుంది (కోడ్ క్రాష్ అవ్వకుండా ఆపుతుంది).</li>
+          <li><strong><code>else</code>:</strong> <code>try</code> లో <strong>ఎలాంటి ఎర్రర్ రాకపోతేనే</strong> ఇది రన్ అవుతుంది (సక్సెస్ అయితే).</li>
+          <li><strong><code>finally</code>:</strong> ఎర్రర్ వచ్చినా, రాకపోయినా లాస్ట్ లో <strong>ఖచ్చితంగా 100% రన్ అయ్యేది</strong> ఇదే. ఫైల్స్ క్లోజ్ చేయడానికి, డేటాబేస్ డిస్కనెక్ట్ చేయడానికి వాడతారు.</li>
         </ul>
-        <div class="diagram-box">┌───────────────┐
-│   try block   │
-└───────┬───────┘
-        │
-   Exception? ──▶ YES ──▶ ┌────────────────┐
-        │                 │  except block  │
-        NO                └────────┬───────┘
-        │                          │
-        ▼                          │
-┌───────────────┐                  │
-│  else block   │                  │
-└───────┬───────┘                  │
-        │                          │
-        ▼                          ▼
-┌──────────────────────────────────────────┐
-│              finally block               │ (Guaranteed 100% Execution)
-└──────────────────────────────────────────┘</div>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: The Complete 4-Clause try-except-else-finally Flow</div>
@@ -648,44 +621,40 @@ print("Is ArithmeticError an Exception?", issubclass(ArithmeticError, Exception)
           <pre><code>def safe_divide_engine(a, b):
     print(f"\n--- Attempting: {a} / {b} ---")
     try:
-        # Step 1: Risky calculation
+        # Step 1: రిస్కీ కోడ్
         result = a / b
     except ZeroDivisionError as err:
-        # Step 2: Handles zero division error
-        print(f"❌ Handled Error: Cannot divide by zero! ({err})")
+        # Step 2: జీరో తో డివైడ్ చేస్తే
+        print(f"❌ Handled Error: సున్నా తో భాగించకూడదు! ({err})")
         return None
     except TypeError as err:
-        # Step 2: Handles invalid data types
-        print(f"❌ Handled Error: Both operands must be numbers! ({err})")
+        # Step 2: వేరేవి ఇస్తే (ఉదా: స్ట్రింగ్)
+        print(f"❌ Handled Error: నెంబర్స్ మాత్రమే ఇవ్వాలి! ({err})")
         return None
     else:
-        # Step 3: Runs ONLY if division was successful
+        # Step 3: సక్సెస్ అయితే మాత్రమే రన్ అవుతుంది
         print(f"✅ Calculation Successful! Result = {result}")
         return result
     finally:
-        # Step 4: Runs ALWAYS for resource cleanup / logging
-        print("🔒 [Cleanup] safe_divide_engine execution cycle finished.")
+        # Step 4: ఎప్పుడూ రన్ అవుతుంది
+        print("🔒 [Cleanup] safe_divide_engine సైకిల్ పూర్తయింది.")
 
-# Test all branches:
+# అన్ని రకాలుగా టెస్ట్ చేద్దాం:
 safe_divide_engine(100, 4)   # Success (try -> else -> finally)
 safe_divide_engine(50, 0)    # Zero Division (try -> except -> finally)
 safe_divide_engine(10, "2")  # Type Error (try -> except -> finally)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Step-by-Step Flow:</strong>
-          <ul style="margin:8px 0 0 18px; line-height:1.7;">
-            <li>In <code>safe_divide_engine(100, 4)</code>: <code>try</code> succeeds, <code>else</code> prints the result, and <code>finally</code> executes cleanup.</li>
-            <li>In <code>safe_divide_engine(50, 0)</code>: <code>ZeroDivisionError</code> triggers, <code>except</code> handles it, <code>else</code> is skipped, and <code>finally</code> executes before returning <code>None</code>.</li>
-          </ul>
+          <strong style="color:#10b981;">🔍 గమనించారా?:</strong>
+          <p style="margin-top:6px;">ఫస్ట్ దాంట్లో సక్సెస్ అయింది కాబట్టి <code>else</code> రన్ అయింది. మిగతా రెంటిలో ఎర్రర్ వచ్చింది కాబట్టి <code>except</code> రన్ అయింది. కానీ మూడు సార్లూ <code>finally</code> మాత్రం గ్యారెంటీగా రన్ అయింది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">3</span>Handling Multiple Specific Exceptions & Grouping</div>
+    <div class="section-title"><span class="num">3</span>చాలా ఎర్రర్స్ వస్తే? (Grouping Exceptions)</div>
     <div class="section-body">
-      <p>Never use a bare <code>except:</code> or generic <code>except Exception:</code> unless logging at the top-level boundary. Catching specific exceptions prevents masking unrelated programming bugs.</p>
-        <p>You can define multiple dedicated <code>except</code> blocks, or group related exceptions into a single tuple <code>except (ValueError, TypeError) as err:</code>:</p>
+      <p>ఎప్పుడూ సింపుల్ గా <code>except:</code> అని రాయకండి. దేనికి ఆ ఎర్రర్ పేరు పెట్టి పట్టుకోవాలి, అప్పుడే ఏ తప్పు జరిగిందో క్లియర్ గా తెలుస్తుంది. మీరు కావాలంటే ఒకేసారి రెండు ఎర్రర్స్ ని బ్రాకెట్స్ (Tuple) లో పెట్టి క్యాచ్ చేయొచ్చు:</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Handling Multiple Specific Exceptions and Tuple Grouping</div>
@@ -696,18 +665,18 @@ safe_divide_engine(10, "2")  # Type Error (try -> except -> finally)</code></pre
           </div>
           <pre><code>def process_user_record(data_dict, key, divisor):
     try:
-        raw_val = data_dict[key]          # May raise KeyError
-        parsed_num = float(raw_val)       # May raise ValueError
-        computed = 1000 / parsed_num      # May raise ZeroDivisionError
+        raw_val = data_dict[key]          # కీ లేకపోతే KeyError
+        parsed_num = float(raw_val)       # టెక్స్ట్ ఉంటే ValueError
+        computed = 1000 / parsed_num      # సున్నా ఉంటే ZeroDivisionError
         return computed
     except KeyError:
-        print(f"❌ Error: Required key '{key}' is missing from user record!")
+        print(f"❌ Error: డేటా లో '{key}' అనే ఫీల్డ్ లేదు!")
     except (ValueError, TypeError) as err:
-        print(f"❌ Data Parsing Error: Invalid numeric input ({err})")
+        print(f"❌ Data Parsing Error: నెంబర్ ఫార్మాట్ తప్పు ({err})")
     except ZeroDivisionError:
-        print("❌ Math Error: Value cannot be zero!")
+        print("❌ Math Error: సున్నా తో క్యాలిక్యులేట్ చేయలేము!")
 
-# Testing different failure scenarios:
+# టెస్టింగ్:
 user_data = {"score": "50", "bonus": "zero", "zero_val": "0"}
 
 print("1. Valid score:    ", process_user_record(user_data, "score", 2))
@@ -717,15 +686,15 @@ print("4. Division by zero:", process_user_record(user_data, "zero_val", 2))</co
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why Specific Handlers Matter:</strong>
-          <p style="margin-top:6px;">Specific exception blocks allow you to provide targeted recovery actions (e.g. asking for missing keys vs asking for re-entered numbers) rather than failing generically.</p>
+          <strong style="color:#10b981;">🔍 ఎందుకు ఇలా రాయాలి?:</strong>
+          <p style="margin-top:6px;">ఇలా ఒక్కొక్కదానికి రాస్తే, కీ లేకపోతే యూజర్ ని మళ్ళీ కీ అడగమని చెప్పొచ్చు, సున్నా ఇస్తే వేరే నెంబర్ అడగమని చెప్పొచ్చు. జనరిక్ గా ఫెయిల్ అవ్వకుండా ఉండొచ్చు.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">4</span>Raising Exceptions & Exception Chaining (raise ... from)</div>
+    <div class="section-title"><span class="num">4</span>కావాలని ఎర్రర్ తెప్పించడం (raise)</div>
     <div class="section-body">
-      <p>Use the <strong><code>raise</code> statement</strong> to throw an exception when business rule invariants are violated. Python 3 also supports <strong>Exception Chaining</strong> via <code>raise NewException from original_error</code>, preserving the original root cause traceback for debugging:</p>
+      <p>యూజర్ వయస్సు -5 ఇస్తే మన కోడ్ క్రాష్ అవ్వదు కానీ బిజినెస్ రూల్ ప్రకారం అది తప్పు. ఇలాంటి టైం లో మనమే కావాలని <strong><code>raise</code></strong> వాడి ఎర్రర్ త్రో చేయాలి (విసిరేయాలి):</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Explicit Exception Raising and Guarding Business Logic</div>
@@ -736,31 +705,31 @@ print("4. Division by zero:", process_user_record(user_data, "zero_val", 2))</co
           </div>
           <pre><code>def validate_account_age(age):
     if not isinstance(age, int):
-        raise TypeError(f"Age must be an integer, received {type(age).__name__}")
+        raise TypeError(f"Age అనేది నెంబర్ అయిఉండాలి, కానీ {type(age).__name__} వచ్చింది")
     if age < 0:
-        raise ValueError(f"Age cannot be negative! Received: {age}")
+        raise ValueError(f"వయస్సు మైనస్ లో ఉండకూడదు! మీరు ఇచ్చింది: {age}")
     if age < 18:
-        raise PermissionError(f"User is {age} years old. Minimum required age is 18.")
+        raise PermissionError(f"వయస్సు {age} ఇయర్స్. అకౌంట్ కి 18 నిండాలి.")
     return "✅ Age verified successfully!"
 
-# Test exception raising:
+# టెస్టింగ్:
 try:
-    print(validate_account_age(22))  # Valid
-    validate_account_age(-5)         # Triggers ValueError
+    print(validate_account_age(22))  # ఓకే
+    validate_account_age(-5)         # ఇక్కడ ValueError వస్తుంది
 except (TypeError, ValueError, PermissionError) as err:
     print(f"🚫 Validation Failed: {err}")</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Fail-Fast Principle:</strong>
-          <p style="margin-top:6px;">Raising exceptions immediately when invalid inputs arrive prevents corrupted state from propagating deeper into your application and database.</p>
+          <strong style="color:#10b981;">🔍 Fail-Fast రూల్:</strong>
+          <p style="margin-top:6px;">తప్పు డేటా వస్తే అక్కడే కోడ్ ని ఆపేసి ఎర్రర్ ఇవ్వాలి. లేకపోతే ఆ తప్పు డేటా డేటాబేస్ లోకి వెళ్లిపోయి పెద్ద ప్రాబ్లం అవుతుంది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">5</span>Creating Custom Application Exceptions (OOP Hierarchy)</div>
+    <div class="section-title"><span class="num">5</span>మన సొంత కస్టమ్ ఎర్రర్స్ రాసుకోవడం</div>
     <div class="section-body">
-      <p>In large production applications (FastAPI backends, payment gateways, microservices), you should define <strong>custom domain-specific exception classes</strong> by inheriting from Python's standard <code>Exception</code> class:</p>
+      <p>పెద్ద ప్రాజెక్ట్స్ (బ్యాంకింగ్ యాప్స్) లో పైథాన్ ఎర్రర్స్ కాకుండా, మన బిజినెస్ కి తగ్గట్టు మన సొంత ఎర్రర్స్ క్లాసెస్ రాసుకోవచ్చు (Exception ని పేరెంట్ గా పెట్టి):</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: Designing Custom Application Exceptions</div>
@@ -769,13 +738,13 @@ except (TypeError, ValueError, PermissionError) as err:
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Define Custom Application Exceptions
+          <pre><code># మన సొంత ఎర్రర్స్ ని డిజైన్ చేద్దాం:
 class BankingAppError(Exception):
-    """Base exception for all banking domain errors."""
+    """అన్ని బ్యాంకింగ్ ఎర్రర్స్ కి ఇది పేరెంట్."""
     pass
 
 class InsufficientFundsError(BankingAppError):
-    """Raised when a withdrawal exceeds available balance."""
+    """బ్యాలెన్స్ కంటే ఎక్కువ డబ్బులు అడిగితే వచ్చే ఎర్రర్."""
     def __init__(self, balance, amount_requested):
         self.balance = balance
         self.amount_requested = amount_requested
@@ -786,41 +755,41 @@ class InsufficientFundsError(BankingAppError):
         )
 
 class AccountLockedError(BankingAppError):
-    """Raised when operating on a frozen account."""
+    """అకౌంట్ బ్లాక్ అయి ఉంటే వచ్చే ఎర్రర్."""
     pass
 
 def withdraw_money(account_balance, amount, is_locked=False):
     if is_locked:
-        raise AccountLockedError("Account is temporarily locked. Please contact support.")
+        raise AccountLockedError("అకౌంట్ లాక్ లో ఉంది. కస్టమర్ కేర్ కి కాల్ చేయండి.")
     if amount > account_balance:
-        raise InsufficientFundsError(account_balance, amount)
+        raise InsufficientFundsError(account_balance, amount) # మన ఎర్రర్!
     return account_balance - amount
 
-# Test Custom Exception handling:
+# టెస్టింగ్:
 try:
-    new_bal = withdraw_money(500.0, 750.0)
+    new_bal = withdraw_money(500.0, 750.0) # బ్యాలెన్స్ 500, కానీ 750 కావాలంటున్నాడు
 except InsufficientFundsError as err:
     print("💳 Transaction Blocked:", err)
-    print(f"👉 Customer needs to deposit at least Rs.{err.shortage:.2f} more.")
+    print(f"👉 కస్టమర్ ఇంకా Rs.{err.shortage:.2f} వేయాలి.")
 except BankingAppError as err:
     print("🏦 General Banking Error:", err)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Architectural Advantage:</strong>
-          <p style="margin-top:6px;">Custom exceptions carry rich structured metadata (like <code>err.shortage</code>) allowing API layers to return structured HTTP 400/403 JSON responses to frontend clients automatically.</p>
+          <strong style="color:#10b981;">🔍 ప్రొఫెషనల్ అప్రోచ్:</strong>
+          <p style="margin-top:6px;">ఇలా మన సొంత ఎర్రర్స్ (ఉదా: <code>InsufficientFundsError</code>) క్రియేట్ చేయడం వల్ల, వేరే వాళ్ళకి మన కోడ్ లో ఏం జరుగుతుందో ఈజీగా అర్థమవుతుంది. అందులో <code>err.shortage</code> లాంటి ఎక్స్ట్రా డేటా కూడా పంపొచ్చు.</p>
         </div>
     </div>
   
 
     <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfall: Using Bare "except:" or "except Exception: pass" (The Silent Bug Trap)</div>
-      <p>Using a bare "except:" or catching Exception and doing "pass" silently suppresses all errors including typos (NameError), keyboard interrupts, and out-of-memory errors, making code completely impossible to debug. Always catch specific exceptions and log them!</p>
+      <div class="callout-title">⚠️ Common Developer Pitfall: బ్లైండ్ గా "except:" అని వదిలేయడం</div>
+      <p>ఉట్టి except: అని రాస్తే అది స్పెల్లింగ్ తప్పులు, అవుట్ ఆఫ్ మెమరీ అన్నీ ఆపేస్తుంది. దీనివల్ల అసలు ఏం తప్పు జరుగుతుందో ఎప్పటికీ అర్థం కాదు. ఎప్పుడూ except ValueError: అలా పేరు పెట్టి పట్టుకోవాలి.</p>
     </div>
 
     <div class="try-box">
       <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p>Write a function parse_integer_input(prompt_text) that repeatedly prompts the user in a while loop until they provide a valid integer, handling ValueError gracefully.</p>
+      <p>యూజర్ ని ఒక ఇంటీజర్ (నెంబర్) అడగండి. అతను తప్పుగా టెక్స్ట్ ఇస్తే క్రాష్ అవ్వకుండా, except వాడి "సరైన నెంబర్ ఇవ్వండి" అని చెప్పే కోడ్ రాయండి.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">Python 3 Practice Challenge</span>
@@ -830,9 +799,9 @@ except BankingAppError as err:
     try:
         return int(raw_value), "Success"
     except ValueError:
-        return None, f"'{raw_value}' is not a valid integer!"
+        return None, f"'{raw_value}' కరెక్ట్ నెంబర్ కాదు!"
 
-# Test inputs:
+# టెస్టింగ్:
 for test_val in ["42", "hello", "100.5", "-99"]:
     val, status = safe_int_converter(test_val)
     print(f"Input: {test_val:8} -> Parsed: {val} ({status})")</code></pre>
@@ -843,20 +812,14 @@ for test_val in ["42", "hello", "100.5", "-99"]:
     <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the difference between else and finally in try-except?</h4>
-      <p>The else block runs ONLY if the try block succeeds with zero exceptions. The finally block runs unconditionally 100% of the time, even if an unhandled exception occurred or a return statement was executed.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> else కి finally కి తేడా ఏంటి?</h4>
+      <p>try లో ఎర్రర్ రాకుండా అంతా సక్సెస్ అయితేనే else రన్ అవుతుంది. కానీ finally అలా కాదు, ఎర్రర్ వచ్చినా, రాకపోయినా లాస్ట్ లో ఖచ్చితంగా గ్యారెంటీగా రన్ అవుతుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Why should custom exceptions inherit from Exception and not BaseException?</h4>
-      <p>BaseException is the root of system-level exits like KeyboardInterrupt and SystemExit. Inheriting from Exception ensures your errors represent application issues without interfering with process termination.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How do I re-raise the currently active exception?</h4>
-      <p>Inside an except block, simply write "raise" with no arguments. Python will re-raise the active exception up the call stack with its full original traceback intact.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> catch బ్లాక్ లోనే మళ్ళీ ఎర్రర్ వస్తే ఏమవుతుంది?</h4>
+      <p>except బ్లాక్ లో కూడా ఎర్రర్ వస్తే ప్రోగ్రామ్ అక్కడే క్రాష్ అవుతుంది. పైథాన్ దాన్ని ఆపలేదు.</p>
     </div>
   
 
@@ -885,6 +848,5 @@ for test_val in ["42", "hello", "100.5", "-99"]:
 </div>
 
 <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

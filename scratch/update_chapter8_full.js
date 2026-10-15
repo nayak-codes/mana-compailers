@@ -1,0 +1,533 @@
+const fs = require('fs');
+const path = require('path');
+
+const publicDir = path.join(__dirname, '..', 'public');
+const jsDir = path.join(publicDir, 'blog-javascript');
+
+// Reuse master script's generateJSAccordionSidebar and wrapJSLessonPage
+const master = require('./build_master_js_curriculum.js');
+
+// Chapter 8 HTML content body
+const chapter8Body = `
+    <!-- ====================================================================
+         👇 CHAPTER CONTENT: Chapter 8 if, else if, else (Telugu) 👇
+         ==================================================================== -->
+
+    <div class="intro-box">
+      <p>ట్రాఫిక్ సిగ్నల్ దగ్గర మీరు ఏం చేస్తారు? <strong>ఎరుపు</strong> లైట్ అయితే ఆగుతారు, <strong>పసుపు</strong> అయితే నెమ్మదిస్తారు, <strong>ఆకుపచ్చ</strong> అయితే వెళ్తారు. పరిస్థితిని బట్టి నిర్ణయం తీసుకోవడమే మనం రోజూ చేసే పని. "వర్షం పడుతుంటే గొడుగు తీసుకెళ్తా, లేకపోతే తీసుకెళ్ళను" అనడం కూడా ఒక నిర్ణయమే.</p>
+      <p>ఇప్పటివరకు మన programs పై నుంచి కిందికి, ఒక్కో లైన్ గా run అయ్యాయి. కానీ నిజమైన programs లో పరిస్థితిని బట్టి వేర్వేరు పనులు చేయాలి. ఉదాహరణకు, వయసు 18 దాటితేనే ఓటు వేయడానికి అనుమతించాలి. మార్కులు 35 కంటే ఎక్కువ ఉంటేనే "Pass" అనాలి. ఇలాంటి నిర్ణయాల కోసం JavaScript లో <code>if</code>, <code>else if</code>, <code>else</code> వాడతాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><code>if</code>, <code>if-else</code> మరియు <code>else if</code> ladder రాయడం</li>
+        <li>Nested if (if లోపల if)</li>
+        <li>Conditions లో comparison మరియు logical operators (<code>&&</code>, <code>||</code>, <code>!</code>) వాడటం</li>
+        <li>Condition లో truthy/falsy విలువలు</li>
+        <li>సాధారణంగా వచ్చే తప్పులు మరియు వాటిని నివారించడం</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">2</span>if statement: ఒక షరతు</div>
+    <div class="section-body">
+      <p><strong>Condition</strong> (షరతు) <code>true</code> అయితేనే <code>{ }</code> లోపల ఉన్న code run అవుతుంది. <code>false</code> అయితే ఆ భాగాన్ని వదిలేసి ముందుకు వెళ్తుంది.</p>
+
+      <p><strong>Syntax:</strong></p>
+      <div class="code-block">
+        <pre><code>if (condition) {
+  // condition true అయితే ఈ code run అవుతుంది
+}</code></pre>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">ఉదాహరణ: ఓటు వేయడానికి అర్హత</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — if</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const age = 20;
+
+if (age >= 18) {
+  console.log("మీరు ఓటు వేయొచ్చు");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        మీరు ఓటు వేయొచ్చు
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">Code అర్థం చేసుకుందాం:</h3>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><code>if</code> అనేది keyword. "ఒకవేళ" అని అర్థం.</li>
+        <li>కుండలీకరణాల <code>( )</code> లోపల condition ఉంటుంది. ఇది ఎప్పుడూ <code>true</code> లేదా <code>false</code> ఫలితం ఇచ్చే expression (Chapter 5 లోని comparison operators గుర్తుందా?).</li>
+        <li><code>age &gt;= 18</code> నిజం కాబట్టి (20, 18 కంటే ఎక్కువ), <code>{ }</code> లోని code run అయ్యింది.</li>
+        <li><code>age = 15</code> అయితే condition false అవుతుంది, అప్పుడు ఏమీ print అవ్వదు.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>if-else: రెండు దారులు</div>
+    <div class="section-body">
+      <p>కొన్నిసార్లు condition false అయినప్పుడు కూడా ఏదైనా చేయాలి. అప్పుడు <code>else</code> వాడతాం. "ఇది కాకపోతే, అది చెయ్యి" అని అర్థం.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — if else</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const marks = 30;
+
+if (marks >= 35) {
+  console.log("Pass");
+} else {
+  console.log("Fail");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        Fail
+      </div>
+      <p style="margin-top: 8px;"><code>marks &gt;= 35</code> false (30, 35 కంటే తక్కువ) కాబట్టి <code>else</code> భాగం run అయ్యింది.</p>
+      <div class="callout" style="margin-top: 12px;">
+        <div class="callout-title">📌 ముఖ్యమైన విషయం</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">if-else లో ఎల్లప్పుడూ రెండింట్లో <strong>ఒకటి మాత్రమే</strong> run అవుతుంది. రెండూ ఒకేసారి run అవ్వవు, రెండూ skip అవ్వవు.</p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>else if ladder: ఎక్కువ దారులు</div>
+    <div class="section-body">
+      <p>రెండు కంటే ఎక్కువ అవకాశాలు ఉన్నప్పుడు <code>else if</code> వాడతాం. మార్కుల ఆధారంగా Grade ఇవ్వడం దీనికి మంచి ఉదాహరణ.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — else if ladder</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const marks = 72;
+
+if (marks >= 80) {
+  console.log("Grade A");
+} else if (marks >= 60) {
+  console.log("Grade B");
+} else if (marks >= 35) {
+  console.log("Grade C");
+} else {
+  console.log("Fail");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        Grade B
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">ఇది ఎలా పని చేస్తుంది?</h3>
+      <p>JavaScript conditions ని <strong>పై నుంచి కిందికి</strong> ఒక్కొక్కటిగా చెక్ చేస్తుంది:</p>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><code>marks &gt;= 80</code> → <code>72 &gt;= 80</code> false, కాబట్టి దాటేసింది.</li>
+        <li><code>marks &gt;= 60</code> → <code>72 &gt;= 60</code> true! కాబట్టి "Grade B" print చేసింది.</li>
+        <li><strong>ఇక్కడే ఆగిపోతుంది.</strong> మిగతా <code>else if</code> లు, <code>else</code> ని అసలు చూడదు.</li>
+      </ol>
+      <p style="margin-top: 8px;">అంటే, <strong>మొదట true అయిన condition యొక్క code మాత్రమే run అవుతుంది.</strong> ఇది ఒక మెట్ల (ladder) లాంటిది, కింది నుంచి కాదు, పై నుంచి దిగుతుంది.</p>
+
+      <div class="callout" style="margin-top: 15px;">
+        <div class="callout-title">💡 గుర్తుంచుకోండి (MDN Web Docs నోట్)</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">JavaScript లో <code>elseif</code> అనే ఒకే పదం లేదు. <code>else if</code> అని మధ్యలో space తో రాయాలి. నిజానికి <code>else if</code> అంటే <code>else</code> లోపల ఇంకో <code>if</code> పెట్టడమే. కానీ దాన్ని ఒకే వరుసలో రాయడం సులభం కాబట్టి ఇలా రాస్తాం.</p>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">ఉదాహరణ: మూడు సంఖ్యల్లో పెద్దది</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Greatest of 3 Numbers</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const a = 15;
+const b = 42;
+const c = 30;
+
+if (a >= b && a >= c) {
+  console.log(a, "అతి పెద్దది");
+} else if (b >= a && b >= c) {
+  console.log(b, "అతి పెద్దది");
+} else {
+  console.log(c, "అతి పెద్దది");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        42 అతి పెద్దది
+      </div>
+      <p style="margin-top: 8px;">ఇక్కడ <code>&&</code> (AND) వాడి, ఒకే condition లో రెండు షరతులు కలిపాం. <code>b &gt;= a &amp;&amp; b &gt;= c</code> అంటే "<code>b</code>, <code>a</code> కంటే పెద్దది <strong>మరియు</strong> <code>c</code> కంటే కూడా పెద్దది".</p>
+    </div>
+
+    <div class="section-title"><span class="num">5</span>Conditions లో Logical Operators</div>
+    <div class="section-body">
+      <p>Chapter 5 లో నేర్చుకున్న <code>&&</code>, <code>||</code>, <code>!</code> ని conditions లో విరివిగా వాడతాం:</p>
+
+      <h3 style="margin-top: 15px; margin-bottom: 8px; font-size: 16px;">1. <code>&&</code> (AND): రెండూ నిజం కావాలి</h3>
+      <div class="code-block">
+        <pre><code>const username = "admin";
+const password = "1234";
+
+if (username === "admin" && password === "1234") {
+  console.log("Login successful");
+} else {
+  console.log("Wrong details");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        Login successful
+      </div>
+      <p style="margin-top: 8px;">Username మరియు password రెండూ సరిగ్గా ఉంటేనే login అవుతుంది. ఏ ఒక్కటి తప్పయినా <code>else</code> run అవుతుంది.</p>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">2. <code>||</code> (OR): ఏదైనా ఒకటి నిజమైతే చాలు</h3>
+      <div class="code-block">
+        <pre><code>const day = "Sunday";
+
+if (day === "Saturday" || day === "Sunday") {
+  console.log("ఈ రోజు సెలవు");
+} else {
+  console.log("ఈ రోజు పని దినం");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        ఈ రోజు సెలవు
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">3. <code>!</code> (NOT): వ్యతిరేకం</h3>
+      <div class="code-block">
+        <pre><code>const isLoggedIn = false;
+
+if (!isLoggedIn) {
+  console.log("దయచేసి login అవ్వండి");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        దయచేసి login అవ్వండి
+      </div>
+      <p style="margin-top: 8px;"><code>isLoggedIn</code> false, దాన్ని <code>!</code> తిప్పి <code>true</code> చేసింది, అందుకే message వచ్చింది.</p>
+    </div>
+
+    <div class="section-title"><span class="num">6</span>Nested if: if లోపల if</div>
+    <div class="section-body">
+      <p>ఒక షరతు నిజమైన తర్వాత, ఇంకో షరతు చెక్ చేయాల్సి వస్తే, if లోపల if రాస్తాం. సినిమా హాల్ లో ముందు వయసు చూస్తారు, ఆ తర్వాత టికెట్ చూస్తారు. అదే nested if:</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Nested if</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const age = 25;
+const hasTicket = true;
+
+if (age >= 18) {
+  if (hasTicket) {
+    console.log("లోపలికి రావచ్చు");
+  } else {
+    console.log("ముందు ticket కొనండి");
+  }
+} else {
+  console.log("18 ఏళ్లు నిండాలి");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        లోపలికి రావచ్చు
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">Code అర్థం చేసుకుందాం:</h3>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>మొదట <code>age &gt;= 18</code> చెక్ అయ్యింది. 25 కాబట్టి true, లోపలికి వెళ్ళింది.</li>
+        <li>లోపల <code>hasTicket</code> చెక్ అయ్యింది. అది <code>true</code> కాబట్టి "లోపలికి రావచ్చు" print అయ్యింది.</li>
+        <li><code>hasTicket</code> false అయి ఉంటే "ముందు ticket కొనండి" వచ్చేది.</li>
+        <li><code>age</code> 18 కంటే తక్కువ అయి ఉంటే, బయటి <code>else</code> run అయ్యి "18 ఏళ్లు నిండాలి" వచ్చేది.</li>
+      </ol>
+      <div class="callout" style="margin-top: 15px;">
+        <div class="callout-title">💡 చిట్కా</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">Nested if ఎక్కువైతే code గందరగోళంగా మారుతుంది. రెండు షరతులను <code>&&</code> తో కలిపి రాయొచ్చు: <code>if (age &gt;= 18 &amp;&amp; hasTicket)</code>. కానీ రెండు షరతులకు వేర్వేరు message లు కావాలంటే, పైన చూపిన nested పద్ధతే సరైనది.</p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">7</span>Condition లో Truthy / Falsy విలువలు</div>
+    <div class="section-body">
+      <p>Condition ఎప్పుడూ <code>true</code> / <code>false</code> గా ఉండాల్సిన అవసరం లేదు. Chapter 6 లో నేర్చుకున్న <strong>truthy / falsy</strong> నియమం ఇక్కడ కూడా వర్తిస్తుంది. JavaScript ఏ విలువనైనా boolean గా మార్చి చూస్తుంది.</p>
+      <div class="code-block">
+        <pre><code>const userName = "";
+
+if (userName) {
+  console.log(&#96;నమస్కారం &#36;{userName}&#96;);
+} else {
+  console.log("పేరు ఖాళీగా ఉంది");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        పేరు ఖాళీగా ఉంది
+      </div>
+      <p style="margin-top: 8px;">ఖాళీ string <code>""</code> falsy, కాబట్టి <code>else</code> run అయ్యింది. <code>userName = "రవి"</code> అయి ఉంటే "నమస్కారం రవి" వచ్చేది. Form లో user ఏదైనా టైప్ చేశాడా లేదా అని చెక్ చేయడానికి ఈ పద్ధతి చాలా సాధారణం.</p>
+      <p style="margin-top: 8px; font-size: 13.5px; color: var(--text3);">(గుర్తుందా? 6 falsy విలువలు: <code>false</code>, <code>0</code>, <code>""</code>, <code>null</code>, <code>undefined</code>, <code>NaN</code>. మిగతావన్నీ truthy.)</p>
+    </div>
+
+    <div class="section-title"><span class="num">8</span>ఏది ఎప్పుడు వాడాలి?</div>
+    <div class="section-body">
+      <table class="tbl">
+        <tr><th>సందర్భం</th><th>వాడాల్సినది</th></tr>
+        <tr><td>ఒక షరతు, ఒకే పని</td><td><code>if</code></td></tr>
+        <tr><td>రెండు దారులలో ఒకటి</td><td><code>if-else</code> (చిన్నదైతే ternary <code>? :</code>)</td></tr>
+        <tr><td>ఎక్కువ దారులు, ఒక్కటి మాత్రమే run కావాలి</td><td><code>else if</code> ladder</td></tr>
+        <tr><td>ఒకే విలువను చాలా options తో పోల్చడం</td><td><code>switch</code> (తర్వాతి chapter)</td></tr>
+      </table>
+
+      <h3 style="margin-top: 25px; margin-bottom: 8px; font-size: 16px;">ఉదాహరణ: సినిమా టికెట్ ధర</h3>
+      <p>వయసును బట్టి టికెట్ ధర:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>5 ఏళ్ల కంటే తక్కువ: ఉచితం</li>
+        <li>5 నుంచి 17 వరకు: ₹50</li>
+        <li>18 మరియు అంతకంటే ఎక్కువ: ₹100</li>
+      </ul>
+      <div class="code-block" style="margin-top: 12px;">
+        <pre><code>const age = 10;
+
+if (age < 5) {
+  console.log("ఉచితం");
+} else if (age < 18) {
+  console.log("టికెట్ ధర: ₹50");
+} else {
+  console.log("టికెట్ ధర: ₹100");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        టికెట్ ధర: ₹50
+      </div>
+      <p style="margin-top: 8px;"><code>age = 10</code>: మొదటి condition (<code>10 &lt; 5</code>) false, రెండోది (<code>10 &lt; 18</code>) true, కాబట్టి ₹50.</p>
+      <p style="margin-top: 8px; font-size: 13.5px; color: var(--text2);">గమనించండి: రెండో condition లో "5 కంటే ఎక్కువ" అని మళ్ళీ రాయలేదు. ఎందుకంటే ladder లో అప్పటికే <code>age &lt; 5</code> false అయ్యాక మాత్రమే అక్కడికి వస్తాం.</p>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు (MDN Verified)</div>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li style="margin-bottom: 12px;">
+          <strong>1. <code>if (...)</code> తర్వాత semicolon పెట్టడం:</strong>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px; margin-top:5px;"><code>const age = 10;
+
+if (age >= 18);
+{
+  console.log("Adult"); // తప్పు! age = 10 అయినా ఇది run అవుతుంది!
+}</code></pre>
+          తప్పు! <code>if (...)</code> తర్వాత <code>;</code> పెట్టడంతో, if కి "ఖాళీ పని" ఇచ్చినట్లయింది. తర్వాత ఉన్న <code>{ }</code> అనేది if కి సంబంధం లేని ఒక వేరే block. <code>if (...)</code> తర్వాత ఎప్పుడూ semicolon పెట్టకండి.
+        </li>
+        <li style="margin-bottom: 12px;">
+          <strong>2. Braces <code>{ }</code> మర్చిపోవడం:</strong>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px; margin-top:5px;"><code>const age = 10;
+
+if (age >= 18)
+  console.log("A");
+  console.log("B"); // Output: "B" ఎప్పుడూ print అవుతుంది!</code></pre>
+          Braces లేకపోతే, if కి కేవలం <strong>మొదటి లైన్</strong> మాత్రమే చెందుతుంది. రెండో లైన్ if లో భాగం కాదు. <strong>బంగారు నియమం:</strong> ఒక్క లైన్ ఉన్నా, ఎప్పుడూ braces <code>{ }</code> వాడండి.
+        </li>
+        <li style="margin-bottom: 12px;">
+          <strong>3. Conditions క్రమం తప్పుగా పెట్టడం:</strong>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px; margin-top:5px;"><code>const marks = 90;
+
+if (marks >= 35) {
+  console.log("Grade C"); // 90 మార్కులకు కూడా Grade C వచ్చేస్తుంది!
+} else if (marks >= 80) {
+  console.log("Grade A");
+}</code></pre>
+          ఎక్కువ విలువ ఉన్న లేదా ప్రత్యేకమైన conditions ని ladder లో ముందు రాయండి.
+        </li>
+        <li style="margin-bottom: 12px;">
+          <strong>4. <code>===</code> బదులు <code>=</code> వాడటం:</strong>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px; margin-top:5px;"><code>let x = 10;
+if (x = 5) { // ❌ assignment జరుగుతుంది, 5 truthy కాబట్టి ఎప్పుడూ true!
+  console.log("run అవుతుంది");
+}</code></pre>
+          పోల్చడానికి ఎప్పుడూ <code>===</code> వాడండి.
+        </li>
+        <li style="margin-bottom: 12px;">
+          <strong>5. <code>else if</code> బదులు వేర్వేరు <code>if</code> లు రాయడం:</strong>
+          రెండు వేర్వేరు <code>if</code> లు రాస్తే రెండూ run అవుతాయి. "ఒక్కటి మాత్రమే" కావాలంటే <code>else if</code> వాడాలి.
+        </li>
+        <li style="margin-bottom: 12px;">
+          <strong>6. పెద్ద, చిన్న అక్షరాల తేడా:</strong>
+          <code>"Hyderabad" === "hyderabad"</code> అనేది <code>false</code>. JavaScript లో case sensitivity ఉంటుంది.
+        </li>
+        <li>
+          <strong>7. Braces లేకుండా nested if రాసి "dangling else" గందరగోళం:</strong>
+          Braces లేకపోతే <code>else</code> దగ్గరగా ఉన్న లోపలి <code>if</code> కి చెందుతుంది. అందుకే ఎప్పుడూ braces <code>{ }</code> వాడాలి.
+        </li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">9</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <div class="section-body">
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>ఒక సంఖ్య positive, negative లేదా zero అని చెప్పే program రాయండి. (సంఖ్య <code>-7</code>)</li>
+        <li>వయసు ఆధారంగా టికెట్ ధర: 5 కంటే తక్కువ ఉచితం, 18 కంటే తక్కువ ₹50, లేకపోతే ₹100. వయసు <code>10</code> అయితే ఏమొస్తుంది?</li>
+        <li><code>username</code> "admin" మరియు <code>password</code> "1234" అయితే "Login successful", లేకపోతే "Wrong details" print చేయండి.</li>
+        <li>ఒక సంఖ్య సరి (even) లేదా బేసి (odd) అని if-else తో చెప్పండి. (సంఖ్య <code>7</code>)</li>
+        <li>మూడు సంఖ్యల్లో <strong>చిన్నది</strong> కనుక్కునే program రాయండి. (<code>a = 15</code>, <code>b = 42</code>, <code>c = 30</code>)</li>
+        <li>ఒక సంవత్సరం leap year అవునా కాదా if-else తో చెప్పండి. (<code>2024</code> తో test చేయండి.)</li>
+      </ol>
+
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: var(--text);">👉 సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 10px; font-size: 14px; color: var(--text2); line-height: 1.6;">
+          <p><strong>1.</strong></p>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px;"><code>const num = -7;
+
+if (num > 0) {
+  console.log("Positive");
+} else if (num < 0) {
+  console.log("Negative");
+} else {
+  console.log("Zero");
+}</code></pre>
+          <p>Output: <code>Negative</code></p>
+
+          <p style="margin-top: 12px;"><strong>2.</strong></p>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px;"><code>const age = 10;
+
+if (age < 5) {
+  console.log("ఉచితం");
+} else if (age < 18) {
+  console.log("₹50");
+} else {
+  console.log("₹100");
+}</code></pre>
+          <p>Output: <code>₹50</code></p>
+
+          <p style="margin-top: 12px;"><strong>3.</strong></p>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px;"><code>const username = "admin";
+const password = "1234";
+
+if (username === "admin" && password === "1234") {
+  console.log("Login successful");
+} else {
+  console.log("Wrong details");
+}</code></pre>
+          <p>Output: <code>Login successful</code></p>
+
+          <p style="margin-top: 12px;"><strong>4.</strong></p>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px;"><code>const num = 7;
+
+if (num % 2 === 0) {
+  console.log("సరి");
+} else {
+  console.log("బేసి");
+}</code></pre>
+          <p>Output: <code>బేసి</code></p>
+
+          <p style="margin-top: 12px;"><strong>5.</strong></p>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px;"><code>const a = 15;
+const b = 42;
+const c = 30;
+
+if (a <= b && a <= c) {
+  console.log(a, "అతి చిన్నది");
+} else if (b <= a && b <= c) {
+  console.log(b, "అతి చిన్నది");
+} else {
+  console.log(c, "అతి చిన్నది");
+}</code></pre>
+          <p>Output: <code>15 అతి చిన్నది</code></p>
+
+          <p style="margin-top: 12px;"><strong>6.</strong></p>
+          <pre style="background:rgba(0,0,0,0.25); padding:8px; border-radius:6px;"><code>const year = 2024;
+
+if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+  console.log(year, "leap year");
+} else {
+  console.log(year, "leap year కాదు");
+}</code></pre>
+          <p>Output: <code>2024 leap year</code></p>
+        </div>
+      </details>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">🚀 మీరే try చేయండి</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">ఈ code ని మన compiler లో run చేసి, <code>temperature</code> విలువ మార్చి ఫలితం ఎలా మారుతుందో చూడండి:</p>
+      <div class="code-block">
+        <pre><code>const temperature = 38;
+
+if (temperature >= 40) {
+  console.log("చాలా వేడి, బయటకు వెళ్ళకండి");
+} else if (temperature >= 30) {
+  console.log("వేడిగా ఉంది, నీళ్లు తాగండి");
+} else if (temperature >= 20) {
+  console.log("వాతావరణం బాగుంది");
+} else {
+  console.log("చల్లగా ఉంది, స్వెటర్ వేసుకోండి");
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output (temperature = 38 కి):</span><br>
+        వేడిగా ఉంది, నీళ్లు తాగండి
+      </div>
+      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript try చేయండి</a>
+    </div>
+
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 సారాంశం (Quick Summary):</h3>
+      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.6;">
+        <li><strong><code>if</code></strong>: condition true అయితే <code>{ }</code> లోని code run అవుతుంది.</li>
+        <li><strong><code>else</code></strong>: condition false అయినప్పుడు run అవుతుంది. if-else లో ఎప్పుడూ ఒకటి మాత్రమే run అవుతుంది.</li>
+        <li><strong><code>else if</code></strong>: ఎక్కువ దారుల కోసం. పై నుంచి కిందికి చెక్ చేసి, <strong>మొదట true అయిన దాని code మాత్రమే</strong> run చేసి ఆగిపోతుంది.</li>
+        <li>JavaScript లో <code>elseif</code> అనే ఒకే పదం లేదు, <code>else if</code> అని space తో రాయాలి.</li>
+        <li>Conditions లో <code>&&</code>, <code>||</code>, <code>!</code> మరియు truthy/falsy విలువలు వాడొచ్చు.</li>
+        <li>Nested if ఎక్కువైతే <code>&&</code> తో conditions కలపండి.</li>
+        <li>తప్పులు నివారించడానికి: <code>if (...)</code> తర్వాత <code>;</code> పెట్టకండి, ఎప్పుడూ braces <code>{ }</code> వాడండి, <code>===</code> వాడండి (<code>=</code> కాదు), పెద్ద conditions ని ముందు రాయండి.</li>
+      </ul>
+    </div>
+`;
+
+function updateChapter8() {
+  const title = "JavaScript if else తెలుగులో | if, else if, else Statements";
+  const desc = "JavaScript లో if, if-else, else if ladder, nested if ఎలా రాయాలి, conditions లో comparison మరియు logical operators ఎలా వాడాలి అనేది తెలుగులో ఉదాహరణలతో నేర్చుకోండి.";
+  const filename = "conditionals.html";
+  const subtopics = "if · else · else if ladder · Nested if · Logical Operators (&&, ||, !) · Truthy/Falsy · Common Mistakes";
+
+  // Navigation: Lesson 7 -> Lesson 8 -> Lesson 9
+  const prevFile = "input-output.html";
+  const prevTitle = "7. Input/Output (I/O)";
+  const nextFile = "switch.html";
+  const nextTitle = "9. switch statement";
+
+  const html = master.wrapJSLessonPage(
+    title,
+    desc,
+    filename,
+    8,
+    subtopics,
+    chapter8Body,
+    prevFile,
+    prevTitle,
+    nextFile,
+    nextTitle,
+    "Part 02: Control Flow"
+  );
+
+  fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
+  console.log("✅ Successfully updated " + filename + " with full rich Telugu content!");
+
+  // Mirror to if-else.html for slug routing
+  const slugFilename = "if-else.html";
+  const slugHtml = master.wrapJSLessonPage(
+    title,
+    desc,
+    slugFilename,
+    8,
+    subtopics,
+    chapter8Body,
+    prevFile,
+    prevTitle,
+    nextFile,
+    nextTitle,
+    "Part 02: Control Flow"
+  );
+  fs.writeFileSync(path.join(jsDir, slugFilename), slugHtml, 'utf8');
+  console.log("✅ Successfully generated mirror " + slugFilename);
+}
+
+updateChapter8();

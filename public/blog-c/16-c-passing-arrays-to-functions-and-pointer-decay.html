@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C Passing Arrays to Functions, Pointer Decay & Memory Architecture Masterclass — C Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on Passing Arrays to Functions in C (Phase 7 Part 3): The Pointer Decay mechanism, why sizeof fails inside functions, mandatory explicit size passing, const read-only protection, returning arrays and dangling stack pointer traps, multi-dimensional array parameter rules, and enterprise production best practices." />
-  <meta name="keywords" content="c tutorial, c passing arrays to functions, pointer decay & memory architecture masterclass, learn c programming, c arrays, c memory model, pointers in c, c data structures" />
+  <title>C Passing Arrays to Functions, Pointer Decay & Limitations (తెలుగులో) — C Tutorial | Our Compiler</title>
+  <meta name="description" content="C Passing Arrays (Phase 7 Part 3): ఫంక్షన్స్ కి Array ని పంపినప్పుడు ఏమవుతుంది, Pointer Decay అంటే ఏంటి, లోపల sizeof ఎందుకు ఫెయిల్ అవుతుంది, మరియు C arrays కి ఉన్న లిమిటేషన్స్ గురించి తెలుగులో నేర్చుకుందాం." />
+  <meta name="keywords" content="c tutorial, c passing arrays to functions, pointer decay & limitations (తెలుగులో), learn c programming, c arrays, c memory model, 2d arrays c, pointer decay c, bubble sort c, matrix c" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-c/16-c-passing-arrays-to-functions-and-pointer-decay.html" />
@@ -21,20 +21,20 @@
       border: 1px solid rgba(16, 185, 129, 0.25);
       border-left: 4px solid #10b981;
       border-radius: 8px;
-      padding: 22px 26px;
-      margin: 24px 0;
+      padding: 18px 22px;
+      margin: 20px 0;
     }
     .concept-box h4 {
       color: #10b981;
-      margin-bottom: 10px;
-      font-size: 16.5px;
+      margin-bottom: 8px;
+      font-size: 15.5px;
       font-weight: 700;
     }
     .concept-box p {
       color: var(--text2);
-      font-size: 15px;
-      line-height: 1.8;
-      margin: 0 0 10px 0;
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin: 0 0 8px 0;
     }
     .concept-box p:last-child {
       margin-bottom: 0;
@@ -43,64 +43,18 @@
       background: #0f141c;
       border: 1px solid #27303f;
       border-radius: 10px;
-      padding: 22px;
+      padding: 20px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13.5px;
+      font-size: 13px;
       color: #38bdf8;
-      line-height: 1.85;
-      margin: 24px 0;
+      line-height: 1.8;
+      margin: 22px 0;
       overflow-x: auto;
       white-space: pre;
     }
     .spec-table th {
       background: rgba(16, 185, 129, 0.12);
       color: #10b981;
-      font-size: 14.5px;
-    }
-    .deep-dive-card {
-      background: #141922;
-      border: 1px solid #27303f;
-      border-radius: 10px;
-      padding: 24px;
-      margin: 26px 0;
-    }
-    .deep-dive-card h3 {
-      color: #10b981;
-      font-size: 17.5px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .faq-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin: 24px 0;
-    }
-    .faq-item {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-left: 4px solid #10b981;
-      border-radius: 8px;
-      padding: 20px 22px;
-    }
-    .faq-item h4 {
-      color: #e6edf3;
-      font-size: 15.5px;
-      margin-bottom: 8px;
-    }
-    .faq-item p {
-      color: var(--text2);
-      font-size: 14.5px;
-      line-height: 1.75;
-      margin: 0;
-    }
-    .text-prose {
-      font-size: 15.5px;
-      line-height: 1.85;
-      color: var(--text);
-      margin-bottom: 18px;
     }
   </style>
 
@@ -118,7 +72,7 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -197,8 +151,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-c">
 
@@ -225,7 +177,6 @@
     <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
 
     <div class="sidebar-accordion">
-
       <!-- Phase 01: C Basics & Architecture -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
@@ -376,341 +327,9 @@
         <a href="/blog-c/17-c-array-algorithms-searching-sorting-and-manipulation.html">17. Array Algorithms (Search, Sort & Reverse)</a>
       </div>
 
-      <!-- Phase 08: Strings & Text Processing -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔤</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 08</span>
-            <span class="phase-title">Strings & Text Processing</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/18-c-strings-null-terminator-and-safe-io.html">18. Strings, Null Terminator & Safe I/O</a>
-        <a href="/blog-c/19-c-string-library-functions-and-security.html">19. <string.h> Functions & Buffer Security</a>
-        <a href="/blog-c/20-c-string-algorithms-and-text-processing-projects.html">20. String Algorithms & 6 Text Projects</a>
-      </div>
-
-      <!-- Phase 09: Pointers & Memory Architecture -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🎯</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 09</span>
-            <span class="phase-title">Pointers & Memory Architecture</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/21-c-pointers-memory-addresses-and-dereferencing.html">21. Pointers, RAM Addresses & Dereferencing</a>
-        <a href="/blog-c/22-c-pointer-arithmetic-arrays-and-const-qualifiers.html">22. Pointer Arithmetic, Arrays & const Qualifiers</a>
-        <a href="/blog-c/23-c-double-pointers-function-pointers-and-safety.html">23. Double Pointers, Function Pointers & Safety</a>
-      </div>
-
-      <!-- Phase 10: Pointers and Functions -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚙️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 10</span>
-            <span class="phase-title">Pointers and Functions</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/24-c-pointers-and-functions-call-by-reference.html">24. Passing Addresses, Swapping & Returning Pointers</a>
-        <a href="/blog-c/25-c-pointer-parameters-arrays-and-const-protection.html">25. Array/String Pointer Parameters & const Safety</a>
-        <a href="/blog-c/26-c-function-pointers-callbacks-and-event-systems.html">26. Function Pointers, Callbacks & Event Systems</a>
-      </div>
-
-      <!-- Phase 11: Structures & Data Packing -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🏗️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 11</span>
-            <span class="phase-title">Structures & Data Packing</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/27-c-structures-declaration-memory-model-and-padding.html">27. Structures, RAM Memory Model & Padding Holes</a>
-        <a href="/blog-c/28-c-structure-arrays-pointers-and-arrow-operator.html">28. Structure Arrays, Pointers & Arrow Operator (->)</a>
-        <a href="/blog-c/29-c-self-referential-structures-file-io-and-5-projects.html">29. Self-Referential Structs, Binary I/O & 5 Projects</a>
-      </div>
-
-      <!-- Phase 12: Unions, Enums & Typedef -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔀</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 12</span>
-            <span class="phase-title">Unions, Enums & Typedef</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/30-c-unions-shared-memory-and-variant-types.html">30. Unions, Shared Memory & Variant Data Types</a>
-        <a href="/blog-c/31-c-enumerations-custom-values-and-switch-dispatch.html">31. Enumerations (enum), Custom Values & Switch</a>
-        <a href="/blog-c/32-c-typedef-type-aliases-and-readable-architecture.html">32. typedef, Type Aliases & Expressive Architecture</a>
-      </div>
-
-      <!-- Phase 13: Dynamic Memory Management -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">💾</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 13</span>
-            <span class="phase-title">Dynamic Memory Management</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/33-c-stack-vs-heap-malloc-and-calloc.html">33. Stack vs Heap, malloc(), calloc() & NULL Guards</a>
-        <a href="/blog-c/34-c-realloc-free-and-the-4-deadly-heap-bugs.html">34. realloc(), free() & The 4 Deadly Heap Bugs</a>
-        <a href="/blog-c/35-c-dynamic-arrays-strings-structures-and-memory-debugging.html">35. Dynamic Collections, Ownership & Valgrind Debugging</a>
-      </div>
-
-      <!-- Phase 14: File Handling & I/O Streams -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📁</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 14</span>
-            <span class="phase-title">File Handling & I/O Streams</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/36-c-file-handling-fopen-fclose-and-text-io.html">36. File Streams, fopen(), fclose() & Text I/O</a>
-        <a href="/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html">37. Binary File I/O, Struct Serialization & fseek()</a>
-        <a href="/blog-c/38-c-file-error-handling-feof-ferror-and-errno.html">38. File Error Handling, EOF, ferror() & errno</a>
-      </div>
-
-      <!-- Phase 15: Preprocessor & Header Files -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚙️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 15</span>
-            <span class="phase-title">Preprocessor & Header Files</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/39-c-preprocessor-directives-and-macro-pitfalls.html">39. Preprocessor Directives & Macro Pitfalls</a>
-        <a href="/blog-c/40-c-conditional-compilation-and-include-guards.html">40. Conditional Compilation & Include Guards</a>
-        <a href="/blog-c/41-c-modular-architecture-headers-linkage-and-compilation-units.html">41. Modular Architecture, Headers & Linkage</a>
-      </div>
-
-      <!-- Phase 16: Command-Line Arguments -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">💻</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 16</span>
-            <span class="phase-title">Command-Line Arguments</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/42-c-command-line-arguments-argc-argv-and-parsing.html">42. Command-Line Arguments (argc, argv & Parsing)</a>
-        <a href="/blog-c/43-c-cli-tool-building-exit-codes-and-environment-variables.html">43. Building CLI Tools, Exit Codes & Environment</a>
-      </div>
-
-      <!-- Phase 17: Standard Library Deep-Dive -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📚</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 17</span>
-            <span class="phase-title">Standard Library Deep-Dive</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/44-c-standard-library-io-utility-math-and-strings.html">44. Standard Library: I/O, Utilities, Math & Strings</a>
-        <a href="/blog-c/45-c-standard-library-time-booleans-and-fixed-width-integers.html">45. Standard Library: Time, Booleans & Integers</a>
-        <a href="/blog-c/46-c-standard-library-assertions-error-handling-and-stddef.html">46. Standard Library: Assertions & Error Handling</a>
-      </div>
-
-      <!-- Phase 18: Data Structures in C -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🌳</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 18</span>
-            <span class="phase-title">Data Structures in C</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/47-c-data-structures-singly-doubly-and-circular-linked-lists.html">47. Linked Lists: Singly, Doubly & Circular</a>
-        <a href="/blog-c/48-c-data-structures-stacks-and-queues-arrays-vs-linked-lists.html">48. Stacks & Queues: Arrays vs Linked Lists</a>
-        <a href="/blog-c/49-c-data-structures-binary-trees-and-binary-search-trees.html">49. Binary Trees & Binary Search Trees (BST)</a>
-        <a href="/blog-c/50-c-data-structures-graph-representations-and-traversals.html">50. Graph Representations & BFS/DFS Traversals</a>
-        <a href="/blog-c/51-c-data-structures-hash-tables-and-collision-resolution.html">51. Hash Tables & Collision Resolution</a>
-      </div>
-
-      <!-- Phase 19: Algorithms & Big-O Complexity -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 19</span>
-            <span class="phase-title">Algorithms & Big-O Complexity</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/52-c-algorithms-big-o-complexity-searching-and-sorting.html">52. Big-O Complexity, Searching & Sorting</a>
-        <a href="/blog-c/53-c-algorithms-recursion-divide-and-conquer-and-greedy-strategies.html">53. Divide-and-Conquer & Greedy Strategies</a>
-        <a href="/blog-c/54-c-algorithms-dynamic-programming-backtracking-and-graph-search.html">54. Dynamic Programming, Backtracking & Search</a>
-      </div>
-
-      <!-- Phase 20: Debugging & Safe C Programming -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🛡️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 20</span>
-            <span class="phase-title">Debugging & Safe C Programming</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/55-c-debugging-compiler-warnings-and-gdb-debugger.html">55. Compiler Warning Flags (-Wall) & GDB Debugger</a>
-        <a href="/blog-c/56-c-security-vulnerabilities-buffer-overflows-and-undefined-behavior.html">56. Security Vulnerabilities & Undefined Behavior</a>
-        <a href="/blog-c/57-c-defensive-c-programming-sanitizers-and-static-analysis.html">57. Defensive Programming, Sanitizers & Static Analysis</a>
-      </div>
-
-      <!-- Phase 21: Build Systems, Makefiles & CMake -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🛠️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 21</span>
-            <span class="phase-title">Build Systems, Makefiles & CMake</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/58-c-multi-file-projects-compilation-pipeline-and-linking.html">58. Multi-File Projects & Compilation Pipeline</a>
-        <a href="/blog-c/59-c-libraries-static-lib-vs-shared-so-dll-libraries.html">59. Static (.a) vs Dynamic Shared (.so / .dll) Libraries</a>
-        <a href="/blog-c/60-c-build-tools-makefiles-cmake-and-git-ci-cd.html">60. Build Automation: Makefiles, CMake & Git CI/CD</a>
-      </div>
-
-      <!-- Phase 22: System Programming & Embedded C -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🚀</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 22</span>
-            <span class="phase-title">System Programming & Embedded C</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/61-c-system-programming-posix-system-calls-processes-and-ipc.html">61. POSIX System Calls, Processes & IPC</a>
-        <a href="/blog-c/62-c-concurrency-pthreads-mutexes-and-race-conditions.html">62. POSIX Threads (pthreads), Mutexes & Concurrency</a>
-        <a href="/blog-c/63-c-network-programming-bsd-sockets-and-tcp-udp-client-server.html">63. Network Programming: BSD Sockets & TCP/UDP</a>
-        <a href="/blog-c/64-c-embedded-c-hardware-registers-bit manipulation-and-microcontrollers.html">64. Embedded C, Hardware Registers & Microcontrollers</a>
-        <a href="/blog-c/65-c-master-project-roadmap-and-systems-portfolio.html">65. C Master Project Roadmap & Systems Portfolio</a>
-      </div>
-
-    
     </div>
+
+
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
     <a href="/blog.html">📚 All Tutorials</a>
@@ -727,273 +346,113 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 16: C Passing Arrays to Functions, Pointer Decay & Memory Architecture Masterclass</span>
+      <span class="current">Lesson 16: C Passing Arrays to Functions, Pointer Decay & Limitations (తెలుగులో)</span>
     </div>
 
-    <h1 class="page-title">C Passing Arrays to Functions, Pointer Decay & Memory Architecture Masterclass</h1>
+    <h1 class="page-title">C Passing Arrays to Functions, Pointer Decay & Limitations (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">⚡ C (C17 / C23 Standard)</span>
       <span class="badge">🟢 Lesson 16</span>
       <span class="badge">📂 Phase 07: Arrays & Memory Organization</span>
-      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+      <span class="badge">📅 2026 Edition</span>
     </div>
 
     <!-- Subtopics Pill Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Pointer Decay Mechanics · Why sizeof(arr) Fails Inside Functions · Explicit Size Passing · const Read-Only Safety · Returning Arrays & Dangling Pointer Pitfall · Multi-Dimensional Function Passing · 6 Production Scenarios</span>
+      <span>Pointer Decay Mechanics · Why sizeof(arr) Fails Inside Functions · Explicit Size Passing · const Read-Only Arrays · Array Limitations</span>
     </div>
 
 
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 7 (Chapter 16): Passing Arrays to Functions, Pointer Decay & Memory Architecture Masterclass</strong>! In C system programming, mastering how arrays travel across function boundaries is the single most critical bridge between basic syntax and advanced pointer manipulation. In C, arrays are <em>never passed by value</em>. Instead, the array identifier instantly <strong>decays into a raw pointer pointing directly to its first memory element in RAM</strong>. In this exhaustive textbook-grade guide, you will master the deep hardware mechanics of Pointer Decay, understand why <code>sizeof</code> yields pointer sizes inside functions, learn why explicit size parameters are mandatory, explore <code>const</code> read-only memory protection, dissect the fatal dangling stack pointer trap when returning arrays, and examine enterprise production architectures.</p>
+      <p><strong>Phase 7 (Chapter 16): Passing Arrays & Pointer Decay Masterclass</strong> కు స్వాగతం! C నేర్చుకునేవాళ్ళు ఎక్కువగా కన్ఫ్యూజ్ అయ్యే టాపిక్ ఫంక్షన్స్ కి Arrays ని పాస్ చేయడం. C లో మనం ఒక Array ని ఫంక్షన్ కి ఇస్తే, అది మొత్తం కాపీ అవ్వదు. దానికి బదులుగా, ఆ Array తన <strong>మొదటి ఎలిమెంట్ అడ్రస్ ఉన్న ఒక Pointer లాగా మారిపోతుంది (దీన్నే Pointer Decay అంటారు)</strong>. ఈ గైడ్ లో, Pointer Decay అంటే ఏంటి, ఫంక్షన్ లోపల <code>sizeof</code> వాడితే సైజు ఎందుకు కరెక్ట్ గా రాదు, మన Array ని వేరేవాళ్ళు మార్చకుండా <code>const</code> తో ఎలా ఆపాలి, మరియు C Arrays కి ఉన్న లిమిట్స్ ఏంటో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
-    <!-- 1. The Philosophy of C's Zero-Copy Memory Model -->
-    <div class="section-title"><span class="num">1</span>The Philosophy of C's Zero-Copy Memory Model</div>
+    <!-- 1. Pointer Decay Mechanics -->
+    <div class="section-title"><span class="num">1</span>Pointer Decay అంటే ఏంటి? అది ఎలా జరుగుతుంది? ⭐</div>
     <div class="section-body">
-      <p class="text-prose">
-        When Dennis Ritchie designed the C programming language at Bell Labs in 1972, hardware memory and CPU processing cycles were extraordinarily precious. 
-        If C had adopted a <em>Pass-by-Value</em> model for arrays—where calling a function with a 100,000-element audio buffer would require copying 400,000 bytes of memory onto a new stack frame—programs would crawl to a halt, wasting valuable CPU time and risking immediate <strong>Stack Overflow crashes</strong>.
-      </p>
-
-      <div class="concept-box">
-        <h4>⚡ Why Zero-Copy Pointer Passing Was Chosen:</h4>
-        <p>1. <strong>$O(1)$ Instantaneous Argument Passing:</strong> Passing an array of 1 element or 10,000,000 elements takes the <em>exact same single machine instruction cycle</em> because only a single 64-bit memory address (8 bytes) is placed into a CPU register (like <code>%rdi</code> or <code>%rcx</code>).<br>
-        2. <strong>Stack Frame Conservation:</strong> The called function consumes almost zero extra stack space.<br>
-        3. <strong>Direct In-Place Mutation:</strong> Functions can filter, sort, and manipulate massive datasets directly in caller memory without expensive round-trip copying!</p>
-      </div>
-    </div>
-
-    <!-- 2. The Pointer Decay Mechanism Explained in Depth -->
-    <div class="section-title"><span class="num">2</span>The Pointer Decay Mechanism Explained in Depth ⭐</div>
-    <div class="section-body">
-      <p class="text-prose">
-        In C, whenever an array identifier is used in an expression—including passing it as a function argument—it automatically <strong>"decays" (converts) into a pointer to its first element (<code>&amp;arr[0]</code>)</strong>. 
-        The only exceptions where array decay does NOT happen are when using the <code>sizeof</code> operator on the original declaration or with the address-of operator <code>&amp;arr</code>.
-      </p>
+      <p>C లో మీరు ఒక Array ని ఫంక్షన్ కి పాస్ చేసినప్పుడు, ఆ Array మొత్తం లోపలికి కాపీ అవ్వదు. 
+      దానికి బదులుగా, కంపైలర్ ఆటోమేటిక్ గా ఆ Array ని తన <strong>మొదటి ఎలిమెంట్ అడ్రస్ కి పాయింటర్ (<code>&amp;arr[0]</code>) లాగా మార్చేస్తుంది (Decay చేస్తుంది)</strong>:</p>
 
       <div class="memory-diagram">
-        <strong>Hardware Memory Architecture: Pointer Decay Across Function Stack Frames:</strong><br>
+        <strong>ఫంక్షన్ లోకి వెళ్ళేటప్పుడు Array పాయింటర్ లాగా మారడం:</strong><br>
         <br>
-        [ main() Stack Frame (RAM Address: 0x7FFF0000) ]<br>
-        ┌────────────────────────────────────────────────────────────────────────┐<br>
-        │ int dataset[4] = {10, 20, 30, 40};                                     │<br>
-        │   0x7FFF0000: [ 10 ]  (dataset[0])  &lt;───┐                              │<br>
-        │   0x7FFF0004: [ 20 ]  (dataset[1])      │                              │<br>
-        │   0x7FFF0008: [ 30 ]  (dataset[2])      │                              │<br>
-        │   0x7FFF000C: [ 40 ]  (dataset[3])      │                              │<br>
-        └─────────────────────────────────────────┼──────────────────────────────┘<br>
-                                                  │ (Passes Memory Address 0x7FFF0000)<br>
-                                                  ▼<br>
-        [ processArray() Stack Frame (RAM Address: 0x7FFEFFF0) ]<br>
-        ┌────────────────────────────────────────────────────────────────────────┐<br>
-        │ int* ptr = 0x7FFF0000; (Contains 8-byte pointer to dataset[0])        │<br>
-        │ int size = 4;                                                          │<br>
-        └────────────────────────────────────────────────────────────────────────┘
+        main() లో:        int numbers[1000];  (RAM లో 4,000 బైట్స్ తీసుకుంటుంది)<br>
+        ఫంక్షన్ కాల్:      processArray(numbers);<br>
+        <br>
+        ఫంక్షన్ లోపల:    void processArray(int* ptr)  &lt;--- ఇక్కడికి కేవలం ఒక చిన్న 8-బైట్ల అడ్రస్ మాత్రమే వస్తుంది!<br>
+        <br>
+        ప్లస్ పాయింట్:   డేటా మొత్తం కాపీ అవ్వదు కాబట్టి చాలా ఫాస్ట్ గా ఉంటుంది.<br>
+        మైనస్ పాయింట్: ఫంక్షన్ కి ఆ Array లో అసలు ఎన్ని ఎలిమెంట్స్ ఉన్నాయో సైజు తెలిసిపోదు (సైజు పోతుంది)!
       </div>
-
-      <div class="concept-box">
-        <h4>🔍 The 3 Syntactic Forms of Array Parameters (All Are 100% Identical!):</h4>
-        <p>In C, the following 3 function signatures look different, but the compiler generates the <strong>exact same assembly machine code</strong> for all three:</p>
-        <p>
-          • <strong>Form 1 (Pointer notation):</strong> <code>void process(int* arr, int size);</code><br>
-          • <strong>Form 2 (Unsized bracket notation):</strong> <code>void process(int arr[], int size);</code><br>
-          • <strong>Form 3 (Sized bracket notation):</strong> <code>void process(int arr[100], int size);</code><br>
-          <br>
-          ⚠️ <em>Note on Form 3:</em> Even if you write <code>arr[100]</code>, the C compiler completely ignores the number <code>100</code>! It is treated purely as <code>int* arr</code>.
-        </p>
-      </div>
-    </div>
-
-    <!-- 3. The Infamous sizeof(arr) Inside Functions Trap -->
-    <div class="section-title"><span class="num">3</span>The Infamous sizeof(arr) Inside Functions Trap ⚠️</div>
-    <div class="section-body">
-      <p class="text-prose">
-        One of the most frequent bugs in C programming occurs when developers attempt to compute the length of an array inside a receiving function using the classic <code>sizeof(arr) / sizeof(arr[0])</code> idiom.
-      </p>
 
       <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
-        <h4 style="color:#ff7b72;">🛑 The Fatal Pointer Size Bug:</h4>
-        <p>
-          Inside a function, <code>arr</code> is no longer an array—it is a <strong>Pointer Variable</strong>!<br>
-          • On a 64-bit operating system (x86_64 / ARM64), all pointers are exactly <strong>8 Bytes</strong>.<br>
-          • Therefore, <code>sizeof(arr)</code> evaluates to <code>8</code>.<br>
-          • <code>sizeof(arr[0])</code> for an integer evaluates to <code>4</code>.<br>
-          • The formula computes: $\frac{8}{4} = 2$ elements, regardless of whether your original array had 4 elements or 4,000,000 elements!<br>
-          <br>
-          ✅ <strong>The Golden C Rule:</strong> Always pass the array length as an explicit, separate parameter: <code>void process(int arr[], int size);</code>
-        </p>
+        <h4 style="color:#ff7b72;">⚠️ ఫంక్షన్స్ లోపల sizeof(arr) వాడితే వచ్చే పెద్ద ప్రాబ్లం:</h4>
+        <p>మీరు పొరపాటున ఫంక్షన్ లోపల <code>sizeof(arr)</code> అని పిలిస్తే, అది <strong>Array సైజ్ ని ఇవ్వదు</strong>! అది లోపలికి పాయింటర్ లాగా వచ్చింది కాబట్టి ఆ పాయింటర్ సైజు ని ఇస్తుంది (<strong>సాధారణంగా 8 బైట్స్ అని వస్తుంది</strong>).<br>
+        ✅ <strong>దీనికి సొల్యూషన్:</strong> ఎప్పుడైనా Array ని ఫంక్షన్ కి ఇస్తున్నారంటే, కచ్చితంగా దానికి తోడుగా సైజు ని కూడా రెండో ఆర్గ్యుమెంట్ గా పంపాలి: <code>void process(int arr[], int size);</code></p>
       </div>
     </div>
 
-    <!-- 4. Modifying Caller Memory vs const Safety -->
-    <div class="section-title"><span class="num">4</span>In-Place RAM Mutation vs const Read-Only Protection</div>
+    <!-- 2. In-Place Mutation & const Safety -->
+    <div class="section-title"><span class="num">2</span>In-Place మార్పులు &amp; "const" తో సేఫ్ గా ఉంచడం</div>
     <div class="section-body">
-      <p class="text-prose">
-        Because the function receives the actual memory address pointing back to the caller's stack frame, any write operation performed via the pointer directly mutates the original data in physical RAM. 
-        When designing reusable library functions, you must strictly specify whether a function is an <em>inspector</em> (read-only) or a <em>mutator</em> (write).
-      </p>
+      <p>ఫంక్షన్ కి లోపలికి డైరెక్ట్ గా మన ఒరిజినల్ అడ్రస్ వెళ్తుంది కాబట్టి, ఫంక్షన్ లోపల దాన్ని మార్చితే <strong>బయట మన ఒరిజినల్ Array కూడా మారిపోతుంది!</strong> 
+      అలా ఫంక్షన్ మన డేటాని మార్చకుండా, కేవలం చూసుకొనేలా చేయాలంటే <strong><code>const</code></strong> అని వాడాలి:</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">C — In-Place Mutation & const Safety Architecture</span>
-          <a class="try-btn" href="/?lang=c">▶ Run Code in C Compiler</a>
+          <span class="lang-tag">C — Passing Arrays & const Protection Demo</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-// 1. Read-Only Function (Enforced by const)
-// Guaranteed by the compiler never to alter the caller's RAM memory!
+// 1. Read-Only display function (Protected with const)
 void printArray(const int arr[], int size) {
-    printf("Array: [ ");
+    printf("Array elements: ");
     for (int i = 0; i &lt; size; i++) {
         printf("%d ", arr[i]);
-        // arr[i] = 99; // ❌ COMPILE ERROR: assignment of read-only location '*arr'!
+        // arr[i] = 0; // ❌ Compile Error: Assignment of read-only location!
     }
-    printf("]\n");
+    printf("\n");
 }
 
-// 2. In-Place Mutator Function (Zero-copy RAM transformation)
-void squareElements(int arr[], int size) {
+// 2. In-Place doubling function (Modifies caller's RAM memory!)
+void doubleElements(int arr[], int size) {
     for (int i = 0; i &lt; size; i++) {
-        arr[i] = arr[i] * arr[i]; // Directly mutates main's memory!
+        arr[i] *= 2;
     }
 }
 
 int main(void) {
-    int numbers[] = {2, 4, 6, 8};
-    int size = sizeof(numbers) / sizeof(numbers[0]);
+    int data[] = {10, 20, 30, 40};
+    int size = sizeof(data) / sizeof(data[0]);
 
-    printf("Original: ");
-    printArray(numbers, size);
-
-    // Transforming data in-place
-    squareElements(numbers, size);
-
-    printf("After Squaring: ");
-    printArray(numbers, size);
+    printArray(data, size);
+    doubleElements(data, size);
+    printf("After Doubling: ");
+    printArray(data, size);
 
     return 0;
 }</code></pre>
       </div>
     </div>
 
-    <!-- 5. Returning Arrays from Functions: The Dangling Stack Pointer Trap -->
-    <div class="section-title"><span class="num">5</span>Returning Arrays: The Fatal Dangling Stack Pointer Trap ☠️</div>
-    <div class="section-body">
-      <p class="text-prose">
-        Beginner developers often attempt to create an array inside a helper function and return it like this: <code>int* createArray() { int local[5]; return local; }</code>. 
-        <strong>This is a catastrophic memory bug that leads to immediate crashes or silent data corruption!</strong>
-      </p>
-
-      <div class="concept-box" style="border-left-color:#ff7b72; background:rgba(255, 123, 114, 0.06);">
-        <h4 style="color:#ff7b72;">☠️ Why Returning Local Array Pointers Fails:</h4>
-        <p>
-          Local variables live inside the function's <strong>Stack Frame</strong>. 
-          When the function returns, its stack frame is instantly <strong>popped and destroyed</strong>! 
-          The returned pointer now points to "dead" deallocated memory (<strong>Dangling Pointer</strong>). 
-          The next function call will overwrite that exact memory location with new stack data, corrupting your program!
-        </p>
-      </div>
-
-      <div class="deep-dive-card">
-        <h3>✅ The 3 Professional Ways to Return Array Data in C:</h3>
-        <p style="color:var(--text2); font-size:14.5px; line-height:1.75;">
-          1. <strong>Caller-Allocated Destination Buffer (Most Common &amp; Safest):</strong> Caller passes an output array buffer for the function to populate: <code>void generateData(int outputBuffer[], int size);</code><br>
-          2. <strong>Dynamic Heap Memory (<code>malloc</code>):</strong> Allocate memory on the Heap which persists across function returns until explicitly freed: <code>int* arr = malloc(size * sizeof(int));</code><br>
-          3. <strong>Static Local Array (Specialized):</strong> Declare the array as <code>static int arr[10];</code> so it resides in the permanent Data Segment rather than the ephemeral stack.
-        </p>
-      </div>
-    </div>
-
-    <!-- 6. Passing Multi-Dimensional (2D) Arrays to Functions -->
-    <div class="section-title"><span class="num">6</span>Passing Multi-Dimensional (2D) Arrays to Functions</div>
-    <div class="section-body">
-      <p class="text-prose">
-        When passing a 2D array (e.g. a $3 \times 4$ matrix) to a function, you <strong>MUST explicitly declare the column dimension in the parameter</strong>:
-      </p>
-
-      <div class="concept-box">
-        <h4>📐 Why is the Column Size Mandatory in Parameter Declarations?</h4>
-        <p>
-          Recall the 2D Row-Major memory offset calculation formula:<br>
-          $$\text{Address} = \text{Base} + (i \times \text{COLS} + j) \times \text{sizeof(element)}$$<br>
-          To compute where Row $i$ begins in physical RAM, the compiler <strong>MUST know how many columns are in each row</strong>! 
-          Therefore, <code>void processMatrix(int mat[][4], int rows);</code> is valid, but <code>void processMatrix(int mat[][], int rows);</code> will trigger a fatal compilation error!
-        </p>
-      </div>
-    </div>
-
-    <!-- 7. Comprehensive Architecture Comparison Table -->
-    <div class="section-title"><span class="num">7</span>Comprehensive Memory Model Comparison Table</div>
+    <!-- 3. Array Limitations in C -->
+    <div class="section-title"><span class="num">3</span>C Arrays తో వచ్చే సమస్యలు (లిమిటేషన్స్)</div>
     <div class="section-body">
       <table class="tbl spec-table">
-        <tr><th>Passing Mechanism</th><th>Memory Overhead</th><th>Execution Speed</th><th>Caller Data Safety</th><th>Use Case</th></tr>
-        <tr>
-          <td><strong>Pass by Value (Primitives)</strong></td>
-          <td>Copies 4 to 8 bytes to stack.</td>
-          <td>Ultra-fast ($O(1)$)</td>
-          <td>✅ 100% Isolated &amp; Safe</td>
-          <td>Single numbers, flags, characters.</td>
-        </tr>
-        <tr>
-          <td><strong>Pass by Pointer Decay (Arrays)</strong></td>
-          <td>Only 8-byte pointer address.</td>
-          <td>Blazing fast ($O(1)$)</td>
-          <td>⚠️ Mutates caller RAM directly!</td>
-          <td>Sorting, filtering large datasets.</td>
-        </tr>
-        <tr>
-          <td><strong><code>const</code> Array Passing</strong></td>
-          <td>Only 8-byte pointer address.</td>
-          <td>Blazing fast ($O(1)$)</td>
-          <td>✅ Compiler-enforced Read-Only</td>
-          <td>Printing, searching, computing metrics.</td>
-        </tr>
-        <tr>
-          <td><strong>Pass by Struct Wrap</strong></td>
-          <td>Copies entire struct bytes.</td>
-          <td>Slow for large sizes ($O(N)$)</td>
-          <td>✅ Copies full data</td>
-          <td>Fixed coordinate points (e.g. <code>Point2D</code>).</td>
-        </tr>
+        <tr><th>సమస్య (Limitation)</th><th>C లో దాని ప్రభావం</th><th>దీనికి సొల్యూషన్ ఏంటి?</th></tr>
+        <tr><td><strong>సైజు ఫిక్స్డ్ గా ఉండటం</strong></td><td>ఒకసారి సైజు ఇచ్చాక ప్రోగ్రామ్ రన్ అయ్యేటప్పుడు దాన్ని పెంచలేము, తగ్గించలేము.</td><td><code>malloc()</code> వాడి Dynamic గా మెమరీ క్రియేట్ చేయాలి.</td></tr>
+        <tr><td><strong>ఒకే రకమైన డేటా ఉండటం</strong></td><td>నెంబర్లని, పేర్లని కలిపి ఒకే Array లో పెట్టలేము.</td><td>దీనికి బదులు <code>struct</code> వాడాలి.</td></tr>
+        <tr><td><strong>సైజు దానికి తెలియకపోవడం</strong></td><td>తన సైజు ఎంతో దానికి తెలియదు, మనమే దాన్ని గుర్తుపెట్టుకొని క్యాలిక్యులేట్ చేయాలి.</td><td>పాయింటర్ తో పాటు సైజు కూడా ఇచ్చేలా కస్టమ్ స్ట్రక్చర్ వాడాలి.</td></tr>
+        <tr><td><strong>సైజు లిమిట్ చెక్ చేయకపోవడం</strong></td><td>లిమిట్ దాటితే ఆపదు, వేరే మెమరీ లోకి వెళ్లి హ్యాక్ కి ఛాన్స్ ఇస్తుంది.</td><td>లూప్ రాసేటప్పుడే కరెక్ట్ గా లిమిట్స్ ఇవ్వాలి.</td></tr>
       </table>
-    </div>
-
-    <!-- 8. Real-World Production Case Studies -->
-    <div class="section-title"><span class="num">8</span>Real-World Enterprise Production Scenarios</div>
-    <div class="section-body">
-      <div class="concept-box">
-        <h4>🏢 Where Array Pointer Passing Powers Real Systems:</h4>
-        <p>• <strong>Linux Kernel Device Drivers:</strong> Network cards pass raw packet byte buffers (<code>char buffer[], int len</code>) directly into kernel ring buffers without memory copying.<br>
-        • <strong>Database Storage Engines (Redis / SQLite):</strong> Page cache managers read 4KB disk blocks into in-memory arrays and pass them to indexing functions.<br>
-        • <strong>Audio &amp; DSP Processing:</strong> Real-time audio engines process 512-sample PCM audio frames in-place using SIMD vectorized pointer arithmetic.</p>
-      </div>
-    </div>
-
-    <!-- 9. Comprehensive FAQ & Interview Deep-Dive -->
-    <div class="section-title"><span class="num">9</span>Frequently Asked Questions &amp; Technical Interview Deep-Dive</div>
-    <div class="section-body">
-      <div class="faq-grid">
-        <div class="faq-item">
-          <h4>Q1: What is the exact difference between <code>int* arr</code> and <code>int arr[]</code> in a function parameter?</h4>
-          <p>There is absolutely zero difference. Under the C standard (C17 §6.7.6.3), any parameter declared with array type is automatically adjusted to a pointer to the element type. <code>int arr[]</code> is purely syntactic sugar for <code>int* arr</code>.</p>
-        </div>
-        <div class="faq-item">
-          <h4>Q2: Can we use pointer arithmetic on array parameters inside a function?</h4>
-          <p>Yes! Because <code>arr</code> is a real pointer variable on the function's stack frame, you can perform operations like <code>arr++</code> to advance through elements. Note that on the original array in <code>main()</code>, writing <code>numbers++</code> is illegal because an array name is a constant pointer r-value.</p>
-        </div>
-        <div class="faq-item">
-          <h4>Q3: Why can't we determine the size of a dynamically passed array inside a function?</h4>
-          <p>Arrays in C are raw memory buffers with zero metadata headers. When decay occurs, the compiler retains only the memory address of the first element. The length information is completely erased, necessitating explicit size arguments.</p>
-        </div>
-      </div>
     </div>
 
     <!-- Practice Challenge -->
     <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — Test Array Passing in Online C Compiler</div>
+      <div class="try-title">💻 Try It Yourself — Test Array Functions in C Compiler</div>
       <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this array scalar addition function in our online GCC compiler:</p>
       
       <div class="code-block">
@@ -1004,21 +463,14 @@ int main(void) {
         <pre><code>#include &lt;stdio.h&gt;
 
 void addBonus(int scores[], int size, int bonus) {
-    for (int i = 0; i &lt; size; i++) {
-        scores[i] += bonus;
-    }
+    for (int i = 0; i &lt; size; i++) scores[i] += bonus;
 }
 
 int main(void) {
     int scores[] = {75, 82, 90};
-    int n = sizeof(scores) / sizeof(scores[0]);
-
-    addBonus(scores, n, 5);
-
-    printf("Updated Scores: ");
-    for (int i = 0; i &lt; n; i++) printf("%d ", scores[i]);
+    addBonus(scores, 3, 5);
+    for (int i = 0; i &lt; 3; i++) printf("%d ", scores[i]);
     printf("\n");
-
     return 0;
 }</code></pre>
       </div>
@@ -1045,6 +497,5 @@ int main(void) {
 </div>
 
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

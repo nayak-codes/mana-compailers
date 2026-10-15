@@ -647,34 +647,37 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML (Inline, Internal, External), console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types (Syntax, Runtime, Logical).',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML (Inline/Internal/External) · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types (Syntax, Runtime, Logical)' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables, var vs let vs const, TDZ (Temporal Dead Zone), Primitive types (Number, String, Boolean, BigInt, Symbol, null, undefined), Reference types (Object, Array, Function), and typeof operator.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (var, let & const)', subtopics: 'var vs let vs const · Scope · Hoisting · Temporal Dead Zone (TDZ)' },
-      { num: 4, file: 'operators.html', title: '4. Data Types & Type Conversion', subtopics: '7 Primitives · Reference Objects · Coercion vs Explicit Conversion · typeof Operator' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Control Flow',
-    icon: '⚡',
-    desc: 'Arithmetic, comparison (== vs ===), logical, ternary operator, short-circuiting, if-else, and switch statements.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: 'conditionals.html', title: '5. Conditionals (if-else & switch)', subtopics: 'Strict Equality (===) · Ternary · Short-circuiting (&& / ||) · Switch Statements' },
-      { num: 6, file: 'loops.html', title: '6. Loops & Control Flow', subtopics: 'for, while, do-while · for...of & for...in · break & continue' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
@@ -682,10 +685,10 @@ const JS_CURRICULUM = [
     tag: 'Phase 04',
     title: 'Strings & Functions',
     icon: '🧩',
-    desc: 'String manipulation, template literals, function declarations, function expressions, arrow functions, and default parameters.',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'strings.html', title: '7. Strings & Template Literals', subtopics: 'String Methods · Template Literals (\`...\`) · Slicing & Regex Search' },
-      { num: 8, file: 'functions.html', title: '8. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters · Rest Operator' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
@@ -695,41 +698,42 @@ const JS_CURRICULUM = [
     icon: '📊',
     desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 9, file: 'arrays.html', title: '9. Arrays & Iteration Methods', subtopics: 'Mutating Methods · map, filter, reduce, find · Array Spread' },
-      { num: 10, file: 'objects.html', title: '10. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · Object.keys/values/entries · JSON Parsing' },
-      { num: 11, file: 'es6-features.html', title: '11. ES6+ Destructuring & Spread', subtopics: 'Array & Object Destructuring · Spread/Rest (...) · Nullish Coalescing (??)' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Advanced Functions & OOP',
-    icon: '🏗️',
-    desc: 'Lexical scope, closures, higher-order functions, Object-Oriented JS, prototypes, ES6 classes, and this keyword binding.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 12, file: 'closures.html', title: '12. Closures & Higher-Order Functions', subtopics: 'Lexical Scope · Closures · Currying · Callback Functions' },
-      { num: 13, file: 'oop.html', title: '13. OOP: Classes & Prototypes', subtopics: 'Prototypes & Inheritance · ES6 Classes · Constructors · this Keyword Binding (call/apply/bind)' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Asynchronous JavaScript',
+    title: 'Asynchronous JavaScript & APIs',
     icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Callbacks, Promises, async/await, and Fetch API.',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 14, file: 'promises.html', title: '14. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise (.then/.catch) · async/await · Fetch API' },
-      { num: 15, file: 'exceptions.html', title: '15. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'DOM & Web Browser APIs',
-    icon: '🌐',
-    desc: 'DOM Selection, manipulation, event handling, Event Delegation, LocalStorage, SessionStorage, and Web APIs.',
+    title: 'Object-Oriented Programming (OOP)',
+    icon: '🏗️',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 16, file: 'dom.html', title: '16. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · Event Bubbling & Delegation · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -847,7 +851,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -1029,200 +1033,226 @@ ${contentBody}
 
 // ── BUILD LESSON 1: JavaScript Fundamentals (Phase 1 Part 1) ────────────────
 function buildLesson1() {
-  const title = "Welcome & JavaScript Fundamentals";
-  const desc = "Complete guide to JavaScript Basics: JavaScript ante enti?, history by Brendan Eich, web uses, JS vs Java, browser role & V8 engine, first program, adding JS to HTML (Inline, Internal, External), console.log(), and strict mode ('use strict').";
+  const title = "JavaScript అంటే ఏమిటి? | JavaScript Introduction in Telugu";
+  const desc = "JavaScript అంటే ఏమిటి, ఎక్కడ వాడతారు, HTML CSS తో దానికి ఉన్న సంబంధం ఏమిటి అనేది తెలుగులో సులభంగా నేర్చుకోండి. మొదటి program తో సహా.";
   const filename = "01-javascript-fundamentals.html";
   const subtopics = "JS ante enti? · History & Uses · JS vs Java · Browser Role & V8 Engine · First Program · 3 Methods to Add JS to HTML (Inline/Internal/External) · console.log() · Strict Mode (\"use strict\")";
 
   const contentBody = `
+
     <div class="intro-box">
-      <p>Welcome to the <strong>Complete JavaScript Masterclass (Phase 1: JavaScript Fundamentals)</strong>! JavaScript (JS) is the world's most popular programming language and the undeniable backbone of the Web. Over <strong>98% of all websites</strong> on the internet run JavaScript to deliver responsive user interfaces, dynamic interactivity, and server-side APIs via Node.js. In this comprehensive lesson, we will cover what JavaScript is, its history, browser execution engines, methods to include JS in HTML, <code>console.log()</code>, and modern strict mode (<code>"use strict"</code>).</p>
+      <p>మీరు ఎప్పుడైనా ఒక వెబ్సైట్లో ఒక బటన్ నొక్కగానే ఏదో మారడం గమనించారా? Instagram లో ఒక photo ని double tap చేయగానే heart వచ్చేస్తుంది. Amazon లో cart లో ఒక item add చేయగానే పైన number పెరుగుతుంది. Google Maps లో మీరు drag చేస్తే map కదులుతుంది. ఇవన్నీ page ని refresh చేయకుండానే జరుగుతాయి కదా?</p>
+      <p>ఈ మాయ వెనుక ఉన్నది <strong>JavaScript</strong>. ఈ chapter లో JavaScript అంటే ఏమిటో, అది ఎందుకు ఇంత ముఖ్యమో, మరియు మీ మొదటి JavaScript program ఎలా రాయాలో చాలా సులభంగా నేర్చుకుందాం. ఇంతకు ముందు ఎప్పుడూ programming చేయకపోయినా పర్వాలేదు, మనం మొదటి నుంచే మొదలుపెడదాం.</p>
     </div>
 
-    <!-- SECTION 1: JavaScript Ante Enti? -->
-    <div class="section-title"><span class="num">1</span>JavaScript Ante Enti? (What is JavaScript?)</div>
+    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
     <div class="section-body">
-      <p><strong>JavaScript</strong> anedhi oka high-level, dynamically typed, prototype-based, interpreted/JIT-compiled programming language. Idi HTML (structure) mariyu CSS (styling) tho kalisi web pages ni <strong>dynamic & interactive</strong> ga marusthundi.</p>
-      
-      <p>Traditional static web page lo HTML/CSS undhi anukundam — adhi purely static content chupisthundhi. Kani JavaScript tho meeru animations, form validations, button clicks, live search suggestions, dark mode toggles, and server data fetching (API calls without reloading page) acheive cheyyavachu.</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>JavaScript అంటే ఏమిటి, అది ఎందుకు వాడతారు</li>
+        <li>JavaScript ఎలా పుట్టింది</li>
+        <li>HTML, CSS, JavaScript మధ్య తేడా ఏమిటి</li>
+        <li>JavaScript ని ఎక్కడెక్కడ ఉపయోగిస్తారు</li>
+        <li>Java మరియు JavaScript ఒకటి కాదు అని ఎందుకు చెబుతారు</li>
+        <li>మీ మొదటి JavaScript program రాసి run చేయడం</li>
+      </ul>
     </div>
 
-    <!-- SECTION 2: History & Uses -->
-    <div class="section-title"><span class="num">2</span>JavaScript History & Modern Industry Uses</div>
+    <div class="section-title"><span class="num">2</span>JavaScript అంటే ఏమిటి?</div>
     <div class="section-body">
-      <p>1995 lo Netscape Communications lo unna <strong>Brendan Eich</strong> direct ga <strong>just 10 days lo</strong> JavaScript language ni create chesaru! Modatlo dheeni peru <em>Mocha</em>, tharvatha <em>LiveScript</em>, mariyu aurojullo popular ga unna Java language marketing trend ni thagattu final ga <strong>JavaScript</strong> ani perupettaru.</p>
-      
-      <p>Ippudu JavaScript <strong>ECMAScript (ES6 / ES2026+)</strong> standard dwara manage cheyyabaduthundhi.</p>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:16px;">
-          <strong style="color:#f7df1e; font-size:15px;">🌐 1. Front-End Web Development</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:6px; line-height:1.6;">React, Vue.js, Angular, Next.js frameworks dwara dynamic single-page applications (SPAs) build cheyyavachu.</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:16px;">
-          <strong style="color:#38bdf8; font-size:15px;">🖥️ 2. Back-End Server Development</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:6px; line-height:1.6;"><strong>Node.js & Express.js</strong> dwara server-side backend REST APIs and microservices run cheyyavachu.</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
-          <strong style="color:#3fb950; font-size:15px;">📱 3. Mobile & Desktop Apps</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:6px; line-height:1.6;"><strong>React Native</strong> for iOS/Android apps & <strong>Electron.js</strong> for desktop apps (VS Code, Discord, Slack are built on JS!).</p>
-        </div>
-      </div>
+      <p><strong>JavaScript</strong> ఒక <strong>programming language</strong>. Programming language అంటే కంప్యూటర్తో మాట్లాడటానికి మనం వాడే భాష. మనం తెలుగులో ఒక వ్యక్తికి "నీళ్లు తీసుకురా" అని చెబుతాం కదా, అలాగే కంప్యూటర్కి "ఈ పని చెయ్యి" అని చెప్పడానికి programming language వాడతాం.</p>
+      <p>JavaScript ని ముఖ్యంగా <strong>వెబ్సైట్లను సజీవంగా (interactive) మార్చడానికి</strong> వాడతారు. ఒక వెబ్సైట్ లో కేవలం text, images ఉంటే అది ఒక పుస్తకంలో పేజీ లాగా ఉంటుంది, మనం చూడగలం కానీ దానితో ఏమీ చేయలేం. అదే వెబ్సైట్లో JavaScript ఉంటే:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>బటన్ నొక్కితే ఏదైనా జరుగుతుంది</li>
+        <li>Form లో తప్పు email రాస్తే వెంటనే "సరైన email ఇవ్వండి" అని చెబుతుంది</li>
+        <li>Menu open అవుతుంది, close అవుతుంది</li>
+        <li>Dark mode, light mode మార్చుకోవచ్చు</li>
+        <li>Server నుంచి కొత్త data వచ్చి page లో కనిపిస్తుంది</li>
+      </ul>
+      <p>అంటే JavaScript అనేది వెబ్సైట్కి <strong>ప్రాణం పోస్తుంది</strong> అని చెప్పొచ్చు.</p>
     </div>
 
-    <!-- SECTION 3: JS vs Java -->
-    <div class="section-title"><span class="num">3</span>JavaScript vs Java (Crucial Differences)</div>
+    <div class="section-title"><span class="num">3</span>JavaScript ఎలా పుట్టింది?</div>
     <div class="section-body">
-      <p>Chaala mandhi beginners Java & JavaScript renduu okate anukuntaru. Kani avi renduu completely different languages! A famous developer quote says: <em>"Java is to JavaScript as Car is to Carpet!"</em> 🚗 vs 🧹</p>
+      <p>ఇది చాలా ఆసక్తికరమైన కథ. 1995 లో <strong>Netscape</strong> అనే company, తమ browser లో వెబ్సైట్లు కొంచెం interactive గా ఉండేలా చేయడానికి ఒక చిన్న language కావాలనుకుంది. ఆ పని <strong>Brendan Eich</strong> అనే engineer కి అప్పగించారు. ఆయన ఈ language ని కేవలం <strong>10 రోజుల్లో</strong> మొదటి version గా తయారు చేశారని చెబుతారు.</p>
+      <p>మొదట దీనికి వేరే పేర్లు ఉండేవి. తర్వాత "JavaScript" అనే పేరు పెట్టారు. ఈరోజు ఇది ప్రపంచంలో అత్యధికంగా వాడే programming languages లో ఒకటి. ఒక చిన్న ప్రయోగంగా మొదలైన language, ఇప్పుడు దాదాపు ప్రతి వెబ్సైట్లో ఉంది.</p>
+    </div>
 
+    <div class="section-title"><span class="num">4</span>HTML, CSS, JavaScript: ఒక ఇల్లు ఉదాహరణ</div>
+    <div class="section-body">
+      <p>వెబ్సైట్ తయారీలో మూడు ముఖ్యమైన భాగాలు ఉంటాయి. వీటిని ఒక <strong>ఇల్లు</strong> తో పోల్చి చూద్దాం.</p>
       <table class="tbl">
-        <tr><th>Feature</th><th>Java</th><th>JavaScript</th></tr>
-        <tr>
-          <td><strong>Language Type</strong></td>
-          <td>Statically Typed (Type specified at compile time)</td>
-          <td>Dynamically Typed (Type determined at runtime)</td>
-        </tr>
-        <tr>
-          <td><strong>Execution Model</strong></td>
-          <td>Compiled to Bytecode (<code>.class</code>) &rarr; Runs on JVM</td>
-          <td>Interpreted / JIT-compiled directly in JS Engine</td>
-        </tr>
-        <tr>
-          <td><strong>OOP Model</strong></td>
-          <td>Strict Class-based Object Oriented</td>
-          <td>Prototype-based Object Oriented</td>
-        </tr>
-        <tr>
-          <td><strong>Variable Syntax</strong></td>
-          <td><code>int score = 95;</code></td>
-          <td><code>let score = 95;</code></td>
-        </tr>
-        <tr>
-          <td><strong>Primary Ecosystem</strong></td>
-          <td>Enterprise Backends, Android, Banking</td>
-          <td>Web Browsers, Full-Stack Web, Node.js</td>
-        </tr>
+        <tr><th>భాగం</th><th>ఇంట్లో దేనికి సమానం</th><th>వెబ్సైట్లో ఏం చేస్తుంది</th></tr>
+        <tr><td><strong>HTML</strong></td><td>గోడలు, తలుపులు, కిటికీలు (ఇంటి నిర్మాణం)</td><td>Page లో ఏమేం ఉండాలో చెబుతుంది: heading, paragraph, image, button</td></tr>
+        <tr><td><strong>CSS</strong></td><td>రంగులు, పెయింటింగ్, ఫర్నిచర్ అమరిక (అందం)</td><td>Page ఎలా కనిపించాలో చెబుతుంది: colors, fonts, spacing</td></tr>
+        <tr><td><strong>JavaScript</strong></td><td>కరెంట్, స్విచ్లు, ఫ్యాన్, లైట్ (పని చేసే విధానం)</td><td>Page ఎలా ప్రవర్తించాలో చెబుతుంది: click చేస్తే ఏం జరగాలి</td></tr>
       </table>
+      <p>గోడలు కట్టి, రంగు వేసినా, కరెంట్ లేకపోతే ఇల్లు ఉపయోగపడదు కదా? స్విచ్ నొక్కితే లైట్ వెలగడం లాంటిదే JavaScript పని. అందుకే ఈ మూడూ కలిస్తేనే ఒక పూర్తి వెబ్సైట్ తయారవుతుంది.</p>
     </div>
 
-    <!-- SECTION 4: Browser Role & JS Engines -->
-    <div class="section-title"><span class="num">4</span>Browser lo JavaScript Role & JS Engines</div>
+    <div class="section-title"><span class="num">5</span>JavaScript ని ఎక్కడ వాడతారు?</div>
     <div class="section-body">
-      <p>Web Browser (Chrome, Firefox, Safari, Edge) lo JavaScript key role play chesthundi. Computer CPU ki direct ga JavaScript execution theliyadhu, andhuke prati browser lo oka <strong>JavaScript Engine</strong> built-in ga untundhi:</p>
+      <p>ఒకప్పుడు JavaScript కేవలం browser లోనే పని చేసేది. ఇప్పుడు పరిస్థితి మారింది. JavaScript తో మీరు చాలా రకాల పనులు చేయొచ్చు:</p>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><strong>Websites మరియు Web Apps:</strong> Gmail, YouTube, Facebook లాంటి వెబ్సైట్ల interactive భాగాలు JavaScript తో నడుస్తాయి.</li>
+        <li><strong>Server-side programming:</strong> <strong>Node.js</strong> అనే technology వల్ల, browser బయట కూడా, అంటే server మీద కూడా JavaScript run చేయొచ్చు. అంటే ఒకే language తో front-end మరియు back-end రెండూ రాయొచ్చు.</li>
+        <li><strong>Mobile Apps:</strong> React Native లాంటి tools తో Android మరియు iPhone apps తయారు చేయొచ్చు.</li>
+        <li><strong>Games:</strong> Browser లో ఆడుకునే చిన్న games JavaScript తో తయారవుతాయి.</li>
+        <li><strong>Desktop Apps:</strong> VS Code editor కూడా JavaScript technologies తో తయారైనదే.</li>
+      </ol>
+      <p>అందుకే JavaScript నేర్చుకుంటే ఉద్యోగ అవకాశాలు చాలా ఎక్కువ. Web developer, Full-stack developer, App developer ఇలా చాలా రోల్స్కి ఇది అవసరం.</p>
+    </div>
 
+    <div class="section-title"><span class="num">6</span>Java మరియు JavaScript ఒకటి కాదు!</div>
+    <div class="section-body">
+      <p>ఇది చాలా మంది beginners చేసే పెద్ద పొరపాటు. పేరులో "Java" ఉంది కాబట్టి రెండూ ఒకటే అనుకుంటారు. కానీ రెండూ <strong>పూర్తిగా వేరు వేరు languages</strong>.</p>
+      <p>దీన్ని ఇలా గుర్తుపెట్టుకోండి: <strong>Java కి JavaScript కి ఉన్న సంబంధం, కారు (Car) కి కార్పెట్ (Carpet) కి ఉన్న సంబంధం లాంటిది.</strong> రెండు పేర్లలో "Car" ఉంది, కానీ రెండూ ఒకటి కావు కదా!</p>
       <table class="tbl">
-        <tr><th>Web Browser</th><th>JavaScript Engine Name</th><th>Developer / Maintainer</th></tr>
-        <tr><td><strong>Google Chrome & Node.js</strong></td><td><strong>V8 Engine</strong></td><td>Google (Written in C++)</td></tr>
-        <tr><td><strong>Mozilla Firefox</strong></td><td><strong>SpiderMonkey</strong></td><td>Mozilla Foundation</td></tr>
-        <tr><td><strong>Apple Safari</strong></td><td><strong>JavaScriptCore (Nitro)</strong></td><td>Apple Inc.</td></tr>
-        <tr><td><strong>Microsoft Edge</strong></td><td><strong>V8 Engine</strong> (Chromium-based)</td><td>Microsoft / Google</td></tr>
+        <tr><th>Java</th><th>JavaScript</th></tr>
+        <tr><td>ముఖ్యంగా Android apps, enterprise software కోసం</td><td>ముఖ్యంగా వెబ్సైట్లు, web apps కోసం</td></tr>
+        <tr><td>Code ని ముందు compile చేయాలి</td><td>Browser నేరుగా code ని run చేస్తుంది</td></tr>
+        <tr><td>రాయడానికి ఎక్కువ code అవసరం</td><td>తక్కువ code తో పని పూర్తవుతుంది</td></tr>
       </table>
+      <p>ఆ కాలంలో Java చాలా ప్రాచుర్యంలో ఉండటంతో, marketing కోసం ఈ పేరు పెట్టారని చెబుతారు. అంతే, వేరే సంబంధం ఏమీ లేదు.</p>
     </div>
 
-    <!-- SECTION 5: 3 Methods to Add JS to HTML -->
-    <div class="section-title"><span class="num">5</span>Adding JavaScript to HTML (3 Methods)</div>
+    <div class="section-title"><span class="num">7</span>మన మొదటి JavaScript Program</div>
     <div class="section-body">
-      <p>HTML page lo JavaScript add cheyyadaniki 3 main approaches unnaayi:</p>
-
-      <!-- Method 1: Inline JS -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px; margin:14px 0;">
-        <h4 style="color:#ff7b72; margin-bottom:6px;">Method 1: Inline JavaScript (Not Recommended for Large Apps)</h4>
-        <p style="font-size:13px; color:var(--text2);">Direct ga HTML element tag inner event attributes lo code rayadam:</p>
-        <code style="display:block; margin-top:6px; background:#0d1117; padding:8px 12px; border-radius:6px; color:#e6edf3;">&lt;button onclick="alert('Button clicked!')"&gt;Click Me&lt;/button&gt;</code>
-      </div>
-
-      <!-- Method 2: Internal JS -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:16px; margin:14px 0;">
-        <h4 style="color:#58a6ff; margin-bottom:6px;">Method 2: Internal JavaScript</h4>
-        <p style="font-size:13px; color:var(--text2);">HTML file lo <code>&lt;script&gt;</code> tags lopala JavaScript logic rayadam:</p>
-        <div class="code-block" style="margin-top:8px;">
-          <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;title&gt;Internal JS Demo&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;h1&gt;Welcome to Our Compiler&lt;/h1&gt;
-    &lt;script&gt;
-        console.log("Internal JavaScript Executed!");
-    &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-        </div>
-      </div>
-
-      <!-- Method 3: External JS -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px; margin:14px 0;">
-        <h4 style="color:#3fb950; margin-bottom:6px;">Method 3: External JavaScript (Industry Best Practice ⭐)</h4>
-        <p style="font-size:13px; color:var(--text2);">Separate <code>script.js</code> file maintain chesi, HTML file lo <code>&lt;script src="script.js" defer&gt;&lt;/script&gt;</code> dwara link cheyyadam. Code organization, caching, and maintainability ki idhe standard!</p>
-      </div>
-    </div>
-
-    <!-- SECTION 6: console.log() and Strict Mode -->
-    <div class="section-title"><span class="num">6</span>console.log() & Strict Mode ("use strict")</div>
-    <div class="section-body">
-      <p>JavaScript lo debugging and console output print cheyyadaniki <code>console.log()</code> vadathamu. Browser DevTools Console (F12) or terminal lo idhi print avthundhi.</p>
-
-      <h4 style="color:#f7df1e; margin:14px 0 6px;">Strict Mode ("use strict";)</h4>
-      <p>ECMAScript 5 lo introduce chesina <strong>Strict Mode</strong> JavaScript engine ki strict execution rules enforcement isthundi. Undeclared global variables, accidental silent bugs, and unsafe operations ni errors ga throw chesthundi.</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Strict Mode & console.log</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// 1. Standard Console Output
-console.log("Hello, JavaScript!");
-console.log("Welcome to Our Compiler Masterclass 🚀");
-
-// 2. Logging Variables
-let userRole = "Full Stack Engineer";
-let experienceYears = 2026;
-console.log("Role:", userRole, "| Year:", experienceYears);
-
-// 3. Strict Mode Error Prevention:
-// Without "use strict", x = 10 creates an accidental global variable.
-// With "use strict", the line below throws: ReferenceError: x is not defined
-// x = 10;</code></pre>
-      </div>
-    </div>
-
-    <!-- SECTION 7: Try It Yourself Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — First JS Challenge</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this interactive JavaScript program that calculates portfolio stats and logs formatted messages:</p>
-      
+      <p>ఇప్పుడు అసలు విషయానికి వద్దాం. ప్రతి programmer తన మొదటి program లో "Hello, World!" అని print చేస్తారు. ఇది ఒక సంప్రదాయం. మనం కూడా అదే చేద్దాం.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">JavaScript</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
-
-console.log("=================================");
-console.log("⚡ DEVELOPER PROFILE CARD");
-console.log("=================================");
-
-let developerName = "Balaji Nayak";
-let targetStack = "JavaScript (React & Node.js)";
-let isCompletedPhase1 = true;
-
-console.log("Name:", developerName);
-console.log("Stack:", targetStack);
-console.log("Phase 1 Status:", isCompletedPhase1 ? "Completed ✅" : "In Progress ⏳");
-console.log("=================================");</code></pre>
+        <pre><code>console.log("Hello, World!");</code></pre>
       </div>
-      <a class="run-btn" href="/?lang=nodejs">Run This Code in Our Compiler →</a>
+      <p style="margin-top:10px;"><strong>Output:</strong></p>
+      <pre style="background: #1e1e1e; color: #fff; padding: 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;">Hello, World!</pre>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 18px;">Code ని లైన్ బై లైన్ అర్థం చేసుకుందాం</h3>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><code>console.log()</code> అనేది ఒక <strong>command</strong>. ఇది మనం ఇచ్చిన దాన్ని screen మీద (console లో) చూపిస్తుంది.</li>
+        <li>కుండలీకరణాల (<code>()</code>) లోపల మనం చూపించాలనుకున్న విషయాన్ని ఇస్తాం.</li>
+        <li><code>"Hello, World!"</code> అనేది ఒక <strong>text (string)</strong>. Text ని ఎప్పుడూ quotation marks (<code>" "</code>) మధ్యలో రాయాలి.</li>
+        <li>చివరిలో ఉన్న <code>;</code> (semicolon) ఒక statement ముగిసిందని సూచిస్తుంది.</li>
+      </ul>
+      <p>ఇదే మీ మొదటి JavaScript program. అభినందనలు, మీరు ఇప్పుడు ఒక JavaScript programmer అయ్యారు!</p>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 18px;">మీ పేరు print చేద్దాం</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>console.log("నా పేరు రవి");
+console.log("నేను JavaScript నేర్చుకుంటున్నాను");</code></pre>
+      </div>
+      <p style="margin-top:10px;"><strong>Output:</strong></p>
+      <pre style="background: #1e1e1e; color: #fff; padding: 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;">నా పేరు రవి
+నేను JavaScript నేర్చుకుంటున్నాను</pre>
+      <p>ప్రతి <code>console.log()</code> ఒక కొత్త లైన్ లో output ఇస్తుంది. మీ పేరు రాసి మీరూ try చేయండి.</p>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="section-title"><span class="num">8</span>మరో ఉదాహరణ: alert box</div>
+    <div class="section-body">
+      <p>Browser లో ఒక popup message చూపించడానికి <code>alert()</code> వాడతాం.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript</span>
+        </div>
+        <pre><code>alert("స్వాగతం! JavaScript నేర్చుకుందాం");</code></pre>
+      </div>
+      <p>ఇది browser లో run చేస్తే ఒక చిన్న popup box వచ్చి ఆ message చూపిస్తుంది.</p>
+      
+      <div class="callout" style="margin-top: 15px;">
+        <div class="callout-title">గమనిక:</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14px;"><code>alert()</code> browser లో మాత్రమే పని చేస్తుంది. కొన్ని online compilers లో ఇది పని చేయదు. అందుకే మనం ఎక్కువగా <code>console.log()</code> నే వాడతాం.</p>
+      </div>
     </div>
+
+    <div class="section-title"><span class="num">9</span>HTML లో JavaScript: ఒక చిన్న ఉదాహరణ</div>
+    <div class="section-body">
+      <p>JavaScript అసలు శక్తి వెబ్సైట్లో కనిపిస్తుంది. ఈ చిన్న ఉదాహరణ చూడండి:</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">HTML</span>
+        </div>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+
+  &lt;h2 id="msg"&gt;నమస్కారం!&lt;/h2&gt;
+  &lt;button onclick="changeText()"&gt;ఇక్కడ నొక్కండి&lt;/button&gt;
+
+  &lt;script&gt;
+    function changeText() {
+      document.getElementById("msg").innerText = "JavaScript పని చేస్తోంది!";
+    }
+  &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+      <p style="margin-top:10px;"><strong>ఇది ఏం చేస్తుంది:</strong> పేజీలో "నమస్కారం!" అనే heading మరియు ఒక బటన్ కనిపిస్తాయి. బటన్ నొక్కగానే heading "JavaScript పని చేస్తోంది!" గా మారుతుంది, page refresh అవ్వకుండానే.</p>
+      <p>ఇప్పుడు ఈ code పూర్తిగా అర్థం కాకపోయినా భయపడకండి. <code>function</code>, <code>document</code> లాంటివి ముందు chapters లో వివరంగా నేర్చుకుంటాం. ఇప్పుడు మీరు గుర్తుపెట్టుకోవాల్సింది ఒక్కటే: <strong>బటన్ నొక్కినప్పుడు page లో ఏదో మార్చగలగడమే JavaScript శక్తి.</strong></p>
+    </div>
+
+    <div class="section-title"><span class="num">10</span>Beginners చేసే సాధారణ తప్పులు</div>
+    <div class="section-body">
+      <p><strong>1. Java మరియు JavaScript ని ఒకటే అనుకోవడం.</strong><br>రెండూ వేరు వేరు. Java నేర్చుకున్నంత మాత్రాన JavaScript రాదు, JavaScript నేర్చుకున్నంత మాత్రాన Java రాదు.</p>
+      
+      <p style="margin-top: 10px;"><strong>2. Quotation marks మర్చిపోవడం.</strong></p>
+      <p style="color:var(--text2); font-size:14px;">తప్పు:</p>
+      <div class="code-block"><pre><code>console.log(Hello);</code></pre></div>
+      <p style="color:var(--text2); font-size:14px;">ఇది error ఇస్తుంది (<code>Hello is not defined</code>), ఎందుకంటే text ని quotes లో రాయలేదు.</p>
+      
+      <p style="color:var(--text2); font-size:14px; margin-top:8px;">సరైనది:</p>
+      <div class="code-block"><pre><code>console.log("Hello");</code></pre></div>
+      
+      <p style="margin-top: 15px;"><strong>3. అక్షరాల పొరపాట్లు (Case sensitivity).</strong><br>JavaScript లో పెద్ద అక్షరం, చిన్న అక్షరం తేడా ఉంటుంది. <code>console.log</code> సరైనది, కానీ <code>Console.Log</code> లేదా <code>console.Log</code> రాస్తే error వస్తుంది.</p>
+      
+      <p style="margin-top: 10px;"><strong>4. కుండలీకరణాలు (brackets) మూసివేయకపోవడం.</strong><br><code>console.log("Hi"</code> అని రాసి <code>)</code> మర్చిపోతే error వస్తుంది. ప్రతి <code>(</code> కి ఒక <code>)</code> ఉండాలి.</p>
+    </div>
+
+    <div class="section-title"><span class="num">11</span>ప్రాక్టీస్ ప్రశ్నలు</div>
+    <div class="section-body">
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>మీ పేరు print చేసే ఒక program రాయండి.</li>
+        <li>మూడు వేర్వేరు లైన్లలో మీ పేరు, మీ ఊరు, మీకు ఇష్టమైన ఆట print చేయండి.</li>
+        <li>HTML, CSS, JavaScript లలో ప్రతిదాని పని ఒక్క వాక్యంలో రాయండి.</li>
+        <li>ఈ code లో తప్పు ఏమిటో కనుక్కోండి: <code>console.log("Welcome)</code></li>
+        <li><code>Console.log("Hi");</code> run చేస్తే ఏం జరుగుతుంది? ఎందుకు?</li>
+      </ol>
+      
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 10px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: var(--text);">సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 10px; font-size: 14px; color: var(--text2);">
+          <p><strong>1.</strong><br><code>console.log("రవి కుమార్");</code></p>
+          <p style="margin-top: 8px;"><strong>2.</strong><br><code>console.log("నా పేరు సీత");</code><br><code>console.log("నా ఊరు హైదరాబాద్");</code><br><code>console.log("నాకు ఇష్టమైన ఆట క్రికెట్");</code></p>
+          <p style="margin-top: 8px;"><strong>3.</strong> HTML page నిర్మాణాన్ని (structure) ఇస్తుంది, CSS దానికి అందాన్ని (design) ఇస్తుంది, JavaScript దానికి పని చేసే గుణాన్ని (behaviour) ఇస్తుంది.</p>
+          <p style="margin-top: 8px;"><strong>4.</strong> Closing quotation mark (<code>"</code>) లేదు. సరైనది: <code>console.log("Welcome");</code></p>
+          <p style="margin-top: 8px;"><strong>5.</strong> Error వస్తుంది (<code>Console is not defined</code>). JavaScript case-sensitive, కాబట్టి <code>console</code> చిన్న అక్షరాలతో రాయాలి.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="try-box">
+      <div class="try-title">🚀 మీరే try చేయండి</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">పైన నేర్చుకున్న <code>console.log("Hello, World!");</code> ని మన compiler లో ఇప్పుడే run చేసి చూడండి. మీ పేరు మార్చి రాసి, output ఎలా మారుతుందో గమనించండి.</p>
+      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript try చేయండి</a>
+    </div>
+
+    <div class="section-title"><span class="num">12</span>సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><strong>JavaScript</strong> ఒక programming language, వెబ్సైట్లను interactive గా చేయడానికి వాడతారు.</li>
+        <li><strong>HTML</strong> నిర్మాణం, <strong>CSS</strong> అందం, <strong>JavaScript</strong> పని చేసే విధానం.</li>
+        <li>JavaScript ని websites, servers (Node.js), mobile apps, games లో వాడతారు.</li>
+        <li><strong>Java మరియు JavaScript వేరు వేరు languages.</strong></li>
+        <li><code>console.log()</code> తో మనం screen మీద output చూపిస్తాం.</li>
+        <li>JavaScript <strong>case-sensitive</strong>, text ఎప్పుడూ quotes లో రాయాలి.</li>
+      </ul>
+    </div>
+
   `;
 
   const html = wrapJSLessonPage(title, desc, filename, 1, subtopics, contentBody, null, null, '02-javascript-syntax-and-errors.html', '2. Syntax & Error Handling');
@@ -1232,169 +1262,175 @@ console.log("=================================");</code></pre>
 
 // ── BUILD LESSON 2: Syntax, Statements & Error Handling (Phase 1 Part 2) ───
 function buildLesson2() {
-  const title = "Syntax, Statements & Error Handling";
-  const desc = "Master JavaScript syntax rules: single and multi-line comments, statements, semicolons & Automatic Semicolon Insertion (ASI), case sensitivity, and the 3 types of Errors (Syntax, Runtime, Logical).";
+  const title = "JavaScript Syntax & Errors | కోడ్ ఎలా రాయాలి (Telugu)";
+  const desc = "JavaScript లో కామెంట్స్, స్టేట్మెంట్స్, సెమికోలన్ వాడకం, ASI, Case Sensitivity, మరియు Errors (Syntax, Runtime, Logical) గురించి తెలుగులో తెలుసుకోండి.";
   const filename = "02-javascript-syntax-and-errors.html";
   const subtopics = "Comments (Single & Multi-line) · Statements · Semicolons & ASI · Case Sensitivity · Syntax Errors · Runtime Errors · Logical Errors";
 
   const contentBody = `
+
     <div class="intro-box">
-      <p>In this second lesson of Phase 1, we delve into the core grammar rules of JavaScript: <strong>Statements, Semicolons & Automatic Semicolon Insertion (ASI)</strong>, <strong>Case Sensitivity</strong>, <strong>Comments</strong>, and a comprehensive breakdown of the <strong>3 categories of Programming Errors</strong> (Syntax vs Runtime vs Logical errors) with practical debugging strategies.</p>
+      <p>పోయిన chapter లో మనం మన మొదటి program రాసాం కదా? ఈ chapter లో JavaScript రాసేటప్పుడు పాటించాల్సిన కొన్ని ముఖ్యమైన నియమాలు (Grammar rules) నేర్చుకుందాం. ఇంగ్లీష్ కి grammar ఎలానో, programming కి <strong>Syntax</strong> అలా అన్నమాట.</p>
+      <p>అలాగే మనం తప్పులు చేసినప్పుడు కంప్యూటర్ ఎలా అరుస్తుందో (Errors) కూడా చూద్దాం. భయపడకండి, తప్పులు చేయడం వల్లే బాగా నేర్చుకుంటారు!</p>
     </div>
 
-    <!-- SECTION 1: Comments in JavaScript -->
-    <div class="section-title"><span class="num">1</span>Comments in JavaScript (Code Documentation)</div>
+    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
     <div class="section-body">
-      <p>Comments developer rase logic ni explain cheyyadaniki mariyu code readability penchadaniki vadathamu. JS Engine execution time lo comments ni completely ignore chesthundi:</p>
-
-      <table class="tbl">
-        <tr><th>Comment Type</th><th>Syntax</th><th>Usage</th></tr>
-        <tr>
-          <td><strong>1. Single-Line Comment</strong></td>
-          <td><code>// Your comment here</code></td>
-          <td>Short explanations on a single line.</td>
-        </tr>
-        <tr>
-          <td><strong>2. Multi-Line Comment</strong></td>
-          <td><code>/* Line 1<br>Line 2 */</code></td>
-          <td>Longer explanations spanning across multiple lines.</td>
-        </tr>
-        <tr>
-          <td><strong>3. JSDoc Comment</strong></td>
-          <td><code>/** JSDoc description<br>* @param {string} name */</code></td>
-          <td>Used by VS Code and documentation generators for type hints and autocomplete.</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- SECTION 2: Statements, Semicolons & ASI -->
-    <div class="section-title"><span class="num">2</span>Statements, Semicolons & Automatic Semicolon Insertion (ASI)</div>
-    <div class="section-body">
-      <p>JavaScript lo prati execution instruction ni <strong>Statement</strong> antaru. Statements sequential ga execute avthayi.</p>
-
-      <h4 style="color:#f7df1e; margin:14px 0 6px;">Semicolons (;) & ASI Gotchas</h4>
-      <p>Statements చివర <strong>Semicolon <code>;</code></strong> unchadam best practice. JavaScript lo <strong>ASI (Automatic Semicolon Insertion)</strong> అనే feature undhi — meeru semicolon rayaka poina browser automatically insert cheskuntundhi. Kani ASI ni completely trust cheste konni hidden bugs edhuravthayi:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — ASI Return Bug Trap</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-function getUser() {
-    // Dangerous ASI Trap:
-    // JS inserts semicolon right after return!
-    return
-    {
-        name: "Balaji"
-    };
-}
-
-console.log("User Object:", getUser()); // Prints undefined instead of Object!</code></pre>
-      </div>
-    </div>
-
-    <!-- SECTION 3: Case Sensitivity -->
-    <div class="section-title"><span class="num">3</span>Case Sensitivity in JavaScript</div>
-    <div class="section-body">
-      <p>JavaScript is <strong>strictly case-sensitive</strong>. Capital and small letters completely different identifiers ga count avthayi:</p>
-
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><code>let score = 100;</code> and <code>let Score = 200;</code> are two separate variables in memory.</li>
-        <li>JavaScript keywords MUST be in lowercase: <code>function</code>, <code>if</code>, <code>const</code>, <code>return</code>. (e.g. <code>Function</code> or <code>IF</code> will throw a SyntaxError).</li>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>Comments అంటే ఏమిటి, ఎందుకు వాడతారు</li>
+        <li>Statements మరియు Semicolon <code>;</code> ప్రాముఖ్యత</li>
+        <li>Automatic Semicolon Insertion (ASI) అంటే ఏంటి</li>
+        <li>Case Sensitivity అంటే ఏమిటి</li>
+        <li>Errors లోని మూడు రకాలు (Syntax, Runtime, Logical)</li>
       </ul>
     </div>
 
-    <!-- SECTION 4: The 3 Types of Errors -->
-    <div class="section-title"><span class="num">4</span>The 3 Types of Errors (Syntax, Runtime & Logical Errors)</div>
+    <div class="section-title"><span class="num">2</span>Comments (కామెంట్స్) అంటే ఏమిటి?</div>
     <div class="section-body">
-      <!-- 1. Syntax Errors -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:18px; margin:16px 0;">
-        <h3 style="color:#ff7b72; font-size:16px; margin-bottom:8px;">1. Syntax Errors (Parse-Time Errors)</h3>
-        <p style="color:var(--text2); font-size:14px; line-height:1.6;">JavaScript grammar rules ni violate chesinappudu JS engine code parse/tokenize chesetappude (before execution) SyntaxError throw chesi execution completely stop chesthundi.</p>
-        
-        <div style="font-size:13px; color:var(--text); margin:8px 0;"><strong>Examples:</strong></div>
-        <ul style="margin-left:18px; color:var(--text2); font-size:13px; line-height:1.7;">
-          <li>Missing closing parenthesis <code>)</code> or bracket.</li>
-          <li>Unclosed String literal (missing quote).</li>
-          <li>Keyword typo (e.g. <code>fuction myFunc()</code>).</li>
-        </ul>
-      </div>
-
-      <!-- 2. Runtime Errors -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:18px; margin:16px 0;">
-        <h3 style="color:#f7df1e; font-size:16px; margin-bottom:8px;">2. Runtime Errors (Exceptions)</h3>
-        <p style="color:var(--text2); font-size:14px; line-height:1.6;">Code syntax correct gaane parsing complete avthundhi. Kani script run ayye time lo illegal operation (e.g. calling an undefined variable or property on null) jariginappudu script crash ayyi Exception throw chesthundi.</p>
-        
-        <div style="font-size:13px; color:var(--text); margin:8px 0;"><strong>Examples:</strong></div>
-        <ul style="margin-left:18px; color:var(--text2); font-size:13px; line-height:1.7;">
-          <li><code>ReferenceError: x is not defined</code> (Accessing un-declared variable).</li>
-          <li><code>TypeError: Cannot read properties of null</code> (Calling method on null/undefined).</li>
-        </ul>
-      </div>
-
-      <!-- 3. Logical Errors -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:18px; margin:16px 0;">
-        <h3 style="color:#3fb950; font-size:16px; margin-bottom:8px;">3. Logical Errors (Silent Bugs)</h3>
-        <p style="color:var(--text2); font-size:14px; line-height:1.6;">Program 0 error messages tho run avthundhi. Kani developer logic/formula wrong unna karanam ga <strong>wrong output</strong> vasthundhi (hardest to detect).</p>
-      </div>
+      <p>మనం రాసిన code ఏమి చేస్తుందో రేపు మనకు కానీ, వేరేవాళ్లకు కానీ అర్థం కావడానికి రాసుకునే నోట్స్ నే <strong>Comments</strong> అంటారు.</p>
+      <p>కంప్యూటర్ ఈ కామెంట్స్ ని పూర్తిగా వదిలేస్తుంది, వాటిని run చేయదు. కేవలం మనుషులు చదువుకోవడానికే ఇవి ఉంటాయి.</p>
+      
+      <p style="margin-top:10px;">JavaScript లో 2 రకాల కామెంట్స్ ఉన్నాయి:</p>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li><strong>Single-line comment:</strong> ఇది <code>//</code> తో మొదలవుతుంది.</li>
+        <li><strong>Multi-line comment:</strong> ఇది <code>/*</code> తో మొదలై <code>*/</code> తో ముగుస్తుంది.</li>
+      </ol>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Error Types Demo</span>
+          <span class="lang-tag">JavaScript</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
+        <pre><code>// ఇది Single-line comment. కింది లైన్ లో పేరు print చేస్తున్నాను
+console.log("రాము"); 
 
-let num1 = 20;
-let num2 = 10;
-
-// Correct Sum
-let sum = num1 + num2;
-console.log("Sum:", sum);
-
-// Logical Error Example:
-// Expected average of 20 and 10 is 15.
-let wrongAvg = num1 + num2 / 2;    // Evaluates to: 20 + 5 = 25 (BUG!)
-let correctAvg = (num1 + num2) / 2; // Evaluates to: (30)/2 = 15 (CORRECT!)
-
-console.log("Wrong Average (Logical Bug):", wrongAvg);
-console.log("Correct Average:", correctAvg);</code></pre>
+/* 
+ఇది Multi-line comment.
+ఇందులో మీరు ఎన్ని లైన్స్ అయినా రాయొచ్చు.
+కంప్యూటర్ దీన్ని అస్సలు పట్టించుకోదు.
+*/
+console.log("హైదరాబాద్");</code></pre>
       </div>
     </div>
 
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — Debugging Exercise</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Fix the logical bug in calculating the total discount below:</p>
+    <div class="section-title"><span class="num">3</span>Statements మరియు Semicolons (<code>;</code>)</div>
+    <div class="section-body">
+      <p>కంప్యూటర్ కి మనం ఇచ్చే ఒక పూర్తి ఆదేశాన్ని (Instruction) <strong>Statement</strong> అంటారు. ఇంగ్లీష్ లో ఒక వాక్యం పూర్తవ్వగానే <strong>Full stop (.)</strong> ఎలా పెడతామో, JavaScript లో ఒక statement పూర్తవ్వగానే <strong>Semicolon (<code>;</code>)</strong> పెడతాం.</p>
       
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript Debugging</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+          <span class="lang-tag">JavaScript</span>
         </div>
-        <pre><code>"use strict";
-
-let price = 500;
-let quantity = 2;
-let discountPercent = 10; // 10%
-
-let total = price * quantity; // 1000
-let discount = (total * discountPercent) / 100; // 100
-let finalBill = total - discount;
-
-console.log("Total Amount: Rs." + total);
-console.log("Discount: Rs." + discount);
-console.log("Final Bill: Rs." + finalBill);</code></pre>
+        <pre><code>console.log("Hello"); // ఇది ఒక statement
+console.log("World"); // ఇది ఇంకొక statement</code></pre>
       </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
+      
+      <p style="margin-top:10px;">అదే ఒకవేళ మీరు రెండు statements ని ఒకే లైన్ లో రాయాలంటే, కచ్చితంగా మధ్యలో <code>;</code> పెట్టాలి. లేకపోతే error వస్తుంది.</p>
+      <div class="code-block">
+        <pre><code>console.log("Hello"); console.log("World"); // సరైనది</code></pre>
+      </div>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="section-title"><span class="num">4</span>Automatic Semicolon Insertion (ASI)</div>
+    <div class="section-body">
+      <p>కొన్నిసార్లు మనం కంగారులో చివరన సెమికోలన్ <code>;</code> పెట్టడం మర్చిపోతాం. అయినా మన program పని చేస్తుంది! ఎందుకంటే జావాస్క్రిప్ట్ ఇంజిన్ చాలా మంచిది. మీరు సెమికోలన్ పెట్టకపోతే, అది అర్థం చేసుకుని తనంతట తానే ఒక సెమికోలన్ ని ఊహించుకుంటుంది. దీనినే <strong>Automatic Semicolon Insertion (ASI)</strong> అంటారు.</p>
+      <p>కానీ, <strong>ఎప్పుడూ ASI మీద ఆధారపడకండి</strong>. అది కొన్నిసార్లు తప్పుగా ఊహించుకుని ఊహించని errors కి దారి తీస్తుంది. కాబట్టి ప్రతీ statement చివర <code>;</code> పెట్టడం ఒక మంచి అలవాటుగా చేసుకోండి.</p>
     </div>
+
+    <div class="section-title"><span class="num">5</span>Case Sensitivity (చిన్న అక్షరాలు - పెద్ద అక్షరాలు)</div>
+    <div class="section-body">
+      <p>JavaScript కి <strong>Case Sensitivity</strong> ఉంటుంది. అంటే దానికి <code>A</code> వేరు, <code>a</code> వేరు. రెండు ఒకటే కాదు.</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript</span>
+        </div>
+        <pre><code>let Name = "Ravi";
+let name = "Teja";
+let NAME = "Kiran";</code></pre>
+      </div>
+      <p style="margin-top:10px;">పైన రాసిన మూడు వేర్వేరు variables! కాబట్టి మీరు <code>console.log</code> ని <code>Console.log</code> అని రాస్తే పని చేయదు.</p>
+    </div>
+
+    <div class="section-title"><span class="num">6</span>Errors (తప్పులు) లో 3 రకాలు</div>
+    <div class="section-body">
+      <p>Program రాసేటప్పుడు errors రావడం చాలా సహజం. పెద్ద పెద్ద programmers కి కూడా రోజుకి వందల errors వస్తాయి. Errors లో ముఖ్యంగా 3 రకాలు ఉంటాయి.</p>
+      
+      <table class="tbl">
+        <tr><th>Error రకం</th><th>వివరణ</th><th>రియల్ లైఫ్ ఉదాహరణ</th></tr>
+        <tr>
+          <td><strong>1. Syntax Error</strong></td>
+          <td>JavaScript grammar రూల్స్ పాటించకపోతే వస్తుంది. Program అసలు run అవ్వదు.</td>
+          <td>తెలుగులో "నేను అన్నం తిన్నాను" కి బదులు "అన్నం నేను తిన్నాను" అని రాయడం.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Runtime Error</strong></td>
+          <td>Syntax కరెక్టే కానీ, run అవుతున్నప్పుడు లేని దాన్ని అడిగితే వస్తుంది.</td>
+          <td>హోటల్ కి వెళ్లి మెనూలో లేని వంటకం తీసుకురమ్మని అడగటం.</td>
+        </tr>
+        <tr>
+          <td><strong>3. Logical Error</strong></td>
+          <td>ఎలాంటి error మెసేజ్ రాదు. కానీ మీకు కావాల్సిన output రాదు. ఇది పట్టుకోవడం చాలా కష్టం.</td>
+          <td>టీ పెట్టబోయి అందులో పంచదారకి బదులు ఉప్పు వేయడం! అంతా బాగానే జరిగింది కానీ తాగితే తెలుస్తుంది తప్పు జరిగిందని.</td>
+        </tr>
+      </table>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 18px;">ఉదాహరణలు చూద్దాం:</h3>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Errors</span>
+        </div>
+        <pre><code>// 1. Syntax Error: బ్రాకెట్ మూసివేయలేదు
+console.log("Hello" ; 
+
+// 2. Runtime Error: console.log స్పెల్లింగ్ తప్పు రాసాం
+consol.log("Hello"); 
+
+// 3. Logical Error: కూడిక చేయబోయి తీసివేత చేశాం
+console.log("5 + 5 = " + (5 - 5)); // Output: 5 + 5 = 0 అని వస్తుంది!</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">7</span>Beginners చేసే సాధారణ తప్పులు</div>
+    <div class="section-body">
+      <p><strong>1. కామెంట్స్ లోనే కోడ్ రాయడం.</strong><br>పొరపాటున <code>//</code> తర్వాత రాస్తే అది పని చేయదు.</p>
+      <div class="code-block"><pre><code>// console.log("ఇది ప్రింట్ అవ్వదు");</code></pre></div>
+      
+      <p style="margin-top: 10px;"><strong>2. Error మెసేజ్ చదివి భయపడటం.</strong><br>Error మెసేజ్ ని ఎప్పుడూ చదవాలి. అది ఏ లైన్ లో ఉందో, ఎందుకు వచ్చిందో క్లియర్ గా చెబుతుంది. దాన్ని చూసి పారిపోకూడదు!</p>
+    </div>
+
+    <div class="section-title"><span class="num">8</span>ప్రాక్టీస్ ప్రశ్నలు</div>
+    <div class="section-body">
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>ఈ కోడ్ లో తప్పు ఏమిటో కనుక్కోండి: <code>Console.log("Hello");</code></li>
+        <li>Automatic Semicolon Insertion (ASI) అంటే ఏమిటి?</li>
+        <li>మీకు బాగా ఇష్టమైన సినిమా పేరును print చేయండి, ఆ లైన్ పైన అదెందుకు ఇష్టమో ఒక కామెంట్ రాయండి.</li>
+        <li>Syntax error కి Logical error కి ఉన్న ముఖ్యమైన తేడా ఏమిటి?</li>
+      </ol>
+      
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 10px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: var(--text);">సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 10px; font-size: 14px; color: var(--text2);">
+          <p><strong>1.</strong> <code>console</code> కి బదులు పెద్ద అక్షరం <code>C</code> తో మొదలైంది. ఇది Case Sensitivity వల్ల error ఇస్తుంది.</p>
+          <p style="margin-top: 8px;"><strong>2.</strong> మనం సెమికోలన్ <code>;</code> మర్చిపోతే, బ్రౌజర్ దానంతట అదే దాన్ని పెట్టుకునే ఫీచర్ ని ASI అంటారు.</p>
+          <p style="margin-top: 8px;"><strong>3.</strong><br><code>// ఈ సినిమాలో కామెడీ బాగుంటుంది</code><br><code>console.log("జల్సా");</code></p>
+          <p style="margin-top: 8px;"><strong>4.</strong> Syntax error వస్తే program అసలు run అవ్వదు. Logical error వస్తే program run అవుతుంది కానీ మనకు కావాల్సిన కరెక్ట్ ఆన్సర్ రాదు.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="section-title"><span class="num">9</span>సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
+        <li>కోడ్ ని అర్థం చేసుకోవడానికి <strong>Comments</strong> వాడతాం (<code>//</code> లేదా <code>/* */</code>).</li>
+        <li>ఒక ఇన్స్ట్రక్షన్ ని <strong>Statement</strong> అంటారు, ఇది సెమికోలన్ <code>;</code> తో ముగుస్తుంది.</li>
+        <li>మనం మర్చిపోతే జావాస్క్రిప్ట్ ఇంజిన్ దానంతట అదే పెట్టుకునేదే <strong>ASI</strong>.</li>
+        <li>JavaScript కి పెద్ద అక్షరాలు చిన్న అక్షరాలు (Case Sensitivity) అంటే పట్టింపు ఎక్కువ.</li>
+        <li><strong>Errors లో 3 రకాలు:</strong> Syntax, Runtime, Logical.</li>
+      </ul>
+    </div>
+
   `;
 
   const html = wrapJSLessonPage(title, desc, filename, 2, subtopics, contentBody, '01-javascript-fundamentals.html', '1. Welcome & JS Fundamentals', 'variables.html', 'Phase 2: Variables');
@@ -1493,7 +1529,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

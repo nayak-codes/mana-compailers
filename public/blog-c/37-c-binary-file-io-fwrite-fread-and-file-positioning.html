@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C Binary File I/O, Struct Serialization & fseek() Positioning Masterclass — C Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive textbook-grade masterclass on Binary Files in C (Phase 14 Part 2): Binary modes ("rb", "wb"), fwrite(), fread(), struct serialization, fseek(), ftell(), and rewind()." />
-  <meta name="keywords" content="c tutorial, c binary file i/o, struct serialization & fseek() positioning masterclass, c programming, gcc, c data structures, c algorithms, c system programming" />
+  <title>Binary File I/O & fseek() (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో ఇమేజెస్, ఆడియోస్ లాంటి బైనరీ (Binary) ఫైల్స్ ని ఎలా హ్యాండిల్ చేయాలి? fwrite() మరియు fread() వాడి వేలాది స్ట్రక్చర్స్ ని ఒకే సెకనులో ఫైల్ లోకి ఎలా సేవ్ చేయాలో మరియు fseek() తో ఫైల్ లో ఎక్కడికైనా ఎలా జంప్ చేయాలో నేర్చుకుందాం." />
+  <meta name="keywords" content="c tutorial, binary file i/o & fseek() (తెలుగులో), c structures, struct padding c, arrow operator c, c unions, c enums, c typedef" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html" />
@@ -14,64 +14,110 @@
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="/blog-c/style.css" />
   <link rel="stylesheet" href="/site-nav.css" />
+
   <style>
-    .concept-box { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.25); border-left: 4px solid #10b981; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #10b981; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
-    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #38bdf8; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(16, 185, 129, 0.12); color: #10b981; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #10b981; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
-    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #10b981; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
-    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
-    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
   </style>
+
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
-      const isOpen = content.classList.contains("open");
+      const isOpen = content.classList.contains('open');
       if (isOpen) {
-        content.classList.remove("open");
-        btn.classList.remove("active");
+        content.classList.remove('open');
+        btn.classList.remove('active');
       } else {
-        content.classList.add("open");
-        btn.classList.add("active");
+        content.classList.add('open');
+        btn.classList.add('active');
       }
     }
-    window.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".code-block").forEach(block => {
-        const header = block.querySelector(".code-block-header");
-        const codeEl = block.querySelector("pre code");
-        if (!header || !codeEl) return;
-        let actionsContainer = header.querySelector(".code-actions");
-        if (!actionsContainer) {
-          actionsContainer = document.createElement("div");
-          actionsContainer.className = "code-actions";
-          actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
-          const tryBtn = header.querySelector(".try-btn");
-          if (tryBtn) actionsContainer.appendChild(tryBtn);
-          header.appendChild(actionsContainer);
-        }
-        const copyBtn = document.createElement("button");
-        copyBtn.className = "copy-btn";
-        copyBtn.innerHTML = "📋 Copy";
-        copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; white-space: nowrap;";
-        copyBtn.addEventListener("click", () => {
-          navigator.clipboard.writeText(codeEl.textContent).then(() => {
-            copyBtn.innerHTML = "✅ Copied!";
-            setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
-          });
-        });
-        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-      });
-    });
-  </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 
-  <script>
     (function() {
       const currentTheme = localStorage.getItem('theme') || 'dark';
       if (currentTheme === 'light') {
@@ -81,29 +127,81 @@
         });
       }
       window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
           updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
         });
-        nav.appendChild(toggleBtn);
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl && runBtn) {
+            runBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
       });
     })();
   </script>
 </head>
 <body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
 <nav class="topnav">
   <a href="/" class="brand">🖥️ Our Compiler</a>
   <a href="/blog-python.html">Python</a>
@@ -118,228 +216,14 @@
   <a href="/blog-php.html">PHP</a>
   <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
+
 <div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
   <aside class="sidebar">
     <div class="sidebar-heading">C Master Course</div>
     <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
     <div class="sidebar-accordion">
-
-      <!-- Phase 01: C Basics & Architecture -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 01</span>
-            <span class="phase-title">C Basics & Architecture</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">1 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/01-c-basics-and-program-structure.html">1. C Fundamentals & Program Architecture</a>
-      </div>
-
-      <!-- Phase 02: Variables & Data Types -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📦</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 02</span>
-            <span class="phase-title">Variables & Data Types</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/02-c-variables-declaration-and-memory-model.html">2. Variables, Memory Model & Scope</a>
-        <a href="/blog-c/03-c-data-types-format-specifiers-and-type-casting.html">3. Data Types, sizeof & Type Casting</a>
-      </div>
-
-      <!-- Phase 03: Input & Operators -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 03</span>
-            <span class="phase-title">Input & Operators</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/04-c-user-input-scanf-and-buffer-handling.html">4. User Input (scanf, fgets & Buffer Traps)</a>
-        <a href="/blog-c/05-c-operators-expressions-and-precedence.html">5. Operators, Precedence & 6 Programs</a>
-      </div>
-
-      <!-- Phase 04: Conditional Statements & Branching -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔀</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 04</span>
-            <span class="phase-title">Conditional Statements & Branching</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/06-c-conditional-branching-if-else-and-logical-operators.html">6. if-else Ladders, Nested if & Logical Logic</a>
-        <a href="/blog-c/07-c-switch-case-and-decision-practice-programs.html">7. switch-case, Fall-Through & 7 Programs</a>
-      </div>
-
-      <!-- Phase 05: Loops & Iterations -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔁</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 05</span>
-            <span class="phase-title">Loops & Iterations</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/08-c-loops-for-while-do-while-and-control-flow.html">8. for, while, do-while, break & continue</a>
-        <a href="/blog-c/09-c-nested-loops-patterns-and-practice-programs.html">9. Nested Loops, Patterns & 9 Core Programs</a>
-      </div>
-
-      <!-- Phase 06: Functions & Modular Architecture -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🧩</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 06</span>
-            <span class="phase-title">Functions & Modular Architecture</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">4 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/10-c-functions-declaration-definition-and-prototypes.html">10. Function Architecture & Prototypes</a>
-        <a href="/blog-c/11-c-variable-scope-lifetime-and-static-storage.html">11. Scope, static Variables & Header Files</a>
-        <a href="/blog-c/12-c-parameter-passing-value-vs-reference.html">12. Pass-by-Value vs Pass-by-Address</a>
-        <a href="/blog-c/13-c-recursion-call-stack-and-modular-projects.html">13. Recursion, Call Stack & 5 Projects</a>
-      </div>
-
-      <!-- Phase 07: Arrays & Memory Organization -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📊</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 07</span>
-            <span class="phase-title">Arrays & Memory Organization</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">4 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/14-c-arrays-fundamentals-memory-model-and-indexing.html">14. 1D Arrays, RAM Architecture & Indexing</a>
-        <a href="/blog-c/15-c-multidimensional-arrays-and-matrices.html">15. 2D/3D Arrays, Row-Major & Matrices</a>
-        <a href="/blog-c/16-c-passing-arrays-to-functions-and-pointer-decay.html">16. Passing Arrays to Functions & Pointer Decay</a>
-        <a href="/blog-c/17-c-array-algorithms-searching-sorting-and-manipulation.html">17. Array Algorithms (Search, Sort & Reverse)</a>
-      </div>
-
-      <!-- Phase 08: Strings & Text Processing -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔤</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 08</span>
-            <span class="phase-title">Strings & Text Processing</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/18-c-strings-null-terminator-and-safe-io.html">18. Strings, Null Terminator & Safe I/O</a>
-        <a href="/blog-c/19-c-string-library-functions-and-security.html">19. <string.h> Functions & Buffer Security</a>
-        <a href="/blog-c/20-c-string-algorithms-and-text-processing-projects.html">20. String Algorithms & 6 Text Projects</a>
-      </div>
-
-      <!-- Phase 09: Pointers & Memory Architecture -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🎯</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 09</span>
-            <span class="phase-title">Pointers & Memory Architecture</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/21-c-pointers-memory-addresses-and-dereferencing.html">21. Pointers, RAM Addresses & Dereferencing</a>
-        <a href="/blog-c/22-c-pointer-arithmetic-arrays-and-const-qualifiers.html">22. Pointer Arithmetic, Arrays & const Qualifiers</a>
-        <a href="/blog-c/23-c-double-pointers-function-pointers-and-safety.html">23. Double Pointers, Function Pointers & Safety</a>
-      </div>
-
-      <!-- Phase 10: Pointers and Functions -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚙️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 10</span>
-            <span class="phase-title">Pointers and Functions</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/24-c-pointers-and-functions-call-by-reference.html">24. Passing Addresses, Swapping & Returning Pointers</a>
-        <a href="/blog-c/25-c-pointer-parameters-arrays-and-const-protection.html">25. Array/String Pointer Parameters & const Safety</a>
-        <a href="/blog-c/26-c-function-pointers-callbacks-and-event-systems.html">26. Function Pointers, Callbacks & Event Systems</a>
-      </div>
-
       <!-- Phase 11: Structures & Data Packing -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
@@ -406,13 +290,13 @@
         <a href="/blog-c/35-c-dynamic-arrays-strings-structures-and-memory-debugging.html">35. Dynamic Collections, Ownership & Valgrind Debugging</a>
       </div>
 
-      <!-- Phase 14: File Handling & I/O Streams -->
+      <!-- Phase 14: File I/O & Preprocessor -->
       <button class="accordion-header active" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">📁</span>
           <div class="phase-info">
             <span class="phase-tag">Phase 14</span>
-            <span class="phase-title">File Handling & I/O Streams</span>
+            <span class="phase-title">File I/O & Preprocessor</span>
           </div>
         </div>
         <div class="accordion-header-meta">
@@ -423,278 +307,188 @@
         </div>
       </button>
       <div class="accordion-content open">
-        <a href="/blog-c/36-c-file-handling-fopen-fclose-and-text-io.html">36. File Streams, fopen(), fclose() & Text I/O</a>
-        <a href="/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html" class="active">37. Binary File I/O, Struct Serialization & fseek()</a>
-        <a href="/blog-c/38-c-file-error-handling-feof-ferror-and-errno.html">38. File Error Handling, EOF, ferror() & errno</a>
+        <a href="/blog-c/36-c-file-handling-fopen-fclose-and-text-io.html">36. File Handling, fopen() & I/O</a>
+        <a href="/blog-c/37-c-binary-file-io-fwrite-fread-and-file-positioning.html" class="active">37. Binary File I/O & fseek()</a>
+        <a href="/blog-c/38-c-file-error-handling-feof-ferror-and-errno.html">38. File Errors & feof()</a>
       </div>
 
-      <!-- Phase 15: Preprocessor & Header Files -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚙️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 15</span>
-            <span class="phase-title">Preprocessor & Header Files</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/39-c-preprocessor-directives-and-macro-pitfalls.html">39. Preprocessor Directives & Macro Pitfalls</a>
-        <a href="/blog-c/40-c-conditional-compilation-and-include-guards.html">40. Conditional Compilation & Include Guards</a>
-        <a href="/blog-c/41-c-modular-architecture-headers-linkage-and-compilation-units.html">41. Modular Architecture, Headers & Linkage</a>
-      </div>
-
-      <!-- Phase 16: Command-Line Arguments -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">💻</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 16</span>
-            <span class="phase-title">Command-Line Arguments</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/42-c-command-line-arguments-argc-argv-and-parsing.html">42. Command-Line Arguments (argc, argv & Parsing)</a>
-        <a href="/blog-c/43-c-cli-tool-building-exit-codes-and-environment-variables.html">43. Building CLI Tools, Exit Codes & Environment</a>
-      </div>
-
-      <!-- Phase 17: Standard Library Deep-Dive -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📚</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 17</span>
-            <span class="phase-title">Standard Library Deep-Dive</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/44-c-standard-library-io-utility-math-and-strings.html">44. Standard Library: I/O, Utilities, Math & Strings</a>
-        <a href="/blog-c/45-c-standard-library-time-booleans-and-fixed-width-integers.html">45. Standard Library: Time, Booleans & Integers</a>
-        <a href="/blog-c/46-c-standard-library-assertions-error-handling-and-stddef.html">46. Standard Library: Assertions & Error Handling</a>
-      </div>
-
-      <!-- Phase 18: Data Structures in C -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🌳</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 18</span>
-            <span class="phase-title">Data Structures in C</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/47-c-data-structures-singly-doubly-and-circular-linked-lists.html">47. Linked Lists: Singly, Doubly & Circular</a>
-        <a href="/blog-c/48-c-data-structures-stacks-and-queues-arrays-vs-linked-lists.html">48. Stacks & Queues: Arrays vs Linked Lists</a>
-        <a href="/blog-c/49-c-data-structures-binary-trees-and-binary-search-trees.html">49. Binary Trees & Binary Search Trees (BST)</a>
-        <a href="/blog-c/50-c-data-structures-graph-representations-and-traversals.html">50. Graph Representations & BFS/DFS Traversals</a>
-        <a href="/blog-c/51-c-data-structures-hash-tables-and-collision-resolution.html">51. Hash Tables & Collision Resolution</a>
-      </div>
-
-      <!-- Phase 19: Algorithms & Big-O Complexity -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 19</span>
-            <span class="phase-title">Algorithms & Big-O Complexity</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/52-c-algorithms-big-o-complexity-searching-and-sorting.html">52. Big-O Complexity, Searching & Sorting</a>
-        <a href="/blog-c/53-c-algorithms-recursion-divide-and-conquer-and-greedy-strategies.html">53. Divide-and-Conquer & Greedy Strategies</a>
-        <a href="/blog-c/54-c-algorithms-dynamic-programming-backtracking-and-graph-search.html">54. Dynamic Programming, Backtracking & Search</a>
-      </div>
-
-      <!-- Phase 20: Debugging & Safe C Programming -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🛡️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 20</span>
-            <span class="phase-title">Debugging & Safe C Programming</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/55-c-debugging-compiler-warnings-and-gdb-debugger.html">55. Compiler Warning Flags (-Wall) & GDB Debugger</a>
-        <a href="/blog-c/56-c-security-vulnerabilities-buffer-overflows-and-undefined-behavior.html">56. Security Vulnerabilities & Undefined Behavior</a>
-        <a href="/blog-c/57-c-defensive-c-programming-sanitizers-and-static-analysis.html">57. Defensive Programming, Sanitizers & Static Analysis</a>
-      </div>
-
-      <!-- Phase 21: Build Systems, Makefiles & CMake -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🛠️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 21</span>
-            <span class="phase-title">Build Systems, Makefiles & CMake</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/58-c-multi-file-projects-compilation-pipeline-and-linking.html">58. Multi-File Projects & Compilation Pipeline</a>
-        <a href="/blog-c/59-c-libraries-static-lib-vs-shared-so-dll-libraries.html">59. Static (.a) vs Dynamic Shared (.so / .dll) Libraries</a>
-        <a href="/blog-c/60-c-build-tools-makefiles-cmake-and-git-ci-cd.html">60. Build Automation: Makefiles, CMake & Git CI/CD</a>
-      </div>
-
-      <!-- Phase 22: System Programming & Embedded C -->
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🚀</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 22</span>
-            <span class="phase-title">System Programming & Embedded C</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-c/61-c-system-programming-posix-system-calls-processes-and-ipc.html">61. POSIX System Calls, Processes & IPC</a>
-        <a href="/blog-c/62-c-concurrency-pthreads-mutexes-and-race-conditions.html">62. POSIX Threads (pthreads), Mutexes & Concurrency</a>
-        <a href="/blog-c/63-c-network-programming-bsd-sockets-and-tcp-udp-client-server.html">63. Network Programming: BSD Sockets & TCP/UDP</a>
-        <a href="/blog-c/64-c-embedded-c-hardware-registers-bit manipulation-and-microcontrollers.html">64. Embedded C, Hardware Registers & Microcontrollers</a>
-        <a href="/blog-c/65-c-master-project-roadmap-and-systems-portfolio.html">65. C Master Project Roadmap & Systems Portfolio</a>
-      </div>
-
-    
     </div>
+
+
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
     <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
   </aside>
+
+  <!-- MAIN CONTENT -->
   <main class="content">
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 37: C Binary File I/O, Struct Serialization & fseek() Positioning Masterclass</span>
+      <span class="current">Lesson 37: Binary File I/O & fseek() (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C Binary File I/O, Struct Serialization & fseek() Positioning Masterclass</h1>
+
+    <h1 class="page-title">Binary File I/O & fseek() (తెలుగులో)</h1>
+
     <div class="page-meta">
       <span class="badge">⚡ C (C17 / C23 Standard)</span>
       <span class="badge">🟢 Lesson 37</span>
-      <span class="badge">📂 Phase 14: File Handling & I/O Streams</span>
+      <span class="badge">📂 Phase 14: File I/O & Preprocessor</span>
       <span class="badge">📅 2026 Comprehensive Master Edition</span>
     </div>
+
+    <!-- Subtopics Pill Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Binary File Modes (rb, wb) · fwrite() & fread() · Struct Serialization · Random Access Positioning (fseek, ftell, rewind) · SEEK_SET / SEEK_CUR / SEEK_END</span>
+      <span>Binary Files (wb, rb) · fwrite() & fread() · Struct Serialization · fseek() & ftell() · Fast I/O</span>
     </div>
-<div class="intro-box">  <p>Welcome to <strong>Phase 14 (Chapter 37): C Binary File I/O, Struct Serialization &amp; fseek() Positioning Masterclass</strong>! While text files format values into human-readable ASCII strings, binary files write exact RAM byte images directly to disk. In this guide, you will master <code>fwrite()</code>, <code>fread()</code>, binary struct serialization, and random-access positioning with <code>fseek()</code>.</p></div><div class="section-title"><span class="num">1</span>Text Files vs Binary Files Comparison</div><div class="section-body">  <p class="text-prose">Binary files store raw memory byte blocks without string conversion overhead.</p>  <table class="tbl spec-table">    <thead><tr><th>Feature</th><th>Text Files ("r", "w", "a")</th><th>Binary Files ("rb", "wb", "ab")</th></tr></thead>    <tbody>      <tr><td>Data Storage</td><td>ASCII / UTF-8 Characters</td><td>Exact RAM Raw Bytes</td></tr>      <tr><td>Storage Size</td><td>Variable (Integer 1234567 = 7 bytes)</td><td>Fixed (32-bit int = 4 bytes)</td></tr>      <tr><td>Processing Speed</td><td>Slower (Requires parsing formatted text)</td><td>Ultra Fast (Direct RAM-to-Disk block copy)</td></tr>      <tr><td>Newline Translation</td><td>OS converts \n to \r\n on Windows</td><td>No translation (Pure byte fidelity)</td></tr>    </tbody>  </table></div><div class="section-title"><span class="num">2</span>fwrite(), fread() &amp; Binary Struct Serialization</div><div class="section-body">  <p class="text-prose">Binary I/O functions move blocks of memory between RAM and disk:</p>  <div class="concept-box">    <h4>Binary I/O Function Signatures:</h4>    <p>• <code>size_t fwrite(const void *ptr, size_t size, size_t count, FILE *stream);</code></p>    <p>• <code>size_t fread(void *ptr, size_t size, size_t count, FILE *stream);</code></p>  </div>  <p class="text-prose">Passing <code>&amp;structInstance</code> writes the entire C structure (including internal member bytes) in one single atomic I/O operation!</p></div><div class="section-title"><span class="num">3</span>Random Access File Positioning (fseek, ftell, rewind)</div><div class="section-body">  <p class="text-prose">By default, file reading and writing happen sequentially. Functions in <code>&lt;stdio.h&gt;</code> allow moving the <strong>File Position Indicator</strong> to any arbitrary byte location:</p>  <div class="memory-diagram">File Byte Offset Positioning Indicator in RAM/Disk:
 
-Byte Index:    0     100    200    300    400    500 (EOF)
-File Buffer:  [ HEADER | RECORD 1 | RECORD 2 | RECORD 3 ]
-                ▲                     ▲              ▲
-                │                     │              │
-             SEEK_SET              SEEK_CUR       SEEK_END
-          (File Start)         (Current Position) (End of File)
-  </div>  <p class="text-prose">• <code>fseek(fp, offset, origin)</code>: Moves file cursor. <code>origin</code> can be <code>SEEK_SET</code> (0), <code>SEEK_CUR</code> (current), or <code>SEEK_END</code> (file end).<br>  • <code>ftell(fp)</code>: Returns current byte offset location from file start.<br>  • <code>rewind(fp)</code>: Resets file pointer back to index 0.</p></div><div class="section-title"><span class="num">4</span>Comprehensive Production Code Example</div><div class="section-body">  <div class="code-block">    <div class="code-block-header"><span class="lang-tag">C — Binary Database Indexing & Random Lookup</span><a class="try-btn" href="/?lang=c">▶ Run Code in C Compiler</a></div><pre><code>#include &lt;stdio.h&gt;
+
+    <div class="intro-box">
+      <p>ఇంతకుముందు మనం రాసిన ఫైల్స్ అన్నీ టెక్స్ట్ (Text) ఫైల్స్. అంటే వాటిని నోట్ ప్యాడ్ (Notepad) తో ఓపెన్ చేస్తే ఇంగ్లీష్ అక్షరాలు కళ్ళకు కనిపిస్తాయి. కానీ ఒక MP3 సాంగ్ ని గాని, ఒక .JPG ఇమేజ్ ని గాని నోట్ ప్యాడ్ లో ఓపెన్ చేస్తే విచిత్రమైన గార్బేజ్ సింబల్స్ కనిపిస్తాయి కదా! అవే <strong>Binary Files (బైనరీ ఫైల్స్)</strong>. రియల్ వరల్డ్ యాప్స్ లో ఒక గేమ్ సేవ్ ఫైల్ ని ఎవరూ చదవకుండా లాక్ చేయాలన్నా, లేదా లక్షల మంది స్టూడెంట్స్ డేటాని మిల్లీ-సెకన్లలో హార్డ్ డిస్క్ లోకి సేవ్ చేయాలన్నా ఈ బైనరీ ఫైల్స్ (0s and 1s) వాడాల్సిందే. ఈరోజు <code>fwrite()</code>, <code>fread()</code> మరియు ఫైల్ లో వీడియో ప్లేయర్ లాగా జంప్ చేసే <code>fseek()</code> మ్యాజిక్ ఏంటో డీప్ గా చూద్దాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> Text మోడ్ vs Binary మోడ్ (అసలు తేడా ఏంటి?)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మీరు టెక్స్ట్ మోడ్ లో (<code>"w"</code>) ఎంటర్ (Newline - <code>\n</code>) రాస్తే, విండోస్ ఆపరేటింగ్ సిస్టమ్ దాన్ని బ్యాక్ గ్రౌండ్ లో <code>\r\n</code> (క్యారేజ్ రిటర్న్ + న్యూలైన్) కింద మారుస్తుంది. ఆ మార్పుల వల్ల ఫైల్ సైజు పెరగడం, డేటా చదవడం స్లో అవ్వడం జరుగుతుంది. 
+      </p>
+      <p class="text-prose">
+        కానీ బైనరీ మోడ్ లో (<code>"wb"</code> - Write Binary) మీరు RAM లో ఉన్న డేటాని (0s & 1s) <strong>ఎలా ఉందో అలాగ (Raw Copy)</strong> విసిరేస్తారు. మధ్యలో OS ఎలాంటి ఫార్మాటింగ్ చేయదు! కాబట్టి ఇది సూపర్ ఫాస్ట్ గా ఉంటుంది. పైగా డేటా సెక్యూరిటీ కూడా ఉంటుంది.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🚀 రియల్ లైఫ్ స్టోరీ: ఒక ట్రక్ లో ఇటుకలు వేయడం (fwrite vs fprintf)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          <strong>fprintf (Text Mode):</strong> మీ దగ్గర 10,000 ఇటుకలు ఉన్నాయి. మీరు ఒక్కో ఇటుకని తీసుకుని, దాన్ని శుభ్రంగా కడిగి, ఒక పేపర్ చుట్టి (ఫార్మాటింగ్) ఆ తర్వాతే ట్రక్ లో వేస్తున్నారు అనుకోండి. దీనికి రెండు రోజులు పడుతుంది కదా! ఇది <code>fprintf</code> చేసే పని (స్లో).<br><br>
+          <strong>fwrite (Binary Mode):</strong> మీరు డైరెక్ట్ గా ఒక జేసీబీ (JCB) తో ఆ 10,000 ఇటుకలని (Memory Block) ఒకేసారి ఎత్తి, ఒక్క సెకనులో ఆ ట్రక్ (File) లో పడేస్తారు! ఏ ఫార్మాటింగ్ లేదు, పేపర్స్ లేవు. RAM లో ఉన్న మెమరీ బ్లాక్ ని ఒకే షాట్ లో హార్డ్ డిస్క్ లోకి కాపీ చేయడాన్నే <code>fwrite()</code> అంటారు. డేటాబేస్ ఇంజిన్స్, గేమ్ సేవ్ ఇంజిన్స్ అన్నీ ఇదే వాడుతాయి.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> fwrite() మరియు fread() సింటాక్స్</div>
+    <div class="section-body">
+      <p class="text-prose">
+        వీటి సింటాక్స్ చూడటానికి కొంచెం భయపెట్టేలా ఉంటుంది కానీ, అర్థమైతే చాలా సింపుల్:<br>
+        <code>fwrite(డేటా_అడ్రస్, ఒక్కో_సైజు, ఎన్ని_ఐటమ్స్, ఫైల్_పాయింటర్);</code>
+      </p>
+      <p class="text-prose">
+        మీరు ఒక స్ట్రక్చర్ ని (ఉదా: ప్లేయర్ ఇన్వెంటరీ) సేవ్ చేయాలంటే <code>fwrite(&amp;player, sizeof(Player), 1, file)</code> అని రాస్తే, ఆ స్ట్రక్చర్ లోపల వంద ఐటమ్స్ ఉన్నా సరే సింగిల్ లైన్ లో సేవ్ అయిపోతుంది!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Struct Serialization)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో ఒక గేమ్ లో ఉన్న ప్లేయర్ స్ట్రక్చర్ ని బైనరీ ఫైల్ (<code>.dat</code>) లోకి రాసి, మళ్ళీ దాన్ని ఎలా ఫాస్ట్ గా చదివి లోడ్ చేసామో చూడండి. 
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Binary File I/O (fwrite/fread)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
-typedef struct {
-    int id;
-    char name[30];
-    double balance;
-} Account;
+// ఒక కాంప్లెక్స్ గేమ్ స్ట్రక్చర్
+struct Player {
+    char name[50];
+    int level;
+    float health;
+};
 
-int main(void) {
-    const char *db_file = "bank_accounts.dat";
-
-    Account accounts[3] = {
-        {101, "Ravi Kumar", 45000.50},
-        {102, "Anitha Roy", 89200.75},
-        {103, "Kiran Sharma", 12300.00}
-    };
-
-    FILE *fp = fopen(db_file, "wb");
-    if (!fp) { perror("Failed to create db"); return 1; }
-    fwrite(accounts, sizeof(Account), 3, fp);
-    fclose(fp);
-    printf("Successfully serialized 3 Account structs to binary file.\n");
-
-    fp = fopen(db_file, "rb");
-    if (!fp) { perror("Failed to open db"); return 1; }
-
-    fseek(fp, 0, SEEK_END);
-    long fileSize = ftell(fp);
-    printf("Total Binary File Size: %ld Bytes (%ld Accounts)\n", fileSize, fileSize / sizeof(Account));
-
-    int targetIndex = 1;
-    long offset = targetIndex * sizeof(Account);
-    fseek(fp, offset, SEEK_SET);
-
-    Account found;
-    if (fread(&amp;found, sizeof(Account), 1, fp) == 1) {
-        printf("\n--- DIRECT RECORD LOOKUP (Index %d) ---\n", targetIndex);
-        printf("ID: %d | Name: %s | Balance: $%.2f\n", found.id, found.name, found.balance);
-    }
-    fclose(fp);
+int main() {
+    // 1. మనం సేవ్ చేయాల్సిన డేటా క్రియేట్ చేద్దాం
+    struct Player p1 = {"DragonSlayer", 45, 89.5f};
+    
+    // --- BRAY FILE WRITE (Save Game) ---
+    // "wb" అంటే Write Binary (నార్మల్ టెక్స్ట్ కాదు)
+    FILE* file = fopen("savegame.dat", "wb");
+    if (file == NULL) return 1;
+    
+    // మ్యాజిక్ ఇక్కడే: RAM లో ఉన్న p1 ని ఒకేసారి ఫైల్ లోకి జేసీబీ తో వేస్తున్నాం
+    // (అడ్రస్, సైజు, ఎన్ని బ్లాక్స్, ఫైల్)
+    fwrite(&p1, sizeof(struct Player), 1, file);
+    
+    fclose(file);
+    printf("[+] Game State Saved Securely (Binary).\n\n");
+    
+    // ------------------------------------
+    // --- BINARY FILE READ (Load Game) ---
+    // ------------------------------------
+    struct Player loadedPlayer; // కొత్త ఖాళీ బాక్స్ 
+    
+    // "rb" అంటే Read Binary
+    FILE* loadFile = fopen("savegame.dat", "rb");
+    if (loadFile == NULL) return 1;
+    
+    // ఫైల్ లో ఉన్న బైనరీ డేటాని డైరెక్ట్ గా మన ఖాళీ స్ట్రక్చర్ లోకి కాపీ కొడుతున్నాం!
+    fread(&loadedPlayer, sizeof(struct Player), 1, loadFile);
+    
+    fclose(loadFile);
+    
+    // లోడ్ అయిన డేటాని చెక్ చేద్దాం
+    printf("--- Loaded Game State ---\n");
+    printf("Player Name : %s\n", loadedPlayer.name);
+    printf("Level       : %d\n", loadedPlayer.level);
+    printf("Health      : %.1f\n", loadedPlayer.health);
+    
     return 0;
-}</code></pre>  </div></div><div class="section-title"><span class="num">5</span>Technical FAQs</div><div class="section-body">  <div class="faq-grid">    <div class="faq-item"><h4>Q1: Why are binary files not portable across different CPU architectures?</h4><p>Binary files write raw RAM memory bytes. Different CPUs have different Endianness (Little-Endian Intel vs Big-Endian Network) and struct padding alignment rules.</p></div>    <div class="faq-item"><h4>Q2: How do you find the exact byte size of a file in C?</h4><p>Use <code>fseek(fp, 0, SEEK_END); long size = ftell(fp); rewind(fp);</code>.</p></div>    <div class="faq-item"><h4>Q3: What does the return value of fread() and fwrite() indicate?</h4><p>They return the number of elements successfully read or written, NOT byte counts.</p></div>    <div class="faq-item"><h4>Q4: Why specify "b" in fopen() mode string ("rb", "wb")?</h4><p>On Windows operating systems, opening files without "b" treats them as text files, automatically altering \r\n bytes which corrupts raw binary images.</p></div>    <div class="faq-item"><h4>Q5: What is struct padding risk during binary serialization?</h4><p>Compilers insert padding hole bytes inside structures for RAM memory alignment. Writing raw structs writes these padding bytes, wasting disk space.</p></div>  </div></div>
-<div class="nav-footer">
-  <a href="36-c-file-handling-fopen-fclose-and-text-io.html" class="nav-btn">
-    <span class="label">← Previous Lesson</span>
-    <span class="title">36. File Streams, fopen(), fclose() & Text I/O</span>
-  </a>
-  <a href="38-c-file-error-handling-feof-ferror-and-errno.html" class="nav-btn" style="text-align:right;">
-    <span class="label">Next Lesson →</span>
-    <span class="title">38. File Error Handling, EOF, ferror() & errno</span>
-  </a>
-</div>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>fopen("savegame.dat", "wb")</code>: డాట్ టెక్స్ట్ (.txt) బదులు .dat అని ఇచ్చాము (బైనరీ ఫైల్ అని గుర్తుకోసం). 'wb' అంటే OS కి మనం చెప్తున్నాం ఎటువంటి క్యారెక్టర్ ఎన్కోడింగ్ చేయకని.</li>
+        <li><code>fwrite(&amp;p1, ...)</code>: ఇది చాలా డేంజరస్ అండ్ పవర్ ఫుల్! <code>p1</code> లోపల స్ట్రింగ్స్ ఉన్నా, ఫ్లోట్స్ ఉన్నా దానికి అనవసరం. అది కేవలం ఆ 58 బైట్స్ ఆఫ్ RAM ని కట్ చేసి హార్డ్ డిస్క్ మీద ముద్రిస్తుంది (Serialization). దీనివల్ల స్పీడ్ 100x పెరుగుతుంది.</li>
+        <li><code>fread(&amp;loadedPlayer, ...)</code>: ఆ బైనరీ డేటాని చదివి, మనకి కావాల్సిన స్ట్రక్చర్ రూల్స్ ప్రకారం మళ్ళీ C కోడ్ లోకి ఒకే లైన్ లో లోడ్ చేసేస్తుంది. No parsing needed!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఫైల్ లో వీడియో ప్లేయర్ లాగా స్కిప్ చేయాలంటే (Seek) ఎలా?</h4>
+          <p>ఒక పెద్ద ఫైల్ లో 1000 రికార్డ్స్ ఉంటే, మధ్యలో 500వ రికార్డ్ చదవాలంటే మొదటి నుండి చదువుకుంటూ వెళ్లక్కర్లేదు. C లో <strong><code>fseek(file, offset, POSITION)</code></strong> అనే ఫంక్షన్ వాడొచ్చు. ఉదాహరణకు <code>fseek(file, 100, SEEK_SET)</code> అంటే స్టార్టింగ్ నుండి 100 బైట్స్ ముందుకు జంప్ అవ్వు అని అర్థం. ఇది డేటాబేస్ అల్గారిథమ్స్ కి ప్రాణం లాంటిది!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: <code>ftell()</code> అంటే ఏంటి? ఫైల్ సైజు ఎలా కనుక్కోవాలి?</h4>
+          <p>మీరు ఫైల్ లోపల ప్రస్తుతం ఎన్నో బైట్ దగ్గర ఉన్నారో ఆ నంబర్ ని <code>ftell(file)</code> చెప్తుంది. ఒక ఫైల్ సైజు కనుక్కోవాలంటే బెస్ట్ ట్రిక్: ముందు <code>fseek(file, 0, SEEK_END)</code> వాడి ఫైల్ చివరికి జంప్ చేయండి. ఆ తర్వాత <code>ftell()</code> వాడి ఆ పొజిషన్ నంబర్ తెచ్చుకోండి. ఆ నంబరే మీ ఫైల్ సైజు (In Bytes)!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: బైనరీ ఫైల్స్ అన్ని సిస్టమ్స్ లో ఒకేలా పనిచేస్తాయా? (Portability Issue)</h4>
+          <p>ఇది చాలా పెద్ద బగ్! ఒక ఇంటెల్ (Little Endian) సిస్టమ్ లో బైనరీ రైట్ చేసి, ఆ ఫైల్ ని మ్యాక్ బుక్ (ARM / Big Endian పాత మోడల్స్) సిస్టమ్ లో చదివితే డేటా మొత్తం ఉల్టా అయిపోతుంది (ఉదాహరణకు లెవల్ 45 కాస్తా 7549747 అవుతుంది). దానికి తోడు స్ట్రక్చర్ ప్యాడింగ్ (Struct Padding) వల్ల సిస్టమ్ కి సిస్టమ్ కి సైజు మారిపోతుంది. బైనరీ ఫైల్స్ ఫాస్ట్ అయినా, అవి పోర్టబుల్ కాదు!</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="36-c-file-handling-fopen-fclose-and-text-io.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">36. File Handling, fopen() & I/O</span>
+      </a>
+
+      
+      <a href="38-c-file-error-handling-feof-ferror-and-errno.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">38. File Errors & feof()</span>
+      </a>
+    </div>
   </main>
 </div>
+
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

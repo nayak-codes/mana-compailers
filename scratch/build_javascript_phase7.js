@@ -9,109 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Methods', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Objects & Functions',
-    icon: '🧩',
-    desc: 'Object literals, properties, methods, JSON, function declarations, function expressions, arrow functions, and default parameters.',
-    lessons: [
-      { num: 11, file: 'objects.html', title: '11. Objects & JSON Mastery', subtopics: 'Object Literals · Properties & Methods · JSON Parsing · Methods this' },
-      { num: 12, file: 'functions.html', title: '12. Functions & Arrow Syntax', subtopics: 'Declaration vs Expression · Arrow Syntax · Default Params · Closures' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Advanced ES6+ & OOP',
+    title: 'Object-Oriented Programming (OOP)',
     icon: '🏗️',
-    desc: 'Array & Object Destructuring, ES6 Classes, Prototypes, Inheritance, and this keyword binding.',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 13, file: 'es6-features.html', title: '13. ES6+ Advanced Features', subtopics: 'Advanced Destructuring · Symbols · Maps & Sets' },
-      { num: 14, file: 'closures.html', title: '14. Closures & Scope Chain', subtopics: 'Lexical Scope · Closures · Higher Order Functions' },
-      { num: 15, file: 'oop.html', title: '15. OOP: Classes & Prototypes', subtopics: 'Prototypes · ES6 Classes · Getters/Setters · Static' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Asynchronous JavaScript & DOM',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, DOM manipulation, and LocalStorage.',
-    lessons: [
-      { num: 16, file: 'promises.html', title: '16. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise · async/await · Fetch API' },
-      { num: 17, file: 'exceptions.html', title: '17. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' },
-      { num: 18, file: 'dom.html', title: '18. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -227,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -416,462 +400,119 @@ function buildLesson10() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 7: Arrays Masterclass</strong>! In JavaScript, an <strong>Array</strong> is an ordered, dynamically-sized collection of values stored sequentially in memory. Unlike strict typed languages (like C or Java) where arrays have fixed sizes and require uniform data types, JavaScript arrays can store heterogeneous data types (Numbers, Strings, Objects, Functions, and other Arrays) and expand or shrink dynamically on demand.</p>
+      <p>ఒకే వేరియబుల్ లో అనేక డేటా వాల్యూస్ ని వరసగా (Ordered list) దాచడానికి <strong>Arrays</strong> వాడతాం. షాపింగ్ లిస్ట్, యూజర్ల పేర్లు, లేదా మార్కుల వివరాలు దాచడానికి అర్రేలు అత్యంత అవసరం. ఈ చాప్టర్ లో Arrays Basics, Mutating Methods (<code>push</code>, <code>pop</code>, <code>shift</code>, <code>unshift</code>), మరియు Spread/Destructuring ల గురించి క్లియర్ గా తెలుసుకుందాం!</p>
     </div>
 
-    <!-- 1. Array Ante Enti & Creation -->
-    <div class="section-title"><span class="num">1</span>Array Ante Enti? & Creating Arrays</div>
-    <div class="section-body">
-      <p>JavaScript lo <strong>Array</strong> ante multiple values ni single variable name kinda store cheyagala data structure. Internally, JS Arrays are specialized Objects where numeric indexes serve as keys and elements are placed in Heap memory.</p>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f7df1e; border-radius:8px; padding:14px;">
-          <strong style="color:#f7df1e;">1. Array Literal (Recommended ⭐)</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;">Square brackets <code>[]</code> tho direct ga elements define cheyyadam: <code>const marks = [85, 90, 78, 92];</code></p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:14px;">
-          <strong style="color:#58a6ff;">2. Array Constructor</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>new Array(5)</code> — ⚠️ Single number isthe 5 empty slots tho array create avthundhi, value kaadu!</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:14px;">
-          <strong style="color:#3fb950;">3. Array.of() & Array.from()</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>Array.of(5)</code> creates <code>[5]</code>. <code>Array.from("JS")</code> creates <code>['J', 'S']</code>.</p>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Array Basics Example</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const marks = [85, 90, 78, 92];
-
-marks.push(88); // Adds 88 to the end
-
-console.log("Marks Array:", marks);
-console.log("First Element [0]:", marks[0]);
-console.log("Total Count (length):", marks.length);</code></pre>
-      </div>
+    <div class="callout">
+      <div class="callout-title">💊 రియల్ లైఫ్ అనలాజీ: మెడిసిన్ పిల్ బాక్స్ (Pillbox with Compartments)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">వారానికి సరిపడా టాబ్లెట్లు దాచే ఒక పిల్ బాక్స్ ని ఊహించుకోండి:</p>
+      <p style="margin-top: 8px; font-family: monospace; color: #f7df1e; font-size: 16px;">[0: Monday Pill, 1: Tuesday Pill, 2: Wednesday Pill, ...]</p>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">అర్రే లోని ప్రతీ ఎలిమెంట్ కి 0 నుండి ఇండెక్స్ ఉంటుంది. మొదటి ఎలిమెంట్ <code>arr[0]</code> లోనూ, రెండవ ఎలిమెంట్ <code>arr[1]</code> లోనూ ఉంటాయి.</p>
     </div>
 
-    <!-- 2. Indexing, Reading, Updating & Length Tricks -->
-    <div class="section-title"><span class="num">2</span>Indexes, Reading, Updating & The length Mutation Trick</div>
+    <div class="section-title"><span class="num">1</span>Array Creation & Accessing Elements</div>
     <div class="section-body">
-      <p>Arrays zero-indexed (<code>0</code> to <code>length - 1</code>):</p>
+      <p>అర్రేలని Square Brackets <code>[...]</code> ఉపయోగించి క్రియేట్ చేస్తాం.</p>
       
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Reading Elements:</strong> <code>marks[0]</code> (first), <code>marks.at(-1)</code> (ES2022 last item). Out-of-bounds reading returns <code>undefined</code>.</li>
-        <li><strong>Updating Elements:</strong> <code>marks[1] = 95;</code> updates index 1 in place.</li>
-        <li><strong>Length Property & Truncation Trick:</strong> <code>length</code> property is writable! Setting <code>marks.length = 2</code> truncates the array down to 2 items! Setting <code>marks.length = 0</code> clears the entire array in memory!</li>
-      </ul>
-
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Length & Bounds Demo</span>
+          <span class="lang-tag">JavaScript — Array Basics</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
+        <pre><code>let marks = [95, 88, 76, 90];
+console.log("మొదటి సబ్జెక్ట్ మార్కులు:", marks[0]); // 95
+console.log("మొత్తం సబ్జెక్టులు:", marks.length); // 4
 
-let fruits = ["Apple", "Banana", "Mango", "Orange", "Grapes"];
-
-console.log("Last Fruit (.at(-1)):", fruits.at(-1)); // "Grapes"
-
-// Truncating array using length
-fruits.length = 3;
-console.log("After fruits.length = 3:", fruits); // ["Apple", "Banana", "Mango"]
-
-// Clearing array in memory
-fruits.length = 0;
-console.log("After fruits.length = 0 (Cleared):", fruits); // []</code></pre>
+// ఎలిమెంట్ ని మార్చడం
+marks[2] = 80; // 76 ఉన్న చోట 80 కి మారింది
+console.log("Updated Marks:", marks);</code></pre>
       </div>
     </div>
 
-    <!-- 3. Mutator Methods (push, pop, unshift, shift) -->
-    <div class="section-title"><span class="num">3</span>Mutator Methods: push(), pop(), unshift() & shift()</div>
+    <div class="section-title"><span class="num">2</span>Mutating Methods: Add & Remove Elements</div>
     <div class="section-body">
-      <p>Original array structure ni direct ga modify chese core four methods:</p>
+      <p>అర్రే చివర లేదా మొదట్లో ఎలిమెంట్స్ ని చేర్చడానికి/తీసివేయడానికి 4 ప్రధాన మెథడ్స్ ఉన్నాయి:</p>
 
       <table class="tbl">
-        <tr><th>Method</th><th>Action Position</th><th>Return Value</th><th>Performance (Time Complexity)</th></tr>
-        <tr>
-          <td><strong><code>push(...items)</code></strong></td>
-          <td>Adds elements to <strong>END</strong></td>
-          <td>New array length</td>
-          <td>$O(1)$ Constant Time ⚡</td>
-        </tr>
-        <tr>
-          <td><strong><code>pop()</code></strong></td>
-          <td>Removes element from <strong>END</strong></td>
-          <td>Removed element</td>
-          <td>$O(1)$ Constant Time ⚡</td>
-        </tr>
-        <tr>
-          <td><strong><code>unshift(...items)</code></strong></td>
-          <td>Adds elements to <strong>START</strong></td>
-          <td>New array length</td>
-          <td>$O(N)$ Linear Time (re-indexes all items)</td>
-        </tr>
-        <tr>
-          <td><strong><code>shift()</code></strong></td>
-          <td>Removes element from <strong>START</strong></td>
-          <td>Removed element</td>
-          <td>$O(N)$ Linear Time (shifts all items left)</td>
-        </tr>
+        <tr><th>Method</th><th>పనిచేసే ప్రదేశం (Location)</th><th>పని (Action)</th><th>ఉదాహరణ (Example)</th></tr>
+        <tr><td><strong><code>push(item)</code></strong></td><td>అర్రే చివర (End)</td><td>కొత్త ఎలిమెంట్ ని చేరుస్తుంది (Adds element)</td><td><code>arr.push("Apple")</code></td></tr>
+        <tr><td><strong><code>pop()</code></strong></td><td>అర్రే చివర (End)</td><td>చివరి ఎలిమెంట్ ని తొలగిస్తుంది (Removes last)</td><td><code>arr.pop()</code></td></tr>
+        <tr><td><strong><code>unshift(item)</code></strong></td><td>అర్రే మొదట్లో (Start)</td><td>మొదట్లోనే కొత్త ఎలిమెంట్ ని చేరుస్తుంది (Adds at start)</td><td><code>arr.unshift("Mango")</code></td></tr>
+        <tr><td><strong><code>shift()</code></strong></td><td>అర్రే మొదట్లో (Start)</td><td>మొదటి ఎలిమెంట్ ని తొలగిస్తుంది (Removes first)</td><td><code>arr.shift()</code></td></tr>
       </table>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Array Modification: slice() vs splice()</div>
+    <div class="section-body">
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ slice() vs splice() తేడా ఏంటి?</div>
+        <ul>
+          <li><strong><code>slice(start, end)</code>:</strong> పాత అర్రేని అస్సలు మార్చదు. కొత్త కాపీ ని మాత్రమే ఇస్తుంది (Non-mutating).</li>
+          <li><strong><code>splice(start, deleteCount, item1...)</code>:</strong> ఒరిజినల్ అర్రే లో నుండి ఎలిమెంట్స్ ని తీసివేస్తుంది లేదా కొత్తవి చేరుస్తుంది (Mutating)!</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>ES6 Destructuring & Spread Operator (...)</div>
+    <div class="section-body">
+      <p>ES6 లో అర్రే ఎలిమెంట్స్ ని సులభంగా కాపీ చేయడానికి <strong>Spread Operator (<code>...</code>)</strong> మరియు విడదీయడానికి <strong>Destructuring</strong> బాగా ఉపయోగపడతాయి:</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Stack & Queue Operations</span>
+          <span class="lang-tag">JavaScript — Array Spread & Destructuring</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-let stack = [10, 20];
+let colors1 = ["Red", "Green"];
+let colors2 = ["Blue", "Yellow"];
 
-// Push & Pop (End)
-stack.push(30); // [10, 20, 30]
-console.log("Pushed 30 ->", stack);
+// 1. Spread Operator తో అర్రేలు కలపడం
+let allColors = [...colors1, ...colors2];
+console.log("All Colors:", allColors); // ["Red", "Green", "Blue", "Yellow"]
 
-let popped = stack.pop(); // Removes 30
-console.log("Popped item:", popped, "| Current Stack:", stack);
-
-// Unshift & Shift (Start)
-stack.unshift(5); // [5, 10, 20]
-console.log("Unshifted 5 ->", stack);
-
-let shifted = stack.shift(); // Removes 5
-console.log("Shifted item:", shifted, "| Current Stack:", stack);</code></pre>
+// 2. Array Destructuring
+let [firstColor, secondColor] = colors1;
+console.log("First:", firstColor);   // Red
+console.log("Second:", secondColor); // Green</code></pre>
       </div>
     </div>
 
-    <!-- 4. slice() vs splice() (Critical Interview Question) -->
-    <div class="section-title"><span class="num">4</span>slice() vs splice() (The Crucial Interview Distinction)</div>
-    <div class="section-body">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:16px;">
-          <strong style="color:#3fb950;">1. slice(start, end) — IMMUTABLE (Safe)</strong>
-          <ul style="font-size:13px; color:var(--text2); margin-top:6px; margin-left:16px; line-height:1.6;">
-            <li>Original array ni <strong>modify cheyyadhu</strong>.</li>
-            <li>Returns a <strong>new shallow copy</strong> of specified range.</li>
-            <li>Negative indices support chesthundhi (e.g. <code>arr.slice(-2)</code>).</li>
-          </ul>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ff7b72; border-radius:8px; padding:16px;">
-          <strong style="color:#ff7b72;">2. splice(start, deleteCount, ...items) — MUTATING</strong>
-          <ul style="font-size:13px; color:var(--text2); margin-top:6px; margin-left:16px; line-height:1.6;">
-            <li>Original array ni <strong>in-place ga modify chesthundi</strong>.</li>
-            <li>Items ni delete, replace, or insert cheyyadaniki vadathamu.</li>
-            <li>Returns an array of <strong>deleted elements</strong>.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — slice vs splice Code Comparison</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const original = ["A", "B", "C", "D", "E"];
-
-// 1. slice() does NOT change original
-const sliced = original.slice(1, 4);
-console.log("Sliced (1 to 4):", sliced);       // ["B", "C", "D"]
-console.log("Original untouched:", original);  // ["A", "B", "C", "D", "E"]
-
-// 2. splice() modifies original array
-// Syntax: splice(startIndex, deleteCount, insertItem1, insertItem2...)
-const deleted = original.splice(2, 2, "NEW_C", "NEW_D");
-console.log("Deleted by splice:", deleted);    // ["C", "D"]
-console.log("Original mutated:", original);    // ["A", "B", "NEW_C", "NEW_D", "E"]</code></pre>
-      </div>
-    </div>
-
-    <!-- 5. includes, indexOf, join, reverse, concat -->
-    <div class="section-title"><span class="num">5</span>Search & Transform: includes, indexOf, join, reverse & concat</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong><code>includes(val)</code>:</strong> Returns <code>true</code> if element exists (handles <code>NaN</code> correctly).</li>
-        <li><strong><code>indexOf(val)</code>:</strong> Returns first matching index or <code>-1</code>.</li>
-        <li><strong><code>join(separator)</code>:</strong> Array elements ni custom string delimiter tho join chesthundi (e.g. <code>["a","b"].join("-") -> "a-b"</code>).</li>
-        <li><strong><code>reverse()</code>:</strong> Reverses the array elements in place (mutates original).</li>
-        <li><strong><code>concat(...arrays)</code>:</strong> Combines multiple arrays into a fresh new array without mutating originals.</li>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li>లేని ఇండెక్స్ ని యాక్సెస్ చేస్తే Error రాదు, <code>undefined</code> వస్తుంది! (Ex: 3 ఎలిమెంట్స్ ఉన్న అర్రే లో <code>arr[10]</code> ని ప్రింట్ చేస్తే <code>undefined</code> వస్తుంది).</li>
+        <li><code>const arr = [1, 2]</code> రాసినా <code>arr.push(3)</code> చేయవచ్చు! ఎందుకంటే అర్రే లోపలి వాల్యూస్ మారుతున్నాయి తప్ప అర్రే అడ్రస్ మారడం లేదు.</li>
       </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Search & Transform Methods</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const fruits = ["Apple", "Mango", "Banana"];
-
-console.log("Has 'Mango'?", fruits.includes("Mango")); // true
-console.log("Index of 'Banana':", fruits.indexOf("Banana")); // 2
-console.log("Joined:", fruits.join(" ➔ ")); // "Apple ➔ Mango ➔ Banana"
-
-const reversed = fruits.reverse();
-console.log("Reversed array:", reversed);
-
-const numbers1 = [1, 2];
-const numbers2 = [3, 4];
-console.log("Concat:", numbers1.concat(numbers2, [5, 6])); // [1, 2, 3, 4, 5, 6]</code></pre>
-      </div>
     </div>
 
-    <!-- 6. sort() & The Famous Sorting Quirk -->
-    <div class="section-title"><span class="num">6</span>The sort() Method & Numeric Sorting Quirk (Deep Dive)</div>
+    <div class="section-title"><span class="num">5</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <div class="callout">
-        <div class="callout-title">⚠️ The Historic JavaScript Array sort() Quirk</div>
-        <p>JavaScript default <code>sort()</code> numbers ni direct ga sort cheyyadhu! Elements ni <strong>Strings ga convert chesi UTF-16 lexicographical (ASCII alphabetic) order</strong> lo sort chesthundi. Andhuke <code>[10, 2, 30].sort()</code> output <code>[10, 2, 30]</code> (or <code>[10, 20, 2]</code>) ga vasthundi, because string <code>"10"</code> comes before <code>"2"</code>!</p>
-      </div>
-
-      <p>Numeric values ni accurate ga sort cheyyadaniki <strong>Comparator Function</strong> <code>(a, b) => a - b</code> pass cheyyali:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — sort() Comparator Demo</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+      <details>
+        <summary>Q1. <code>shift()</code> మరియు <code>pop()</code> కి తేడా ఏమిటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>pop()</code> అర్రే యొక్క చివరి ఎలిమెంట్ ని తొలగిస్తుంది, <code>shift()</code> మొదటి ఎలిమెంట్ ని తొలగిస్తుంది.</p>
         </div>
-        <pre><code>"use strict";
+      </details>
 
-const numbers = [10, 2, 30];
-
-// ❌ Default string sort (Buggy for numbers!)
-// numbers.sort(); // Output: [10, 2, 30]
-
-// ✅ Correct Numeric Ascending Sort: (a, b) => a - b
-numbers.sort((a, b) => a - b);
-console.log("Ascending Sorted:", numbers); // [2, 10, 30]
-
-// ✅ Correct Numeric Descending Sort: (a, b) => b - a
-numbers.sort((a, b) => b - a);
-console.log("Descending Sorted:", numbers); // [30, 10, 2]</code></pre>
-      </div>
+      <details>
+        <summary>Q2. రెండు అర్రేలని క్లోనింగ్ (Clone/Copy) చేయడానికి సరైన మార్గం ఏది?</summary>
+        <div class="faq-ans">
+          <p><strong>కోడ్:</strong> <code>let copy = [...original];</code></p>
+          <p><strong>వివరణ:</strong> <code>let copy = original</code> అని రాస్తే రెండూ ఒకే మెమరీ అడ్రస్ ని పాయింట్ చేస్తాయి. Spread operator వాడితే కొత్త శ్రేణి క్రియేట్ అవుతుంది.</p>
+        </div>
+      </details>
     </div>
 
-    <!-- 7. Nested Arrays (2D Matrices) -->
-    <div class="section-title"><span class="num">7</span>Nested Arrays (Multi-Dimensional 2D Matrices)</div>
-    <div class="section-body">
-      <p>Oka array lopala maroka array unte dhaanni <strong>2D Array / Nested Array</strong> antaru. Matrix row and column format lo data access avthundi:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — 2D Matrix Grid</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const matrix = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
-];
-
-console.log("Row 0, Col 0:", matrix[0][0]); // 1
-console.log("Row 1, Col 1 (Center):", matrix[1][1]); // 5
-console.log("Row 2, Col 2:", matrix[2][2]); // 9
-
-// Flattening nested arrays with .flat()
-const nested = [1, [2, [3, 4]]];
-console.log("Flattened (depth 2):", nested.flat(2)); // [1, 2, 3, 4]</code></pre>
-      </div>
-    </div>
-
-    <!-- 8. Array Destructuring, Spread & Rest Operators -->
-    <div class="section-title"><span class="num">8</span>Array Destructuring, Spread & Rest Operators</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Array Destructuring:</strong> Unpacking array elements into clean individual variables: <code>const [first, second] = arr;</code></li>
-        <li><strong>Spread Operator (<code>...</code> Expanding):</strong> Unpacks array items into comma-separated elements (ideal for merging and shallow cloning).</li>
-        <li><strong>Rest Operator (<code>...</code> Collecting):</strong> Gathers the remaining elements into a fresh array: <code>const [leader, ...members] = team;</code></li>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>అర్రేలు ఇండెక్స్ 0 నుండి ప్రారంభమవుతాయి.</li>
+        <li>చివర మార్పులకు <code>push/pop</code>, మొదట్లో మార్పులకు <code>unshift/shift</code> వాడండి.</li>
+        <li>అర్రేలని కలపడానికి/కాపీ చేయడానికి Spread Operator (<code>...</code>) వాడండి.</li>
       </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Destructuring & Spread/Rest</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const scores = [95, 88, 76, 62, 55];
-
-// 1. Destructuring with Rest (...)
-const [topper, runnerUp, ...others] = scores;
-console.log("Topper:", topper);       // 95
-console.log("Runner Up:", runnerUp);   // 88
-console.log("Others Array:", others);  // [76, 62, 55]
-
-// 2. Swapping variables in 1 line
-let x = 10, y = 20;
-[x, y] = [y, x];
-console.log("Swapped: x =", x, ", y =", y);
-
-// 3. Spread operator merging
-const batch1 = ["Ravi", "Kiran"];
-const batch2 = ["Sneha", "Pooja"];
-const allStudents = [...batch1, ...batch2, "Vijay"];
-console.log("All Students:", allStudents);</code></pre>
-      </div>
     </div>
-
-    <!-- 5 PRACTICE ALGORITHMS -->
-    <div class="section-title"><span class="num">9</span>5 Real-World Practice Algorithms</div>
-    <div class="section-body">
-      <p>Mastering arrays through 5 essential coding interview problems:</p>
-
-      <!-- 1. Max and Min -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 1: Find Largest and Smallest in an Array</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const data = [45, 12, 89, 3, 99, 24];
-
-const maxVal = Math.max(...data);
-const minVal = Math.min(...data);
-
-console.log("Array:", data);
-console.log("Max:", maxVal, "| Min:", minVal);</code></pre>
-        </div>
-      </div>
-
-      <!-- 2. Remove Duplicates -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 2: Remove Duplicates from an Array</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const duplicateNums = [1, 2, 2, 3, 4, 4, 5, 1];
-
-// Clean 1-line solution using Set and Spread
-const uniqueNums = [...new Set(duplicateNums)];
-
-console.log("Original:", duplicateNums);
-console.log("Unique:", uniqueNums); // [1, 2, 3, 4, 5]</code></pre>
-        </div>
-      </div>
-
-      <!-- 3. Array Rotation -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 3: Rotate Array by K Positions</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function rotateRight(arr, k) {
-    const n = arr.length;
-    const effectiveK = k % n;
-    // Slice last k items and put in front
-    return [...arr.slice(n - effectiveK), ...arr.slice(0, n - effectiveK)];
-}
-
-console.log("Rotated [1,2,3,4,5] right by 2:", rotateRight([1, 2, 3, 4, 5], 2));
-// Output: [4, 5, 1, 2, 3]</code></pre>
-        </div>
-      </div>
-
-      <!-- 4. Frequency Counter -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 4: Element Frequency Counter</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const votes = ["Ravi", "Sneha", "Ravi", "Kiran", "Ravi", "Sneha"];
-const counts = {};
-
-for (const vote of votes) {
-    counts[vote] = (counts[vote] || 0) + 1;
-}
-
-console.log("Vote Counts:", counts);
-// { Ravi: 3, Sneha: 2, Kiran: 1 }</code></pre>
-        </div>
-      </div>
-
-      <!-- 5. 2D Matrix Sum -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Program 5: Matrix Diagonal Sum</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const grid = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
-];
-
-let primaryDiagonalSum = 0;
-for (let i = 0; i < grid.length; i++) {
-    primaryDiagonalSum += grid[i][i]; // 1 + 5 + 9
-}
-
-console.log("Primary Diagonal Sum (1+5+9):", primaryDiagonalSum); // 15</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this marks array and sorting comparator snippet in our live compiler:</p>
-      
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript Arrays & Sorting</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// Part 1: Marks Array
-const marks = [85, 90, 78, 92];
-marks.push(88);
-
-console.log("Marks:", marks);
-console.log("First Element:", marks[0]);
-console.log("Length:", marks.length);
-
-// Part 2: Numeric Sorting with Comparator
-const numbers = [10, 2, 30];
-numbers.sort((a, b) => a - b);
-console.log("Sorted Numbers:", numbers);</code></pre>
-      </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
-    </div>
-
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 10, subtopics, contentBody, 'strings.html', '9. Strings & Text Processing', 'objects.html', 'Phase 8: Objects');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -968,7 +609,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

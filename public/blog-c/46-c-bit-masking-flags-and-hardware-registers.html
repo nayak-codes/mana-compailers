@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bit Masking, Flags & Hardware (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లాంగ్వేజ్ తో హార్డ్వేర్ ని ఎలా కంట్రోల్ చేస్తారు? Bit Masking (బిట్ మాస్కింగ్) అంటే ఏంటి? ఎక్స్ట్రా మెమరీ వాడకుండా ఒకే వేరియబుల్ లో 8 రకాల ఆప్షన్స్ ని (Flags) ఆన్ లేదా ఆఫ్ ఎలా చేయాలో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c tutorial, bit masking, flags & hardware (తెలుగులో), void pointers, bitwise operators c, left shift right shift, bit masking c, bit fields c" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/46-c-bit-masking-flags-and-hardware-registers.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 15: Advanced Pointers -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🎯</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 15</span>
+            <span class="phase-title">Advanced Pointers</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/41-c-double-pointers-and-memory-addresses.html">41. Double Pointers (**) & Memory Addresses</a>
+        <a href="/blog-c/42-c-function-pointers-and-callbacks.html">42. Function Pointers & Callbacks</a>
+        <a href="/blog-c/43-c-void-pointers-and-generic-programming.html">43. Void Pointers & Generic Programming</a>
+      </div>
+
+      <!-- Phase 16: Bitwise & Low-Level -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚙️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 16</span>
+            <span class="phase-title">Bitwise & Low-Level</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/44-c-bitwise-and-or-xor-not-operators.html">44. Bitwise AND, OR, XOR, NOT</a>
+        <a href="/blog-c/45-c-shift-operators-and-fast-math.html">45. Shift Operators (<<, >>) & Fast Math</a>
+        <a href="/blog-c/46-c-bit-masking-flags-and-hardware-registers.html" class="active">46. Bit Masking, Flags & Hardware Registers</a>
+        <a href="/blog-c/47-c-bit-fields-and-struct-packing.html">47. Bit Fields & Struct Packing</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 46: Bit Masking, Flags & Hardware (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Bit Masking, Flags & Hardware (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 46</span>
+      <span class="badge">📂 Phase 16: Bitwise & Low-Level</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Bit Masking · Setting a Bit · Clearing a Bit · Toggling a Bit · Checking a Bit</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>ఇప్పటిదాకా మనం నంబర్స్ ని అటూ ఇటూ జరిపాం. కానీ రియల్ వరల్డ్ లో, ఎంబెడెడ్ సిస్టమ్స్ (Embedded Systems) లేదా రోబోటిక్స్ ప్రోగ్రామింగ్ చేసేటప్పుడు, మీరు ఒక 8-బిట్ రిజిస్టర్ (Hardware Box) లో 3వ పిన్ కి కనెక్ట్ అయిన LED లైట్ ని మాత్రమే ఆన్ చేయాలి, మిగతావి టచ్ చేయకూడదు అనుకుంటే ఎలా? డైరెక్ట్ గా <code>num = 1;</code> అంటే మొత్తం అన్నీ ఆరిపోతాయి. ఇలాంటప్పుడు పర్టిక్యులర్ గా ఒకే ఒక్క బిట్ (Bit) మీద స్నిపర్ షాట్ లాగా ఆపరేషన్ చేయడాన్నే <strong>Bit Masking (బిట్ మాస్కింగ్)</strong> అంటారు. Set, Clear, Toggle అనే మూడు బ్రహ్మాస్త్రాలు ఎలా పనిచేస్తాయో ఈరోజు నేర్చుకుందాం.</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> బిట్ మాస్క్ (Bit Mask) అంటే ఏంటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మాస్క్ (Mask) అంటే ఏంటి? మన ఫేస్ లో కళ్లు తప్ప మిగతా అంతా కవర్ చేస్తుంది. అలాగే కంప్యూటర్ లో మనకు కావాల్సిన బిట్ ని మాత్రమే ఓపెన్ చేసి, మిగతా వాటిని (సున్నాలతో) కవర్ చేసే ఒక స్పెషల్ నంబర్ ని <strong>Bit Mask</strong> అంటారు. దీన్ని జనరేట్ చేయడానికి మనం లాస్ట్ లెసన్ లో నేర్చుకున్న షిఫ్ట్ (<code>1 &lt;&lt; n</code>) వాడతాం.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🎯 4 మ్యాజిక్ ఫార్ములాస్ (The Cheat Sheet)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          మీరు ఒక లైట్ ని (<code>n</code>th బిట్) కంట్రోల్ చేయాలి అనుకుంటే, ముందు మాస్క్ <code>(1 &lt;&lt; n)</code> తయారుచేసుకోవాలి. ఆ తర్వాత:<br><br>
+          <strong>1. Set a Bit (ఆన్ చేయడం):</strong> <code>REG = REG | (1 &lt;&lt; n);</code> (ఉన్నదాన్ని కదిలించకుండా, n వ బిట్ ని 1 చేస్తుంది).<br>
+          <strong>2. Clear a Bit (ఆఫ్ చేయడం):</strong> <code>REG = REG &amp; ~(1 &lt;&lt; n);</code> (మాస్క్ ని రివర్స్ చేసి అండ్ చేస్తుంది, n వ బిట్ 0 అవుతుంది).<br>
+          <strong>3. Toggle a Bit (స్విచ్ వేయడం):</strong> <code>REG = REG ^ (1 &lt;&lt; n);</code> (XOR వాడితే ఆన్ ఉంటే ఆఫ్, ఆఫ్ ఉంటే ఆన్ అవుతుంది).<br>
+          <strong>4. Check a Bit (చెక్ చేయడం):</strong> <code>if (REG &amp; (1 &lt;&lt; n))</code> (ఆ బిట్ ఆన్ లో ఉందా లేదా అని చెప్తుంది).
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> ఒకే ఒక సింపుల్ కోడ్ (LED Control Simulator)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో మనం ఒక హార్డ్వేర్ రిజిస్టర్ లాంటి 8-bit వేరియబుల్ తీసుకుని, అందులో కరెక్ట్ గా 3వ లైట్ ని ఆన్, ఆఫ్ ఎలా చేస్తున్నామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Bit Masking (Flags)</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// సులువు కోసం ఒక మాక్రో రాసుకుందాం (n వ బిట్ కోసం మాస్క్)
+#define BIT_MASK(n) (1 << (n))
+
+// బైనరీ ని మనుషుల కోసం డిస్ప్లే చేసే సింపుల్ ఫంక్షన్
+void printBinary(unsigned char num) {
+    for (int i = 7; i >= 0; i--) {
+        printf("%d", (num & BIT_MASK(i)) ? 1 : 0);
+    }
+    printf("\n");
+}
+
+int main() {
+    // మన హార్డ్వేర్ స్టేటస్ (అన్ని లైట్స్ ఆఫ్ లో ఉన్నాయి)
+    unsigned char PORT = 0; // 00000000
+    
+    printf("Initial PORT status: ");
+    printBinary(PORT);
+    
+    // ------------------------------------
+    // 1. SET (ఆన్ చేద్దాం): 3వ లైట్ ని ఆన్ చేయాలి
+    // ------------------------------------
+    PORT = PORT | BIT_MASK(3); 
+    printf("After Setting bit 3: ");
+    printBinary(PORT); // అవుట్పుట్: 00001000
+    
+    // ఇంకో లైట్ (1వ లైట్) కూడా ఆన్ చేద్దాం (పాతది పోదు)
+    PORT = PORT | BIT_MASK(1);
+    printf("After Setting bit 1: ");
+    printBinary(PORT); // అవుట్పుట్: 00001010
+    
+    // ------------------------------------
+    // 2. TOGGLE (రివర్స్ చేద్దాం): 1వ లైట్ ని టోగుల్ చేద్దాం
+    // ------------------------------------
+    PORT = PORT ^ BIT_MASK(1);
+    printf("After Toggle bit 1 : ");
+    printBinary(PORT); // అవుట్పుట్: 00001000 (ఆఫ్ అయింది)
+    
+    // ------------------------------------
+    // 3. CLEAR (ఆఫ్ చేద్దాం): 3వ లైట్ ని ఆఫ్ చేద్దాం
+    // ------------------------------------
+    PORT = PORT & ~(BIT_MASK(3));
+    printf("After Clear bit 3  : ");
+    printBinary(PORT); // అవుట్పుట్: 00000000 (మొత్తం ఆఫ్)
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>BIT_MASK(3)</code>: ఇది బ్యాక్ గ్రౌండ్ లో <code>1 &lt;&lt; 3</code> అవుతుంది. బైనరీ లో ఇది <code>0000 1000</code> కి సమానం. దీన్నే మాస్క్ అంటారు.</li>
+        <li><code>PORT | BIT_MASK(3)</code>: OR (<code>|</code>) ఆపరేటర్ ప్రాపర్టీ ఏంటంటే, ఎక్కడైనా 1 ఉంటే రిజల్ట్ లో 1 పెడుతుంది, 0 ఉంటే పాత వాల్యూ (పోర్ట్ లో ముందు ఉన్న వాల్యూ) నే ఉంచుతుంది. అందుకే కేవలం 3వ బిట్ మాత్రమే ఆన్ అవుతుంది!</li>
+        <li><code>PORT &amp; ~(BIT_MASK(3))</code>: ముందు మాస్క్ ని NOT (<code>~</code>) చేసాం. అప్పుడు <code>0000 1000</code> కాస్తా <code>1111 0111</code> అయ్యింది. దాన్ని అండ్ (<code>&amp;</code>) చేస్తే, ఆ ఒక్క బిట్ దగ్గర 0 ఉంది కాబట్టి అది 0 అయిపోయి ఆఫ్ అవుతుంది, మిగతావన్నీ 1 తో అండ్ అయ్యి ఎలా ఉన్నాయో అలానే ఉంటాయి!</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: ఈ బిట్ మాస్కింగ్ కేవలం ఎంబెడెడ్ హార్డ్వేర్ లోనే వాడతారా? సాఫ్ట్వేర్ లో వాడరా?</h4>
+          <p>సాఫ్ట్వేర్ లో కూడా విపరీతంగా వాడతారు! ఒక యూజర్ కి 8 రకాల పర్మిషన్స్ (Read, Write, Delete etc) ఇవ్వాలంటే, 8 వేరియబుల్స్ (8 బైట్స్) తీసుకునే బదులు, ఒకేఒక్క <code>char</code> వేరియబుల్ (1 బైట్) తీసుకుని అందులో 8 బిట్స్ ని 8 ఫ్లాగ్స్ లాగా వాడతారు (దీన్నే Flags అంటారు). విండోస్ API మొత్తం ఇలానే పనిచేస్తుంది (ఉదా: <code>MB_OK | MB_ICONERROR</code>).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: <code>num &amp; (num - 1)</code> అనే ఫేమస్ ఇంటర్వ్యూ క్వశ్చన్ ఏంటి?</h4>
+          <p>చాలా కంపెనీస్ లో అడిగే బెస్ట్ ట్రిక్ ఇది! ఈ ఆపరేషన్ ఒక నంబర్ లో చివరగా ఉన్న '1' (Rightmost set bit) ని సున్నా (0) చేస్తుంది. ఒక నంబర్ ని పవర్ ఆఫ్ 2 (అంటే 2, 4, 8, 16 లాగా) అవునా కాదా అని కనుక్కోవడానికి <code>if ((num &amp; (num - 1)) == 0)</code> అని సింగిల్ లైన్ లో చెక్ చేయొచ్చు!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: <code>1 &lt;&lt; 32</code> చేస్తే ఏమవుతుంది?</h4>
+          <p>ఒక స్టాండర్డ్ ఇంట్ (int) 32-bits మాత్రమే ఉంటుంది. దాన్ని 32 సార్లు షిఫ్ట్ చేస్తే అది ఓవర్ ఫ్లో అయ్యి కంపైలర్ వార్నింగ్ ఇస్తుంది (Undefined Behavior). ఒకవేళ మీకు 64-బిట్ నంబర్స్ కావాలంటే <code>1ULL &lt;&lt; 40</code> (Unsigned Long Long) అని స్పెసిఫై చేయాలి.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="45-c-shift-operators-and-fast-math.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">45. Shift Operators & Fast Math</span>
+      </a>
+
+      
+      <a href="47-c-bit-fields-and-struct-packing.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">47. Bit Fields & Struct Packing</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

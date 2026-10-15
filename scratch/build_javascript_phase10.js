@@ -9,128 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
-    lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions Mastery',
-    icon: '🧩',
-    desc: 'Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions, Closures & this (Masterclass)', subtopics: 'Declaration vs Expression · Arrow Functions · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'Advanced ES6+ & OOP',
+    title: 'Object-Oriented Programming (OOP)',
     icon: '🏗️',
-    desc: 'Advanced Destructuring, ES6 Classes, Prototypes, Inheritance, Getters/Setters, Static methods, and OOP principles.',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 14, file: 'es6-features.html', title: '14. ES6+ Advanced Features', subtopics: 'Advanced Destructuring · Symbols · Maps & Sets' },
-      { num: 15, file: 'closures.html', title: '15. Advanced Scope Chain & Currying', subtopics: 'Lexical Scope · Closures · Currying · Factory Functions' },
-      { num: 16, file: 'oop.html', title: '16. OOP: Classes & Prototypes', subtopics: 'Prototypes · ES6 Classes · Getters/Setters · Static' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Asynchronous JavaScript & DOM',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, DOM manipulation, and LocalStorage.',
-    lessons: [
-      { num: 17, file: 'promises.html', title: '17. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise · async/await · Fetch API' },
-      { num: 18, file: 'exceptions.html', title: '18. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' },
-      { num: 19, file: 'dom.html', title: '19. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -246,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -435,362 +400,132 @@ function buildLesson13() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 10: Functions Mastery</strong>! In JavaScript, <strong>Functions</strong> are <em>First-Class Citizens</em>. This means functions can be assigned to variables, passed as arguments to other functions, and returned from functions just like any other data value. In this exhaustive masterclass guide, you will master the 3 ways to define functions (Declarations, Expressions, Arrow Syntax), Parameters vs Arguments, Default & Rest parameters, Higher-Order Functions, Lexical Scopes, the superpower of <strong>Closures</strong>, Recursion, Pure Functions, Function Hoisting mechanics, and explicit context binding with <strong><code>call()</code>, <code>apply()</code>, and <code>bind()</code></strong>.</p>
+      <p>ప్రోగ్రామింగ్ లో మళ్ళీ మళ్ళీ వాడాల్సిన కోడ్ ముక్కలని (Reusable code) ఒకే చోట పెట్టి, కావలసినప్పుడు పిలుచుకోవడానికి (Call) <strong>Functions</strong> వాడతాం. DRY (Don't Repeat Yourself) సూత్రానికి ఫంక్షన్లే మూలస్తంభాలు! ఈ చాప్టర్ లో Function Declarations, Expressions, Arrow Functions, Default Parameters, మరియు Scope ల గురించి స్పష్టంగా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. Function Declarations, Expressions & Arrow Functions -->
-    <div class="section-title"><span class="num">1</span>The 3 Ways to Define Functions</div>
-    <div class="section-body">
-      <table class="tbl">
-        <tr><th>Type</th><th>Syntax</th><th>Hoisting Behavior</th><th><code>this</code> Context</th></tr>
-        <tr>
-          <td><strong>1. Function Declaration</strong></td>
-          <td><code>function calculateTotal(price, tax = 0.18) { ... }</code></td>
-          <td><strong>Fully Hoisted</strong> to the top of scope! Can be called before definition.</td>
-          <td>Dynamic (bound at call-time)</td>
-        </tr>
-        <tr>
-          <td><strong>2. Function Expression</strong></td>
-          <td><code>const calculateTotal = function(price, tax = 0.18) { ... };</code></td>
-          <td><strong>Not hoisted</strong> before assignment (Temporal Dead Zone).</td>
-          <td>Dynamic (bound at call-time)</td>
-        </tr>
-        <tr>
-          <td><strong>3. Arrow Function (ES6)</strong></td>
-          <td><code>const calculateTotal = (price, tax = 0.18) => price + price * tax;</code></td>
-          <td><strong>Not hoisted</strong> before assignment.</td>
-          <td><strong>Lexical <code>this</code></strong> (inherits from outer scope ⭐)</td>
-        </tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Default Parameters Example</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-function calculateTotal(price, tax = 0.18) {
-    return price + price * tax;
-}
-
-console.log("Price with Default Tax (18%):", calculateTotal(100)); // 118
-console.log("Price with Custom Tax (5%):", calculateTotal(100, 0.05)); // 105</code></pre>
-      </div>
-    </div>
-
-    <!-- 2. Parameters, Arguments, Default & Rest Parameters -->
-    <div class="section-title"><span class="num">2</span>Parameters, Arguments, Default Values & Rest Parameters</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Parameters vs Arguments:</strong> Function definition lo declare chesina variables ni <em>Parameters</em> antaru. Function call chesinappudu pass chesina real values ni <em>Arguments</em> antaru.</li>
-        <li><strong>Default Parameters (ES6):</strong> Argument pass cheyyakapothe or <code>undefined</code> isthe fallback value evaluate avthundhi: <code>function greet(name = "Guest")</code>.</li>
-        <li><strong>Rest Parameters (<code>...args</code>):</strong> Any number of arguments ni single genuine Array ga collect chesthundhi (replaces legacy <code>arguments</code> keyword).</li>
+    <div class="callout">
+      <div class="callout-title">🥤 రియల్ లైఫ్ అనలాజీ: జ్యూస్ మిక్సర్ మెషిన్ (Juicer Machine)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">ఒక జ్యూస్ మిక్సర్ మెషిన్ ని ఊహించుకోండి:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>Parameters (ఇన్ పుట్):</strong> మీరు వేసే పండ్లు (మామిడి / అరటి).</li>
+        <li><strong>Function Logic (పని):</strong> మెషిన్ తిరిగి జ్యూస్ చేసే ప్రాసెస్.</li>
+        <li><strong>Return Value (అవుట్ పుట్):</strong> బయటకు వచ్చే రుచికరమైన జ్యూస్ గ్లాసు.</li>
       </ul>
+    </div>
+
+    <div class="section-title"><span class="num">1</span>Function Declarations vs Function Expressions</div>
+    <div class="section-body">
+      <p>జావాస్క్రిప్ట్ లో ఫంక్షన్లు రాయడానికి రెండు ప్రధాన పద్ధతులు ఉన్నాయి:</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Rest Parameters Sum Function</span>
+          <span class="lang-tag">JavaScript — Function Declaration & Expression</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
-
-// Rest parameter gathers indefinite arguments into an array
-function sumAll(...numbers) {
-    return numbers.reduce((acc, num) => acc + num, 0);
+        <pre><code>// 1. Function Declaration (Hoisting కి సపోర్ట్ చేస్తుంది)
+function greet(name) {
+    return "నమస్తే " + name + "! Welcome to Our Compiler.";
 }
+console.log(greet("Balaji"));
 
-console.log("Sum 3 items:", sumAll(10, 20, 30));         // 60
-console.log("Sum 6 items:", sumAll(1, 2, 3, 4, 5, 6));    // 21</code></pre>
-      </div>
-    </div>
-
-    <!-- 3. Callback Functions & Higher-Order Functions -->
-    <div class="section-title"><span class="num">3</span>Callbacks & Higher-Order Functions (HOF)</div>
-    <div class="section-body">
-      <p>Oka function ni maroka function ki argument ga pass chesthe dhaanni <strong>Callback Function</strong> antaru. Functions ni parameters ga teesukune or functions ni return chese function ni <strong>Higher-Order Function</strong> antaru:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Higher-Order Function & Callback</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// Higher-Order Function that accepts a callback
-function executeOperation(a, b, operationCallback) {
-    return operationCallback(a, b);
-}
-
-const add = (x, y) => x + y;
-const multiply = (x, y) => x * y;
-
-console.log("Addition Callback:", executeOperation(5, 4, add));        // 9
-console.log("Multiply Callback:", executeOperation(5, 4, multiply));  // 20</code></pre>
-      </div>
-    </div>
-
-    <!-- 4. Scopes & Closures (The Golden JavaScript Superpower) -->
-    <div class="section-title"><span class="num">4</span>Scopes & Closures (The Golden Concept) ⭐</div>
-    <div class="section-body">
-      <div class="callout">
-        <div class="callout-title">💡 What is a Closure?</div>
-        <p>A <strong>Closure</strong> is a function that <strong>remembers and retains access to its outer lexical scope variables</strong> even AFTER the outer parent function has finished executing and returned from the Call Stack!</p>
-      </div>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Closure Counter & State Encapsulation</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-function createCounter(initialValue = 0) {
-    let count = initialValue; // Private variable encapsulated in closure
-
-    return {
-        increment() {
-            count++;
-            return count;
-        },
-        decrement() {
-            count--;
-            return count;
-        },
-        getCount() {
-            return count;
-        }
-    };
-}
-
-const counter1 = createCounter(10);
-console.log("Increment:", counter1.increment()); // 11
-console.log("Increment:", counter1.increment()); // 12
-console.log("Decrement:", counter1.decrement()); // 11
-console.log("Current Value:", counter1.getCount()); // 11
-// 'count' variable direct ga access cheyyaleru (Private & Secure!)</code></pre>
-      </div>
-    </div>
-
-    <!-- 5. Recursion & Pure Functions -->
-    <div class="section-title"><span class="num">5</span>Recursion & Pure Functions</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong>Recursion:</strong> A function calling itself until a <strong>Base Condition</strong> is met. Base condition lekunte Call Stack overflow avthundhi!</li>
-        <li><strong>Pure Function:</strong> Given identical arguments, always returns the <strong>exact same result</strong> with <strong>zero side-effects</strong> (does not modify global variables, mutate external arrays, or trigger DOM/network mutations).</li>
-      </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Recursive Factorial & Pure Function</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// Recursive Factorial Function
-function factorial(n) {
-    if (n <= 1) return 1; // Base condition!
-    return n * factorial(n - 1); // Recursive step
-}
-
-console.log("5! =", factorial(5)); // 120
-console.log("6! =", factorial(6)); // 720</code></pre>
-      </div>
-    </div>
-
-    <!-- 6. Explicit Binding: call(), apply(), bind() -->
-    <div class="section-title"><span class="num">6</span>Explicit Context Binding: call(), apply() & bind() (Crucial Interview Topic)</div>
-    <div class="section-body">
-      <p>JavaScript allows you to manually force what <code>this</code> points to using <code>call</code>, <code>apply</code>, and <code>bind</code>:</p>
-
-      <table class="tbl">
-        <tr><th>Method</th><th>Execution Time</th><th>Arguments Format</th><th>Use Case</th></tr>
-        <tr>
-          <td><strong><code>call(thisArg, arg1, arg2...)</code></strong></td>
-          <td><strong>Immediately executes</strong></td>
-          <td>Comma-separated arguments</td>
-          <td>Borrowing methods with individual parameters.</td>
-        </tr>
-        <tr>
-          <td><strong><code>apply(thisArg, [argsArray])</code></strong></td>
-          <td><strong>Immediately executes</strong></td>
-          <td>Single array of arguments</td>
-          <td>Borrowing methods with an array of values.</td>
-        </tr>
-        <tr>
-          <td><strong><code>bind(thisArg, arg1, arg2...)</code></strong></td>
-          <td><strong>Does NOT execute immediately</strong></td>
-          <td>Returns a <strong>new permanently bound function</strong></td>
-          <td>Event listeners, timer callbacks, preserving <code>this</code>.</td>
-        </tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — call, apply & bind Demo</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const person1 = { name: "Ravi", role: "Frontend Dev" };
-const person2 = { name: "Sneha", role: "Backend Architect" };
-
-function introduce(greeting, location) {
-    return \`\${greeting}! I am \${this.name}, working as \${this.role} in \${location}.\`;
-}
-
-// 1. call() - Comma separated arguments
-console.log(introduce.call(person1, "Hello", "Hyderabad"));
-
-// 2. apply() - Array of arguments
-console.log(introduce.apply(person2, ["Namaste", "Bengaluru"]));
-
-// 3. bind() - Returns new function bound to person1
-const boundRavi = introduce.bind(person1, "Hi");
-console.log(boundRavi("Remote Hub"));</code></pre>
-      </div>
-    </div>
-
-    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
-    <div class="section-title"><span class="num">7</span>4 Real-World Practice Projects</div>
-    <div class="section-body">
-      <p>Mastering functions through 4 production-grade engineering patterns:</p>
-
-      <!-- Project 1: Bank Vault Closure -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: Secure Bank Account Vault (Closures)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Bank Vault Closure</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function createBankAccount(initialDeposit, pin) {
-    let balance = initialDeposit; // Protected private state
-
-    return {
-        checkBalance(enteredPin) {
-            if (enteredPin !== pin) return "❌ Invalid PIN!";
-            return "✅ Balance: Rs." + balance;
-        },
-        deposit(amount) {
-            if (amount <= 0) return "Invalid amount!";
-            balance += amount;
-            return "✅ Deposited Rs." + amount + " | New Balance: Rs." + balance;
-        }
-    };
-}
-
-const myAccount = createBankAccount(10000, 1234);
-console.log(myAccount.checkBalance(9999)); // Invalid PIN
-console.log(myAccount.checkBalance(1234)); // Rs. 10000
-console.log(myAccount.deposit(2500));     // Rs. 12500</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: Currying Function -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Function Currying (Discount Engine)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Currying</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-// Curried discount function
-const applyDiscount = discountRate => price => price - (price * discountRate);
-
-const tenPercentDiscount = applyDiscount(0.10);
-const festiveThirtyPercent = applyDiscount(0.30);
-
-console.log("Laptop 10% Off:", tenPercentDiscount(50000));   // 45000
-console.log("Laptop 30% Off:", festiveThirtyPercent(50000)); // 35000</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Recursive Deep Flattening -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: Recursive Deep Array Flattening</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Recursive Flatten</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-function deepFlatten(arr) {
-    let result = [];
-    for (const item of arr) {
-        if (Array.isArray(item)) {
-            result = result.concat(deepFlatten(item)); // Recursive step
-        } else {
-            result.push(item);
-        }
-    }
-    return result;
-}
-
-const multiLevel = [1, [2, [3, [4, 5]], 6], 7];
-console.log("Deep Flattened:", deepFlatten(multiLevel)); // [1, 2, 3, 4, 5, 6, 7]</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Method Borrowing with call -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Reusable Logger with call() Binding</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Method Borrowing</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const apiResponse = {
-    status: 200,
-    endpoint: "/api/v1/users",
-    timestamp: "2026-08-17"
+// 2. Function Expression (వేరియబుల్ లో దాచడం)
+const add = function(a, b) {
+    return a + b;
 };
-
-function formatLog(level) {
-    return \`[\${level.toUpperCase()}] \${this.endpoint} returned \${this.status} at \${this.timestamp}\`;
-}
-
-console.log(formatLog.call(apiResponse, "info"));
-// [INFO] /api/v1/users returned 200 at 2026-08-17</code></pre>
-        </div>
+console.log("Sum:", add(10, 20)); // 30</code></pre>
       </div>
     </div>
 
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this total tax calculation function in our live compiler:</p>
-      
+    <div class="section-title"><span class="num">2</span>Modern ES6 Arrow Functions (=>)</div>
+    <div class="section-body">
+      <p>ES6 లో కోడ్ ని చాలా షార్ట్ గా, అందంగా రాయడానికి <strong>Arrow Functions</strong> వచ్చాయి. రియాక్ట్ (React.js) ప్రాజెక్టులలో 90% ఇవే వాడతారు!</p>
+
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript Functions</span>
+          <span class="lang-tag">JavaScript — Arrow Functions</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-function calculateTotal(price, tax = 0.18) {
-    return price + price * tax;
-}
+// మామూలు ఫంక్షన్
+// function square(x) { return x * x; }
 
-console.log("Total (with 18% default tax):", calculateTotal(100));
-console.log("Total (with 5% custom tax):", calculateTotal(200, 0.05));</code></pre>
+// Arrow Function (ఒకే లైన్ లో ఉంటే return మరియు { } అవసరం లేదు!)
+const square = x => x * x;
+console.log("Square of 5:", square(5)); // 25
+
+// మల్టీ లైన్ Arrow Function
+const calculateBill = (price, tax) => {
+    let total = price + (price * tax);
+    return total;
+};
+console.log("Total Bill:", calculateBill(100, 0.18)); // 118</code></pre>
       </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
+    <div class="section-title"><span class="num">3</span>Default Parameters & Scope Basics</div>
+    <div class="section-body">
+      <p>యూజర్ ఇన్ పుట్ ఇవ్వకపోతే వాల్యూస్ దానంతటదే తీసుకోవడానికి <strong>Default Parameters</strong> వాడతాం. వేరియబుల్స్ ఎక్కడ పనిచేస్తాయో చెప్పడానికి <strong>Scope</strong> ఉపయోగపడుతుంది.</p>
 
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Default Parameters & Scope</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>// Default Parameter (role ఇవ్వకపోతే "Guest" తీసుకుంటుంది)
+function welcomeUser(name, role = "Guest") {
+    console.log("User:", name, "| Role:", role);
+}
+welcomeUser("Balaji", "Admin"); // User: Balaji | Role: Admin
+welcomeUser("Suresh");         // User: Suresh | Role: Guest
+
+// Scope ఉదాహరణ
+let globalVar = "I am Global";
+
+function testScope() {
+    let localVar = "I am Local";
+    console.log(globalVar); // పనిచేస్తుంది
+    console.log(localVar);  // పనిచేస్తుంది
+}
+testScope();
+// console.log(localVar); // ❌ ReferenceError! (ఫంక్షన్ బయట స్థానిక వేరియబుల్స్ పనిచేయవు)</code></pre>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li>ఫంక్షన్ లో <code>return</code> రాయడం మర్చిపోవడం. <code>return</code> లేకపోతే ఫంక్షన్ ఎప్పుడూ <code>undefined</code> ని ఇస్తుంది!</li>
+        <li>Arrow Function లో <code>{}</code> రాసినప్పుడు <code>return</code> కీవర్డ్ తప్పక రాయాలి. <code>const add = (a, b) => { a + b }</code> అని రాస్తే <code>undefined</code> ఇస్తుంది. <code>const add = (a, b) => a + b</code> అని రాయాలి.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>Practice Questions & Answers</div>
+    <div class="section-body">
+      <details>
+        <summary>Q1. Function Declaration కి Function Expression కి ప్రధాన తేడా ఏంటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> Function Declarations కి Hoisting ఉంటుంది (అంటే ఫంక్షన్ నిర్వచించే ముందే దాన్ని కాల్ చేయవచ్చు). కానీ Function Expression ని నిర్వచించిన తర్వాతే కాల్ చేయగలము.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q2. ఫంక్షన్ ఎన్ని వాల్యూస్ ని రిటర్న్ చేయగలదు?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> ఫంక్షన్ కేవలం ఒకే ఒక వాల్యూ ని రిటర్న్ చేయగలదు. కానీ ఒకే సారి చాలా వాల్యూస్ కావాలంటే Array <code>[a, b]</code> లేదా Object <code>{a, b}</code> గా మార్చి రిటర్న్ చేయవచ్చు!</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>కోడ్ రిపీటేషన్ ని అడ్డుకోవడానికి ఫంక్షన్లు వాడండి.</li>
+        <li>ఆధునిక JavaScript లో Arrow Functions <code>=></code> వాడటం అలవాటు చేసుకోండి.</li>
+        <li>ఫంక్షన్ నుండి అవుట్ పుట్ రావాలంటే <code>return</code> తప్పనిసరి.</li>
+      </ul>
+    </div>
+`;
   const html = wrapJSLessonPage(title, desc, filename, 13, subtopics, contentBody, 'objects.html', '12. Objects & Key-Value Mastery', 'es6-features.html', 'Phase 11: Advanced ES6+');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -887,7 +622,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

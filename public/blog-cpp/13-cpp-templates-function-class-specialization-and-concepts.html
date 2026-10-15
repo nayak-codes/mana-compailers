@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Templates, Function & Class Templates, Specialization, Variadic & Concepts Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive C++ guide on Templates (Phase 13): function templates, class templates, non-type parameters, template specialization, variadic templates, fold expressions, and C++20 concepts." />
-  <meta name="keywords" content="c++ tutorial, c++ templates, function & class templates, specialization, variadic & concepts masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Templates & Generic Programming (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లో Templates అంటే ఏమిటి? ఒకే లాజిక్ ని అన్ని డేటా టైప్స్ కి వాడే Generic Programming ఎలా రాస్తారు? C++20 లో వచ్చిన Concepts అంటే ఏంటో డీప్ గా తెలుసుకుందాం." />
+  <meta name="keywords" content="c++ tutorial, templates & generic programming (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/13-cpp-templates-function-class-specialization-and-concepts.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -490,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 13: C++ Templates, Function & Class Templates, Specialization, Variadic & Concepts Masterclass</span>
+      <span class="current">Lesson 13: Templates & Generic Programming (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Templates, Function & Class Templates, Specialization, Variadic & Concepts Masterclass</h1>
+    <h1 class="page-title">Templates & Generic Programming (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 13</span>
@@ -501,174 +478,123 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Function Templates · Class Templates · Non-Type Parameters · Template Specialization · Variadic Templates · Fold Expressions · C++20 Concepts · Generic Programming</span>
+      <span>Function Templates · Class Templates · Generic Programming · Template Specialization · Concepts (C++20)</span>
     </div>
-<div class="intro-box">
-  <p>Welcome to <strong>Phase 13: Templates &amp; Generic Programming</strong>! C++ templates let you write type-independent algorithms and data structures. The compiler generates type-specific specializations at compile time — zero runtime overhead. Templates power the entire STL (vector, map, sort, etc.).</p>
-</div>
 
-<div class="section-title"><span class="num">1</span>Function Templates</div>
-<div class="section-body">
-  <p class="text-prose">A <strong>function template</strong> defines a pattern. The compiler deduces the type argument from the call site, or you can specify it explicitly: <code>maximum&lt;int&gt;(3, 5)</code>.</p>
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Function Templates</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
+    <div class="intro-box">
+      <p>ఒక ఫంక్షన్ రాసి దాన్ని రకరకాలుగా వాడుకోవచ్చు (Overloading) అని మనం నేర్చుకున్నాం. కానీ అందులో ఒక ప్రాబ్లెమ్ ఉంది. మీరు రెండు ఇంటీజర్స్ (int) కూడటానికి ఒక ఫంక్షన్ రాశారు. రేపు మీకు ఫ్లోట్స్ (float) కూడాలి అనిపించింది, మళ్ళీ ఇంకో ఫంక్షన్ రాయాలి. ఎల్లుండి డబుల్స్ (double) కూడాలి, ఇంకోటి రాయాలి. ఇదంతా ఒకే లాజిక్ (కూడిక) అయినప్పుడు, అన్నిటికీ విడివిడిగా కోడ్ రాయడం టైమ్ వేస్ట్ కాదా? ఈ ప్రాబ్లెమ్ ని రూట్ తో సహా పీకేయడానికి C++ కనిపెట్టిన బ్రహ్మాస్త్రమే <strong>Templates (టెంప్లేట్స్)</strong>. దీన్నే మనం <strong>Generic Programming (జెనెరిక్ ప్రోగ్రామింగ్)</strong> అని అంటాము. అసలు ఈ టెంప్లేట్స్ ఎంత పవర్ ఫుల్ అంటే, మొత్తం C++ STL (Standard Template Library) పుట్టిందే దీని మీద!</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> Templates (టెంప్లేట్స్) ఎలా పనిచేస్తాయి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        టెంప్లేట్ అంటే ఒక మౌల్డ్ (అచ్చు లేదా స్వరూపం) లాంటిది. అందులో మీరు లాజిక్ ఒకసారి రాసి పెడతారు, కానీ ఏ డేటా టైప్ వాడాలో చెప్పరు. ఆ డేటా టైప్ ని <code>&lt;T&gt;</code> అనే ఒక స్పెషల్ వేరియబుల్ లాగా పక్కన పెడతారు. మీరు ఎప్పుడైతే ఫంక్షన్ ని కాల్ చేసి దానికి నంబర్ ఇస్తారో... అప్పుడు కంపైలర్ ఆ నంబర్ ని చూసి, బ్యాక్ గ్రౌండ్ లో ఆ <code>&lt;T&gt;</code> ని <code>int</code> కింద మార్చుకుని దానంతట అదే ఒక ఫంక్షన్ ని తయారు చేసుకుంటుంది!
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🏭 రియల్ లైఫ్ స్టోరీ: బొమ్మల ఫ్యాక్టరీ లో ఇనుప అచ్చు (Mould)</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          ఒక ఫ్యాక్టరీ లో కారు ఆకారంలో ఉన్న ఒక ఇనుప అచ్చు (Mould) ఉంది అనుకోండి. ఆ అచ్చు ని టెంప్లేట్ (Template) అంటారు.<br><br>
+          అందులో మీరు ప్లాస్టిక్ పోస్తే (int పంపిస్తే)... ప్లాస్టిక్ కారు వస్తుంది.<br>
+          అందులో మీరు కరిగించిన చాక్లెట్ పోస్తే (double పంపిస్తే)... చాక్లెట్ కారు వస్తుంది.<br>
+          అందులో మైనం పోస్తే (string పంపిస్తే)... మైనపు కారు వస్తుంది.<br><br>
+          షేప్ (లాజిక్) ఒకటే... కానీ మీరు పోసే మెటీరియల్ (డేటా టైప్) ని బట్టి ఫైనల్ ప్రోడక్ట్ మారిపోతుంది. ప్రోగ్రామింగ్ లో కూడా మీరు లాజిక్ ఒకసారే రాస్తారు, కంపైలర్ మీరు పంపిన డేటా ని బట్టి రకరకాల ఫంక్షన్స్ ని ఆటోమేటిక్ గా రాసుకుంటుంది. ప్రోగ్రామర్ కి పని చాలా ఈజీ అయిపోతుంది.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> Class Templates మరియు Specialization</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కేవలం ఫంక్షన్స్ కి మాత్రమే కాకుండా, మొత్తం ఒక క్లాస్ కి కూడా మనం టెంప్లేట్ రాయొచ్చు. ఉదాహరణకు <code>vector&lt;int&gt;</code> మరియు <code>vector&lt;string&gt;</code> ఇవన్నీ క్లాస్ టెంప్లేట్స్ వల్లే సాధ్యం అయ్యాయి.
+      </p>
+      <p class="text-prose">
+        <strong>Template Specialization:</strong> టెంప్లేట్ అన్నిటికీ ఒకేలా పనిచేస్తుంది కదా. కానీ ఏదైనా ఒక పర్టికులర్ డేటా టైప్ (ఉదాహరణకు <code>char*</code>) వచ్చినప్పుడు మాత్రం వేరే లాజిక్ రన్ అవ్వాలి అనుకుంటే, దానికి మనం ఒక స్పెషల్ టెంప్లేట్ రాసుకోవచ్చు. దీన్నే స్పెషలైజేషన్ అంటారు.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Function Template)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో <code>getMax</code> అనే ఒకటే ఫంక్షన్ ని టెంప్లేట్ వాడి రాసాం. అదే ఫంక్షన్ ఇంటీజర్స్ ని, ఫ్లోట్స్ ని, స్ట్రింగ్స్ ని ఎలా క్యాలిక్యులేట్ చేస్తుందో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — Generic Templates</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
 
-// Single type parameter
+// T అనేది డేటా టైప్ (int, float, string ఏదైనా కావొచ్చు)
 template &lt;typename T&gt;
-T maximum(T first, T second) {
-    return first &gt; second ? first : second;
-}
-
-// Multiple type parameters
-template &lt;typename T, typename U&gt;
-auto add(T a, U b) -&gt; decltype(a + b) {
-    return a + b;
-}
-
-// Non-type template parameter
-template &lt;int N&gt;
-constexpr int square() { return N * N; }
-
-int main() {
-    std::cout &lt;&lt; maximum(10, 20) &lt;&lt; "
-";          // T = int
-    std::cout &lt;&lt; maximum(4.5, 2.3) &lt;&lt; "
-";        // T = double
-    std::cout &lt;&lt; maximum&lt;std::string&gt;("apple", "mango") &lt;&lt; "
-"; // explicit T
-    std::cout &lt;&lt; add(3, 4.7) &lt;&lt; "
-";              // T=int, U=double → double
-    std::cout &lt;&lt; square&lt;7&gt;() &lt;&lt; "
-";              // compile-time: 49
-    return 0;
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">2</span>Class Templates</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Class Template (Generic Stack)</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;vector&gt;
-#include &lt;stdexcept&gt;
-
-template &lt;typename T&gt;
-class Stack {
-    std::vector&lt;T&gt; data_;
-public:
-    void push(const T&amp; item) { data_.push_back(item); }
-    void pop() {
-        if (data_.empty()) throw std::underflow_error("Stack underflow!");
-        data_.pop_back();
+T getMax(T a, T b) {
+    // రెండిట్లో ఏది పెద్దదైతే అది ఇస్తుంది
+    if (a > b) {
+        return a;
+    } else {
+        return b;
     }
-    const T&amp; top() const {
-        if (data_.empty()) throw std::underflow_error("Stack is empty!");
-        return data_.back();
-    }
-    bool empty() const { return data_.empty(); }
-    std::size_t size() const { return data_.size(); }
-};
-
-// Template specialization for bool (memory-efficient bitset version)
-template &lt;&gt;
-class Stack&lt;bool&gt; {
-    std::vector&lt;uint8_t&gt; data_;
-public:
-    void push(bool val) { data_.push_back(val ? 1 : 0); }
-    bool top() const { return data_.back() != 0; }
-    void pop() { data_.pop_back(); }
-    bool empty() const { return data_.empty(); }
-};
-
-int main() {
-    Stack&lt;int&gt; intStack;
-    intStack.push(10);
-    intStack.push(20);
-    intStack.push(30);
-    std::cout &lt;&lt; "Top: " &lt;&lt; intStack.top() &lt;&lt; "
-";
-    intStack.pop();
-    std::cout &lt;&lt; "After pop top: " &lt;&lt; intStack.top() &lt;&lt; "
-";
-
-    Stack&lt;std::string&gt; strStack;
-    strStack.push("Hello");
-    strStack.push("C++");
-    std::cout &lt;&lt; "String top: " &lt;&lt; strStack.top() &lt;&lt; "
-";
-    return 0;
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">3</span>Variadic Templates &amp; Fold Expressions</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — Variadic Templates &amp; Fold Expressions</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
-
-// Variadic template: accepts any number of args of any types
-template &lt;typename... Args&gt;
-void printAll(Args... args) {
-    // C++17 fold expression over comma operator
-    ((std::cout &lt;&lt; args &lt;&lt; " "), ...);
-    std::cout &lt;&lt; "
-";
-}
-
-// Fold to sum
-template &lt;typename... Ts&gt;
-auto sumAll(Ts... values) {
-    return (values + ...);  // binary fold with +
 }
 
 int main() {
-    printAll(1, 2.5, "hello", 'A');    // 1 2.5 hello A
-    std::cout &lt;&lt; sumAll(1, 2, 3, 4, 5) &lt;&lt; "
-";  // 15
+    // 1. ఇంటీజర్స్ (నంబర్స్) పంపుతున్నాం
+    int maxInt = getMax(10, 25);
+    std::cout << "Max Int: " << maxInt << std::endl;
+    
+    // 2. డబుల్స్ (పాయింట్ నంబర్స్) పంపుతున్నాం
+    double maxDouble = getMax(9.99, 4.55);
+    std::cout << "Max Double: " << maxDouble << std::endl;
+    
+    // 3. క్యారెక్టర్స్ (అక్షరాలు) పంపుతున్నాం (ఆస్కీ కోడ్ బట్టి వస్తుంది)
+    char maxChar = getMax('A', 'Z');
+    std::cout << "Max Char: " << maxChar << std::endl;
+    
     return 0;
 }</code></pre>
-  </div>
-  <div class="concept-box">
-    <h4>C++20 Concepts — Constraining Templates:</h4>
-    <p>Concepts allow placing compile-time constraints on template parameters, improving error messages and enforcing API contracts.</p>
-    <pre style="background:#0f141c;padding:12px;border-radius:6px;color:#60a5fa;font-size:13px;overflow-x:auto">#include &lt;concepts&gt;
-template &lt;typename T&gt;
-concept Numeric = std::integral&lt;T&gt; || std::floating_point&lt;T&gt;;
+      </div>
+    </div>
 
-template &lt;Numeric T&gt;
-T safeDiv(T a, T b) { return a / b; }
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>template &lt;typename T&gt;</code>: ఇక్కడ T అంటే Type అని అర్థం (మీరు ఏ పేరు అయినా పెట్టుకోవచ్చు). ఇది రాసిన తర్వాత కింద ఉన్న ఫంక్షన్ అంతా T మీద ఆధారపడి ఉంటుంది.</li>
+        <li>మనం <code>getMax(10, 25)</code> కాల్ చేసినప్పుడు, కంపైలర్ చూసుకుని "అరె ఇవి int వాల్యూస్ కదా" అని అర్థం చేసుకుని, బ్యాక్ గ్రౌండ్ లో T ప్లేస్ లో int పెట్టి ఒక ఫంక్షన్ క్రియేట్ చేస్తుంది.</li>
+        <li>అదే <code>getMax(9.99, 4.55)</code> పిలిచినప్పుడు, డబుల్స్ కి సరిపడే ఇంకొక ఫంక్షన్ ని దానంతట అదే క్రియేట్ చేస్తుంది. ఇదంతా ప్రోగ్రామ్ రన్ అయ్యేటప్పుడు కాదు, కంపైల్ అయ్యేటప్పుడే జరిగిపోతుంది. కాబట్టి స్పీడ్ ఏమాత్రం తగ్గదు. సూపర్ ఫాస్ట్!</li>
+      </ul>
+    </div>
 
-// safeDiv("hello", "world"); // ← COMPILE ERROR — string is not Numeric!</pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">4</span>Technical FAQs</div>
-<div class="section-body">
-  <div class="faq-grid">
-    <div class="faq-item"><h4>Q1: Why are template definitions in header files?</h4><p>Templates are compiled per translation unit. The compiler needs the full template definition (not just declaration) at instantiation point — so they must be in headers.</p></div>
-    <div class="faq-item"><h4>Q2: What is explicit template instantiation?</h4><p>You can force the compiler to instantiate a template for a specific type: <code>template class Stack&lt;int&gt;;</code> in a .cpp file, reducing compile time.</p></div>
-    <div class="faq-item"><h4>Q3: What is SFINAE?</h4><p>Substitution Failure Is Not An Error. When template substitution fails, the compiler silently discards that overload candidate rather than emitting an error. Used with <code>std::enable_if</code>.</p></div>
-    <div class="faq-item"><h4>Q4: What is the difference between typename and class in template parameters?</h4><p>They are interchangeable for type parameters. <code>class</code> is historical, <code>typename</code> is preferred in modern C++ for clarity, and is required when disambiguating dependent names.</p></div>
-    <div class="faq-item"><h4>Q5: What are template template parameters?</h4><p>A template can accept another template as its parameter: <code>template&lt;template&lt;typename&gt; class Container&gt; class Adapter { ... };</code></p></div>
-  </div>
-</div>
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: C++20 లో కొత్తగా వచ్చిన "Concepts" అంటే ఏంటి?</h4>
+          <p>టెంప్లేట్స్ లో ఉన్న పెద్ద మైనస్ ఏంటంటే, మీరు T లోపలికి ఏ చెత్త పంపినా అది తీసుకుంటుంది, లోపల లాజిక్ ఫెయిల్ అయ్యి భయంకరమైన ఎర్రర్ మెసేజెస్ ఇస్తుంది. దీన్ని ఆపడానికి C++20 లో <strong>Concepts (కాన్సెప్ట్స్)</strong> తెచ్చారు. దీని ద్వారా మీరు T మీద కండిషన్స్ పెట్టొచ్చు (ఉదాహరణకు: <code>template &lt;Integral T&gt;</code> అని రాస్తే, కేవలం నంబర్స్ ని మాత్రమే అలో చేస్తుంది, వేరేవి ఇస్తే సింపుల్ ఎర్రర్ ఇస్తుంది).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: జావా లో ఉండే Generics కి, C++ లో ఉండే Templates కి తేడా ఏంటి?</h4>
+          <p>జావా లో జెనెరిక్స్ కేవలం కోడ్ రాసేటప్పుడు మాత్రమే పనిచేస్తాయి (Type Erasure), ప్రోగ్రామ్ రన్ అయ్యేటప్పుడు అన్నీ ఒకే ఆబ్జెక్ట్ కింద మారిపోతాయి. కానీ C++ లో కంపైలర్ ప్రతి ఒక్క డేటా టైప్ కి విడివిడిగా ఒరిజినల్ మెషిన్ కోడ్ (Assembly) జనరేట్ చేస్తుంది. అందుకే C++ టెంప్లేట్స్ చాలా ఫాస్ట్ గా ఉంటాయి, కానీ దానివల్ల ఫైనల్ <code>.exe</code> ఫైల్ సైజ్ కొంచెం పెరుగుతుంది (దీన్నే Code Bloat అంటారు).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: <code>template &lt;class T&gt;</code> కి మరియు <code>template &lt;typename T&gt;</code> కి తేడా ఉందా?</h4>
+          <p>పాత C++ వెర్షన్స్ లో <code>class T</code> వాడేవాళ్ళు. కానీ అది చూసి స్టూడెంట్స్ ఇది కేవలం క్లాసెస్ కి మాత్రమే అప్లై అవుతుందేమో అని కన్ఫ్యూజ్ అయ్యేవారు (int కి క్లాస్ ఉండదు కదా). ఆ కన్ఫ్యూజన్ పోగొట్టడానికి తర్వాత <code>typename T</code> ని కూడా అలో చేశారు. ఈ రెండిటి మధ్య 99% ఎలాంటి తేడా లేదు, ఏది వాడినా ఒకటే.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="12-cpp-operator-overloading-friend-functions-and-stream-operators.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">12. Operator Overloading, Friend Functions & Streams</span>
+    <span class="title">12. Operator Overloading</span>
   </a>
   <a href="14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">14. STL: vector, map, set, unordered & Container Adaptors</span>
+    <span class="title">14. STL Containers</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

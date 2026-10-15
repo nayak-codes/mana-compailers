@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Constructors, this Keyword & Constructor Overloading — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering Java constructor mechanics: understanding the 3 types of constructors (default, parameterized, and copy), the critical roles of the this keyword in field disambiguation, method chaining, and inter-constructor delegation, and designing constructor overloads to provide flexible object creation APIs." />
-  <meta name="keywords" content="java constructors, this keyword & constructor overloading, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Constructors, this Keyword & Constructor Overloading (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="ఆబ్జెక్ట్ పుట్టగానే దానికి ఒక పేరు, వయసు లాంటివి డిఫాల్ట్ గా సెట్ అవ్వాలంటే ఎలా? అందుకోసమే జావాలో **Constructors (కన్స్ట్రక్టర్స్)** ఉంటాయి. అసలు ఇవి మామూలు మెథడ్స్ కి ఎలా వేరు? దీంట్లో `this` కీవర్డ్ ఎందుకు అంత ఇంపార్టెంట్? కన్స్ట్రక్టర్స్ ని ఓవర్ లోడ్ చేసి రకరకాలుగా ఆబ్జెక్ట్స్ ని ఎలా క్రియేట్ చేయాలో ఈ చాప్టర్ లో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="java constructors, this keyword & constructor overloading (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/39-java-constructors-this-keyword-and-overloading.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 39: 39. Constructors & this Keyword</span>
     </div>
 
-    <h1 class="page-title">Java Constructors, this Keyword & Constructor Overloading</h1>
+    <h1 class="page-title">Java Constructors, this Keyword & Constructor Overloading (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,76 +541,75 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering Java constructor mechanics: understanding the 3 types of constructors (default, parameterized, and copy), the critical roles of the this keyword in field disambiguation, method chaining, and inter-constructor delegation, and designing constructor overloads to provide flexible object creation APIs.</p>
+      <p>ఆబ్జెక్ట్ పుట్టగానే దానికి ఒక పేరు, వయసు లాంటివి డిఫాల్ట్ గా సెట్ అవ్వాలంటే ఎలా? అందుకోసమే జావాలో **Constructors (కన్స్ట్రక్టర్స్)** ఉంటాయి. అసలు ఇవి మామూలు మెథడ్స్ కి ఎలా వేరు? దీంట్లో `this` కీవర్డ్ ఎందుకు అంత ఇంపార్టెంట్? కన్స్ట్రక్టర్స్ ని ఓవర్ లోడ్ చేసి రకరకాలుగా ఆబ్జెక్ట్స్ ని ఎలా క్రియేట్ చేయాలో ఈ చాప్టర్ లో డీప్ గా చూద్దాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. What is a Constructor? (Object Initialization Specialist)</h2>
+      <h2>1. Constructor అంటే ఏంటి? (ఆబ్జెక్ట్ కి ప్రాణం పోసేది)</h2>
       <div class="theory-text">
-        <p>A <strong>Constructor</strong> is a special method that is <strong>automatically invoked by the JVM when a new object is created</strong> with the <code>new</code> keyword. Its purpose is to set up the object's initial state.</p>
-<p><strong>Constructor vs Regular Method — 5 Critical Differences:</strong></p>
-<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>Property</th><th>Constructor</th><th>Regular Method</th></tr></thead><tbody><tr><td>**Name**</td></tr></tbody></table></div>
- Must exactly match the class name | Any valid identifier |
-| <strong>Return Type</strong> | <strong>None</strong> (not even <code>void</code>!) | Must declare <code>void</code> or a type |
-| <strong>When Called</strong> | Automatically on <code>new</code> | Must be explicitly invoked |
-| <strong>Can be inherited?</strong> | No | Yes |
-| <strong>Purpose</strong> | Object initialization | Any operation |
+        <p><strong>Constructor</strong> అంటే ఒక స్పెషల్ మెథడ్. మనం <code>new</code> అని ఆబ్జెక్ట్ క్రియేట్ చేయగానే.. <strong>జావా ఆటోమాటిక్ గా దీన్ని రన్ చేస్తుంది</strong>. ఆబ్జెక్ట్ లోపల ఉన్న వేరియబుల్స్ కి ఫస్ట్ టైమ్ వాల్యూస్ ఇవ్వడానికి (Initial setup) దీన్ని వాడతాం.</p>
+<p><strong>కన్స్ట్రక్టర్ కి, మామూలు మెథడ్ కి ఉన్న 5 తేడాలు:</strong></p>
+<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>రూల్</th><th>Constructor</th><th>మామూలు Method</th></tr></thead><tbody><tr><td>**పేరు**</td></tr></tbody></table></div>
+ క్లాస్ పేరు ఏదైతే ఉందో, అచ్చం అదే పేరు ఉండాలి | మన ఇష్టం వచ్చిన పేరు పెట్టుకోవచ్చు |
+| <strong>రిటర్న్ టైప్</strong> | <strong>ఏమీ ఉండకూడదు</strong> (కనీసం <code>void</code> అని కూడా రాయకూడదు!) | కచ్చితంగా <code>void</code> లేదా ఏదో ఒక టైప్ రాయాలి |
+| <strong>ఎప్పుడు రన్ అవుతుంది?</strong> | <code>new</code> తో ఆబ్జెక్ట్ క్రియేట్ అవ్వగానే ఆటోమాటిక్ గా | మనం ఎప్పుడు పిలిస్తే అప్పుడు |
+| <strong>వారసత్వంగా వస్తుందా?</strong> | రాదు (Inherit అవ్వదు) | వస్తుంది (Inherit అవుతుంది) |
+| <strong>ఎందుకు వాడతారు?</strong> | ఆబ్జెక్ట్ పుట్టగానే డేటా సెటప్ చేయడానికి | మనకి కావాల్సిన లాజిక్స్ రన్ చేసుకోవడానికి |
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. The Default Constructor</h2>
+      <h2>2. Default Constructor (మనం రాయకపోయినా ఉండేది)</h2>
       <div class="theory-text">
-        <p>If you <strong>do NOT define any constructor</strong> in your class, the Java compiler automatically generates a hidden <strong>Default Constructor</strong> with no parameters and an empty body:</p>
+        <p>ఒకవేళ మీరు క్లాస్ లోపల <strong>కన్స్ట్రక్టర్ ఏమీ రాయకపోతే</strong>, కంపైల్ చేసేటప్పుడు జావా ఆటోమాటిక్ గా ఒక డమ్మీ కన్స్ట్రక్టర్ ని సృష్టించి పెడుతుంది. దాన్నే <strong>Default Constructor</strong> అంటారు.</p>
 <div class="code-block"><pre><code>class Product {
-    String name; // Field
+    String name;
 }
-// Compiler inserts this invisible default constructor:
-// Product() { super(); }
-<p>Product p = new Product(); // Valid! Uses auto-generated default constructor</code></pre></div></p>
-<p><strong>Warning:</strong> As soon as you explicitly define ANY constructor (parameterized), the compiler STOPS generating the default constructor automatically! If you still need no-arg construction, you must define it explicitly.</p>
+// జావా లోపల ఇలా రాసుకుంటుంది:
+// Product() { }
+<p>Product p = new Product(); // ఇది వర్క్ అవుతుంది ఎందుకంటే జావా డమ్మీది పెట్టింది కాబట్టి</code></pre></div></p>
+<p><strong>డేంజర్ అలర్ట్:</strong> ఒకవేళ మీరు సొంతంగా కనీసం ఒక్క కన్స్ట్రక్టర్ రాసినా సరే.. జావా ఇక ఆ డమ్మీ దాన్ని ఇవ్వదు! అప్పుడు మీరు <code>new Product()</code> అని ఖాళీగా ఇస్తే ఎర్రర్ వస్తుంది.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. The Parameterized Constructor</h2>
+      <h2>3. Parameterized Constructor (మనం డేటా పంపించడం)</h2>
       <div class="theory-text">
-        <p>A <strong>Parameterized Constructor</strong> accepts arguments to initialize the object's fields with caller-provided values at creation time:</p>
+        <p>ఆబ్జెక్ట్ క్రియేట్ చేసేటప్పుడే మనం దానికి కావాల్సిన వాల్యూస్ ని (పేరు, వయసు లాంటివి) పంపించడాన్నే <strong>Parameterized Constructor</strong> అంటారు:</p>
 <div class="code-block"><pre><code>class Student {
     String name;
     int age;
-<p>// Parameterized Constructor<br>    Student(String name, int age) {<br>        this.name = name; // "this.name" = instance field; "name" = parameter<br>        this.age  = age;<br>    }<br>}</p>
-<p>Student s = new Student("Ravi", 20); // Compactly creates a fully initialized object</code></pre></div></p>
+<p>// Parameterized Constructor<br>    Student(String name, int age) {<br>        this.name = name; // "this.name" అంటే క్లాస్ లో ఉన్న వేరియబుల్. "name" అంటే మనం పంపించిన పారామీటర్<br>        this.age  = age;<br>    }<br>}</p>
+<p>// ఒకే లైన్ లో ఆబ్జెక్ట్ కి డేటా ఇచ్చేస్తున్నాం<br>Student s = new Student("Ravi", 20);</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. The this Keyword — 3 Distinct Roles</h2>
+      <h2>4. The this Keyword — దీనికి ఉన్న 3 రోల్స్</h2>
       <div class="theory-text">
-        <p>The <code>this</code> keyword is a reference variable that points to the <strong>current object</strong> (the object whose method or constructor is currently executing).</p>
-<p><strong>Role 1: Field Disambiguation (Most Common)</strong><br>When a constructor parameter has the same name as an instance field, <code>this.fieldName</code> disambiguates between them:<br><div class="code-block"><pre><code>Student(String name, int age) {<br>    this.name = name; // this.name = field; name = parameter<br>    this.age  = age;<br>}</code></pre></div></p>
-<p><strong>Role 2: Passing Current Object as Argument</strong><br><div class="code-block"><pre><code>void register() {<br>    Database.save(this); // Passes the current Student object to the Database<br>}</code></pre></div></p>
-<p><strong>Role 3: Constructor Chaining (this() Call)</strong><br><div class="code-block"><pre><code>Student(String name) {<br>    this(name, 18); // Delegates to Student(String, int) — MUST be first statement!<br>}</code></pre></div></p>
+        <p><code>this</code> అనే కీవర్డ్ <strong>కరెంట్ ఆబ్జెక్ట్</strong> ని పాయింట్ చేస్తుంటుంది. అంటే "నాది" అని అర్థం.</p>
+<p><strong>రోల్ 1: పేర్ల కన్ఫ్యూజన్ తీర్చడం (Field Disambiguation)</strong><br>క్లాస్ లో ఉన్న వేరియబుల్ పేరు, మనం మెథడ్ కి పంపిన పారామీటర్ పేరు ఒక్కటే ఉంటే.. కంపైలర్ కి అర్థం కాదు. అప్పుడు <code>this</code> వాడి "ఇది నా క్లాస్ వేరియబుల్ రా బాబు" అని చెప్తాం:<br><div class="code-block"><pre><code>Student(String name, int age) {<br>    this.name = name; // ఈ 'name' నా క్లాస్ ది, ఇవతల ఉన్న 'name' నువ్వు పంపించింది<br>    this.age  = age;<br>}</code></pre></div></p>
+<p><strong>రోల్ 2: కరెంట్ ఆబ్జెక్ట్ ని వేరే వాళ్ళకి పంపడం</strong><br><div class="code-block"><pre><code>void register() {<br>    Database.save(this); // నన్ను నేను (నా ఆబ్జెక్ట్ ని) డేటాబేస్ కి పంపించుకుంటున్నా<br>}</code></pre></div></p>
+<p><strong>రోల్ 3: ఇంకో కన్స్ట్రక్టర్ ని పిలవడానికి (<code>this()</code>)</strong><br><div class="code-block"><pre><code>Student(String name) {<br>    this(name, 18); // ఇదే క్లాస్ లో ఉన్న రెండు పారామీటర్స్ తీసుకునే కన్స్ట్రక్టర్ కి పంపుతుంది<br>}</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. Constructor Overloading</h2>
+      <h2>5. Constructor Overloading (ఒకటి కంటే ఎక్కువ కన్స్ట్రక్టర్స్)</h2>
       <div class="theory-text">
-        <p>Just like method overloading, you can define <strong>multiple constructors with different parameter lists</strong> to provide flexible object creation options:</p>
+        <p>మెథడ్స్ లాగానే, కన్స్ట్రక్టర్స్ కి కూడా ఒకే పేరుతో (అంటే క్లాస్ పేరుతో) మల్టిపుల్ వెర్షన్స్ రాయొచ్చు. దీన్ని బట్టి ఆబ్జెక్ట్ ని మన ఇష్టం వచ్చినట్టు వేరు వేరు స్టైల్స్ లో క్రియేట్ చేసుకోవచ్చు:</p>
 <div class="code-block"><pre><code>class Student {
     String name;
     int age;
-    double gpa;
-<p>// No-arg constructor (Defaults)<br>    Student() {<br>        this("Unknown", 18, 0.0);<br>    }</p>
-<p>// Name-only constructor<br>    Student(String name) {<br>        this(name, 18, 0.0);<br>    }</p>
-<p>// Full parameterized constructor (the one that does the actual work)<br>    Student(String name, int age, double gpa) {<br>        this.name = name;<br>        this.age  = age;<br>        this.gpa  = gpa;<br>    }<br>}</code></pre></div></p>
+<p>// ఏమీ ఇవ్వకపోతే డిఫాల్ట్ గా ఇది తీసుకుంటుంది<br>    Student() {<br>        this("Unknown", 18);<br>    }</p>
+<p>// పేరు మాత్రమే ఇస్తే ఇది రన్ అవుతుంది<br>    Student(String name) {<br>        this(name, 18);<br>    }</p>
+<p>// మొత్తం పంపిస్తే ఇది రన్ అవుతుంది (అసలు పని జరిగేది ఇక్కడే)<br>    Student(String name, int age) {<br>        this.name = name;<br>        this.age  = age;<br>    }<br>}</code></pre></div></p>
       </div>
     </section>
   
@@ -632,17 +631,17 @@
     double gpa;
     String department;
 
-    // Constructor 1: No-arg (Delegates to full constructor with defaults)
+    // కన్స్ట్రక్టర్ 1: ఏమీ ఇవ్వకపోతే డమ్మీ డేటాతో కిందకి పంపుతుంది
     Student() {
         this("Unknown Student", 18, 0.0, "Undeclared");
     }
 
-    // Constructor 2: Name and age only (User requested snippet base)
+    // కన్స్ట్రక్టర్ 2: పేరు, వయసు ఇస్తే మిగిలినవి డమ్మీ పెట్టి పంపుతుంది
     Student(String name, int age) {
         this(name, age, 0.0, "General");
     }
 
-    // Constructor 3: Full parameterized constructor (All fields)
+    // కన్స్ట్రక్టర్ 3: అసలైన ఫుల్ కన్స్ట్రక్టర్ (అన్నీ తీసుకుంటుంది)
     Student(String name, int age, double gpa, String department) {
         this.name       = name;
         this.age        = age;
@@ -650,49 +649,49 @@
         this.department = department;
     }
 
-    // Copy Constructor: Creates a new object with same state as another
+    // Copy Constructor: ఒక ఆబ్జెక్ట్ లో ఉన్న డేటా మొత్తం కాపీ కొట్టి కొత్తది క్రియేట్ చేయడం
     Student(Student other) {
         this(other.name, other.age, other.gpa, other.department);
     }
 
-    // Instance method
+    // ఇది మామూలు మెథడ్
     void displayDetails() {
         System.out.println(this.name + " - " + this.age);
     }
 
     void displayFullProfile() {
-        System.out.printf("  Name: %-18s | Age: %2d | GPA: %.2f | Dept: %s%n",
+        System.out.printf("  పేరు: %-18s | వయసు: %2d | GPA: %.2f | బ్రాంచ్: %s%n",
                 name, age, gpa, department);
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1. User Requested Snippet (Parameterized Constructor) ===");
+        System.out.println("=== 1. పారామీటర్స్ తో క్రియేట్ చేయడం ===");
         Student student = new Student("Ravi", 20);
         student.displayDetails();
 
         System.out.println("
-=== 2. Constructor Overloading Showcase ===");
-        Student noArg   = new Student();
-        Student nameAge = new Student("Priya", 22);
-        Student full    = new Student("Kiran", 21, 3.85, "Computer Science");
+=== 2. Constructor Overloading డెమో ===");
+        Student noArg   = new Student(); // ఏమీ ఇవ్వలేదు
+        Student nameAge = new Student("Priya", 22); // రెండు ఇచ్చాం
+        Student full    = new Student("Kiran", 21, 3.85, "Computer Science"); // అన్నీ ఇచ్చాం
 
         noArg.displayFullProfile();
         nameAge.displayFullProfile();
         full.displayFullProfile();
 
         System.out.println("
-=== 3. Copy Constructor Pattern ===");
+=== 3. Copy Constructor (కాపీ కొట్టడం) ===");
         Student original = new Student("Ananya Reddy", 23, 3.95, "Data Science");
-        Student copy = new Student(original);  // New independent object
-        copy.name = "Ananya Reddy (Clone)";    // Modifying copy doesn't affect original
+        Student copy = new Student(original);  // ఒరిజినల్ ఆబ్జెక్ట్ ని పంపించి కొత్తది క్రియేట్ చేసాం
+        copy.name = "Ananya Reddy (కాపీ)";    // కాపీ ని మార్చినా ఒరిజినల్ మారదు!
 
-        System.out.println("Original: " + original.name + " | GPA: " + original.gpa);
-        System.out.println("Copy    : " + copy.name     + " | GPA: " + copy.gpa);
+        System.out.println("ఒరిజినల్: " + original.name + " | GPA: " + original.gpa);
+        System.out.println("కాపీ     : " + copy.name     + " | GPA: " + copy.gpa);
 
         System.out.println("
-=== 4. this Keyword Disambiguation Test ===");
+=== 4. this Keyword వాడుక ===");
         Student s = new Student("Venkat", 25, 3.7, "Electronics");
         s.displayFullProfile();
     }
@@ -701,20 +700,20 @@ public class Main {
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== 1. User Requested Snippet (Parameterized Constructor) ===
+        <div class="output-content">=== 1. పారామీటర్స్ తో క్రియేట్ చేయడం ===
 Ravi - 20
 
-=== 2. Constructor Overloading Showcase ===
-  Name: Unknown Student    | Age: 18 | GPA: 0.00 | Dept: Undeclared
-  Name: Priya              | Age: 22 | GPA: 0.00 | Dept: General
-  Name: Kiran              | Age: 21 | GPA: 3.85 | Dept: Computer Science
+=== 2. Constructor Overloading డెమో ===
+  పేరు: Unknown Student    | వయసు: 18 | GPA: 0.00 | బ్రాంచ్: Undeclared
+  పేరు: Priya              | వయసు: 22 | GPA: 0.00 | బ్రాంచ్: General
+  పేరు: Kiran              | వయసు: 21 | GPA: 3.85 | బ్రాంచ్: Computer Science
 
-=== 3. Copy Constructor Pattern ===
-Original: Ananya Reddy | GPA: 3.95
-Copy    : Ananya Reddy (Clone) | GPA: 3.95
+=== 3. Copy Constructor (కాపీ కొట్టడం) ===
+ఒరిజినల్: Ananya Reddy | GPA: 3.95
+కాపీ     : Ananya Reddy (కాపీ) | GPA: 3.95
 
-=== 4. this Keyword Disambiguation Test ===
-  Name: Venkat             | Age: 25 | GPA: 3.70 | Dept: Electronics</div>
+=== 4. this Keyword వాడుక ===
+  పేరు: Venkat             | వయసు: 25 | GPA: 3.70 | బ్రాంచ్: Electronics</div>
       </div>
 
       <div class="explain-card">
@@ -722,25 +721,25 @@ Copy    : Ananya Reddy (Clone) | GPA: 3.95
         
     <div class="explain-item">
       <code class="code-token">Student student = new Student("Ravi", 20);</code>
-      <p>Triggers the 2-parameter constructor, copies "Ravi" and 20 as arguments, then this() delegates to the 4-parameter constructor.</p>
+      <p>రెండు పారామీటర్స్ ఉన్న కన్స్ట్రక్టర్ రన్ అవుతుంది, అది `this()` వాడి ఫుల్ కన్స్ట్రక్టర్ కి పంపుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">this("Unknown Student", 18, 0.0, "Undeclared");</code>
-      <p>Constructor chaining via this(): delegates initialization to the full constructor. MUST be the very first statement.</p>
+      <p>ఇలా `this()` వాడి ఒక కన్స్ట్రక్టర్ ఇంకో కన్స్ట్రక్టర్ కి పనిని అప్పజెప్పొచ్చు. ఇది కచ్చితంగా ఆ బ్లాక్ లో మొదటి లైన్ గానే ఉండాలి.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">this.name = name;</code>
-      <p>this.name refers to the instance field; the plain "name" refers to the constructor parameter of the same name.</p>
+      <p>ఎడమవైపు ఉన్న `this.name` క్లాస్ కి చెందింది. కుడివైపు ఉన్న `name` మనం బయటనుంచి పంపింది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">Student copy = new Student(original);</code>
-      <p>Invokes the copy constructor to allocate a brand new heap object with the same field values as original.</p>
+      <p>ఇలా ఆబ్జెక్ట్ కి ఆబ్జెక్ట్ ని మొత్తం పంపించి దానికి జిరాక్స్ తీసినట్టు ఇంకో ఆబ్జెక్ట్ క్రియేట్ చేయడాన్ని Copy Constructor అంటారు.</p>
     </div>
   
       </div>
@@ -771,18 +770,19 @@ Copy    : Ananya Reddy (Clone) | GPA: 3.95
     }
 
     void displayProduct() {
-        System.out.printf("  [%s] %-20s | Price: $%6.2f | Stock: %3d units%n",
+        System.out.printf("  [%s] %-20s | ప్రైస్: $%6.2f | స్టాక్: %3d యూనిట్లు%n",
                 productId, name, price, stockQuantity);
     }
 }
 
 public class PracticalApplication {
     public static void main(String[] args) {
+        // అన్నీ ఒకే లైన్ లో ఆబ్జెక్ట్ తో పాటు సెటప్ అయిపోతున్నాయి
         Product p1 = new Product("SKU-001", "Mechanical Keyboard", 79.99, 150);
         Product p2 = new Product("SKU-002", "Wireless Mouse",      29.99, 320);
         Product p3 = new Product("SKU-003", "4K Monitor",         349.00,  48);
 
-        System.out.println("=== E-Commerce Inventory Catalog ===");
+        System.out.println("=== అమెజాన్ ఇన్వెంటరీ క్యాటలాగ్ ===");
         p1.displayProduct();
         p2.displayProduct();
         p3.displayProduct();
@@ -792,10 +792,10 @@ public class PracticalApplication {
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">=== E-Commerce Inventory Catalog ===
-  [SKU-001] Mechanical Keyboard    | Price: $ 79.99 | Stock: 150 units
-  [SKU-002] Wireless Mouse         | Price: $ 29.99 | Stock: 320 units
-  [SKU-003] 4K Monitor             | Price: $349.00 | Stock:  48 units</div>
+        <div class="output-content">=== అమెజాన్ ఇన్వెంటరీ క్యాటలాగ్ ===
+  [SKU-001] Mechanical Keyboard    | ప్రైస్: $ 79.99 | స్టాక్: 150 యూనిట్లు
+  [SKU-002] Wireless Mouse         | ప్రైస్: $ 29.99 | స్టాక్: 320 యూనిట్లు
+  [SKU-003] 4K Monitor             | ప్రైస్: $349.00 | స్టాక్:  48 యూనిట్లు</div>
       </div>
     </section>
 
@@ -804,16 +804,16 @@ public class PracticalApplication {
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Declaring a return type (even void) on a constructor, turning it into a regular method.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">కన్స్ట్రక్టర్ ముందు <code>void</code> లేదా ఏదో ఒక రిటర్న్ టైప్ పెట్టడం. అలా పెడితే అది కన్స్ట్రక్టర్ కాదు, జస్ట్ ఒక మామూలు మెథడ్ అయిపోతుంది.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Placing this() or super() as any statement other than the very first statement in a constructor body.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>this()</code> ని కన్స్ట్రక్టర్ లోపల ఎక్కడపడితే అక్కడ రాయడం. అది కచ్చితంగా ఆ బ్లాక్ లో మొట్టమొదటి లైన్ లోనే ఉండాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Forgetting that defining a parameterized constructor removes the compiler-generated no-arg constructor.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">ఒక పారామీటర్ కన్స్ట్రక్టర్ రాసేసి, మళ్ళీ ఆ తర్వాత <code>new Student()</code> అని ఖాళీగా ఆబ్జెక్ట్ క్రియేట్ చేద్దాం అనుకోవడం. (ఎర్రర్ వస్తుంది, డిఫాల్ట్ ది పోయింది కదా!)</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Writing <code>this.name = this.name;</code> (setting the field to itself) instead of <code>this.name = name;</code>.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>this.name = this.name;</code> అని రాయడం. ఇలా రాస్తే దానికి అదే అసైన్ అయ్యి వాల్యూ సెట్ అవ్వదు. <code>this.name = name;</code> అనే ఉండాలి.</li>
   
       </ul>
     </div>
@@ -830,17 +830,17 @@ public class PracticalApplication {
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Create a class Circle with:
-// 1. field: double radius.
-// 2. Constructor Circle(double radius) with this keyword.
-// 3. No-arg constructor defaulting radius to 1.0 using this(1.0).
-// 4. Methods: getArea(), getCircumference(), and displayInfo().
+// Circle అనే క్లాస్ ని క్రియేట్ చేయండి:
+// 1. ఫీల్డ్: double radius ఉండాలి.
+// 2. ఒక కన్స్ట్రక్టర్ Circle(double radius) కి this కీవర్డ్ వాడి సెట్ చేయాలి.
+// 3. ఏమీ పంపకపోతే radius 1.0 ఉండేలా No-arg కన్స్ట్రక్టర్ రాయాలి (this(1.0) వాడాలి).
+// 4. ఏరియా, చుట్టుకొలత కనుక్కునే మెథడ్స్ తో పాటు displayInfo() అని ప్రింట్ చేయాలి.
 
 class Circle {
     double radius;
 
     Circle() {
-        this(1.0);
+        this(1.0); // డిఫాల్ట్ గా 1 వెళ్తుంది
     }
 
     Circle(double radius) {
@@ -856,16 +856,16 @@ class Circle {
     }
 
     void displayInfo() {
-        System.out.printf("  Circle | Radius: %.2f | Area: %.4f | Circumference: %.4f%n",
+        System.out.printf("  సర్కిల్ | రేడియస్: %.2f | ఏరియా: %.4f | చుట్టుకొలత: %.4f%n",
                 radius, getArea(), getCircumference());
     }
 }
 
 public class Challenge {
     public static void main(String[] args) {
-        new Circle().displayInfo();       // Default r=1.0
-        new Circle(5.0).displayInfo();    // r=5.0
-        new Circle(12.5).displayInfo();   // r=12.5
+        new Circle().displayInfo();       // డిఫాల్ట్ రేడియస్ 1.0
+        new Circle(5.0).displayInfo();    // రేడియస్ 5.0
+        new Circle(12.5).displayInfo();   // రేడియస్ 12.5
     }
 }</code></pre>
       </div>
@@ -876,20 +876,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ What happens if we do not write any constructor in a class?</h4>
-      <p>Java compiler automatically provides a no-argument default constructor with an empty body. However, as soon as you define any constructor yourself, the default constructor is no longer auto-generated.</p>
+      <h4>❓ క్లాస్ లో కన్స్ట్రక్టర్ ఏమీ రాయకపోతే ఏమవుతుంది?</h4>
+      <p>జావా ఒక డిఫాల్ట్ కన్స్ట్రక్టర్ ని అదే రాసుకుంటుంది (ఏ పారామీటర్స్ లేనిది). కానీ మీరు ఏదైనా ఒకటి రాస్తే మాత్రం, జావా ఆ డిఫాల్ట్ దాన్ని ఇవ్వదు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Can a constructor call another constructor in the same class?</h4>
-      <p>Yes, using `this(args...)` as the very first statement. This is called Constructor Chaining and promotes code reuse by having all constructors delegate to one "master" constructor.</p>
+      <h4>❓ ఒక కన్స్ట్రక్టర్ లోపల నుంచి ఇంకో కన్స్ట్రక్టర్ ని పిలవొచ్చా?</h4>
+      <p>పిలవొచ్చు! దాన్నే Constructor Chaining అంటారు. `this(పారామీటర్స్)` అని రాసి పిలుస్తారు, కానీ ఇది కచ్చితంగా మొదటి లైన్ లోనే ఉండాలి.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ Can constructors be private in Java?</h4>
-      <p>Yes! Private constructors are used in Singleton design patterns to prevent external classes from instantiating the class directly. Object creation is controlled through a static factory method like `getInstance()`.</p>
+      <h4>❓ కన్స్ట్రక్టర్స్ కి private అని పెట్టొచ్చా?</h4>
+      <p>పెట్టొచ్చు! అలా పెడితే బయట ఎవరూ మీ క్లాస్ కి ఆబ్జెక్ట్ క్రియేట్ చేయలేరు. దీన్ని Singleton డిజైన్ ప్యాటర్న్ లో ఎక్కువగా వాడతారు.</p>
     </div>
   
     </section>
@@ -899,19 +899,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Constructors initialize objects at creation time and have no return type.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఆబ్జెక్ట్ క్రియేట్ అయిన వెంటనే డేటాని సెటప్ చేయడానికి Constructor వాడతారు.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Java provides an auto-generated default no-arg constructor only when NO constructor is defined.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">దీనికి రిటర్న్ టైప్ ఉండదు, క్లాస్ పేరే ఉంటుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;"><code>this.field</code> disambiguates instance fields from same-named constructor parameters.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">పేర్లు కన్ఫ్యూజ్ అవ్వకుండా ఉండటానికి క్లాస్ వేరియబుల్ ముందు <code>this</code> వాడుతాం.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;"><code>this(args)</code> delegates to another constructor in the same class and must be the first statement.</li>
+    <li style="margin-bottom:6px; line-height:1.5;"><code>this()</code> వాడి ఒక కన్స్ట్రక్టర్ ఇంకో కన్స్ట్రక్టర్ ని పిలవొచ్చు (Constructor Chaining).</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Constructor overloading provides flexible APIs for creating objects with varying initialization data.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ఒకే పేరుతో రకరకాల కన్స్ట్రక్టర్స్ రాయడాన్నే Constructor Overloading అంటారు.</li>
   
       </ul>
     </div>

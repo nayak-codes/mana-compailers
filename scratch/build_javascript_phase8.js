@@ -9,128 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
-    lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects & JSON',
-    icon: '📦',
-    desc: 'Object literals, dot vs bracket notation, methods, this binding, Object.keys/values/entries, JSON serialization, and cloning.',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & JSON Mastery', subtopics: 'Object Literals · Properties & Methods · JSON Parsing · Object static methods' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions & Arrow Syntax',
-    icon: '🧩',
-    desc: 'Function declarations, expressions, arrow functions, default params, rest params, callback functions, and pure functions.',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions & Arrow Syntax', subtopics: 'Declaration vs Expression · Arrow Syntax · Default Params · Closures' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'Advanced ES6+ & OOP',
+    title: 'Object-Oriented Programming (OOP)',
     icon: '🏗️',
-    desc: 'Array & Object Destructuring, ES6 Classes, Prototypes, Inheritance, and this keyword binding.',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 14, file: 'es6-features.html', title: '14. ES6+ Advanced Features', subtopics: 'Advanced Destructuring · Symbols · Maps & Sets' },
-      { num: 15, file: 'closures.html', title: '15. Closures & Scope Chain', subtopics: 'Lexical Scope · Closures · Higher Order Functions' },
-      { num: 16, file: 'oop.html', title: '16. OOP: Classes & Prototypes', subtopics: 'Prototypes · ES6 Classes · Getters/Setters · Static' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Asynchronous JavaScript & DOM',
-    icon: '⏳',
-    desc: 'Event Loop, Call Stack, Task Queue, Microtask Queue, Promises, async/await, Fetch API, DOM manipulation, and LocalStorage.',
-    lessons: [
-      { num: 17, file: 'promises.html', title: '17. Promises & Async/Await', subtopics: 'Event Loop · Call Stack · Promise · async/await · Fetch API' },
-      { num: 18, file: 'exceptions.html', title: '18. Error Handling & Debugging', subtopics: 'try...catch...finally · Custom Error Classes · Console Debugging' },
-      { num: 19, file: 'dom.html', title: '19. DOM Basics & Event Listeners', subtopics: 'querySelector · DOM Modification · addEventListener · LocalStorage' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -246,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -435,381 +400,119 @@ function buildLesson11() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 8: Higher-Order Array Methods</strong>! In modern full-stack JavaScript (React, Node.js, Next.js, and TypeScript), traditional <code>for</code> loops are often replaced by expressive, declarative <strong>Higher-Order Array Methods</strong>. A Higher-Order Method is a function that takes a callback function as an argument to process elements. In this comprehensive masterclass guide, you will master <code>map()</code>, <code>filter()</code>, <code>reduce()</code>, <code>find()</code>, <code>findIndex()</code>, <code>some()</code>, <code>every()</code>, <code>flatMap()</code>, multi-step <strong>Method Chaining Pipelines</strong>, modern <strong>ES2023 Immutable Array Methods</strong> (<code>toSorted</code>, <code>toReversed</code>, <code>toSpliced</code>, <code>with</code>), and ES2024 <code>Object.groupBy()</code>.</p>
+      <p>అర్రే లోని డేటాను ప్రాసెస్ చేయడానికి <code>for</code> లూప్‌లు రాయడానికి బదులుగా, JavaScript లో <strong>Modern Array Methods</strong> (<code>map</code>, <code>filter</code>, <code>reduce</code>, <code>forEach</code>, <code>find</code>) వాడతాం. ఇవి కోడ్ ని చాలా క్లీన్ గా, వేగంగా మరియు రియాక్ట్/నోడ్ జెఎస్ ప్రాజెక్టులలో సులభంగా వాడేలా చేస్తాయి!</p>
     </div>
 
-    <!-- 1. The Core Functional Trio: forEach, map, filter -->
-    <div class="section-title"><span class="num">1</span>The Core Functional Trio: forEach(), map() & filter()</div>
-    <div class="section-body">
-      <p>Understanding the exact difference between these three methods is fundamental to writing clean JavaScript:</p>
+    <div class="callout">
+      <div class="callout-title">🏭 రియల్ లైఫ్ అనలాజీ: ఫ్యాక్టరీ కన్వేయర్ బెల్ట్ (Assembly Line)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">ఒక జ్యూస్ తయారీ ఫ్యాక్టరీ ని ఊహించుకోండి:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong><code>filter()</code>:</strong> కుళ్ళిపోయిన పండ్లను వేరు చేసి, కేవలం మంచి పండ్లను మాత్రమే ఎంచుకుంటుంది.</li>
+        <li><strong><code>map()</code>:</strong> ప్రతి మంచి పండుని తొక్క తీసి, జ్యూస్ గా మారుస్తుంది (తయారైన కొత్త అర్రే).</li>
+        <li><strong><code>reduce()</code>:</strong> తయారైన అన్ని జ్యూస్ గ్లాసులను కలిపి ఒక పెద్ద జగ్ లో నింపుతుంది (ఒకే ఒక ఫైనల్ వాల్యూ).</li>
+      </ul>
+    </div>
 
+    <div class="section-title"><span class="num">1</span>forEach() vs map()</div>
+    <div class="section-body">
       <table class="tbl">
-        <tr><th>Method</th><th>Purpose</th><th>Returns</th><th>Mutates Original?</th></tr>
+        <tr><th>Method</th><th>పని (Purpose)</th><th>రిటర్న్ వాల్యూ (Return Value)</th></tr>
         <tr>
           <td><strong><code>forEach(callback)</code></strong></td>
-          <td>Side-effects iteration (e.g. logging, DOM updates). Cannot break/return early.</td>
-          <td><code>undefined</code></td>
-          <td>No</td>
+          <td>అర్రేలోని ప్రతి ఎలిమెంట్ పై ఒక పనిని రన్ చేస్తుంది.</td>
+          <td><code>undefined</code> (ఏ కొత్త అర్రే ని ఇవ్వదు)</td>
         </tr>
         <tr>
           <td><strong><code>map(callback)</code></strong></td>
-          <td>Transforms every element into a new value. Length of new array is <strong>always identical</strong>.</td>
-          <td><strong>New transformed array</strong></td>
-          <td>No (Immutable ⭐)</td>
-        </tr>
-        <tr>
-          <td><strong><code>filter(callback)</code></strong></td>
-          <td>Evaluates predicate condition (<code>true</code>/<code>false</code>). Keeps only matching items.</td>
-          <td><strong>New filtered array</strong></td>
-          <td>No (Immutable ⭐)</td>
+          <td>ప్రతి ఎలిమెంట్ ని మోడిఫై చేసి <strong>కొత్త అర్రే ని క్రియేట్ చేస్తుంది.</strong></td>
+          <td><strong>New Array</strong> (రూపాంతరం చెందిన అర్రే)</td>
         </tr>
       </table>
+    </div>
+
+    <div class="section-title"><span class="num">2</span>filter() & reduce()</div>
+    <div class="section-body">
+      <p>డేటాను ఫిల్టర్ చేయడానికి <code>filter()</code>, మరియు అర్రే మొత్తాన్ని ఒక్క వాల్యూ గా కుదించడానికి <code>reduce()</code> వాడతాం:</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — map & filter Pipeline</span>
+          <span class="lang-tag">JavaScript — Iteration Methods</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
-const numbers = [10, 15, 20, 25, 30];
+let numbers = [10, 20, 30, 40, 50];
 
-// Filter even numbers, then double them
-const evenNumbers = numbers
-    .filter(number => number % 2 === 0)
-    .map(number => number * 2);
+// 1. map(): ప్రతి సంఖ్యను రెట్టింపు (Double) చేయడం
+let doubled = numbers.map(num => num * 2);
+console.log("Doubled:", doubled); // [20, 40, 60, 80, 100]
 
-console.log("Original Numbers:", numbers);
-console.log("Filtered & Doubled:", evenNumbers); // [20, 40, 60]</code></pre>
+// 2. filter(): 25 కంటే ఎక్కువ ఉన్న నంబర్లను ఎంచుకోవడం
+let highNums = numbers.filter(num => num > 25);
+console.log("High Numbers:", highNums); // [30, 40, 50]
+
+// 3. reduce(): అన్ని సంఖ్యల మొత్తం (Total Sum) లెక్కించడం
+// reduce(accumulator, current)
+let totalSum = numbers.reduce((acc, curr) => acc + curr, 0);
+console.log("Total Sum:", totalSum); // 150</code></pre>
       </div>
     </div>
 
-    <!-- 2. Searching Data: find, findIndex, some, every -->
-    <div class="section-title"><span class="num">2</span>Searching & Testing: find(), findIndex(), some() & every()</div>
+    <div class="section-title"><span class="num">3</span>find() & findIndex()</div>
     <div class="section-body">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #58a6ff; border-radius:8px; padding:14px;">
-          <strong style="color:#58a6ff;">1. find() vs findIndex()</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>find()</code> returns the <strong>first matching element value</strong> (or <code>undefined</code>). <code>findIndex()</code> returns the <strong>first matching index</strong> (or <code>-1</code>).</p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3fb950; border-radius:8px; padding:14px;">
-          <strong style="color:#3fb950;">2. some() vs every()</strong>
-          <p style="font-size:13px; color:var(--text2); margin-top:4px;"><code>some()</code> returns <code>true</code> if <strong>at least ONE</strong> element matches. <code>every()</code> returns <code>true</code> only if <strong>ALL</strong> elements match.</p>
-        </div>
-      </div>
+      <p>అర్రే లోని ఒక నిర్దిష్టమైన ఎలిమెంట్ ని వెతకడానికి <code>find()</code> వాడతాం. ఇది కండిషన్ మ్యాచ్ అయిన <strong>మొదటి ఎలిమెంట్ ని మాత్రమే</strong> ఇస్తుంది.</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Search & Test Demo</span>
+          <span class="lang-tag">JavaScript — find & findIndex</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
-
-const users = [
-    { id: 101, name: "Ravi", age: 21, isVerified: true },
-    { id: 102, name: "Sneha", age: 17, isVerified: true },
-    { id: 103, name: "Kiran", age: 25, isVerified: false }
+        <pre><code>let users = [
+    { id: 1, name: "Balaji" },
+    { id: 2, name: "Suresh" },
+    { id: 3, name: "Ramesh" }
 ];
 
-// 1. find & findIndex
-const userRavi = users.find(u => u.name === "Ravi");
-console.log("Found User:", userRavi);
-
-const underageIndex = users.findIndex(u => u.age < 18);
-console.log("First Underage Index:", underageIndex); // 1 (Sneha)
-
-// 2. some & every
-const hasUnderage = users.some(u => u.age < 18);
-console.log("Has any underage user?", hasUnderage); // true
-
-const areAllVerified = users.every(u => u.isVerified);
-console.log("Are all users verified?", areAllVerified); // false</code></pre>
+let user = users.find(u => u.id === 2);
+console.log("Found User:", user.name); // Suresh</code></pre>
       </div>
     </div>
 
-    <!-- 3. The Power of reduce() -->
-    <div class="section-title"><span class="num">3</span>The Swiss Army Knife: reduce() (Deep Dive)</div>
-    <div class="section-body">
-      <p><code>reduce()</code> array lo unna anni elements ni process chesi <strong>single accumulator value</strong> (Number, Object, String, or Array) ga condense chesthundhi. Dheeni signature:</p>
-      
-      <code style="display:block; padding:12px 16px; background:#0d1117; border-radius:8px; color:#7ee787; margin:10px 0; font-size:13px;">array.reduce((accumulator, currentValue, index, array) => {<br>    return nextAccumulatorValue;<br>}, initialValue);</code>
-
-      <div class="callout">
-        <div class="callout-title">⚠️ Always Provide an Initial Value!</div>
-        <p>Meeru <code>initialValue</code> ivvakapothe, array lo first element accumulator ga set avthundhi mariyu loop index 1 nunchi start avthundhi. Empty arrays meedha initial value lekunda <code>reduce()</code> call chesthe <code>TypeError: Reduce of empty array with no initial value</code> throw chesthundhi!</p>
-      </div>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — reduce() Master Examples</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const cart = [
-    { item: "Laptop", price: 65000, qty: 1 },
-    { item: "Mouse", price: 800, qty: 2 },
-    { item: "Monitor", price: 14000, qty: 1 }
-];
-
-// 1. Calculate Total Cart Price
-const totalPrice = cart.reduce((acc, product) => {
-    return acc + (product.price * product.qty);
-}, 0);
-
-console.log("Total Cart Price: Rs.", totalPrice); // 80600
-
-// 2. Count Occurrences using reduce
-const fruits = ["apple", "banana", "apple", "orange", "banana", "apple"];
-const countMap = fruits.reduce((acc, fruit) => {
-    acc[fruit] = (acc[fruit] || 0) + 1;
-    return acc;
-}, {});
-
-console.log("Fruit Counts:", countMap); // { apple: 3, banana: 2, orange: 1 }</code></pre>
-      </div>
-    </div>
-
-    <!-- 4. flat() and flatMap() -->
-    <div class="section-title"><span class="num">4</span>Flattening Nested Structures: flat() & flatMap()</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><code>arr.flat(depth)</code> — Multi-level nested arrays ni single level array ga flatten chesthundhi (default depth is <code>1</code>). Pass <code>Infinity</code> to flatten all depths!</li>
-        <li><code>arr.flatMap(callback)</code> — First <code>map()</code> function execute chesi, result ni 1-level <code>flat()</code> chesthundhi (more performant than calling <code>.map().flat()</code> separately).</li>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li><code>map()</code> లో <code>return</code> రాయడం మర్చిపోతే కొత్త అర్రే లో అన్ని <code>undefined</code> లు నిండుతాయి! Ex: <code>arr.map(x => { x * 2 })</code> లో <code>return</code> లేదు. <code>arr.map(x => x * 2)</code> అని రాయాలి.</li>
+        <li><code>filter()</code> ఎప్పుడూ అర్రే ని రిటర్న్ చేస్తుంది. ఒకే ఒక వాల్యూ కావాలనుకుంటే <code>find()</code> వాడాలి.</li>
       </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — flat & flatMap</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// flat() with Infinity
-const deepArray = [1, [2, [3, [4, 5]]]];
-console.log("Fully Flattened:", deepArray.flat(Infinity)); // [1, 2, 3, 4, 5]
-
-// flatMap() split sentences into words
-const sentences = ["Hello World", "JavaScript ES2026", "Master Course"];
-const allWords = sentences.flatMap(s => s.split(" "));
-console.log("All Words (flatMap):", allWords);
-// ["Hello", "World", "JavaScript", "ES2026", "Master", "Course"]</code></pre>
-      </div>
     </div>
 
-    <!-- 5. Modern ES2023 Immutable Array Methods -->
-    <div class="section-title"><span class="num">5</span>Modern ES2023+ Immutable Array Methods ⭐</div>
+    <div class="section-title"><span class="num">4</span>Practice Questions & Answers</div>
     <div class="section-body">
-      <p>Historically, <code>sort()</code>, <code>reverse()</code>, and <code>splice()</code> modified the original array in-place, causing state management bugs in React. <strong>ES2023 introduced safe, non-mutating immutable alternatives</strong>:</p>
-
-      <table class="tbl">
-        <tr><th>Mutating (Old)</th><th>Immutable (ES2023 ⭐)</th><th>Behavior</th></tr>
-        <tr><td><code>arr.sort()</code></td><td><strong><code>arr.toSorted()</code></strong></td><td>Returns new sorted array without mutating original.</td></tr>
-        <tr><td><code>arr.reverse()</code></td><td><strong><code>arr.toReversed()</code></strong></td><td>Returns new reversed array without mutating original.</td></tr>
-        <tr><td><code>arr.splice()</code></td><td><strong><code>arr.toSpliced()</code></strong></td><td>Returns new array with deleted/added items without mutating original.</td></tr>
-        <tr><td><code>arr[i] = val</code></td><td><strong><code>arr.with(i, val)</code></strong></td><td>Returns new array with updated item at index <code>i</code> without mutating original.</td></tr>
-      </table>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — ES2023 toSorted & with Demo</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+      <details>
+        <summary>Q1. <code>map()</code> కి <code>forEach()</code> కి ప్రధాన వ్యత్యాసం ఏమిటి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> <code>map()</code> ఒక కొత్త అర్రే ని రిటర్న్ చేస్తుంది, కానీ <code>forEach()</code> ఏమీ రిటర్న్ చేయదు (<code>undefined</code>).</p>
         </div>
-        <pre><code>"use strict";
+      </details>
 
-const scores = [80, 20, 95, 40];
-
-// Safe sorting with toSorted()
-const sortedScores = scores.toSorted((a, b) => a - b);
-console.log("Original scores (Untouched!):", scores); // [80, 20, 95, 40]
-console.log("New sorted scores:", sortedScores);       // [20, 40, 80, 95]
-
-// Safe element replacement with .with()
-const updatedScores = scores.with(1, 99); // Replace index 1 with 99
-console.log("After with(1, 99):", updatedScores);     // [80, 99, 95, 40]</code></pre>
-      </div>
+      <details>
+        <summary>Q2. ఒక అర్రే లోని సరి సంఖ్యల (Even Numbers) మొత్తాన్ని ఎలా కనుగొనాలి?</summary>
+        <div class="faq-ans">
+          <p><strong>కోడ్:</strong> <code>arr.filter(x => x % 2 === 0).reduce((a, b) => a + b, 0)</code></p>
+          <p><strong>వివరణ:</strong> ముందుగా <code>filter</code> తో సరిసంఖ్యలను వేరుచేసి, ఆ తర్వాత <code>reduce</code> తో మొత్తాన్ని కనుగొంటాం (Method Chaining!).</p>
+        </div>
+      </details>
     </div>
 
-    <!-- 6. Grouping Data with Object.groupBy() (ES2024) -->
-    <div class="section-title"><span class="num">6</span>Grouping Data: Object.groupBy() (ES2024 Standard)</div>
-    <div class="section-body">
-      <p>ES2024 introduced the built-in <strong><code>Object.groupBy()</code></strong> method to group array elements by a categorical key without writing complex custom reducers:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Grouping Data Demo</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const inventory = [
-    { name: "iPhone 15", category: "Electronics", price: 80000 },
-    { name: "T-Shirt", category: "Apparel", price: 1200 },
-    { name: "MacBook Pro", category: "Electronics", price: 150000 },
-    { name: "Jeans", category: "Apparel", price: 2500 }
-];
-
-// ES2024 Object.groupBy (or reduce fallback)
-const grouped = inventory.reduce((acc, item) => {
-    const key = item.category;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(item.name);
-    return acc;
-}, {});
-
-console.log("Grouped Products by Category:", grouped);
-// { Electronics: ["iPhone 15", "MacBook Pro"], Apparel: ["T-Shirt", "Jeans"] }</code></pre>
-      </div>
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>రూపాంతరం చేయాలంటే <code>map()</code>, ఫిల్టర్ చేయాలంటే <code>filter()</code> వాడండి.</li>
+        <li>మొత్తం ఒకే వాల్యూ కావాలంటే <code>reduce()</code> వాడండి.</li>
+        <li>ఒకే ఒక ఎలిమెంట్ కోసం <code>find()</code> వాడండి.</li>
+      </ul>
     </div>
-
-    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
-    <div class="section-title"><span class="num">7</span>4 Real-World Data Processing Projects</div>
-    <div class="section-body">
-      <p>Mastering Higher-Order Array pipelines through 4 production-grade projects:</p>
-
-      <!-- Project 1: E-Commerce Cart Engine -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: E-Commerce Checkout Engine (filter + map + reduce)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — E-Commerce Cart</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const cartItems = [
-    { id: 1, name: "Keyboard", price: 2500, inStock: true, taxRate: 0.18 },
-    { id: 2, name: "Webcam", price: 4000, inStock: false, taxRate: 0.18 }, // Out of stock
-    { id: 3, name: "Desk Mat", price: 800, inStock: true, taxRate: 0.12 }
-];
-
-// Calculate final payable amount for in-stock items including tax
-const grandTotal = cartItems
-    .filter(item => item.inStock) // 1. Keep only available items
-    .map(item => item.price * (1 + item.taxRate)) // 2. Add GST tax
-    .reduce((sum, itemTotal) => sum + itemTotal, 0); // 3. Accumulate sum
-
-console.log("Grand Total Payable: Rs.", Math.round(grandTotal)); // Rs. 3846</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: Student Grade Analytics -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: Student Class Analytics & Rank List</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Student Analytics</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const students = [
-    { name: "Ravi", marks: [85, 90, 78] },
-    { name: "Sneha", marks: [95, 92, 98] },
-    { name: "Kiran", marks: [50, 45, 55] }
-];
-
-// Transform to compute average, assign grade, and sort top scorers
-const classLeaderboard = students
-    .map(s => {
-        const total = s.marks.reduce((a, b) => a + b, 0);
-        const avg = Math.round(total / s.marks.length);
-        return { name: s.name, average: avg, status: avg >= 60 ? "PASS" : "FAIL" };
-    })
-    .sort((a, b) => b.average - a.average);
-
-console.log("Class Leaderboard:", classLeaderboard);</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Data Sanitization Pipeline -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: Raw API Data Sanitization & Deduplication</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — API Data Sanitizer</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const rawTags = ["  JavaScript  ", "React.JS ", "JAVASCRIPT", "  node.js", "REACT.js", " python "];
-
-const cleanTags = [...new Set(
-    rawTags
-        .map(tag => tag.trim().toLowerCase()) // Trim whitespace and normalize case
-        .filter(tag => tag.length > 0)
-)];
-
-console.log("Clean Unique Tags:", cleanTags);
-// ["javascript", "react.js", "node.js", "python"]</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Financial Transaction Ledger -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: Bank Account Balance & Expense Breakdown</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Banking Ledger</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-const transactions = [
-    { type: "credit", amount: 50000, desc: "Salary" },
-    { type: "debit", amount: 15000, desc: "Rent" },
-    { type: "debit", amount: 4500, desc: "Groceries" },
-    { type: "credit", amount: 8000, desc: "Freelancing" }
-];
-
-const ledgerSummary = transactions.reduce((acc, t) => {
-    if (t.type === "credit") {
-        acc.totalCredits += t.amount;
-        acc.balance += t.amount;
-    } else {
-        acc.totalDebits += t.amount;
-        acc.balance -= t.amount;
-    }
-    return acc;
-}, { totalCredits: 0, totalDebits: 0, balance: 0 });
-
-console.log("Ledger Statement:", ledgerSummary);
-// { totalCredits: 58000, totalDebits: 19500, balance: 38500 }</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this filter-map pipeline snippet in our live compiler:</p>
-      
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript Array Methods</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-const numbers = [10, 15, 20, 25, 30];
-
-const evenNumbers = numbers
-    .filter(number => number % 2 === 0)
-    .map(number => number * 2);
-
-console.log("Original Numbers:", numbers);
-console.log("Even Numbers Doubled:", evenNumbers);</code></pre>
-      </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
-    </div>
-
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
-    </div>
-  `;
-
+`;
   const html = wrapJSLessonPage(title, desc, filename, 11, subtopics, contentBody, 'arrays.html', '10. Arrays Deep Dive', 'objects.html', 'Phase 9: Objects & JSON');
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -906,7 +609,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

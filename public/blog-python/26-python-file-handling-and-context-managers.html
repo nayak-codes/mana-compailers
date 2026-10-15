@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python File Handling & with open() — Python 3 Tutorial | Our Compiler</title>
-  <meta name="description" content="Master file I/O operations in Python: understanding file streams and OS descriptors, all file modes, reading strategies (read, readline, line iterators), writing and appending data, UTF-8 encoding standards, and the with open() context manager." />
-  <meta name="keywords" content="python tutorial, learn python, python file handling & with open(), python online compiler, python automation, web scraping, python testing" />
+  <title>Python File Handling & with open() (తెలుగులో) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="పైథాన్ ద్వారా మన కంప్యూటర్ లోని ఫైల్స్ ని (txt, csv) ఎలా ఓపెన్ చేయాలి? ఎలా చదవాలి? మరియు with open() ఎందుకు వాడాలి అనేది డీటెయిల్ గా చూద్దాం." />
+  <meta name="keywords" content="python tutorial, learn python, python file handling & with open() (తెలుగులో), python online compiler, python automation, web scraping, python testing" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-python/26-python-file-handling-and-context-managers.html" />
@@ -20,8 +20,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Python File Handling & with open() — Python 3 Master Tutorial",
-  "description": "Master file I/O operations in Python: understanding file streams and OS descriptors, all file modes, reading strategies (read, readline, line iterators), writing and appending data, UTF-8 encoding standards, and the with open() context manager.",
+  "headline": "Python File Handling & with open() (తెలుగులో) — Python 3 Master Tutorial",
+  "description": "పైథాన్ ద్వారా మన కంప్యూటర్ లోని ఫైల్స్ ని (txt, csv) ఎలా ఓపెన్ చేయాలి? ఎలా చదవాలి? మరియు with open() ఎందుకు వాడాలి అనేది డీటెయిల్ గా చూద్దాం.",
   "articleSection": "Phase 6: Exception and File Handling",
   "author": {
     "@type": "Organization",
@@ -44,26 +44,18 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Why does Python not close files immediately when leaving a regular function without \"with\"?",
+      "name": "Text mode కి Binary mode (\"rb\") కి తేడా ఏంటి?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "CPython uses reference counting to close files when the file variable goes out of scope, but garbage collection timing is not guaranteed in other Python implementations (PyPy, Jython). with open() guarantees immediate deterministic closure on all platforms."
+        "text": "Text mode వాడితే పైథాన్ డేటాని మనకు అర్థమయ్యే స్ట్రింగ్స్ గా ఇస్తుంది. అదే ఒక ఇమేజ్ గానీ, PDF గానీ ఓపెన్ చేయాలంటే \"rb\" (read binary) వాడాలి. అప్పుడు బైట్స్ (Bytes) రూపంలో వస్తుంది."
       }
     },
     {
       "@type": "Question",
-      "name": "What is the difference between text mode and binary mode?",
+      "name": "with open() లో ఒకేసారి రెండు ఫైల్స్ ఓపెన్ చేయొచ్చా?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Text mode (\"r\", \"w\") handles string encoding (UTF-8) and normalizes platform-specific line endings (\\r\\n on Windows to \\n in Python). Binary mode (\"rb\", \"wb\") reads/writes raw unencoded bytes directly."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I check if a file is already open or closed in Python?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Inspect the boolean attribute file_handle.closed. It returns True if closed and False if still open."
+        "text": "చేయొచ్చు. with open(\"file1.txt\", \"r\") as f1, open(\"file2.txt\", \"w\") as f2: ఇలా కామా పెట్టి రాసుకోవచ్చు."
       }
     }
   ]
@@ -205,8 +197,6 @@
       });
     })();
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
 <body class="lang-python">
 
@@ -548,7 +538,7 @@
       <span class="current">Chapter 26: 26. File I/O & Context Managers</span>
     </div>
 
-    <h1 class="page-title">Python File Handling & with open()</h1>
+    <h1 class="page-title">Python File Handling & with open() (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">🐍 Python 3.12+</span>
@@ -564,23 +554,20 @@
     </div>
 
     <div class="intro-box">
-      Master file I/O operations in Python: understanding file streams and OS descriptors, all file modes, reading strategies (read, readline, line iterators), writing and appending data, UTF-8 encoding standards, and the with open() context manager.
+      పైథాన్ ద్వారా మన కంప్యూటర్ లోని ఫైల్స్ ని (txt, csv) ఎలా ఓపెన్ చేయాలి? ఎలా చదవాలి? మరియు with open() ఎందుకు వాడాలి అనేది డీటెయిల్ గా చూద్దాం.
     </div>
 
 
-    <div class="section-title"><span class="num">1</span>File Streams, OS Descriptors & The open() Function</div>
+    <div class="section-title"><span class="num">1</span>File ఓపెన్ చేయడం: open() ఫంక్షన్ & Modes</div>
     <div class="section-body">
-      <p>In computer operating systems, persistent files are stored on disk (SSD/HDD). When Python interacts with a file, the OS creates an open <strong>File Descriptor</strong> and returns a stream wrapper object in memory.</p>
-        <p>The built-in <code>open(file, mode="r", encoding="utf-8")</code> function connects Python to the physical file system.</p>
-        <h4 style="color:#10b981; margin:16px 0 8px;">Comprehensive Python File Modes:</h4>
+      <p>పైథాన్ ఫైల్ సిస్టమ్ తో మాట్లాడటానికి <code>open("filename", mode)</code> అనే ఫంక్షన్ ఇస్తుంది. మోడ్ ని బట్టి మనం ఫైల్ తో ఏం చేయగలమో డిసైడ్ అవుతుంది.</p>
+        <h4 style="color:#10b981; margin:16px 0 8px;">File Modes ఇవే:</h4>
         <table class="tbl" style="margin-top:8px; font-size:12.5px;">
-          <tr><th>Mode</th><th>Name</th><th>Behavior / Stream Position</th><th>File Must Exist?</th></tr>
-          <tr><td><code>'r'</code></td><td>Read (Default)</td><td>Opens file for reading text. Pointer placed at start.</td><td><strong>Yes</strong> (raises <code>FileNotFoundError</code> if missing)</td></tr>
-          <tr><td><code>'w'</code></td><td>Write (Overwrite)</td><td><strong>Truncates (wipes)</strong> file to 0 bytes and writes from start.</td><td>No (Creates file if missing)</td></tr>
-          <tr><td><code>'a'</code></td><td>Append</td><td>Writes new data to the <strong>end</strong> of file without erasing existing content.</td><td>No (Creates file if missing)</td></tr>
-          <tr><td><code>'x'</code></td><td>Exclusive Creation</td><td>Creates and opens file for writing. <strong>Fails if file already exists</strong>!</td><td>Must <strong>NOT</strong> exist (raises <code>FileExistsError</code>)</td></tr>
-          <tr><td><code>'r+'</code></td><td>Read & Write</td><td>Opens for bidirectional reading and writing.</td><td><strong>Yes</strong></td></tr>
-          <tr><td><code>'rb' / 'wb'</code></td><td>Binary Modes</td><td>Reads/writes raw bytes (images, PDFs, audio, pickles).</td><td>Matches 'r' / 'w' rules</td></tr>
+          <tr><th>Mode</th><th>Name</th><th>ఏం చేస్తుంది?</th><th>ఫైల్ ఉండాలా?</th></tr>
+          <tr><td><code>'r'</code></td><td>Read (డిఫాల్ట్)</td><td>ఫైల్ లోని టెక్స్ట్ చదువుతుంది.</td><td><strong>ఉండాలి</strong> (లేకపోతే FileNotFoundError వస్తుంది)</td></tr>
+          <tr><td><code>'w'</code></td><td>Write</td><td>పాత డేటా <strong>మొత్తం తుడిపేసి (ఎరేజ్ చేసి)</strong> కొత్తది రాస్తుంది.</td><td>అవసరం లేదు (లేకపోతే క్రియేట్ చేస్తుంది)</td></tr>
+          <tr><td><code>'a'</code></td><td>Append</td><td>పాత డేటాని చెరపకుండా, దాని కింద (చివర్లో) కొత్తది <strong>యాడ్ చేస్తుంది</strong>.</td><td>అవసరం లేదు</td></tr>
+          <tr><td><code>'x'</code></td><td>Exclusive</td><td>కొత్త ఫైల్ క్రియేట్ చేస్తుంది. అప్పటికే ఆ ఫైల్ ఉంటే క్రాష్ అవుతుంది.</td><td><strong>ఉండకూడదు!</strong></td></tr>
         </table>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
@@ -590,39 +577,32 @@
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Writing and Reading using the open() function:
-# Step 1: Open file in write mode ('w') with explicit UTF-8 encoding
+          <pre><code># 1. Write మోడ్ ('w') తో ఫైల్ ఓపెన్ చేద్దాం:
 f_write = open("sample_demo.txt", "w", encoding="utf-8")
 f_write.write("Line 1: Hello from Python File I/O! 🚀\n")
 f_write.write("Line 2: Built-in file streaming is fast and portable.\n")
-f_write.close() # Always close manually if not using 'with'!
+f_write.close() # ఎప్పుడూ మాన్యువల్ గా క్లోజ్ చేయాలి!
 
-# Step 2: Open file in read mode ('r')
+# 2. Read మోడ్ ('r') తో చదువుదాం:
 f_read = open("sample_demo.txt", "r", encoding="utf-8")
 file_contents = f_read.read()
 f_read.close()
 
-print("--- File Contents Read From Disk ---")
+print("--- ఫైల్ నుంచి చదివిన డేటా ---")
 print(file_contents)</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Why UTF-8 Encoding is Mandatory:</strong>
-          <p style="margin-top:6px;">If you omit <code>encoding="utf-8"</code>, Windows defaults to legacy <code>cp1252</code> or <code>ANSI</code>, causing fatal <code>UnicodeDecodeError</code> crashes when reading emojis, non-English names, or foreign currency symbols!</p>
+          <strong style="color:#10b981;">🔍 UTF-8 ఎందుకు?:</strong>
+          <p style="margin-top:6px;">ఫైల్ ఓపెన్ చేసేటప్పుడు <code>encoding="utf-8"</code> రాయడం మర్చిపోకండి. లేదంటే మీ ఫైల్ లో ఎమోజీలు కానీ, తెలుగు అక్షరాలు కానీ ఉంటే విండోస్ లో క్రాష్ అయిపోతుంది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">2</span>The Context Manager: Why "with open()" is Mandatory</div>
+    <div class="section-title"><span class="num">2</span>"with open()" (Context Manager) ఎందుకు మ్యాండేటరీ?</div>
     <div class="section-body">
-      <p>In the manual <code>open() ... close()</code> pattern, if an unexpected exception occurs between <code>open()</code> and <code>close()</code>, the file remains locked in OS memory, causing <strong>resource leaks and file locking crashes</strong>.</p>
-        <p>The <strong><code>with open(...) as f:</code> statement</strong> implements the Python <strong>Context Manager protocol</strong> (<code>__enter__</code> and <code>__exit__</code>). It guarantees that the file stream is <strong>100% automatically flushed and closed</strong> the microsecond execution exits the block, even if an unhandled exception or return statement occurs!</p>
-        <div class="diagram-box">┌────────────────────────────────────────────────────────┐
-│  with open("data.txt", "w", encoding="utf-8") as f:    │
-│      f.write("Safe writing...")                        │
-│                                                        │
-│  [__exit__ automatically triggers OS close() here!]    │
-└────────────────────────────────────────────────────────┘</div>
+      <p>మామూలుగా <code>open()</code> వాడితే, పని అయ్యాక కచ్చితంగా <code>close()</code> రాయాలి. ఒకవేళ మధ్యలో ఏదైనా ఎర్రర్ వచ్చి కోడ్ క్రాష్ అయితే, <code>close()</code> రన్ అవ్వదు, ఆ ఫైల్ అలాగే లాక్ అయిపోయి మెమరీ వేస్ట్ అవుతుంది.</p>
+        <p>దీనికి సొల్యూషన్ <strong><code>with open(...) as f:</code></strong>. దీన్ని వాడితే పని అయిపోగానే లేదా మధ్యలో క్రాష్ అయినా సరే, పైథాన్ <strong>ఆటోమాటిక్ గా ఫైల్ ని క్లోజ్ చేస్తుంది</strong> (దీన్నే Context Manager అంటారు)!</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Automatic Resource Management with with open()</div>
@@ -631,30 +611,30 @@ print(file_contents)</code></pre>
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># Safe, industry-standard file handling with Context Manager:
+          <pre><code># ఇండస్ట్రీలో వాడే సేఫ్ పద్ధతి ఇది:
 with open("audit_log.txt", "w", encoding="utf-8") as file:
     file.write("2026-08-14 10:00:00 [INFO] System initialized successfully.\n")
     file.write("2026-08-14 10:05:22 [INFO] Database connection active.\n")
+    # ఇక్కడ బ్లాక్ అయిపోగానే ఆటోమాటిక్ గా ఫైల్ close() అయిపోతుంది.
 
-# Verify that Python automatically closed the file descriptor:
-print("Is the file closed?", file.closed) # True! Guaranteed!</code></pre>
+# ఫైల్ క్లోజ్ అయిందో లేదో మనమే చెక్ చేద్దాం:
+print("Is the file closed?", file.closed) # True! గ్యారెంటీ!</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Zero Leak Guarantee:</strong>
-          <p style="margin-top:6px;"><code>file.closed</code> evaluates to <code>True</code> immediately outside the <code>with</code> block. You never need to call <code>file.close()</code> manually ever again.</p>
+          <strong style="color:#10b981;">🔍 ఇక క్లోజ్ తో పనిలేదు:</strong>
+          <p style="margin-top:6px;"><code>with</code> వాడిన తర్వాత మీరు మీ లైఫ్ లో ఎప్పుడూ <code>f.close()</code> అని రాయక్కర్లేదు. పైథాన్ చూసుకుంటుంది.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">3</span>Reading Strategies: read() vs readline() vs Line Iterator</div>
+    <div class="section-title"><span class="num">3</span>ఫైల్ చదవడానికి పద్ధతులు (Big Data Secrets)</div>
     <div class="section-body">
-      <p>Python provides three different techniques for reading text streams:</p>
+      <p>ఫైల్స్ చదవడానికి మూడు పద్ధతులున్నాయి:</p>
         <ol>
-          <li><code>f.read()</code>: Reads the entire file into a single string in RAM. (Good for small config files; dangerous for 10 GB log files!).</li>
-          <li><code>f.readline()</code>: Reads a single line up to the newline <code>\n</code> character.</li>
-          <li><code>f.readlines()</code>: Reads all lines and returns them as a Python list of strings.</li>
-          <li><strong>Memory-Efficient Line Iterator (<code>for line in f:</code>):</strong> Streams lines one by one from the OS buffer in $O(1)$ memory! This is the gold standard for large datasets.</li>
+          <li><code>f.read()</code>: ఫైల్ మొత్తాన్ని ఒకేసారి ర్యామ్ (RAM) లోకి లాగుతుంది. (చిన్న ఫైల్స్ కి ఓకే, 10GB లాగ్ ఫైల్స్ అయితే కంప్యూటర్ క్రాష్ అవుతుంది!).</li>
+          <li><code>f.readlines()</code>: ఫైల్ మొత్తాన్ని చదివి ఒక్కో లైన్ ని ఒక లిస్ట్ లో వేస్తుంది.</li>
+          <li><strong>Memory-Efficient పద్ధతి (<code>for line in f:</code>):</strong> ఇది ఫైల్ ని ఒకేసారి కాకుండా లైన్ బై లైన్ ఆపరేటింగ్ సిస్టం నుంచి తెస్తుంది. ఇది బెస్ట్ అప్రోచ్!</li>
         </ol>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
@@ -664,33 +644,33 @@ print("Is the file closed?", file.closed) # True! Guaranteed!</code></pre>
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># 1. Prepare multi-line test file:
+          <pre><code># 1. ఒక డెమో ఫైల్ తయారుచేద్దాం:
 with open("server_metrics.txt", "w", encoding="utf-8") as f:
     f.write("CPU_Usage: 24%\nMemory_Usage: 58%\nDisk_Free: 412GB\nActive_Threads: 16\n")
 
-# 2. Strategy A: Memory-Efficient Line-by-Line Streaming (O(1) RAM):
-print("--- 🚀 Strategy A: Streaming lines with for loop ---")
+# 2. బెస్ట్ పద్ధతి: For loop వాడి ఒక్కో లైన్ తెచ్చుకోవడం:
+print("--- 🚀 Strategy A: Streaming lines (Best for Big Data) ---")
 with open("server_metrics.txt", "r", encoding="utf-8") as f:
     for line_num, line in enumerate(f, start=1):
-        # line.strip() removes trailing newline character:
+        # .strip() వాడితే లైన్ చివర ఉన్న అదనపు స్పేసెస్ (ఎంటర్) పోతాయి
         print(f"Line {line_num}: {line.strip()}")
 
-# 3. Strategy B: readlines() returning a list:
+# 3. మామూలు పద్ధతి: readlines() వాడి లిస్ట్ గా మార్చడం:
 with open("server_metrics.txt", "r", encoding="utf-8") as f:
     all_lines = f.readlines()
 print(f"\nTotal Lines in list: {len(all_lines)}")</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Big Data Performance Rule:</strong>
-          <p style="margin-top:6px;">When processing massive multi-gigabyte log files, <strong>NEVER</strong> use <code>f.read()</code> or <code>f.readlines()</code>. Always stream lines using <code>for line in file_handle:</code> to maintain a negligible memory footprint.</p>
+          <strong style="color:#10b981;">🔍 ఇంటర్వ్యూ ప్రశ్న:</strong>
+          <p style="margin-top:6px;">"10 GB సైజ్ ఉన్న ఫైల్ ని పైథాన్ లో ఎలా చదువుతావ్?" అని అడిగితే <code>f.read()</code> చెప్పకూడదు. "for line in file అని లూప్ వాడతాను, అప్పుడు RAM ఫుల్ అవ్వదు" అని చెప్పాలి.</p>
         </div>
     </div>
   
 
-    <div class="section-title"><span class="num">4</span>Appending Data & The Difference Between "w" and "a"</div>
+    <div class="section-title"><span class="num">4</span>పాత డేటాని ఉంచి కొత్తది కలపడం ("a" Mode)</div>
     <div class="section-body">
-      <p>Opening a file in write mode (<code>"w"</code>) <strong>immediately erases all prior content</strong>. To preserve existing data and add new records to the bottom, open the file in append mode (<code>"a"</code>):</p>
+      <p>మీరు <code>"w"</code> (write) వాడితే పాతది మొత్తం చెరిపేసి రాస్తుంది. అలా కాకుండా డేటాని యాడ్ (Append) చేయాలంటే <code>"a"</code> వాడాలి:</p>
       
       <div style="margin-top: 16px; margin-bottom: 12px;">
         <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Appending Event Logs with "a" Mode</div>
@@ -699,11 +679,11 @@ print(f"\nTotal Lines in list: {len(all_lines)}")</code></pre>
             <span class="lang-tag">Python 3</span>
             <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
           </div>
-          <pre><code># 1. Initialize log file with header in 'w' mode:
+          <pre><code># 1. ఫైల్ ని 'w' లో స్టార్ట్ చేద్దాం:
 with open("app_activity.log", "w", encoding="utf-8") as log_file:
     log_file.write("=== APPLICATION EVENT LOG ===\n")
 
-# 2. Append new user actions dynamically using 'a' mode:
+# 2. ఇప్పుడు 'a' (append) వాడి కింద లాగ్స్ రాద్దాం:
 def append_log_event(event_message):
     with open("app_activity.log", "a", encoding="utf-8") as log_file:
         log_file.write(f"• EVENT: {event_message}\n")
@@ -712,32 +692,32 @@ append_log_event("User 'balaji' logged into the portal")
 append_log_event("Payment of Rs.1499 processed successfully")
 append_log_event("User downloaded invoice PDF")
 
-# Read back accumulated log:
+# మళ్ళీ ఫైల్ ఓపెన్ చేసి చూద్దాం (పాత లైన్ కూడా అలాగే ఉంటుంది):
 with open("app_activity.log", "r", encoding="utf-8") as log_file:
     print(log_file.read())</code></pre>
         </div>
       </div>
       <div class="card" style="background:var(--bg2); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-          <strong style="color:#10b981;">🔍 Append Mechanics:</strong>
-          <p style="margin-top:6px;">In <code>"a"</code> mode, the OS file pointer is automatically moved to the end of the file before every write operation.</p>
+          <strong style="color:#10b981;">🔍 Append సీక్రెట్:</strong>
+          <p style="margin-top:6px;"><code>"a"</code> మోడ్ వాడినప్పుడు ఫైల్ కర్సర్ ఆటోమాటిక్ గా ఎండ్ కి వెళ్లిపోతుంది, కాబట్టి కొత్త డేటా ఎప్పుడూ కిందే పడుతుంది.</p>
         </div>
     </div>
   
 
     <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfall: Accidentally Overwriting Files by using "w" instead of "a"</div>
-      <p>Opening an existing file in "w" mode immediately wipes and truncates its entire content to 0 bytes before you even write a single character. Always use "a" mode when adding records to existing files.</p>
+      <div class="callout-title">⚠️ Common Developer Pitfall: కొత్త డేటా రాయడానికి పొరపాటున "w" వాడటం</div>
+      <p>మీకు పాత డేటా కావాలి, కొత్తది దానికి కింద చేర్చాలి అనుకున్నప్పుడు "w" వాడకూడదు. "w" వాడితే సెకనులో పాతది మొత్తం ఎరేజ్ అయిపోయి ఎంప్టీ అవుతుంది. అపెండ్ కి ఎప్పుడూ "a" వాడాలి.</p>
     </div>
 
     <div class="try-box">
       <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p>Write a small program that asks for a grocery item, appends it to "groceries.txt", and then reads back all saved items with line numbers.</p>
+      <p>ఒక గ్రాసరీ లిస్ట్ (ఐటమ్స్) ని ఒక ఫైల్ "groceries.txt" లోకి రైట్ చేయండి, తర్వాత మళ్ళీ రీడ్ చేసి పక్కన నెంబర్స్ వేసి ప్రింట్ చేయండి.</p>
       <div class="code-block">
         <div class="code-block-header">
           <span class="lang-tag">Python 3 Practice Challenge</span>
           <a class="try-btn" href="/online-python-compiler.html">▶ Run in Compiler</a>
         </div>
-        <pre><code># Writing items to shopping list:
+        <pre><code># వస్తువుల లిస్ట్:
 items = ["Milk", "Whole Wheat Bread", "Eggs", "Green Tea"]
 
 with open("groceries.txt", "w", encoding="utf-8") as f:
@@ -755,20 +735,14 @@ with open("groceries.txt", "r", encoding="utf-8") as f:
     <div class="section-title"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Why does Python not close files immediately when leaving a regular function without "with"?</h4>
-      <p>CPython uses reference counting to close files when the file variable goes out of scope, but garbage collection timing is not guaranteed in other Python implementations (PyPy, Jython). with open() guarantees immediate deterministic closure on all platforms.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Text mode కి Binary mode ("rb") కి తేడా ఏంటి?</h4>
+      <p>Text mode వాడితే పైథాన్ డేటాని మనకు అర్థమయ్యే స్ట్రింగ్స్ గా ఇస్తుంది. అదే ఒక ఇమేజ్ గానీ, PDF గానీ ఓపెన్ చేయాలంటే "rb" (read binary) వాడాలి. అప్పుడు బైట్స్ (Bytes) రూపంలో వస్తుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> What is the difference between text mode and binary mode?</h4>
-      <p>Text mode ("r", "w") handles string encoding (UTF-8) and normalizes platform-specific line endings (\r\n on Windows to \n in Python). Binary mode ("rb", "wb") reads/writes raw unencoded bytes directly.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> How do I check if a file is already open or closed in Python?</h4>
-      <p>Inspect the boolean attribute file_handle.closed. It returns True if closed and False if still open.</p>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> with open() లో ఒకేసారి రెండు ఫైల్స్ ఓపెన్ చేయొచ్చా?</h4>
+      <p>చేయొచ్చు. with open("file1.txt", "r") as f1, open("file2.txt", "w") as f2: ఇలా కామా పెట్టి రాసుకోవచ్చు.</p>
     </div>
   
 
@@ -797,6 +771,5 @@ with open("groceries.txt", "r", encoding="utf-8") as f:
 </div>
 
 <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

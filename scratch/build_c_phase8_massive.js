@@ -238,7 +238,7 @@ function wrapCPage(title, desc, filename, currentNum, phaseTag, phaseTitle, subt
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -411,28 +411,28 @@ ${contentBody}
 
 // ── BUILD LESSON 18: Strings, Null Terminator & Safe I/O ───────────────────
 function buildLesson18() {
-  const title = "C Strings: Memory Layout, Null Terminator ('\\0') Sentinel & Safe I/O";
-  const desc = "Comprehensive textbook-grade masterclass on C Strings (Phase 8 Part 1): Why C has no native string data type, the Null Terminator sentinel character ('\\0'), Stack Character Arrays vs Read-Only String Literals in .rodata, dangerous scanf() traps vs safe fgets() input, strcspn newline removal, and 2D string arrays.";
+  const title = "C Strings: Memory Layout, Null Terminator ('\\0') Sentinel & Safe I/O (తెలుగులో)";
+  const desc = "C Strings (Phase 8 Part 1): C లో String అనే డేటా టైప్ ఎందుకు ఉండదు, Null Terminator ('\\0') అంటే ఏంటి, scanf() ఎందుకు వాడకూడదు, fgets() తో సేఫ్ గా డేటా ఎలా తీసుకోవాలి, మరియు 2D String Arrays గురించి తెలుగులో నేర్చుకుందాం.";
   const filename = "18-c-strings-null-terminator-and-safe-io.html";
   const subtopics = "Strings ante enti? · Null Terminator (\\0) Sentinel · Stack Array vs Read-Only Literal · scanf() Traps vs fgets() · strcspn() Newline Removal · String Arrays";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 8 (Chapter 18): C Strings, Null Terminator Sentinel & Safe I/O Architecture Masterclass</strong>! Unlike higher-level languages (such as Python, Java, or JavaScript) that provide a built-in, dynamic <code>String</code> object type, <strong>C language has NO native string data type</strong>. In C, a string is architecturally represented as a <strong>one-dimensional array of characters terminated by a special zero-byte Sentinel character known as the Null Terminator (<code>'\\0'</code>)</strong>. In this extensive guide, you will master physical ASCII RAM layouts, understand the critical difference between mutable stack character arrays and immutable read-only string literals, learn why legacy input functions like <code>gets()</code> caused catastrophic global cyber breaches, and master safe modern I/O using <code>fgets()</code> and <code>strcspn()</code>.</p>
+      <p><strong>Phase 8 (Chapter 18): C Strings & Safe I/O Architecture Masterclass</strong> కు స్వాగతం! Python, Java, లాంటి లాంగ్వేజెస్ లో <code>String</code> అనే డేటా టైప్ డైరెక్ట్ గా ఉంటుంది, కానీ <strong>C భాషలో క్యారెక్టర్స్ (అక్షరాలు) తప్ప అసలు String డేటా టైప్ అనేదే ఉండదు!</strong> అందుకని C లో క్యారెక్టర్స్ ని పక్కపక్కన ఒక Array లో పెట్టి, చివర్లో <strong>దీనితో పదం అయిపోయింది అని చెప్పడానికి <code>'\\0'</code> (Null Terminator) ని పెడతాం</strong>. ఈ గైడ్ లో, అసలు RAM లో ఇవి ఎలా సేవ్ అవుతాయి, <code>scanf()</code> లేదా <code>gets()</code> వాడటం వల్ల హ్యాకర్స్ కి ఎలా ఛాన్స్ దొరుకుతుంది, మరియు <code>fgets()</code> వాడి సేఫ్ గా యూజర్ నుండి డేటా ఎలా తీసుకోవాలో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. What Are Strings in C? -->
-    <div class="section-title"><span class="num">1</span>C Lo Strings Ante Enti? The Character Array Architecture</div>
+    <div class="section-title"><span class="num">1</span>C లో Strings అంటే ఏంటి? (క్యారెక్టర్ Array)</div>
     <div class="section-body">
       <p class="text-prose">
-        C language lo <code>string</code> ane separate primitive keyword ledhu. Text data ni store cheyyadaniki <code>char</code> data type loni elements ni <strong>Contiguous 1D Array</strong> ga organize chesi, text ekkada mugisindho theliyajeyyadaniki చివరన <strong>Null Terminator (<code>'\\0'</code>)</strong> ni append chesthamu.
+        C లాంగ్వేజ్ లో <code>string</code> అనే కీవర్డ్ అసలే లేదు. పేర్లు లేదా వాక్యాలు సేవ్ చేయాలంటే, <code>char</code> ని ఒక <strong>1D Array</strong> లాగా వాడి, ఆ పదం ఎక్కడ ఆగిపోయిందో కంప్యూటర్ కి చెప్పడానికి చివర్లో <strong>Null Terminator (<code>'\\0'</code>)</strong> ని యాడ్ చేస్తాము.
       </p>
 
       <div class="concept-box">
-        <h4>🌟 The 3 Golden Rules of C String Architecture:</h4>
-        <p>1. <strong>Array of 1-Byte Chars:</strong> Prati character ASCII value format lo exact ga 1 Byte (8 bits) of memory occupy chesthundhi.<br>
-        2. <strong>The Sentinel Null Terminator (<code>'\\0'</code>):</strong> String length entho thelusukovadaniki C lo metadata field undadhu. Functions (like <code>printf</code> or <code>strlen</code>) memory byte-by-byte scan chesthu <code>'\\0'</code> (ASCII value <code>0</code>) kanipinchagane aagipothayi!<br>
-        3. <strong>The $+1$ Memory Rule:</strong> $N$ characters unna word ni store cheyyalante, RAM memory lo <strong>$N + 1$ Bytes</strong> array size compulsory ga allocate cheyyali (e.g. <code>"India"</code> needs 6 bytes)!</p>
+        <h4>🌟 C Strings కి ఉండే 3 గోల్డెన్ రూల్స్:</h4>
+        <p>1. <strong>ఒక అక్షరానికి 1 బైట్:</strong> ప్రతి క్యారెక్టర్ RAM లో కచ్చితంగా ఒక బైట్ (8 bits) స్పేస్ ని తీసుకుంటుంది.<br>
+        2. <strong>Null Terminator (<code>'\\0'</code>):</strong> C కి ఈ పదం ఎంత పొడవు ఉందో ముందే తెలియదు. కాబట్టి <code>printf</code> లాంటివి లైన్ గా చదువుకుంటూ వెళ్ళి, ఆ <code>'\\0'</code> కనబడగానే అక్కడితో ప్రింటింగ్ ఆపేస్తాయి!<br>
+        3. <strong>మెమరీకి $+1$ రూల్:</strong> 5 అక్షరాలున్న పదం స్టోర్ చేయాలంటే, ఆ లాస్ట్ లో ఉండే <code>'\\0'</code> కి కూడా ఒక ప్లేస్ కావాలి కదా, కాబట్టి <strong>మొత్తం 6 బైట్స్</strong> మెమరీ కావాలి!</p>
       </div>
 
       <div class="memory-diagram">
@@ -450,25 +450,25 @@ function buildLesson18() {
     </div>
 
     <!-- 2. Stack Array vs Read-Only String Literal -->
-    <div class="section-title"><span class="num">2</span>Stack Array (Mutable) vs String Literal (Read-Only .rodata) ⭐</div>
+    <div class="section-title"><span class="num">2</span>మామూలు Array కి, String Literal కి తేడా ఏంటి? ⭐</div>
     <div class="section-body">
       <p class="text-prose">
-        C lo strings initialize cheyyadaniki 2 completely different memory mechanisms untayi. Ee difference theliyakapothe program mysterious <strong>Segmentation Fault crashes</strong> ki guri avthundhi:
+        C లో ఒక పదాన్ని సేవ్ చేయడానికి 2 వేర్వేరు పద్ధతులు ఉంటాయి. ఈ రెంటి మధ్య తేడా తెలియకపోతే, మీ ప్రోగ్రామ్ అకారణంగా <strong>Segmentation Fault</strong> అని వచ్చి క్రాష్ అయిపోతుంది:
       </p>
 
       <table class="tbl spec-table">
-        <tr><th>Declaration Syntax</th><th>RAM Segment</th><th>Can We Modify Characters?</th><th>Safety Status</th></tr>
+        <tr><th>ఎలా క్రియేట్ చేస్తాం?</th><th>RAM లో ఎక్కడ పడుతుంది?</th><th>మనం అక్షరాలని మార్చొచ్చా?</th><th>సేఫ్ ఆర్ నాట్?</th></tr>
         <tr>
           <td><code>char str[] = "Hello";</code></td>
-          <td><strong>Stack Frame</strong></td>
-          <td>✅ <strong>YES (Mutable)!</strong> <code>str[0] = 'M';</code> works perfectly!</td>
-          <td>Safe for user input and editing.</td>
+          <td><strong>Stack లో</strong> (మన కంట్రోల్ లో)</td>
+          <td>✅ <strong>ఎస్ మార్చొచ్చు!</strong> <code>str[0] = 'M';</code> అంటే Mello అని మారుతుంది.</td>
+          <td>ఎడిటింగ్ కి 100% సేఫ్.</td>
         </tr>
         <tr>
           <td><code>char* ptr = "Hello";</code></td>
-          <td><strong>Text Segment (<code>.rodata</code>)</strong></td>
-          <td>❌ <strong>FATAL CRASH!</strong> <code>ptr[0] = 'M';</code> triggers Segfault!</td>
-          <td>Read-only compiled constant string.</td>
+          <td><strong>.rodata లో</strong> (OS కంట్రోల్ లో)</td>
+          <td>❌ <strong>క్రాష్ అయిపోతుంది!</strong> ఇక్కడ మార్చడానికి ట్రై చేస్తే సిస్టం ఒప్పుకోదు!</td>
+          <td>ఇది కేవలం చదువుకోవడానికే (Read-Only).</td>
         </tr>
       </table>
 
@@ -480,26 +480,26 @@ function buildLesson18() {
     </div>
 
     <!-- 3. Reading Strings: scanf vs fgets Safe I/O -->
-    <div class="section-title"><span class="num">3</span>Reading Strings: Dangerous scanf() Traps vs Safe fgets()</div>
+    <div class="section-title"><span class="num">3</span>యూజర్ నుండి డేటా తీసుకోవడం: scanf() ఎందుకు డేంజర్?</div>
     <div class="section-body">
       <p class="text-prose">
-        Text input read cheyyadaniki C standard library multiple functions provide chesthundhi, kaani vatilo chala functions dangerous security vulnerabilities create chesthayi:
+        యూజర్ కీబోర్డ్ ద్వారా టైప్ చేసిన పదాన్ని చదవడానికి C లో చాలా ఆప్షన్స్ ఉన్నాయి. కానీ వాటిలో కొన్ని వాడితే సిస్టం సులభంగా హ్యాక్ అవుతుంది:
       </p>
 
       <div class="concept-box">
-        <h4>⚠️ 1. The Limitations of <code>scanf("%s", buf)</code>:</h4>
-        <p>• <strong>Whitespace Truncation:</strong> <code>scanf("%s")</code> space, tab, or newline kanipinchagane reading apesthundhi (e.g. <code>"Dennis Ritchie"</code> enters, only <code>"Dennis"</code> is captured!).<br>
-        • <strong>Buffer Overflow Danger:</strong> User buffer size (e.g. 10 chars) kante ekkuva type chesthe, <code>scanf</code> adjacent memory ni overwrite chesi stack smash chesthundi!</p>
+        <h4>⚠️ 1. <code>scanf("%s", buf)</code> వాడితే వచ్చే ప్రాబ్లమ్స్:</h4>
+        <p>• <strong>ఖాళీ (Space) కనబడితే ఆగిపోతుంది:</strong> మీరు "Ratan Tata" అని టైప్ చేస్తే, <code>scanf</code> మధ్యలో ఉన్న స్పేస్ చూడగానే అక్కడితో కట్ చేసి, కేవలం "Ratan" మాత్రమే సేవ్ చేసుకుంటుంది!<br>
+        • <strong>మెమరీ ఓవర్ ఫ్లో (చాలా డేంజర్):</strong> మీ బాక్స్ లో 10 అక్షరాలకే ప్లేస్ ఉండి, యూజర్ 100 అక్షరాలు టైప్ చేస్తే, <code>scanf</code> ఆ 100 ని బలవంతంగా ఎక్కించి సిస్టం ని హ్యాక్ చేసేలా చేస్తుంది (Buffer Overflow)!</p>
       </div>
 
       <div class="deep-dive-card">
-        <h3>🛡️ The Modern Secure Standard: fgets() + strcspn()</h3>
+        <h3>🛡️ దీనికి సరైన సొల్యూషన్: fgets() + strcspn()</h3>
         <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
-          Modern C standard lo user text input kosam <strong><code>fgets()</code></strong> mathrame use cheyyali:<br>
-          1. <strong>Bounded Input:</strong> <code>fgets(buffer, sizeof(buffer), stdin)</code> strictly specifies maximum bytes allowed, completely preventing buffer overflows!<br>
-          2. <strong>Captures Spaces:</strong> Full sentences with multiple spaces are read cleanly.<br>
-          3. <strong>The Trailing Newline Issue:</strong> When user presses Enter, <code>fgets</code> stores the <code>'\\n'</code> character inside the buffer before <code>'\\0'</code>.<br>
-          4. <strong>The Clean Solution:</strong> We use <code>buffer[strcspn(buffer, "\\n")] = '\\0';</code> to find the newline index and replace it with the null terminator instantly!
+          దీనికి పర్ఫెక్ట్ సొల్యూషన్ <strong><code>fgets()</code></strong> వాడటమే. ఇది మాత్రమే ఎందుకు వాడాలంటే:<br>
+          1. <strong>మెమరీకి లిమిట్ ఇస్తుంది:</strong> ఇది మనం ఇచ్చిన సైజు ఎంతైతే అంతవరకే చదువుతుంది, కాబట్టి మెమరీ ఓవర్ ఫ్లో అవ్వదు!<br>
+          2. <strong>స్పేసెస్ ని కూడా చదువుతుంది:</strong> మధ్యలో ఎన్ని ఖాళీలు ఉన్నా పూర్తి వాక్యాన్ని చదువుతుంది.<br>
+          3. <strong>ఒక చిన్న చిక్కు:</strong> మనం ఎంటర్ కొట్టగానే, ఆ ఎంటర్ (<code>'\\n'</code>) కూడా వచ్చి మన పదం చివర్లో సేవ్ అయిపోతుంది.<br>
+          4. <strong>సొల్యూషన్:</strong> దాన్ని తీసేయడానికి మనం <code>buffer[strcspn(buffer, "\\n")] = '\\0';</code> అని రాస్తే సరిపోతుంది!
         </p>
       </div>
 
@@ -599,36 +599,36 @@ int main(void) {
 
 // ── BUILD LESSON 19: <string.h> Functions & Buffer Security ────────────────
 function buildLesson19() {
-  const title = "C <string.h> Library Masterclass: strlen, strcpy, strcat, strcmp & Security";
-  const desc = "Comprehensive textbook-grade masterclass on C String Manipulation Functions (Phase 8 Part 2): In-depth mechanics of strlen(), strcpy() vs bounded strncpy(), strcat() vs strncat(), strcmp() vs strncmp(), strchr() & strstr(), buffer overflow CVEs, and manual pointer-based reimplementations.";
+  const title = "C <string.h> Library Masterclass: strlen, strcpy, strcmp (తెలుగులో)";
+  const desc = "C <string.h> Functions (Phase 8 Part 2): C లో స్ట్రింగ్స్ ని ఆపరేట్ చేసే strlen, strcpy, strcat, strcmp ఫంక్షన్స్ ఎలా పనిచేస్తాయి, వాటి వల్ల వచ్చే ప్రాబ్లమ్స్, సేఫ్ ఫంక్షన్స్ ఏంటి, వాటిని సొంతంగా ఎలా రాయాలో తెలుగులో నేర్చుకుందాం.";
   const filename = "19-c-string-library-functions-and-security.html";
   const subtopics = "strlen() Complexity · strcpy vs strncpy · strcat vs strncat · strcmp & strncmp · strchr & strstr · Buffer Overflow CVEs · Manual Reimplementations";
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 8 (Chapter 19): C &lt;string.h&gt; Standard Library & Buffer Overflow Security Masterclass</strong>! Because C does not treat strings as high-level objects with built-in methods, all string operations—from finding lengths to copying, concatenating, comparing, and searching substrings—are executed via the standard <strong><code>&lt;string.h&gt;</code></strong> library header. In this exhaustive guide, you will master the internal algorithms, time complexities, and hardware memory movements of core string functions, analyze why unbounded functions like <code>strcpy()</code> caused historical cyber exploits, learn how to use bounded safe variants (<code>strncpy</code>, <code>strncat</code>, <code>strncmp</code>), and construct clean manual pointer-based reimplementations from scratch.</p>
+      <p><strong>Phase 8 (Chapter 19): C &lt;string.h&gt; Library Masterclass</strong> కు స్వాగతం! వేరే భాషల్లో స్ట్రింగ్స్ కోసం ఇన్-బిల్ట్ ఆప్షన్స్ ఉంటాయి. కానీ C లో స్ట్రింగ్స్ అంటే కేవలం క్యారెక్టర్ Arrays కాబట్టి, వాటిని కాపీ చేయడం, కలపడం లాంటి పనులు చేయడానికి మనం కచ్చితంగా <strong><code>&lt;string.h&gt;</code></strong> అనే లైబ్రరీని వాడాలి. ఈ గైడ్ లో, ఈ లైబ్రరీలోని ప్రతి ఫంక్షన్ లోపల అసలు ఏం జరుగుతుందో, <code>strcpy()</code> వల్ల ఏ ఏ సిస్టమ్స్ క్రాష్ అయ్యాయో, వాటి బదులు వాడాల్సిన సేఫ్ వెర్షన్స్ ఏంటో, మరియు ఈ ఫంక్షన్స్ ని ఎవరి సహాయం లేకుండా మన చేతులతో (Pointers వాడి) ఎలా రాయాలో తెలుగులో నేర్చుకుందాం.</p>
     </div>
 
     <!-- 1. The <string.h> Master Function Reference -->
-    <div class="section-title"><span class="num">1</span>The Standard &lt;string.h&gt; Library Function Matrix</div>
+    <div class="section-title"><span class="num">1</span>&lt;string.h&gt; లైబ్రరీలో ఉండే ముఖ్యమైన ఫంక్షన్స్ జాబితా</div>
     <div class="section-body">
       <p class="text-prose">
-        The C standard library categorizes string functions into 5 core families: Measurement, Copying, Concatenation, Comparison, and Searching:
+        C లో ముఖ్యంగా మనం చేసే పనులు 5 రకాలు: లెంత్ కనుక్కోవడం, కాపీ చేయడం, రెండు పదాలని కలపడం, రెంటినీ చెక్ చేయడం, మరియు ఒక పదంలో ఇంకో పదాన్ని వెతకడం:
       </p>
 
       <table class="tbl spec-table">
-        <tr><th>Function Signature</th><th>Role &amp; Mechanism</th><th>Time Complexity</th><th>Security Status</th></tr>
+        <tr><th>ఫంక్షన్ పేరు</th><th>ఏం చేస్తుంది?</th><th>ఎంత టైం పడుతుంది?</th><th>సేఫ్టీ పరిస్థితి</th></tr>
         <tr>
           <td><code>size_t strlen(const char* s)</code></td>
-          <td>Scans memory sequentially counting characters until <code>'\\0'</code>.</td>
+          <td>వరుసగా అక్షరాలని లెక్కపెడుతూ వెళ్లి <code>'\\0'</code> రాగానే ఆగుతుంది.</td>
           <td><strong>$O(N)$</strong> (Linear Scan)</td>
           <td>✅ Safe (Read-Only)</td>
         </tr>
         <tr>
           <td><code>char* strcpy(char* dest, const char* src)</code></td>
-          <td>Copies all characters from <code>src</code> to <code>dest</code> including <code>'\\0'</code>.</td>
+          <td>ఒక పదాన్ని ఇంకో పదంలోకి డైరెక్ట్ గా కాపీ చేస్తుంది (<code>'\\0'</code> తో సహా).</td>
           <td>$O(N)$</td>
-          <td>⚠️ <strong>UNSAFE!</strong> No buffer limit.</td>
+          <td>⚠️ <strong>డేంజర్!</strong> లిమిట్ లేకుండా కాపీ చేస్తుంది.</td>
         </tr>
         <tr>
           <td><code>char* strncpy(char* dest, const char* src, size_t n)</code></td>
@@ -638,19 +638,19 @@ function buildLesson19() {
         </tr>
         <tr>
           <td><code>char* strcat(char* dest, const char* src)</code></td>
-          <td>Finds end of <code>dest</code> and appends <code>src</code>.</td>
+          <td>మొదటి పదం లాస్ట్ కి వెళ్ళి, దానికి రెండో పదాన్ని అతికిస్తుంది.</td>
           <td>$O(\\text{len}_1 + \\text{len}_2)$</td>
           <td>⚠️ <strong>UNSAFE!</strong> Potential overflow.</td>
         </tr>
         <tr>
           <td><code>char* strncat(char* dest, const char* src, size_t n)</code></td>
-          <td>Appends at most $n$ chars and <strong>always appends <code>'\\0'</code></strong>.</td>
+          <td>రెండో పదంలో కేవలం <code>n</code> అక్షరాలని మాత్రమే పర్ఫెక్ట్ గా అతికిస్తుంది.</td>
           <td>$O(\\text{len}_1 + n)$</td>
           <td>✅ Bounded &amp; Safe</td>
         </tr>
         <tr>
           <td><code>int strcmp(const char* s1, const char* s2)</code></td>
-          <td>Lexicographical ASCII subtraction ($s_1[i] - s_2[i]$). Returns <code>0</code> if equal.</td>
+          <td>రెండు పదాల అక్షరాలని ఒకదానితో ఒకటి పోలుస్తుంది. సేమ్ ఉంటే <code>0</code> వస్తుంది.</td>
           <td>$O(N)$</td>
           <td>✅ Safe (Read-Only)</td>
         </tr>
@@ -670,12 +670,12 @@ function buildLesson19() {
     </div>
 
     <!-- 2. strlen() vs sizeof() Deep Architectural Comparison -->
-    <div class="section-title"><span class="num">2</span>strlen() vs sizeof() Deep Architectural Comparison</div>
+    <div class="section-title"><span class="num">2</span>strlen() vs sizeof() అసలు తేడా ఏంటి?</div>
     <div class="section-body">
       <div class="concept-box">
-        <h4>⚡ strlen() vs sizeof() in Depth:</h4>
-        <p>• <strong><code>sizeof(str)</code>:</strong> Evaluates the <strong>Total Physical RAM Buffer Size in Bytes</strong> allocated at compile time (an $O(1)$ constant value).<br>
-        • <strong><code>strlen(str)</code>:</strong> Traverses RAM at runtime counting characters until it hits <code>'\\0'</code> (an $O(N)$ dynamic operation that excludes the null terminator!).<br>
+        <h4>⚡ ఈ రెండిటికీ ఉండే అసలు తేడా:</h4>
+        <p>• <strong><code>sizeof(str)</code>:</strong> ఇది మనం <strong>మొత్తం ఎన్ని బాక్స్ లు (మెమరీ) క్రియేట్ చేశాం</strong> అని చెప్తుంది (ఖాళీగా ఉన్నా సరే కౌంట్ చేస్తుంది).<br>
+        • <strong><code>strlen(str)</code>:</strong> ఇది <strong>అందులో అసలు ఎన్ని అక్షరాలు ఉన్నాయి</strong> అని లెక్కపెట్టి మరీ చెప్తుంది (ఇది లాస్ట్ లో ఉండే <code>'\\0'</code> ని కౌంట్ చేయదు!).<br>
         <br>
         <em>Example:</em> For <code>char name[50] = "Dennis";</code>:<br>
         - <code>sizeof(name)</code> = <strong>50 Bytes</strong> (Total Stack buffer).<br>
@@ -724,10 +724,10 @@ int main(void) {
     </div>
 
     <!-- 4. Manual Pointer-Based Reimplementation -->
-    <div class="section-title"><span class="num">4</span>Manual Pointer-Based Reimplementation of &lt;string.h&gt;</div>
+    <div class="section-title"><span class="num">4</span>ఈ ఫంక్షన్స్ ని మన చేతులతో (Pointers వాడి) ఎలా రాయాలి?</div>
     <div class="section-body">
       <p class="text-prose">
-        Understanding how standard library functions operate under the hood using raw pointer arithmetic is an essential skill for system software engineers:
+        అసలు ఆ లైబ్రరీలో ఉన్న ఫంక్షన్స్ ఇంటర్నల్ గా ఎలా రన్ అవుతున్నాయో మనకు తెలిస్తే, మనం సిస్టమ్స్ మీద అద్భుతంగా పట్టు సాధించగలం:
       </p>
 
       <div class="deep-dive-card">
@@ -1174,7 +1174,7 @@ function buildBlogCHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

@@ -9,164 +9,93 @@ const JS_CURRICULUM = [
   {
     id: 'phase1',
     tag: 'Phase 01',
-    title: 'JavaScript Fundamentals',
+    title: 'JavaScript Fundamentals & Basics',
     icon: '🟨',
-    desc: 'What is JavaScript?, History & Brendan Eich, Web uses, JS vs Java, Browser role & V8 engine, First program, 3 Methods to add JS to HTML, console.log(), Comments, Statements, Semicolons & ASI, Case sensitivity, Strict mode ("use strict"), and 3 Error types.',
+    desc: 'JavaScript Introduction, Browser Console, <script> tag, External JS, Comments, Statements & Errors, Variables (let, const, var), and Data Types (string, number, boolean, null, undefined, typeof).',
     lessons: [
-      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · JS vs Java · Browser Role · First Program · Adding to HTML · console.log() · Strict Mode' },
-      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Syntax, Statements & Errors', subtopics: 'Comments · Statements · Semicolons & ASI · Case Sensitivity · 3 Error Types' }
+      { num: 1, file: '01-javascript-fundamentals.html', title: '1. Welcome & JS Fundamentals', subtopics: 'JS ante enti? · History & Uses · Browser Role · First Program' },
+      { num: 2, file: '02-javascript-syntax-and-errors.html', title: '2. Setup, Console & Script Tag', subtopics: 'Browser Console · script tag · External .js · Comments · VS Code' },
+      { num: 3, file: 'variables.html', title: '3. Variables (let, const, var)', subtopics: 'Variables ante enti? · let vs const vs var · Swapping · Naming Rules' },
+      { num: 4, file: 'data-types.html', title: '4. Data Types (string, number, boolean...)', subtopics: 'Primitive Types · typeof · null vs undefined · NaN · \"5\" vs 5' }
     ]
   },
   {
     id: 'phase2',
     tag: 'Phase 02',
-    title: 'Variables & Data Types',
-    icon: '📦',
-    desc: 'Variables ante enti?, let vs const vs var, Reassigning values, Variable naming rules, Scope basics (Global, Function, Block), 7 Primitives (String, Number, BigInt, Boolean, undefined, null, Symbol), Objects, typeof operator, Historic typeof null bug, Dynamic typing, Explicit Type Conversion, Implicit Type Coercion, and Truthy vs Falsy values.',
+    title: 'Operators & Input',
+    icon: '⚡',
+    desc: 'Arithmetic, Comparison (== vs ===), Logical (&&, ||, !), Ternary, Precedence, Type Conversion, Template Literals, alert(), prompt(), confirm(), and DOM output.',
     lessons: [
-      { num: 3, file: 'variables.html', title: '3. Variables (let, const & var)', subtopics: 'Variables ante enti? · let vs const vs var · Reassigning Values · Naming Rules · Global vs Function vs Block Scope' },
-      { num: 4, file: 'operators.html', title: '4. Data Types, typeof & Coercion', subtopics: '7 Primitives · Objects · typeof Operator · Dynamic Typing · Explicit Conversion · Implicit Coercion · Truthy & Falsy' }
+      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Comparison (== vs ===) · Logical · Ternary · Precedence' },
+      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Type Conversion & Template Literals', subtopics: 'Number() · parseInt() · String() · Boolean() · Truthy & Falsy · Backticks' },
+      { num: 7, file: 'input-output.html', title: '7. Input & Output (alert, prompt...)', subtopics: 'console.log · alert() · prompt() · confirm() · Node readline · DOM output' }
     ]
   },
   {
     id: 'phase3',
     tag: 'Phase 03',
-    title: 'Operators & Input',
-    icon: '⚡',
-    desc: 'Arithmetic, assignment, comparison (== vs ===, != vs !==), logical (&&, ||, !), increment/decrement, ternary operator, nullish coalescing (??), optional chaining (?.), bitwise operators, operator precedence, alert(), prompt(), confirm(), Number(), parseInt(), parseFloat(), invalid input handling (isNaN), and HTML Form Input.',
+    title: 'Conditionals & Loops',
+    icon: '🔀',
+    desc: 'if-else branching, ternary expressions, switch statements, for loops, while loops, do-while, and break/continue.',
     lessons: [
-      { num: 5, file: '05-operators-expressions-and-precedence.html', title: '5. Operators, Expressions & Precedence', subtopics: 'Arithmetic · Assignment · == vs === · != vs !== · Logical &&/||/! · Increment/Decrement · Ternary · ?? & ?. · Bitwise · Precedence' },
-      { num: 6, file: '06-browser-input-and-number-parsing.html', title: '6. Input & Output (alert, prompt...)', subtopics: 'alert() · prompt() · confirm() · Number() vs parseInt() vs parseFloat() · isNaN() Handling · HTML Form Input' }
+      { num: 8, file: 'conditionals.html', title: '8. Conditionals (if-else & switch)', subtopics: 'if-else Chains · Ternary Expressions · Short-circuiting · Switch Statements' },
+      { num: 9, file: 'loops.html', title: '9. Loops & Control Flow', subtopics: 'for, while, do-while · for...of · break & continue' }
     ]
   },
   {
     id: 'phase4',
     tag: 'Phase 04',
-    title: 'Conditional Statements',
-    icon: '🔀',
-    desc: 'if, else, else if ladders, nested conditions, multiple conditions with logical operators (&&, ||, !), ternary expressions, switch-case-break-default, guard clauses, truthy/falsy conditions, comparing values correctly with ===, and 6 practice programs.',
+    title: 'Strings & Functions',
+    icon: '🧩',
+    desc: 'String methods, template literals, function declarations, function expressions, arrow functions, and default parameters.',
     lessons: [
-      { num: 7, file: 'conditionals.html', title: '7. Conditional Statements (if & switch)', subtopics: 'if · else · else if · Nested Conditions · Logical Conditions · Ternary · switch, case, break, default · Guard Clauses · 6 Practice Programs' }
+      { num: 10, file: 'strings.html', title: '10. Strings & Template Literals', subtopics: 'String Methods · Template Literals · Slicing & Splitting' },
+      { num: 11, file: 'functions.html', title: '11. Functions & Arrow Syntax', subtopics: 'Function Declaration vs Expression · Arrow Functions · Default Parameters' }
     ]
   },
   {
     id: 'phase5',
     tag: 'Phase 05',
-    title: 'Loops & Iterations',
-    icon: '🔁',
-    desc: 'Why loops are needed, for, while, do...while, for...of (iterables), for...in (object keys), nested loops, break, continue, infinite loops, looping through strings and arrays, number patterns, star patterns, loop performance, and 8 practice programs.',
+    title: 'Arrays & Objects',
+    icon: '📊',
+    desc: 'Array manipulation, iteration methods (map, filter, reduce), object literals, JSON, and ES6 destructuring.',
     lessons: [
-      { num: 8, file: 'loops.html', title: '8. Loops & Control Flow (Masterclass)', subtopics: 'Why Loops · for · while · do...while · for...of · for...in · Nested Loops · break & continue · Strings & Arrays · Star Patterns · 8 Practice Programs' }
+      { num: 12, file: 'arrays.html', title: '12. Arrays Basics & Methods', subtopics: 'Array Basics · push/pop/shift/unshift · Spread & Destructuring' },
+      { num: 13, file: 'array-methods.html', title: '13. Higher-Order Array Methods', subtopics: 'map · filter · reduce · find · forEach' },
+      { num: 14, file: 'objects.html', title: '14. Objects & JSON', subtopics: 'Object Literals · Properties & Methods · this Keyword · Destructuring' }
     ]
   },
   {
     id: 'phase6',
     tag: 'Phase 06',
-    title: 'Strings Mastery',
-    icon: '🧵',
-    desc: 'Creating strings, single/double quotes, template literals, length, indexing, charAt, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, indexOf, slice vs substring, replace, replaceAll, split, repeat, escape chars, string interpolation, and 5 projects.',
+    title: 'DOM & Browser APIs',
+    icon: '🌐',
+    desc: 'DOM Selection, manipulation, event handling, Forms, LocalStorage, and Timers.',
     lessons: [
-      { num: 9, file: 'strings.html', title: '9. Strings & Text Processing (Masterclass)', subtopics: 'String Methods · Template Literals · slice vs substring · replaceAll · split · Palindromes · 5 Mini Projects' }
+      { num: 15, file: 'dom.html', title: '15. DOM Basics & Tree Selection', subtopics: 'querySelector · textContent · style · classList · createElement' },
+      { num: 16, file: 'events-and-forms.html', title: '16. Events, Listeners & Form Handling', subtopics: 'addEventListener · click · submit · preventDefault · e.target' },
+      { num: 17, file: 'browser-apis-and-storage.html', title: '17. LocalStorage & Timers', subtopics: 'localStorage · sessionStorage · JSON Storage · setTimeout · setInterval' }
     ]
   },
   {
     id: 'phase7',
     tag: 'Phase 07',
-    title: 'Arrays Masterclass',
-    icon: '📊',
-    desc: 'Array ante enti?, Creation, Indexes, Reading/Updating, length tricks, push, pop, shift, unshift, slice vs splice, includes, indexOf, join, reverse, sort with custom comparators, concat, Nested 2D matrices, Destructuring, Spread, Rest, and 5 practice algorithms.',
+    title: 'Asynchronous JavaScript & APIs',
+    icon: '⏳',
+    desc: 'JSON, Fetch API, Promises, async/await, and error handling.',
     lessons: [
-      { num: 10, file: 'arrays.html', title: '10. Arrays Deep Dive & Core Operations', subtopics: 'Array ante enti? · Indexes & length · push/pop/shift/unshift · slice vs splice · sort() Quirks & Comparators · Nested 2D · Destructuring & Spread/Rest' }
+      { num: 18, file: 'json-and-fetch-api.html', title: '18. JSON & Fetch API (HTTP)', subtopics: 'JSON.stringify · JSON.parse · fetch() · async/await · HTTP Status' },
+      { num: 19, file: 'promises.html', title: '19. Promises & Async/Await', subtopics: 'Callbacks · Promise States · resolve/reject · async/await · try...catch' }
     ]
   },
   {
     id: 'phase8',
     tag: 'Phase 08',
-    title: 'Higher-Order Array Methods',
-    icon: '⚡',
-    desc: 'forEach, map, filter, find, findIndex, some, every, reduce, flat, flatMap, Method Chaining pipelines, ES2023 Immutable methods (toSorted, toReversed, toSpliced, with), Data transformation, Search decision tree, and Grouping with Object.groupBy.',
-    lessons: [
-      { num: 11, file: 'array-methods.html', title: '11. Array Methods (map, filter, reduce & ES2024)', subtopics: 'forEach · map · filter · find/findIndex · some/every · reduce Accumulator · flat/flatMap · Method Chaining · Immutable Methods · Object.groupBy' }
-    ]
-  },
-  {
-    id: 'phase9',
-    tag: 'Phase 09',
-    title: 'Objects Mastery',
-    icon: '📦',
-    desc: 'Object ante enti?, Creating objects, Properties, Methods, Dot vs Bracket notation, Adding/Updating/Deleting, Nested objects, Destructuring, Spread & Rest, Object.keys/values/entries, Object.assign, Property shorthand, Computed properties, this binding, and Optional chaining (?.).',
-    lessons: [
-      { num: 12, file: 'objects.html', title: '12. Objects & Key-Value Mastery', subtopics: 'Object ante enti? · Dot vs Bracket · Methods & this · Nested Objects · Destructuring · Object.keys/values/entries · Computed Props · Optional Chaining' }
-    ]
-  },
-  {
-    id: 'phase10',
-    tag: 'Phase 10',
-    title: 'Functions Mastery',
-    icon: '🧩',
-    desc: 'Function declaration vs expression, Arrow functions, Parameters vs Arguments, Return values, Default params, Rest params, Callbacks, Higher-order functions, Scopes, Closures, Recursion, Pure functions, Hoisting, this context, call(), apply(), and bind().',
-    lessons: [
-      { num: 13, file: 'functions.html', title: '13. Functions, Closures & this (Masterclass)', subtopics: 'Declaration vs Expression · Arrow Syntax · Default & Rest · Callbacks & HOF · Scopes & Closures · Recursion · Pure Functions · call, apply, bind' }
-    ]
-  },
-  {
-    id: 'phase11',
-    tag: 'Phase 11',
-    title: 'DOM Manipulation',
-    icon: '🌐',
-    desc: 'DOM ante enti?, Selecting elements (getElementById, querySelector, querySelectorAll), textContent vs innerHTML, changing styles, classList (add, remove, toggle), reading input values, creating & appending elements, removing elements, data attributes, DOM traversal (parent, children, closest), dynamic lists, and 4 interactive projects.',
-    lessons: [
-      { num: 14, file: 'dom.html', title: '14. DOM Manipulation & Web Interactivity', subtopics: 'DOM ante enti? · Selecting Elements · textContent vs innerHTML · Styles & classList · createElement & append · Data Attributes · DOM Traversal & closest · 4 Interactive Projects' }
-    ]
-  },
-  {
-    id: 'phase12',
-    tag: 'Phase 12',
-    title: 'Events & Forms',
-    icon: '🎯',
-    desc: 'Browser events, addEventListener, click, dblclick, mouse events, keyboard events, input & change, submit event, focus & blur, event object, event bubbling vs capturing, event delegation, preventDefault, form validation, error messages, and 6 full projects.',
-    lessons: [
-      { num: 15, file: 'events-and-forms.html', title: '15. Browser Events, Forms & Event Delegation', subtopics: 'addEventListener · Click, Mouse & Keyboard · Input vs Change · Submit & preventDefault() · Bubbling & Delegation · Form Validation · 6 Complete Projects' }
-    ]
-  },
-  {
-    id: 'phase13',
-    tag: 'Phase 13',
-    title: 'Browser APIs & Storage',
-    icon: '💾',
-    desc: 'window, document, console utilities, setTimeout, setInterval, clearTimeout, clearInterval, localStorage, sessionStorage, Cookies, URL & URLSearchParams, History API, Clipboard API, Geolocation API, Notifications, and Permissions.',
-    lessons: [
-      { num: 16, file: 'browser-apis-and-storage.html', title: '16. Browser APIs, Storage & Timers', subtopics: 'window & document · Timers (setTimeout/setInterval) · localStorage vs sessionStorage vs Cookies · URL API · History · Clipboard · Geolocation · Notifications' }
-    ]
-  },
-  {
-    id: 'phase14',
-    tag: 'Phase 14',
-    title: 'JSON & Fetch API',
-    icon: '🌐',
-    desc: 'What is JSON?, Objects & Arrays, JSON.stringify & parse, HTTP basics (GET, POST, PUT, DELETE), Headers, Body, response.ok, Status codes, Error handling, Loading states, Query params, Authentication, and 5 full projects.',
-    lessons: [
-      { num: 17, file: 'json-and-fetch-api.html', title: '17. JSON, Fetch API & REST Integration', subtopics: 'JSON.stringify & parse · HTTP GET/POST/PUT/DELETE · Headers & Body · response.ok & Status · Loading States · Auth & Tokens · 5 Projects' }
-    ]
-  },
-  {
-    id: 'phase15',
-    tag: 'Phase 15',
-    title: 'Asynchronous JavaScript & Promises',
-    icon: '⏳',
-    desc: 'Sync vs Async, Call Stack, Web APIs, Event Loop & Microtasks priority, Callbacks & Callback Hell, Promises & 3 states, .then/.catch/.finally, Promise Chaining, Promise combinators (all, allSettled, race, any), async/await, and Sequential vs Parallel execution.',
-    lessons: [
-      { num: 18, file: 'promises.html', title: '18. Asynchronous JavaScript, Promises & async/await', subtopics: 'Sync vs Async · Event Loop & Microtasks · Callbacks & Hell · Promise States · all/allSettled/race/any · async/await · Sequential vs Parallel' }
-    ]
-  },
-  {
-    id: 'phase16',
-    tag: 'Phase 16',
-    title: 'Object-Oriented JavaScript (OOP)',
+    title: 'Object-Oriented Programming (OOP)',
     icon: '🏗️',
-    desc: 'OOP in JavaScript, Constructor functions, Prototypes & Prototype Chain, ES6 Classes, constructor(), instance vs static methods, getters & setters, Inheritance (extends, super), Polymorphism, #private fields, Composition vs Inheritance, Factory functions, and this binding.',
+    desc: 'Classes, constructors, methods, inheritance, super, and private fields.',
     lessons: [
-      { num: 19, file: 'oop.html', title: '19. Object-Oriented JavaScript (Classes & Prototypes)', subtopics: 'Prototypes & Chain · ES6 Classes · constructor & Methods · static & Getters/Setters · extends & super · Polymorphism · #private Fields · 4 Projects' }
+      { num: 20, file: 'oop.html', title: '20. OOP: Classes & Prototypes', subtopics: 'ES6 Classes · Constructor · extends · super() · #private fields' }
     ]
   }
 ];
@@ -282,7 +211,7 @@ function wrapJSLessonPage(title, desc, filename, currentNum, subtopics, contentB
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -471,377 +400,131 @@ function buildLesson19() {
 
   const contentBody = `
     <div class="intro-box">
-      <p>Welcome to <strong>Phase 16: Object-Oriented JavaScript (OOP)</strong>! JavaScript uses a unique and powerful <strong>Prototypal Inheritance model</strong>. With the introduction of <strong>ES6 Classes</strong>, JavaScript provides a clean, syntactic standard for implementing the 4 core pillars of OOP: <strong>Encapsulation</strong>, <strong>Abstraction</strong>, <strong>Inheritance</strong>, and <strong>Polymorphism</strong>. In this comprehensive masterclass guide, you will master constructor functions, the prototype chain, ES6 class syntax, instance vs static methods, getters and setters, inheritance with <code>extends</code> and <code>super</code>, method overriding, private fields (<code>#privateField</code>), composition patterns, and construct 4 enterprise object-oriented applications.</p>
+      <p>ప్రోగ్రామింగ్ ని వాస్తవ ప్రపంచ ఆబ్జెక్టులు మరియు వాటి బ్లూప్రింట్లు (Classes) గా డిజైన్ చేయడానికి <strong>Object-Oriented Programming (OOP)</strong> వాడతాం. పెద్ద పెద్ద అప్లికేషన్లు మరియు ఎంటర్ ప్రైజ్ సాఫ్ట్‌వేర్ రాసేటప్పుడు OOP సూత్రాలు అత్యంత అవసరం! ఈ చాప్టర్ లో ES6 Classes, Constructors, Inheritance (<code>extends</code>), మరియు Private Fields (<code>#</code>) ల గురించి క్లియర్ గా నేర్చుకుందాం!</p>
     </div>
 
-    <!-- 1. Prototypal Inheritance Under the Hood -->
-    <div class="section-title"><span class="num">1</span>Prototypes & The Prototype Chain Under the Hood</div>
-    <div class="section-body">
-      <p>JavaScript lo prati Object ki hidden link <code>[[Prototype]]</code> untundhi. Methods ni prototype meedha define chesthe, 1000 instances create chesina memory lo <strong>single method definition</strong> mathrame share avthundhi:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Prototype Inheritance Demo</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// 1. Constructor Function
-function User(name, role) {
-    this.name = name;
-    this.role = role;
-}
-
-// 2. Attach shared method to Prototype
-User.prototype.getRole = function() {
-    return this.name + " is a " + this.role;
-};
-
-const user1 = new User("Ravi", "Admin");
-console.log(user1.getRole()); // "Ravi is a Admin"
-console.log(Object.getPrototypeOf(user1) === User.prototype); // true</code></pre>
-      </div>
-    </div>
-
-    <!-- 2. ES6 Classes & Constructors -->
-    <div class="section-title"><span class="num">2</span>ES6 Classes, Constructors & Instance Methods</div>
-    <div class="section-body">
-      <p>ES6 <code>class</code> syntax prototypal inheritance paina clean modern wrapper ga pani chesthundhi:</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — User Curriculum Example</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-class Student {
-    constructor(name, age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    // Instance Method
-    displayDetails() {
-        console.log(this.name + " is " + this.age + " years old");
-    }
-}
-
-const student = new Student("Ravi", 20);
-student.displayDetails(); // "Ravi is 20 years old"</code></pre>
-      </div>
-    </div>
-
-    <!-- 3. Static Methods & Getters/Setters -->
-    <div class="section-title"><span class="num">3</span>Static Methods, Getters & Setters</div>
-    <div class="section-body">
-      <ul style="margin-left:18px; color:var(--text2); font-size:14px; line-height:1.7;">
-        <li><strong><code>static</code> Methods:</strong> Instance meedha kaakunda Class constructor meedha mathrame call avthayi (Utility helper methods e.g. <code>Student.compare()</code>).</li>
-        <li><strong>Getters (<code>get</code>) & Setters (<code>set</code>):</strong> Computed properties ni access cheyyadaniki mariyu data assignment appudu automatic validation run cheyyadaniki use avthayi.</li>
+    <div class="callout">
+      <div class="callout-title">🏗️ రియల్ లైఫ్ అనలాజీ: ఇల్లు నిర్మాణ ప్లాన్ (Building Blueprint vs Houses)</div>
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">ఒక ఆర్కిటెక్ట్ ఇల్లు కట్టడానికి ఒక ప్లాన్ గీసాడు:</p>
+      <ul style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <li><strong>Class (బ్లూప్రింట్ ప్లాన్):</strong> ఇల్లు ఎలా ఉండాలో (గదులు, తలుపులు, రంగులు) చెప్పే కాగితం ప్లాన్. దానికి సొంతంగా ఉనికి ఉండదు.</li>
+        <li><strong>Object / Instance (నిజమైన ఇల్లు):</strong> ఆ ప్లాన్ ని చూసి కట్టిన అసలైన ఇల్లు! ఒకే ప్లాన్ (Class) నుండి ఎన్ని ఇళ్ళు (Objects) అయినా కట్టవచ్చు.</li>
       </ul>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Static & Getters/Setters</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-class Temperature {
-    constructor(celsius) {
-        this._celsius = celsius;
-    }
-
-    // Getter
-    get fahrenheit() {
-        return (this._celsius * 9) / 5 + 32;
-    }
-
-    // Setter with validation
-    set celsius(val) {
-        if (val < -273.15) throw new Error("Temperature below absolute zero!");
-        this._celsius = val;
-    }
-
-    // Static Utility Method
-    static convertToKelvin(c) {
-        return c + 273.15;
-    }
-}
-
-const temp = new Temperature(25);
-console.log("25°C in Fahrenheit:", temp.fahrenheit); // 77
-console.log("25°C in Kelvin:", Temperature.convertToKelvin(25)); // 298.15</code></pre>
-      </div>
     </div>
 
-    <!-- 4. Inheritance with extends, super & Polymorphism -->
-    <div class="section-title"><span class="num">4</span>Inheritance (extends & super) & Polymorphism</div>
+    <div class="section-title"><span class="num">1</span>ES6 Class Syntax & Constructor</div>
     <div class="section-body">
-      <p>Child classes parent properties ni inherit chesukovadaniki <strong><code>extends</code></strong> mariyu <strong><code>super()</code></strong> vadathamu. Child class parent method ni override chesi specialized behavior chupinchadanni <strong>Polymorphism</strong> antaru:</p>
+      <p>ES6 లో <code>class</code> కీవర్డ్ ద్వారా తరగతులను (Classes) నిర్వచిస్తాం. కొత్త ఆబ్జెక్ట్ సృష్టించినప్పుడు <code>constructor()</code> ఆటోమేటిక్ గా రన్ అవుతుంది.</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — Inheritance & Polymorphism</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-        </div>
-        <pre><code>"use strict";
-
-// Parent Class
-class Employee {
-    constructor(name, salary) {
-        this.name = name;
-        this.salary = salary;
-    }
-
-    calculateBonus() {
-        return this.salary * 0.10; // Standard 10% bonus
-    }
-}
-
-// Child Class extending Employee
-class Manager extends Employee {
-    constructor(name, salary, teamSize) {
-        super(name, salary); // Call parent constructor
-        this.teamSize = teamSize;
-    }
-
-    // Polymorphism: Overriding parent method with specialized logic!
-    calculateBonus() {
-        return super.calculateBonus() + (this.teamSize * 500);
-    }
-}
-
-const dev = new Employee("Ravi", 60000);
-const mgr = new Manager("Sneha", 100000, 8);
-
-console.log(dev.name + " Bonus: Rs." + dev.calculateBonus()); // Rs. 6000
-console.log(mgr.name + " Bonus: Rs." + mgr.calculateBonus()); // Rs. 14000 (10k + 4k team bonus)</code></pre>
-      </div>
-    </div>
-
-    <!-- 5. Private Fields (#privateField) -->
-    <div class="section-title"><span class="num">5</span>Encapsulation with #Private Fields & Methods (ES2022 ⭐)</div>
-    <div class="section-body">
-      <div class="callout">
-        <div class="callout-title">🔒 True Language-Level Private State</div>
-        <p>JavaScript lo property name mundhu hash <strong><code>#</code></strong> pedithe adhi strictly <strong>Private</strong> avthundhi. Class bahata nunchi access cheyyadaniki try chesthe <code>SyntaxError</code> throw avthundhi!</p>
-      </div>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — #Private Bank Account</span>
+          <span class="lang-tag">JavaScript — ES6 Class & Methods</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
         <pre><code>"use strict";
 
 class BankAccount {
-    #balance = 0; // True Private Field!
-    #pin;
-
-    constructor(owner, initialDeposit, pin) {
-        this.owner = owner;
-        this.#balance = initialDeposit;
-        this.#pin = pin;
+    // Constructor: ఆబ్జెక్ట్ సృష్టించేటప్పుడు ప్రారభ విలువలను ఇస్తుంది
+    constructor(accountHolder, balance) {
+        this.accountHolder = accountHolder;
+        this.balance = balance;
     }
 
+    // Method: డబ్బు జమ చేయడం
     deposit(amount) {
-        if (amount <= 0) throw new Error("Invalid deposit amount!");
-        this.#balance += amount;
-        return "Deposited Rs." + amount;
+        this.balance += amount;
+        console.log("✅ ₹" + amount + " జమ అయింది. ప్రస్తుత నిల్వ: ₹" + this.balance);
     }
 
-    getBalance(enteredPin) {
-        if (enteredPin !== this.#pin) throw new Error("❌ Unauthorized: Invalid PIN!");
-        return "Rs." + this.#balance;
-    }
-}
-
-const myAcc = new BankAccount("Ravi", 10000, 1234);
-myAcc.deposit(5000);
-console.log("Balance:", myAcc.getBalance(1234)); // Rs.15000
-// console.log(myAcc.#balance); // ❌ SyntaxError: Private field '#balance' must be declared in an enclosing class!</code></pre>
-      </div>
-    </div>
-
-    <!-- 4 REAL-WORLD PRACTICE PROJECTS -->
-    <div class="section-title"><span class="num">6</span>4 Real-World OOP Practice Projects</div>
-    <div class="section-body">
-      <p>Mastering Object-Oriented design patterns through 4 production-grade systems:</p>
-
-      <!-- Project 1: Banking Vault -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 1: Secure Bank Account Engine with Encapsulation</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Banking System</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-class SecureVault {
-    #funds = 0;
-    #auditLogs = [];
-
-    constructor(initialFunds) {
-        this.#funds = initialFunds;
-        this.#log("Account opened with Rs." + initialFunds);
-    }
-
-    #log(action) {
-        this.#auditLogs.push({ action, timestamp: new Date().toISOString() });
-    }
-
+    // Method: డబ్బులు తీయడం
     withdraw(amount) {
-        if (amount > this.#funds) return "❌ Insufficient funds!";
-        this.#funds -= amount;
-        this.#log("Withdrew Rs." + amount);
-        return "✅ Withdrew Rs." + amount + " | Remaining: Rs." + this.#funds;
-    }
-
-    getAuditHistory() {
-        return [...this.#auditLogs]; // Return clone to prevent mutation
+        if (amount > this.balance) {
+            console.log("❌ ఖాతాలో తగినంత నిల్వ లేదు!");
+        } else {
+            this.balance -= amount;
+            console.log("✅ ₹" + amount + " తీసేశారు. మిగిలిన నిల్వ: ₹" + this.balance);
+        }
     }
 }
 
-const vault = new SecureVault(50000);
-console.log(vault.withdraw(15000));
-console.log("Audit Logs Count:", vault.getAuditHistory().length);</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 2: E-Commerce Hierarchy -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 2: E-Commerce Product Hierarchy (Inheritance & Polymorphism)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Product Hierarchy</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-class Product {
-    constructor(id, title, basePrice) {
-        this.id = id;
-        this.title = title;
-        this.basePrice = basePrice;
-    }
-
-    getFinalPrice() {
-        return this.basePrice; // Standard product has no discount
-    }
-}
-
-class DigitalProduct extends Product {
-    constructor(id, title, basePrice, downloadLink) {
-        super(id, title, basePrice);
-        this.downloadLink = downloadLink;
-    }
-
-    getFinalPrice() {
-        return this.basePrice * 0.90; // 10% off for instant digital downloads!
-    }
-}
-
-const book = new Product(1, "Clean Code Physical Book", 1000);
-const ebook = new DigitalProduct(2, "Clean Code PDF", 1000, "https://download.io/pdf");
-
-console.log(book.title + ": Rs." + book.getFinalPrice());   // Rs.1000
-console.log(ebook.title + ": Rs." + ebook.getFinalPrice()); // Rs.900</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 3: Vehicle Simulator -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 3: Vehicle Fleet Simulator (Polymorphic Engine)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Fleet Engine</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-class Vehicle {
-    constructor(brand) { this.brand = brand; }
-    startEngine() { return this.brand + " engine started (Standard Gas)."; }
-}
-
-class ElectricVehicle extends Vehicle {
-    startEngine() { return this.brand + " silently powered ON (Dual Motors Electric)."; }
-}
-
-const fleet = [new Vehicle("Toyota Corolla"), new ElectricVehicle("Tesla Model 3")];
-fleet.forEach(v => console.log(v.startEngine()));</code></pre>
-        </div>
-      </div>
-
-      <!-- Project 4: Composition over Inheritance -->
-      <div style="margin:18px 0;">
-        <h4 style="color:#f7df1e;">Project 4: User Permission Engine (Composition over Inheritance)</h4>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">JavaScript — Composition Pattern</span>
-            <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
-          </div>
-          <pre><code>"use strict";
-
-// Modular feature behaviors
-const canRead = state => ({
-    read: () => console.log(state.name + " is reading article.")
-});
-
-const canWrite = state => ({
-    write: () => console.log(state.name + " published a new article.")
-});
-
-// Factory function composing features
-function createAdminUser(name) {
-    const user = { name };
-    return Object.assign(user, canRead(user), canWrite(user));
-}
-
-const admin = createAdminUser("Ravi");
-admin.read();
-admin.write();</code></pre>
-        </div>
+// 1. Class నుండి Object ని సృష్టించడం (new keyword వాడాలి)
+let myAcc = new BankAccount("Balaji", 1000);
+myAcc.deposit(500);  // ₹500 జమ అయింది (మొత్తం ₹1500)
+myAcc.withdraw(200); // ₹200 తీసేశారు (మిగిలినవి ₹1300)</code></pre>
       </div>
     </div>
 
-    <!-- Practice Challenge -->
-    <div class="try-box">
-      <div class="try-title">💻 Try It Yourself — User Curriculum Code Example</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">Run this ES6 Student class instance in our live Node.js / JavaScript compiler:</p>
-      
+    <div class="section-title"><span class="num">2</span>Inheritance (extends & super)</div>
+    <div class="section-body">
+      <p>ఒక పాత Class లోని లక్షణాలను కొత్త Class లోకి వారసత్వంగా (Inheritance) తెచ్చుకోవడానికి <strong><code>extends</code></strong> మరియు <strong><code>super()</code></strong> వాడతాం.</p>
+
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript Classes</span>
+          <span class="lang-tag">JavaScript — Class Inheritance</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>"use strict";
-
-class Student {
-    constructor(name, age) {
+        <pre><code>// Parent Class (తండ్రి తరగతి)
+class Person {
+    constructor(name) {
         this.name = name;
-        this.age = age;
     }
-
-    displayDetails() {
-        console.log(this.name + " is " + this.age + " years old");
+    greet() {
+        console.log("నమస్తే, నా పేరు " + this.name);
     }
 }
 
-const student = new Student("Ravi", 20);
-student.displayDetails();</code></pre>
+// Child Class (పిల్లల తరగతి - Inheritance)
+class Student extends Person {
+    constructor(name, course) {
+        super(name); // Parent class constructor ని పిలుస్తుంది
+        this.course = course;
+    }
+
+    study() {
+        console.log(this.name + " " + this.course + " చదువుతున్నారు 📚");
+    }
+}
+
+let s1 = new Student("Suresh", "B.Tech");
+s1.greet(); // Parent class method పనిచేస్తుంది!
+s1.study(); // Child class method పనిచేస్తుంది!</code></pre>
       </div>
-      <a class="run-btn" href="/?lang=nodejs">Run Code in Our Compiler →</a>
     </div>
 
-    <div class="author">
-      <div class="avatar">OC</div>
-      <div>Written and reviewed by Our Compiler Technical Team · Updated for JavaScript ES2026+</div>
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ ప్రాక్టీస్ లో వచ్చే పొరపాట్లు (Common Mistakes)</div>
+      <ul>
+        <li>Class నుండి Object ని క్రియేట్ చేసేటప్పుడు <code>new</code> కీవర్డ్ రాయడం మర్చిపోవడం (Ex: <code>let a = BankAccount()</code> ❌ -> <code>let a = new BankAccount()</code> ✅).</li>
+        <li>Child class constructor లో <code>this</code> ని వాడే ముందు విధిగా <code>super()</code> ని పిలవాలి! లేకపోతే <code>ReferenceError</code> వస్తుంది.</li>
+      </ul>
     </div>
-  `;
 
+    <div class="section-title"><span class="num">3</span>Practice Questions & Answers</div>
+    <div class="section-body">
+      <details>
+        <summary>Q1. Class లో Private Fields ని ఎలా క్రియేట్ చేయాలి?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> Variable పేరు ముందు <strong><code>#</code></strong> వాడాలి (Ex: <code>#balance = 0;</code>). వీటిని ఆ క్లాస్ బయట నుండి యాక్సెస్ చేయలేము (Encapsulation!).</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q2. <code>super()</code> కీవర్డ్ దేనికి ఉపయోగపడుతుంది?</summary>
+        <div class="faq-ans">
+          <p><strong>రిజల్ట్:</strong> Child class నుండి Parent class constructor ని మరియు దాని మెథడ్స్ ని పిలవడానికి <code>super()</code> ఉపయోగపడుతుంది.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary:</h3>
+      <ul style="margin-left: 20px; color: var(--text2);">
+        <li>బ్లూప్రింట్ ల కోసం <code>class</code>, సృష్టించడానికి <code>new</code> వాడండి.</li>
+        <li>వారసత్వానికి <code>extends</code> మరియు <code>super()</code> వాడండి.</li>
+        <li>సెక్యూరిటీ కోసం <code>#private</code> ఫీల్డ్స్ ని ఉపయోగించండి.</li>
+      </ul>
+    </div>
+`;
   const html = wrapJSLessonPage(title, desc, filename, 19, subtopics, contentBody, 'promises.html', '18. Promises & Async/Await', null, null);
   fs.writeFileSync(path.join(jsDir, filename), html, 'utf8');
   console.log(`✅ Generated ${filename}`);
@@ -938,7 +621,7 @@ function buildBlogJSHome() {
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {

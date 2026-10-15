@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java User Input with Scanner & Newline Trap — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Complete guide to interactive console input in Java using the java.util.Scanner class: reading primitives and strings, fixing the notorious "Newline Buffer Trap" when mixing numbers and text, handling input mismatch exceptions defensively, and closing resource streams properly." />
-  <meta name="keywords" content="java user input with scanner & newline trap, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java User Input with Scanner & Newline Trap (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="జావాలో కీబోర్డ్ నుంచి వాల్యూస్ (User Input) ఎలా తీసుకోవాలి? Scanner క్లాస్ ఎలా వాడాలి? నంబర్స్ తర్వాత టెక్స్ట్ తీసుకునేటప్పుడు వచ్చే "Newline Trap" అనే పెద్ద బగ్ ని ఎలా సాల్వ్ చేయాలో ఈ చాప్టర్ లో చూద్దాం." />
+  <meta name="keywords" content="java user input with scanner & newline trap (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/12-java-user-input-scanner-complete-guide.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 12: 12. Scanner & User Input</span>
     </div>
 
-    <h1 class="page-title">Java User Input with Scanner & Newline Trap</h1>
+    <h1 class="page-title">Java User Input with Scanner & Newline Trap (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,61 +541,65 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Complete guide to interactive console input in Java using the java.util.Scanner class: reading primitives and strings, fixing the notorious "Newline Buffer Trap" when mixing numbers and text, handling input mismatch exceptions defensively, and closing resource streams properly.</p>
+      <p>జావాలో కీబోర్డ్ నుంచి వాల్యూస్ (User Input) ఎలా తీసుకోవాలి? Scanner క్లాస్ ఎలా వాడాలి? నంబర్స్ తర్వాత టెక్స్ట్ తీసుకునేటప్పుడు వచ్చే "Newline Trap" అనే పెద్ద బగ్ ని ఎలా సాల్వ్ చేయాలో ఈ చాప్టర్ లో చూద్దాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. What is the Scanner Class?</h2>
+      <h2>1. Scanner క్లాస్ అంటే ఏంటి?</h2>
       <div class="theory-text">
-        <p>The <strong><code>Scanner</code></strong> class (located in the <code>java.util</code> package) is Java's most versatile utility for parsing primitive data types and strings from standard console input (<code>System.in</code>), files, or network streams.</p>
-<h3>Basic Scanner Setup:</h3><div class="code-block"><pre><code>import java.util.Scanner; // 1. Import class
-<p>Scanner input = new Scanner(System.in); // 2. Create Scanner object reading System.in<br>System.out.print("Enter your name: ");<br>String name = input.nextLine(); // 3. Read input<br>input.close(); // 4. Close scanner resource</code></pre></div></p>
+        <p>మనం కీబోర్డ్ లో ఏది టైప్ చేసినా అది డైరెక్ట్ గా జావా ప్రోగ్రామ్ లోకి వెళ్ళిపోదు. మధ్యలో దాన్ని చదవడానికి <strong><code>Scanner</code></strong> అనే ఒక క్లాస్ కావాలి (ఇది <code>java.util</code> అనే ప్యాకేజ్ లో ఉంటుంది).</p>
+<h3>Scanner ని సెటప్ చేసే విధానం:</h3><div class="code-block"><pre><code>import java.util.Scanner; // 1. పైన దీన్ని ఇంపోర్ట్ చేసుకోవాలి
+<p>Scanner input = new Scanner(System.in); // 2. సిస్టమ్ కీబోర్డ్ (System.in) ని చదవమని చెప్తున్నాం<br>System.out.print("మీ పేరు ఎంటర్ చేయండి: ");<br>String name = input.nextLine(); // 3. యూజర్ టైప్ చేసేదాన్ని చదువుతున్నాం<br>input.close(); // 4. పని అయ్యాక దాన్ని క్లోజ్ చేయాలి</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Standard Scanner Reading Methods</h2>
+      <h2>2. Scanner లో ఉండే మెయిన్ ఫంక్షన్స్</h2>
       <div class="theory-text">
-        <div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>Method</th><th>Return Type</th><th>What It Reads</th></tr></thead><tbody><tr><td>**`nextLine()`**</td></tr></tbody></table></div>
- <code>String</code> | Reads the entire line of text until the user presses Enter (<code>\n</code>). |
-| <strong><code>next()</code></strong> | <code>String</code> | Reads only the next single word (stops at whitespace or space). |
-| <strong><code>nextInt()</code></strong> | <code>int</code> | Scans the next token of input as an <code>int</code>. |
-| <strong><code>nextDouble()</code></strong>| <code>double</code> | Scans the next token as a <code>double</code> decimal. |
-| <strong><code>nextLong()</code></strong> | <code>long</code> | Scans the next token as a 64-bit <code>long</code>. |
-| <strong><code>nextBoolean()</code></strong>| <code>boolean</code> | Scans the next token as <code>true</code> or <code>false</code>. |
+        <p>యూజర్ ఇచ్చే డేటా ఏ టైపో దాన్నిబట్టి ఫంక్షన్ వాడాలి:</p>
+<div class="ref-table-wrap"><table class="ref-table"><thead><tr><th>ఫంక్షన్</th><th>ఏ టైప్ వస్తుంది?</th><th>ఏం చదువుతుంది?</th></tr></thead><tbody><tr><td>**`nextLine()`**</td></tr></tbody></table></div>
+ <code>String</code> | యూజర్ టైప్ చేసిన లైన్ మొత్తాన్ని (స్పేస్ లతో సహా) చదువుతుంది. Enter నొక్కే వరకు ఆగుతుంది. |
+| <strong><code>next()</code></strong> | <code>String</code> | స్పేస్ వచ్చే వరకు మాత్రమే చదువుతుంది. (ఒకే పదాన్ని తీసుకుంటుంది). |
+| <strong><code>nextInt()</code></strong> | <code>int</code> | నంబర్ ని తీసుకుంటుంది. |
+| <strong><code>nextDouble()</code></strong>| <code>double</code> | డెసిమల్ నంబర్ (పాయింట్ వాల్యూ) ని తీసుకుంటుంది. |
+| <strong><code>nextLong()</code></strong> | <code>long</code> | పెద్ద నంబర్ ని తీసుకుంటుంది. |
+| <strong><code>nextBoolean()</code></strong>| <code>boolean</code> | కేవలం <code>true</code> లేదా <code>false</code> తీసుకుంటుంది. |
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. The Infamous "Newline Buffer Trap" & The Professional Fix</h2>
+      <h2>3. అందరూ చేసే పెద్ద తప్పు: "Newline Buffer Trap"</h2>
       <div class="theory-text">
-        <p>The single most common bug encountered by Java developers when reading input is the <strong>Newline Buffer Trap</strong>:</p>
-<h3>What Causes the Trap?</h3>When you use numeric methods like <code>nextInt()</code> or <code>nextDouble()</code>, the Scanner reads the number, but <strong>leaves the trailing Enter key newline character (<code>\n</code>) sitting in the input buffer</strong>:
-<div class="code-block"><pre><code>System.out.print("Enter Age: ");
-int age = scanner.nextInt(); // User types '21' + presses ENTER. nextInt() reads 21, but leaves '\n' in buffer!
-<p>System.out.print("Enter Full Name: ");<br>String name = scanner.nextLine(); // nextLine() reads the leftover '\n' IMMEDIATELY and returns empty string ""!<br>// The user is NEVER prompted to enter their name!</code></pre></div></p>
-<h3>The Professional Fix:</h3>Whenever you call <code>nextLine()</code> <strong>after</strong> calling <code>nextInt()</code>, <code>nextDouble()</code>, or <code>next()</code>, you <strong>must insert a dummy <code>scanner.nextLine()</code></strong> to consume the orphaned newline character:
-<div class="code-block"><pre><code>System.out.print("Enter Age: ");
+        <p>జావా నేర్చుకునే ప్రతి ఒక్కరూ ఫేస్ చేసే అతిపెద్ద ప్రాబ్లమ్ ఇది. నంబర్స్ ని తీసుకుని, వెంటనే స్ట్రింగ్ ని తీసుకున్నప్పుడు ఈ ప్రాబ్లమ్ వస్తుంది.</p>
+<h3>ఏం జరుగుతుంది?:</h3>మీరు <code>nextInt()</code> వాడినప్పుడు, యూజర్ నంబర్ టైప్ చేసి <strong>Enter</strong> కీ నొక్కుతాడు కదా. ఆ Enter కీ కి సంబంధించిన న్యూలైన్ (<code>\n</code>) క్యారెక్టర్ ని Scanner రీడ్ చేయకుండా అలా బఫర్ (మెమరీ) లోనే వదిలేస్తుంది:
+<div class="code-block"><pre><code>System.out.print("వయసు ఎంటర్ చేయండి: ");
+int age = scanner.nextInt(); // యూజర్ '21' టైప్ చేసి ENTER నొక్కుతాడు. ఇది 21 తీసుకుంటుంది కానీ ఆ ఎంటర్ (
+) అక్కడే ఉండిపోతుంది!
+<p>System.out.print("పేరు ఎంటర్ చేయండి: ");<br>String name = scanner.nextLine(); // నెక్స్ట్ లైన్ లోకి రాగానే.. అక్కడున్న ఆ ఎంటర్ (<br>) ని చూసి యూజర్ పేరు కూడా ఎంటర్ చేసాడేమో అనుకుని ఖాళీగా సేవ్ చేసేస్తుంది!<br>// అసలు యూజర్ కి పేరు ఎంటర్ చేసే ఛాన్సే ఇవ్వదు.</code></pre></div></p>
+<h3>దీన్ని ఎలా సాల్వ్ చేయాలి? (The Professional Fix):</h3>ఎప్పుడైనా సరే <code>nextInt()</code>, <code>nextDouble()</code> వాడిన తర్వాత మీరు <code>nextLine()</code> వాడాల్సి వస్తే.. మధ్యలో ఒక డమ్మీ <code>scanner.nextLine()</code> రాయాలి. ఆ డమ్మీ లైన్ ఆ ఎంటర్ (<code>\n</code>) ని క్లీన్ చేసేస్తుంది:
+<div class="code-block"><pre><code>System.out.print("వయసు ఎంటర్ చేయండి: ");
 int age = scanner.nextInt();
-scanner.nextLine(); // FIX: Consumes leftover newline character '\n'
-<p>System.out.print("Enter Full Name: ");<br>String name = scanner.nextLine(); // Works perfectly! Prompts user for name.</code></pre></div></p>
+scanner.nextLine(); // FIX: ఇది ఆ ఎంటర్ కీ (
+) ని క్లీన్ చేసి పారేస్తుంది
+<p>System.out.print("పేరు ఎంటర్ చేయండి: ");<br>String name = scanner.nextLine(); // ఇప్పుడు పర్ఫెక్ట్ గా యూజర్ పేరు అడుగుతుంది!</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. Handling `InputMismatchException` Gracefully</h2>
+      <h2>4. తప్పు డేటా ఇస్తే క్రాష్ అవ్వకుండా ఆపడం (InputMismatchException)</h2>
       <div class="theory-text">
-        <p>If you prompt for an integer with <code>scanner.nextInt()</code> and the user enters text (<code>"twenty"</code>), the Scanner throws a runtime <strong><code>java.util.InputMismatchException</code></strong> and crashes the program.</p>
-<h3>Defensive Validation using <code>hasNextInt()</code>:</h3><div class="code-block"><pre><code>if (scanner.hasNextInt()) {
+        <p>మీరు <code>scanner.nextInt()</code> వాడి నంబర్ అడిగినప్పుడు, యూజర్ కావాలని నంబర్ ఇవ్వకుండా టెక్స్ట్ (<code>"hello"</code>) టైప్ చేస్తే ఏమవుతుంది? వెంటనే జావా <strong><code>InputMismatchException</code></strong> అని ఎర్రర్ ఇచ్చి ప్రోగ్రామ్ ని క్రాష్ చేస్తుంది.</p>
+<h3>దీన్ని సేఫ్ గా ఎలా డీల్ చేయాలి?:</h3><code>hasNextInt()</code> వాడి, యూజర్ ఇచ్చింది నంబరా కాదా అని ముందే చెక్ చేసుకోవచ్చు:
+<div class="code-block"><pre><code>if (scanner.hasNextInt()) {
     int age = scanner.nextInt();
-    System.out.println("Valid age: " + age);
+    System.out.println("కరెక్ట్ గా ఇచ్చారు: " + age);
 } else {
-    System.out.println("Invalid input! Please enter a valid numerical integer.");
+    System.out.println("తప్పు! మీరు నంబర్ మాత్రమే ఎంటర్ చేయాలి.");
 }</code></pre></div>
       </div>
     </section>
@@ -619,37 +623,37 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("==========================================");
-        System.out.println("   STUDENT ENROLLMENT CONSOLE SYSTEM      ");
+        System.out.println("   స్టూడెంట్ రిజిస్ట్రేషన్ సిస్టమ్      ");
         System.out.println("==========================================");
 
-        // 1. Reading Integer
-        System.out.print("Enter Student ID (e.g. 101): ");
+        // 1. ఇంటిజర్ చదవడం
+        System.out.print("స్టూడెంట్ ID ఎంటర్ చేయండి (ఉదా: 101): ");
         int studentId = scanner.nextInt();
 
-        // 2. Reading Double
-        System.out.print("Enter Current GPA (e.g. 3.85): ");
+        // 2. డెసిమల్ చదవడం
+        System.out.print("GPA ఎంటర్ చేయండి (ఉదా: 3.85): ");
         double gpa = scanner.nextDouble();
 
-        // 3. CRITICAL: Consume leftover newline from buffer
+        // 3. ఇంపార్టెంట్: బఫర్ లో ఉన్న 'ఎంటర్' కీ ని క్లీన్ చేయడం
         scanner.nextLine();
 
-        // 4. Reading Full Line of Text
-        System.out.print("Enter Full Name (e.g. Balaji Nayak): ");
+        // 4. టెక్స్ట్ (లైన్) మొత్తం చదవడం
+        System.out.print("పూర్తి పేరు ఎంటర్ చేయండి: ");
         String fullName = scanner.nextLine();
 
-        // 5. Reading Boolean
-        System.out.print("Is Enrolled Full-Time? (true/false): ");
+        // 5. బూలియన్ చదవడం
+        System.out.print("ఫుల్ టైమ్ స్టూడెంటా? (true/false): ");
         boolean isFullTime = scanner.nextBoolean();
 
-        // Display summary
+        // రిజల్ట్స్ ప్రింట్ చేయడం
         System.out.println("
---- Registered Student Summary ---");
+--- స్టూడెంట్ డీటెయిల్స్ ---");
         System.out.println("ID        : #" + studentId);
-        System.out.println("Name      : " + fullName);
+        System.out.println("పేరు      : " + fullName);
         System.out.println("GPA       : " + gpa);
-        System.out.println("Full-Time : " + (isFullTime ? "YES" : "NO"));
+        System.out.println("ఫుల్ టైమ్ : " + (isFullTime ? "YES" : "NO"));
 
-        scanner.close(); // Clean up resource stream
+        scanner.close(); // స్మానర్ క్లోజ్ చేయడం మర్చిపోవద్దు
     }
 }</code></pre>
       </div>
@@ -657,18 +661,18 @@ public class Main {
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
         <div class="output-content">==========================================
-   STUDENT ENROLLMENT CONSOLE SYSTEM      
+   స్టూడెంట్ రిజిస్ట్రేషన్ సిస్టమ్      
 ==========================================
-Enter Student ID (e.g. 101): 101
-Enter Current GPA (e.g. 3.85): 3.85
-Enter Full Name (e.g. Balaji Nayak): Balaji Nayak
-Is Enrolled Full-Time? (true/false): true
+స్టూడెంట్ ID ఎంటర్ చేయండి (ఉదా: 101): 101
+GPA ఎంటర్ చేయండి (ఉదా: 3.85): 3.85
+పూర్తి పేరు ఎంటర్ చేయండి: Balaji Nayak
+ఫుల్ టైమ్ స్టూడెంటా? (true/false): true
 
---- Registered Student Summary ---
+--- స్టూడెంట్ డీటెయిల్స్ ---
 ID        : #101
-Name      : Balaji Nayak
+పేరు      : Balaji Nayak
 GPA       : 3.85
-Full-Time : YES</div>
+ఫుల్ టైమ్ : YES</div>
       </div>
 
       <div class="explain-card">
@@ -676,31 +680,31 @@ Full-Time : YES</div>
         
     <div class="explain-item">
       <code class="code-token">Scanner scanner = new Scanner(System.in);</code>
-      <p>Creates a new Scanner object linked to standard console input stream System.in.</p>
+      <p>కీబోర్డ్ నుంచి వచ్చే డేటాని (System.in) చదవడానికి ఒక స్మానర్ ని రెడీ చేసుకున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">int studentId = scanner.nextInt();</code>
-      <p>Parses the next integer token from the console stream.</p>
+      <p>యూజర్ టైప్ చేసే ఇంటిజర్ ని తీసుకొని studentId లో స్టోర్ చేస్తున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">scanner.nextLine(); // Clean buffer</code>
-      <p>Essential buffer clean-up consuming the trailing newline character leftover from nextDouble().</p>
+      <p>పైన నంబర్స్ తీసుకున్నాం కదా, అక్కడ మిగిలిపోయిన Enter కీ ని ఇది క్లీన్ చేసేస్తుంది. (చాలా ఇంపార్టెంట్!).</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">String fullName = scanner.nextLine();</code>
-      <p>Reads the entire line of text including spaces until the Enter key is pressed.</p>
+      <p>యూజర్ పేరు మొత్తాన్ని స్పేస్ లతో సహా చదువుతుంది.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">scanner.close();</code>
-      <p>Closes the scanner instance to prevent underlying OS stream resource leaks.</p>
+      <p>పని అయ్యాక ఆ కనెక్షన్ ని క్లోజ్ చేయాలి, లేదంటే మెమరీ లీక్ అవుతుంది.</p>
     </div>
   
       </div>
@@ -723,29 +727,29 @@ public class SimpleBillCalculator {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
-        System.out.println("--- Supermarket POS Billing System ---");
-        System.out.print("Enter Item Name: ");
+        System.out.println("--- సూపర్ మార్కెట్ బిల్లింగ్ సిస్టమ్ ---");
+        System.out.print("ఐటమ్ పేరు: ");
         String itemName = input.nextLine();
 
-        System.out.print("Enter Unit Price (₹): ");
+        System.out.print("ఒక దాని ధర (₹): ");
         double unitPrice = input.nextDouble();
 
-        System.out.print("Enter Quantity Purchased: ");
+        System.out.print("ఎన్ని తీసుకున్నారు?: ");
         int quantity = input.nextInt();
 
-        // Calculate Subtotal & 18% GST
+        // సబ్ టోటల్ & 18% GST క్యాలిక్యులేషన్
         double subtotal = unitPrice * quantity;
         double gstAmount = subtotal * 0.18;
         double grandTotal = subtotal + gstAmount;
 
         System.out.println("
-========= INVOICE RECEIPT =========");
-        System.out.println("Item      : " + itemName);
-        System.out.println("Quantity  : " + quantity + " units @ ₹" + unitPrice);
-        System.out.println("Subtotal  : ₹" + subtotal);
+========= ఫైనల్ బిల్ =========");
+        System.out.println("ఐటమ్      : " + itemName);
+        System.out.println("క్వాంటిటీ  : " + quantity + " x ₹" + unitPrice);
+        System.out.println("సబ్ టోటల్  : ₹" + subtotal);
         System.out.println("GST (18%) : ₹" + gstAmount);
-        System.out.println("Total Due : ₹" + grandTotal);
-        System.out.println("===================================");
+        System.out.println("మొత్తం కట్టాల్సింది: ₹" + grandTotal);
+        System.out.println("===============================");
 
         input.close();
     }
@@ -754,18 +758,18 @@ public class SimpleBillCalculator {
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">--- Supermarket POS Billing System ---
-Enter Item Name: Wireless Keyboard
-Enter Unit Price (₹): 1250.00
-Enter Quantity Purchased: 2
+        <div class="output-content">--- సూపర్ మార్కెట్ బిల్లింగ్ సిస్టమ్ ---
+ఐటమ్ పేరు: Wireless Mouse
+ఒక దాని ధర (₹): 1250.00
+ఎన్ని తీసుకున్నారు?: 2
 
-========= INVOICE RECEIPT =========
-Item      : Wireless Keyboard
-Quantity  : 2 units @ ₹1250.0
-Subtotal  : ₹2500.0
+========= ఫైనల్ బిల్ =========
+ఐటమ్      : Wireless Mouse
+క్వాంటిటీ  : 2 x ₹1250.0
+సబ్ టోటల్  : ₹2500.0
 GST (18%) : ₹450.0
-Total Due : ₹2950.0
-===================================</div>
+మొత్తం కట్టాల్సింది: ₹2950.0
+===============================</div>
       </div>
     </section>
 
@@ -774,13 +778,13 @@ Total Due : ₹2950.0
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">The Newline Trap: Calling nextLine() immediately after nextInt() without a dummy nextLine() to clear the newline character.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">బఫర్ ని క్లీన్ చేయకపోవడం: nextInt() తర్వాత డైరెక్ట్ గా nextLine() వాడితే టెక్స్ట్ అసలు చదవదు. మధ్యలో ఒక డమ్మీ nextLine() కచ్చితంగా ఉండాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Using next() when reading multi-word strings: "scanner.next()" only reads up to the first space. Entering "John Doe" will capture only "John". Always use "scanner.nextLine()" for full names/addresses.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">పేరు అడగడానికి next() వాడటం: scanner.next() వాడితే కేవలం మొదటి పదం మాత్రమే తీసుకుంటుంది (ఉదా: Balaji Nayak అని ఇస్తే Balaji మాత్రమే తీసుకుంటుంది). కాబట్టి పూర్తి పేర్ల కోసం scanner.nextLine() వాడాలి.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Closing Scanner inside loops: Closing scanner closes the underlying System.in stream. Once System.in is closed, it cannot be reopened in the same JVM session!</li>
+    <li style="margin-bottom:8px; line-height:1.6;">లూప్ లోపల scanner.close() చేయడం: scanner.close() చేస్తే అది System.in ని కూడా క్లోజ్ చేస్తుంది. మళ్ళీ ఆ ప్రోగ్రామ్ రన్ అవుతున్నంత సేపు కీబోర్డ్ నుంచి ఎలాంటి డేటా తీసుకోలేరు. కాబట్టి ప్రోగ్రామ్ చివర్లోనే క్లోజ్ చేయాలి.</li>
   
       </ul>
     </div>
@@ -797,19 +801,19 @@ Total Due : ₹2950.0
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Write a program that asks the user for:
-// 1. Principal Amount (double)
-// 2. Annual Interest Rate in % (double)
-// 3. Time Duration in Years (int)
-// Compute Simple Interest: SI = (P * R * T) / 100
-// Print the Simple Interest and Total Amount Payable.
+// ఒక సింపుల్ ఇంట్రెస్ట్ (వడ్డీ) క్యాలిక్యులేటర్ రాయండి. యూజర్ నుంచి ఈ కిందవి అడగండి:
+// 1. అసలు ఎంత (Principal) - double
+// 2. వడ్డీ రేటు ఎంత (Rate) - double
+// 3. ఎన్ని సంవత్సరాలు (Time) - int
+// ఫార్ములా: SI = (P * R * T) / 100
+// వడ్డీ ఎంత అయ్యిందో, టోటల్ ఎంత కట్టాలో ప్రింట్ చేయండి.
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        // TODO: Read P, R, T and compute Simple Interest
+        // TODO: లాజిక్ రాయండి
         
         input.close();
     }
@@ -822,20 +826,14 @@ public class Main {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ Why should we close the Scanner (scanner.close())?</h4>
-      <p>Scanner implements the AutoCloseable interface. Closing it releases underlying system file handles or stream resources. Note: closing a scanner tied to System.in also closes System.in for the rest of the application.</p>
+      <h4>❓ scanner.close() కచ్చితంగా రాయాలా? రాయకపోతే ఏమవుతుంది?</h4>
+      <p>రాయకపోతే జావా ఎర్రర్ ఏమీ ఇవ్వదు, కానీ మెమరీ లీక్ (Resource leak) అయ్యే ఛాన్స్ ఉందని వార్నింగ్ ఇస్తుంది. సేఫ్ సైడ్ క్లోజ్ చేయడం మంచి అలవాటు.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ How does Scanner differentiate between next() and nextLine()?</h4>
-      <p>"next()" uses whitespace (spaces, tabs, newlines) as delimiters and returns the next single token. "nextLine()" uses only newline (\n or \r\n) as the delimiter and returns the entire sentence.</p>
-    </div>
-  
-
-    <div class="faq-card">
-      <h4>❓ What is the modern alternative to Scanner for reading passwords without echoing characters?</h4>
-      <p>Use "System.console().readPassword()" which masks user input and returns a char array for secure memory clearing.</p>
+      <h4>❓ next() కి nextLine() కి మెయిన్ డిఫరెన్స్ ఏంటి?</h4>
+      <p>"next()" స్పేస్ రాగానే చదవడం ఆపేస్తుంది. "nextLine()" మనం Enter కీ నొక్కేవరకు లైన్ మొత్తాన్ని చదువుతుంది.</p>
     </div>
   
     </section>
@@ -845,16 +843,16 @@ public class Main {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">java.util.Scanner parses primitives and text from standard input (System.in).</li>
+    <li style="margin-bottom:6px; line-height:1.5;">యూజర్ నుంచి కీబోర్డ్ ద్వారా డేటా తీసుకోవడానికి java.util.Scanner వాడతాం.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Use nextLine() for full lines, next() for single words, nextInt()/nextDouble() for numbers.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">లైన్ మొత్తం చదవాలంటే nextLine(), నంబర్స్ కి nextInt(), డెసిమల్స్ కి nextDouble().</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Always insert a dummy scanner.nextLine() after reading numbers before reading text to clear the buffer.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">నంబర్స్ చదివాక టెక్స్ట్ చదవాలంటే, మధ్యలో బఫర్ ని క్లీన్ చేయడానికి ఒక డమ్మీ nextLine() వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Close scanner with scanner.close() when input processing is complete.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">పని అయిపోయాక scanner.close() చేయాలి.</li>
   
       </ul>
     </div>

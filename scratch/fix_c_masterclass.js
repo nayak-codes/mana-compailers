@@ -104,10 +104,10 @@ allFiles.forEach(file => {
   }
 
   // Ensure Theme toggle defaults to Dark theme in script if not set
-  if (html.includes("const currentTheme = localStorage.getItem('theme') || 'dark';")) {
+  if (html.includes("const currentTheme = localStorage.getItem('theme') || 'light';")) {
     // Clean
   } else if (html.includes("const currentTheme = localStorage.getItem('theme')")) {
-    html = html.replace("const currentTheme = localStorage.getItem('theme')", "const currentTheme = localStorage.getItem('theme') || 'dark'");
+    html = html.replace("const currentTheme = localStorage.getItem('theme')", "const currentTheme = localStorage.getItem('theme') || 'light'");
   }
 
   fs.writeFileSync(filePath, html, 'utf8');

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linked Lists - Insertion & Deletion (తెలుగులో) — C Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C లో Linked List మధ్యలో కొత్త నోడ్ ని ఎలా దూర్చాలి (Insert)? పాత నోడ్ ని ఎలా తీసేయాలి (Delete)? డేటా స్ట్రక్చర్స్ లో అత్యంత ముఖ్యమైన చైన్ లింకింగ్ టెక్నిక్స్ ని యానిమేషన్ లెవెల్ ఎక్స్‌ప్లనేషన్ తో డీప్ గా చూద్దాం." />
+  <meta name="keywords" content="c tutorial, linked lists - insertion & deletion (తెలుగులో), setjmp longjmp c, variable arguments c, pthreads c, linked lists c, insert delete linked list" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/52-c-linked-lists-insertion-deletion.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    .concept-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .concept-box h4 {
+      color: #10b981;
+      margin-bottom: 10px;
+      font-size: 16.5px;
+      font-weight: 700;
+    }
+    .concept-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 10px 0;
+    }
+    .concept-box p:last-child {
+      margin-bottom: 0;
+    }
+    .memory-diagram {
+      background: #0f141c;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      line-height: 1.85;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .spec-table th {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      font-size: 14.5px;
+    }
+    .deep-dive-card {
+      background: #141922;
+      border: 1px solid #27303f;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 26px 0;
+    }
+    .deep-dive-card h3 {
+      color: #10b981;
+      font-size: 17.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 20px 22px;
+    }
+    .faq-item h4 {
+      color: var(--text);
+      font-size: 15.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .faq-item p {
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .text-prose {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        const topnav = document.querySelector('.topnav');
+        if (topnav) {
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'blog-theme-toggle';
+          toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
+          const updateText = () => {
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
+          };
+          updateText();
+          toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            document.documentElement.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateText();
+          });
+          topnav.appendChild(toggleBtn);
+        }
+
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeEl.textContent).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', codeEl.textContent);
+              window.location.href = '/?lang=c';
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-c">
+
+<!-- TOP LANGUAGE BAR -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR WITH ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 17: Advanced Concepts -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 17</span>
+            <span class="phase-title">Advanced Concepts</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/48-c-error-handling-setjmp-longjmp.html">48. Error Handling (setjmp, longjmp)</a>
+        <a href="/blog-c/49-c-variable-arguments-stdarg-h.html">49. Variable Arguments (stdarg.h)</a>
+        <a href="/blog-c/50-c-multi-threading-pthreads-basics.html">50. Multi-threading in C (pthreads)</a>
+      </div>
+
+      <!-- Phase 18: Data Structures - 1 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧱</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 18</span>
+            <span class="phase-title">Data Structures - 1</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/51-c-linked-lists-singly-creation-traversal.html">51. Singly Linked Lists - Basics</a>
+        <a href="/blog-c/52-c-linked-lists-insertion-deletion.html" class="active">52. Linked Lists - Insert & Delete</a>
+        <a href="/blog-c/53-c-doubly-and-circular-linked-lists.html">53. Doubly & Circular Linked Lists</a>
+        <a href="/blog-c/54-c-stack-implementation-array-linkedlist.html">54. Stack Implementation</a>
+        <a href="/blog-c/55-c-queue-implementation-linear-circular.html">55. Queue Implementation</a>
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-heading">Interactive IDE</div>
+    <a href="/?lang=c" style="color:#10b981; font-weight:700;">▶ Try C Online Compiler</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">Other Courses</div>
+    <a href="/blog-python.html">Python Course (65 Lessons)</a>
+    <a href="/blog-java.html">Java Course (51 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (19 Lessons)</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Programming</a><span class="sep">›</span>
+      <span class="current">Lesson 52: Linked Lists - Insertion & Deletion (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">Linked Lists - Insertion & Deletion (తెలుగులో)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ C (C17 / C23 Standard)</span>
+      <span class="badge">🟢 Lesson 52</span>
+      <span class="badge">📂 Phase 18: Data Structures - 1</span>
+      <span class="badge">📅 2026 Comprehensive Master Edition</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this in-depth guide:</span>
+      <span>Insert at Head · Insert at Tail · Insert at Position · Deletion · Memory Management (free)</span>
+    </div>
+
+
+    <div class="intro-box">
+      <p>లాస్ట్ లెసన్ లో మనం లింక్డ్ లిస్ట్ (ట్రైన్ డబ్బాలు) క్రియేట్ చేయడం నేర్చుకున్నాం కదా. కానీ ఒక ప్యాసింజర్ వచ్చి "నన్ను కరెక్ట్ గా రెండో డబ్బాకి, మూడో డబ్బాకి మధ్యలో ఎక్కించండి" అంటే ఎలా? ఆ చైన్ ని ఎలా విడదీసి మధ్యలో కొత్త బాక్స్ ని ఎలా <strong>Insert</strong> చేయాలో, అలాగే వద్దు అనుకున్న బాక్స్ ని <strong>Delete (free)</strong> చేసి చైన్ ని మళ్ళీ ఎలా అతకాలో ఈరోజు నేర్చుకుందాం. ఇంటర్వ్యూస్ లో వైట్ బోర్డ్ మీద కోడింగ్ అడిగే క్వశ్చన్స్ అన్నీ దీనిమీదనే ఉంటాయి!</p>
+    </div>
+
+    <div class="section-title"><span class="num">1</span> ఇన్సర్షన్ టెక్నిక్ (చైన్ మార్చడం)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        <strong>Insert at Beginning (ముందు యాడ్ చేయడం):</strong> కొత్త ఇంజిన్ వచ్చింది. సింపుల్ గా కొత్త డబ్బా చైన్ ని పాత ఇంజిన్ (హెడ్) కి కనెక్ట్ చేసి, హెడ్ అనే కిరీటాన్ని కొత్త దానికి ఇచ్చేయడమే!
+      </p>
+      
+      <div class="deep-dive-card">
+        <h3>🔗 రియల్ లైఫ్ స్టోరీ: మధ్యలో దూర్చడం (Insert at Position)</h3>
+        <p style="color:#e2e8f0; font-size:14.5px; line-height:1.8;">
+          అనుకోండి A, B, C అనే ముగ్గురు వ్యక్తులు చేతులు పట్టుకుని నిలబడ్డారు (A->B->C). ఇప్పుడు కొత్తగా X అనేవాడు వచ్చి B మరియు C మధ్యలో దూరాలి.<br><br>
+          అత్యంత <strong>డేంజరస్ రూల్:</strong> B తన చేయి వదిలేసి ముందు X ని పట్టుకోకూడదు! అలా వదిలేస్తే C ఎక్కడికి పోయాడో అడ్రస్ దొరకదు (మెమరీ లీక్). దానికి కరెక్ట్ పద్ధతి ఏంటంటే: ముందు X అనేవాడు తన చేత్తో C ని పట్టుకుంటాడు. ఆ తర్వాతే B తన పాత చేయి (C) ని వదిలేసి X ని పట్టుకుంటాడు! అంటే చైన్ తెగకుండా లింక్ మారుతుంది.<br>
+          కోడ్ లో దీన్ని: <code>newNode-&gt;next = temp-&gt;next;</code> ఆ తర్వాత <code>temp-&gt;next = newNode;</code> అంటారు.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> డిలీషన్ టెక్నిక్ (చైన్ అతకడం)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        మధ్యలో B అనే డబ్బాని తీసేయాలి. అప్పుడు A డబ్బా వాడికి, డైరెక్ట్ గా C అడ్రస్ ఇస్తే చాలు (<code>A-&gt;next = B-&gt;next;</code>). చైన్ అతుక్కుపోతుంది. కానీ ఆ తర్వాత కచ్చితంగా ఆ కట్ అయిన B డబ్బాని ఆపరేటింగ్ సిస్టమ్ కి తిరిగి ఇచ్చేయాలి (<code>free(B)</code>). లేదంటే మెమరీ లీక్ కన్ఫార్మ్!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Insert at Front & End)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో హెడ్ ద్వారా ముందు, వెనక నోడ్స్ ని ఎలా డైనమిక్ గా ఇన్సర్ట్ చేసామో ఒక ప్రొఫెషనల్ పద్ధతిలో రాసిన ఫంక్షన్స్ ని చూడండి. డబుల్ పాయింటర్స్ (<code>**</code>) ఎందుకు వాడుతున్నామో గమనించండి!
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Insert at Head & Tail</span>
+          <a class="try-btn" href="/?lang=c">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// 1. ముందు యాడ్ చేయడం (Insert at Head)
+// హెడ్ అడ్రస్ ని మార్చాలి కాబట్టి (**) డబుల్ పాయింటర్ తీసుకుంటున్నాం
+void push(struct Node** head_ref, int new_data) {
+    // కొత్త బాక్స్ క్రియేట్ చేద్దాం
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    
+    // కొత్త దాని చైన్ ని పాత హెడ్ కి ఇద్దాం
+    new_node->next = *head_ref;
+    
+    // ఇప్పుడు కొత్త బాక్స్ ని హెడ్ కింద మారుద్దాం!
+    *head_ref = new_node;
+}
+
+// 2. చివర్లో యాడ్ చేయడం (Insert at Tail)
+void append(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* last = *head_ref;
+    
+    new_node->data = new_data;
+    new_node->next = NULL; // ఇది లాస్ట్ కాబట్టి NULL
+    
+    // ఒకవేళ లిస్ట్ పూర్తిగా ఖాళీగా ఉంటే... ఇదే ఫస్ట్ (హెడ్) అవుతుంది
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+    
+    // ఖాళీ లేకపోతే, నడుచుకుంటూ లాస్ట్ డబ్బా దాకా వెతుకుదాం
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    
+    // లాస్ట్ డబ్బా దొరికింది! దానికి ఈ కొత్త డబ్బాని చైన్ వేద్దాం
+    last->next = new_node;
+}
+
+// లిస్ట్ ప్రింట్ చేసే ఫంక్షన్
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    // లిస్ట్ మొదట్లో ఖాళీగా ఉంది (హెడ్ లేదు)
+    struct Node* head = NULL;
+    
+    printf("--- Linked List Insertion ---\n\n");
+    
+    // చివర్లో 10 యాడ్ చేద్దాం (ఖాళీ కాబట్టి ఇదే హెడ్ అవుతుంది)
+    append(&head, 10);
+    
+    // ముందు 5 యాడ్ చేద్దాం (5 -> 10)
+    push(&head, 5);
+    
+    // చివర్లో 20 యాడ్ చేద్దాం (5 -> 10 -> 20)
+    append(&head, 20);
+    
+    // ముందు 1 యాడ్ చేద్దాం (1 -> 5 -> 10 -> 20)
+    push(&head, 1);
+    
+    printf("Final List is:\n");
+    printList(head);
+    
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>struct Node** head_ref</code>: ఇది చాలా మందికి కన్ఫ్యూజ్ అవుతుంది! మనం ఒక ఫంక్షన్ ద్వారా మెయిన్ లో ఉన్న <code>head</code> పాయింటర్ వేల్యూ ని మార్చాలి (అంటే ఒక బాక్స్ ని హెడ్ కింద డిక్లేర్ చేయాలి). పాయింటర్ వాల్యూ ని ఫంక్షన్ లో మార్చాలంటే దాని అడ్రస్ ని (అంటే డబుల్ పాయింటర్) పంపాలి అని మనం పాత లెసన్స్ లో నేర్చుకున్నాం!</li>
+        <li><code>*head_ref = new_node;</code>: పాత ఇంజిన్ పోయి, కొత్తగా వచ్చిన <code>new_node</code> కి హెడ్ (కిరీటం) దక్కింది.</li>
+        <li><code>while (last-&gt;next != NULL)</code>: అపెండ్ (Append) చేసేటప్పుడు, మనకు లాస్ట్ డబ్బా అడ్రస్ డైరెక్ట్ గా తెలీదు. కాబట్టి ఫస్ట్ నుండి ఒకటొకటి చెక్ చేసుకుంటూ వెళ్లి కరెక్ట్ గా లాస్ట్ డబ్బా దగ్గర ఆగి (నెక్స్ట్ చైన్ 0 అవ్వగానే) దానికి లింక్ కనెక్ట్ చేసాము (O(N) time).</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: Append చేయడానికి ఎప్పుడూ O(N) టైమ్ పడుతుందా? ఫాస్ట్ చేయలేమా?</h4>
+          <p>సపోజ్ మీ దగ్గర లక్ష డబ్బాలు ఉంటే, చివర్లో ఇంకో డబ్బా యాడ్ చేయడానికి ప్రతిసారి మొదటి నుండి లక్ష సార్లు నడుచుకుంటూ వెళ్ళాలి. ఇది చాలా స్లో! దీన్ని సాల్వ్ చేయడానికి ప్రోగ్రామర్స్ <code>head</code> తో పాటు, లాస్ట్ డబ్బా అడ్రస్ ని పట్టుకునే <code>tail</code> అనే ఇంకో పాయింటర్ ని కూడా మెయింటైన్ చేస్తారు. దానివల్ల సెకనులో లాస్ట్ కి కనెక్ట్ చేయొచ్చు (O(1)).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: Head ని డిలీట్ చేయాలంటే ఎలా?</h4>
+          <p>సింపుల్! హెడ్ కి కిరీటం తీసేసి, దాని నెక్స్ట్ ఉన్న డబ్బాకి కిరీటం పెడతాం. (<code>*head = (*head)-&gt;next;</code>). కానీ ఆ పాత హెడ్ ని మర్చిపోకుండా ఒక టెంపరరీ పాయింటర్ లో పట్టుకుని <code>free(temp)</code> చేయాలి, లేదంటే అది గాలిలో అలాగే ఉండిపోయి మెమరీ లీక్ అవుతుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: Garbage Collector ఉన్న లాంగ్వేజెస్ లో ఇదంతా చేయాలా?</h4>
+          <p>జావా (Java) లేదా పైథాన్ (Python) లో మీరు <code>free()</code> చేయక్కర్లేదు. మీరు ఒక లింక్ ని కట్ చేస్తే (అంటే అడ్రస్ ని నల్ చేస్తే), ఆ కట్ అయిపోయిన డబ్బా దగ్గరికి బ్యాక్ గ్రౌండ్ లో గార్బేజ్ కలెక్టర్ వచ్చి దానంతట అదే క్లీన్ చేసేస్తుంది. కానీ C లో మీరే దేవుడు కాబట్టి అంతా మీరే మ్యాన్యువల్ గా డిలీట్ చేయాలి.</p>
+        </div>
+      </div>
+    </div>
+  
+
+    <div class="nav-footer">
+      
+      <a href="51-c-linked-lists-singly-creation-traversal.html" class="nav-btn">
+        <span class="label">← Previous Lesson</span>
+        <span class="title">51. Linked Lists Basics</span>
+      </a>
+
+      
+      <a href="53-c-doubly-and-circular-linked-lists.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">53. Doubly & Circular Linked Lists</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+  <script src="/site-nav.js" defer></script>
+</body>
+</html>

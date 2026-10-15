@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Iterators, STL Algorithms: sort, find, transform, accumulate Masterclass — Modern C++ Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Exhaustive C++ guide on Iterators & Algorithms (Phase 15): iterator categories, sort/find/count_if/transform/accumulate/reverse/binary_search, erase-remove idiom, custom comparators, and algorithm complexity." />
-  <meta name="keywords" content="c++ tutorial, c++ iterators, stl algorithms: sort, find, transform, accumulate masterclass, modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
+  <title>Iterators & STL Algorithms (తెలుగులో) — Modern C++ Master Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ STL లో Iterators (ఇటరేటర్స్) ఎందుకు అంత ఇంపార్టెంట్? Sort, Find, మరియు Transform లాంటి అద్భుతమైన ఇన్-బిల్ట్ అల్గారిథమ్స్ ని మన ప్రాజెక్ట్స్ లో ఎలా వాడుకోవాలో డీప్ ఎక్స్‌ప్లనేషన్ తో నేర్చుకుందాం." />
+  <meta name="keywords" content="c++ tutorial, iterators & stl algorithms (తెలుగులో), modern c++, cpp20, RAII, stl, cpp pointers, cpp oop" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/15-cpp-iterators-algorithms-sort-find-transform-and-stl.html" />
@@ -16,15 +16,15 @@
   <link rel="stylesheet" href="/site-nav.css" />
   <style>
     .concept-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.25); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
-    .concept-box h4 { color: #3b82f6; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box h4 { color: var(--blue); margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
     .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
-    .memory-diagram { background: #0f141c; border: 1px solid #27303f; border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #60a5fa; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
-    .spec-table th { background: rgba(59, 130, 246, 0.12); color: #3b82f6; font-size: 14.5px; }
-    .deep-dive-card { background: #141922; border: 1px solid #27303f; border-radius: 10px; padding: 24px; margin: 26px 0; }
-    .deep-dive-card h3 { color: #3b82f6; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--blue); line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    .spec-table th { background: rgba(59, 130, 246, 0.12); color: var(--blue); font-size: 14.5px; }
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: var(--blue); font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
     .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px 22px; }
-    .faq-item h4 { color: #e6edf3; font-size: 15.5px; margin-bottom: 8px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
     .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
     .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
   </style>
@@ -68,38 +68,15 @@
       });
     });
   </script>
-  <script src="/site-footer.js" defer></script>
-  <link rel="stylesheet" href="/pages.css" />
-
   <script>
     (function() {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = localStorage.getItem('theme') || 'light';
       if (currentTheme === 'light') {
         document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener('DOMContentLoaded', () => {
-        const nav = document.querySelector('.topnav') || document.querySelector('.header-container') || document.querySelector('header');
-        if (!nav || nav.querySelector('.blog-theme-toggle')) return;
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'blog-theme-toggle';
-        toggleBtn.style.cssText = 'margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Inter", sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;';
-        const updateText = () => {
-          const isLight = document.body.classList.contains('light-theme');
-          toggleBtn.innerHTML = isLight ? '🌙 Dark' : '☀️ Light';
-        };
-        updateText();
-        toggleBtn.addEventListener('click', () => {
-          document.body.classList.toggle('light-theme');
-          document.documentElement.classList.toggle('light-theme');
-          const isLight = document.body.classList.contains('light-theme');
-          localStorage.setItem('theme', isLight ? 'light' : 'dark');
-          updateText();
-        });
-        nav.appendChild(toggleBtn);
-      });
     })();
   </script>
 </head>
@@ -490,9 +467,9 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Programming</a><span class="sep">›</span>
-      <span class="current">Lesson 15: C++ Iterators, STL Algorithms: sort, find, transform, accumulate Masterclass</span>
+      <span class="current">Lesson 15: Iterators & STL Algorithms (తెలుగులో)</span>
     </div>
-    <h1 class="page-title">C++ Iterators, STL Algorithms: sort, find, transform, accumulate Masterclass</h1>
+    <h1 class="page-title">Iterators & STL Algorithms (తెలుగులో)</h1>
     <div class="page-meta">
       <span class="badge">⚡ Modern C++ (C++17 / C++20 / C++23)</span>
       <span class="badge">🟢 Lesson 15</span>
@@ -501,175 +478,123 @@
     </div>
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#3b82f6; font-weight:700;">📌 Covered in this in-depth guide:</span>
-      <span>Iterator Categories · begin/end/cbegin · sort & stable_sort · find & binary_search · count_if · transform · accumulate · remove_if + erase · lower_bound · for_each</span>
+      <span>Iterators Concept · std::sort · std::find · std::transform · Lambda with STL</span>
     </div>
-<div class="intro-box">
-  <p>Welcome to <strong>Phase 15: Iterators &amp; Algorithms</strong>! Iterators are the glue between containers and algorithms. The STL algorithm library provides over 100 generic algorithms (sort, find, transform, accumulate…) that work on any container via iterators — enabling powerful, reusable, and highly optimized code.</p>
-</div>
 
-<div class="section-title"><span class="num">1</span>Iterator Categories</div>
-<div class="section-body">
-  <table class="tbl spec-table">
-    <thead><tr><th>Category</th><th>Supports</th><th>Example Container</th></tr></thead>
-    <tbody>
-      <tr><td>Input Iterator</td><td>Read once, forward only</td><td><code>std::istream_iterator</code></td></tr>
-      <tr><td>Output Iterator</td><td>Write once, forward only</td><td><code>std::ostream_iterator</code></td></tr>
-      <tr><td>Forward Iterator</td><td>Read/Write, forward only</td><td><code>std::forward_list</code></td></tr>
-      <tr><td>Bidirectional</td><td>Read/Write, forward &amp; backward</td><td><code>std::list</code>, <code>std::set</code></td></tr>
-      <tr><td>Random Access</td><td>Full arithmetic (+, -, [])</td><td><code>std::vector</code>, <code>std::array</code></td></tr>
-      <tr><td>Contiguous (C++20)</td><td>Random access + contiguous memory</td><td><code>std::vector</code>, <code>std::string</code></td></tr>
-    </tbody>
-  </table>
-</div>
+    <div class="intro-box">
+      <p>గత పాఠంలో మనం STL కంటైనర్స్ (Containers) వాడి డేటాని ఎలా దాచుకోవాలో చూసాము. కానీ ఆ దాచిన డేటాని ఒక పద్ధతిలో యాక్సెస్ చేయడానికి (లూప్ తిప్పడానికి) మనకు ఒక దారి కావాలి, ఆ దారి చూపించేవే <strong>Iterators (ఇటరేటర్స్)</strong>. అంతే కాకుండా, ఒక లక్ష నంబర్స్ ని షార్ట్ (చిన్న దాని నుండి పెద్ద దానికి అమర్చడం) చేయడానికి మీరు 20 లైన్ల కోడ్ రాయక్కర్లేదు. C++ లో <strong>Algorithms (అల్గారిథమ్స్)</strong> అనే లైబ్రరీ లో మనకు అవసరమైన 100 కి పైగా పవర్ ఫుల్ లాజిక్స్ అన్నీ రెడీమేడ్ గా దొరుకుతాయి. ఇటరేటర్స్ ని, ఈ అల్గారిథమ్స్ ని కలిపి వాడితే మీరు గంటలో రాయాల్సిన కోడ్ ని ఒక్క నిమిషంలో ముగించేయొచ్చు. ఇవన్నీ ఎలా పనిచేస్తాయో డీప్ గా చూద్దాం.</p>
+    </div>
 
-<div class="section-title"><span class="num">2</span>Essential STL Algorithms</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — sort, find, count, transform, accumulate</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
+    <div class="section-title"><span class="num">1</span> అసలు Iterator (ఇటరేటర్) అంటే ఏమిటి?</div>
+    <div class="section-body">
+      <p class="text-prose">
+        ఇటరేటర్ అనేది ఒక అడ్వాన్స్డ్ పాయింటర్ లాంటిది. మీరు వెక్టార్ వాడినా, మ్యాప్ వాడినా, లిస్ట్ వాడినా... వాటన్నింటి లోపల డేటా అరేంజ్ మెంట్ వేరువేరుగా ఉంటుంది. మీరే సొంతంగా లూప్ (for loop) రాసి డేటాని బయటకి తీయాలంటే, ప్రతి కంటైనర్ కి వేరువేరు లాజిక్ రాయాలి. అలా కాకుండా, కంటైనర్ ఏదైనా సరే, మొదటి ఐటమ్ (begin) నుండి చివరి ఐటమ్ (end) వరకు ఎలాంటి ఇబ్బంది లేకుండా ఒక స్మార్ట్ పాయింటర్ లాగా డేటాని చూపించే ఫీచరే ఈ ఇటరేటర్.
+      </p>
+
+      <div class="deep-dive-card">
+        <h3>🔍 రియల్ లైఫ్ స్టోరీ: ఒక గైడ్ మరియు టూరిస్ట్ బస్సు</h3>
+        <p style="color:var(--text2); font-size:14.5px; line-height:1.8;">
+          ఒక మ్యూజియం కి వెళ్లారు అనుకోండి (అదే కంటైనర్). అందులో రకరకాల గదుల్లో రకరకాల వస్తువులు ఉన్నాయి. మీరు స్వయంగా వెతికితే దారి తప్పిపోయే ప్రమాదం ఉంది.<br><br>
+          కానీ మీకొక <strong>టూర్ గైడ్ (Iterator)</strong> దొరికాడు అనుకోండి. మీరు అతనికి "నెక్స్ట్ ఐటమ్ చూపించు" (అంటే <code>it++</code>) అని చెప్తే చాలు, అతనే ఆ గదులన్నీ పర్ఫెక్ట్ ఆర్డర్ లో చూపించుకుంటూ తీసుకువెళతాడు. మీరు దారి గురించి టెన్షన్ పడక్కర్లేదు. ఇటరేటర్ కూడా ఇదే చేస్తుంది, కంటైనర్ కాంప్లెక్సిటీ ని దాచేసి, డేటాని సింపుల్ గా యాక్సెస్ చేసేలా చేస్తుంది.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="num">2</span> మ్యాజికల్ STL Algorithms (రెడీమేడ్ కోడ్స్)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        C++ వాళ్ళు <code>#include &lt;algorithm&gt;</code> అనే ఒక గొప్ప లైబ్రరీ ని ఇచ్చారు. ఇందులో మనం రెగ్యులర్ గా వాడే కోడ్స్ అన్నీ సింగిల్ లైన్ లో ఉంటాయి.
+      </p>
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><strong><code>std::sort()</code></strong>: అర్రే ని గానీ వెక్టార్ ని గానీ చాలా ఫాస్ట్ గా సార్ట్ (ఆర్డర్) చేస్తుంది. ఇది బ్యాక్ గ్రౌండ్ లో <em>IntroSort</em> అనే అల్గారిథమ్ వాడుతుంది (ప్రపంచంలోనే బెస్ట్ టైమ్ కాంప్లెక్సిటీ O(N log N) ).</li>
+        <li><strong><code>std::find()</code></strong>: ఒక పెద్ద వెక్టార్ లో మీకు కావాల్సిన డేటా ఎక్కడుందో వెతికిపెడుతుంది.</li>
+        <li><strong><code>std::reverse()</code></strong>: డేటాని మొత్తం ఉల్టా (రివర్స్) చేస్తుంది.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">3</span> ఒకే ఒక సింపుల్ కోడ్ (Sort & Iterators)</div>
+    <div class="section-body">
+      <p class="text-prose">
+        కింద కోడ్ లో కొన్ని జంబుల్ అయిన నంబర్స్ ని <code>sort()</code> వాడి ఎలా ఆర్డర్ లో పెట్టామో, మరియు రివర్స్ ఎలా చేసామో చూడండి.
+      </p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++ — STL Algorithms</span>
+          <a class="try-btn" href="/?lang=cpp17">▶ Run Code</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 #include &lt;vector&gt;
-#include &lt;algorithm&gt;
-#include &lt;numeric&gt;
-#include &lt;string&gt;
+#include &lt;algorithm&gt; // ఇక్కడే సార్ట్ ఫంక్షన్లు ఉంటాయి
 
 int main() {
-    std::vector&lt;int&gt; nums{5, 2, 8, 1, 9, 3, 7, 4, 6};
-
-    // sort ascending
+    // చెల్లాచెదురుగా ఉన్న నంబర్స్ (Vector)
+    std::vector&lt;int&gt; nums = {50, 10, 80, 20, 40};
+    
+    // 1. చిన్న దాని నుండి పెద్ద దానికి సార్ట్ చేయడం
+    // begin() మరియు end() అనేవి ఇటరేటర్స్ (గైడ్స్) ని ఇస్తాయి
     std::sort(nums.begin(), nums.end());
-    std::cout &lt;&lt; "sorted: ";
-    for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
-    std::cout &lt;&lt; "
-";
-
-    // sort descending with custom comparator
-    std::sort(nums.begin(), nums.end(), std::greater&lt;int&gt;{});
-    std::cout &lt;&lt; "descend: ";
-    for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
-    std::cout &lt;&lt; "
-";
-
-    // find
-    auto it = std::find(nums.begin(), nums.end(), 7);
-    if (it != nums.end())
-        std::cout &lt;&lt; "found 7 at index: " &lt;&lt; std::distance(nums.begin(), it) &lt;&lt; "
-";
-
-    // count_if
-    int evenCount = std::count_if(nums.begin(), nums.end(),
-                                  [](int n){ return n % 2 == 0; });
-    std::cout &lt;&lt; "even count: " &lt;&lt; evenCount &lt;&lt; "
-";
-
-    // transform: square each element into new vector
-    std::vector&lt;int&gt; squares(nums.size());
-    std::transform(nums.begin(), nums.end(), squares.begin(),
-                   [](int n){ return n * n; });
-    std::cout &lt;&lt; "squares: ";
-    for (int s : squares) std::cout &lt;&lt; s &lt;&lt; " ";
-    std::cout &lt;&lt; "
-";
-
-    // accumulate: sum all
-    int total = std::accumulate(nums.begin(), nums.end(), 0);
-    std::cout &lt;&lt; "sum: " &lt;&lt; total &lt;&lt; "
-";
-
-    // min/max element
-    auto [mn, mx] = std::minmax_element(nums.begin(), nums.end());
-    std::cout &lt;&lt; "min=" &lt;&lt; *mn &lt;&lt; " max=" &lt;&lt; *mx &lt;&lt; "
-";
-
-    // remove_if + erase idiom
-    nums.erase(std::remove_if(nums.begin(), nums.end(),
-                               [](int n){ return n % 2 == 0; }),
-               nums.end());
-    std::cout &lt;&lt; "after removing evens: ";
-    for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
-    std::cout &lt;&lt; "
-";
-
-    // binary search (on sorted range)
-    std::vector&lt;int&gt; sorted{1,2,3,4,5,6,7,8,9};
-    bool found = std::binary_search(sorted.begin(), sorted.end(), 5);
-    std::cout &lt;&lt; "binary_search(5): " &lt;&lt; std::boolalpha &lt;&lt; found &lt;&lt; "
-";
-
-    auto lb = std::lower_bound(sorted.begin(), sorted.end(), 5);
-    std::cout &lt;&lt; "lower_bound(5) index: " &lt;&lt; std::distance(sorted.begin(), lb) &lt;&lt; "
-";
+    
+    std::cout << "Sorted Order (Ascending):" << std::endl;
+    for (int n : nums) {
+        std::cout << n << " ";
+    }
+    std::cout << std::endl;
+    
+    // 2. పెద్ద దాని నుండి చిన్న దానికి రివర్స్ చేయడం
+    // rbegin() అంటే రివర్స్ బిగిన్ అని అర్థం!
+    std::sort(nums.rbegin(), nums.rend());
+    
+    std::cout << "Sorted Order (Descending):" << std::endl;
+    for (int n : nums) {
+        std::cout << n << " ";
+    }
+    std::cout << std::endl;
+    
     return 0;
 }</code></pre>
-  </div>
-</div>
+      </div>
+    </div>
 
-<div class="section-title"><span class="num">3</span>reverse, copy, fill, for_each</div>
-<div class="section-body">
-  <div class="code-block">
-    <div class="code-block-header"><span class="lang-tag">C++ — reverse, copy, fill, for_each</span><a class="try-btn" href="/?lang=cpp17">▶ Run in Compiler</a></div>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;vector&gt;
-#include &lt;algorithm&gt;
-#include &lt;iterator&gt;
+    <div class="section-title"><span class="num">4</span> కోడ్ లో ఏం జరుగుతోంది? (Step-by-Step)</div>
+    <div class="section-body">
+      <ul style="color:var(--text2); font-size:15px; line-height:1.9; margin-bottom:20px;">
+        <li><code>#include &lt;algorithm&gt;</code>: మీరు పైన దీన్ని ఇన్‌క్లూడ్ చేయకపోతే కింద <code>sort()</code> లాంటివి పనిచేయవు.</li>
+        <li><code>nums.begin()</code> మరియు <code>nums.end()</code>: ఇవే ఇటరేటర్స్. సార్ట్ ఫంక్షన్ కి మనం "మొదటి పొజిషన్ నుండి చివరి పొజిషన్ దాకా సార్ట్ చెయ్యి" అని దారి చూపిస్తున్నాం అన్నమాట.</li>
+        <li><code>nums.rbegin()</code>: ఇది చాలా స్మార్ట్ ఫీచర్ (Reverse Iterator). ఇది వెక్టార్ ని రివర్స్ లో చదువుకుంటూ వెళ్తుంది. కాబట్టి <code>sort()</code> ఫంక్షన్ కి రివర్స్ లో డేటా వెళ్ళి ఆటోమేటిక్ గా డిసెండింగ్ ఆర్డర్ (పెద్ద నుండి చిన్నకి) వస్తుంది. దీనికోసం మళ్ళీ ఇంకో సార్ట్ లాజిక్ రాయక్కర్లేదు!</li>
+      </ul>
+    </div>
 
-int main() {
-    std::vector&lt;int&gt; v{1,2,3,4,5};
-
-    // reverse in-place
-    std::reverse(v.begin(), v.end());
-    std::cout &lt;&lt; "reversed: ";
-    for (int x : v) std::cout &lt;&lt; x &lt;&lt; " ";
-    std::cout &lt;&lt; "
-";
-
-    // copy to another container
-    std::vector&lt;int&gt; dest(v.size());
-    std::copy(v.begin(), v.end(), dest.begin());
-
-    // fill with a value
-    std::vector&lt;int&gt; zeros(5);
-    std::fill(zeros.begin(), zeros.end(), 0);
-
-    // for_each with side effects
-    std::for_each(v.begin(), v.end(), [](int&amp; x){ x *= 2; });
-    std::cout &lt;&lt; "doubled: ";
-    for (int x : v) std::cout &lt;&lt; x &lt;&lt; " ";
-    std::cout &lt;&lt; "
-";
-
-    // copy to ostream
-    std::cout &lt;&lt; "ostream copy: ";
-    std::copy(v.begin(), v.end(), std::ostream_iterator&lt;int&gt;(std::cout, " "));
-    std::cout &lt;&lt; "
-";
-    return 0;
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">4</span>Technical FAQs</div>
-<div class="section-body">
-  <div class="faq-grid">
-    <div class="faq-item"><h4>Q1: What is the erase-remove idiom?</h4><p><code>std::remove_if</code> moves matching elements to the end and returns an iterator to the new logical end. Then <code>erase()</code> actually removes them. They must be combined because algorithms don't change container size.</p></div>
-    <div class="faq-item"><h4>Q2: Difference between sort and stable_sort?</h4><p><code>std::sort</code> is O(n log n) but doesn't preserve relative order of equal elements. <code>std::stable_sort</code> preserves relative order of equal elements (slightly more memory and time).</p></div>
-    <div class="faq-item"><h4>Q3: What does std::distance do?</h4><p><code>std::distance(first, last)</code> returns the number of hops between two iterators. For random-access iterators it's O(1), for others O(n).</p></div>
-    <div class="faq-item"><h4>Q4: What is std::back_inserter?</h4><p><code>std::back_inserter(container)</code> returns an output iterator that calls <code>push_back()</code> on each assignment — used with <code>std::copy</code> to append to a container.</p></div>
-    <div class="faq-item"><h4>Q5: What is std::partition?</h4><p><code>std::partition(begin, end, pred)</code> reorders elements so those satisfying pred come first. Returns iterator to the first element NOT satisfying pred.</p></div>
-  </div>
-</div>
+    <div class="section-title"><span class="num">5</span> ఇంటర్వ్యూలలో అడిగే కామన్ ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Q1: నాకు నచ్చిన విధంగా డేటాని సార్ట్ చేయొచ్చా? (Custom Sorting)</h4>
+          <p>ఖచ్చితంగా! ఉదాహరణకు మీ దగ్గర స్టూడెంట్స్ ఆబ్జెక్ట్స్ ఉన్నాయి. మీరు మార్కుల బట్టి సార్ట్ చేయాలా లేక పేర్ల బట్టి సార్ట్ చేయాలా అని కంపైలర్ కి తెలీదు. అప్పుడు మీరు <code>std::sort(begin, end, customLogic)</code> లాగా ఒక లాంబ్డా ఫంక్షన్ ని మూడవ ఆర్గ్యుమెంట్ గా పంపొచ్చు. ఆ కస్టమ్ లాజిక్ ని బట్టి కంపైలర్ సార్ట్ చేస్తుంది.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q2: <code>std::transform</code> అంటే ఏంటి?</h4>
+          <p>మీ వెక్టార్ లో 10 నంబర్స్ ఉన్నాయి. వాటన్నిటినీ డబుల్ (x2) చేసి ఇంకో వెక్టార్ లో పెట్టాలి అనుకుంటే, మీరు ఫర్ లూప్ రాసుకుంటూ కూర్చోక్కర్లేదు. డైరెక్ట్ గా <code>std::transform(begin, end, output_begin, డబుల్ చేసే లాజిక్)</code> రాస్తే, ఒక్క సెకనులో అన్ని నంబర్స్ మారిపోయి అవుట్పుట్ లోకి వచ్చేస్తాయి. ఇది మోడరన్ ఫంక్షనల్ ప్రోగ్రామింగ్ కి చాలా ముఖ్యం.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q3: <code>.end()</code> ఇటరేటర్ కరెక్ట్ గా లాస్ట్ ఐటమ్ ని చూపిస్తుందా?</h4>
+          <p>లేదు, ఇది చాలా మంది చేసే తప్పు. <code>.begin()</code> కరెక్ట్ గా మొదటి ఐటమ్ పైనే పాయింట్ చేస్తుంది. కానీ <code>.end()</code> అనేది లాస్ట్ ఐటమ్ తర్వాత ఉన్న ఒక "ఖాళీ జాగా" (Past-the-end) ని చూపిస్తుంది. అందుకే మనం లూప్స్ వాడేటప్పుడు ఎప్పుడూ <code>it != nums.end()</code> అని రాస్తాం (అంటే ఎండ్ కి వచ్చేదాకా ఆగు అని). దాన్ని డైరెక్ట్ గా ప్రింట్ చేయాలని చూస్తే గార్బేజ్ వాల్యూ వస్తుంది.</p>
+        </div>
+      </div>
+    </div>
+  
 <div class="nav-footer">
   <a href="14-cpp-stl-containers-vector-map-set-unordered-and-adaptors.html" class="nav-btn">
     <span class="label">← Previous Lesson</span>
-    <span class="title">14. STL: vector, map, set, unordered & Container Adaptors</span>
+    <span class="title">14. STL Containers</span>
   </a>
   <a href="16-cpp-lambda-expressions-captures-std-function-and-closures.html" class="nav-btn" style="text-align:right;">
     <span class="label">Next Lesson →</span>
-    <span class="title">16. Lambdas, Captures, std::function & Closures</span>
+    <span class="title">16. Lambda Expressions</span>
   </a>
 </div>
   </main>
 </div>
   <script src="/site-nav.js" defer></script>
-  <footer class="footer" id="site-footer"></footer>
 </body>
 </html>

@@ -85,7 +85,7 @@ function wrapPage(slug, title, mainContent, prevFile, prevTitle, nextFile, nextT
   <link rel="stylesheet" href="/blog-style.css" />
   <script>
     (function() {
-      const t = localStorage.getItem('theme') || 'dark';
+      const t = localStorage.getItem('theme') || 'light';
       if (t === 'light') { document.documentElement.classList.add('light-theme'); document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('light-theme'); }); }
       window.addEventListener('DOMContentLoaded', () => {
         const nav = document.querySelector('.topnav');

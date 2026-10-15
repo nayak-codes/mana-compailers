@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Java Good Class Design: Packages, Access Control & SOLID Principles — Java 21 Tutorial | Our Compiler</title>
-  <meta name="description" content="Mastering professional class design in Java: the package system for organizing and isolating code, package-private boundary enforcement, access modifier decision frameworks, coupling vs cohesion trade-offs, and recognizing common encapsulation anti-patterns that create fragile, hard-to-maintain software." />
-  <meta name="keywords" content="java good class design: packages, access control & solid principles, java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
+  <title>Java Good Class Design: Packages, Access Control & SOLID Principles (తెలుగులో) — Java 21 Tutorial | Our Compiler</title>
+  <meta name="description" content="ప్రొఫెషనల్ సాఫ్ట్వేర్ డెవలపర్స్ జావాలో క్లాసులు ఎలా డిజైన్ చేస్తారు? ఫైల్స్ అన్నింటినీ కలిపి ఒకే ఫోల్డర్ లో ఎందుకు పడేయరు? జావా Packages (ప్యాకేజెస్) ఎలా పనిచేస్తాయి? మన కోడ్ ని మంచి డిజైన్ తో (SOLID రూల్స్) క్లీన్ గా ఎలా రాయాలో ఈ చాప్టర్ లో డీటెయిల్డ్ గా నేర్చుకుందాం." />
+  <meta name="keywords" content="java good class design: packages, access control & solid principles (తెలుగులో), java tutorial, learn java, java 21 lts, java programming, java backend, spring boot" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-java/46-java-good-class-design-and-package-access.html" />
@@ -526,7 +526,7 @@
       <span class="current">Chapter 46: 46. Package Access & Class Design</span>
     </div>
 
-    <h1 class="page-title">Java Good Class Design: Packages, Access Control & SOLID Principles</h1>
+    <h1 class="page-title">Java Good Class Design: Packages, Access Control & SOLID Principles (తెలుగులో)</h1>
 
     <div class="page-meta">
       <span class="badge">☕ Java 21+ LTS</span>
@@ -541,65 +541,65 @@
     </div>
 
     <div class="theory-intro" style="margin: 24px 0; font-size:15.5px; line-height:1.75; color:var(--text);">
-      <p>Mastering professional class design in Java: the package system for organizing and isolating code, package-private boundary enforcement, access modifier decision frameworks, coupling vs cohesion trade-offs, and recognizing common encapsulation anti-patterns that create fragile, hard-to-maintain software.</p>
+      <p>ప్రొఫెషనల్ సాఫ్ట్వేర్ డెవలపర్స్ జావాలో క్లాసులు ఎలా డిజైన్ చేస్తారు? ఫైల్స్ అన్నింటినీ కలిపి ఒకే ఫోల్డర్ లో ఎందుకు పడేయరు? జావా Packages (ప్యాకేజెస్) ఎలా పనిచేస్తాయి? మన కోడ్ ని మంచి డిజైన్ తో (SOLID రూల్స్) క్లీన్ గా ఎలా రాయాలో ఈ చాప్టర్ లో డీటెయిల్డ్ గా నేర్చుకుందాం.</p>
     </div>
 
     <!-- Deep Conceptual Theory Sections -->
     
     <section class="lesson-section">
-      <h2>1. The Java Package System</h2>
+      <h2>1. అసలు Java Package సిస్టమ్ అంటే ఏంటి?</h2>
       <div class="theory-text">
-        <p>A <strong>Package</strong> is a namespace mechanism that groups related classes and interfaces together, serving two purposes:<br>1. <strong>Organization:</strong> Hierarchically categorizes classes (like folders on a filesystem).<br>2. <strong>Access Control:</strong> The default (package-private) modifier creates an <strong>internal API boundary</strong> visible only within the package.</p>
-<p><strong>Package Naming Convention (Reverse Domain):</strong><br><div class="code-block"><pre><code>package com.ourcompiler.java.tutorial.phase10;<br>// com     = top-level domain (reversed)<br>// ourcompiler = company name<br>// java.tutorial.phase10 = product and feature hierarchy</code></pre></div></p>
-<p><strong>Declaring and Importing:</strong><br><div class="code-block"><pre><code>// In Animal.java:<br>package com.zoo.animals;<br>public class Animal { ... }</p>
-<p>// In Main.java (different package):<br>package com.zoo.management;<br>import com.zoo.animals.Animal;     // Import specific class<br>import com.zoo.animals.*;           // Import all classes in package (Discouraged in production)</code></pre></div></p>
+        <p><strong>Package</strong> అంటే సింపుల్ గా చెప్పాలంటే ఫోల్డర్. దీనివల్ల రెండు లాభాలు ఉన్నాయి:<br>1. <strong>ఆర్గనైజేషన్:</strong> వెయ్యి ఫైల్స్ ఒకే ఫోల్డర్ లో ఉంటే పిచ్చెక్కిపోతుంది, అందుకే నీట్ గా సపరేట్ ఫోల్డర్స్ లాగా పెట్టుకుంటాం.<br>2. <strong>సెక్యూరిటీ కంట్రోల్:</strong> "ఈ ఫోల్డర్ లో ఉన్నవాళ్లకు మాత్రమే ఇవి కనపడాలి, వేరే వాళ్ళకి కనపడకూడదు" అని రూల్స్ పెట్టుకోవచ్చు.</p>
+<p><strong>ప్యాకేజ్ పేర్లు ఎలా పెడతారు (రివర్స్ డొమైన్):</strong><br><div class="code-block"><pre><code>package com.ourcompiler.java.tutorial.phase10;<br>// com     = ఇది టాప్ లెవెల్<br>// ourcompiler = మన కంపెనీ పేరు<br>// java.tutorial.phase10 = ప్రాజెక్ట్ లోపల ఉన్న ఫోల్డర్స్</code></pre></div></p>
+<p><strong>ఒక ప్యాకేజ్ ని ఇంకో ప్యాకేజ్ లో వాడుకోవడం (Import):</strong><br><div class="code-block"><pre><code>// ఫైల్ 1: Animal.java (com.zoo.animals ఫోల్డర్ లో ఉంది)<br>package com.zoo.animals;<br>public class Animal { ... }</p>
+<p>// ఫైల్ 2: Main.java (com.zoo.management ఫోల్డర్ లో ఉంది)<br>package com.zoo.management;<br>import com.zoo.animals.Animal;     // ఆ ఫోల్డర్ లో ఉన్న Animal ని తీసుకుంటున్నాం<br>import com.zoo.animals.*;           // అందులో ఉన్న అన్నీ తీసుకుంటున్నాం (ప్రొడక్షన్ లో ఇలా వాడకూడదు)</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>2. Package-Private: Building Internal API Boundaries</h2>
+      <h2>2. ప్యాకేజ్ లోపలే దాచిపెట్టడం (Package-Private)</h2>
       <div class="theory-text">
-        <p>Using <strong>default (package-private) access</strong> strategically creates clean internal API boundaries:</p>
-<div class="code-block"><pre><code>// Package: com.company.payments
-<p>// INTERNAL implementation (package-private: only used inside the package)<br>class EncryptionUtil {<br>    static String encrypt(String data) { ... }<br>}</p>
+        <p>మనం <code>public</code>, <code>private</code> ఏమీ రాయకపోతే దాన్ని <strong>default</strong> అంటారు కదా. దీనివల్ల మన ప్యాకేజ్ లోపల మాత్రమే పనిచేసే సీక్రెట్ క్లాసులు రాసుకోవచ్చు:</p>
+<div class="code-block"><pre><code>// ప్యాకేజ్: com.company.payments
+<p>// ఇది బయట ఎవరికీ కనపడదు, కేవలం ఈ ప్యాకేజ్ లో వాళ్లకు మాత్రమే కనపడుతుంది<br>class EncryptionUtil {<br>    static String encrypt(String data) { ... }<br>}</p>
 <p>class FraudDetector {<br>    boolean isSuspicious(double amount) { ... }<br>}</p>
-<p>// PUBLIC API (the only surface exposed to external packages)<br>public class PaymentProcessor {<br>    public boolean processPayment(String card, double amount) {<br>        String encrypted = EncryptionUtil.encrypt(card); // OK: same package<br>        if (new FraudDetector().isSuspicious(amount)) return false; // OK: same package<br>        // ... actual processing<br>        return true;<br>    }<br>}<br>// External packages ONLY see PaymentProcessor; EncryptionUtil and FraudDetector are hidden!</code></pre></div></p>
+<p>// ఇది పబ్లిక్! ప్యాకేజ్ బయటవాళ్ళకి ఇది ఒక్కటే కనపడుతుంది<br>public class PaymentProcessor {<br>    public boolean processPayment(String card, double amount) {<br>        String encrypted = EncryptionUtil.encrypt(card); // ఒకే ప్యాకేజ్ కాబట్టి ఓకే<br>        if (new FraudDetector().isSuspicious(amount)) return false; // ఇది కూడా ఓకే<br>        // పేమెంట్ ప్రాసెస్ అవుతుంది<br>        return true;<br>    }<br>}<br>// వేరే ప్యాకేజ్ వాళ్ళు కేవలం PaymentProcessor మాత్రమే పిలవగలరు, లోపల ఏం జరుగుతుందో వాళ్ళకి తెలియదు!</code></pre></div></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>3. Good Class Design Principles</h2>
+      <h2>3. బెస్ట్ క్లాస్ డిజైన్ రూల్స్ (SOLID Principles)</h2>
       <div class="theory-text">
-        <p><strong>1. Single Responsibility Principle (SRP):</strong><br>A class should have <strong>exactly one reason to change</strong>. Avoid God Classes that do everything:<br><div class="code-block"><pre><code>Bad:  class UserManager { register() + sendEmail() + saveToDatabase() + generateReport() }<br>Good: class UserRegistrar, class EmailSender, class UserRepository, class ReportGenerator</code></pre></div></p>
-<p><strong>2. High Cohesion — Related Concepts Together:</strong><br>All methods and fields in a class should relate to a single, well-defined concept. If a class has fields for both "employee details" and "payroll calculation rules", consider splitting them.</p>
-<p><strong>3. Low Coupling — Minimize Dependencies:</strong><br>A class should know as little as possible about other classes. Prefer working with abstract interfaces rather than concrete implementations.</p>
-<p><strong>4. Encapsulation as a First Principle:</strong><br>Always default to <code>private</code>. Only expose a member when you have a specific, justified reason to do so.</p>
+        <p><strong>1. Single Responsibility Principle (ఒక్కటే పని):</strong><br>ఒక క్లాస్ కి ఎప్పుడూ ఒకే ఒక్క పని అప్పజెప్పాలి. అన్ని పనులూ ఒక్కడే చేస్తే కన్ఫ్యూజ్ అవుతాడు (God Class):<br><div class="code-block"><pre><code>చెడ్డ కోడ్: class UserManager { అకౌంట్ క్రియేట్ చేయడం + ఈమెయిల్ పంపడం + డేటాబేస్ లో సేవ్ చేయడం }<br>మంచి కోడ్: class UserRegistrar, class EmailSender, class UserRepository అని సపరేట్ గా రాయాలి</code></pre></div></p>
+<p><strong>2. High Cohesion (కలిసికట్టుగా ఉండటం):</strong><br>క్లాస్ లో రాసిన వేరియబుల్స్, మెథడ్స్ అన్నీ ఒకదానికొకటి లింక్ అయి ఉండాలి. ఎంప్లాయీ క్లాస్ లో శాలరీకి సంబంధించిన ఫార్ములాస్ ఉండకూడదు, దానికి సపరేట్ పేరోల్ క్లాస్ రాయాలి.</p>
+<p><strong>3. Low Coupling (ఎవరికి వాళ్ళే యమునా తీరే):</strong><br>ఒక క్లాస్ కి ఇంకో క్లాస్ కి మధ్య ఎక్కువ డిపెండెన్సీ ఉండకూడదు. రేపు ఒక క్లాస్ తీసేసినా ఇంకో క్లాస్ పనిచేసేలా ఉండాలి.</p>
+<p><strong>4. ముందు సెక్యూరిటీ:</strong><br>ప్రతిదీ కళ్ళు మూసుకుని <code>private</code> పెట్టేయండి. అవసరమైతేనే వాడుకోవడానికి పర్మిషన్ ఇవ్వండి.</p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>4. The Access Modifier Decision Flowchart</h2>
+      <h2>4. ఏ వేరియబుల్ కి ఏ పర్మిషన్ ఇవ్వాలో డిసైడ్ చేసే ఫ్లో-చార్ట్</h2>
       <div class="theory-text">
-        <p>When choosing an access modifier for a field or method, ask these questions in order:</p>
-<div class="code-block"><pre><code>Q1: Is this part of the PUBLIC API used by external packages?
-       YES → public
-       NO  → Q2
-<p>Q2: Is this needed by SUBCLASSES in other packages?<br>       YES → protected<br>       NO  → Q3</p>
-<p>Q3: Is this shared among MULTIPLE classes in the SAME package?<br>       YES → default (no modifier)<br>       NO  → private</code></pre></div></p>
-<p><strong>The Default Answer is ALWAYS: private!</strong></p>
+        <p>ఒక వేరియబుల్ కి గానీ మెథడ్ కి గానీ పర్మిషన్ ఇచ్చేముందు ఈ ప్రశ్నలు వేసుకోండి:</p>
+<div class="code-block"><pre><code>ప్రశ్న 1: ఇది వేరే ప్యాకేజ్ వాళ్ళు కచ్చితంగా వాడుకోవాలా?
+       అవును → public పెట్టు
+       కాదు  → ప్రశ్న 2 కి వెళ్ళు
+<p>ప్రశ్న 2: వేరే ప్యాకేజ్ లో ఉన్న సబ్-క్లాసులు దీన్ని వాడుకుంటాయా?<br>       అవును → protected పెట్టు<br>       కాదు  → ప్రశ్న 3 కి వెళ్ళు</p>
+<p>ప్రశ్న 3: కనీసం మన ప్యాకేజ్ లో ఉన్న వేరే క్లాసులు దీన్ని వాడతాయా?<br>       అవును → default (ఏమీ రాయొద్దు)<br>       కాదు  → private పెట్టు</code></pre></div></p>
+<p><strong>గుర్తుపెట్టుకోండి: చాలా వరకు ఆన్సర్ ఎప్పుడూ <code>private</code> ఏ అవుతుంది!</strong></p>
       </div>
     </section>
   
 
     <section class="lesson-section">
-      <h2>5. Encapsulation Anti-Patterns to Avoid</h2>
+      <h2>5. మనం సాధారణంగా చేసే చెత్త తప్పులు (Anti-Patterns)</h2>
       <div class="theory-text">
-        <p><strong>Anti-Pattern 1: Public Fields (God Mode Access)</strong><br><div class="code-block"><pre><code>// TERRIBLE!<br>class User { public String password; } // Anyone can read/write password!</code></pre></div></p>
-<p><strong>Anti-Pattern 2: Getter-Setter for Everything (Anemic Domain Model)</strong><br><div class="code-block"><pre><code>// Technically encapsulated but semantically broken:<br>account.setBalance(account.getBalance() - withdrawAmount); // Logic leaked outside!<br>// Better: account.withdraw(amount) — keeps logic inside the class!</code></pre></div></p>
-<p><strong>Anti-Pattern 3: Returning Internal Mutable Collections</strong><br><div class="code-block"><pre><code>public List&lt;String&gt; getTags() { return tags; } // External code can add/remove tags!<br>// Better:<br>public List&lt;String&gt; getTags() { return Collections.unmodifiableList(tags); }</code></pre></div></p>
+        <p><strong>తప్పు 1: వేరియబుల్స్ కి Public పెట్టడం</strong><br><div class="code-block"><pre><code>// భయంకరమైన కోడ్!<br>class User { public String password; } // ఎవడైనా వచ్చి పాస్వర్డ్ మార్చేయగలడు!</code></pre></div></p>
+<p><strong>తప్పు 2: అన్నీ గెట్టర్స్, సెట్టర్స్ తోనే నడిపించడం (Anemic Model)</strong><br><div class="code-block"><pre><code>// చూడటానికి బాగానే ఉంది కానీ మీనింగ్ లేదు:<br>account.setBalance(account.getBalance() - withdrawAmount); // లాజిక్ అంతా బయట క్లాస్ లో రాస్తున్నావ్!<br>// దానికి బదులు: account.withdraw(amount) అని రాస్తే లాజిక్ క్లాస్ లోపలే సేఫ్ గా ఉంటుంది.</code></pre></div></p>
+<p><strong>తప్పు 3: లోపల ఉన్న లిస్ట్ ని బయటకి ఇచ్చేయడం</strong><br><div class="code-block"><pre><code>public List&lt;String&gt; getTags() { return tags; } // బయటవాడు దీంట్లో యాడ్/రిమూవ్ చేసేస్తాడు!<br>// కరెక్ట్ పద్ధతి:<br>public List&lt;String&gt; getTags() { return Collections.unmodifiableList(tags); }</code></pre></div></p>
       </div>
     </section>
   
@@ -620,103 +620,103 @@ import java.util.Collections;
 import java.util.List;
 
 // ---------------------------------------------------------------
-// WELL-DESIGNED ENCAPSULATED CLASS: CourseEnrollment System
+// పర్ఫెక్ట్ గా డిజైన్ చేసిన క్లాస్: CourseEnrollment సిస్టమ్
 // ---------------------------------------------------------------
 class Course {
     private final String courseId;
     private final String title;
     private final int maxCapacity;
-    private final List&lt;String&gt; enrolledStudentIds; // Mutable internally
+    private final List&lt;String&gt; enrolledStudentIds; // ఇది బయటకి వెళ్ళకూడదు!
 
     public Course(String courseId, String title, int maxCapacity) {
-        if (maxCapacity &lt;= 0) throw new IllegalArgumentException("Capacity must be positive.");
+        if (maxCapacity &lt;= 0) throw new IllegalArgumentException("సీట్స్ కనీసం 1 అయినా ఉండాలి.");
         this.courseId          = courseId;
         this.title             = title;
         this.maxCapacity       = maxCapacity;
         this.enrolledStudentIds = new ArrayList&lt;&gt;();
     }
 
-    // Read-only getters for immutable fields
+    // వీటికి మార్చడానికి వీలు లేకుండా కేవలం గెట్టర్స్ మాత్రమే ఉన్నాయి
     public String getCourseId()  { return courseId; }
     public String getTitle()     { return title; }
     public int getMaxCapacity()  { return maxCapacity; }
 
-    // Computed properties
+    // ఎవరైనా జాయిన్ అయ్యారో లేదో కనుక్కోవడానికి ఫార్ములాస్ (Computed properties)
     public int getEnrolledCount()    { return enrolledStudentIds.size(); }
     public boolean isFullyBooked()   { return enrolledStudentIds.size() &gt;= maxCapacity; }
     public int getAvailableSeats()   { return maxCapacity - enrolledStudentIds.size(); }
 
-    // Return UNMODIFIABLE view — prevents external mutation!
+    // లిస్ట్ ని రీడ్-ఓన్లీ లాగా ఇస్తున్నాం (ఎవడూ యాడ్/రిమూవ్ చేయలేడు)
     public List&lt;String&gt; getEnrolledStudents() {
         return Collections.unmodifiableList(enrolledStudentIds);
     }
 
-    // Business operation (logic stays inside the class)
+    // అసలైన లాజిక్ అంతా క్లాస్ లోపలే రాస్తున్నాం, బయట క్లాస్ కి పనిలేదు
     public boolean enroll(String studentId) {
         if (studentId == null || studentId.isBlank()) return false;
         if (isFullyBooked()) {
-            System.out.println("  [ENROLL FAIL] Course '" + title + "' is fully booked!");
+            System.out.println("  [ఎర్రర్] '" + title + "' కోర్సులో సీట్స్ ఫుల్!");
             return false;
         }
         if (enrolledStudentIds.contains(studentId)) {
-            System.out.println("  [ENROLL FAIL] Student " + studentId + " already enrolled.");
+            System.out.println("  [ఎర్రర్] స్టూడెంట్ " + studentId + " ఆల్రెడీ జాయిన్ అయ్యాడు.");
             return false;
         }
         enrolledStudentIds.add(studentId);
-        System.out.printf("  [ENROLL OK] %s enrolled in '%s'. Seats remaining: %d%n",
-                studentId, title, getAvailableSeats());
+        System.out.printf("  [సక్సెస్] %s స్టూడెంట్ జాయిన్ అయ్యాడు. ఇంకా మిగిలిన సీట్స్: %d%n",
+                studentId, getAvailableSeats());
         return true;
     }
 
     public boolean unenroll(String studentId) {
         boolean removed = enrolledStudentIds.remove(studentId);
-        if (removed) System.out.printf("  [UNENROLL] %s removed from '%s'.%n", studentId, title);
+        if (removed) System.out.printf("  [రిమూవ్] %s ని తీసేసాం.%n", studentId);
         return removed;
     }
 
     @Override
     public String toString() {
-        return String.format("Course{id='%s', title='%s', seats=%d/%d, booked=%b}",
+        return String.format("కోర్సు{ఐడీ='%s', పేరు='%s', సీట్స్=%d/%d, ఫుల్_అయ్యిందా=%b}",
                 courseId, title, getEnrolledCount(), maxCapacity, isFullyBooked());
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== Course Enrollment System ===");
-        Course javaAdvanced = new Course("CS-401", "Advanced Java Programming", 3);
+        System.out.println("=== కోర్స్ ఎన్రోల్మెంట్ సిస్టమ్ ===");
+        Course javaAdvanced = new Course("CS-401", "అడ్వాన్స్డ్ జావా", 3);
 
-        System.out.println("Initial State: " + javaAdvanced);
+        System.out.println("స్టార్టింగ్: " + javaAdvanced);
 
         System.out.println("
---- Enrollment Phase ---");
+--- జాయిన్ అవుతున్న ఫేజ్ ---");
         javaAdvanced.enroll("STU-001");
         javaAdvanced.enroll("STU-002");
-        javaAdvanced.enroll("STU-001"); // Duplicate!
-        javaAdvanced.enroll("STU-003"); // Last seat!
-        javaAdvanced.enroll("STU-004"); // Should FAIL — fully booked
+        javaAdvanced.enroll("STU-001"); // ఆల్రెడీ ఉన్నాడు కాబట్టి యాడ్ అవ్వడు
+        javaAdvanced.enroll("STU-003"); // లాస్ట్ సీట్!
+        javaAdvanced.enroll("STU-004"); // ఇది ఫెయిల్ అవ్వాలి, సీట్స్ లేవు
 
         System.out.println("
-Full State: " + javaAdvanced);
+మొత్తం సీట్స్ ఫుల్: " + javaAdvanced);
 
         System.out.println("
---- Unmodifiable List Protection ---");
+--- లిస్ట్ ని హ్యాక్ చేయాలని చూద్దాం ---");
         List&lt;String&gt; students = javaAdvanced.getEnrolledStudents();
-        System.out.println("Enrolled students: " + students);
+        System.out.println("ఉన్న స్టూడెంట్స్: " + students);
         try {
-            students.add("STU-HACKER"); // Attempt external mutation!
+            students.add("STU-HACKER"); // బయటనుంచి దొంగతనంగా సీట్ తీసుకుందాం
         } catch (UnsupportedOperationException e) {
-            System.out.println("External mutation BLOCKED! Unmodifiable list protected internal state.");
+            System.out.println("హ్యాకింగ్ కుదరదు! Unmodifiable list మిమ్మల్ని బ్లాక్ చేసింది.");
         }
 
         System.out.println("
---- Unenrollment ---");
+--- రిమూవ్ చేయడం ---");
         javaAdvanced.unenroll("STU-002");
-        System.out.println("After unenroll: " + javaAdvanced);
+        System.out.println("ఒకరిని తీసేసాక: " + javaAdvanced);
 
         System.out.println("
---- Good Design Check ---");
-        System.out.printf("Available seats: %d | Is full: %b%n",
+--- ఫైనల్ చెకింగ్ ---");
+        System.out.printf("మిగిలిన సీట్స్: %d | సీట్స్ ఫుల్ ఆ: %b%n",
                 javaAdvanced.getAvailableSeats(), javaAdvanced.isFullyBooked());
     }
 }</code></pre>
@@ -724,28 +724,28 @@ Full State: " + javaAdvanced);
 
       <div class="code-output-card">
         <div class="output-header">💻 Program Console Output</div>
-        <div class="output-content">=== Course Enrollment System ===
-Initial State: Course{id='CS-401', title='Advanced Java Programming', seats=0/3, booked=false}
+        <div class="output-content">=== కోర్స్ ఎన్రోల్మెంట్ సిస్టమ్ ===
+స్టార్టింగ్: కోర్సు{ఐడీ='CS-401', పేరు='అడ్వాన్స్డ్ జావా', సీట్స్=0/3, ఫుల్_అయ్యిందా=false}
 
---- Enrollment Phase ---
-  [ENROLL OK] STU-001 enrolled in 'Advanced Java Programming'. Seats remaining: 2
-  [ENROLL OK] STU-002 enrolled in 'Advanced Java Programming'. Seats remaining: 1
-  [ENROLL FAIL] Student STU-001 already enrolled.
-  [ENROLL OK] STU-003 enrolled in 'Advanced Java Programming'. Seats remaining: 0
-  [ENROLL FAIL] Course 'Advanced Java Programming' is fully booked!
+--- జాయిన్ అవుతున్న ఫేజ్ ---
+  [సక్సెస్] STU-001 స్టూడెంట్ జాయిన్ అయ్యాడు. ఇంకా మిగిలిన సీట్స్: 2
+  [సక్సెస్] STU-002 స్టూడెంట్ జాయిన్ అయ్యాడు. ఇంకా మిగిలిన సీట్స్: 1
+  [ఎర్రర్] స్టూడెంట్ STU-001 ఆల్రెడీ జాయిన్ అయ్యాడు.
+  [సక్సెస్] STU-003 స్టూడెంట్ జాయిన్ అయ్యాడు. ఇంకా మిగిలిన సీట్స్: 0
+  [ఎర్రర్] 'అడ్వాన్స్డ్ జావా' కోర్సులో సీట్స్ ఫుల్!
 
-Full State: Course{id='CS-401', title='Advanced Java Programming', seats=3/3, booked=true}
+మొత్తం సీట్స్ ఫుల్: కోర్సు{ఐడీ='CS-401', పేరు='అడ్వాన్స్డ్ జావా', సీట్స్=3/3, ఫుల్_అయ్యిందా=true}
 
---- Unmodifiable List Protection ---
-Enrolled students: [STU-001, STU-002, STU-003]
-External mutation BLOCKED! Unmodifiable list protected internal state.
+--- లిస్ట్ ని హ్యాక్ చేయాలని చూద్దాం ---
+ఉన్న స్టూడెంట్స్: [STU-001, STU-002, STU-003]
+హ్యాకింగ్ కుదరదు! Unmodifiable list మిమ్మల్ని బ్లాక్ చేసింది.
 
---- Unenrollment ---
-  [UNENROLL] STU-002 removed from 'Advanced Java Programming'.
-After unenroll: Course{id='CS-401', title='Advanced Java Programming', seats=2/3, booked=false}
+--- రిమూవ్ చేయడం ---
+  [రిమూవ్] STU-002 ని తీసేసాం.
+ఒకరిని తీసేసాక: కోర్సు{ఐడీ='CS-401', పేరు='అడ్వాన్స్డ్ జావా', సీట్స్=2/3, ఫుల్_అయ్యిందా=false}
 
---- Good Design Check ---
-Available seats: 1 | Is full: false</div>
+--- ఫైనల్ చెకింగ్ ---
+మిగిలిన సీట్స్: 1 | సీట్స్ ఫుల్ ఆ: false</div>
       </div>
 
       <div class="explain-card">
@@ -753,25 +753,25 @@ Available seats: 1 | Is full: false</div>
         
     <div class="explain-item">
       <code class="code-token">Collections.unmodifiableList(enrolledStudentIds)</code>
-      <p>Wraps the internal list in an immutable view — callers can read but cannot add, remove, or clear elements.</p>
+      <p>లోపల ఉన్న ఒరిజినల్ లిస్ట్ కి ఒక కవర్ వేసి బయటకి ఇస్తున్నాం. వాళ్ళు కేవలం చదువుకోగలరు కానీ, కొత్తవి యాడ్ చేయలేరు.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">public boolean enroll(String studentId)</code>
-      <p>Business logic lives INSIDE the class (not in caller code), keeping rules cohesive and centralized.</p>
+      <p>ఒక స్టూడెంట్ ని యాడ్ చేయాలంటే ఏమేమి కండిషన్స్ ఉండాలో అంతా ఈ కోర్సు క్లాస్ లోనే రాసుకున్నాం. ఎందుకంటే ఆ పనులన్నీ దీనివే కాబట్టి.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">public boolean isFullyBooked()</code>
-      <p>Computed boolean property derived from comparing list size and capacity — no backing field needed.</p>
+      <p>సీట్స్ ఫుల్ అయ్యాయో లేదో కనుక్కోవడానికి వేరే వేరియబుల్ అక్కర్లేదు, జస్ట్ లిస్ట్ సైజ్ తో ఫార్ములా వేస్తున్నాం.</p>
     </div>
   
 
     <div class="explain-item">
       <code class="code-token">private final List&lt;String&gt; enrolledStudentIds</code>
-      <p>Private final reference prevents reassigning the list variable, but internal add/remove operations still work.</p>
+      <p>ఫైనల్ పెట్టాం కాబట్టి ఈ వేరియబుల్ కి కొత్త లిస్ట్ అటాచ్ చేయలేరు, కానీ లోపల యాడ్/రిమూవ్ అవుతాయి.</p>
     </div>
   
       </div>
@@ -788,44 +788,44 @@ Available seats: 1 | Is full: false</div>
             <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Compiler</button>
           </div>
         </div>
-        <pre><code>// Industry Simulation: Configuration Management Module
-// Internal helper (package-private — hidden from external packages)
+        <pre><code>// ఇది కాన్ఫిగరేషన్ మేనేజ్మెంట్ ప్రాజెక్ట్
+// ఇంటర్నల్ హెల్పర్ (Package-private — బయట ప్యాకేజ్ వాళ్ళకి ఇది కనపడదు)
 class ConfigValidator {
     static void validateKey(String key) {
+        // కీ అనేది కచ్చితంగా క్యాపిటల్ లెటర్స్ లోనే ఉండాలి
         if (key == null || !key.matches("[A-Z_]+"))
-            throw new IllegalArgumentException("Invalid config key: " + key);
+            throw new IllegalArgumentException("తప్పు కాన్ఫిగ్ కీ: " + key);
     }
 }
 
-// Public API class
+// ఇది పబ్లిక్ క్లాస్, అందరూ వాడుకోవచ్చు
 public class PracticalApplication {
-    // Simulated config store
     static java.util.Map&lt;String, String&gt; config = new java.util.HashMap&lt;&gt;();
 
     public static void setConfig(String key, String value) {
-        ConfigValidator.validateKey(key); // Internal utility — same package
+        ConfigValidator.validateKey(key); // ఇక్కడే ప్యాకేజ్ లో ఉన్న వేరే క్లాస్ ని వాడుకుంటున్నాం
         config.put(key, value);
     }
 
     public static String getConfig(String key) {
-        return config.getOrDefault(key, "NOT_SET");
+        return config.getOrDefault(key, "వాల్యూ లేదు");
     }
 
     public static void main(String[] args) {
         setConfig("DB_HOST", "localhost");
         setConfig("DB_PORT", "5432");
-        System.out.println("DB_HOST: " + getConfig("DB_HOST"));
-        System.out.println("DB_PORT: " + getConfig("DB_PORT"));
-        System.out.println("DB_PASS: " + getConfig("DB_PASS")); // Not set
+        System.out.println("డేటాబేస్ హోస్ట్: " + getConfig("DB_HOST"));
+        System.out.println("డేటాబేస్ పోర్ట్: " + getConfig("DB_PORT"));
+        System.out.println("డేటాబేస్ పాస్వర్డ్: " + getConfig("DB_PASS")); // సెట్ చేయలేదు
     }
 }</code></pre>
       </div>
 
       <div class="code-output-card">
         <div class="output-header">💻 Practical Console Output</div>
-        <div class="output-content">DB_HOST: localhost
-DB_PORT: 5432
-DB_PASS: NOT_SET</div>
+        <div class="output-content">డేటాబేస్ హోస్ట్: localhost
+డేటాబేస్ పోర్ట్: 5432
+డేటాబేస్ పాస్వర్డ్: వాల్యూ లేదు</div>
       </div>
     </section>
 
@@ -834,16 +834,16 @@ DB_PASS: NOT_SET</div>
       <div class="callout-title">⚠️ Common Mistakes & Professional Best Practices</div>
       <ul style="margin: 8px 0 0 18px; color: var(--text2); font-size: 14px;">
         
-    <li style="margin-bottom:8px; line-height:1.6;">Returning a mutable <code>List</code> or <code>Map</code> directly from a getter — use <code>Collections.unmodifiableList()</code> or return a copy.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">బయటకి పంపే లిస్ట్ లకి <code>Collections.unmodifiableList()</code> వాడకుండా డైరెక్ట్ గా రిటర్న్ చేసేయడం.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Using wildcard imports (<code>import com.company.*;</code>) in production code — always import specific classes for clarity.</li>
+    <li style="margin-bottom:8px; line-height:1.6;"><code>import com.company.*;</code> అని అన్నీ ఇంపోర్ట్ చేసుకోవడం. దీనివల్ల ఏ ఫైల్ నుంచి ఏమొస్తుందో అర్థం కాక కన్ఫ్యూజ్ అవుతాం.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Putting all classes in the default (unnamed) package — this prevents using the default access modifier effectively.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">చిన్న ప్రాజెక్టే కదా అని ఫైల్స్ అన్నింటికీ అసలు ప్యాకేజ్ (Package) ఏ పెట్టకుండా వదిలేయడం. అలా చేస్తే ఇంటర్నల్ సెక్యూరిటీ ఉండదు.</li>
   
 
-    <li style="margin-bottom:8px; line-height:1.6;">Designing "Anemic Domain Models" where classes have only getters/setters and all logic lives in external "Service" classes.</li>
+    <li style="margin-bottom:8px; line-height:1.6;">లాజిక్స్ అన్నీ కంట్రోలర్ క్లాసుల్లో రాసి.. మెయిన్ క్లాసుల్లో కేవలం గెట్టర్స్, సెట్టర్స్ మాత్రమే వదిలేయడం (దీన్నే Anemic Model అంటారు).</li>
   
       </ul>
     </div>
@@ -860,11 +860,11 @@ DB_PASS: NOT_SET</div>
           </div>
         </div>
         <pre><code>// Coding Challenge:
-// Create a Playlist class:
-// 1. private final String playlistName (read-only).
-// 2. private List&lt;String&gt; songs (mutable internally, unmodifiable externally).
-// 3. Public methods: addSong(String song), removeSong(String song), getSongs(), contains(String).
-// 4. Return an unmodifiable view from getSongs().
+// Playlist అనే క్లాస్ క్రియేట్ చేయండి:
+// 1. private final String playlistName (మార్చడానికి వీల్లేదు).
+// 2. private List&lt;String&gt; songs (లోపల యాడ్/రిమూవ్ అవ్వాలి, బయటకి వెళ్తే అన్-మాడిఫయబుల్ అయిపోవాలి).
+// 3. పబ్లిక్ మెథడ్స్: addSong(String song), removeSong(String song), getSongs(), contains(String).
+// 4. getSongs() అనేది ఎవరూ మార్చలేని లిస్ట్ ని రిటర్న్ చేయాలి.
 
 import java.util.*;
 
@@ -873,7 +873,7 @@ class Playlist {
     private final List&lt;String&gt; songs = new ArrayList&lt;&gt;();
 
     public Playlist(String name) {
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("Name required.");
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("పేరు కావాలి.");
         this.playlistName = name.trim();
     }
 
@@ -892,9 +892,9 @@ class Playlist {
 
 public class Challenge {
     public static void main(String[] args) {
-        Playlist p = new Playlist("Coding Vibes");
-        p.addSong("Lo-Fi Hip Hop"); p.addSong("Chill Beats"); p.addSong("Focus Zone");
-        System.out.println("Playlist: " + p.getSongs());
+        Playlist p = new Playlist("కోడింగ్ సాంగ్స్");
+        p.addSong("లో-ఫై హిప్ హాప్"); p.addSong("చిల్ బీట్స్"); p.addSong("ఫోకస్ మ్యూజిక్");
+        System.out.println("ప్లే-లిస్ట్: " + p.getSongs());
     }
 }</code></pre>
       </div>
@@ -905,20 +905,20 @@ public class Challenge {
       <h2 style="color: #10b981; font-size: 20px; font-weight: 700; margin-bottom: 18px;">💡 Frequently Asked Questions & Interview Insights</h2>
       
     <div class="faq-card">
-      <h4>❓ What is the unnamed default package in Java?</h4>
-      <p>Classes without a `package` declaration belong to the unnamed default package. While fine for quick experiments, production code should always use named packages for proper access control and modularity.</p>
+      <h4>❓ జావాలో ఏ ప్యాకేజ్ పేరూ రాయకపోతే ఏమవుతుంది?</h4>
+      <p>దాన్ని 'unnamed default package' అంటారు. చిన్న చిన్న ప్రయోగాలు చేయడానికి ఇది పర్వాలేదు కానీ, అసలైన ప్రాజెక్ట్స్ లో మాత్రం కచ్చితంగా ప్యాకేజ్ పేరు రాయాల్సిందే.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What does Collections.unmodifiableList() do?</h4>
-      <p>It wraps an existing List in an unmodifiable view. Any attempt to call `add()`, `remove()`, or `clear()` on the returned view throws `UnsupportedOperationException` at runtime. The underlying list itself is still modifiable via the original reference.</p>
+      <h4>❓ Collections.unmodifiableList() అసలు ఏం చేస్తుంది?</h4>
+      <p>ఇది మీ ఒరిజినల్ లిస్ట్ చుట్టూ ఒక ఇనుప కంచె లాంటిది వేస్తుంది. బయటనుంచి ఎవరైనా `add` లేదా `remove` అని పిలిస్తే.. వెంటనే క్రాష్ (Exception) అయ్యేలా చేస్తుంది.</p>
     </div>
   
 
     <div class="faq-card">
-      <h4>❓ What is the difference between high cohesion and low coupling?</h4>
-      <p>Cohesion measures how closely related the responsibilities within a single class are (high = good). Coupling measures how dependent a class is on other classes (low = good). Good design achieves both simultaneously.</p>
+      <h4>❓ Cohesion కి, Coupling కి తేడా ఏంటి?</h4>
+      <p>Cohesion అంటే ఒక క్లాస్ లో ఉన్న మెథడ్స్ కి వేరియబుల్స్ కి ఎంత మంచి లింక్ ఉంది అని. ఇది ఎక్కువగా ఉండాలి (High). Coupling అంటే ఒక క్లాస్ ఇంకో క్లాస్ మీద ఎంత ఆధారపడి ఉంది అని. ఇది తక్కువగా ఉండాలి (Low).</p>
     </div>
   
     </section>
@@ -928,19 +928,19 @@ public class Challenge {
       <h3 style="color: #10b981; font-size: 16px; font-weight: 700; margin-bottom: 12px;">🚀 Quick Chapter Recap</h3>
       <ul style="margin: 0 0 0 18px; color: var(--text); font-size: 13.5px;">
         
-    <li style="margin-bottom:6px; line-height:1.5;">Java packages provide hierarchical namespacing and package-level access boundaries.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">జావా ప్యాకేజెస్ అనేవి ఫోల్డర్స్ లాగా పనిచేసి మన కోడ్ ని నీట్ గా ఉంచుతాయి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Package-private (default) access creates clean internal API isolation without exposing internals.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">ప్యాకేజ్ కి ఏమీ రాయకపోతే (default) అది ఆ ప్యాకేజ్ లోపల మాత్రమే పనిచేస్తుంది.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Always return <code>Collections.unmodifiableList()</code> or copies when exposing mutable collection fields.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">లిస్ట్ లను రిటర్న్ చేసేటప్పుడు కచ్చితంగా <code>Collections.unmodifiableList()</code> వాడాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Business logic should live inside the class (cohesive), not scattered in external caller code.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">లాజిక్స్ అన్నీ బయట రాయకుండా, ఏ క్లాస్ కి సంబంధించినవి ఆ క్లాస్ లోనే రాయాలి.</li>
   
 
-    <li style="margin-bottom:6px; line-height:1.5;">Default access modifier choice: <code>private</code> — widen only when there is a justified architectural need.</li>
+    <li style="margin-bottom:6px; line-height:1.5;">రూల్: ముందు అన్నీ <code>private</code> పెట్టండి, అవసరమైతేనే ఆ గేటు కొంచెం తీయండి.</li>
   
       </ul>
     </div>

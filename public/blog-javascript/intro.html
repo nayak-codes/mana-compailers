@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome & Hello World (జావాస్క్రిప్ట్ ఇంట్రడక్షన్) — Modern JavaScript | Our Compiler</title>
+  <meta name="description" content="Learn Welcome & Hello World (జావాస్క్రిప్ట్ ఇంట్రడక్షన్) in JavaScript. Deep dive tutorial with real-life examples, memory diagrams, and interview questions." />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+  <style>
+    .concept-box { background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.25); border-left: 4px solid #f59e0b; border-radius: 8px; padding: 22px 26px; margin: 24px 0; }
+    .concept-box h4 { color: #f59e0b; margin-bottom: 10px; font-size: 16.5px; font-weight: 700; }
+    .concept-box p { color: var(--text2); font-size: 15px; line-height: 1.8; margin: 0 0 10px 0; }
+    
+    .memory-diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: #f59e0b; line-height: 1.85; margin: 24px 0; overflow-x: auto; white-space: pre; }
+    
+    .spec-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14.5px; }
+    .spec-table th, .spec-table td { border: 1px solid var(--border); padding: 14px 18px; text-align: left; }
+    .spec-table th { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+    .spec-table tr:nth-child(even) { background: var(--bg2); }
+    
+    .deep-dive-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 26px 0; }
+    .deep-dive-card h3 { color: #f59e0b; font-size: 17.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    
+    .faq-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
+    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid #f59e0b; border-radius: 8px; padding: 20px 22px; }
+    .faq-item h4 { color: var(--text); font-size: 15.5px; margin-bottom: 8px; font-weight: 700; }
+    .faq-item p { color: var(--text2); font-size: 14.5px; line-height: 1.75; margin: 0; }
+    
+    .text-prose { font-size: 15.5px; line-height: 1.85; color: var(--text); margin-bottom: 18px; }
+  </style>
+  <script>
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        window.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+    
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".code-block").forEach(block => {
+        const header = block.querySelector(".code-block-header");
+        const codeEl = block.querySelector("pre code");
+        if (!header || !codeEl) return;
+        let actionsContainer = header.querySelector(".code-actions");
+        if (!actionsContainer) {
+          actionsContainer = document.createElement("div");
+          actionsContainer.className = "code-actions";
+          actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
+          const tryBtn = header.querySelector(".try-btn");
+          if (tryBtn) actionsContainer.appendChild(tryBtn);
+          header.appendChild(actionsContainer);
+        }
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.innerHTML = "📋 Copy";
+        copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; white-space: nowrap;";
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText(codeEl.textContent).then(() => {
+            copyBtn.innerHTML = "✅ Copied!";
+            setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
+          });
+        });
+        actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+      });
+    });
+  </script>
+</head>
+<body class="lang-javascript">
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    
+    <div class="sidebar-heading">JavaScript Tutorial</div>
+    <a href="/blog-javascript.html">⚡ JavaScript HOME</a>
+    <a href="/blog-javascript/intro.html" class="active">1. Welcome & Hello World</a>
+    <a href="/blog-javascript/variables.html">2. Variables (var, let & const)</a>
+    <a href="/blog-javascript/operators.html">3. Data Types & Operators</a>
+    <a href="/blog-javascript/strings.html">4. Strings & Template Literals</a>
+    <a href="/blog-javascript/conditionals.html">5. Conditionals (if-else & switch)</a>
+    <a href="/blog-javascript/loops.html">6. Loops & Control Flow</a>
+    <a href="/blog-javascript/functions.html">7. Functions & Arrow Syntax</a>
+    <a href="/blog-javascript/arrays.html">8. Arrays & Iteration Methods</a>
+    <a href="/blog-javascript/objects.html">9. Objects & JSON</a>
+    <a href="/blog-javascript/es6-features.html">10. ES6+ Destructuring & Spread</a>
+    <a href="/blog-javascript/oop.html">11. OOP: Classes & Prototypes</a>
+    <a href="/blog-javascript/closures.html">12. Closures & Callback Functions</a>
+    <a href="/blog-javascript/promises.html">13. Promises & Async/Await</a>
+    <a href="/blog-javascript/exceptions.html">14. Error Handling (try-catch)</a>
+    <a href="/blog-javascript/dom.html">15. DOM Basics & Event Listeners</a>
+
+    <div class="sidebar-heading">Reference</div>
+    <a href="/blog.html">All Tutorials</a>
+    <a href="/?lang=nodejs" style="color:var(--yellow); font-weight:700;">▶ Try JavaScript Online</a>
+
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/blog.html">Tutorials</a><span>›</span>
+      <a href="/blog-javascript.html">JavaScript</a><span>›</span>
+      <span>Lesson 1</span>
+    </div>
+    
+    
+    <h1 class="page-title">Welcome & Hello World</h1>
+    <div class="page-meta">
+      <span class="badge">🟨 JavaScript</span>
+      <span class="badge">Lesson 1</span>
+      <span class="badge">Beginner</span>
+    </div>
+
+    <div class="intro-box">
+      <p>కంప్యూటర్స్ కి మనం చెప్పే పనిని అర్థమయ్యేలా చేయడానికి వాడే లాంగ్వేజెస్ లో <strong>JavaScript (JS)</strong> ఒకటి. ఇది ప్రపంచంలోనే అత్యంత పాపులర్ ప్రోగ్రామింగ్ లాంగ్వేజ్! మొదట్లో కేవలం వెబ్ పేజీలని ఇంటరాక్టివ్ (Interactive) గా చేయడానికి వాడేవారు. కానీ ఇప్పుడు గేమ్స్, మొబైల్ యాప్స్, మరియు సర్వర్ సైడ్ (Node.js) కూడా జావాస్క్రిప్ట్ తోనే చేస్తున్నారు.</p>
+    </div>
+
+    <div class="concept-box">
+      <h4>🍔 రియల్ లైఫ్ స్టోరీ: JavaScript అంటే ఏంటి?</h4>
+      <p>ఒక ఇల్లు (House) కడుతున్నాం అనుకోండి:</p>
+      <ul>
+        <li><strong>HTML:</strong> ఇటుకలు, గోడలు (Structure). ఇది లేకపోతే ఇల్లు నిలబడదు.</li>
+        <li><strong>CSS:</strong> పెయింటింగ్, ఇంటీరియర్ డిజైన్ (Style). ఇల్లు అందంగా కనిపించడానికి.</li>
+        <li><strong>JavaScript:</strong> ఎలక్ట్రిసిటీ, స్విచ్ వేస్తే ఫ్యాన్ తిరగడం, మోటార్ ఆన్ అవ్వడం (Functionality). ఇది లేకపోతే ఇల్లు కేవలం ఒక బొమ్మ లాగా ఉంటుంది!</li>
+      </ul>
+      <p>అలాగే ఒక వెబ్సైట్ కి ప్రాణం పోసేదే JavaScript!</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">1</span> V8 Engine & JIT Compilation</div>
+      <p class="text-prose">జావాస్క్రిప్ట్ అనేది <strong>Interpreted</strong> మరియు <strong>Just-In-Time (JIT) Compiled</strong> లాంగ్వేజ్. మీరు రాసిన కోడ్ ని బ్రౌజర్ లో ఉండే "V8 Engine" (Google Chrome లో వాడే ఇంజిన్) చదివి, వెంటనే మెషిన్ కోడ్ కి మార్చి రన్ చేస్తుంది. అందుకే ఇది చాలా ఫాస్ట్ గా ఉంటుంది!</p>
+      
+      <div class="memory-diagram">
+[ JavaScript Code ] 
+       ↓ (Parsed by Browser)
+[ AST (Abstract Syntax Tree) ] 
+       ↓ (JIT Compiler / Interpreter)
+[ Bytecode & Optimized Machine Code ]
+       ↓
+[ Executes on CPU ]</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="num">2</span> Your First Program</div>
+      <p class="text-prose">ప్రోగ్రామింగ్ నేర్చుకునేటప్పుడు ఎవరైనా ముందుగా రాసే ప్రోగ్రాం <strong>"Hello World"</strong>. జావాస్క్రిప్ట్ లో ఏదైనా ఔట్పుట్ ని స్క్రీన్ మీద (లేదా Console లో) ప్రింట్ చేయడానికి <code>console.log()</code> వాడతాం.</p>
+      
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Hello World</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code class="language-javascript">// మీ మొదటి JavaScript ప్రోగ్రాం
+console.log("Hello, World!");
+console.log(10 + 20); // కూడికలు కూడా చేయొచ్చు (Output: 30)</code></pre>
+      </div>
+    </div>
+
+    <div class="deep-dive-card">
+      <h3>💡 ఇంటర్వ్యూ ప్రశ్నలు (Interview Questions)</h3>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>1. JavaScript కీ Java కీ సంబంధం ఉందా?</h4>
+          <p><strong>Answer:</strong> అస్సలు లేదు! Apple పండు కీ, Pine-apple కీ ఎంత సంబంధం ఉందో.. Java కీ, JavaScript కీ అంతే సంబంధం ఉంది. పేర్లు మాత్రమే సిమిలర్ గా ఉంటాయి.</p>
+        </div>
+        <div class="faq-item">
+          <h4>2. JavaScript ఎక్కడ రన్ అవుతుంది?</h4>
+          <p><strong>Answer:</strong> బ్రౌజర్ (Client-side) లో మరియు Node.js ద్వారా సర్వర్ (Server-side) లో కూడా రన్ అవుతుంది.</p>
+        </div>
+      </div>
+    </div>
+  
+    
+    <div class="nav-footer">
+      <a href="/blog-javascript.html" class="nav-btn">
+        <span class="label">← JS Overview</span>
+        <span class="title">Course Index</span>
+      </a>
+      <a href="/blog-javascript/variables.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Next Lesson →</span>
+        <span class="title">Variables (var, let & const)</span>
+      </a>
+    </div>
+  </main>
+</div>
+<script src="/site-nav.js"></script>
+</body>
+</html>
