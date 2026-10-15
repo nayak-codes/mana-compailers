@@ -843,6 +843,47 @@ function preprocessJavaCode(code) {
   return code;
 }
 
+// ⚡ Ultra-fast runner for Java (~1.5s vs 8s on Docker backend)
+async function runJavaFastRunner(code, stdin = '') {
+  try {
+    const processedCode = preprocessJavaCode(code);
+    const createRes = await fetch('https://api.paiza.io/runners/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: 'java',
+        source_code: processedCode,
+        input: stdin || '',
+        api_key: 'guest'
+      }),
+      signal: AbortSignal.timeout(9000)
+    });
+    const createData = await createRes.json();
+    if (!createData || !createData.id) return null;
+
+    let maxTries = 40;
+    while (maxTries-- > 0) {
+      await new Promise(r => setTimeout(r, 100));
+      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${createData.id}&api_key=guest`, {
+        signal: AbortSignal.timeout(4000)
+      });
+      const details = await detailsRes.json();
+      if (details.status === 'completed') {
+        if (details.build_stderr) {
+          return { error: details.build_stderr, output: details.stdout || '' };
+        }
+        return {
+          output: details.stdout || (details.stderr ? '' : '(no output)'),
+          error: details.stderr || null
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('[Fast Java Runner] Error, falling back to Render backend:', err?.message);
+  }
+  return null;
+}
+
 // ── Own Render Backend URL (always direct) ────────────────────────────────
 const RENDER_BACKEND = 'https://mana-compailer-backend-docker.onrender.com'
 
@@ -1579,41 +1620,50 @@ export default function App() {
     try {
       let data = null
 
-      // ⚡ Use our own Render Docker backend directly
-      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      const apiUrl = isLocal
-        ? 'http://localhost:3002/api/run'
-        : `${RENDER_BACKEND}/api/run`
-
-      // If backend might be cold, show warming message first
-      if (!isBackendWarm() && !isLocal) {
-        setOutput({ status: 'running', text: '🔄 Server is starting up... please wait (this takes ~20s on first run)' })
+      // ⚡ Step 1: For Java, use ultra-fast runner (~1.5s) to bypass slow JVM spin-up on Render (8s)
+      if (lang.id === 'java') {
+        try {
+          data = await runJavaFastRunner(codeToRun, inputToSend)
+        } catch (_) {}
       }
 
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 55000)
+      // ⚡ Step 2: If not Java or if Fast Runner failed, use Render Docker backend
+      if (!data) {
+        const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        const apiUrl = isLocal
+          ? 'http://localhost:3002/api/run'
+          : `${RENDER_BACKEND}/api/run`
 
-      try {
-        const res = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            language: lang.id,
-            code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
-            stdin: inputToSend || ''
-          }),
-          signal: controller.signal
-        })
-        clearTimeout(timeoutId)
-        data = await res.json()
-        // Mark backend as warm after successful call
-        setBackendWarm(true)
-      } catch (fetchErr) {
-        clearTimeout(timeoutId)
-        if (fetchErr.name === 'AbortError') {
-          throw new Error('Server took too long to respond. Please try again — it should be warmed up now.')
+        // If backend might be cold, show warming message first
+        if (!isBackendWarm() && !isLocal) {
+          setOutput({ status: 'running', text: '🔄 Server is starting up... please wait (this takes ~20s on first run)' })
         }
-        throw fetchErr
+
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 55000)
+
+        try {
+          const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              language: lang.id,
+              code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+              stdin: inputToSend || ''
+            }),
+            signal: controller.signal
+          })
+          clearTimeout(timeoutId)
+          data = await res.json()
+          // Mark backend as warm after successful call
+          setBackendWarm(true)
+        } catch (fetchErr) {
+          clearTimeout(timeoutId)
+          if (fetchErr.name === 'AbortError') {
+            throw new Error('Server took too long to respond. Please try again — it should be warmed up now.')
+          }
+          throw fetchErr
+        }
       }
       const elapsed = ((Date.now() - start) / 1000).toFixed(2)
 
