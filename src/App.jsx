@@ -1063,6 +1063,7 @@ export default function App() {
   const [siteTheme, setSiteTheme] = useState(() => localStorage.getItem('site_theme') || 'light')
   const [compilerTheme, setCompilerTheme] = useState('dark')
   const [showTour, setShowTour] = useState(false)
+  const [saveFeedback, setSaveFeedback] = useState(false)
 
   // 💡 Auto-launch tour ONLY ONCE for first-time visitors
   useEffect(() => {
@@ -1673,6 +1674,18 @@ export default function App() {
     executeCode("")
   }, [executeCode, isMobile])
 
+  // Global shortcut to run code with Ctrl+Enter, Cmd+Enter, or F9
+  useEffect(() => {
+    const handleRunKey = (e) => {
+      if (((e.ctrlKey || e.metaKey) && e.key === 'Enter') || e.key === 'F9') {
+        e.preventDefault()
+        runCode()
+      }
+    }
+    window.addEventListener('keydown', handleRunKey)
+    return () => window.removeEventListener('keydown', handleRunKey)
+  }, [runCode])
+
   const handleTerminalClick = () => {
     const inputEl = document.querySelector('.terminal-active-input')
     if (inputEl) {
@@ -1709,20 +1722,38 @@ export default function App() {
                   onClick={runCode} 
                   onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
                   disabled={running} 
+                  className="btn-action-run"
                   style={{
-                    ...s.btnRun,
-                    opacity: running ? 0.6 : 1,
-                    cursor: running ? 'not-allowed' : 'pointer',
+                    height: 36,
+                    padding: '0 14px',
                     fontSize: 13,
-                    padding: '7px 14px',
-                    fontWeight: 700,
-                    borderRadius: 8,
-                    boxShadow: '0 3px 10px rgba(46, 160, 67, 0.4)',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0,
                   }}
+                  title={lang.id === 'html' ? 'Refresh live preview' : 'Run code'}
                 >
-                  {running ? '⏳' : '▶ Run'}
+                  {running ? (
+                    <>
+                      <svg className="compiler-btn-spinner" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                        <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                      </svg>
+                      <span>Running</span>
+                    </>
+                  ) : lang.id === 'html' ? (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="23 4 23 10 17 10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                      </svg>
+                      <span>Refresh</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="6 3 20 12 6 21 6 3" />
+                      </svg>
+                      <span>Run</span>
+                    </>
+                  )}
                 </button>
               </div>
             )}
@@ -1785,26 +1816,52 @@ export default function App() {
                   )}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  {!isMobile && (
-                    <>
-                      <button 
-                        onClick={saveCurrentCodeToLocal}
-                        style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
-                        title="Save code locally (Ctrl+S)"
-                      >
-                        💾
-                      </button>
-                      <button 
-                        id="tour-step-format"
-                        onClick={handleFormatCode}
-                        style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
-                        title="Format code (add proper spacing & operator formatting)"
-                      >
-                        ✨
-                      </button>
-                    </>
-                  )}
+                <div className="btn-toolbar-group">
+                  {/* 💾 Save Code Button */}
+                  <button 
+                    onClick={() => {
+                      saveCurrentCodeToLocal()
+                      setSaveFeedback(true)
+                      setTimeout(() => setSaveFeedback(false), 1500)
+                    }}
+                    className="btn-action-tool btn-action-save"
+                    title="Save code locally (Ctrl+S)"
+                  >
+                    {saveFeedback ? (
+                      <>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3fb950" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span style={{ color: '#3fb950' }}>Saved</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                          <polyline points="17 21 17 13 7 13 7 21"/>
+                          <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        <span className="btn-action-label-sub">Save</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* ✨ Format Code Button (Code Beautifier) */}
+                  <button 
+                    id="tour-step-format"
+                    onClick={handleFormatCode}
+                    className="btn-action-tool btn-action-format"
+                    title="Format code (Auto indent & prettify spacing)"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m15 4-2 4-4 2 4 2 2 4 2-4 4-2-4-2-2-4z"/>
+                      <path d="M20 16l-1 2-2 1 2 1 1 2 1-2 2-1-2-1-1-2z"/>
+                      <path d="M4 16l-1 2-2 1 2 1 1 2 1-2 2-1-2-1-1-2z"/>
+                    </svg>
+                    <span className="btn-action-label-sub">Format</span>
+                  </button>
+
+                  {/* 🧹 Clear Code Button */}
                   <button 
                     onClick={() => { 
                       if (lang.id === 'html') {
@@ -1822,34 +1879,55 @@ export default function App() {
                         })
                       }
                     }} 
-                    style={{ ...s.panelBtn, border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '4px' }}
+                    className="btn-action-tool btn-action-clear"
                     title={lang.id === 'html' ? `Clear current ${activeHtmlTab === 'html' ? 'HTML' : activeHtmlTab === 'css' ? 'CSS' : 'JS'} file` : 'Clear editor code'}
                   >
-                    🧹
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                    <span className="btn-action-label-sub">Clear</span>
                   </button>
 
+                  {/* ▶ Run Code Button (Desktop) */}
                   {!isMobile && (
                     <button 
+                      id="tour-step-run"
                       onClick={runCode} 
                       onMouseEnter={() => fetch(`${BACKEND_URL}/`, { mode: 'no-cors' }).catch(() => {})}
                       disabled={running} 
-                      style={{
-                        ...s.btnRun,
-                        opacity: running ? 0.6 : 1,
-                        cursor: running ? 'not-allowed' : 'pointer',
-                        fontSize: 14,
-                        padding: '6px 18px',
-                        fontWeight: 700,
-                        borderRadius: 8,
-                        boxShadow: '0 4px 14px rgba(46, 160, 67, 0.4)',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                      }}
+                      className="btn-action-run"
+                      title={lang.id === 'html' ? 'Refresh live preview' : 'Run code (Ctrl+Enter or F9)'}
                     >
-                      {running ? '⏳ Running...' : lang.id === 'html' ? '▶ Refresh' : '▶ Run'}
+                      {running ? (
+                        <>
+                          <svg className="compiler-btn-spinner" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                            <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                          </svg>
+                          <span>Running...</span>
+                        </>
+                      ) : lang.id === 'html' ? (
+                        <>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="23 4 23 10 17 10" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                          </svg>
+                          <span>Refresh</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="6 3 20 12 6 21 6 3" />
+                          </svg>
+                          <span>Run</span>
+                          <span className="btn-action-shortcut">F9</span>
+                        </>
+                      )}
                     </button>
                   )}
-
                 </div>
               </div>
 
@@ -2062,6 +2140,12 @@ export default function App() {
                       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
                         window.dispatchEvent(new KeyboardEvent('keydown', { key: 's', ctrlKey: true }));
                       });
+                      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                        runCode();
+                      });
+                      editor.addCommand(monaco.KeyCode.F9, () => {
+                        runCode();
+                      });
                     }}
                     options={{
                       fontSize: isMobile ? 13 : 14,
@@ -2128,7 +2212,20 @@ export default function App() {
 
                   {!isMobile && (
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0, marginLeft: 'auto' }}>
-                      <button onClick={() => { setOutput(null); setInputs([]); }} style={{ ...s.panelBtn, padding: '4px 8px', border: '1px solid var(--border)', borderRadius: '4px' }} title="Clear Output">🧹</button>
+                      <button 
+                        onClick={() => { setOutput(null); setInputs([]); }} 
+                        className="btn-action-tool btn-action-clear" 
+                        style={{ height: 28, padding: '0 9px', fontSize: 12 }} 
+                        title="Clear terminal output"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6"/>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                          <line x1="10" y1="11" x2="10" y2="17"/>
+                          <line x1="14" y1="11" x2="14" y2="17"/>
+                        </svg>
+                        <span>Clear</span>
+                      </button>
                       <div style={{ width: 1, height: 22, background: 'var(--border)', margin: '0 2px' }} />
                       <button id="toolbar-share-btn" onClick={openShareCode} style={{ background: 'rgba(63,185,80,0.12)', color: '#3fb950', border: '1px solid rgba(63,185,80,0.45)', borderRadius: 8, padding: '6px 13px', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.18s', whiteSpace: 'nowrap' }}>📤 Share Code</button>
                       <button id="toolbar-receive-btn" onClick={openReceiveCode} style={{ background: 'rgba(88,166,255,0.12)', color: '#58a6ff', border: '1px solid rgba(88,166,255,0.45)', borderRadius: 8, padding: '6px 13px', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.18s', whiteSpace: 'nowrap' }}>📥 Receive Code</button>

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>12. Functions: declaration, parameters, return — JavaScript Tutorial | Our Compiler</title>
-  <meta name="description" content="Learn 12. Functions: declaration, parameters, return in JavaScript with clear Telugu explanations and live runnable code." />
-  <meta name="keywords" content="javascript tutorial, 12. functions: declaration, parameters, return, learn javascript, javascript online compiler" />
+  <title>JavaScript Functions తెలుగులో | function, parameters, return — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="JavaScript లో function అంటే ఏమిటి, function declaration, parameters, arguments, return, default parameters మరియు function expression తెలుగులో ఉదాహరణలతో నేర్చుకోండి." />
+  <meta name="keywords" content="javascript functions telugu, javascript functions తెలుగులో, function declaration, parameters vs arguments, return keyword, default parameters, function expression, javascript tutorial telugu" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/functions.html" />
@@ -14,6 +14,207 @@
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="/site-nav.css" />
+
+  <style>
+    /* Interactive Quiz Widget Styles */
+    .quiz-widget {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 32px 0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    .quiz-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .quiz-badge {
+      display: inline-block;
+      background: rgba(247, 223, 30, 0.15);
+      color: #f7df1e;
+      border: 1px solid rgba(247, 223, 30, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    body.light-theme .quiz-badge {
+      background: #fefce8;
+      color: #a16207;
+      border-color: #fde047;
+    }
+    .quiz-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .quiz-desc {
+      font-size: 14.5px;
+      color: var(--text2);
+      margin: 0;
+      line-height: 1.6;
+    }
+    .quiz-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+    .quiz-q-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quiz-q-text {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiz-opt-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14.5px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      user-select: none;
+      font-family: inherit;
+      width: 100%;
+    }
+    .quiz-opt-btn:hover:not(:disabled) {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      transform: translateX(3px);
+    }
+    .quiz-opt-btn .opt-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .quiz-opt-btn.correct {
+      background: rgba(34, 197, 94, 0.15) !important;
+      border-color: #22c55e !important;
+      color: #4ade80 !important;
+      font-weight: 600;
+    }
+    .quiz-opt-btn.correct .opt-letter {
+      background: #22c55e;
+      color: #ffffff;
+      border-color: #22c55e;
+    }
+    .quiz-opt-btn.wrong {
+      background: rgba(239, 68, 68, 0.15) !important;
+      border-color: #ef4444 !important;
+      color: #f87171 !important;
+    }
+    .quiz-opt-btn.wrong .opt-letter {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #ef4444;
+    }
+    .quiz-opt-btn.highlight-correct {
+      border-color: #22c55e !important;
+      background: rgba(34, 197, 94, 0.08) !important;
+      color: #86efac !important;
+    }
+    .quiz-feedback {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+    .quiz-feedback.show {
+      display: block;
+    }
+    .quiz-feedback.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #86efac;
+    }
+    .quiz-feedback.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+    body.light-theme .quiz-feedback.success {
+      background: #f0fdf4;
+      border-color: #86efac;
+      color: #166534;
+    }
+    body.light-theme .quiz-feedback.error {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+    .quiz-score-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .quiz-score-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .quiz-reset-btn {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quiz-reset-btn:hover {
+      background: #38bdf8;
+      color: #0b1120;
+    }
+  </style>
   
   <script>
     function toggleAccordion(btn) {
@@ -144,6 +345,88 @@
         });
       });
     })();
+
+    // Interactive Quiz State & Handlers
+    const quizAnswers = {
+      1: { correct: 'c', explanation: "Function ని declare చేసేటప్పుడు ( ) లో రాసే వేరియబుల్ పేరును 'Parameter' అంటారు (ఇది ఒక ఖాళీ డబ్బా లాంటిది). Function ని call చేసేటప్పుడు పంపే అసలైన విలువను 'Argument' అంటారు." },
+      2: { correct: 'c', explanation: "JavaScript లో ఒక function లో ఎలాంటి return స్టేట్‌మెంట్ రాయని పక్షంలో, ఆ function స్వయంచాలకంగా 'undefined' ని తిరిగి ఇస్తుంది." },
+      3: { correct: 'b', explanation: "Function expression ని 'const' తో ఒక variable లో దాచినప్పుడు, దాన్ని initialize చేయకముందే access చేయలేం. అందుకే ReferenceError వస్తుంది. Function declaration కి మాత్రమే Hoisting వల్ల ముందే call చేసే సౌలభ్యం ఉంటుంది." },
+      4: { correct: 'b', explanation: "calc(5) లో రెండవ argument ఇవ్వలేదు కాబట్టి default parameter అయిన b = 10 విలువను తీసుకుంటుంది. a = 5, b = 10 కలిపి 5 + 10 = 15 అవుతుంది." },
+      5: { correct: 'b', explanation: "return స్టేట్‌మెంట్ కనిపించగానే function అక్కడితో తక్షణమే ముగుస్తుంది. దాని కింద ఉన్న code ని 'Unreachable / Dead Code' అంటారు, అది ఎప్పటికీ run అవ్వదు." }
+    };
+
+    let userScore = 0;
+    let answeredQuestions = new Set();
+
+    function selectQuizOption(btn, qNum, chosenOpt) {
+      if (answeredQuestions.has(qNum)) return;
+      answeredQuestions.add(qNum);
+
+      const card = btn.closest('.quiz-card');
+      const allBtns = card.querySelectorAll('.quiz-opt-btn');
+      const feedbackEl = card.querySelector('.quiz-feedback');
+      const qData = quizAnswers[qNum];
+      const isCorrect = chosenOpt === qData.correct;
+
+      allBtns.forEach(b => {
+        b.disabled = true;
+        b.style.cursor = 'default';
+        const opt = b.getAttribute('data-opt');
+        if (opt === qData.correct) {
+          b.classList.add(isCorrect ? 'correct' : 'highlight-correct');
+        }
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedbackEl.className = 'quiz-feedback show success';
+        feedbackEl.innerHTML = '<strong>✅ సరైన సమాధానం!</strong> ' + qData.explanation;
+        userScore++;
+      } else {
+        btn.classList.add('wrong');
+        feedbackEl.className = 'quiz-feedback show error';
+        feedbackEl.innerHTML = '<strong>❌ తప్పు సమాధానం!</strong> ' + qData.explanation;
+      }
+
+      updateQuizScore();
+    }
+
+    function updateQuizScore() {
+      const scoreEl = document.getElementById('quizScoreText');
+      if (!scoreEl) return;
+      const total = Object.keys(quizAnswers).length;
+      const answeredCount = answeredQuestions.size;
+      if (answeredCount === total) {
+        if (userScore === total) {
+          scoreEl.innerHTML = `🏆 అద్భుతం! మీ స్కోర్: <strong>${userScore} / ${total}</strong> (100% Correct) — Functions కాన్సెప్ట్ పూర్తిగా అర్థమైంది!`;
+        } else if (userScore >= 3) {
+          scoreEl.innerHTML = `👏 మంచి ప్రయత్నం! మీ స్కోర్: <strong>${userScore} / ${total}</strong> — కాన్సెప్ట్స్ బాగా అర్థమయ్యాయి!`;
+        } else {
+          scoreEl.innerHTML = `📚 మీ స్కోర్: <strong>${userScore} / ${total}</strong> — ఒకసారి పాఠాన్ని మళ్ళీ చదివి 'రీట్రై' చేయండి!`;
+        }
+      } else {
+        scoreEl.innerHTML = `పూర్తయినవి: <strong>${answeredCount} / ${total}</strong> | ప్రస్తుత స్కోర్: <strong>${userScore}</strong>`;
+      }
+    }
+
+    function resetQuiz() {
+      userScore = 0;
+      answeredQuestions.clear();
+      document.querySelectorAll('.quiz-card').forEach(card => {
+        card.querySelectorAll('.quiz-opt-btn').forEach(b => {
+          b.disabled = false;
+          b.style.cursor = 'pointer';
+          b.classList.remove('correct', 'wrong', 'highlight-correct');
+        });
+        const feedbackEl = card.querySelector('.quiz-feedback');
+        feedbackEl.className = 'quiz-feedback';
+        feedbackEl.innerHTML = '';
+      });
+      const scoreEl = document.getElementById('quizScoreText');
+      if (scoreEl) {
+        scoreEl.innerHTML = 'క్విజ్ ప్రారంభించండి! (మొత్తం 5 ప్రశ్నలు)';
+      }
+    }
   </script>
 </head>
 <body class="lang-javascript">
@@ -316,10 +599,10 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
-      <span class="current">Lesson 12: 12. Functions: declaration, parameters, return</span>
+      <span class="current">Lesson 12: JavaScript Functions తెలుగులో | function, parameters, return</span>
     </div>
 
-    <h1 class="page-title">12. Functions: declaration, parameters, return</h1>
+    <h1 class="page-title">JavaScript Functions తెలుగులో | function, parameters, return</h1>
 
     <div class="page-meta">
       <span class="badge">🟨 JavaScript (ES2026+)</span>
@@ -329,102 +612,825 @@
     </div>
 
     <!-- Subtopics Pill Bar -->
-    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+    <div class="subtopics-pill-bar" style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#f7df1e; font-weight:700;">📌 Covered in this lesson:</span>
-      <span>Function declaration · Parameters & arguments · return keyword · Default params</span>
+      <span>Function declaration · Parameters & arguments · return keyword · Default parameters · Function expression · Hoisting preview · Scope preview · Common mistakes · Interactive Quiz</span>
     </div>
 
-
     <!-- ====================================================================
-         👇 CHAPTER CONTENT START (ఇక్కడ నుండి మీ పాఠం కంటెంట్ రాయండి) 👇
+         👇 CHAPTER CONTENT: Chapter 12 Functions (Telugu) 👇
          ==================================================================== -->
 
     <div class="intro-box">
-      <p>ఈ పాఠంలో మనం JavaScript లోని ముఖ్యమైన <strong>12. Functions: declaration, parameters, return</strong> గురించి స్పష్టంగా, సులభమైన ఉదాహరణలతో నేర్చుకుందాం.</p>
-      <p>రియల్ వరల్డ్ ప్రాజెక్టులలో మరియు ఇంటర్వ్యూలలో ఈ కాన్సెప్ట్ చాలా కీలకం.</p>
+      <h3 style="margin-bottom:10px; font-size:18px;">☕ చాయ్ తయారీ విధానం (Recipe) మరియు Functions</h3>
+      <p>ఇంట్లో చాయ్ తయారు చేయడానికి ఒక విధానం (<strong>recipe</strong>) ఉంటుంది: నీళ్లు మరిగించు, పాలు, చక్కెర, టీ పొడి వేయి, వడకట్టు. ప్రతిసారీ ఈ విధానాన్ని మళ్ళీ మళ్ళీ రాయరు కదా? <em>"చాయ్ చెయ్యి"</em> అని చెబితే చాలు, ఆ విధానం అంతా జరిగిపోతుంది. ఇంకా, ఎంతమందికి కావాలో (ingredients) మార్చి చెబితే, అదే విధానంతో ఎన్ని కప్పులైనా తయారవుతాయి.</p>
+      <p>Programming లో ఇలా ఒక పనికి సంబంధించిన code ని ఒక పేరు పెట్టి, ఎన్ని సార్లైనా వాడుకునే ఏర్పాటునే <strong>Function</strong> అంటారు. ఒకే code ని 10 చోట్ల కాపీ చేసి రాయాల్సిన అవసరం లేదు. ఒక్కసారి function గా రాసి, పేరు చెప్పి వాడుకుంటే చాలు (దీనినే <strong>DRY — Don't Repeat Yourself</strong> ప్రిన్సిపల్ అంటారు).</p>
+      <p style="margin-top:10px;">ఇప్పటికే మీరు functions ని వాడుతున్నారు: <code>console.log()</code>, <code>Number()</code>, <code>parseInt()</code> ఇవన్నీ JavaScript అందించే ఇన్-బిల్ట్ functions. ఈ chapter లో మీ సొంత functions రాయడం నేర్చుకుందాం.</p>
     </div>
 
     <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
     <div class="section-body">
-      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li><code>Function declaration</code> గురించి అవగాహన</li>
-        <li><code>Parameters & arguments</code> గురించి అవగాహన</li>
-        <li><code>return keyword</code> గురించి అవగాహన</li>
-        <li><code>Default params</code> గురించి అవగాహన</li>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 15px; line-height: 1.8;">
+        <li>Function అంటే ఏమిటి, ఎందుకు కావాలి?</li>
+        <li>Function ని <strong>declare</strong> చేయడం మరియు <strong>call</strong> చేయడం</li>
+        <li><strong>Parameters</strong> మరియు <strong>arguments</strong> మధ్య ఉన్న తేడా</li>
+        <li><code>return</code> తో విలువను తిరిగి ఇవ్వడం & return తో function ఆగిపోవడం</li>
+        <li><strong>Default parameters</strong> (డిఫాల్ట్ విలువలు)</li>
+        <li><strong>Function expression</strong> మరియు <strong>Hoisting</strong> (ముందే వాడగలమా?)</li>
+        <li>Function లోపలి variables (Scope కి చిన్న పరిచయం)</li>
+        <li>Beginners చేసే 6 సాధారణ తప్పులు (Real Node.js error outputs తో)</li>
+        <li>సమగ్ర ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</li>
+        <li><strong>🧠 ఇంటరాక్టివ్ క్విజ్ (Interactive Telugu Quiz)</strong></li>
       </ul>
     </div>
 
-    <div class="section-title"><span class="num">2</span>సిద్ధాంతం & ప్రాథమిక కాన్సెప్ట్</div>
+    <div class="section-title"><span class="num">2</span>Function ఎందుకు కావాలి?</div>
     <div class="section-body">
-      <p>ఇక్కడ కాన్సెప్ట్ గురించిన పూర్తి వివరణ రాయండి...</p>
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        ఒకే message ని చాలా చోట్ల print చేయాలనుకోండి. Function లేకపోతే ప్రతిచోటా అదే code రాయాలి. Function తో:
+      </p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — ఉదాహరణ 1</span>
+          <span class="lang-tag">JavaScript — Simple Function</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>// 12. Functions: declaration, parameters, return కోడ్ ఉదాహరణ
-console.log("12. Functions: declaration, parameters, return మొదలైంది");
-</code></pre>
-      </div>
+        <pre><code>function greet() {
+  console.log("నమస్కారం!");
+}
 
+greet();
+greet();</code></pre>
+      </div>
       <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
         <span style="color:#64748b;">Output:</span><br>
-        12. Functions: declaration, parameters, return మొదలైంది
+        నమస్కారం!<br>
+        నమస్కారం!
+      </div>
+
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2); margin-top: 12px;">
+        <strong>Code పరిశీలన:</strong> ఒక్కసారి రాశాం, రెండుసార్లు వాడాం. రేపు message మార్చాలంటే ఒక్క చోట మార్చితే చాలు, అన్ని చోట్లా మారిపోతుంది. ఇదే function శక్తి!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">3</span>Function ని declare చేయడం మరియు call చేయడం</div>
+    <div class="section-body">
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        Function syntax చాలా సూటిగా ఉంటుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Syntax</span>
+        </div>
+        <pre><code>function functionName(parameters) {
+  // function body: చేయాల్సిన పని
+}</code></pre>
+      </div>
+
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text); margin-top: 14px;">
+        Function వాడకంలో రెండు ప్రధాన దశలు ఉంటాయి:
+      </p>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><strong>1. Declare (నిర్వచించడం):</strong> Function ని తయారు చేయడం. ఇది చాయ్ తయారీ విధానాన్ని పుస్తకంలో రాసి పెట్టడం లాంటిది. ఈ దశలో లోపల ఉన్న code అసలు <strong>run అవ్వదు</strong>.</li>
+        <li><strong>2. Call (పిలవడం / Invoke):</strong> Function పేరు తర్వాత <code>()</code> రాసి పిలిస్తే, అప్పుడు మాత్రమే అందులోని code run అవుతుంది.</li>
+      </ol>
+
+      <div class="callout" style="margin-top: 16px; background: rgba(56, 189, 248, 0.06); border-left: 4px solid #38bdf8; padding: 14px 18px; border-radius: 8px;">
+        <p style="color: var(--text); font-size: 14.5px; margin: 0; line-height: 1.7;">
+          పై ఉదాహరణలో:<br>
+          • <code>function greet() { ... }</code> ← declare చేశాం (చాయ్ విధానం రాశాం).<br>
+          • <code>greet();</code> ← call చేశాం (చాయ్ చెయ్యి అన్నాం). రెండుసార్లు call చేశాం కాబట్టి రెండుసార్లు run అయ్యింది.
+        </p>
+      </div>
+
+      <h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 16px;">Function పేర్లు ఎలా పెట్టాలి?</h3>
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2);">
+        Variables కి వర్తించే నియమాలే functions కి కూడా వర్తిస్తాయి (Chapter 3). అదనంగా:
+      </p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><strong>camelCase వాడండి:</strong> <code>calculateTotal</code>, <code>isEven</code>.</li>
+        <li>Function ఒక పని చేస్తుంది కాబట్టి, పేరు సాధారణంగా <strong>క్రియ (verb)</strong> తో మొదలవ్వాలి: <code>greet</code>, <code>getPrice</code>, <code>calculateTax</code>.</li>
+        <li><code>true</code> లేదా <code>false</code> ఇచ్చే functions కి <strong>is</strong> లేదా <strong>has</strong> తో మొదలుపెట్టడం మంచి సంప్రదాయం: <code>isEven</code>, <code>hasTicket</code>.</li>
+      </ul>
+    </div>
+
+    <div class="section-title"><span class="num">4</span>Parameters: function కి విలువలు ఇవ్వడం</div>
+    <div class="section-body">
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        Function ప్రతిసారీ ఒకే పని చేస్తే ప్రయోజనం తక్కువ. చాయ్ లో <em>"ఎన్ని కప్పులు?"</em> అని మార్చినట్లు, function కి విలువలు పంపించి, వాటిని బట్టి వేర్వేరు ఫలితాలు రాబట్టొచ్చు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Parameters Example</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function greetUser(name) {
+  console.log(`నమస్కారం ${name}!`);
+}
+
+greetUser("రవి");
+greetUser("సీత");</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        నమస్కారం రవి!<br>
+        నమస్కారం సీత!
+      </div>
+
+      <h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 16px;">Parameters vs Arguments</h3>
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2);">
+        ఈ రెండు పదాలు విద్యార్థులను తరచూ గందరగోళానికి గురిచేస్తాయి. తేడా చాలా సులభం:
+      </p>
+
+      <table class="tbl" style="width:100%; border-collapse: collapse; margin-top:12px; font-size:14px;">
+        <thead>
+          <tr style="background:rgba(247, 223, 30, 0.1); border-bottom:2px solid #27303f;">
+            <th style="padding:10px 14px; text-align:left; color:#f7df1e;">పదం (Term)</th>
+            <th style="padding:10px 14px; text-align:left; color:#f7df1e;">అర్థం (Meaning)</th>
+            <th style="padding:10px 14px; text-align:left; color:#f7df1e;">ఉదాహరణలో</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #27303f;">
+            <td style="padding:10px 14px;"><strong>Parameter</strong></td>
+            <td style="padding:10px 14px;">Function ని declare చేసేటప్పుడు <code>( )</code> లో రాసే పేరు. ఇది ఒక <strong>ఖాళీ డబ్బా</strong> లాంటిది.</td>
+            <td style="padding:10px 14px;"><code>name</code> (<code>function greetUser(name)</code> లో)</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;"><strong>Argument</strong></td>
+            <td style="padding:10px 14px;">Function ని call చేసేటప్పుడు పంపే <strong>నిజమైన విలువ</strong>.</td>
+            <td style="padding:10px 14px;"><code>"రవి"</code>, <code>"సీత"</code> (<code>greetUser("రవి")</code> లో)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2); margin-top: 14px;">
+        <code>greetUser("రవి")</code> అన్నప్పుడు, <code>"రవి"</code> అనే argument, <code>name</code> అనే parameter డబ్బాలో కూర్చుంటుంది. Function లోపల <code>name</code> ని మామూలు variable లాగా వాడొచ్చు.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">5</span>return: విలువను తిరిగి ఇవ్వడం</div>
+    <div class="section-body">
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        ఇప్పటివరకు functions కేవలం screen మీద print చేశాయి. కానీ చాలాసార్లు function ఒక ఫలితాన్ని తిరిగి ఇవ్వాలి, దాన్ని మనం వేరే చోట వాడుకోవడానికి. దానికి <code>return</code> వాడతాం. చాయ్ విధానం చివర తయారైన చాయ్ ని మన చేతికి ఇవ్వడం లాంటిది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — return Value</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function add(a, b) {
+  return a + b;
+}
+
+const sum = add(10, 20);
+console.log(sum);
+console.log(add(5, 7));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        30<br>
+        12
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 16px;">Code అర్థం చేసుకుందాం:</h3>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><code>add(a, b)</code> కి రెండు parameters ఉన్నాయి. కామాతో వేరు చేసి ఎన్నైనా రాయొచ్చు.</li>
+        <li><code>return a + b;</code> అంటే <em>"a + b విలువను తిరిగి ఇవ్వు"</em>.</li>
+        <li><code>add(10, 20)</code> అని call చేస్తే, ఆ expression స్థానంలో <code>30</code> వచ్చి కూర్చుంటుంది. అందుకే <code>const sum = add(10, 20)</code> అంటే <code>const sum = 30</code>.</li>
+        <li>తిరిగి వచ్చిన విలువను variable లో దాచొచ్చు (<code>sum</code>), నేరుగా print చేయొచ్చు (<code>console.log(add(5, 7))</code>), లేదా మరో లెక్కలో వాడొచ్చు.</li>
+      </ol>
+
+      <h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 16px;">return తో function ఆగిపోతుంది</h3>
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2);">
+        <code>return</code> కనిపించగానే function అక్కడితో ముగుస్తుంది. దాని కింద ఉన్న code ఏదీ run అవ్వదు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — return Stops Execution</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function test() {
+  console.log("A");
+  return;
+  console.log("B");
+}
+
+test();</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        A
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        <code>"B"</code> రాలేదు, ఎందుకంటే <code>return</code> తర్వాత ఉన్న code ఎప్పటికీ run అవ్వదు (దీనినే <strong>Unreachable Code</strong> అంటారు).
+      </p>
+
+      <h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 16px;">ఈ లక్షణాన్ని if తో కలిపి వాడటం (Early Return Pattern):</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Guard Clauses / Early Return</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function check(n) {
+  if (n > 0) {
+    return "positive";
+  }
+  return "not positive";
+}
+
+console.log(check(5));
+console.log(check(-2));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        positive<br>
+        not positive
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        <code>n = 5</code> అయితే మొదటి <code>return</code> తో function ముగుస్తుంది, రెండో return వరకు రాదు. <code>else</code> రాయాల్సిన అవసరం కూడా లేకుండా పోయింది!
+      </p>
+
+      <h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 16px;">Return లేని function</h3>
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2);">
+        <code>return</code> రాయని function ఫలితంగా <code>undefined</code> ఇస్తుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — No return gives undefined</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function sayHi() {
+  console.log("Hi");
+}
+
+const r = sayHi();
+console.log(r);</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        Hi<br>
+        undefined
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        <code>sayHi()</code> screen మీద <code>"Hi"</code> print చేసింది (అది దాని పని), కానీ తిరిగి ఇవ్వడానికి ఏమీ లేదు, అందుకే <code>r</code> లో <code>undefined</code> ఉంది.
+      </p>
+
+      <div class="callout callout-warning" style="margin-top: 20px;">
+        <div class="callout-title">💡 print చేయడం (console.log) vs return చేయడం</div>
+        <p style="margin-top: 8px; font-size: 14.5px; line-height: 1.7;">
+          కొత్తవారికి ఇది పెద్ద గందరగోళం. తేడా ఇది:<br>
+          • <strong><code>console.log</code>:</strong> మనకు (developer కి) screen మీద చూపిస్తుంది. ఆ విలువను program లో మళ్ళీ వాడుకోలేం.<br>
+          • <strong><code>return</code>:</strong> విలువను program కి తిరిగి ఇస్తుంది. దాన్ని variable లో దాచొచ్చు, ఇతర గణనలకు (calculations) వాడొచ్చు.<br>
+          <em>సాధారణంగా లెక్కలు చేసే functions return చేయాలి, print చేయడం వేరే చోట చూసుకోవాలి.</em>
+        </p>
       </div>
     </div>
 
-    <div class="section-title"><span class="num">3</span>రియల్-లైఫ్ ఉదాహరణ & ప్రాక్టీస్</div>
+    <div class="section-title"><span class="num">6</span>వాస్తవ ఉదాహరణలు (Real-World Examples)</div>
     <div class="section-body">
-      <p>రెండో ఉదాహరణ లేదా వాస్తవ ప్రపంచంలో దీని ఉపయోగం ఇక్కడ రాయండి...</p>
+      <h3 style="margin-bottom: 8px; font-size: 16px;">ఉదాహరణ 1: సరి సంఖ్యా కాదా? (isEven)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — isEven Function</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function isEven(n) {
+  return n % 2 === 0;
+}
+
+console.log(isEven(10));
+console.log(isEven(7));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        true<br>
+        false
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        <code>n % 2 === 0</code> అనేది ఇప్పటికే <code>true</code> లేదా <code>false</code> ఇస్తుంది. దాన్ని నేరుగా return చేసేశాం!
+      </p>
+
+      <h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 16px;">ఉదాహరణ 2: GST తో కలిపిన మొత్తం (calculateTotal)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Billing with Tax</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function calculateTotal(price, gstPercent) {
+  const gst = price * gstPercent / 100;
+  return price + gst;
+}
+
+console.log(calculateTotal(1000, 18));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        1180
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        ₹1000 కి 18% GST = ₹180. కలిపి ₹1180. వేరే ధర, వేరే GST తో ఎన్ని సార్లైనా ఇదే function ని వాడొచ్చు.
+      </p>
+
+      <h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 16px;">ఉదాహరణ 3: ఒక function నుంచి ఇంకో function ని పిలవడం (Modularity)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Function Composition</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function square(n) {
+  return n * n;
+}
+
+function sumOfSquares(a, b) {
+  return square(a) + square(b);
+}
+
+console.log(sumOfSquares(3, 4));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        25
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        <code>square(3) = 9</code>, <code>square(4) = 16</code>, కలిపి <code>25</code>. పెద్ద పనిని చిన్న చిన్న functions గా విడగొట్టడం ఒక గొప్ప సాఫ్ట్‌వేర్ ఇంజనీరింగ్ అలవాటు. ప్రతి function ఒక్క పనిని మాత్రమే పరిపూర్ణంగా చేయాలి!
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">7</span>Default Parameters (డిఫాల్ట్ పారామీటర్లు)</div>
+    <div class="section-body">
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        Argument ఇవ్వకపోతే ఒక డిఫాల్ట్ విలువ వాడాలనుకుంటే, parameter పక్కన <code>=</code> తో రాస్తాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Default Parameters</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>function greet(name = "అతిథి") {
+  console.log(`నమస్కారం ${name}!`);
+}
+
+greet();
+greet("రవి");</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        నమస్కారం అతిథి!<br>
+        నమస్కారం రవి!
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        <code>greet()</code> లో argument ఇవ్వలేదు కాబట్టి <code>name</code> లో డిఫాల్ట్ విలువ అయిన <code>"అతిథి"</code> వచ్చింది. <code>greet("రవి")</code> లో ఇచ్చిన విలువను ప్రాధాన్యతతో వాడింది.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">8</span>Function Expression & Hoisting</div>
+    <div class="section-body">
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        ఇప్పటివరకు మనం రాసినది <strong>function declaration</strong> (<code>function పేరు() {}</code>). ఇంకో పద్ధతి <strong>function expression</strong>: function ని ఒక variable లో దాచడం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Function Expression</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const multiply = function (a, b) {
+  return a * b;
+};
+
+console.log(multiply(4, 5));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        20
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        ఇక్కడ function కి పేరు లేదు (Anonymous Function). అది <code>multiply</code> అనే variable లో కూర్చుంది, ఆ variable పేరుతోనే call చేస్తున్నాం. చివరలో <code>;</code> ఉందని గమనించండి (ఎందుకంటే ఇది ఒక variable assignment). Chapter 13 లో దీనికే చిన్న ఆధునిక రూపమైన <strong>Arrow Functions</strong> నేర్చుకుంటాం.
+      </p>
+
+      <h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 16px;">Hoisting: ముందే వాడగలిగేది</h3>
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2);">
+        <strong>Function declaration</strong> ని, దాన్ని రాసిన చోటుకి ముందే call చేయొచ్చు. JavaScript code ని run చేసే ముందు declarations ని పైకి "ఎత్తి" పెడుతుంది. దీన్నే <strong>hoisting</strong> అంటారు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Hoisting with Declaration</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>console.log(square(4));
+
+function square(n) {
+  return n * n;
+}</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        16
+      </div>
+
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2); margin-top: 14px;">
+        కానీ <strong>function expression</strong> తో ఇది పని చేయదు:
+      </p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Expression Hoisting Error</span>
+        </div>
+        <pre><code>console.log(cube(3));
+
+const cube = function (n) {
+  return n ** 3;
+};</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #7f1d1d; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#f87171; font-size:13px;">
+        <span style="color:#ef4444;">Output:</span><br>
+        ReferenceError: Cannot access 'cube' before initialization
+      </div>
+      <p style="font-size: 14px; color: var(--text2); margin-top: 8px;">
+        కాబట్టి function expression ని ఎప్పుడూ వాడటానికి ముందే రాయండి. Hoisting గురించి Chapter 24 లో మరింత వివరంగా నేర్చుకుందాం.
+      </p>
+    </div>
+
+    <div class="section-title"><span class="num">9</span>Function లోపలి variables: చిన్న పరిచయం (Scope)</div>
+    <div class="section-body">
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        Function లోపల declare చేసిన variables, ఆ function లోపల మాత్రమే కనిపిస్తాయి. బయట వాడలేం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Local Scope</span>
+        </div>
+        <pre><code>function f() {
+  const secret = 10;
+}
+
+f();
+console.log(secret);</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #7f1d1d; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#f87171; font-size:13px;">
+        <span style="color:#ef4444;">Output:</span><br>
+        ReferenceError: secret is not defined
+      </div>
+      <p style="font-size: 14.5px; line-height: 1.7; color: var(--text2); margin-top: 10px;">
+        ఇది ఒక ఇంటి లోపల ఉన్న వస్తువులు ఇంటి బయట రోడ్డు మీద నుంచి కనిపించనట్లు. దీన్నే <strong>scope</strong> అంటారు. Chapter 24 లో వివరంగా తెలుసుకుందాం. ఇప్పటికి <em>"function లోపలి variable బయటకు కనిపించదు"</em> అని గుర్తుంచుకోండి. కావాల్సిన విలువను <code>return</code> తో బయటకు పంపండి.
+      </p>
     </div>
 
     <div class="callout callout-warning">
-      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు (Common Mistakes)</div>
-      <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">ఈ టాపిక్ నేర్చుకునేటప్పుడు విద్యార్థులు తరచుగా చేసే తప్పులు మరియు వాటిని ఎలా సరిచేయాలో ఇక్కడ పేర్కొనండి.</p>
+      <div class="callout-title">⚠️ Beginners చేసే 6 సాధారణ తప్పులు (Common Mistakes)</div>
+      
+      <div style="margin-top: 14px;">
+        <p><strong>1. return రాయడం మర్చిపోవడం:</strong></p>
+        <div class="code-block">
+          <pre><code>function add(a, b) {
+  a + b;
+}
+console.log(add(2, 3));</code></pre>
+        </div>
+        <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13px;">
+          Output: undefined
+        </div>
+        <p style="font-size:13.5px; color:var(--text2);">5 రావాలి, కానీ <code>undefined</code> వచ్చింది. <code>a + b</code> ని లెక్కించింది, కానీ ఎక్కడికీ తిరిగి ఇవ్వలేదు. <code>return a + b;</code> అని రాయాలి.</p>
+
+        <p style="margin-top: 16px;"><strong>2. Function ని () లేకుండా రాయడం:</strong></p>
+        <div class="code-block">
+          <pre><code>function greet() {
+  console.log("నమస్కారం!");
+}
+greet;</code></pre>
+        </div>
+        <p style="font-size:13.5px; color:var(--text2); margin-top: 6px;">ఇది ఏమీ చేయదు. <code>greet</code> అని మాత్రమే రాస్తే function ని "చూస్తుంది", కానీ పిలవదు (call చేయదు). <code>typeof greet</code> అడిగితే <code>"function"</code> అని వస్తుంది. పిలవాలంటే <code>greet();</code> అని కుండలీకరణాలు తప్పనిసరి!</p>
+
+        <p style="margin-top: 16px;"><strong>3. Function expression ని declare చేయకముందే వాడటం:</strong></p>
+        <p style="font-size:13.5px; color:var(--text2);">పైన చూసినట్లు <code>ReferenceError: Cannot access 'cube' before initialization</code> వస్తుంది. Expression ని ఎల్లప్పుడూ వాడటానికి ముందు రాయండి.</p>
+
+        <p style="margin-top: 16px;"><strong>4. Arguments సంఖ్య తప్పుగా ఇవ్వడం:</strong></p>
+        <div class="code-block">
+          <pre><code>function add(a, b) {
+  return a + b;
+}
+console.log(add(5));
+console.log(add(5, 10, 20));</code></pre>
+        </div>
+        <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13px;">
+          Output:<br>
+          NaN<br>
+          15
+        </div>
+        <p style="font-size:13.5px; color:var(--text2);"><code>add(5)</code> లో <code>b</code> కి ఏ విలువా రాలేదు, కాబట్టి <code>b</code> ఒక <code>undefined</code>. <code>5 + undefined</code> అంటే <code>NaN</code>.<br>
+        <code>add(5, 10, 20)</code> లో అదనంగా ఇచ్చిన <code>20</code> ని ఏ parameter తీసుకోలేదు, కాబట్టి పట్టించుకోకుండా వదిలేసింది (error ఇవ్వదు).</p>
+
+        <p style="margin-top: 16px;"><strong>5. Arguments క్రమం తప్పుగా ఇవ్వడం:</strong></p>
+        <div class="code-block">
+          <pre><code>function subtract(a, b) {
+  return a - b;
+}
+console.log(subtract(3, 10));
+console.log(subtract(10, 3));</code></pre>
+        </div>
+        <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13px;">
+          Output:<br>
+          -7<br>
+          7
+        </div>
+        <p style="font-size:13.5px; color:var(--text2);">Arguments ని parameters వరుస క్రమంలోనే (మొదటిది మొదటి దానికి, రెండోది రెండో దానికి) ఇస్తుంది. క్రమం మారితే ఫలితం తారుమారవుతుంది.</p>
+
+        <p style="margin-top: 16px;"><strong>6. return తర్వాత code రాయడం:</strong></p>
+        <p style="font-size:13.5px; color:var(--text2);"><code>return</code> తర్వాత ఉన్న code ఎప్పటికీ run అవ్వదు (పైన <code>test()</code> ఉదాహరణ చూశాం). అది పొరపాటున ఉంటే మనకు తెలియకుండా డెడ్ కోడ్ గా మిగిలిపోతుంది.</p>
+      </div>
     </div>
 
-    <div class="section-title"><span class="num">4</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <div class="section-title"><span class="num">10</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
     <div class="section-body">
-      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li>మొదటి ప్రాక్టీస్ ప్రశ్న?</li>
-        <li>రెండో ప్రాక్టీస్ ప్రశ్న?</li>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 15px; line-height: 1.8;">
+        <li>వృత్తం వ్యాసార్థం (radius) ఇస్తే దాని వైశాల్యం ఇచ్చే function రాయండి. (వైశాల్యం = π × r × r. <code>Math.PI</code> వాడండి.) radius 5 తో call చేయండి.</li>
+        <li>రెండు సంఖ్యల్లో పెద్దదాన్ని return చేసే <code>maxOfTwo</code> function రాయండి. (15, 42 తో test చేయండి)</li>
+        <li>ఒక సంఖ్య palindrome అవునా కాదా (ముందునుంచి, వెనుకనుంచి ఒకేలా ఉండే సంఖ్య, ఉదా: 121) చెప్పే function రాయండి. 121 మరియు 123 తో test చేయండి.</li>
+        <li>మార్కులు ఇస్తే "Pass" (35 లేదా ఎక్కువ) లేదా "Fail" return చేసే function రాయండి. (72, 20 తో test చేయండి)</li>
+        <li>Celsius ని Fahrenheit గా మార్చే function రాయండి. (F = C × 9 / 5 + 32) 100 మరియు 0 తో test చేయండి.</li>
       </ol>
 
-      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
-        <summary style="font-weight: bold; color: var(--text);">👉 సమాధానాలు చూడండి</summary>
-        <div style="margin-top: 10px; font-size: 14px; color: var(--text2); line-height: 1.6;">
-          <p>సమాధానం వివరణ ఇక్కడ రాయండి...</p>
+      <details style="margin-top: 20px; background: var(--bg2); border: 1px solid var(--border); padding: 16px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: #f7df1e; font-size: 15px;">👉 సమాధానాలు చూడండి</summary>
+        <div style="margin-top: 14px; font-size: 14px; color: var(--text2); line-height: 1.7;">
+          <p><strong>1. వృత్తం వైశాల్యం:</strong></p>
+          <div class="code-block">
+            <pre><code>function circleArea(radius) {
+  return Math.PI * radius * radius;
+}
+console.log(circleArea(5));</code></pre>
+          </div>
+          <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13px;">
+            Output: 78.53981633974483
+          </div>
+
+          <p><strong>2. పెద్ద సంఖ్య (maxOfTwo):</strong></p>
+          <div class="code-block">
+            <pre><code>function maxOfTwo(a, b) {
+  if (a > b) {
+    return a;
+  }
+  return b;
+}
+console.log(maxOfTwo(15, 42));</code></pre>
+          </div>
+          <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13px;">
+            Output: 42
+          </div>
+
+          <p><strong>3. Palindrome సంఖ్య:</strong></p>
+          <div class="code-block">
+            <pre><code>function isPalindrome(num) {
+  let original = num;
+  let reversed = 0;
+  while (num > 0) {
+    const last = num % 10;
+    reversed = reversed * 10 + last;
+    num = (num - last) / 10;
+  }
+  return original === reversed;
+}
+console.log(isPalindrome(121));
+console.log(isPalindrome(123));</code></pre>
+          </div>
+          <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13px;">
+            Output:<br>
+            true<br>
+            false<br>
+            <span style="color:#64748b;">(సంఖ్య యొక్క అంకెలను వెనుకనుంచి తిరగేసి (reversed) అసలు సంఖ్యతో పోల్చాం. 121 తిరగేస్తే 121, 123 తిరగేస్తే 321.)</span>
+          </div>
+
+          <p><strong>4. Pass లేదా Fail:</strong></p>
+          <div class="code-block">
+            <pre><code>function result(marks) {
+  if (marks >= 35) {
+    return "Pass";
+  }
+  return "Fail";
+}
+console.log(result(72));
+console.log(result(20));</code></pre>
+          </div>
+          <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13px;">
+            Output:<br>
+            Pass<br>
+            Fail
+          </div>
+
+          <p><strong>5. Celsius to Fahrenheit:</strong></p>
+          <div class="code-block">
+            <pre><code>function toFahrenheit(c) {
+  return c * 9 / 5 + 32;
+}
+console.log(toFahrenheit(100));
+console.log(toFahrenheit(0));</code></pre>
+          </div>
+          <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:6px; padding:8px 12px; font-family:monospace; color:#38bdf8; font-size:13px;">
+            Output:<br>
+            212<br>
+            32
+          </div>
         </div>
       </details>
     </div>
 
+    <!-- Live Practice Box -->
     <div class="try-box">
       <div class="try-title">🚀 మీరే try చేయండి</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">మన ఆన్‌లైన్ కంపైలర్ లో ఈ కోడ్‌ను ఎడిట్ చేసి రన్ చేయండి:</p>
-      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript రన్ చేయండి</a>
-    </div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">
+        ఈ code ని మన compiler లో run చేయండి. ఒక షాప్ బిల్లు function ఇది, GST % ఇవ్వకపోతే 18% అనుకుంటుంది. విలువలు మార్చి ఫలితాలు చూడండి:
+      </p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Live Shop Billing</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+        </div>
+        <pre><code>function billAmount(price, qty, gstPercent = 18) {
+  const subtotal = price * qty;
+  return subtotal + subtotal * gstPercent / 100;
+}
 
-    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
-      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary (సారాంశం):</h3>
-      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.6;">
-        <li><strong>12. Functions: declaration, parameters, return:</strong> Function declaration · Parameters & arguments · return keyword · Default params</li>
-      </ul>
+console.log(billAmount(250, 3));
+console.log(billAmount(250, 3, 5));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        885<br>
+        787.5
+      </div>
+      <p style="color:var(--text2); font-size:13.5px; margin-bottom:12px;">
+        మొదటి call లో GST ఇవ్వలేదు (18% వాడింది), రెండో call లో 5% ఇచ్చాం.
+      </p>
+      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript try చేయండి</a>
     </div>
 
     <!-- ====================================================================
-         👆 CHAPTER CONTENT END (ఇక్కడితో మీ కంటెంట్ పూర్తవుతుంది) 👆
+         🧠 INTERACTIVE QUIZ FEATURE (AdSense Engagement Booster) 🧠
          ==================================================================== -->
+    <div class="quiz-widget" id="quizSection">
+      <div class="quiz-header">
+        <span class="quiz-badge">🧠 Interactive Telugu Quiz</span>
+        <h3 class="quiz-title">JavaScript Functions నాలెడ్జ్ చెక్</h3>
+        <p class="quiz-desc">ఈ క్రింది ప్రశ్నలకు సమాధానమిచ్చి మీ అవగాహనను పరీక్షించుకోండి. క్లిక్ చేసిన వెంటనే సరైన ఆన్సర్ మరియు తెలుగు వివరణ కనిపిస్తాయి:</p>
+      </div>
 
+      <!-- Question 1 -->
+      <div class="quiz-card" data-q="1">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 1 / 5</span></div>
+        <div class="quiz-q-text">1. <code>function greetUser(name) { ... }</code> లో <code>name</code> ని ఏమంటారు?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 1, 'a')">
+            <span class="opt-letter">A</span> Argument
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 1, 'b')">
+            <span class="opt-letter">B</span> Global Variable
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 1, 'c')">
+            <span class="opt-letter">C</span> Parameter
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 1, 'd')">
+            <span class="opt-letter">D</span> Method
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
 
-        <div class="nav-footer">
-      
+      <!-- Question 2 -->
+      <div class="quiz-card" data-q="2">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 2 / 5</span></div>
+        <div class="quiz-q-text">2. JavaScript లో ఏ <code>return</code> స్టేట్‌మెంట్ రాయని function డిఫాల్ట్‌గా ఏమి విలువను తిరిగి ఇస్తుంది?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 2, 'a')">
+            <span class="opt-letter">A</span> 0 (Zero)
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 2, 'b')">
+            <span class="opt-letter">B</span> null
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 2, 'c')">
+            <span class="opt-letter">C</span> undefined
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 2, 'd')">
+            <span class="opt-letter">D</span> false
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="quiz-card" data-q="3">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 3 / 5</span></div>
+        <div class="quiz-q-text">3. క్రింది কোడ్ రన్ చేస్తే ఏమి జరుగుతుంది?
+          <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin:8px 0; color:#f7df1e; font-size:13px;"><code>console.log(cube(3));
+const cube = function (n) { return n ** 3; };</code></pre>
+        </div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 3, 'a')">
+            <span class="opt-letter">A</span> 27 print అవుతుంది
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 3, 'b')">
+            <span class="opt-letter">B</span> ReferenceError: Cannot access 'cube' before initialization
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 3, 'c')">
+            <span class="opt-letter">C</span> undefined print అవుతుంది
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 3, 'd')">
+            <span class="opt-letter">D</span> NaN print అవుతుంది
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="quiz-card" data-q="4">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 4 / 5</span></div>
+        <div class="quiz-q-text">4. <code>function calc(a, b = 10) { return a + b; }</code> ని <code>calc(5)</code> తో call చేస్తే ఔట్‌పుట్ ఏమిటి?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 4, 'a')">
+            <span class="opt-letter">A</span> NaN
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 4, 'b')">
+            <span class="opt-letter">B</span> 15
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 4, 'c')">
+            <span class="opt-letter">C</span> 5
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 4, 'd')">
+            <span class="opt-letter">D</span> undefined
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 5 -->
+      <div class="quiz-card" data-q="5">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 5 / 5</span></div>
+        <div class="quiz-q-text">5. Function లోపల <code>return</code> స్టేట్‌మెంట్ తర్వాత రాసిన code ఎందుకు run అవ్వదు?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 5, 'a')">
+            <span class="opt-letter">A</span> JavaScript ఇంజిన్ లో బగ్ ఉండటం వల్ల
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 5, 'b')">
+            <span class="opt-letter">B</span> return కనిపించగానే function అక్కడితో తక్షణమే పూర్తయిపోతుంది కాబట్టి
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 5, 'c')">
+            <span class="opt-letter">C</span> SyntaxError వస్తుంది కాబట్టి
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 5, 'd')">
+            <span class="opt-letter">D</span> కేవలం బ్రౌజర్లలో మాత్రమే అలా జరుగుతుంది
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Score Box & Reset -->
+      <div class="quiz-score-box">
+        <div class="quiz-score-text" id="quizScoreText">క్విజ్ ప్రారంభించండి! (మొత్తం 5 ప్రశ్నలు)</div>
+        <button class="quiz-reset-btn" onclick="resetQuiz()">🔄 మళ్ళీ ప్రయత్నించండి (Reset)</button>
+      </div>
+    </div>
+
+    <!-- Summary Box -->
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 సారాంశం (Quick Summary):</h3>
+      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.7; font-size: 14.5px;">
+        <li><strong>Function అంటే:</strong> ఒక పనికి సంబంధించిన code ని పేరు పెట్టి, ఎన్ని సార్లైనా పునర్వినియోగించుకునే (reuse) ఏర్పాటు.</li>
+        <li><strong>Declare:</strong> <code>function పేరు(parameters) { ... }</code>. <strong>Call:</strong> <code>పేరు(arguments);</code> (కుండలీకరణాలు తప్పనిసరి).</li>
+        <li><strong>Parameter =</strong> declare చేసేటప్పుడు రాసే ఖాళీ డబ్బా పేరు. <strong>Argument =</strong> call చేసేటప్పుడు పంపే అసలైన విలువ.</li>
+        <li><strong><code>return</code>:</strong> విలువను తిరిగి ఇస్తుంది మరియు function ని అక్కడే ముగిస్తుంది. return లేకపోతే <code>undefined</code> వస్తుంది.</li>
+        <li><strong><code>console.log</code> vs <code>return</code>:</strong> <code>console.log</code> కేవలం చూపిస్తుంది, <code>return</code> లెక్కల కోసం ప్రోగ్రామ్ కి తిరిగి ఇస్తుంది. రెండూ వేరు!</li>
+        <li><strong>Default parameter:</strong> <code>function f(name = "అతిథి")</code> — argument ఇవ్వకపోతే డిఫాల్ట్ విలువను వాడుకుంటుంది.</li>
+        <li><strong>Hoisting:</strong> Function declaration ని ముందే call చేయొచ్చు (Hoisting). కానీ function expression ని ముందే call చేస్తే <code>ReferenceError</code> వస్తుంది.</li>
+        <li><strong>Local Scope:</strong> Function లోపలి variables బయటకు కనిపించవు.</li>
+        <li>ప్రతి function ఒక్క పని మాత్రమే బాగా చేయాలి. Function పేరు సాధారణంగా క్రియ (verb) తో మొదలవ్వాలి.</li>
+      </ul>
+    </div>
+
+    <!-- Next Chapter Announcement -->
+    <div class="intro-box" style="background: linear-gradient(135deg, rgba(247, 223, 30, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%); border: 1px solid rgba(247, 223, 30, 0.35); margin-top: 30px; padding: 24px;">
+      <h2 style="color: #f7df1e; font-size: 20px; margin-bottom: 10px; font-family: 'Sora', sans-serif;">👉 తర్వాతి పాఠం: Arrow Functions →</h2>
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        ఇప్పటివరకు మనం సాంప్రదాయ <code>function</code> కీవర్డ్ తో functions రాశాం. తర్వాతి పాఠంలో ఆధునిక JavaScript (ES6+) లో functions ని అత్యంత చిన్నగా, సొగసైన పద్ధతిలో రాసే <strong>Arrow Functions (<code>=&gt;</code>)</strong> గురించి నేర్చుకుందాం!
+      </p>
+      <div style="margin-top: 14px;">
+        <a href="arrow-functions.html" style="color: #38bdf8; font-weight: 700; text-decoration: underline; font-size: 15px;">13. Arrow Functions: ఆధునిక జావాస్క్రిప్ట్ సింటాక్స్ →</a>
+      </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="nav-footer">
       <a href="break-continue.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
         <span class="title">11. break & continue</span>
       </a>
 
-      
       <a href="arrow-functions.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
         <span class="title">13. Arrow Functions</span>
