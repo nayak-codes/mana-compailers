@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr) — Modern C Tutorial | Our Compiler</title>
+  <meta name="description" content="పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr) సమగ్ర తెలుగు గైడ్: అర్రే డికే (Array Decay) రహస్యం · *(arr + i) నోటేషన్ · డబుల్ పాయింటర్లు (**ptr) · ఫంక్షన్ పాయింటర్లు (Callbacks)." />
+  <meta name="keywords" content="c tutorial in telugu, learn c language, పాయింటర్లు, అర్రేస్ & double pointers (**ptr), c programming, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/16-c-pointers-with-arrays-and-double-pointers.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr) (C Programming in Telugu)",
+    "description": "అర్రే డికే (Array Decay) రహస్యం · *(arr + i) నోటేషన్ · డబుల్ పాయింటర్లు (**ptr) · ఫంక్షన్ పాయింటర్లు (Callbacks)",
+    "articleSection": "Phase 04: అర్రేస్, స్ట్రింగ్స్ & పాయింటర్లు",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-10-29"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C Syntax Highlighter & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-c light-theme">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course (తెలుగు)</div>
+    <a href="/blog-c.html" class="sidebar-home-link">⚡ C Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & మెమరీ ఆర్కిటెక్చర్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/01-c-introduction-and-hello-world.html">1. C పరిచయం, చరిత్ర & మొదటి ప్రోగ్రామ్ (Hello World)</a>
+        <a href="/blog-c/02-c-variables-data-types-constants.html">2. వేరియబుల్స్, డేటా టైప్స్, కాన్‌స్టాంట్స్ & మెమరీ మోడల్</a>
+        <a href="/blog-c/03-c-user-input-scanf-format-specifiers.html">3. యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు & బఫర్ హ్యాండ్లింగ్</a>
+        <a href="/blog-c/04-c-operators-and-expressions.html">4. ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & ప్రిసిడెన్స్ నియమాలు</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/05-c-if-else-conditionals.html">5. కండిషనల్ స్టేట్‌మెంట్స్ (if, else if, else & Nested Branches)</a>
+        <a href="/blog-c/06-c-switch-case-decision-making.html">6. switch-case స్టేట్‌మెంట్ & మెనూ డ్రివెన్ ప్రోగ్రామింగ్</a>
+        <a href="/blog-c/07-c-loops-while-do-while-for.html">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-c/08-c-break-continue-nested-loops.html">8. break, continue, నెస్టెడ్ లూప్స్ & ప్యాటర్న్స్</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, స్కోప్ & రికర్షన్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/09-c-functions-and-prototypes.html">9. ఫంక్షన్స్, ఫార్వర్డ్ డిక్లరేషన్ & కాల్ స్టాక్ (Call Stack)</a>
+        <a href="/blog-c/10-c-parameter-passing-call-by-value-reference.html">10. Call by Value vs Call by Reference (పాయింటర్స్ ద్వారా)</a>
+        <a href="/blog-c/11-c-storage-classes-and-scope.html">11. వేరియబుల్ స్కోప్ & స్టోరేజ్ క్లాసెస్ (auto, static, extern, register)</a>
+        <a href="/blog-c/12-c-recursion-call-stack.html">12. రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">అర్రేస్, స్ట్రింగ్స్ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/13-c-arrays-1d-and-2d-matrices.html">13. అర్రేలు (1D Arrays & 2D Matrices)</a>
+        <a href="/blog-c/14-c-strings-character-arrays-string-h.html">14. స్ట్రింగ్స్ (Character Arrays, '\0' Null Terminator & <string.h>)</a>
+        <a href="/blog-c/15-c-pointers-basics-and-address-arithmetic.html">15. పాయింటర్లు: బేసిక్స్, మెమరీ అడ్రస్లు & Dereferencing (*, &)</a>
+        <a href="/blog-c/16-c-pointers-with-arrays-and-double-pointers.html" class="active">16. పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr)</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">స్ట్రక్చర్స్, డైనమిక్ మెమరీ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/17-c-structures-unions-and-typedef.html">17. స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef</a>
+        <a href="/blog-c/18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html">18. డైనమిక్ మెమరీ కేటాయింపు (malloc, calloc, realloc, free)</a>
+        <a href="/blog-c/19-c-file-handling-fopen-fclose-text-binary.html">19. ఫైల్ హ్యాండ్లింగ్ (<stdio.h>, fopen, fclose, fprintf, fscanf, fread, fwrite)</a>
+        <a href="/blog-c/20-c-mini-project-student-record-management.html">20. కంప్లీట్ మినీ ప్రాజెక్ట్: స్టూడెంట్ రికార్డ్ మేనేజ్‌మెంట్ సిస్టమ్</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-c-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 16: పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr)</span>
+    </div>
+
+    <h1 class="page-title">పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C (C99 / C11)</span>
+      <span class="badge">🟢 Chapter 16 of 20</span>
+      <span class="badge">📂 Phase 04: అర్రేస్, స్ట్రింగ్స్ & పాయింటర్లు</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Covered Topics Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>అర్రే డికే (Array Decay) రహస్యం · *(arr + i) నోటేషన్ · డబుల్ పాయింటర్లు (**ptr) · ఫంక్షన్ పాయింటర్లు (Callbacks)</span>
+    </div>
+
+    
+    <div class="intro-box">
+      అర్రే పేరు స్వయంగా ఒక పాయింటర్‌గా క్షీణించడం (Array Decay), డబుల్ పాయింటర్లు (<code>**ptr</code>), మరియు C లో ఈవెంట్ సిస్టమ్స్‌ను నిర్మించే <strong>ఫంక్షన్ పాయింటర్లు (Function Pointers)</strong> గురించి నేర్చుకుందాం.
+    </div>
+
+    <div class="section-title"><span class="num">1</span>డబుల్ పాయింటర్లు: Pointer to a Pointer</div>
+    <div class="section-body">
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Double Pointer</span>
+          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int val = 99;
+    int* p1 = &val;
+    int** p2 = &p1; // పాయింటర్ p1 యొక్క అడ్రస్‌ను పట్టుకునే డబుల్ పాయింటర్
+
+    printf("Direct: %d | Via P1: %d | Via P2: %d\n", val, *p1, **p2);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+  
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      
+      <a href="/blog-c/15-c-pointers-basics-and-address-arithmetic.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 15. పాయింటర్లు: బేసిక్స్
+      </a>
+      
+      <a href="/blog-c/17-c-structures-unions-and-typedef.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 17. స్ట్రక్చర్స్ & యూనియన్స్ →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
