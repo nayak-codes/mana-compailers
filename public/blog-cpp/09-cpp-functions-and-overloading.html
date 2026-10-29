@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ఫంక్షన్స్ & Function Overloading — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ ఫంక్షన్స్ మరియు Function Overloading సమగ్ర గైడ్ తెలుగులో: Call Stack, Activation Records, Pass by Value vs Pass by Reference (&), Const Reference, Name Mangling, మరియు inline ఫంక్షన్ల అంతర్గత పనితీరు." />
+  <meta name="keywords" content="c++ functions in telugu, pass by value vs pass by reference c++ telugu, function overloading in c++ telugu, c++ call stack activation records, name mangling c++, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/09-cpp-functions-and-overloading.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "ఫంక్షన్స్ & Function Overloading (Functions & Overloading in C++) తెలుగులో",
+    "description": "C++ ఫంక్షన్స్: Call Stack, Stack Frames, Pass by Value vs Reference, Const Reference, Function Overloading, మరియు Name Mangling.",
+    "articleSection": "Phase 3: Functions, Memory & Pointers",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-09",
+    "dateModified": "2026-10-29"
+  }
+  </script>
+
+  <!-- Schema.org FAQPage Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "C++ లో Pass by Value కి Pass by Reference కి ముఖ్యమైన తేడా ఏమిటి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pass by Value లో వేరియబుల్ యొక్క పూర్తి డూప్లికేట్ కాపీ ఫంక్షన్‌కు వెళ్తుంది; కాబట్టి ఫంక్షన్ లోపల మార్పులు చేస్తే ఒరిజినల్ వేరియబుల్ మారదు. Pass by Reference (&) లో కొత్త కాపీ సృష్టించబడదు, నేరుగా ఒరిజినల్ వేరియబుల్ మెమరీ అడ్రస్‌నే పంచుకుంటుంది; కాబట్టి ఫంక్షన్ లోపల మార్పులు చేస్తే బయట ఉన్న ఒరిజినల్ వేరియబుల్ కూడా మారుతుంది."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "C++ లో కేవలం Return Type మార్చి Function Overload చేయవచ్చా?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ఖచ్చితంగా కుదరదు! C++ లో Function Signature అంటే కేవలం ఫంక్షన్ పేరు మరియు దాని పారామీటర్ల రకాలు మాత్రమే. Return Type అనేది ఫంక్షన్ సిగ్నేచర్‌లో భాగం కాదు. కాబట్టి పారామీటర్లు ఒకేలా ఉండి కేవలం రిటర్న్ టైప్ వేరుగా ఉంటే కంపైలర్ 'ambiguity error' ఇస్తుంది."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Modern C++ లో 'const Type&' (Pass by Const Reference) ఎందుకు అంత ప్రాచుర్యం పొందింది?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "పెద్ద స్ట్రింగ్స్ లేదా ఆబ్జెక్టులను పాస్ చేసేటప్పుడు మెమరీ కాపీ అయ్యే ఓవర్‌హెడ్ లేకుండా (Zero Copy Speed) రిఫరెన్స్ ద్వారా పంపుతుంది. అదే సమయంలో 'const' ఉండటం వల్ల ఆ ఫంక్షన్ మన డేటాను పొరపాటున కూడా మార్చకుండా రీడ్-ఓన్లీ భద్రతను ఇస్తుంది."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CPP_TOK_${id}___`;
+      };
+
+      let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline'
+      ];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = ['std','cout','cin','endl','getline','string','vector','map','set','main','fixed','setprecision'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:f|u|l|ll)?)\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightCppCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display:flex; gap:8px; align-items:center; margin-left:auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_cpp17', rawCode);
+              window.location.href = '/online-cpp-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightCppCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_cpp17', rawCode);
+                window.location.href = '/online-cpp-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course (తెలుగు)</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- PHASE 1: BASICS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & ఫండమెంటల్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html">1. C++ పరిచయం & Hello World</a>
+        <a href="/blog-cpp/02-cpp-variables-data-types.html">2. వేరియబుల్స్, డేటా టైప్స్ & auto</a>
+        <a href="/blog-cpp/03-cpp-input-output-cin-cout.html">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</a>
+        <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- PHASE 2: CONTROL FLOW -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-if-else-conditionals.html">5. డెసిషన్ మేకింగ్ (if, else if, else)</a>
+        <a href="/blog-cpp/06-cpp-switch-case.html">6. switch స్టేట్‌మెంట్ & Fall-through</a>
+        <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
+      </div>
+
+      <!-- PHASE 3: FUNCTIONS & MEMORY (ACTIVE) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, మెమరీ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html" class="active">9. ఫంక్షన్స్ & Function Overloading</a>
+        <a href="/blog-cpp/10-cpp-arrays-and-strings.html">10. అర్రేలు (Arrays) & std::string</a>
+        <a href="/blog-cpp/11-cpp-pointers-and-references.html">11. పాయింటర్లు & రిఫరెన్సెస్</a>
+        <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
+      </div>
+
+      <!-- PHASE 4: OOPS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-classes-and-objects.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & Encapsulation</a>
+        <a href="/blog-cpp/14-cpp-constructors-and-destructors.html">14. Constructors, Destructors & RAII</a>
+        <a href="/blog-cpp/15-cpp-inheritance.html">15. ఇన్హెరిటెన్స్ (Inheritance)</a>
+        <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html">16. పాలిమార్ఫిజమ్ & Virtual Functions</a>
+        <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
+      </div>
+
+      <!-- PHASE 5: ADVANCED STL -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C++, STL & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-templates-generic-programming.html">18. టెంప్లేట్లు & Generic Programming</a>
+        <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
+        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. Exceptions, Files & Mini Project</a>
+      </div>
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-cpp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 9: Functions & Overloading</span>
+    </div>
+
+    <h1 class="page-title">ఫంక్షన్స్ & Function Overloading (Functions, Parameters & Overloading)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++20 / C++17</span>
+      <span class="badge">🟢 Chapter 9 of 20</span>
+      <span class="badge">📂 Phase 3: Functions, Memory & Pointers</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Covered Topics Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Function Prototypes vs Definitions · Call Stack & Activation Records (RAM Architecture) · Pass by Value vs Pass by Reference (&) · Modern C++ Const Reference (const Type&) · Function Overloading Rules · Name Mangling under the hood · Default Arguments · Inline Functions (inline)</span>
+    </div>
+
+    <!-- Intro Overview Box -->
+    <div class="intro-box">
+      ప్రపంచ స్థాయి సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌కు మూలస్తంభం <strong>మాడ్యులారిటీ మరియు రీయూజబిలిటీ (DRY: Don't Repeat Yourself)</strong>. వేలాది లైన్ల భారీ కోడ్‌ను స్వతంత్రమైన చిన్న పనులుగా విభజించడానికి <strong>Functions</strong> తోడ్పడతాయి. ఈ అధ్యాయంలో ఫంక్షన్ పిలిచినప్పుడు CPU మరియు RAM లోని <strong>Call Stack</strong> లో ఏం జరుగుతుంది, మెమరీ కాపీ అవ్వకుండా వేగాన్ని పెంచే <strong>Pass by Reference</strong>, మరియు కంపైలర్ లోపల <strong>Name Mangling</strong> ఎలా పనిచేస్తుందో లోతైన సిద్ధాంతంతో నేర్చుకుందాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>Function అంటే ఏమిటి? (Declaration vs Definition)</div>
+    <div class="section-body">
+      <p>
+        ఒక <strong>Function</strong> అంటే ఒక నిర్దిష్టమైన పనిని (Specific Task) పూర్తి చేయడానికి రూపొందించబడిన స్వయంప్రతిపత్తి కలిగిన స్టేట్‌మెంట్ల సమూహం.
+      </p>
+
+      <div class="concept-box">
+        <h4>🧱 The 4 Pillars of a Function Signature</h4>
+        <p>
+          ప్రతి ఫంక్షన్‌కు 4 ముఖ్యమైన భాగాలు ఉంటాయి:
+        </p>
+        <ul style="margin:0; padding-left:18px; line-height:1.75;">
+          <li><strong>Return Type:</strong> ఆ పని పూర్తయిన తర్వాత ఫంక్షన్ తిరిగి ఇచ్చే ఫలితం యొక్క డేటా టైప్ (ఉదా: <code>int</code>, <code>double</code>, ఏమీ ఇవ్వకపోతే <code>void</code>).</li>
+          <li><strong>Function Name:</strong> ఆ పనిని పిలవడానికి మనం పెట్టే పేరు (Identifier).</li>
+          <li><strong>Parameter List:</strong> ఆ పని పూర్తి చేయడానికి బయట నుంచి లోపలికి పంపించాల్సిన ముడిసరుకు (ఇన్‌పుట్ వేరియబుల్స్).</li>
+          <li><strong>Function Body:</strong> కర్లీ బ్రేసెస్ <code>{ ... }</code> మధ్య ఉండే అసలైన ఎగ్జిక్యూషన్ లాజిక్.</li>
+        </ul>
+      </div>
+
+      <h4 style="color:#10b981; margin:20px 0 10px; font-size:16px;">Function Prototype (Declaration) ఎందుకు అవసరం?</h4>
+      <p>
+        C++ కంపైలర్ మీ సోర్స్ కోడ్‌ను పై నుంచి కిందకి (Top to Bottom, Single-pass) చదువుతుంది. మీరు ఒక ఫంక్షన్‌ను <code>main()</code> కంటే కింద రాసి, <code>main()</code> లోపల దానిని పిలిస్తే కంపైలర్ <code>error: 'calculateBonus' was not declared in this scope</code> అని గగ్గోలు పెడుతుంది!
+      </p>
+      <p>
+        దీనిని నివారించడానికి <code>main()</code> కంటే పైన కేవలం ఫంక్షన్ హెడర్‌ను మాత్రమే రాసి సెమికోలన్ పెడతాం. దీనినే <strong>Function Prototype లేదా Forward Declaration</strong> అంటారు. ఇది కంపైలర్‌కు <em>"కింద ఎక్కడో ఈ ఫంక్షన్ డెఫినిషన్ ఉంది, నువ్వు ధైర్యంగా ముందుకు సాగు"</em> అని హామీ ఇస్తుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>CPU లోపల Call Stack & Activation Records (మెమరీ రహస్యం)</div>
+    <div class="section-body">
+      <p>
+        మీరు ఒక ఫంక్షన్‌ను పిలిచినప్పుడు కంప్యూటర్ ర్యామ్ (RAM) లో ఏమి జరుగుతుందో ఒక సాఫ్ట్‌వేర్ ఆర్కిటెక్ట్‌గా మీరు తప్పనిసరిగా తెలుసుకోవాలి.
+      </p>
+      <p>
+        కంప్యూటర్ మెమరీలోని <strong>Stack Segment</strong> లో ప్రతి ఫంక్షన్ కాల్ కోసం ఒక ప్రత్యేకమైన పెట్టె కేటాయించబడుతుంది. దీనిని <strong>Stack Frame లేదా Activation Record</strong> అంటారు.
+      </p>
+
+      <!-- Visual Call Stack ASCII Diagram -->
+      <div class="diagram-box">┌────────────────────────────────────────────────────────┐  ◄── Stack Top (SP)
+│  Stack Frame: calculateTotal()                         │
+│  - Return Address (ఏ లైన్‌కి తిరిగి వెళ్లాలో గుర్తు)   │
+│  - Parameters: (price=500, taxRate=0.18)               │
+│  - Local Variables: (finalAmount=590)                  │
+├────────────────────────────────────────────────────────┤
+│  Stack Frame: main()                                   │
+│  - Local Variables: (cartTotal=500, customerId=101)    │
+│  - Return Address: (Operating System Shell)            │
+└────────────────────────────────────────────────────────┘  ◄── Stack Bottom</div>
+
+      <h4 style="color:#10b981; margin:16px 0 8px;">ఫంక్షన్ కాల్ లైఫ్‌సైకిల్ (The 3 Critical Steps):</h4>
+      <ol style="margin-left:20px; line-height:1.85;">
+        <li>
+          <strong>Step 1: PUSH:</strong> ఫంక్షన్ పిలవబడగానే, ప్రోగ్రామ్ కౌంటర్ (Program Counter) ప్రస్తుత లైన్‌ను సేవ్ చేసుకుని, ఫంక్షన్ యొక్క పారామీటర్లు మరియు లోకల్ వేరియబుల్స్ కోసం ఒక కొత్త స్టాక్ ఫ్రేమ్‌ను స్టాక్ పైకి పుష్ (Push) చేస్తుంది.
+        </li>
+        <li>
+          <strong>Step 2: EXECUTION:</strong> ఫంక్షన్ లోపల ఉన్న స్టేట్‌మెంట్లు ఎగ్జిక్యూట్ అవుతాయి. వేరియబుల్స్ అన్నీ ఆ ఫ్రేమ్‌లోని లోకల్ మెమరీలోనే ఉంటాయి.
+        </li>
+        <li>
+          <strong>Step 3: POP & DESTRUCTION:</strong> ఫంక్షన్ <code>return</code> స్టేట్‌మెంట్‌కు రాగానే, ఆ స్టాక్ ఫ్రేమ్ మొత్తం తక్షణమే స్టాక్ నుండి పాప్ (Pop) అయిపోతుంది! అందులోని లోకల్ వేరియబుల్స్ అన్నీ క్షణాల్లో నాశనమై మెమరీ క్లీన్ అవుతుంది. ఆ తర్వాత సేవ్ చేసుకున్న Return Address ద్వారా కంట్రోల్ తిరిగి <code>main()</code> లోని కాలింగ్ లైన్‌కు చేరుకుంటుంది.
+        </li>
+      </ol>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>Pass by Value vs Pass by Reference (`&`) & Const Reference</div>
+    <div class="section-body">
+      <p>
+        C++ లో ఫంక్షన్లకు డేటాను పంపే విధానం మీ ప్రోగ్రామ్ పనితీరును (Performance) ఆకాశానికెత్తగలదు లేదా అధఃపాతాళానికి తొక్కగలదు!
+      </p>
+
+      <div style="overflow-x:auto; margin:16px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
+              <th style="padding:12px 14px; color:#10b981;">లక్షణం</th>
+              <th style="padding:12px 14px; color:var(--text);">Pass by Value (`int x`)</th>
+              <th style="padding:12px 14px; color:#10b981;">Pass by Reference (`int& x`)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">మెమరీ మెకానిజం</td>
+              <td style="padding:10px 14px; color:var(--text2);">పూర్తి డూప్లికేట్ కాపీని సృష్టిస్తుంది (New Memory Allocation).</td>
+              <td style="padding:10px 14px; color:var(--text);">కాపీ చేయదు; ఒరిజినల్ వేరియబుల్ మెమరీ అడ్రస్‌కే మరో మారుపేరు (Alias).</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">ఒరిజినల్ డేటా మార్పు</td>
+              <td style="padding:10px 14px; color:var(--text2);">ఫంక్షన్ లోపల మార్చినా ఒరిజినల్ వేరియబుల్ అస్సలు మారదు.</td>
+              <td style="padding:10px 14px; color:var(--text);">ఫంక్షన్ లోపల మార్చితే బయట ఉన్న ఒరిజినల్ వేరియబుల్ కూడా మారిపోతుంది!</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:700;">ఉపయోగం</td>
+              <td style="padding:10px 14px; color:var(--text2);">చిన్న డేటా టైప్స్ (int, char, double, bool) కు మంచిది.</td>
+              <td style="padding:10px 14px; color:var(--text);">రెండు వేరియబుల్స్ విలువలను స్వాప్ చేయడానికి లేదా అవుట్‌పుట్ మార్చడానికి.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="concept-box">
+        <h4>🌟 Modern C++ Golden Rule: `const Type&` (Pass by Const Reference)</h4>
+        <p>
+          మీరు ఒక 1MB సైజు ఉన్న పెద్ద టెక్స్ట్ డాక్యుమెంట్‌ను లేదా 10,000 ఎలిమెంట్స్ ఉన్న <code>std::vector</code> ను ఫంక్షన్‌కు పాస్ చేయాలనుకున్నారు.
+        </p>
+        <p>
+          • Pass by Value వాడితే: 1MB మొత్తం మళ్ళీ కాపీ అవ్వడానికి వేల CPU సైకిల్స్ వృధా అవుతాయి!
+          <br>• సాధారణ Reference (<code>Type&</code>) వాడితే: కాపీ అవ్వదు కానీ, ఫంక్షన్ పొరపాటున ఆ డేటాను మార్చేసే ప్రమాదం ఉంది!
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>సొల్యూషన్:</strong> <code>const std::string& document</code> అని పాస్ చేయాలి! ఇది <strong>Zero Copy Speed</strong> ని ఇస్తుంది, మరియు <code>const</code> వల్ల ఫంక్షన్ ఆ డేటాను ఎట్టిపరిస్థితుల్లోనూ మార్చకుండా 100% సేఫ్టీని ఇస్తుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>Function Overloading & Name Mangling</div>
+    <div class="section-body">
+      <p>
+        ఒకే పేరుతో విభిన్న పారామీటర్లను తీసుకునే బహుళ ఫంక్షన్లను రూపొందించడాన్ని <strong>Function Overloading (Compile-Time Polymorphism)</strong> అంటారు.
+      </p>
+
+      <h4 style="color:#10b981; margin:16px 0 8px;">ఓవర్‌లోడింగ్ నియమాలు (Rules of Overloading):</h4>
+      <ul style="line-height:1.8;">
+        <li>పారామీటర్ల సంఖ్య మారాలి (ఉదా: 2 పారామీటర్లు vs 3 పారామీటర్లు).</li>
+        <li>లేదా పారామీటర్ల డేటా టైప్స్ మారాలి (ఉదా: <code>int, int</code> vs <code>double, double</code>).</li>
+        <li><strong>క్రిటికల్ రూల్:</strong> కేవలం Return Type ఒక్కటే మారితే C++ కంపైలర్ ఓవర్‌లోడింగ్‌గా అంగీకరించదు! ఎందుకంటే ఫంక్షన్ కాల్ చేసేటప్పుడు కంపైలర్ ఏ ఫంక్షన్ పిలవాలో నిర్ణయించడానికి పారామీటర్లను మాత్రమే చూస్తుంది.</li>
+      </ul>
+
+      <div class="concept-box">
+        <h4>🧬 Under the Hood: C++ Name Mangling (Symbol Decoration)</h4>
+        <p>
+          C లాంగ్వేజ్‌లో Function Overloading ఎందుకు ఉండదు? ఎందుకంటే C కంపైలర్ ఫంక్షన్ పేరును నేరుగా <code>_add</code> అనే సింబల్‌గా మారుస్తుంది. కాబట్టి రెండు <code>add</code> లు ఉంటే డూప్లికేట్ సింబల్ ఎర్రర్ వస్తుంది.
+        </p>
+        <p style="margin-bottom:0;">
+          కానీ C++ కంపైలర్ <strong>Name Mangling</strong> చేస్తుంది. అంటే ఫంక్షన్ పేరుతో పాటు దాని పారామీటర్ల అక్షరాలను కలిపి ఒక రహస్య సింబల్‌గా మారుస్తుంది:
+          <br>• <code>int add(int, int)</code> $\rightarrow$ <code>_Z3addii</code> గా మారుతుంది.
+          <br>• <code>double add(double, double)</code> $\rightarrow$ <code>_Z3adddd</code> గా మారుతుంది.
+          <br>లింకర్ దృష్టిలో ఇవి రెండూ పూర్తిగా వేర్వేరు ఫంక్షన్లు! అందుకే C++ లో ఓవర్‌లోడింగ్ అద్భుతంగా పనిచేస్తుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>Default Arguments & Inline Functions (`inline`)</div>
+    <div class="section-body">
+      <p>
+        <strong>Default Arguments:</strong> ఒక ఫంక్షన్‌కు కాలర్ విలువ పంపకపోతే ఆటోమేటిక్‌గా ఒక డీఫాల్ట్ విలువను తీసుకోవడానికి ఇది వాడతాం. (ముఖ్య నియమం: డీఫాల్ట్ ఆర్గ్యుమెంట్లు ఎల్లప్పుడూ పారామీటర్ లిస్ట్‌లో కుడి చివర మాత్రమే ఉండాలి).
+      </p>
+      <p>
+        <strong>Inline Functions (`inline`):</strong> సాధారణంగా ఒక ఫంక్షన్‌ను పిలిచినప్పుడు CPU రిజిస్టర్లను సేవ్ చేయడం, జంప్ చేయడం వంటి Call Overhead ఉంటుంది. ఒక చిన్న 1-2 లైన్ల ఫంక్షన్‌ను <code>inline</code> అని డిక్లేర్ చేస్తే, కంపైలర్ ఆ ఫంక్షన్‌ను పిలిచే బదులు, ఆ ఫంక్షన్ బాడీని నేరుగా ఆ లైన్‌లోనే అతికిస్తుంది (Inlining). దీనివల్ల ఫంక్షన్ కాల్ ఓవర్‌హెడ్ శూన్యమవుతుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 6: UNIFIED CODE SHOWCASE (FEWER BOXES, MAXIMUM IMPACT) -->
+    <div class="section-title"><span class="num">6</span>ప్రాక్టికల్ కోడ్ ఇంప్లిమెంటేషన్ (Practical Code Showcase)</div>
+    <div class="section-body">
+      <p>
+        పై కాన్సెప్ట్‌లన్నింటినీ కలుపుతూ రూపొందించిన రెండు సమగ్రమైన ప్రోగ్రామ్‌లను పరిశీలిద్దాం:
+      </p>
+
+      <!-- Code Box 1 -->
+      <div style="margin-top: 16px; margin-bottom: 20px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Pass by Value vs Pass by Reference vs Const Reference</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 Reference Mechanics</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+// 1. Pass by Value: కాపీ అవుతుంది, బయట వేరియబుల్ మారదు
+void tryModifyValue(int val) {
+    val += 100;
+}
+
+// 2. Pass by Reference: నేరుగా ఒరిజినల్ మెమరీనే మారుస్తుంది
+void modifyByReference(int&amp; ref) {
+    ref += 100;
+}
+
+// 3. Pass by Const Reference: జీరో కాపీ స్పీడ్ + రీడ్ ఓన్లీ సేఫ్టీ
+void displayStudent(const std::string&amp; name, const int&amp; roll) {
+    // name += " Jr."; // ❌ ERROR: assignment of read-only reference
+    std::cout &lt;&lt; "Student: " &lt;&lt; name &lt;&lt; " | Roll No: " &lt;&lt; roll &lt;&lt; "\n";
+}
+
+int main() {
+    int score = 50;
+
+    tryModifyValue(score);
+    std::cout &lt;&lt; "After tryModifyValue     : score = " &lt;&lt; score &lt;&lt; " (Unchanged!)\n";
+
+    modifyByReference(score);
+    std::cout &lt;&lt; "After modifyByReference  : score = " &lt;&lt; score &lt;&lt; " (Modified directly!)\n";
+
+    std::string studentName = "Balaji Nayak";
+    displayStudent(studentName, 101);
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Code Box 2 -->
+      <div style="margin-top: 20px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Function Overloading & Default Arguments in Action</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 Overloading</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+// Overload 1: రెండు పూర్ణాంకాలను కలపడం
+int computeSum(int a, int b) {
+    return a + b;
+}
+
+// Overload 2: మూడు పూర్ణాంకాలను కలపడం (మూడవది డీఫాల్ట్ ఆర్గ్యుమెంట్ c = 0)
+int computeSum(int a, int b, int c) {
+    return a + b + c;
+}
+
+// Overload 3: రెండు దశాంశ సంఖ్యలను కలపడం
+double computeSum(double a, double b) {
+    return a + b;
+}
+
+int main() {
+    std::cout &lt;&lt; "computeSum(10, 20)         : " &lt;&lt; computeSum(10, 20) &lt;&lt; "\n";
+    std::cout &lt;&lt; "computeSum(10, 20, 30)     : " &lt;&lt; computeSum(10, 20, 30) &lt;&lt; "\n";
+    std::cout &lt;&lt; "computeSum(12.5, 7.25)     : " &lt;&lt; computeSum(12.5, 7.25) &lt;&lt; "\n";
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMON PITFALLS CALLOUT -->
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 9</div>
+      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
+        <li>
+          <strong>Dangling Reference విపత్తు (Returning Reference to Local Variable):</strong> ఒక ఫంక్షన్ లోపల ఉన్న లోకల్ వేరియబుల్‌కు రిఫరెన్స్ రిటర్న్ చేయకూడదు (ఉదా: <code>int&amp; getNum() { int x = 10; return x; }</code>). ఎందుకంటే ఫంక్షన్ ముగియగానే ఆ స్టాక్ ఫ్రేమ్ నాశనమవుతుంది, మీరు గాల్లో ఉన్న చెత్త మెమరీని పాయింట్ చేస్తారు!
+        </li>
+        <li>
+          <strong>Ambiguous Function Call:</strong> <code>add(int, double)</code> మరియు <code>add(double, int)</code> ఉన్నప్పుడు మీరు <code>add(5, 5)</code> అని పిలిస్తే, కంపైలర్ ఏది పిలవాలో తెలియక క్రాష్ అవుతుంది.
+        </li>
+      </ul>
+    </div>
+
+    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
+        <strong>టాస్క్:</strong> Function Overloading ఉపయోగించి ఒక జియోమెట్రీ ఏరియా కాలిక్యులేటర్ రాయండి:
+        <br>• చతురస్రం వైశాల్యం: <code>calculateArea(int side)</code>
+        <br>• దీర్ఘచతురస్రం వైశాల్యం: <code>calculateArea(int length, int breadth)</code>
+        <br>• వృత్తం వైశాల్యం: <code>calculateArea(double radius)</code> — దీనిని బ్రౌజర్‌లోనే రన్ చేసి ఫలితం చూడండి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++17 Geometry Overload Challenge</span>
+          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+
+// చతురస్రం వైశాల్యం (Square: side * side)
+int calculateArea(int side) {
+    return side * side;
+}
+
+// దీర్ఘచతురస్రం వైశాల్యం (Rectangle: length * breadth)
+int calculateArea(int length, int breadth) {
+    return length * breadth;
+}
+
+// వృత్తం వైశాల్యం (Circle: pi * r^2)
+double calculateArea(double radius) {
+    constexpr double PI = 3.1415926535;
+    return PI * radius * radius;
+}
+
+int main() {
+    std::cout &lt;&lt; "========================================\n";
+    std::cout &lt;&lt; "       GEOMETRIC AREA CALCULATOR        \n";
+    std::cout &lt;&lt; "========================================\n";
+    std::cout &lt;&lt; "Square Area (side = 6)       : " &lt;&lt; calculateArea(6) &lt;&lt; " sq. units\n";
+    std::cout &lt;&lt; "Rectangle Area (10 x 5)      : " &lt;&lt; calculateArea(10, 5) &lt;&lt; " sq. units\n";
+    std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);
+    std::cout &lt;&lt; "Circle Area (radius = 4.5)   : " &lt;&lt; calculateArea(4.5) &lt;&lt; " sq. units\n";
+    std::cout &lt;&lt; "========================================\n";
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో Pass by Value కి Pass by Reference కి ముఖ్యమైన తేడా ఏమిటి?</h4>
+      <p>
+        Pass by Value లో వేరియబుల్ యొక్క పూర్తి డూప్లికేట్ కాపీ ఫంక్షన్‌కు వెళ్తుంది; కాబట్టి ఫంక్షన్ లోపల మార్పులు చేస్తే ఒరిజినల్ వేరియబుల్ మారదు. Pass by Reference (<code>&</code>) లో కొత్త కాపీ సృష్టించబడదు, నేరుగా ఒరిజినల్ వేరియబుల్ మెమరీ అడ్రస్‌నే పంచుకుంటుంది; కాబట్టి ఫంక్షన్ లోపల మార్పులు చేస్తే బయట ఉన్న ఒరిజినల్ వేరియబుల్ కూడా మారుతుంది.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో కేవలం Return Type మార్చి Function Overload చేయవచ్చా?</h4>
+      <p>
+        ఖచ్చితంగా కుదరదు! C++ లో Function Signature అంటే కేవలం ఫంక్షన్ పేరు మరియు దాని పారామీటర్ల రకాలు మాత్రమే. Return Type అనేది ఫంక్షన్ సిగ్నేచర్‌లో భాగం కాదు. కాబట్టి పారామీటర్లు ఒకేలా ఉండి కేవలం రిటర్న్ టైప్ వేరుగా ఉంటే కంపైలర్ Ambiguity Error ఇస్తుంది.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++ లో 'const Type&' (Pass by Const Reference) ఎందుకు అంత ప్రాచుర్యం పొందింది?</h4>
+      <p>
+        పెద్ద స్ట్రింగ్స్ లేదా ఆబ్జెక్టులను పాస్ చేసేటప్పుడు మెమరీ కాపీ అయ్యే ఓవర్‌హెడ్ లేకుండా (Zero Copy Speed) రిఫరెన్స్ ద్వారా పంపుతుంది. అదే సమయంలో <code>const</code> ఉండటం వల్ల ఆ ఫంక్షన్ మన డేటాను పొరపాటున కూడా మార్చకుండా రీడ్-ఓన్లీ భద్రతను ఇస్తుంది.
+      </p>
+    </div>
+
+    <!-- AUTHOR ATTRIBUTION -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+      </div>
+    </div>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <a href="/blog-cpp/08-cpp-break-continue.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
+        <span style="font-size:14px; font-weight:700;">8. break, continue & లూప్ కంట్రోల్</span>
+      </a>
+
+      <a href="/blog-cpp/10-cpp-arrays-and-strings.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
+        <span style="font-size:14px; font-weight:700;">10. అర్రేలు & std::string</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
