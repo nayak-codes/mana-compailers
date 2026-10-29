@@ -232,89 +232,190 @@
 
     
     <div class="intro-box">
-      కంప్యూటర్ RAM మెమరీలో డేటాను భద్రపరచడానికి కేటాయించే పేరున్న స్థలాలనే <strong>వేరియబుల్స్ (Variables)</strong> అంటారు. C లో వివిధ రకాల డేటా టైప్స్, వాటి బైట్ పరిమాణాలు (Sizes), <code>sizeof</code> ఆపరేటర్ మరియు అన్‌సైన్డ్ ఓవర్‌ఫ్లో ప్రమాదాలను ఈ అధ్యాయంలో నేర్చుకుందాం.
+      కంప్యూటర్ ప్రోగ్రామింగ్ అంటే వాస్తవానికి మెమరీ (RAM) లోని బైట్లను చదవడం, లెక్కించడం మరియు తిరిగి నిల్వ చేయడమే. ఈ అధ్యాయంలో C లాంగ్వేజ్ RAM ను ఎలా కేటాయిస్తుంది (Memory Cells & Addresses), ఫండమెంటల్ డేటా టైప్స్, <code>sizeof</code> ఆపరేటర్, <code>const</code> vs <code>#define</code> మరియు సైన్డ్ ఓవర్‌ఫ్లో ప్రమాదాలను లోతుగా నేర్చుకుందాం.
     </div>
 
+    <!-- SECTION 1 -->
     <div class="section-title"><span class="num">1</span>వేరియబుల్స్ & RAM మెమరీ లేఅవుట్</div>
     <div class="section-body">
       <p>
-        ఒక వేరియబుల్ డిక్లేర్ చేసినప్పుడు RAM లో దాని డేటా టైప్‌కు సరిపడా బైట్లు కేటాయించబడతాయి:
+        <strong>వేరియబుల్ (Variable)</strong> అంటే మెమరీ (RAM) లోని ఒక నిర్దిష్ట స్థానానికి మనం పెట్టే పేరు. కంప్యూటర్ అంతర్గతంగా మెమరీని హెక్సాడెసిమల్ అడ్రస్‌లతో (ఉదాహరణకు <code>0x7ffee4a10</code>) గుర్తిస్తుంది. మనుషులు ప్రతిసారీ ఈ అడ్రస్‌లను గుర్తుపెట్టుకోవడం అసాధ్యం కాబట్టి C మనకు వేరియబుల్స్ అనే సౌకర్యాన్ని కల్పిస్తుంది.
       </p>
 
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin:18px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-top:3px solid #10b981; border-radius:8px; padding:12px;">
-          <div style="font-size:11px; color:#10b981; font-family:var(--font-mono);">0x2000 to 0x2003 (4 Bytes)</div>
-          <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">int rollNo = 101;</div>
-          <div style="font-size:12px; color:var(--text2);">పూర్ణాంకాలు (Integer Data)</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#10b981; margin-bottom:6px; font-size:14px;">1. డిక్లరేషన్ (Declaration):</div>
+          <code style="font-size:13px; color:var(--text); display:block; background:var(--bg3); padding:6px 10px; border-radius:4px; margin-bottom:8px;">int age;</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">కంపైలర్‌కు "నాకు మెమరీలో 4 బైట్ల పూర్ణాంక స్థలాన్ని కేటాయించు, దాని పేరు age" అని చెప్పడం.</p>
         </div>
-        <div style="background:var(--bg2); border:1px solid var(--border); border-top:3px solid #3b82f6; border-radius:8px; padding:12px;">
-          <div style="font-size:11px; color:#3b82f6; font-family:var(--font-mono);">0x2004 to 0x2007 (4 Bytes)</div>
-          <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">float cgpa = 8.75f;</div>
-          <div style="font-size:12px; color:var(--text2);">దశాంశ సంఖ్యలు (Single Precision)</div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#10b981; margin-bottom:6px; font-size:14px;">2. ఇనీషియలైజేషన్ (Initialization):</div>
+          <code style="font-size:13px; color:var(--text); display:block; background:var(--bg3); padding:6px 10px; border-radius:4px; margin-bottom:8px;">age = 25;</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">ఆ కేటాయించబడిన 4 బైట్ల RAM గదిలో <code>25</code> అనే బైనరీ విలువను నిల్వ చేయడం.</p>
         </div>
-        <div style="background:var(--bg2); border:1px solid var(--border); border-top:3px solid #f59e0b; border-radius:8px; padding:12px;">
-          <div style="font-size:11px; color:#f59e0b; font-family:var(--font-mono);">0x2008 (1 Byte)</div>
-          <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">char section = 'A';</div>
-          <div style="font-size:12px; color:var(--text2);">సింగిల్ అక్షరం (ASCII Code 65)</div>
-        </div>
+      </div>
+
+      <div style="background:rgba(245, 158, 11, 0.08); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#d97706; font-size:14px;">⚠️ గార్బేజ్ వాల్యూస్ (Garbage Values) ప్రమాదం:</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          C లో ఒక వేరియబుల్‌ను కేవలం డిక్లేర్ చేసి (<code>int score;</code>) దానికి విలువ ఇవ్వకపోతే, C దానిని డీఫాల్ట్‌గా 0 చేయదు! గతంలో వేరే ఏదో ప్రోగ్రామ్ RAM లో వదిలేసిన పాత విలువ (Garbage Data) అలాగే ఉంటుంది. అందుకే ఎల్లప్పుడూ వేరియబుల్స్ ను ఇనీషియలైజ్ చేయాలి.
+        </p>
       </div>
     </div>
 
-    <div class="section-title"><span class="num">2</span>C ప్రిమిటివ్ డేటా టైప్స్ టేబుల్</div>
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>C ఫండమెంటల్ డేటా టైప్స్ (Data Types Matrix)</div>
     <div class="section-body">
+      <p>
+        ఆధునిక 64-బిట్ ఆర్కిటెక్చర్‌లలో (GCC/Clang) డేటా టైప్స్ యొక్క పరిమాణాలు మరియు వాటి పరిధుల పట్టిక:
+      </p>
+
       <div style="overflow-x:auto; margin:16px 0;">
         <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
           <thead>
-            <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
-              <th style="padding:10px 12px; color:#10b981;">డేటా టైప్</th>
-              <th style="padding:10px 12px; color:var(--text);">పరిమాణం (Size)</th>
-              <th style="padding:10px 12px; color:var(--text);">పరిధి (Range)</th>
-              <th style="padding:10px 12px; color:var(--text2);">Format Specifier</th>
+            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+              <th style="padding:10px 14px; color:var(--text);">డేటా టైప్</th>
+              <th style="padding:10px 14px; color:var(--text);">మెమరీ సైజ్</th>
+              <th style="padding:10px 14px; color:var(--text);">ఫార్మాట్ స్పెసిఫైయర్</th>
+              <th style="padding:10px 14px; color:var(--text);">విలువ పరిధి (Range)</th>
             </tr>
           </thead>
           <tbody>
             <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">char</td>
-              <td style="padding:9px 12px;">1 Byte</td>
-              <td style="padding:9px 12px;">-128 to 127</td>
-              <td style="padding:9px 12px; font-family:var(--font-mono);">%c</td>
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">char</td>
+              <td style="padding:10px 14px;">1 Byte (8 bits)</td>
+              <td style="padding:10px 14px;"><code>%c</code></td>
+              <td style="padding:10px 14px;">-128 నుండి 127 (లేదా 0 నుండి 255)</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">int</td>
-              <td style="padding:9px 12px;">4 Bytes</td>
-              <td style="padding:9px 12px;">-2.14 Billion to +2.14 Billion</td>
-              <td style="padding:9px 12px; font-family:var(--font-mono);">%d</td>
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">short</td>
+              <td style="padding:10px 14px;">2 Bytes (16 bits)</td>
+              <td style="padding:10px 14px;"><code>%hd</code></td>
+              <td style="padding:10px 14px;">-32,768 నుండి 32,767</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">float</td>
-              <td style="padding:9px 12px;">4 Bytes</td>
-              <td style="padding:9px 12px;">~6-7 డెసిమల్ డిజిట్స్</td>
-              <td style="padding:9px 12px; font-family:var(--font-mono);">%f</td>
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">int</td>
+              <td style="padding:10px 14px;">4 Bytes (32 bits)</td>
+              <td style="padding:10px 14px;"><code>%d</code> లేదా <code>%i</code></td>
+              <td style="padding:10px 14px;">-2,147,483,648 నుండి 2,147,483,647</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">unsigned int</td>
+              <td style="padding:10px 14px;">4 Bytes (32 bits)</td>
+              <td style="padding:10px 14px;"><code>%u</code></td>
+              <td style="padding:10px 14px;">0 నుండి 4,294,967,295</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">long long</td>
+              <td style="padding:10px 14px;">8 Bytes (64 bits)</td>
+              <td style="padding:10px 14px;"><code>%lld</code></td>
+              <td style="padding:10px 14px;">≈ -9.22 × 10<sup>18</sup> నుండి +9.22 × 10<sup>18</sup></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">float</td>
+              <td style="padding:10px 14px;">4 Bytes (32 bits)</td>
+              <td style="padding:10px 14px;"><code>%f</code></td>
+              <td style="padding:10px 14px;">6-7 దశాంశ అంకెల ఖచ్చితత్వం</td>
             </tr>
             <tr>
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">double</td>
-              <td style="padding:9px 12px;">8 Bytes</td>
-              <td style="padding:9px 12px;">~15-17 డెసిమల్ డిజిట్స్</td>
-              <td style="padding:9px 12px; font-family:var(--font-mono);">%lf</td>
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">double</td>
+              <td style="padding:10px 14px;">8 Bytes (64 bits)</td>
+              <td style="padding:10px 14px;"><code>%lf</code></td>
+              <td style="padding:10px 14px;">15-17 దశాంశ అంకెల అత్యున్నత ఖచ్చితత్వం</td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>sizeof ఆపరేటర్: లైవ్ మెమరీ తనిఖీ</div>
+    <div class="section-body">
+      <p>
+        ఏదైనా వేరియబుల్ లేదా డేటా టైప్ మెమరీలో ఎన్ని బైట్లు ఆక్రమించిందో తెలుసుకోవడానికి <strong>sizeof</strong> ఆపరేటర్ వాడతాం. ఇది ఫంక్షన్ కాదు, కంపైల్-టైమ్ ఆపరేటర్.
+      </p>
 
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — sizeof operator</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — sizeof operator demo</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    printf("char size:   %zu byte\n", sizeof(char));
-    printf("int size:    %zu bytes\n", sizeof(int));
-    printf("float size:  %zu bytes\n", sizeof(float));
-    printf("double size: %zu bytes\n", sizeof(double));
+int main(void) {
+    int a = 100;
+    double pi = 3.14159265;
+
+    printf("Size of char   : %zu byte\n", sizeof(char));
+    printf("Size of int    : %zu bytes\n", sizeof(a));
+    printf("Size of double : %zu bytes\n", sizeof(pi));
     return 0;
 }</code></pre>
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin:16px 0; font-size:13px; color:var(--text2);">
+        💡 <strong>గమనిక:</strong> C లో <code>sizeof</code> రిటర్న్ చేసే విలువ <code>size_t</code> టైప్ (unsigned integer). కాబట్టి ఆధునిక C ప్రమాణాల ప్రకారం దీనిని ప్రింట్ చేయడానికి <strong>%zu</strong> ఫార్మాట్ స్పెసిఫైయర్ వాడాలి.
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>కాన్‌స్టాంట్స్: const vs #define</div>
+    <div class="section-body">
+      <p>
+        ప్రోగ్రామ్ రన్ అవుతున్నంత సేపు మారకూడని విలువలను (ఉదా: గణిత స్థిరాంకం PI, గరిష్ట పరిమితి MAX_USERS) స్థిరంగా ఉంచడానికి C లో రెండు పద్ధతులు ఉన్నాయి:
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">1. const కీవర్డ్ (సిఫార్సు చేయబడినది):</h4>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-bottom:8px;">const float PI = 3.14159f;<br>// PI = 3.15; // Compiler Error!</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">ఇది టైప్-సేఫ్ (Type-safe). కంపైలర్ టైప్ చెకింగ్ చేస్తుంది మరియు డీబగ్గర్‌లో వేరియబుల్ పేరు కనిపిస్తుంది.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">2. #define మ్యాక్రో (పాత పద్ధతి):</h4>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-bottom:8px;">#define MAX_USERS 100</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">ఇది ప్రీప్రాసెసర్ టెక్స్ట్ రీప్లేస్‌మెంట్ మాత్రమే. దీనికి మెమరీ లేదా డేటా టైప్ ఉండదు. ఆధునిక C కోడ్‌లో <code>const</code> వాడటమే శ్రేయస్కరం.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. అరిథ్‌మెటిక్ ఓవర్‌ఫ్లో (Arithmetic Overflow):</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">int max = 2147483647; max = max + 1; // ఇక్కడ max విలువ -2147483648 అవుతుంది!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">32-బిట్ సైన్డ్ ఇంటిజర్ గరిష్ట పరిమితికి 1 కలిపితే 2's Complement సైకిల్ ప్రకారం నెగటివ్ విలువగా మారుతుంది. దీనిని ఇంటిజర్ ఓవర్‌ఫ్లో అంటారు.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. వేరియబుల్ పేర్లలో నిబంధనలు ఉల్లంఘించడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">int 2rollNumber; // తప్పు! వేరియబుల్ పేరు నంబర్‌తో ప్రారంభం కారాదు</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">వేరియబుల్ పేరు కేవలం అక్షరాలు (A-Z, a-z), అండర్‌స్కోర్ (<code>_</code>) తో మాత్రమే ప్రారంభం కావాలి. కీవర్డ్లను (ఉదా: <code>int</code>, <code>return</code>) పేర్లుగా వాడరాదు.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: float మరియు double మధ్య ప్రధాన తేడా ఏమిటి? దేనిని ఎప్పుడు వాడాలి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>float</code> కేవలం 4 బైట్లు మాత్రమే తీసుకుంటుంది మరియు 7 అంకెల ఖచ్చితత్వం ఇస్తుంది. <code>double</code> 8 బైట్లు తీసుకుని 15-17 అంకెల ఖచ్చితత్వం ఇస్తుంది. బ్యాంకింగ్, సైంటిఫిక్ కాలిక్యులేషన్స్‌లో ఖచ్చితత్వం కోసం ఎల్లప్పుడూ <strong>double</strong> వాడటమే ఆధునిక ప్రమాణం.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: 32-bit OS లో int 4 బైట్లు ఉంటే, 64-bit OS లో 8 బైట్లు అవుతుందా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            లేదు! ఎక్కువమంది పొరబడే విషయమిది. ఆధునిక x86_64 సిస్టమ్స్‌లో (LP64 డేటా మోడల్) <code>int</code> ఎల్లప్పుడూ <strong>4 బైట్లే</strong> ఉంటుంది. పాయింటర్లు మరియు <code>long</code> మాత్రమే 8 బైట్లు అవుతాయి.
+          </p>
+        </div>
       </div>
     </div>
   

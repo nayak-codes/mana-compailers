@@ -232,44 +232,209 @@
 
     
     <div class="intro-box">
-      వేరియబుల్స్‌పై లెక్కలు చేయడానికి, పరిస్థితులను పోల్చడానికి మరియు కంప్యూటర్ బిట్లను మార్చడానికి <strong>ఆపరేటర్లు (Operators)</strong> ఉపయోగపడతాయి. ఇంటర్వ్యూలలో ఎక్కువగా అడిగే <code>++i</code> vs <code>i++</code> తేడా, షార్ట్-సర్క్యూట్ మరియు ప్రిసిడెన్స్ నియమాలను నేర్చుకుందాం.
+      వేరియబుల్స్‌పై లెక్కలు చేయడానికి, పరిస్థితులను సరిపోల్చడానికి మరియు కంప్యూటర్ బిట్లను మార్చడానికి <strong>ఆపరేటర్లు (Operators)</strong> ప్రాణాధారం. ఇంటర్వ్యూలలో ఎక్కువగా అడిగే <code>++i</code> vs <code>i++</code> అంతర్గత అసెంబ్లీ తేడా, షార్ట్-సర్క్యూట్ మూలసూత్రం, బిట్‌వైజ్ ఆపరేటర్లు మరియు ప్రెసిడెన్స్ నియమాలను ఈ అధ్యాయంలో లోతుగా పరిశీలిద్దాం.
     </div>
 
+    <!-- SECTION 1 -->
     <div class="section-title"><span class="num">1</span>Prefix (++i) vs Postfix (i++): అంతర్గత మెమరీ తేడా</div>
     <div class="section-body">
+      <p>
+        చాలామంది <code>++i</code> మరియు <code>i++</code> రెండూ ఒకే విధంగా వేరియబుల్ విలువను 1 పెంచుతాయని అనుకుంటారు. కానీ అవి ఎక్స్‌ప్రెషన్‌లో పాల్గొన్నప్పుడు CPU రిజిస్టర్లలో జరిగే ప్రక్రియ పూర్తిగా భిన్నం:
+      </p>
+
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
         <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0;">Prefix (++i): Increment Then Use</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0;">ముందుగా విలువను 1 పెంచి, నవీకరించబడిన తాజా విలువనే ఎక్స్‌ప్రెషన్‌కు అందిస్తుంది.</p>
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">⚡ Prefix (++i): Increment Then Fetch</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ముందుగా మెమరీలోని విలువను వెంటనే 1 పెంచుతుంది (Increment), ఆ తర్వాత ఆ తాజా నవీకరించబడిన విలువను ఎక్స్‌ప్రెషన్‌కు అందిస్తుంది.
+          </p>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-top:8px;">int x = 5;<br>int y = ++x; // x = 6, y = 6</code>
         </div>
+
         <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#ef4444; margin:0 0 6px 0;">Postfix (i++): Use Then Increment</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0;">ప్రస్తుతం ఉన్న పాత విలువను ఎక్స్‌ప్రెషన్‌లో వాడిన తర్వాత మాత్రమే మెమరీలో 1 పెంచుతుంది.</p>
+          <h4 style="color:var(--text); margin:0 0 6px 0; font-size:14.5px;">⏳ Postfix (i++): Fetch Then Increment</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            పాత విలువను ఒక తాత్కాలిక కాపీగా దాచి ఎక్స్‌ప్రెషన్‌కు ఇచ్చేస్తుంది. ఆ తర్వాత మాత్రమే మెమరీలోని అసలు వేరియబుల్‌ను 1 పెంచుతుంది.
+          </p>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-top:8px;">int x = 5;<br>int y = x++; // y = 5 (old copy), x = 6</code>
         </div>
       </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>Short-Circuit Evaluation: లాజికల్ సేఫ్టీ షీల్డ్</div>
+    <div class="section-body">
+      <p>
+        C లాంగ్వేజ్ లాజికల్ ఆపరేటర్లైన <code>&amp;&amp;</code> (AND) మరియు <code>||</code> (OR) లలో <strong>షార్ట్-సర్క్యూట్ ఎవాల్యుయేషన్</strong> అనే అద్భుతమైన ఆప్టిమైజేషన్‌ను అనుసరిస్తుంది. మొదటి కండిషన్ ఫలితంతోనే మొత్తం సమాధానం ఖరారైపోతే, CPU రెండో కండిషన్‌ను అస్సలు టచ్ చేయదు!
+      </p>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981; font-size:14px;">🛡️ పాయింటర్ల రక్షణ కవచం (Real-World Safety Guard):</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          <code>if (ptr != NULL &amp;&amp; *ptr &gt; 0)</code><br>
+          ఒకవేళ పాయింటర్ <code>ptr</code> శూన్యం (NULL) అయితే, ఎడమ వైపు కండిషన్ తప్పు (0) అవుతుంది. కాబట్టి C కంపైలర్ కుడివైపు ఉన్న <code>*ptr</code> ను యాక్సెస్ చేయడానికి ప్రయత్నించదు! ఒకవేళ షార్ట్-సర్క్యూట్ లేకపోతే NULL పాయింటర్‌ను డీరిఫరెన్స్ చేసి ఆపరేటింగ్ సిస్టమ్ ప్రోగ్రామ్‌ను వెంటనే క్రాష్ చేస్తుంది.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>బిట్‌వైజ్ ఆపరేటర్లు (Bitwise Operators & Hardware Control)</div>
+    <div class="section-body">
+      <p>
+        ఎంబెడెడ్ సిస్టమ్స్ మరియు ఆపరేటింగ్ సిస్టమ్స్ ప్రోగ్రామింగ్‌లో మెమరీని మరియు హార్డ్‌వేర్ రిజిస్టర్లను సింగిల్ బిట్ స్థాయిలో నియంత్రించడానికి బిట్‌వైజ్ ఆపరేటర్లు వాడతారు:
+      </p>
+
+      <div style="overflow-x:auto; margin:16px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+              <th style="padding:10px 14px; color:var(--text);">ఆపరేటర్</th>
+              <th style="padding:10px 14px; color:var(--text);">పేరు</th>
+              <th style="padding:10px 14px; color:var(--text);">ఉదాహరణ (a=5, b=3)</th>
+              <th style="padding:10px 14px; color:var(--text);">బైనరీ ఆపరేషన్</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">&amp;</td>
+              <td style="padding:9px 14px;">Bitwise AND</td>
+              <td style="padding:9px 14px;"><code>5 &amp; 3 = 1</code></td>
+              <td style="padding:9px 14px;">రెండూ 1 అయితేనే ఫలితం 1 (0101 &amp; 0011 = 0001)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">|</td>
+              <td style="padding:9px 14px;">Bitwise OR</td>
+              <td style="padding:9px 14px;"><code>5 | 3 = 7</code></td>
+              <td style="padding:9px 14px;">ఏ ఒక్కటి 1 అయినా ఫలితం 1 (0101 | 0011 = 0111)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">^</td>
+              <td style="padding:9px 14px;">Bitwise XOR</td>
+              <td style="padding:9px 14px;"><code>5 ^ 3 = 6</code></td>
+              <td style="padding:9px 14px;">బిట్లు వేర్వేరుగా ఉంటే 1, సమానమైతే 0</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">&lt;&lt;</td>
+              <td style="padding:9px 14px;">Left Shift</td>
+              <td style="padding:9px 14px;"><code>5 &lt;&lt; 1 = 10</code></td>
+              <td style="padding:9px 14px;">బిట్లను ఎడమవైపు జరుపుతుంది (2 తో గుణించడం సమానం)</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">&gt;&gt;</td>
+              <td style="padding:9px 14px;">Right Shift</td>
+              <td style="padding:9px 14px;"><code>5 &gt;&gt; 1 = 2</code></td>
+              <td style="padding:9px 14px;">బిట్లను కుడివైపు జరుపుతుంది (2 తో భాగించడం సమానం)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ఇంటిజర్ డివిజన్ ట్రాప్ (5 / 2 = 2) & టైప్ కాస్టింగ్</div>
+    <div class="section-body">
+      <p>
+        C లో రెండు పూర్ణాంకాలను భాగిస్తే (<code>5 / 2</code>) వచ్చే ఫలితం పూర్ణాంకం మాత్రమే అవుతుంది. దశాంశ భాగమైన <code>.5</code> ను C నిర్దాక్షిణ్యంగా తొలగిస్తుంది (Truncation towards zero).
+      </p>
 
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Increment Operators</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Type casting demo</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    int a = 5, b = 5;
-    int res1 = ++a; // a=6, res1=6
-    int res2 = b++; // res2=5, b=6
-    printf("Prefix: a=%d, res=%d | Postfix: b=%d, res=%d\n", a, res1, b, res2);
+int main(void) {
+    int a = 5, b = 2;
+
+    float wrong = a / b;          // 5/2 = 2 -> 2.000000 (తప్పు!)
+    float correct = (float)a / b; // ఎక్స్‌ప్లిసిట్ టైప్ కాస్టింగ్ -> 2.500000 (సరైనది!)
+
+    printf("Wrong   : %f\n", wrong);
+    printf("Correct : %f\n", correct);
     return 0;
 }</code></pre>
       </div>
     </div>
 
-    <div class="section-title"><span class="num">2</span>ఇంటిజర్ డివిజన్ ట్రాప్ (5 / 2 = 2)</div>
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>ఆపరేటర్ ప్రాధాన్యతా క్రమం (Precedence Hierarchy)</div>
     <div class="section-body">
       <p>
-        రెండు పూర్ణాంకాలను భాగిస్తే (<code>5 / 2</code>) C లో ఫలితం <code>2</code> మాత్రమే వస్తుంది. దశాంశ విలువ రావాలంటే కనీసం ఒక వేరియబుల్‌ను <code>(float)5 / 2</code> అని టైప్ కాస్టింగ్ చేయాలి.
+        ఒక ఎక్స్‌ప్రెషన్‌లో బహుళ ఆపరేటర్లు ఉన్నప్పుడు ఏది ముందు లెక్కించబడుతుందో నిర్ణయించే ప్రాధాన్యతా క్రమం (Precedence Ladder):
       </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0; font-size:13.5px; line-height:1.8;">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">1. అత్యున్నత ప్రాధాన్యత:</span>
+          <span>బ్రాకెట్లు <code>()</code>, అర్రే ఇండెక్స్ <code>[]</code>, మెంబర్ యాక్సెస్ <code>.</code>, <code>-&gt;</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">2. యునరీ ఆపరేటర్లు:</span>
+          <span><code>++</code>, <code>--</code>, <code>!</code>, <code>~</code>, <code>sizeof</code>, పాయింటర్ <code>*</code>, అడ్రస్ <code>&amp;</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">3. గుణకార ఆపరేటర్లు:</span>
+          <span><code>*</code>, <code>/</code>, మాడ్యులో <code>%</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">4. సంకలన ఆపరేటర్లు:</span>
+          <span>కూడిక <code>+</code>, తీసివేత <code>-</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">5. రిలేషనల్ & కంపారిజన్:</span>
+          <span><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code> మరియు <code>==</code>, <code>!=</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">6. లాజికల్ ఆపరేటర్లు:</span>
+          <span><code>&amp;&amp;</code> (AND) తర్వాతి స్థానంలో <code>||</code> (OR)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">7. అత్యల్ప ప్రాధాన్యత:</span>
+          <span>అసైన్‌మెంట్ <code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code></span>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 <strong>గోల్డెన్ రూల్:</strong> ప్రెసిడెన్స్ రూల్స్ పై సందేహం ఉన్నప్పుడు ఎల్లప్పుడూ బ్రాకెట్లను <code>( ... )</code> ఉపయోగించడం ఉత్తమ ఇంజనీరింగ్ పద్ధతి.
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. if కండిషన్‌లో = బదులు == వాడడం మర్చిపోవడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">if (x = 5) { ... } // తప్పు! ఇది ఎల్లప్పుడూ TRUE అవుతుంది!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">సింగిల్ ఈక్వల్స్ <code>=</code> అసైన్‌మెంట్ చేస్తుంది (x లోకి 5 వేస్తుంది). అది నాన్-జీరో కాబట్టి కండిషన్ ఎప్పటికీ సత్యమే అవుతుంది. పోల్చడానికి ఎల్లప్పుడూ డబుల్ ఈక్వల్స్ <code>==</code> వాడాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. ఫ్లోటింగ్ పాయింట్ సంఖ్యలకు మాడ్యులో % వాడడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">float rem = 5.5 % 2; // కంపైలర్ ఎర్రర్!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">C లో <code>%</code> ఆపరేటర్ కేవలం పూర్ణాంకాలపై (integers) మాత్రమే పనిచేస్తుంది. ఫ్లోట్ శేషం కావాలంటే <code>&lt;math.h&gt;</code> లోని <code>fmod()</code> ఫంక్షన్ వాడాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: for లూప్‌లో i++ కంటే ++i వాడితే ఏమైనా స్పీడ్ పెరుగుతుందా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ప్రిమిటివ్ ఇంటిజర్లకు ఆధునిక ఆప్టిమైజింగ్ కంపైలర్లు రెండింటికీ ఒకే విధమైన అసెంబ్లీ కోడ్ ఉత్పత్తి చేస్తాయి. అయితే C++ లో హెవీ ఆబ్జెక్ట్ ఇటరేటర్లతో పనిచేసేటప్పుడు టెంపరరీ ఆబ్జెక్ట్ కాపీ అవసరం లేని <code>++i</code> వాడటమే ఉత్తమ అలవాటు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Bitwise Left Shift (x &lt;&lt; 1) ఎందుకు x * 2 కంటే వేగవంతమైనది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            పాత ప్రాసెసర్లలో గుణకారం (Multiplication) చేయడానికి బహుళ క్లాక్ సైకిల్స్ పట్టేది. కానీ షిఫ్ట్ ఆపరేషన్ కేవలం ఒకే ఒక్క సింగిల్ సైకిల్ బారెల్ షిఫ్టర్‌తో ముగుస్తుంది. ఆధునిక కంపైలర్లు కూడా మీరు <code>x * 2</code> అని రాస్తే అంతర్గతంగా <code>x &lt;&lt; 1</code> గా మారుస్తాయి.
+          </p>
+        </div>
+      </div>
     </div>
   
 
