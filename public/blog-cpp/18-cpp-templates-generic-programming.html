@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>టెంప్లేట్లు & Generic Programming — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ టెంప్లేట్లు మరియు Generic Programming సమగ్ర తెలుగు గైడ్: Function Templates, Class Templates, Template Type Deduction, Compiler Instantiation (Monomorphization), Template Specialization, మరియు C++20 Concepts." />
+  <meta name="keywords" content="c++ templates in telugu, generic programming c++ telugu, function templates class templates c++, template specialization c++, c++ 20 concepts, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/18-cpp-templates-generic-programming.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "టెంప్లేట్లు & Generic Programming (Templates in C++) తెలుగులో",
+    "description": "C++ టెంప్లేట్లు: Generic Programming, Function Templates, Class Templates, Compiler Instantiation, Template Specialization, మరియు C++20 Concepts.",
+    "articleSection": "Phase 5: Advanced C++, STL & Project",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-18",
+    "dateModified": "2026-10-29"
+  }
+  </script>
+
+  <!-- Schema.org FAQPage Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "C++ లో Templates రన్‌టైమ్ లో పనిచేస్తాయా లేక కంపైల్-టైమ్ లోనా?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Templates పూర్తిగా కంపైల్-టైమ్ (Compile-time) లోనే పనిచేస్తాయి! మనం కోడ్‌లో రాసే template అనేది కేవలం ఒక బ్లూప్రింట్ లేదా కోడ్-జనరేటర్ లాంటిది. కంపైలర్ ప్రోగ్రామ్‌ను కంపైల్ చేసేటప్పుడు మనం ఏయే డేటా టైప్స్ (int, double, string) ఉపయోగించామో చూసి, వాటికి ప్రత్యేకమైన విడివిడి ఫంక్షన్లను తానే స్వయంగా సృష్టిస్తుంది (దీనినే Template Instantiation లేదా Monomorphization అంటారు). కాబట్టి రన్‌టైమ్‌లో ఎటువంటి స్పీడ్ లాస్ ఉండదు (Zero Runtime Overhead)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "template <typename T> కి template <class T> కి ఏదైనా తేడా ఉందా?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "సాంకేతికంగా రెండింటి మధ్య ఏ విధమైన తేడా లేదు! రెండూ ఒకేలా పనిచేస్తాయి. ప్రాచీన C++ లో కేవలం 'class' మాత్రమే ఉండేది; అయితే T అనేది ప్రాథమిక రకం (int, double) కూడా కావచ్చనే ఉద్దేశంతో Modern C++ లో 'typename' ప్రవేశపెట్టారు. ఆధునిక C++ కోడింగ్ స్టాండర్డ్స్ లో 'typename' వాడటాన్ని ఎక్కువగా సిఫార్సు చేస్తారు."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Template Specialization అంటే ఏమిటి? ఎప్పుడు వాడతారు?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "సాధారణంగా టెంప్లేట్ అన్ని డేటా టైప్స్‌కు ఒకే సాధారణ లాజిక్‌ను వర్తింపజేస్తుంది. కానీ ఏదైనా ఒక నిర్దిష్ట డేటా టైప్ కోసం (ఉదాహరణకు 'char*' లేదా 'bool' కోసం) ఆ సాధారణ లాజిక్ సరిపోనప్పుడు లేదా ప్రత్యేక ఆప్టిమైజేషన్ అవసరమైనప్పుడు, ఆ ఒక్క టైప్ కోసం విడిగా కస్టమ్ కోడ్ రాయడాన్నే Template Specialization అంటారు."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CPP_TOK_${id}___`;
+      };
+
+      let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const keywords = [
+        'alignas', 'alignof', 'and', 'and_eq', 'asm', 'auto', 'bitand', 'bitor',
+        'bool', 'break', 'case', 'catch', 'char', 'char8_t', 'char16_t', 'char32_t',
+        'class', 'compl', 'concept', 'const', 'consteval', 'constexpr', 'constinit',
+        'const_cast', 'continue', 'co_await', 'co_return', 'co_yield', 'decltype',
+        'default', 'delete', 'do', 'double', 'dynamic_cast', 'else', 'enum',
+        'explicit', 'export', 'extern', 'false', 'float', 'for', 'friend', 'goto',
+        'if', 'inline', 'int', 'long', 'mutable', 'namespace', 'new', 'noexcept',
+        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'private', 'protected',
+        'public', 'register', 'reinterpret_cast', 'requires', 'return', 'short',
+        'signed', 'sizeof', 'static', 'static_assert', 'static_cast', 'struct',
+        'switch', 'template', 'this', 'thread_local', 'throw', 'true', 'try',
+        'typedef', 'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual',
+        'void', 'volatile', 'wchar_t', 'while', 'xor', 'xor_eq'
+      ];
+      const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|Pair|Box|size_t|integral)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
+      code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split(`___CPP_TOK_${idx}___`).join(tok);
+      });
+
+      return code;
+    }
+
+    (function() {
+      // Default to Light Theme
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme !== 'dark') {
+        document.documentElement.classList.add('light-theme');
+        window.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre code').forEach(codeBlock => {
+          const pre = codeBlock.parentElement;
+          if (pre.closest('.code-box') || pre.closest('.try-box')) return;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-box';
+
+          const header = document.createElement('div');
+          header.className = 'code-header';
+          header.innerHTML = `
+            <span>C++ Source</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          `;
+
+          pre.parentNode.insertBefore(wrapper, pre);
+          wrapper.appendChild(header);
+          wrapper.appendChild(pre);
+
+          const rawCode = codeBlock.textContent;
+          codeBlock.innerHTML = highlightCppCode(rawCode);
+
+          const actionsContainer = header.querySelector('.code-actions');
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_cpp17', rawCode);
+              window.location.href = '/online-cpp-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightCppCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_cpp17', rawCode);
+                window.location.href = '/online-cpp-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course (తెలుగు)</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- PHASE 1: BASICS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & ఫండమెంటల్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html">1. C++ పరిచయం & Hello World</a>
+        <a href="/blog-cpp/02-cpp-variables-data-types.html">2. వేరియబుల్స్, డేటా టైప్స్ & auto</a>
+        <a href="/blog-cpp/03-cpp-input-output-cin-cout.html">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</a>
+        <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- PHASE 2: CONTROL FLOW -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-if-else-conditionals.html">5. డెసిషన్ మేకింగ్ (if, else if, else)</a>
+        <a href="/blog-cpp/06-cpp-switch-case.html">6. switch స్టేట్‌మెంట్ & Fall-through</a>
+        <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
+      </div>
+
+      <!-- PHASE 3: FUNCTIONS & MEMORY -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, మెమరీ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html">9. ఫంక్షన్స్ & Function Overloading</a>
+        <a href="/blog-cpp/10-cpp-arrays-and-strings.html">10. అర్రేలు (Arrays) & std::string</a>
+        <a href="/blog-cpp/11-cpp-pointers-and-references.html">11. పాయింటర్లు & రిఫరెన్సెస్</a>
+        <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
+      </div>
+
+      <!-- PHASE 4: OOPS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-classes-and-objects.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & Encapsulation</a>
+        <a href="/blog-cpp/14-cpp-constructors-and-destructors.html">14. Constructors, Destructors & RAII</a>
+        <a href="/blog-cpp/15-cpp-inheritance.html">15. ఇన్హెరిటెన్స్ (Inheritance)</a>
+        <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html">16. పాలిమార్ఫిజమ్ & Virtual Functions</a>
+        <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
+      </div>
+
+      <!-- PHASE 5: ADVANCED STL (ACTIVE) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C++, STL & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/18-cpp-templates-generic-programming.html" class="active">18. టెంప్లేట్లు & Generic Programming</a>
+        <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
+        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. ఎక్సెప్షన్ హ్యాండ్లింగ్ & మినీ ప్రాజెక్ట్</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a> » <a href="/blog-cpp.html">C++ Masterclass</a> » <span>Chapter 18: టెంప్లేట్లు & Generic Programming</span>
+    </div>
+
+    <div class="lesson-header">
+      <span class="badge">Phase 05 · Modern C++ & STL · Chapter 18 of 20</span>
+      <h1 class="lesson-title">టెంప్లేట్లు & Generic Programming (C++ Templates)</h1>
+      <p class="lesson-desc">
+        ఒక్కసారే కోడ్ రాయండి, ఏ డేటా టైప్‌కైనా నడపండి! Generic Programming ఫిలాసఫీ, Function Templates మరియు Class Templates సింటాక్స్, కంపైలర్ యొక్క <strong>Template Instantiation (Monomorphization)</strong> రహస్యం, Zero Runtime Overhead సూత్రం, Template Specialization, మరియు C++20 లో వచ్చిన అధునాతన <strong>Concepts</strong> ప్రివ్యూ.
+      </p>
+    </div>
+
+    <!-- CONCEPT 1: WHAT IS GENERIC PROGRAMMING -->
+    <div class="section-title"><span class="num">1</span> Generic Programming అంటే ఏమిటి? DRY సూత్రం</div>
+    <p>
+      సాంప్రదాయ ప్రోగ్రామింగ్‌లో రెండు సంఖ్యలను కూడాలంటే <code>int add(int a, int b)</code> రాయాలి. మళ్ళీ ఫ్లోటింగ్ పాయింట్ సంఖ్యల కోసం <code>double add(double a, double b)</code> రాయాలి. రేపు స్ట్రింగ్స్ లేదా ఇతర ఆబ్జెక్టుల కోసం మళ్ళీ రాయాలి. లాజిక్ ఒక్కటే అయినప్పటికీ డేటా టైప్స్ మారిన ప్రతిసారీ కోడ్‌ను డూప్లికేట్ చేయడం <strong>DRY (Don't Repeat Yourself)</strong> సూత్రానికి విరుద్ధం.
+    </p>
+    <p>
+      ఈ సమస్యను శాశ్వతంగా పరిష్కరించే ఆధునిక సాఫ్ట్‌వేర్ పద్ధతినే <strong>Generic Programming</strong> అంటారు. డేటా టైప్‌ను ఒక పారామీటర్‌గా మార్చి, ఏ డేటా టైప్‌కైనా సమర్థవంతంగా పనిచేసే సాధారణ కోడ్ రాయడానికి C++ లో <strong>Templates</strong> ఉపయోగపడతాయి.
+    </p>
+
+    <!-- CONCEPT 2: FUNCTION TEMPLATES & TYPE DEDUCTION -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> Function Templates & Type Deduction</div>
+    <p>
+      ఒక ఫంక్షన్ టెంప్లేట్‌ను ప్రకటించడానికి <code>template &lt;typename T&gt;</code> లేదా <code>template &lt;class T&gt;</code> ఉపయోగిస్తారు. ఇక్కడ <code>T</code> అనేది ఏదైనా డేటా టైప్‌ను సూచించే ప్లేస్‌హోల్డర్ (Type Placeholder):
+    </p>
+
+    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
+<span style="color:#10b981; font-weight:700;">[Function Template సింటాక్స్ & ఆటోమేటిక్ డిడక్షన్]</span>
+
+template &lt;typename T&gt;
+T getMax(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+కంపైలర్ గుర్తింపు (Template Type Deduction):
+• getMax(10, 20)       ──► కంపైలర్ T ని 'int' గా గుర్తిస్తుంది
+• getMax(3.14, 2.71)   ──► కంపైలర్ T ని 'double' గా గుర్తిస్తుంది
+• getMax('x', 'z')     ──► కంపైలర్ T ని 'char' గా గుర్తిస్తుంది
+    </div>
+
+    <!-- CONCEPT 3: COMPILER INSTANTIATION UNDER THE HOOD -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> లోపల ఏం జరుగుతుంది? Template Instantiation (Monomorphization)</div>
+    <p>
+      చాలామంది ప్రారంభకులు టెంప్లేట్లు రన్‌టైమ్‌లో నెమ్మదిగా పనిచేస్తాయేమో (Java Generics లేదా Python లాగా) అనుకుంటారు. కానీ C++ లో టెంప్లేట్లకు <strong>రన్‌టైమ్‌తో ఎలాంటి సంబంధం లేదు!</strong>
+    </p>
+
+    <!-- ASCII MONOMORPHIZATION DIAGRAM -->
+    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
+<span style="color:#10b981; font-weight:700;">[కంపైల్-టైమ్ కోడ్ జనరేషన్ (Monomorphization Architecture)]</span>
+
+మీరు రాసినది: కేవలం ఒకే ఒక్క టెంప్లేట్ బ్లూప్రింట్:
+template &lt;typename T&gt; T add(T a, T b) { return a + b; }
+
+కంపైలేషన్ సమయంలో మీరు వాడిన కాల్స్ చూసి కంపైలర్ బైనరీలో సృష్టించే అసలైన ఫంక్షన్లు:
+1. add(5, 10) పిలిస్తే        ──► int add(int a, int b) { return a + b; }
+2. add(2.5, 4.5) పిలిస్తే    ──► double add(double a, double b) { return a + b; }
+3. add("A", "B") పిలిస్తే    ──► string add(string a, string b) { return a + b; }
+
+ఫలితం:
+ప్రతి ఫంక్షన్ నేరుగా మెషిన్ కోడ్ లో నేటివ్ స్పీడ్ తో రన్ అవుతుంది!
+"Zero Runtime Overhead — What you don't use, you don't pay for!"
+    </div>
+
+    <!-- CODE BLOCK 1: COMPACT FUNCTION TEMPLATE & SPECIALIZATION -->
+    <div class="try-box" style="margin-top:28px;">
+      <div class="try-box-title">
+        <span>💻 Code Example 1: Function Template & Explicit Specialization</span>
+        <button class="run-btn">▶ Run C++ Code Live</button>
+      </div>
+
+      <div class="code-box">
+        <div class="code-header">
+          <span>templates_func_demo.cpp</span>
+          <div class="code-actions">
+            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+// 1. Generic Function Template
+template &lt;typename T&gt;
+T findMax(T a, T b) {
+    return (a &gt; b) ? a : b;
+}
+
+// 2. Full Template Specialization (bool కోసం ప్రత్యేకమైన లాజిక్)
+template &lt;&gt;
+bool findMax&lt;bool&gt;(bool a, bool b) {
+    std::cout &lt;&lt; "  [Specialized bool Logic]: ";
+    return a || b; // బూలియన్లలో లాజికల్ OR ఫలితాన్ని ఇస్తుంది
+}
+
+int main() {
+    std::cout &lt;&lt; "Max int   : " &lt;&lt; findMax(45, 89) &lt;&lt; "\n";
+    std::cout &lt;&lt; "Max double: " &lt;&lt; findMax(3.1415, 2.7182) &lt;&lt; "\n";
+    std::cout &lt;&lt; "Max string: " &lt;&lt; findMax(std::string("Apple"), std::string("Zebra")) &lt;&lt; "\n";
+    std::cout &lt;&lt; "Max bool  : " &lt;&lt; std::boolalpha &lt;&lt; findMax(true, false) &lt;&lt; "\n";
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- CONCEPT 4: CLASS TEMPLATES -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> క్లాస్ టెంప్లేట్లు (Class Templates) & మల్టిపుల్ పారామీటర్లు</div>
+    <p>
+      ఫంక్షన్ల లాగే క్లాసులను కూడా జెనరిక్ గా మార్చవచ్చు. Standard Library లోని <code>std::vector&lt;T&gt;</code>, <code>std::pair&lt;T, U&gt;</code> లు క్లాస్ టెంప్లేట్లకు అత్యుత్తమ ఉదాహరణలు. ఒకే క్లాస్‌ను ఉపయోగించి పూర్ణాంకాలు, స్ట్రింగ్స్ లేదా ఏదైనా యూజర్ డిఫైన్డ్ ఆబ్జెక్టుల కోసం కస్టమ్ కంటైనర్లను నిర్మించవచ్చు.
+    </p>
+
+    <!-- CODE BLOCK 2: GENERIC PAIR CLASS TEMPLATE -->
+    <div class="try-box" style="margin-top:28px;">
+      <div class="try-box-title">
+        <span>💻 Code Example 2: Generic Multi-Type Container Class Template</span>
+        <button class="run-btn">▶ Run C++ Code Live</button>
+      </div>
+
+      <div class="code-box">
+        <div class="code-header">
+          <span>generic_pair_class.cpp</span>
+          <div class="code-actions">
+            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+// రెండు వేర్వేరు రకాల డేటాను భద్రపరిచే Generic Pair క్లాస్
+template &lt;typename T1, typename T2&gt;
+class KeyValuePair {
+private:
+    T1 key;
+    T2 value;
+
+public:
+    KeyValuePair(T1 k, T2 v) : key(k), value(v) {}
+
+    void print() const {
+        std::cout &lt;&lt; "Key: [" &lt;&lt; key &lt;&lt; "] =&gt; Value: [" &lt;&lt; value &lt;&lt; "]\n";
+    }
+};
+
+int main() {
+    // 1. int, string తో క్లాస్ టెంప్లేట్
+    KeyValuePair&lt;int, std::string&gt; student(101, "Suresh");
+    student.print();
+
+    // 2. string, double తో క్లాస్ టెంప్లేట్
+    KeyValuePair&lt;std::string, double&gt; product("MacBook M3", 149999.0);
+    product.print();
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- CONCEPT 5: MODERN C++20 CONCEPTS PREVIEW -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> Modern C++20: Concepts & Constraints ప్రివ్యూ</div>
+    <p>
+      పాత C++ లో టెంప్లేట్లకు ఏ విధమైన పరిమితులు ఉండేవి కావు. ఒకవేళ టెంప్లేట్ ఫంక్షన్ లో <code>a + b</code> అని ఉండి, మీరు <code>+</code> ఆపరేటర్ సపోర్ట్ చేయని ఒక ఆబ్జెక్ట్‌ను పాస్ చేస్తే, కంపైలర్ 100 లైన్ల భయంకరమైన ఎర్రర్ మెసేజ్ ఇచ్చేది!
+    </p>
+    <p>
+      దీనికి పరిష్కారంగా Modern C++20 లో <strong>Concepts</strong> పరిచయమయ్యాయి:
+    </p>
+
+    <div class="tip-box">
+      <strong>💎 Concepts తో క్లీన్ కంపైలర్ రక్షణ:</strong><br>
+      <code>template &lt;std::integral T&gt; T add(T a, T b) { return a + b; }</code><br>
+      ఇప్పుడు ఎవరైనా 실수గా ఫ్లోట్ లేదా స్ట్రింగ్ పంపితే, కంపైలర్ వెంటనే క్లియర్ గా చెబుతుంది: <em>"Constraint not satisfied: T must be an integral type!"</em>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో Templates రన్‌టైమ్ లో పనిచేస్తాయా లేక కంపైల్-టైమ్ లోనా?</h4>
+      <p>
+        Templates పూర్తిగా కంపైల్-టైమ్ (Compile-time) లోనే పనిచేస్తాయి! మనం కోడ్‌లో రాసే template అనేది కేవలం ఒక బ్లూప్రింట్ లేదా కోడ్-జనరేటర్ లాంటిది. కంపైలర్ ప్రోగ్రామ్‌ను కంపైల్ చేసేటప్పుడు మనం ఏయే డేటా టైప్స్ (<code>int</code>, <code>double</code>, <code>string</code>) ఉపయోగించామో చూసి, వాటికి ప్రత్యేకమైన విడివిడి ఫంక్షన్లను తానే స్వయంగా సృష్టిస్తుంది (దీనినే Template Instantiation లేదా Monomorphization అంటారు). కాబట్టి రన్‌టైమ్‌లో ఎటువంటి స్పీడ్ లాస్ ఉండదు (Zero Runtime Overhead).
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> template &lt;typename T&gt; కి template &lt;class T&gt; కి ఏదైనా తేడా ఉందా?</h4>
+      <p>
+        సాంకేతికంగా రెండింటి మధ్య ఏ విధమైన తేడా లేదు! రెండూ ఒకేలా పనిచేస్తాయి. ప్రాచీన C++ లో కేవలం <code>class</code> మాత్రమే ఉండేది; అయితే T అనేది ప్రాథమిక రకం (int, double) కూడా కావచ్చనే ఉద్దేశంతో Modern C++ లో <code>typename</code> ప్రవేశపెట్టారు. ఆధునిక C++ కోడింగ్ స్టాండర్డ్స్ లో <code>typename</code> వాడటాన్ని ఎక్కువగా సిఫార్సు చేస్తారు.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Template Specialization అంటే ఏమిటి? ఎప్పుడు వాడతారు?</h4>
+      <p>
+        సాధారణంగా టెంప్లేట్ అన్ని డేటా టైప్స్‌కు ఒకే సాధారణ లాజిక్‌ను వర్తింపజేస్తుంది. కానీ ఏదైనా ఒక నిర్దిష్ట డేటా టైప్ కోసం (ఉదాహరణకు <code>char*</code> లేదా <code>bool</code> కోసం) ఆ సాధారణ లాజిక్ సరిపోనప్పుడు లేదా ప్రత్యేక ఆప్టిమైజేషన్ అవసరమైనప్పుడు, ఆ ఒక్క టైప్ కోసం విడిగా కస్టమ్ కోడ్ రాయడాన్నే Template Specialization అంటారు.
+      </p>
+    </div>
+
+    <!-- AUTHOR ATTRIBUTION -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+      </div>
+    </div>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <a href="/blog-cpp/17-cpp-operator-overloading.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
+        <span style="font-size:14px; font-weight:700;">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</span>
+      </a>
+
+      <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
+        <span style="font-size:14px; font-weight:700;">19. STL కంటైనర్లు & అల్గారిథమ్స్</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
