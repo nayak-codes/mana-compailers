@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>లూప్స్ (for, while, do-while & Range-based for) — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ లూప్స్ పూర్తి గైడ్ తెలుగులో: for loop, while loop, do-while loop, Nested loops, Star patterns, మరియు Modern C++11 Range-based for loop." />
+  <meta name="keywords" content="c++ loops in telugu, c++ for loop telugu, c++ while vs do while, range based for loop c++ telugu, c++ nested loops patterns, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/07-cpp-loops-for-while-do-while.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "లూప్స్ (for, while, do-while & Range-based for in C++) తెలుగులో",
+    "description": "C++ లూప్స్ గైడ్: for, while, do-while, nested loops, మరియు C++11 range-based for loop.",
+    "articleSection": "Phase 2: Control Flow & Loops",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-07",
+    "dateModified": "2026-10-29"
+  }
+  </script>
+
+  <!-- Schema.org FAQPage Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "while కి do-while కి ముఖ్యమైన తేడా ఏమిటి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "while లూప్ మొదట్లోనే కండిషన్ చెక్ చేస్తుంది (Entry-Controlled). కండిషన్ మొదట్లోనే false అయితే లూప్ ఒక్కసారి కూడా రన్ అవ్వదు. కానీ do-while లూప్ కోడ్‌ను ఒకసారి రన్ చేసిన తర్వాతే చివర్లో కండిషన్ చెక్ చేస్తుంది (Exit-Controlled). కాబట్టి కండిషన్ false అయినా సరే కనీసం ఒక్కసారైనా ఎగ్జిక్యూట్ అవుతుంది."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Modern C++ లో Range-based for loop ఎందుకు వాడాలి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "సాంప్రదాయ for లూప్‌లో ఇండెక్స్ వేరియబుల్ (i = 0; i < n; i++) రాయాలి, దీనివల్ల 'Off-by-one errors' మరియు అర్రే సరిహద్దులు దాటే ప్రమాదం ఉంటుంది. Range-based for loop (for (const auto& x : arr)) ఎలాంటి ఇండెక్స్ తప్పులు లేకుండా నేరుగా ఎలిమెంట్లను సురక్షితంగా మరియు క్లీన్‌గా ఇటరేట్ చేస్తుంది."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ఇన్ఫినిట్ లూప్ (Infinite Loop) ఎప్పుడు వాడతారు?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ఆపరేటింగ్ సిస్టమ్‌లు, వెబ్ సర్వర్లు, మైక్రోకంట్రోలర్లు, మరియు వీడియో గేమ్‌లలో 'Game Loop' లేదా 'Event Loop' (ఉదా: while (true)) నిరంతరం కీబోర్డ్ ఈవెంట్‌లను వింటూ రన్ అవ్వడానికి ఉద్దేశపూర్వకంగానే ఇన్ఫినిట్ లూప్‌లను వాడతారు."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CPP_TOK_${id}___`;
+      };
+
+      let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline'
+      ];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = ['std','cout','cin','endl','getline','string','vector','map','set','main','fixed','setprecision'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:f|u|l|ll)?)\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightCppCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display:flex; gap:8px; align-items:center; margin-left:auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_cpp17', rawCode);
+              window.location.href = '/online-cpp-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightCppCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_cpp17', rawCode);
+                window.location.href = '/online-cpp-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course (తెలుగు)</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- PHASE 1: BASICS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & ఫండమెంటల్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html">1. C++ పరిచయం & Hello World</a>
+        <a href="/blog-cpp/02-cpp-variables-data-types.html">2. వేరియబుల్స్, డేటా టైప్స్ & auto</a>
+        <a href="/blog-cpp/03-cpp-input-output-cin-cout.html">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</a>
+        <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- PHASE 2: CONTROL FLOW (ACTIVE) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/05-cpp-if-else-conditionals.html">5. డెసిషన్ మేకింగ్ (if, else if, else)</a>
+        <a href="/blog-cpp/06-cpp-switch-case.html">6. switch స్టేట్‌మెంట్ & Fall-through</a>
+        <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html" class="active">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
+      </div>
+
+      <!-- PHASE 3: FUNCTIONS & MEMORY -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, మెమరీ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html">9. ఫంక్షన్స్ & Function Overloading</a>
+        <a href="/blog-cpp/10-cpp-arrays-and-strings.html">10. అర్రేలు (Arrays) & std::string</a>
+        <a href="/blog-cpp/11-cpp-pointers-and-references.html">11. పాయింటర్లు & రిఫరెన్సెస్</a>
+        <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
+      </div>
+
+      <!-- PHASE 4: OOPS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-classes-and-objects.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & Encapsulation</a>
+        <a href="/blog-cpp/14-cpp-constructors-and-destructors.html">14. Constructors, Destructors & RAII</a>
+        <a href="/blog-cpp/15-cpp-inheritance.html">15. ఇన్హెరిటెన్స్ (Inheritance)</a>
+        <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html">16. పాలిమార్ఫిజమ్ & Virtual Functions</a>
+        <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
+      </div>
+
+      <!-- PHASE 5: ADVANCED STL -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C++, STL & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-templates-generic-programming.html">18. టెంప్లేట్లు & Generic Programming</a>
+        <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
+        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. Exceptions, Files & Mini Project</a>
+      </div>
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-cpp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 7: Loops (for, while, do-while)</span>
+    </div>
+
+    <h1 class="page-title">లూప్స్ (for, while, do-while & Range-based for)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++20 / C++17</span>
+      <span class="badge">🟢 Chapter 7 of 20</span>
+      <span class="badge">📂 Phase 2: Control Flow & Loops</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Covered Topics Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Need for Loops · for Loop Anatomy (Init, Condition, Step) · while Loop (Entry-Controlled) · do-while Loop (Exit-Controlled) · Nested Loops & Star Patterns · Modern C++11 Range-based for loop · Infinite Loops & Server Event Loops</span>
+    </div>
+
+    <!-- Intro Overview Box -->
+    <div class="intro-box">
+      కంప్యూటర్లు మనుషుల కంటే వేగంగా పనిచేయడానికి ప్రధాన కారణం <strong>విసుగు లేకుండా ఒకే పనిని కోట్లాది సార్లు పునరావృతం (Looping / Iteration)</strong> చేయగలగడం. ఈ అధ్యాయంలో C++ లోని మూడు ప్రాథమిక లూప్‌లు (<code>for</code>, <code>while</code>, <code>do-while</code>), స్టార్ ప్యాటర్న్స్ కోసం <strong>Nested Loops</strong>, మరియు Modern C++11 లో వచ్చిన అత్యంత ఆధునిక <strong>Range-based for loop</strong> ను లోతుగా నేర్చుకుందాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>The `for` Loop Anatomy (ఆర్కిటెక్చర్ & ఎగ్జిక్యూషన్ ఫ్లో)</div>
+    <div class="section-body">
+      <p>
+        ఒక పని ఎన్నిసార్లు జరగాలో మనకు ముందే ఖచ్చితంగా తెలిసినప్పుడు (ఉదా: 100 సార్లు, లేదా n సార్లు) <strong>`for` లూప్</strong> అత్యుత్తమమైన ఎంపిక:
+      </p>
+
+      <!-- For Loop Architecture Diagram -->
+      <div class="diagram-box">for ( [1. Initialization] ; [2. Condition Check] ; [4. Increment / Step] )
+{
+    // [3. Loop Body Code]
+}
+
+ఫ్లో ఆర్డర్:
+1. Initialization (కేవలం లూప్ మొదలైనప్పుడు ఒక్కసారి మాత్రమే రన్ అవుతుంది).
+2. Condition Check (షరతు true అయితేనే లోపలికి వెళ్తుంది, false అయితే లూప్ ఆగిపోతుంది).
+3. Loop Body (లోపల ఉన్న కోడ్ ఎగ్జిక్యూట్ అవుతుంది).
+4. Step / Increment (కౌంటర్ వేరియబుల్ పెరుగుతుంది, మళ్ళీ Step 2 కి వెళ్తుంది!).</div>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Sum of First N Natural Numbers with for Loop</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int targetN = 10;
+    int totalSum = 0;
+
+    // 1 నుండి 10 వరకు కూడటం
+    for (int i = 1; i &lt;= targetN; ++i) {
+        totalSum += i;
+    }
+
+    std::cout &lt;&lt; "Sum of numbers from 1 to " &lt;&lt; targetN &lt;&lt; " = " &lt;&lt; totalSum &lt;&lt; "\n";
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>The `while` Loop (కండిషన్-ఆధారిత పునరావృతం)</div>
+    <div class="section-body">
+      <p>
+        ఒక పని ఎన్నిసార్లు జరగాలో మనకు ముందే తెలియక, కేవలం ఒక <strong>షరతు నెరవేరేంత వరకు మాత్రమే</strong> నడవాలి అనుకున్నప్పుడు <strong>`while` లూప్</strong> వాడతాం (Entry-Controlled Loop):
+      </p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Reversing a Number with while Loop</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 while</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int originalNumber = 12345;
+    int temp = originalNumber;
+    int reversedNumber = 0;
+
+    // సంఖ్య 0 అయ్యేంతవరకు చివరి అంకెను తీసి తిరగేయడం
+    while (temp &gt; 0) {
+        int lastDigit = temp % 10;
+        reversedNumber = (reversedNumber * 10) + lastDigit;
+        temp /= 10; // temp = temp / 10
+    }
+
+    std::cout &lt;&lt; "Original Number : " &lt;&lt; originalNumber &lt;&lt; "\n";
+    std::cout &lt;&lt; "Reversed Number : " &lt;&lt; reversedNumber &lt;&lt; "\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>The `do-while` Loop (కనీసం 1 సారి గ్యారెంటీ ఎగ్జిక్యూషన్)</div>
+    <div class="section-body">
+      <p>
+        <code>while</code> లూప్‌లో మొదట్లోనే కండిషన్ తప్పు అయితే కోడ్ ఒక్కసారి కూడా రన్ అవ్వదు. కానీ <strong>`do-while` లూప్‌లో షరతు చివర్లో ఉంటుంది (Exit-Controlled Loop)</strong>. కాబట్టి కండిషన్ తప్పు అయినా సరే, కనీసం ఒక్కసారైనా కోడ్ రన్ అవుతుంది!
+      </p>
+      <p>
+        <strong>ఎక్కడ వాడతారు?</strong> ATM పిన్ ఎంటర్ చేయమనడం, లేదా ఇంటరాక్టివ్ యూజర్ మెనూ అడగడం లాంటి పనుల్లో వాడతారు (ఎందుకంటే యూజర్‌కు ముందు మెనూ చూపించాలి, ఆ తర్వాతే ఎగ్జిట్ అవ్వాలా వద్దా అనేది చెక్ చేయాలి!).
+      </p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Menu-Driven Interactive Loop with do-while</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 do-while</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int userChoice = 0;
+
+    do {
+        std::cout &lt;&lt; "\n--- MINI CALCULATOR MENU ---\n";
+        std::cout &lt;&lt; "1. Check Balance\n";
+        std::cout &lt;&lt; "2. Mini Statement\n";
+        std::cout &lt;&lt; "3. Exit System\n";
+        std::cout &lt;&lt; "Simulating selection: 3 (Exit)\n";
+        userChoice = 3; // ఉదాహరణకు యూజర్ 3 ఎంచుకున్నారు
+    } while (userChoice != 3);
+
+    std::cout &lt;&lt; "Session Ended. Thank you! 👋\n";
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>Nested Loops & Star Patterns (నెస్టెడ్ లూప్స్ మ్యాజిక్)</div>
+    <div class="section-body">
+      <p>
+        ఒక లూప్ లోపల మరొక లూప్ రాయడాన్ని <strong>Nested Loop</strong> అంటారు. సాధారణంగా మ్యాట్రిక్స్‌లు (2D Arrays) ప్రాసెస్ చేయడానికి మరియు ఆకర్షణీయమైన స్టార్ ప్యాటర్న్స్ ప్రింట్ చేయడానికి ఇది అత్యంత ప్రాచుర్యం పొందింది:
+      </p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Right-Angled Star Pyramid</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 Patterns</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int totalRows = 5;
+
+    // బయట లూప్: వరుసలను (Rows) నియంత్రిస్తుంది
+    for (int row = 1; row &lt;= totalRows; ++row) {
+        // లోపలి లూప్: ఆ వరుసలో ఎన్ని స్టార్స్ ప్రింట్ చేయాలో చూస్తుంది
+        for (int star = 1; star &lt;= row; ++star) {
+            std::cout &lt;&lt; "* ";
+        }
+        std::cout &lt;&lt; "\n"; // ప్రతి వరుస ముగిశాక కొత్త లైన్
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
+        <strong style="color:#10b981;">🔍 అవుట్‌పుట్:</strong>
+        <pre style="background:transparent; margin:6px 0 0 0; padding:0; color:#a7f3d0; font-family:'JetBrains Mono',monospace;">* 
+* * 
+* * * 
+* * * * 
+* * * * * </pre>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>Modern C++11 Range-based `for` Loop</div>
+    <div class="section-body">
+      <p>
+        సాంప్రదాయ <code>for (int i = 0; i &lt; n; i++)</code> లో ఇండెక్స్ తప్పులు (Index out of bounds) జరిగే అవకాశం ఉంది. Modern C++11 లో పైథాన్ లాంటి క్లీన్ సింటాక్స్‌తో <strong>Range-based for loop</strong> ప్రవేశపెట్టారు:
+      </p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: Clean Array Traversal with Range-based for</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Modern C++11/17</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int scores[] = {98, 85, 92, 78, 100};
+
+    std::cout &lt;&lt; "Exam Scores: ";
+    // ఇండెక్స్ అవసరం లేదు! ప్రతి ఎలిమెంట్ నేరుగా score లోకి వస్తుంది
+    for (const auto&amp; score : scores) {
+        std::cout &lt;&lt; score &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; "\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMON PITFALLS CALLOUT -->
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 7</div>
+      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
+        <li>
+          <strong>లూప్ కౌంటర్ పెంచడం మర్చిపోవడం (Infinite Loop Disaster):</strong> <code>while (i &lt; 10) { ... }</code> లోపల <code>++i;</code> రాయడం మర్చిపోతే, <code>i</code> ఎప్పటికీ 0 గానే ఉండి కంప్యూటర్ CPU 100% కి చేరి ప్రోగ్రామ్ ఫ్రీజ్ అయిపోతుంది!
+        </li>
+        <li>
+          <strong>Off-by-one Error:</strong> 10 సార్లు రన్ చేయాలనుకున్నప్పుడు <code>i &lt; 10</code> బదులు <code>i &lt;= 10</code> అని రాస్తే 11 సార్లు రన్ అయ్యి అర్రే బౌండరీని దాటే ప్రమాదం ఉంటుంది.
+        </li>
+      </ul>
+    </div>
+
+    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
+        <strong>టాస్క్:</strong> గణితంలో అత్యంత ప్రసిద్ధమైన <strong>Fibonacci Series</strong> (0, 1, 1, 2, 3, 5, 8, 13, 21...) లోని మొదటి 10 సంఖ్యలను <code>for</code> లూప్ ఉపయోగించి స్క్రీన్ పై ప్రింట్ చేసే ప్రోగ్రామ్ రాయండి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++17 Fibonacci Challenge</span>
+          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int totalTerms = 10;
+    long long first = 0, second = 1;
+
+    std::cout &lt;&lt; "========================================\n";
+    std::cout &lt;&lt; "       FIBONACCI SERIES GENERATOR       \n";
+    std::cout &lt;&lt; "========================================\n";
+    std::cout &lt;&lt; "First " &lt;&lt; totalTerms &lt;&lt; " Terms: ";
+
+    for (int i = 1; i &lt;= totalTerms; ++i) {
+        std::cout &lt;&lt; first &lt;&lt; (i == totalTerms ? "" : ", ");
+        long long nextTerm = first + second;
+        first = second;
+        second = nextTerm;
+    }
+    std::cout &lt;&lt; "\n========================================\n";
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> while కి do-while కి ముఖ్యమైన తేడా ఏమిటి?</h4>
+      <p>
+        <code>while</code> లూప్ మొదట్లోనే కండిషన్ చెక్ చేస్తుంది (Entry-Controlled). కండిషన్ మొదట్లోనే false అయితే లూప్ ఒక్కసారి కూడా రన్ అవ్వదు. కానీ <code>do-while</code> లూప్ కోడ్‌ను ఒకసారి రన్ చేసిన తర్వాతే చివర్లో కండిషన్ చెక్ చేస్తుంది (Exit-Controlled). కాబట్టి కండిషన్ false అయినా సరే కనీసం ఒక్కసారైనా ఎగ్జిక్యూట్ అవుతుంది.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++ లో Range-based for loop ఎందుకు వాడాలి?</h4>
+      <p>
+        సాంప్రదాయ for లూప్‌లో ఇండెక్స్ వేరియబుల్ (i = 0; i &lt; n; i++) రాయాలి, దీనివల్ల 'Off-by-one errors' మరియు అర్రే సరిహద్దులు దాటే ప్రమాదం ఉంటుంది. Range-based for loop (<code>for (const auto& x : arr)</code>) ఎలాంటి ఇండెక్స్ తప్పులు లేకుండా నేరుగా ఎలిమెంట్లను సురక్షితంగా మరియు క్లీన్‌గా ఇటరేట్ చేస్తుంది.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> ఇన్ఫినిట్ లూప్ (Infinite Loop) ఎప్పుడు వాడతారు?</h4>
+      <p>
+        ఆపరేటింగ్ సిస్టమ్‌లు, వెబ్ సర్వర్లు, మైక్రోకంట్రోలర్లు, మరియు వీడియో గేమ్‌లలో 'Game Loop' లేదా 'Event Loop' (ఉదా: <code>while (true)</code>) నిరంతరం కీబోర్డ్ ఈవెంట్‌లను వింటూ రన్ అవ్వడానికి ఉద్దేశపూర్వకంగానే ఇన్ఫినిట్ లూప్‌లను వాడతారు.
+      </p>
+    </div>
+
+    <!-- AUTHOR ATTRIBUTION -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+      </div>
+    </div>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <a href="/blog-cpp/06-cpp-switch-case.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
+        <span style="font-size:14px; font-weight:700;">6. switch స్టేట్‌మెంట్ & Fall-through</span>
+      </a>
+
+      <a href="/blog-cpp/08-cpp-break-continue.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
+        <span style="font-size:14px; font-weight:700;">8. break, continue & లూప్ కంట్రోల్</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
