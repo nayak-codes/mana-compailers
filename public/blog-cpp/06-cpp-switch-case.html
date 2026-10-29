@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>switch స్టేట్‌మెంట్ & Fall-through (switch, case, break, default) — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ switch స్టేట్‌మెంట్ పూర్తి గైడ్ తెలుగులో: switch vs if-else, Jump Tables అంతర్గత పనితీరు, Fall-through మెకానిజం, Modern C++17 [[fallthrough]] ఆట్రిబ్యూట్, మరియు Scoped Variables in Case." />
+  <meta name="keywords" content="c++ switch case in telugu, c++ fall through, modern c++17 fallthrough attribute, jump table in c++ telugu, c++ switch vs if else, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/06-cpp-switch-case.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "switch స్టేట్‌మెంట్ & Fall-through (switch, case, break, default in C++) తెలుగులో",
+    "description": "C++ switch స్టేట్‌మెంట్: Jump Tables, Fall-through మెకానిజం, [[fallthrough]], switch vs if-else.",
+    "articleSection": "Phase 2: Control Flow & Loops",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-06",
+    "dateModified": "2026-10-29"
+  }
+  </script>
+
+  <!-- Schema.org FAQPage Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "switch లో break మర్చిపోతే ఏమవుతుంది? (Fall-through అంటే ఏమిటి?)",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "case చివర 'break;' రాయకపోతే, ఆ తర్వాతి case కండిషన్ మ్యాచ్ అవ్వకపోయినా, అందులో ఉన్న కోడ్ కూడా వరుసగా ఎగ్జిక్యూట్ అయిపోతుంది. దీనిని 'Fall-through' అంటారు. ఉద్దేశపూర్వకంగా ఇది చేయాలనుకుంటే C++17 లో '[[fallthrough]];' అని రాయాలి."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "C++ switch లో float లేదా string విలువలను ఎందుకు వాడలేము?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "C++ కంపైలర్ switch స్టేట్‌మెంట్‌ను ఆప్టిమైజ్ చేయడానికి మెమరీలో 'Jump Table' అనే బైనరీ అడ్రస్ టేబుల్‌ను నిర్మిస్తుంది. Jump Table కేవలం పూర్ణాంకాలు (Integral Types: int, char, enum) పై మాత్రమే పనిచేస్తుంది. ఫ్లోటింగ్ పాయింట్ లేదా స్ట్రింగ్స్ కోసం if-else వాడాలి."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "case లోపల కొత్త వేరియబుల్ డిక్లేర్ చేస్తే ఎర్రర్ ఎందుకు వస్తుంది?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ఒక case లో 'int x = 10;' అని రాస్తే, కంపైలర్ ఆ వేరియబుల్ ఇనిషియలైజేషన్‌ను దాటి మరో case కి జంప్ చేయలేక 'crosses initialization of variable' ఎర్రర్ ఇస్తుంది. దీనిని నివారించడానికి ఆ case కు కర్లీ బ్రేసెస్ '{ int x = 10; ... }' పెట్టి ప్రత్యేక పరిధి (Scope) ఇవ్వాలి."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CPP_TOK_${id}___`;
+      };
+
+      let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline'
+      ];
+      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = ['std','cout','cin','endl','getline','string','vector','map','set','main','fixed','setprecision'];
+      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:f|u|l|ll)?)\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+          codeEl.innerHTML = highlightCppCode(rawCode);
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display:flex; gap:8px; align-items:center; margin-left:auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_cpp17', rawCode);
+              window.location.href = '/online-cpp-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightCppCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_cpp17', rawCode);
+                window.location.href = '/online-cpp-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course (తెలుగు)</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- PHASE 1: BASICS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & ఫండమెంటల్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html">1. C++ పరిచయం & Hello World</a>
+        <a href="/blog-cpp/02-cpp-variables-data-types.html">2. వేరియబుల్స్, డేటా టైప్స్ & auto</a>
+        <a href="/blog-cpp/03-cpp-input-output-cin-cout.html">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</a>
+        <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- PHASE 2: CONTROL FLOW (ACTIVE) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/05-cpp-if-else-conditionals.html">5. డెసిషన్ మేకింగ్ (if, else if, else)</a>
+        <a href="/blog-cpp/06-cpp-switch-case.html" class="active">6. switch స్టేట్‌మెంట్ & Fall-through</a>
+        <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
+      </div>
+
+      <!-- PHASE 3: FUNCTIONS & MEMORY -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, మెమరీ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html">9. ఫంక్షన్స్ & Function Overloading</a>
+        <a href="/blog-cpp/10-cpp-arrays-and-strings.html">10. అర్రేలు (Arrays) & std::string</a>
+        <a href="/blog-cpp/11-cpp-pointers-and-references.html">11. పాయింటర్లు & రిఫరెన్సెస్</a>
+        <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
+      </div>
+
+      <!-- PHASE 4: OOPS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-classes-and-objects.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & Encapsulation</a>
+        <a href="/blog-cpp/14-cpp-constructors-and-destructors.html">14. Constructors, Destructors & RAII</a>
+        <a href="/blog-cpp/15-cpp-inheritance.html">15. ఇన్హెరిటెన్స్ (Inheritance)</a>
+        <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html">16. పాలిమార్ఫిజమ్ & Virtual Functions</a>
+        <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
+      </div>
+
+      <!-- PHASE 5: ADVANCED STL -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C++, STL & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-templates-generic-programming.html">18. టెంప్లేట్లు & Generic Programming</a>
+        <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
+        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. Exceptions, Files & Mini Project</a>
+      </div>
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-cpp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C++ Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 6: switch Statement & Fall-through</span>
+    </div>
+
+    <h1 class="page-title">switch స్టేట్‌మెంట్ & Fall-through (switch, case, break, default)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++20 / C++17</span>
+      <span class="badge">🟢 Chapter 6 of 20</span>
+      <span class="badge">📂 Phase 2: Control Flow & Loops</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Covered Topics Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>switch vs if-else Performance · Jump Tables Internal Architecture · Syntax (switch, case, break, default) · The Dangerous Fall-through Trap · Modern C++17 [[fallthrough]] Attribute · Scoped Variables in Case Blocks · C++17 switch with Initializer</span>
+    </div>
+
+    <!-- Intro Overview Box -->
+    <div class="intro-box">
+      ఒక వేరియబుల్ విలువను పదుల కొద్దీ స్థిరాంకాలతో (Constants) పోల్చాల్సి వచ్చినప్పుడు 10 <code>else-if</code> లు రాయడం కోడ్‌ను గజిబిజి చేస్తుంది. C++ లో దీనికి సమాధానమే <strong>`switch` స్టేట్‌మెంట్</strong>. కంపైలర్ లోపల <strong>Jump Table</strong> ఎలా పనిచేస్తుందో, బిగినర్లను వేధించే <strong>Fall-through</strong> మెకానిజం, మరియు C++17 లో ప్రవేశపెట్టిన ఆధునిక ఆట్రిబ్యూట్‌లను ఈ అధ్యాయంలో నేర్చుకుందాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>`switch` vs `if-else`: Jump Table రహస్యం</div>
+    <div class="section-body">
+      <p>
+        చాలామందికి ఒక సందేహం ఉంటుంది: <code>if-else</code> ఉండగా <code>switch</code> ఎందుకు వాడాలి?
+      </p>
+
+      <div class="concept-box">
+        <h4>⚡ Under the Hood: Jump Table vs Linear Search</h4>
+        <p>
+          • <strong>else-if Ladder:</strong> కంపైలర్ ప్రతి కండిషన్‌ను మొదటి నుండి ఒకదాని తర్వాత ఒకటి వరుసగా చెక్ చేసుకుంటూ వెళ్తుంది (Linear Search - $O(N)$ టైమ్ కాంప్లెక్సిటీ). 10వ కండిషన్ మ్యాచ్ అవ్వాలంటే పై 9 తప్పు అని తేలాలి!
+        </p>
+        <p style="margin-bottom:0;">
+          • <strong>switch Statement:</strong> C++ కంపైలర్ కేస్ విలువలతో మెమరీలో ఒక <strong>Jump Table</strong> (అడ్రస్‌ల అరే) తయారు చేస్తుంది. యూజర్ ఇచ్చిన విలువ ఆధారంగా ఏ లొకేషన్‌కి వెళ్లాలో నేరుగా లెక్కించి ఒకే జంప్‌తో ఆ కేస్‌కి వెళ్లిపోతుంది (Direct Jump - $O(1)$ కాన్‌స్టాంట్ టైమ్!). కాబట్టి అనేక స్థిర విలువల పోలికలో <code>switch</code> చాలా వేగవంతమైనది!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>`switch` సింటాక్స్ & బేసిక్ ఎగ్జాంపుల్</div>
+    <div class="section-body">
+      <p>
+        <code>switch</code> స్టేట్‌మెంట్‌లో 4 ముఖ్యమైన భాగాలు ఉంటాయి:
+      </p>
+      <ul style="line-height:1.8;">
+        <li><code>switch(expression)</code>: పరీక్షించాల్సిన పూర్ణాంక వేరియబుల్ (int, char, enum మాత్రమే!).</li>
+        <li><code>case constant:</code>: ఆ వేరియబుల్ సమానమవ్వాల్సిన విలువ.</li>
+        <li><code>break;</code>: ఆ పని ముగియగానే స్విచ్ బ్లాక్ నుండి బయటకు దూకడానికి (Jump out).</li>
+        <li><code>default:</code>: పైన ఏ కేస్ మ్యాచ్ అవ్వకపోతే ఎగ్జిక్యూట్ అయ్యే బ్యాకప్ బ్లాక్ (else లాంటిది).</li>
+      </ul>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Day of Week with switch</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int dayNumber = 3;
+
+    switch (dayNumber) {
+        case 1: std::cout &lt;&lt; "Monday - Work Starts! 💻\n"; break;
+        case 2: std::cout &lt;&lt; "Tuesday - Deep Work ⚙️\n"; break;
+        case 3: std::cout &lt;&lt; "Wednesday - Midweek Sync 🚀\n"; break;
+        case 4: std::cout &lt;&lt; "Thursday - Code Review 🔍\n"; break;
+        case 5: std::cout &lt;&lt; "Friday - Release & Deploy 🎉\n"; break;
+        case 6: 
+        case 7: std::cout &lt;&lt; "Weekend! Rest & Learn 🌟\n"; break;
+        default: std::cout &lt;&lt; "Invalid Day Number (Enter 1 to 7)\n"; break;
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>The Fall-through Mechanism & Modern `[[fallthrough]]`</div>
+    <div class="section-body">
+      <p>
+        ఒక <code>case</code> చివర <code>break;</code> పెట్టడం మర్చిపోతే ఏమవుతుంది? కంపైలర్ అక్కడితో ఆగదు! తర్వాతి case కండిషన్ మ్యాచ్ అవ్వకపోయినా సరే, ఆ కింది కోడ్‌ను కూడా ఎగ్జిక్యూట్ చేసుకుంటూ వెళ్లిపోతుంది! దీనినే <strong>Fall-through</strong> అంటారు.
+      </p>
+
+      <div class="concept-box">
+        <h4>🛡️ Modern C++17 `[[fallthrough]]` Attribute</h4>
+        <p>
+          కొన్నిసార్లు మనం ఉద్దేశపూర్వకంగానే ఒక కేస్ నుండి మరొక కేస్‌కి జారిపోవాలని కోరుకుంటాం. పాత C++ లో ఇలా చేస్తే కంపైలర్ <em>"Warning: this statement may fall through"</em> అని హెచ్చరిక ఇచ్చేది.
+        </p>
+        <p style="margin-bottom:0;">
+          C++17 లో <strong>`[[fallthrough]];`</strong> అని రాస్తే, కంపైలర్‌కు <em>"నేను కావాలనే బ్రేక్ లేకుండా కిందికి వెళ్తున్నాను, వార్నింగ్ ఇవ్వకు"</em> అని స్పష్టంగా చెప్పవచ్చు.
+        </p>
+      </div>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Intentional Fall-through with C++17 Attribute</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 [[fallthrough]]</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int userTier = 1; // 1 = Admin, 2 = Moderator, 3 = Normal User
+
+    std::cout &lt;&lt; "--- User Granted Permissions ---\n";
+    switch (userTier) {
+        case 1:
+            std::cout &lt;&lt; "[+] Full System Root Access\n";
+            [[fallthrough]]; // C++17: కావాలనే కింది పర్మిషన్లు కూడా ఇస్తున్నాం!
+        case 2:
+            std::cout &lt;&lt; "[+] Moderate Content & Ban Users\n";
+            [[fallthrough]];
+        case 3:
+            std::cout &lt;&lt; "[+] Read & Write Comments\n";
+            break;
+        default:
+            std::cout &lt;&lt; "[-] Guest: Read-only Access\n";
+            break;
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>Scoped Variables in Case Blocks (బగ్ నివారణ)</div>
+    <div class="section-body">
+      <p>
+        C++ లో ఒక కేస్ లోపల వేరియబుల్‌ను డిక్లేర్ చేస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది:
+      </p>
+      <pre style="background:var(--bg2); padding:10px 14px; border-radius:6px; border:1px solid var(--border); font-family:'JetBrains Mono',monospace; color:#f87171; font-size:13.5px;">case 1:
+    int discount = 50; // ❌ ERROR: jump to case label crosses initialization
+    break;</pre>
+      <p>
+        ఎందుకంటే స్విచ్ స్టేట్‌మెంట్‌లో కంపైలర్ ఏ కేస్‌కైనా డైరెక్ట్‌గా జంప్ అవ్వవచ్చు. అలా జంప్ అయినప్పుడు ఆ వేరియబుల్ ఇనిషియలైజేషన్ స్కిప్ అయిపోయి మెమరీ కరప్ట్ అవుతుంది.
+      </p>
+      <p>
+        <strong>✅ సరైన పరిష్కారం:</strong> కేస్ లోపల వేరియబుల్ కావాలంటే, కచ్చితంగా కర్లీ బ్రేసెస్ <code>{ ... }</code> పెట్టి ప్రత్యేక పరిధి (Local Scope) సృష్టించాలి:
+      </p>
+
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Scoped Variable in switch-case</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 Scoped Case</span>
+            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int planType = 2;
+
+    switch (planType) {
+        case 1: { // ✅ కర్లీ బ్రేసెస్‌తో పరిధి సెట్ చేసాం
+            int basePrice = 499;
+            std::cout &lt;&lt; "Basic Plan Selected: Rs. " &lt;&lt; basePrice &lt;&lt; "\n";
+            break;
+        }
+        case 2: {
+            int premiumPrice = 999;
+            int freeBonusCredits = 100;
+            std::cout &lt;&lt; "Premium Plan: Rs. " &lt;&lt; premiumPrice 
+                      &lt;&lt; " (Bonus Credits: " &lt;&lt; freeBonusCredits &lt;&lt; ")\n";
+            break;
+        }
+        default:
+            std::cout &lt;&lt; "Standard Free Tier\n";
+            break;
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMON PITFALLS CALLOUT -->
+    <div class="callout">
+      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 6</div>
+      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
+        <li>
+          <strong><code>case</code> పక్కన డూప్లికేట్ విలువలు రాయడం:</strong> ఒకే స్విచ్‌లో <code>case 1:</code> అని రెండుసార్లు రాస్తే కంపైలర్ <code>error: duplicate case value</code> అని ప్రోగ్రామ్‌ను తిరస్కరిస్తుంది.
+        </li>
+        <li>
+          <strong>ఫ్లోటింగ్ పాయింట్ విలువలు వాడటం:</strong> <code>switch (3.14)</code> లేదా <code>case 2.5:</code> అని రాయడం C++ లో చట్టవిరుద్ధం (Illegal). డెసిమల్స్ కోసం <code>if-else</code> వాడాలి.
+        </li>
+      </ul>
+    </div>
+
+    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
+    <div class="try-box">
+      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
+      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
+        <strong>టాస్క్:</strong> ఒక స్మార్ట్ కాఫీ వెండింగ్ మెషిన్ కంట్రోలర్ రాయండి. కస్టమర్ ఎంపిక (char: 'E'=Espresso, 'C'=Cappuccino, 'L'=Latte, 'M'=Mocha) ఆధారంగా ధర లెక్కించి, తగిన కప్పు సైజు వివరాలను <code>switch</code> ద్వారా ప్రింట్ చేయండి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C++17 Coffee Machine Challenge</span>
+          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    char beverageChoice = 'C'; // Cappuccino
+    double beveragePrice = 0.0;
+    std::string beverageName = "";
+
+    switch (beverageChoice) {
+        case 'E':
+        case 'e':
+            beverageName = "Double Shot Espresso";
+            beveragePrice = 120.00;
+            break;
+        case 'C':
+        case 'c':
+            beverageName = "Creamy Cappuccino";
+            beveragePrice = 180.00;
+            break;
+        case 'L':
+        case 'l':
+            beverageName = "Classic Cafe Latte";
+            beveragePrice = 160.00;
+            break;
+        case 'M':
+        case 'm':
+            beverageName = "Dark Chocolate Mocha";
+            beveragePrice = 210.00;
+            break;
+        default:
+            std::cout &lt;&lt; "[-] Error: Selected beverage not available in machine.\n";
+            return 1;
+    }
+
+    std::cout &lt;&lt; "========================================\n";
+    std::cout &lt;&lt; "       SMART COFFEE DISPENSER ☕        \n";
+    std::cout &lt;&lt; "========================================\n";
+    std::cout &lt;&lt; "Selected Beverage : " &lt;&lt; beverageName &lt;&lt; "\n";
+    std::cout &lt;&lt; "Dispense Price    : Rs. " &lt;&lt; beveragePrice &lt;&lt; "\n";
+    std::cout &lt;&lt; "Brewing Status    : READY TO DISPENSE ✅\n";
+    std::cout &lt;&lt; "========================================\n";
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> switch లో break మర్చిపోతే ఏమవుతుంది? (Fall-through అంటే ఏమిటి?)</h4>
+      <p>
+        case చివర <code>break;</code> రాయకపోతే, ఆ తర్వాతి case కండిషన్ మ్యాచ్ అవ్వకపోయినా, అందులో ఉన్న కోడ్ కూడా వరుసగా ఎగ్జిక్యూట్ అయిపోతుంది. దీనిని Fall-through అంటారు. ఉద్దేశపూర్వకంగా ఇది చేయాలనుకుంటే C++17 లో <code>[[fallthrough]];</code> అని రాయాలి.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ switch లో float లేదా string విలువలను ఎందుకు వాడలేము?</h4>
+      <p>
+        C++ కంపైలర్ switch స్టేట్‌మెంట్‌ను ఆప్టిమైజ్ చేయడానికి మెమరీలో Jump Table అనే బైనరీ అడ్రస్ టేబుల్‌ను నిర్మిస్తుంది. Jump Table కేవలం పూర్ణాంకాలు (Integral Types: int, char, enum) పై మాత్రమే పనిచేస్తుంది. ఫ్లోటింగ్ పాయింట్ లేదా స్ట్రింగ్స్ కోసం <code>if-else</code> వాడాలి.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> case లోపల కొత్త వేరియబుల్ డిక్లేర్ చేస్తే ఎర్రర్ ఎందుకు వస్తుంది?</h4>
+      <p>
+        ఒక case లో <code>int x = 10;</code> అని రాస్తే, కంపైలర్ ఆ వేరియబుల్ ఇనిషియలైజేషన్‌ను దాటి మరో case కి జంప్ చేయలేక ఎర్రర్ ఇస్తుంది. దీనిని నివారించడానికి ఆ case కు కర్లీ బ్రేసెస్ <code>{ int x = 10; ... }</code> పెట్టి ప్రత్యేక పరిధి (Local Scope) ఇవ్వాలి.
+      </p>
+    </div>
+
+    <!-- AUTHOR ATTRIBUTION -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+      </div>
+    </div>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <a href="/blog-cpp/05-cpp-if-else-conditionals.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
+        <span style="font-size:14px; font-weight:700;">5. డెసిషన్ మేకింగ్ (if, else if, else)</span>
+      </a>
+
+      <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
+        <span style="font-size:14px; font-weight:700;">7. లూప్స్ (for, while, do-while)</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
