@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -73,7 +73,7 @@
   }
   </script>
 
-  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Default Light Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -117,7 +117,7 @@
       const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|ServerResource|DeepBuffer|size_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|Player|Buffer|ResourceManager|size_t)\b/g, m => pushToken('tp', m));
       code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
       code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
 
@@ -129,13 +129,15 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      // Default to Light Theme
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         window.addEventListener('DOMContentLoaded', () => {
           if (document.body) document.body.classList.add('light-theme');
         });
       }
+
       window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('pre code').forEach(codeBlock => {
           const pre = codeBlock.parentElement;
@@ -202,7 +204,7 @@
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -348,243 +350,237 @@
       </p>
     </div>
 
-    <!-- CONCEPT 1: WHAT IS A CONSTRUCTOR -->
-    <div class="section-title"><span class="num">1</span> కన్‌స్ట్రక్టర్ (Constructor) అంటే ఏమిటి?</div>
-    <p>
-      ఒక ఆబ్జెక్ట్ మెమరీలో పుట్టిన వెంటనే దాని వేరియబుల్స్‌ను ప్రారంభించడానికి (Initialize) కంపైలర్ స్వయంచాలకంగా పిలిచే ఒక ప్రత్యేకమైన మెంబర్ ఫంక్షనే <strong>Constructor</strong>. 
-    </p>
-
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[Constructor ప్రాథమిక నియమాలు]</span>
-
-1. కన్‌స్ట్రక్టర్ పేరు ఖచ్చితంగా క్లాస్ పేరుతోనే సమానంగా ఉండాలి.
-2. దీనికి ఎలాంటి Return Type ఉండదు (చివరికి void కూడా రాయకూడదు!).
-3. ఆబ్జెక్ట్ డిక్లేర్ చేయగానే మనం స్పష్టంగా పిలవాల్సిన పనిలేకుండా ఆటోమేటిక్‌గా రన్ అవుతుంది.
-4. దీనిని ఓవర్‌లోడ్ చేయవచ్చు (Overloading: పారామీటర్లను బట్టి వేర్వేరు కన్‌స్ట్రక్టర్లు).
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Constructor Mechanics · Initializer Lists · Copy Constructors · Deep vs Shallow Copy · Destructor LIFO Order · RAII · Rule of Five</span>
     </div>
 
-    <!-- CONCEPT 2: CONSTRUCTOR TYPES & MEMBER INITIALIZER LIST -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> కన్‌స్ట్రక్టర్ రకాలు & Member Initializer List సీక్రెట్</div>
-    <p>
-      C++ లో ప్రధానంగా మూడు రకాల కన్‌స్ట్రక్టర్లు ఉంటాయి:
-    </p>
+    <!-- CONCEPT 1: WHAT IS A CONSTRUCTOR -->
+    <div class="section-title"><span class="num">1</span> కన్‌స్ట్రక్టర్ (Constructor) అంటే ఏమిటి? ఎందుకు అవసరం?</div>
+    <div class="section-body">
+      <p>
+        కంప్యూటర్ ప్రోగ్రామింగ్‌లో మనం ఒక వేరియబుల్‌ను డిక్లేర్ చేసినప్పుడు దానికి సరైన విలువ ఇవ్వకపోతే, కంప్యూటర్ ర్యామ్ (RAM) లో అంతకుముందు ఉండిపోయిన ఏదో ఒక పనికిరాని చెత్త విలువ (<strong>Garbage Value</strong>) ఆ వేరియబుల్‌కు కేటాయించబడుతుంది. ఉదాహరణకు ఒక బ్యాంక్ అకౌంట్ ఆబ్జెక్ట్ క్రియేట్ చేయగానే దాని బ్యాలెన్స్ గార్బేజ్ విలువతో <code>-8392193</code> అని ఉండటం ఎంత ప్రమాదకరమో ఆలోచించండి!
+      </p>
+      <p>
+        ఈ సమస్య రాకుండా ఒక ఆబ్జెక్ట్ మెమరీలో పుట్టిన వెంటనే, ప్రోగ్రామర్ స్వయంగా ఎలాంటి ఫంక్షన్ పిలవకుండానే, ఆటోమేటిక్‌గా రన్ అయ్యే ఒక ప్రత్యేకమైన మెంబర్ ఫంక్షన్‌నే <strong>Constructor</strong> అంటారు. ఆబ్జెక్ట్‌కు కావలసిన ప్రాథమిక డేటాను సరిగ్గా సెట్ చేయడం దీని బాధ్యత.
+      </p>
 
-    <ul style="color:var(--text); line-height:1.8; margin-left:20px;">
-      <li><strong>Default Constructor:</strong> ఎటువంటి పారామీటర్లు తీసుకోని కన్‌స్ట్రక్టర్ (ఉదా: <code>Player()</code>). మనం ఏ కన్‌స్ట్రక్టర్ రాయకపోతే కంపైలర్ ఉచితంగా డమ్మీ డిఫాల్ట్ కన్‌స్ట్రక్టర్‌ను ఇస్తుంది.</li>
-      <li><strong>Parameterized Constructor:</strong> మనం బయటి నుండి పంపే విలువల ఆధారంగా ఆబ్జెక్ట్‌ను ప్రారంభించేది (ఉదా: <code>Player("Arjun", 100)</code>).</li>
-      <li><strong>Copy Constructor:</strong> ఇప్పటికే ఉన్న మరొక ఆబ్జెక్ట్ నుండి పూర్తి డూప్లికేట్ ఆబ్జెక్ట్‌ను సృష్టించేది (<code>Player(const Player&amp; other)</code>).</li>
-    </ul>
+      <!-- VISUAL CONCEPT CARD (Clean Light Card, NOT a dark code box) -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:10px; padding:18px 22px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px; font-weight:700;">🏛️ Constructor యొక్క 4 ప్రాథమిక నియమాలు:</h4>
+        <ul style="margin:0; padding-left:20px; line-height:1.8; color:var(--text);">
+          <li><strong>క్లాస్ పేరుతోనే సమానమైన పేరు:</strong> కన్‌స్ట్రక్టర్ పేరు ఖచ్చితంగా ఆ క్లాస్ పేరుతోనే ఉండాలి (ఉదా: <code>class Player</code> అయితే కన్‌స్ట్రక్టర్ పేరు <code>Player()</code>).</li>
+          <li><strong>ఎలాంటి Return Type ఉండదు:</strong> దీనికి <code>int</code>, <code>string</code> మాత్రమే కాదు, ఆఖరికి <code>void</code> కూడా రాయకూడదు!</li>
+          <li><strong>స్వయంచాలక ఎగ్జిక్యూషన్:</strong> ఆబ్జెక్ట్ డిక్లేర్ చేయగానే (<code>Player p1;</code>) కంపైలర్ స్వయంగా దీనిని పిలుస్తుంది.</li>
+          <li><strong>ఓవర్‌లోడింగ్ సదుపాయం:</strong> పారామీటర్ల సంఖ్య లేదా రకాలను బట్టి ఒకే క్లాస్‌లో ఎన్ని కన్‌స్ట్రక్టర్లనైనా రాయవచ్చు.</li>
+        </ul>
+      </div>
 
-    <div class="tip-box">
-      <strong>🔥 Member Initializer List (: var(val)) ఎందుకు వాడాలి?</strong><br>
-      చాలామంది ప్రారంభకులు కన్‌స్ట్రక్టర్ బాడీ లోపల అసైన్ చేస్తుంటారు:<br>
-      <code>Player(string n, int h) { name = n; health = h; }</code> // ❌ పాత & నెమ్మదైన పద్ధతి!<br>
-      ఇక్కడ ముందుగా <code>name</code> డమ్మీగా క్రియేట్ అయి, తర్వాత కొత్త స్ట్రింగ్ కాపీ అవుతుంది (రెండు స్టెప్స్!).<br><br>
-      దీనికి బదులుగా Modern C++ లో <strong>Member Initializer List</strong> వాడాలి:<br>
-      <code>Player(string n, int h) : name(n), health(h) {}</code> // ⚡ సూపర్ ఫాస్ట్ డైరెక్ట్ ఇనిషియలైజేషన్!<br>
-      ఇది సింగిల్-స్టెప్‌లో డైరెక్ట్‌గా మెమరీని నిర్మిస్తుంది. అంతేకాకుండా <strong><code>const</code> వేరియబుల్స్</strong> మరియు <strong>References (<code>&amp;</code>)</strong> లను బాడీ లోపల మార్చలేము కాబట్టి, వాటిని కేవలం Member Initializer List ద్వారా మాత్రమే ఇనిషియలైజ్ చేయగలం!
+      <!-- COMPACT FOCUSED CODE SNIPPET (Only 6 lines!) -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Constructor Declaration & Auto Execution</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>constructor_basics.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+class Player {
+public:
+    int health;
+    Player() { // Default Constructor
+        health = 100;
+        std::cout &lt;&lt; "Player initialized with full health: " &lt;&lt; health &lt;&lt; "\n";
+    }
+};
+
+int main() {
+    Player hero; // ఇక్కడ ఆటోమేటిక్ గా కన్‌స్ట్రక్టర్ రన్ అవుతుంది!
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- DEDICATED EXPLANATION CARD (Python Style) -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>Player()</code>: ఇది క్లాస్ పేరుతోనే ఉన్న డిఫాల్ట్ కన్‌స్ట్రక్టర్. దీనికి ఎలాంటి రిటర్న్ టైప్ లేదు.</li>
+          <li><code>health = 100;</code>: ఆబ్జెక్ట్ పుట్టగానే గార్బేజ్ విలువ రాకుండా ఖచ్చితంగా 100 ని సెట్ చేస్తుంది.</li>
+          <li><code>Player hero;</code>: <code>main()</code> లో ఈ లైన్ ఎగ్జిక్యూట్ అవ్వగానే రామ్‌లో మెమరీ కేటాయించబడి వెంటనే కన్‌స్ట్రక్టర్ లోపలి కోడ్ రన్ అవుతుంది.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CONCEPT 2: INITIALIZER LIST VS BODY ASSIGNMENT -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> Member Initializer List యొక్క అద్భుతమైన స్పీడ్ సీక్రెట్</div>
+    <div class="section-body">
+      <p>
+        చాలామంది ప్రోగ్రామర్లు కన్‌స్ట్రక్టర్ బాడీ లోపల వేరియబుల్స్‌ను అసైన్ చేస్తుంటారు:
+      </p>
+      <div style="background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-radius:8px; padding:12px 18px; margin:14px 0; color:var(--text); font-size:13.5px;">
+        <strong style="color:#ef4444;">❌ అసమర్థమైన పద్ధతి (Body Assignment):</strong><br>
+        <code>Player(std::string n, int h) { name = n; health = h; }</code><br>
+        ఇలా రాసినప్పుడు కంపైలర్ రెండుసార్లు పని చేస్తుంది: మొదటగా <code>name</code> ని ఒక ఖాళీ స్ట్రింగ్ గా తయారు చేస్తుంది (Default Construction), ఆ తర్వాత <code>n</code> లోని డేటాను కాపీ చేసి ఓవర్‌రైట్ చేస్తుంది (Copy Assignment). ఇది అత్యంత నెమ్మదైన పద్ధతి!
+      </div>
+
+      <p>
+        దీనికి బదులుగా Modern C++ లో <strong>Member Initializer List (<code>: var(val)</code>)</strong> ను ఉపయోగించాలి. ఇది బాడీ ప్రారంభం కావడానికి ముందే, ఆబ్జెక్ట్ మెమరీ క్రియేట్ అయ్యే మొదటి క్షణంలోనే డేటాను నేరుగా నింపుతుంది:
+      </p>
+
+      <div style="background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); border-radius:8px; padding:12px 18px; margin:14px 0; color:var(--text); font-size:13.5px;">
+        <strong style="color:#10b981;">⚡ సిఫార్సు చేయబడిన బెస్ట్ ప్రాక్టీస్ (Member Initializer List):</strong><br>
+        <code>Player(std::string n, int h) : name(n), health(h) { }</code><br>
+        ఒకే ఒక్క స్టెప్ లో డైరెక్ట్ గా మెమరీ నిర్మాణం జరుగుతుంది! ఎలాంటి వేస్ట్ ఆపరేషన్స్ ఉండవు.
+      </div>
+
+      <!-- TIP BOX -->
+      <div class="tip-box">
+        <strong>🔥 కచ్చితంగా గుర్తుంచుకోవాల్సిన నిబంధన:</strong><br>
+        మీ క్లాస్‌లో ఏదైనా <strong><code>const</code> వేరియబుల్</strong> (ఉదా: <code>const int id;</code>) లేదా <strong>Reference వేరియబుల్</strong> (ఉదా: <code>int&amp; ref;</code>) ఉన్నట్లయితే, వాటిని కన్‌స్ట్రక్టర్ బాడీ లోపల ఎప్పటికీ అసైన్ చేయలేరు (కంపైలర్ ఎర్రర్ వస్తుంది)! వాటిని కేవలం <strong>Member Initializer List</strong> ద్వారా మాత్రమే ఇనిషియలైజ్ చేయగలం.
+      </div>
     </div>
 
     <!-- CONCEPT 3: DEEP COPY VS SHALLOW COPY -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> Deep Copy vs Shallow Copy (డబుల్ ఫ్రీ క్రాష్ ముప్పు)</div>
-    <p>
-      మనం ఒక ఆబ్జెక్ట్‌ను మరొక ఆబ్జెక్ట్‌కు కాపీ చేసినప్పుడు (<code>Player p2 = p1;</code>), కంపైలర్ ఇచ్చే డిఫాల్ట్ కాపీ కన్‌స్ట్రక్టర్ రన్ అవుతుంది. మీ క్లాస్‌లో సాధారణ వేరియబుల్స్ (int, double) ఉంటే ఏ సమస్యా లేదు. కానీ <strong>హీప్ మెమరీ పాయింటర్లు (Pointers)</strong> ఉన్నప్పుడు విపత్తు జరుగుతుంది!
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> Deep Copy vs Shallow Copy (డబుల్ ఫ్రీ క్రాష్ నివారణ)</div>
+    <div class="section-body">
+      <p>
+        మనం ఒక ఆబ్జెక్ట్ నుండి మరొక కొత్త ఆబ్జెక్ట్‌ను క్లోన్ చేసినప్పుడు (ఉదా: <code>Player p2 = p1;</code>), C++ లోని <strong>Copy Constructor</strong> పనిచేస్తుంది. ఒకవేళ మనం స్వయంగా కాపీ కన్‌స్ట్రక్టర్ రాయకపోతే, కంపైలర్ ఉచితంగా ఒక డిఫాల్ట్ కాపీ కన్‌స్ట్రక్టర్‌ను ఇస్తుంది.
+      </p>
+      <p>
+        కానీ మీ క్లాస్ లోపల <strong>హీప్ మెమరీ పాయింటర్లు (Heap Pointers)</strong> ఉన్నప్పుడు, కంపైలర్ ఇచ్చే డిఫాల్ట్ కాపీ <strong>Shallow Copy</strong> మాత్రమే చేస్తుంది. దీనివల్ల కంప్యూటర్ ప్రోగ్రామింగ్ చరిత్రలోనే అత్యంత ప్రమాదకరమైన <strong>Double Free Crash</strong> సంభవిస్తుంది!
+      </p>
 
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[Shallow Copy Disaster vs Deep Copy Safety]</span>
-
-1. Shallow Copy (డిఫాల్ట్ బిట్‌వైజ్ కాపీ):
-   p1.dataPtr (0x1000) ──┐
-                         ├──► [ HEAP MEMORY: "Secret Data" ]
-   p2.dataPtr (0x1000) ──┘
-   • సమస్య: రెండు ఆబ్జెక్టులూ ఒకే మెమరీ అడ్రస్‌ను చూపిస్తాయి!
-   • ఫంక్షన్ ముగిసినప్పుడు p2 డిస్ట్రక్టర్ ఆ మెమరీని delete చేస్తుంది.
-   • ఆ తర్వాత p1 డిస్ట్రక్టర్ అదే మెమరీని మళ్ళీ delete చేయబోతుంది!
-   • ఫలితం: 💥 DOUBLE FREE CRASH (Segmentation Fault / Abort)!
-
-2. Deep Copy (కస్టమ్ కాపీ కన్‌స్ట్రక్టర్):
-   p1.dataPtr ──► [ HEAP 1 (0x1000): "Secret Data" ]
-   p2.dataPtr ──► [ HEAP 2 (0x8000): "Secret Data" ] (విడిగా కొత్త మెమరీ!)
-   • రెండు ఆబ్జెక్టులకూ స్వతంత్ర మెమరీ ఉంటుంది; క్రాష్ అయ్యే అవకాశమే లేదు!
-    </div>
-
-    <!-- CODE BLOCK 1: CONSTRUCTORS & DEEP COPY -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 1: Member Initializer List & Safe Deep Copying</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <!-- VISUAL COMPARISON CARD (Not a dark code box) -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:10px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">❌ Shallow Copy (ప్రమాదకరం)</h4>
+          <p style="font-size:13px; line-height:1.6; margin:0; color:var(--text2);">
+            కేవలం పాయింటర్ అడ్రస్‌ను మాత్రమే కాపీ చేస్తుంది. p1 మరియు p2 రెండూ రామ్‌లోని ఒకే హీప్ మెమరీని చూపిస్తాయి. ప్రోగ్రామ్ ముగిసినప్పుడు p2 ఆ మెమరీని డిలీట్ చేస్తుంది, ఆ తర్వాత p1 కూడా అదే మెమరీని మళ్ళీ డిలీట్ చేయబోయి ప్రోగ్రామ్ క్రాష్ అవుతుంది!
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">✔️ Deep Copy (పూర్తి సురక్షితం)</h4>
+          <p style="font-size:13px; line-height:1.6; margin:0; color:var(--text2);">
+            కాపీ కన్‌స్ట్రక్టర్ స్వయంగా <code>new</code> ద్వారా రామ్‌లో మరొక కొత్త స్వతంత్ర మెమరీ బ్లాక్‌ను కేటాయించి అసలైన డేటాను డూప్లికేట్ చేస్తుంది. రెండు ఆబ్జెక్టుల మెమరీలు వేర్వేరు కాబట్టి క్లీనప్ సమయంలో ఎటువంటి క్రాష్ రాదు!
+          </p>
+        </div>
       </div>
 
-      <div class="code-box">
-        <div class="code-header">
-          <span>deep_copy_demo.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- COMPACT FOCUSED CODE SNIPPET -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Deep Copy Constructor Implementation</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>deep_copy_safe.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
           </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
+          <pre><code>#include &lt;iostream&gt;
 
-class DeepBuffer {
-private:
-    std::string tag;
-    int* data; // డైనమిక్ హీప్ పాయింటర్
-
+class Buffer {
 public:
-    // 1. Parameterized Constructor with Member Initializer List
-    DeepBuffer(const std::string& t, int val) 
-        : tag(t), data(new int(val)) {
-        std::cout &lt;&lt; "  [+] Constructor: " &lt;&lt; tag &lt;&lt; " created with value " &lt;&lt; *data 
-                  &lt;&lt; " at Heap address: " &lt;&lt; data &lt;&lt; "\n";
+    int* data;
+
+    // Parameterized Constructor
+    Buffer(int val) : data(new int(val)) { }
+
+    // Custom Copy Constructor (DEEP COPY)
+    Buffer(const Buffer& other) : data(new int(*other.data)) {
+        std::cout &lt;&lt; "Deep Copy created with independent new memory!\n";
     }
 
-    // 2. Custom Copy Constructor for DEEP COPY (Zero Shared Pointer Trap)
-    DeepBuffer(const DeepBuffer& other) 
-        : tag(other.tag + "_Copy"), data(new int(*other.data)) { // కొత్త హీప్ కేటాయింపు!
-        std::cout &lt;&lt; "  [+] Deep Copy Constructor: " &lt;&lt; tag 
-                  &lt;&lt; " allocated NEW Heap address: " &lt;&lt; data &lt;&lt; "\n";
-    }
-
-    // 3. Destructor - ఆటోమేటిక్ హీప్ క్లీనప్
-    ~DeepBuffer() {
-        std::cout &lt;&lt; "  [-] Destructor: Cleaning " &lt;&lt; tag 
-                  &lt;&lt; " and freeing Heap address: " &lt;&lt; data &lt;&lt; "\n";
-        delete data;
-    }
-
-    void setValue(int v) { *data = v; }
-    void print() const {
-        std::cout &lt;&lt; "    " &lt;&lt; tag &lt;&lt; " holds value: " &lt;&lt; *data &lt;&lt; "\n";
-    }
+    // Destructor
+    ~Buffer() { delete data; }
 };
 
 int main() {
-    std::cout &lt;&lt; "=== 1. Creating Original Object ===\n";
-    DeepBuffer original("Buffer_A", 100);
-
-    std::cout &lt;&lt; "\n=== 2. Creating Deep Copy ===\n";
-    DeepBuffer cloned = original; // Deep Copy Constructor పిలవబడుతుంది
-
-    std::cout &lt;&lt; "\n=== 3. Modifying Clone to Prove Independence ===\n";
-    cloned.setValue(999);
-    original.print(); // ఒరిజినల్ 100 గానే ఉంటుంది!
-    cloned.print();   // క్లోన్ 999 కి మారింది
-
-    std::cout &lt;&lt; "\n=== 4. Leaving Scope (Watch Destructors) ===\n";
+    Buffer b1(42);
+    Buffer b2 = b1; // Safe Deep Copy!
+    std::cout &lt;&lt; "b1 address: " &lt;&lt; b1.data &lt;&lt; " | b2 address: " &lt;&lt; b2.data &lt;&lt; "\n";
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>Buffer(const Buffer& other)</code>: కాపీ కన్‌స్ట్రక్టర్ సిగ్నేచర్. ఎల్లప్పుడూ <code>const ClassName&</code> రిఫరెన్స్ గానే తీసుకోవాలి.</li>
+          <li><code>data(new int(*other.data))</code>: ఇక్కడే మ్యాజిక్ ఉంది! పాత అడ్రస్ కాపీ చేయకుండా <code>new</code> తో కొత్త హీప్ మెమరీని క్రియేట్ చేసి, అందులోకి పాత విలువను నింపుతుంది.</li>
+          <li><code>~Buffer() { delete data; }</code>: ఆబ్జెక్ట్ చనిపోయినప్పుడు దాని స్వంత మెమరీని మాత్రమే డిలీట్ చేసుకుంటుంది; డబుల్ ఫ్రీ సమస్య రాదు.</li>
+        </ul>
+      </div>
     </div>
 
-    <!-- CONCEPT 4: DESTRUCTOR LIFECYCLE & LIFO EXECUTION ORDER -->
+    <!-- CONCEPT 4: DESTRUCTORS & LIFO ORDER -->
     <div class="section-title" style="margin-top:40px;"><span class="num">4</span> డిస్ట్రక్టర్ (Destructor) & LIFO Execution Order</div>
-    <p>
-      టిల్డే గుర్తు (<code>~</code>) తో మొదలయ్యే ఫంక్షనే <strong>Destructor</strong>. ఆబ్జెక్ట్ తన జీవితకాలాన్ని ముగించుకొని మెమరీ నుండి తొలగించబడే క్షణంలో ఇది ఆటోమేటిక్‌గా రన్ అవుతుంది. ఫైల్స్ క్లోజ్ చేయడానికి, సాకెట్స్ డిస్‌కనెక్ట్ చేయడానికి, హీప్ మెమరీని విడుదల చేయడానికి ఇది అద్భుతమైన రక్షణ సాధనం.
-    </p>
+    <div class="section-body">
+      <p>
+        ఒక ఆబ్జెక్ట్ పుట్టినప్పుడు కన్‌స్ట్రక్టర్ ఎలాగైతే పని మొదలుపెడుతుందో, ఆ ఆబ్జెక్ట్ తన జీవితకాలాన్ని ముగించుకొని మెమరీ నుండి తొలగించబడే క్షణంలో ఆటోమేటిక్‌గా రన్ అయ్యే క్లీనప్ ఫంక్షనే <strong>Destructor</strong>.
+      </p>
+      <p>
+        డిస్ట్రక్టర్ పేరు కూడా క్లాస్ పేరుతోనే ఉంటుంది, కానీ దాని ముందు <strong>టిల్డే గుర్తు (<code>~</code>)</strong> ఉంటుంది (ఉదా: <code>~Player()</code>). డిస్ట్రక్టర్ ఎటువంటి పారామీటర్లను తీసుకోదు, కాబట్టి దీనిని ఓవర్‌లోడ్ చేయడం కుదరదు; ఒక క్లాస్‌కు ఒకే ఒక్క డిస్ట్రక్టర్ ఉంటుంది.
+      </p>
 
-    <div class="warn-box">
-      <strong>⚙️ LIFO (Last-In, First-Out) Destructor Order:</strong><br>
-      స్టాక్ మెమరీలో ఆబ్జెక్టులు ఒకదానిపై ఒకటి పేర్చబడతాయి (Stack of plates). కాబట్టి ఆబ్జెక్టులు <strong>ఏ క్రమంలో సృష్టించబడ్డాయో దానికి పూర్తి వ్యతిరేక క్రమంలో (Reverse Order) Destructors రన్ అవుతాయి</strong>!<br>
-      మొదట పుట్టిన ఆబ్జెక్ట్ అన్నింటికంటే చివరగా డిస్ట్రాయ్ అవుతుంది; చివరగా పుట్టిన ఆబ్జెక్ట్ అందరికంటే ముందుగా డిస్ట్రాయ్ అవుతుంది.
+      <!-- VISUAL DIAGRAM CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">⚙️ స్టాక్ మెమరీలో LIFO (Last-In, First-Out) ఎగ్జిక్యూషన్ ఆర్డర్:</h4>
+        <p style="font-size:13.5px; line-height:1.7; color:var(--text); margin:0;">
+          స్టాక్ మెమరీలో ఆబ్జెక్టులు ఒకదానిపై ఒకటి పేర్చిన ప్లేట్ల లాగా స్టోర్ అవుతాయి. కాబట్టి <strong>ఆబ్జెక్టులు ఏ క్రమంలో పుట్టాయో దానికి పూర్తి వ్యతిరేక క్రమంలో (Reverse Order) Destructors రన్ అవుతాయి</strong>!<br><br>
+          • కన్‌స్ట్రక్టర్ల ఆర్డర్: Object A పుట్టింది ──► Object B పుట్టింది ──► Object C పుట్టింది<br>
+          • డిస్ట్రక్టర్ల ఆర్డర్: Object C చనిపోతుంది ──► Object B చనిపోతుంది ──► Object A చనిపోతుంది
+        </p>
+      </div>
     </div>
 
-    <!-- CONCEPT 5: RULE OF THREE & RULE OF FIVE -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">5</span> Rule of Three & Rule of Five సూత్రాలు</div>
-    <p>
-      ఒక క్లాస్‌లో డైనమిక్ రిసోర్సెస్ (హీప్ పాయింటర్లు, ఫైల్ హ్యాండిల్స్) ఉన్నప్పుడు అనుసరించాల్సిన ముఖ్యమైన సాఫ్ట్‌వేర్ ఇంజనీరింగ్ నియమాలు:
-    </p>
+    <!-- CONCEPT 5: RAII & THE RULE OF FIVE -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> RAII ఫిలాసఫీ మరియు ప్రామాణిక Rule of Five</div>
+    <div class="section-body">
+      <p>
+        C++ ప్రపంచంలో అత్యంత ప్రసిద్ధి చెందిన డిజైన్ ఫిలాసఫీ <strong>RAII (Resource Acquisition Is Initialization)</strong>. దీని అర్థం: ఏదైనా విలువైన వనరును (హీప్ మెమరీ, ఫైల్ హ్యాండిల్, నెట్‌వర్క్ సాకెట్, డేటాబేస్ కనెక్షన్) ఎప్పుడూ ఒంటరిగా వదిలేయకూడదు! దానిని ఒక స్టాక్ ఆబ్జెక్ట్ లోపల బంధించాలి:
+      </p>
 
-    <div class="table-container" style="margin:20px 0;">
-      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
-        <thead>
-          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-            <th style="padding:12px; color:var(--text);">రూల్</th>
-            <th style="padding:12px; color:var(--text);">చేర్చాల్సిన ఫంక్షన్లు</th>
-            <th style="padding:12px; color:var(--text);">ఎందుకు అవసరం?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong>Rule of Three</strong> (C++98)</td>
-            <td style="padding:12px;">1. Destructor<br>2. Copy Constructor<br>3. Copy Assignment (<code>operator=</code>)</td>
-            <td style="padding:12px;">వీటిలో ఏదైనా ఒక్కదాన్ని మీరు స్వయంగా రాయాల్సి వస్తే, మిగిలిన రెండింటిని కూడా తప్పక రాయాలి; లేకపోతే డబుల్ ఫ్రీ లేదా మెమరీ లీక్ జరుగుతుంది.</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong>Rule of Five</strong> (Modern C++11)</td>
-            <td style="padding:12px;">Rule of Three +<br>4. Move Constructor<br>5. Move Assignment Operator</td>
-            <td style="padding:12px;">లక్షలాది ఎలిమెంట్స్ ఉన్న పెద్ద ఆబ్జెక్టులను కాపీ చేయకుండా పాయింటర్లను వేరొక ఆబ్జెక్ట్‌కు నేరుగా బదిలీ (Move Semantics) చేసి అత్యంత వేగాన్ని సాధించడానికి.</td>
-          </tr>
-          <tr>
-            <td style="padding:12px;"><strong>Rule of Zero</strong> (బెస్ట్ ప్రాక్టీస్)</td>
-            <td style="padding:12px;">ఏ ప్రత్యేకమైన డిస్ట్రక్టర్ గానీ కాపీ లాజిక్ గానీ రాయొద్దు.</td>
-            <td style="padding:12px;">రా పాయింటర్లకు బదులుగా <code>std::unique_ptr</code>, <code>std::string</code>, <code>std::vector</code> వాడండి. అన్నీ కంపైలరే ఆటోమేటిక్‌గా హ్యాండిల్ చేస్తుంది!</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <ul style="color:var(--text); line-height:1.8; margin-left:20px;">
+        <li>ఆబ్జెక్ట్ క్రియేట్ అయినప్పుడు దాని <strong>Constructor</strong> ఆ వనరును తీసుకుంటుంది.</li>
+        <li>ఆబ్జెక్ట్ స్కోప్ దాటి వెళ్ళినప్పుడు లేదా ఏదైనా ఎర్రర్ వచ్చినప్పుడు దాని <strong>Destructor</strong> ఆటోమేటిక్‌గా ఆ వనరును రిలీజ్ చేస్తుంది.</li>
+      </ul>
 
-    <!-- CODE BLOCK 2: RAII RESOURCE LIFECYCLE & LIFO ORDER -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 2: RAII Scope Lifecycle & Reverse LIFO Execution Proof</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <!-- TABLE: RULE OF THREE / FIVE / ZERO -->
+      <div class="table-container" style="margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px; color:var(--text);">నియమం (Rule)</th>
+              <th style="padding:12px; color:var(--text);">చేర్చాల్సిన ఫంక్షన్లు</th>
+              <th style="padding:12px; color:var(--text);">ఎందుకు అవసరం?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px;"><strong>Rule of Three</strong> (C++98)</td>
+              <td style="padding:12px;">1. Destructor<br>2. Copy Constructor<br>3. Copy Assignment (<code>operator=</code>)</td>
+              <td style="padding:12px;">క్లాస్‌లో హీప్ పాయింటర్లు ఉంటే ఈ మూడింటినీ తప్పనిసరిగా మనమే రాయాలి, లేకపోతే డబుల్ ఫ్రీ క్రాష్ వస్తుంది.</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px;"><strong>Rule of Five</strong> (Modern C++11)</td>
+              <td style="padding:12px;">పై మూడింటితో పాటు:<br>4. Move Constructor<br>5. Move Assignment Operator</td>
+              <td style="padding:12px;">లక్షలాది అంశాలున్న భారీ ఆబ్జెక్టులను కాపీ చేయకుండా వేరొక ఆబ్జెక్ట్‌కు నేరుగా యాజమాన్యం బదిలీ (Move Semantics) చేసి సూపర్ స్పీడ్ సాధించడానికి.</td>
+            </tr>
+            <tr>
+              <td style="padding:12px;"><strong>Rule of Zero</strong> (బెస్ట్ ప్రాక్టీస్)</td>
+              <td style="padding:12px;">ఏ ప్రత్యేకమైన డిస్ట్రక్టర్ లేదా కాపీ లాజిక్ రాయకండి!</td>
+              <td style="padding:12px;">రా పాయింటర్ల బదులు <code>std::unique_ptr</code>, <code>std::string</code>, <code>std::vector</code> వాడండి. కంపైలరే అన్నింటినీ చూసుకుంటుంది!</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <div class="code-box">
-        <div class="code-header">
-          <span>raii_lifo_order.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-          </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
-
-class ServerResource {
-private:
-    std::string serviceName;
-
-public:
-    ServerResource(const std::string& name) : serviceName(name) {
-        std::cout &lt;&lt; "  --> [STARTED] Service: " &lt;&lt; serviceName &lt;&lt; " initialized.\n";
-    }
-
-    ~ServerResource() {
-        std::cout &lt;&lt; "  <-- [STOPPED] Service: " &lt;&lt; serviceName &lt;&lt; " shut down safely.\n";
-    }
-};
-
-void runServerWorkflow() {
-    std::cout &lt;&lt; "\nEntering runServerWorkflow() Scope...\n";
-    ServerResource db("DatabaseConnection"); // 1st created
-    ServerResource auth("AuthSecurityToken"); // 2nd created
-
-    {
-        std::cout &lt;&lt; "\n  [Inner Scope Started]\n";
-        ServerResource cache("RedisCacheWorker"); // 3rd created
-        std::cout &lt;&lt; "  [Inner Scope Ending]\n";
-    } // RedisCacheWorker ఇక్కడే డిస్ట్రాయ్ అవుతుంది
-
-    ServerResource logger("AuditLogger"); // 4th created
-    std::cout &lt;&lt; "\nExiting runServerWorkflow() Scope (Watch Reverse LIFO Order)...\n";
-}
-
-int main() {
-    std::cout &lt;&lt; "=== Demonstrating Constructor & Destructor Execution Order ===\n";
-    runServerWorkflow();
-    std::cout &lt;&lt; "\nWorkflow completely finished. All resources cleaned.\n";
-    return 0;
-}</code></pre>
-      </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
     </div>
 
     <!-- FAQ SECTION -->
@@ -640,4 +636,3 @@ int main() {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
-

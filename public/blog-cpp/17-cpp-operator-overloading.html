@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends — Modern C++ Tutorial | Our Compiler</title>
-  <meta name="description" content="C++ ఆపరేటర్ ఓవర్‌లోడింగ్ మరియు Friend Functions సమగ్ర తెలుగు గైడ్: Operator Overloading సూత్రాలు, ఓవర్‌లోడ్ చేయలేని ఆపరేటర్లు, Stream Insertion (<<, >>) Friend ఫంక్షన్ రహస్యం, Friend Classes, మరియు Modern C++20 Spaceship Operator (<=>)." />
+  <meta name="description" content="C++ ఆపరేటర్ ఓవర్‌లోడింగ్ మరియు Friend Functions సమగ్ర తెలుగు గైడ్: Operator Overloading సూత్రాలు, ఓవర్‌లోడ్ చేయలేని 5 ఆపరేటర్లు, Stream Insertion (<<) Friend ఫంక్షన్ రహస్యం, Friend Classes, మరియు Modern C++20 Spaceship Operator (<=>)." />
   <meta name="keywords" content="c++ operator overloading in telugu, friend function in c++ telugu, stream insertion operator overloading c++, spaceship operator c++ 20, friend class c++, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
@@ -107,9 +107,9 @@
         'default', 'delete', 'do', 'double', 'dynamic_cast', 'else', 'enum',
         'explicit', 'export', 'extern', 'false', 'float', 'for', 'friend', 'goto',
         'if', 'inline', 'int', 'long', 'mutable', 'namespace', 'new', 'noexcept',
-        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'private', 'protected',
-        'public', 'register', 'reinterpret_cast', 'requires', 'return', 'short',
-        'signed', 'sizeof', 'static', 'static_assert', 'static_cast', 'struct',
+        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'override', 'private',
+        'protected', 'public', 'register', 'reinterpret_cast', 'requires', 'return',
+        'short', 'signed', 'sizeof', 'static', 'static_assert', 'static_cast', 'struct',
         'switch', 'template', 'this', 'thread_local', 'throw', 'true', 'try',
         'typedef', 'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual',
         'void', 'volatile', 'wchar_t', 'while', 'xor', 'xor_eq'
@@ -117,9 +117,9 @@
       const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|ostream|istream|Complex|BankAccount|TaxAuditor|size_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|ostream|istream|Complex|Point|BankAccount|size_t)\b/g, m => pushToken('tp', m));
       code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
-      code = code.replace(/([&|<>!+\-*\/%=^~]+|<=>)/g, m => pushToken('op', m));
+      code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
 
       tokens.forEach((tok, idx) => {
         code = code.split(`___CPP_TOK_${idx}___`).join(tok);
@@ -129,13 +129,15 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      // Default to Light Theme
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         window.addEventListener('DOMContentLoaded', () => {
           if (document.body) document.body.classList.add('light-theme');
         });
       }
+
       window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('pre code').forEach(codeBlock => {
           const pre = codeBlock.parentElement;
@@ -182,27 +184,11 @@
             });
           }
         });
-
-        document.querySelectorAll('.try-box').forEach(tryBox => {
-          const codeEl = tryBox.querySelector('pre code');
-          const runBtn = tryBox.querySelector('.run-btn');
-          if (codeEl) {
-            const rawCode = codeEl.textContent;
-            codeEl.innerHTML = highlightCppCode(rawCode);
-            if (runBtn) {
-              runBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.setItem('code_cpp17', rawCode);
-                window.location.href = '/online-cpp-compiler.html';
-              });
-            }
-          }
-        });
       });
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -348,230 +334,289 @@
       </p>
     </div>
 
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Operator Overloading Mechanics · 5 Non-Overloadable Operators · cout Stream Insertion · Friend Functions · Friend Classes · C++20 Spaceship <=></span>
+    </div>
+
     <!-- CONCEPT 1: WHAT IS OPERATOR OVERLOADING -->
-    <div class="section-title"><span class="num">1</span> ఆపరేటర్ ఓవర్‌లోడింగ్ అంటే ఏమిటి?</div>
-    <p>
-      సాధారణంగా <code>+</code>, <code>-</code>, <code>==</code> వంటి ఆపరేటర్లు <code>int</code>, <code>float</code> లాంటి ప్రాథమిక డేటా టైప్స్ పై పనిచేస్తాయి. కానీ మన స్వంత క్లాస్ ఆబ్జెక్టులపై (ఉదా: రెండు కాంప్లెక్స్ నంబర్లు, రెండు మ్యాట్రిక్స్‌లు, లేదా రెండు వెక్టార్లు) <code>+</code> ఆపరేటర్ ఉపయోగించాలనుకుంటే?
-    </p>
-    <p>
-      అందుకోసం C++ మనకు <strong>Operator Overloading</strong> సదుపాయాన్ని అందిస్తుంది:
-    </p>
+    <div class="section-title"><span class="num">1</span> ఆపరేటర్ ఓవర్‌లోడింగ్ అంటే ఏమిటి? Syntactic Sugar</div>
+    <div class="section-body">
+      <p>
+        C++ లో <code>+</code>, <code>-</code>, <code>*</code>, <code>==</code> వంటి ప్రామాణిక ఆపరేటర్లు ప్రాథమిక డేటా టైపులైన <code>int</code>, <code>double</code> లపై సహజంగా పనిచేస్తాయి. కానీ మన స్వంత క్లాస్ ఆబ్జెక్టులైన <em>Complex Numbers</em> (కాంప్లెక్స్ సంఖ్యలు), <em>Vector3D</em> (3D కోఆర్డినేట్లు), లేదా <em>Matrix</em> లపై కూడా <code>c1 + c2</code> అని సహజంగా కూడాలనుకుంటే?
+      </p>
+      <p>
+        జావా (Java) వంటి భాషల్లో దీనికి అనుమతి లేదు; వారు <code>c1.add(c2)</code> అని ఫంక్షన్ రాయాలి. కానీ C++ లో మన స్వంత ఆబ్జెక్టులకు కూడా సహజమైన గణిత వ్యక్తీకరణలను జోడించడానికి కంపైలర్ ఇచ్చిన అద్భుతమైన ఫీచరే <strong>Operator Overloading</strong>!
+      </p>
 
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[Operator Overloading సింటాక్స్ & పరివర్తన]</span>
-
-మనం రాసే క్లీన్ కోడ్:
-Complex c3 = c1 + c2;
-
-కంపైలర్ అంతర్గతంగా పిలిచే ఫంక్షన్:
-Complex c3 = c1.operator+(c2);
-             ▲
-             └── c1 ఆబ్జెక్ట్ యొక్క operator+ ఫంక్షన్ లోకి c2 పారామీటర్ గా వెళ్తుంది!
-    </div>
-
-    <div class="warn-box">
-      <strong>⚠️ ఓవర్‌లోడ్ చేయలేని ఆపరేటర్లు ఏవి? (Interview Question):</strong><br>
-      C++ లో దాదాపు అన్ని ఆపరేటర్లను ఓవర్‌లోడ్ చేయవచ్చు, కానీ ఈ క్రింది <strong>5 ఆపరేటర్లను ఎట్టి పరిస్థితుల్లోనూ ఓవర్‌లోడ్ చేయలేము</strong>:<br>
-      1. Dot Operator (<code>.</code>)<br>
-      2. Pointer-to-member Operator (<code>.*</code>)<br>
-      3. Scope Resolution Operator (<code>::</code>)<br>
-      4. Ternary Conditional Operator (<code>?:</code>)<br>
-      5. Size Operator (<code>sizeof</code>)
-    </div>
-
-    <!-- CODE BLOCK 1: ARITHMETIC OPERATOR OVERLOADING -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 1: Arithmetic & Equality Operator Overloading (+, ==)</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
-      </div>
-
-      <div class="code-box">
-        <div class="code-header">
-          <span>complex_operators.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- LIGHT VISUAL CONVERSION CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:10px; padding:18px 22px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px; font-weight:700;">🔄 కంపైలర్ అంతర్గతంగా ఎలా మారుస్తుంది?</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:10px;">
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px 14px;">
+            <strong style="color:#047857;">డెవలపర్ రాసే సహజమైన కోడ్:</strong>
+            <p style="font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:6px 0 0; color:#0f172a;">
+              Complex c3 = c1 + c2;
+            </p>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px 14px;">
+            <strong style="color:#334155;">కంపైలర్ కాల్ చేసే ఫంక్షన్:</strong>
+            <p style="font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:6px 0 0; color:#0f172a;">
+              Complex c3 = c1.operator+(c2);
+            </p>
           </div>
         </div>
-        <pre><code>#include &lt;iostream&gt;
+        <p style="font-size:12.5px; color:var(--text2); margin:10px 0 0;">
+          ఎడమవైపున్న <code>c1</code> ఆబ్జెక్ట్ <code>this</code> అవుతుంది, కుడివైపున్న <code>c2</code> ఆబ్జెక్ట్ ఫంక్షన్ పారామీటర్ గా వెళ్తుంది!
+        </p>
+      </div>
+
+      <!-- COMPACT FOCUSED CODE BLOCK 1 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Overloading the '+' Binary Operator</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>operator_plus.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
 
 class Complex {
-private:
-    double real;
-    double imag;
-
 public:
-    Complex(double r = 0.0, double i = 0.0) : real(r), imag(i) {}
+    double real, imag;
+    Complex(double r = 0, double i = 0) : real(r), imag(i) {}
 
-    // '+' Binary Operator Overloading (Member Function)
+    // Overloading '+' operator (Member function)
     Complex operator+(const Complex& other) const {
         return Complex(this->real + other.real, this->imag + other.imag);
     }
-
-    // '==' Equality Operator Overloading
-    bool operator==(const Complex& other) const {
-        return (this->real == other.real) && (this->imag == other.imag);
-    }
-
-    void display() const {
-        std::cout &lt;&lt; real &lt;&lt; " + " &lt;&lt; imag &lt;&lt; "i\n";
-    }
 };
 
 int main() {
-    Complex c1(3.5, 2.5);
-    Complex c2(1.5, 4.5);
-
-    std::cout &lt;&lt; "c1 = "; c1.display();
-    std::cout &lt;&lt; "c2 = "; c2.display();
-
-    // '+' ఆపరేటర్ ద్వారా రెండు ఆబ్జెక్టులను కూడడం
-    Complex c3 = c1 + c2; // Calls c1.operator+(c2)
-    std::cout &lt;&lt; "\nc3 (c1 + c2) = "; c3.display();
-
-    // '==' ఆపరేటర్ తో పోలిక
-    Complex c4(3.5, 2.5);
-    std::cout &lt;&lt; "\nChecking c1 == c4: " &lt;&lt; (c1 == c4 ? "EQUAL ✔️" : "NOT EQUAL ❌") &lt;&lt; "\n";
-    std::cout &lt;&lt; "Checking c1 == c2: " &lt;&lt; (c1 == c2 ? "EQUAL ✔️" : "NOT EQUAL ❌") &lt;&lt; "\n";
-
+    Complex c1(3.0, 4.0), c2(1.5, 2.5);
+    Complex c3 = c1 + c2; // Natural math syntax!
+    std::cout &lt;&lt; "c3 = " &lt;&lt; c3.real &lt;&lt; " + " &lt;&lt; c3.imag &lt;&lt; "i\n";
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
-    </div>
-
-    <!-- CONCEPT 2: STREAM OPERATORS & FRIEND FUNCTIONS -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> Stream Insertion (<code>&lt;&lt;</code>) & Friend Functions</div>
-    <p>
-      మనం ఒక ఆబ్జెక్ట్‌ను <code>c1.display()</code> అని కాకుండా నేరుగా <code>std::cout &lt;&lt; c1;</code> అని ప్రింట్ చేయాలనుకుంటే, <code>operator&lt;&lt;</code> ని ఓవర్‌లోడ్ చేయాలి. కానీ ఇక్కడ ఒక చిక్కు సమస్య ఉంది:
-    </p>
-
-    <div class="tip-box">
-      <strong>💡 ఎందుకు Stream Operators ని మెంబర్ ఫంక్షన్ గా రాయలేము?</strong><br>
-      <code>std::cout &lt;&lt; c1</code> లో ఎడమ వైపు ఉన్న మొదటి ఆపరాండ్ <code>std::cout</code> (ఇది <code>std::ostream</code> రకం).<br>
-      ఒకవేళ ఇది మెంబర్ ఫంక్షన్ అవ్వాలంటే, <code>ostream</code> క్లాస్ లోపల మన క్లాస్ కోసం మెథడ్ ఉండాలి! కానీ <code>ostream</code> అనేది C++ స్టాండర్డ్ లైబ్రరీకి చెందినది; దానిని మనం ఎడిట్ చేయలేము.<br><br>
-      అందుకే దీనిని క్లాస్ బయట ఉండే గ్లోబల్ ఫంక్షన్‌గా రాయాలి. అయితే క్లాస్ ప్రైవేట్ వేరియబుల్స్ (real, imag) ను చదవడానికి ఆ ఫంక్షన్‌కు క్లాస్ లోపల <strong><code>friend</code></strong> పర్మిషన్ ఇవ్వాలి!
-    </div>
-
-    <!-- CONCEPT 3: FRIEND FUNCTIONS & FRIEND CLASSES -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> Friend Functions & Friend Classes నియమాలు</div>
-    <p>
-      ఒక క్లాస్ తన <code>private</code> మరియు <code>protected</code> మెంబర్లను బయటి ఒక నిర్దిష్ట ఫంక్షన్‌కు లేదా మరొక క్లాస్‌కు మాత్రమే అనుమతించాలనుకున్నప్పుడు <strong><code>friend</code></strong> కీవర్డ్ వాడుతుంది.
-    </p>
-
-    <ul style="color:var(--text); line-height:1.8; margin-left:20px;">
-      <li><strong>Friendship is not mutual:</strong> క్లాస్ A క్లాస్ B కి ఫ్రెండ్ అయితే, ఆటోమేటిక్‌గా B క్లాస్ A కి ఫ్రెండ్ అవ్వదు!</li>
-      <li><strong>Friendship is not inherited:</strong> పేరెంట్ క్లాస్ ఫ్రెండ్స్ చైల్డ్ క్లాస్ కు ఆటోమేటిక్‌గా ఫ్రెండ్స్ కాలేరు.</li>
-      <li><strong>పరిమితంగా వాడాలి:</strong> మితిమీరిన ఫ్రెండ్స్ వాడకం వల్ల ఎన్‌క్యాప్సులేషన్ భద్రత బలహీనపడుతుంది.</li>
-    </ul>
-
-    <!-- CONCEPT 4: MODERN C++20 SPACESHIP OPERATOR -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">4</span> Modern C++20: Spaceship Operator (<code>&lt;=&gt;</code>)</div>
-    <p>
-      పూర్వం రెండు ఆబ్జెక్టులను పోల్చడానికి మనం 6 వేర్వేరు ఆపరేటర్లను (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>==</code>, <code>!=</code>) విడివిడిగా రాసేవాళ్ళం. C++20 లో పరిచయమైన <strong>Three-Way Comparison (Spaceship) Operator <code>&lt;=&gt;</code></strong> తో ఈ బాధలన్నీ తీరిపోయాయి!
-    </p>
-
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[C++20 Spaceship Operator Magic]</span>
-
-struct Point {
-    int x;
-    int y;
-
-    // ఒక్క లైన్ తో మొత్తం 6 రిలేషనల్ ఆపరేటర్లు ఆటోమేటిక్ గా తయారవుతాయి!
-    auto operator<=>(const Point&) const = default;
-};
-
-Point p1{1, 2}, p2{2, 3};
-bool b1 = (p1 < p2);  // Works automatically!
-bool b2 = (p1 == p2); // Works automatically!
-    </div>
-
-    <!-- CODE BLOCK 2: STREAM OPERATOR & FRIEND CLASS -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 2: Stream Insertion (<<) Overload & Friend Class Auditing</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>Complex operator+(const Complex& other) const</code>: ఆపరేటర్ ఓవర్‌లోడింగ్ కు <code>operator</code> కీవర్డ్ మరియు చిహ్నం (<code>+</code>) వాడాలి.</li>
+          <li><code>const Complex& other</code>: అదనపు కాపీ వేస్ట్ అవ్వకుండా <code>const</code> రిఫరెన్స్ ద్వారా రెండవ ఆబ్జెక్ట్ ను తీసుకుంటుంది.</li>
+          <li><code>Complex c3 = c1 + c2;</code>: క్లీన్ మరియు సహజమైన గణిత సూత్రంలా కనిపిస్తుంది.</li>
+        </ul>
       </div>
+    </div>
 
-      <div class="code-box">
-        <div class="code-header">
-          <span>stream_friend_demo.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+    <!-- CONCEPT 2: THE 5 NON-OVERLOADABLE OPERATORS -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> ఓవర్‌లోడ్ చేయలేని 5 ఆపరేటర్లు (The 5 Forbidden Operators)</div>
+    <div class="section-body">
+      <p>
+        C++ లో దాదాపు ప్రతి ఆపరేటర్‌ను ఓవర్‌లోడ్ చేయవచ్చు. కానీ కంపైలర్ భద్రత మరియు మెమరీ అలైన్‌మెంట్ కోసం ఈ క్రింది <strong>5 ఆపరేటర్లను ఎట్టి పరిస్థితుల్లోనూ ఓవర్‌లోడ్ చేయలేము</strong> (ఇది ప్రతి టెక్ ఇంటర్వ్యూలో అడిగే ఫేవరెట్ ప్రశ్న!):
+      </p>
+
+      <!-- LIGHT 5 PILLS CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:20px 0;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#dc2626; font-size:16px;">1. Dot (<code>.</code>)</strong>
+            <p style="font-size:12px; color:#475569; margin:4px 0 0;">డైరెక్ట్ మెంబర్ యాక్సెస్</p>
+          </div>
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#dc2626; font-size:16px;">2. Scope (<code>::</code>)</strong>
+            <p style="font-size:12px; color:#475569; margin:4px 0 0;">నేమ్‌స్పేస్ & క్లాస్ స్కోప్</p>
+          </div>
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#dc2626; font-size:16px;">3. Ternary (<code>?:</code>)</strong>
+            <p style="font-size:12px; color:#475569; margin:4px 0 0;">కండిషనల్ స్టేట్‌మెంట్</p>
+          </div>
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#dc2626; font-size:16px;">4. Size (<code>sizeof</code>)</strong>
+            <p style="font-size:12px; color:#475569; margin:4px 0 0;">బైట్ల లెక్కింపు</p>
+          </div>
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#dc2626; font-size:16px;">5. Pointer-to-member (<code>.*</code>)</strong>
+            <p style="font-size:12px; color:#475569; margin:4px 0 0;">మెంబర్ పాయింటర్ డిరిఫరెన్స్</p>
           </div>
         </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
+        <p style="font-size:13px; color:var(--text2); margin:14px 0 0; line-height:1.6;">
+          <strong>ఎందుకు నిషేధించబడ్డాయి?</strong> ఒకవేళ డాట్ (<code>.</code>) లేదా స్కోప్ (<code>::</code>) ను ఓవర్‌లోడ్ చేయడానికి అనుమతిస్తే, ఏ మెంబర్ అసలైనదో ఏది యూజర్ కోడో కంపైలర్ కనిపెట్టలేక ప్రోగ్రామ్ సింటాక్స్ కుప్పకూలిపోతుంది!
+        </p>
+      </div>
+    </div>
 
-class BankAccount {
+    <!-- CONCEPT 3: STREAM OPERATORS & FRIEND FUNCTIONS -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> Stream Insertion (<code>&lt;&lt;</code>) & Friend Functions రహస్యం</div>
+    <div class="section-body">
+      <p>
+        మనం ఒక ఆబ్జెక్ట్‌ను ప్రింట్ చేయడానికి ప్రత్యేకంగా <code>c1.display()</code> అని పిలవకుండా, బిల్ట్-ఇన్ వేరియబుల్స్ లాగే <code>std::cout &lt;&lt; c1 &lt;&lt; std::endl;</code> అని రాయాలనుకుంటే, మనం <strong>Stream Insertion Operator (<code>&lt;&lt;</code>)</strong> ను ఓవర్‌లోడ్ చేయాలి.
+      </p>
+
+      <div class="tip-box">
+        <strong>💡 ఎందుకు Stream Operators ను మెంబర్ ఫంక్షన్ గా రాయలేము?</strong><br>
+        <code>std::cout &lt;&lt; c1</code> ఎక్స్‌ప్రెషన్‌లో ఎడమ వైపు ఉన్న మొదటి ఆపరాండ్ <code>std::cout</code> (ఇది <code>std::ostream</code> రకం).<br>
+        ఒకవేళ ఇది క్లాస్ మెంబర్ ఫంక్షన్ కావాలంటే, మనం <code>std::ostream</code> క్లాస్ లోపలికి వెళ్లి కోడ్ మార్చాలి! కానీ <code>ostream</code> అనేది C++ స్టాండర్డ్ లైబ్రరీకి చెందిన కోడ్; దానిని మనం మార్చలేము.<br><br>
+        అందుకే దీనిని క్లాస్ బయట ఉండే గ్లోబల్ ఫంక్షన్‌గా రాయాలి. అయితే క్లాస్ లోని ప్రైవేట్ వేరియబుల్స్‌ను చదవడానికి ఆ ఫంక్షన్‌కు క్లాస్ లోపల <strong><code>friend</code></strong> పర్మిషన్ ఇవ్వాలి!
+      </div>
+
+      <!-- COMPACT FOCUSED CODE BLOCK 2 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Stream Insertion (<<) Overload using friend</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>stream_insertion.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+class Point {
 private:
-    std::string owner;
-    double balance;
-
+    int x, y;
 public:
-    BankAccount(const std::string& name, double bal) : owner(name), balance(bal) {}
+    Point(int xVal = 0, int yVal = 0) : x(xVal), y(yVal) {}
 
-    // 1. Friend Function for Stream Insertion (std::cout &lt;&lt; account)
-    friend std::ostream& operator&lt;&lt;(std::ostream& os, const BankAccount& acc) {
-        os &lt;&lt; "[Account: " &lt;&lt; acc.owner &lt;&lt; " | Verified Balance: $" &lt;&lt; acc.balance &lt;&lt; "]";
-        return os; // చైనింగ్ (cout &lt;&lt; a &lt;&lt; b) కోసం os రిటర్న్ చేయాలి
-    }
-
-    // 2. Friend Class Declaration - TaxAuditor కి ప్రైవేట్ యాక్సెస్ ఇస్తుంది
-    friend class TaxAuditor;
-};
-
-class TaxAuditor {
-public:
-    void auditAccount(const BankAccount& acc) {
-        std::cout &lt;&lt; "  [TAX AUDIT] Inspecting Private Records...\n";
-        // 'owner' & 'balance' private అయినప్పటికీ TaxAuditor కి friend కాబట్టి యాక్సెస్ ఉంది!
-        std::cout &lt;&lt; "  Auditing: " &lt;&lt; acc.owner &lt;&lt; " | Liquid Cash: $" &lt;&lt; acc.balance &lt;&lt; "\n";
+    // Friend Function for std::cout &lt;&lt; pt
+    friend std::ostream& operator&lt;&lt;(std::ostream& os, const Point& pt) {
+        os &lt;&lt; "(" &lt;&lt; pt.x &lt;&lt; ", " &lt;&lt; pt.y &lt;&lt; ")";
+        return os; // Enables chaining: cout &lt;&lt; p1 &lt;&lt; p2;
     }
 };
 
 int main() {
-    BankAccount userAcc("Suresh Kumar", 75000.0);
-
-    std::cout &lt;&lt; "=== 1. Direct Object Printing via overloaded &lt;&lt; ===\n";
-    std::cout &lt;&lt; userAcc &lt;&lt; "\n\n";
-
-    std::cout &lt;&lt; "=== 2. Friend Class Accessing Private Members ===\n";
-    TaxAuditor governmentAuditor;
-    governmentAuditor.auditAccount(userAcc);
-
+    Point p1(10, 20);
+    std::cout &lt;&lt; "Point Coordinates: " &lt;&lt; p1 &lt;&lt; "\n";
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>friend std::ostream& operator&lt;&lt;(...)</code>: క్లాస్ లోపల <code>friend</code> అని రాసి డిక్లేర్ చేశాం కాబట్టి ఈ ఫంక్షన్ <code>x</code> మరియు <code>y</code> ప్రైవేట్ వేరియబుల్స్ ను చదవగలిగింది.</li>
+          <li><code>return os;</code>: <code>std::ostream&</code> ను తిరిగి ఇవ్వడం వల్ల మనం <code>cout &lt;&lt; p1 &lt;&lt; " and " &lt;&lt; p2;</code> లాగా చైనింగ్ (Chaining) చేసుకోవచ్చు.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CONCEPT 4: FRIEND CLASSES -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> Friend Classes & భద్రతా నియమాలు</div>
+    <div class="section-body">
+      <p>
+        ఒక క్లాస్ తన పూర్తి <code>private</code> మరియు <code>protected</code> మెంబర్లను మరొక నిర్దిష్ట క్లాస్‌కు మాత్రమే ఓపెన్ చేయాలనుకున్నప్పుడు <strong>Friend Class (<code>friend class Auditor;</code>)</strong> ను వాడతారు.
+      </p>
+      <p>
+        <strong>రియల్-వరల్డ్ ఉదాహరణ:</strong><br>
+        ఒక బ్యాంక్ కస్టమర్ అకౌంట్ లోని ప్రైవేట్ బ్యాలెన్స్ బయటి వ్యక్తులకు కనిపించదు. కానీ బ్యాంక్ నియమించిన అధికారిక <em>ఆడిటర్ (Auditor)</em> కు మాత్రం ఆ ప్రైవేట్ బ్యాలెన్స్ ను తనిఖీ చేసే ప్రత్యేక అధికార పాస్ (Friendship) ఉంటుంది!
+      </p>
+
+      <ul style="color:var(--text); line-height:1.8; margin-left:20px;">
+        <li><strong>Friendship is NOT Mutual:</strong> క్లాస్ A క్లాస్ B ని ఫ్రెండ్ గా ప్రకటిస్తే, B క్లాస్ A యొక్క ప్రైవేట్ డేటాను చూడగలదు; కానీ A ఆటోమేటిక్ గా B యొక్క ప్రైవేట్ డేటాను చూడలేదు!</li>
+        <li><strong>Friendship is NOT Inherited:</strong> తండ్రికి ఉన్న ఫ్రెండ్ కొడుక్కి ఆటోమేటిక్ గా ఫ్రెండ్ కానట్లే, Base క్లాస్ ఫ్రెండ్స్ చైల్డ్ క్లాస్ కు వర్తించరు.</li>
+      </ul>
+    </div>
+
+    <!-- CONCEPT 5: MODERN C++20 SPACESHIP OPERATOR -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> Modern C++20: Spaceship Operator (<code>&lt;=&gt;</code>) విప్లవం</div>
+    <div class="section-body">
+      <p>
+        C++20 రాకముందు రెండు ఆబ్జెక్టులను పూర్తిగా పోల్చడానికి మనం 6 వేర్వేరు ఆపరేటర్లను (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>==</code>, <code>!=</code>) విడివిడిగా రాసేవాళ్ళం. ఇది ఎంతో బోరింగ్ మరియు తప్పులు జరిగే అవకాశం ఉన్న పని!
+      </p>
+      <p>
+        Modern C++20 లో వచ్చిన <strong>Three-Way Comparison (Spaceship) Operator (<code>&lt;=&gt;</code>)</strong> తో కేవలం <strong>ఒకే ఒక్క లైన్ కోడ్</strong> తో మొత్తం 6 రిలేషనల్ ఆపరేటర్లు ఆటోమేటిక్ గా తయారవుతాయి:
+      </p>
+
+      <!-- COMPACT FOCUSED CODE BLOCK 3 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: C++20 Spaceship Operator (<=>) in 1 Line</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>spaceship_operator.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;compare&gt;
+
+struct Player {
+    int score;
+    int rank;
+
+    // C++20 Magic: 1 line generates all 6 comparison operators!
+    auto operator&lt;=&gt;(const Player&amp;) const = default;
+};
+
+int main() {
+    Player p1{100, 1}, p2{90, 2};
+    std::cout &lt;&lt; std::boolalpha;
+    std::cout &lt;&lt; "Is p1 &gt; p2? " &lt;&lt; (p1 &gt; p2) &lt;&lt; "\n";  // true
+    std::cout &lt;&lt; "Is p1 == p2? " &lt;&lt; (p1 == p2) &lt;&lt; "\n"; // false
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>auto operator&lt;=&gt;(const Player&amp;) const = default;</code>: <code>= default</code> అని పెట్టగానే కంపైలర్ స్వయంగా మెంబర్ల ఆధారంగా ఆరు ఆపరేటర్లను మెరుపు వేగంతో సింథసైజ్ చేస్తుంది.</li>
+          <li><code>p1 &gt; p2</code>: మనం ప్రత్యేకంగా <code>operator&gt;</code> రాయకపోయినా Spaceship ఆపరేటర్ స్వయంగా నిర్ణయిస్తుంది.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PITFALLS & BEST PRACTICES -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">6</span> సాధారణంగా బిగినర్స్ చేసే తప్పులు & బెస్ట్ ప్రాక్టీసెస్</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:10px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">⚠️ Common Beginner Traps</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>లోకల్ ఆబ్జెక్ట్ ను రిఫరెన్స్ గా రిటర్న్ చేయడం:</strong> <code>Complex&amp; operator+()</code> అని రిఫరెన్స్ రిటర్న్ చేస్తే, ఫంక్షన్ ముగియగానే ఆ లోకల్ ఆబ్జెక్ట్ నశించి Dangling Reference ఎర్రర్ వస్తుంది. అర్థమెటిక్ ఆపరేటర్లలో ఎల్లప్పుడూ బై-వాల్యూ (<code>Complex operator+</code>) రిటర్న్ చేయాలి!</li>
+            <li><strong>సహజమైన అర్థాన్ని మార్చడం:</strong> <code>+</code> ఆపరేటర్ తో సబ్ట్రాక్షన్ చేయడం లాంటి వింత కోడ్ రాయకండి; ఇది టీమ్‌లోని ఇతర ఇంజనీర్లను గందరగోళానికి గురిచేస్తుంది.</li>
+          </ul>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">💡 Industry Best Practices</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Chaining కోసం స్ట్రీమ్ రిఫరెన్స్ రిటర్న్ చేయండి:</strong> <code>operator&lt;&lt;</code> లో ఎల్లప్పుడూ <code>return os;</code> చేయాలి, లేదంటే <code>cout &lt;&lt; a &lt;&lt; b;</code> చైనింగ్ ఫెయిల్ అవుతుంది.</li>
+            <li><strong>Compound Assignment తో కోడ్ తగ్గించండి:</strong> <code>operator+=</code> ని మొదట రాసి, దాని ఆధారంగా <code>operator+</code> ని రాయడం ప్రొఫెషనల్ పద్ధతి.</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో Stream Insertion Operator (&lt;&lt;) ని మెంబర్ ఫంక్షన్ గా కాకుండా ఎల్లప్పుడూ 'friend' ఫంక్షన్ గానే ఎందుకు రాయాలి?</h4>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో Stream Insertion Operator (<<) ని మెంబర్ ఫంక్షన్ గా కాకుండా ఎల్లప్పుడూ 'friend' ఫంక్షన్ గానే ఎందుకు రాయాలి?</h4>
       <p>
-        <code>std::cout &lt;&lt; obj</code> అని రాసినప్పుడు ఎడమ వైపు ఉన్న మొదటి ఆబ్జెక్ట్ <code>std::ostream</code>. ఒకవేళ మెంబర్ ఫంక్షన్ గా రాయాలంటే మనం <code>ostream</code> క్లాస్ లోపలికి వెళ్లి కోడ్ మార్చాలి, అది స్టాండర్డ్ లైబ్రరీ కాబట్టి అసాధ్యం. అందుకే <code>friend ostream&amp; operator&lt;&lt;(ostream&amp; os, const MyClass&amp; obj)</code> రూపంలో బయటి గ్లోబల్ ఫ్రెండ్ ఫంక్షన్ గా నిర్వచిస్తాం.
+        <code>std::cout &lt;&lt; obj</code> అని రాసినప్పుడు ఎడమ వైపు ఉన్న మొదటి ఆబ్జెక్ట్ <code>std::ostream</code>. ఒకవేళ మెంబర్ ఫంక్షన్ గా రాయాలంటే మనం ostream క్లాస్ లోపలికి వెళ్లి కోడ్ మార్చాలి, అది స్టాండర్డ్ లైబ్రరీ కాబట్టి అసాధ్యం. అందుకే <code>friend ostream&amp; operator&lt;&lt;(ostream&amp; os, const MyClass&amp; obj)</code> రూపంలో బయటి గ్లోబల్ ఫ్రెండ్ ఫంక్షన్ గా నిర్వచిస్తాం.
       </p>
     </div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో ఏయే ఆపరేటర్లను ఓవర్‌లోడ్ చేయడం కుదరదు?</h4>
       <p>
-        C++ లో కేవలం 5 ఆపరేటర్లను ఓవర్‌లోడ్ చేయలేము: 1. డాట్ ఆపరేటర్ (<code>.</code>) 2. పాయింటర్ టు మెంబర్ (<code>.*</code>) 3. స్కోప్ రిజల్యూషన్ (<code>::</code>) 4. టెర్నరీ కండిషనల్ ఆపరేటర్ (<code>?:</code>) 5. <code>sizeof</code> ఆపరేటర్. ఇవి కంపైలర్ యొక్క ప్రాథమిక సింటాక్స్ మరియు మెమరీ అలైన్‌మెంట్‌కు అవసరమైనవి.
+        C++ లో కేవలం 5 ఆపరేటర్లను ఓవర్‌లోడ్ చేయలేము: 1. డాట్ ఆపరేటర్ (<code>.</code>) 2. పాయింటర్ టు మెంబర్ (<code>.*</code>) 3. స్కోప్ రిజల్యూషన్ (<code>::</code>) 4. టెర్నరీ కండిషనల్ ఆపరేటర్ (<code>?:</code>) 5. sizeof ఆపరేటర్. ఇవి కంపైలర్ యొక్క ప్రాథమిక సింటాక్స్ మరియు మెమరీ అలైన్‌మెంట్‌కు అవసరమైనవి.
       </p>
     </div>
 
     <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++20 లో 'Spaceship Operator' (&lt;=&gt;) అంటే ఏమిటి?</h4>
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++20 లో 'Spaceship Operator' (<=>) అంటే ఏమిటి?</h4>
       <p>
         C++20 లో వచ్చిన Three-Way Comparison Operator (<code>&lt;=&gt;</code>). పూర్వం ఆరు ఆపరేటర్లను (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>==</code>, <code>!=</code>) విడివిడిగా ఓవర్‌లోడ్ చేయాల్సి వచ్చేది. Spaceship ఆపరేటర్‌తో <code>auto operator&lt;=&gt;(const MyClass&amp;) const = default;</code> అని ఒక్క లైన్ రాస్తే చాలు, కంపైలర్ అన్నింటినీ మెరుపు వేగంతో ఆటోమేటిక్‌గా రూపొందిస్తుంది.
       </p>
@@ -606,4 +651,3 @@ int main() {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
-

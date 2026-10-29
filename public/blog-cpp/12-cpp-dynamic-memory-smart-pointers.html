@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -117,8 +117,8 @@
       const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|unique_ptr|shared_ptr|weak_ptr|make_unique|make_shared|move|size_t)\b/g, m => pushToken('tp', m));
-      code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*|0x[0-9a-fA-F]+)\b/g, m => pushToken('nm', m));
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|unique_ptr|shared_ptr|weak_ptr|make_unique|make_shared|Song|size_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
       code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
 
       tokens.forEach((tok, idx) => {
@@ -129,13 +129,15 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      // Default to Light Theme
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         window.addEventListener('DOMContentLoaded', () => {
           if (document.body) document.body.classList.add('light-theme');
         });
       }
+
       window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('pre code').forEach(codeBlock => {
           const pre = codeBlock.parentElement;
@@ -182,27 +184,11 @@
             });
           }
         });
-
-        document.querySelectorAll('.try-box').forEach(tryBox => {
-          const codeEl = tryBox.querySelector('pre code');
-          const runBtn = tryBox.querySelector('.run-btn');
-          if (codeEl) {
-            const rawCode = codeEl.textContent;
-            codeEl.innerHTML = highlightCppCode(rawCode);
-            if (runBtn) {
-              runBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.setItem('code_cpp17', rawCode);
-                window.location.href = '/online-cpp-compiler.html';
-              });
-            }
-          }
-        });
       });
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -341,281 +327,224 @@
     </div>
 
     <div class="lesson-header">
-      <span class="badge">Phase 03 · Core Memory Mechanics · Chapter 12 of 20</span>
-      <h1 class="lesson-title">డైనమిక్ మెమరీ & Smart Pointers (C++ Memory Management)</h1>
+      <span class="badge">Phase 03 · Functions, Memory & Pointers · Chapter 12 of 20</span>
+      <h1 class="lesson-title">డైనమిక్ మెమరీ & Smart Pointers (తెలుగులో)</h1>
       <p class="lesson-desc">
-        కంప్యూటర్ మెమరీ పై సంపూర్ణ నియంత్రణ సాధించండి! Stack vs Heap నిర్మాణం, <code>new</code> మరియు <code>delete[]</code> పనితీరు, భయంకరమైన Memory Leaks మరియు Dangling Pointers నివారణ, C++ యొక్క అత్యున్నత డిజైన్ ఫిలాసఫీ <strong>RAII</strong>, మరియు Modern C++ విప్లవం <code>std::unique_ptr</code>, <code>std::shared_ptr</code> సమగ్ర వివరణ.
+        జీరో మెమరీ లీక్స్ సాధించండి! Stack vs Heap ఆర్కిటెక్చర్, <code>new</code> మరియు <code>delete[]</code> ప్రమాదాలు, Dangling Pointers, C++ యొక్క రక్షకుడైన <strong>RAII సూత్రం</strong>, మరియు Modern C++ లోని <code>std::unique_ptr</code>, <code>std::shared_ptr</code>, <code>std::weak_ptr</code> సమగ్ర విశ్లేషణ.
       </p>
     </div>
 
-    <!-- CONCEPT 1: STACK VS HEAP -->
-    <div class="section-title"><span class="num">1</span> Stack vs Heap: కంప్యూటర్ ర్యామ్ లో రెండు భాగాలు</div>
-    <p>
-      ఒక C++ ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు, దానికి కేటాయించబడిన మెమరీ ప్రధానంగా రెండు వేర్వేరు రీజియన్లుగా విభజించబడుతుంది: <strong>Stack</strong> మరియు <strong>Heap</strong>.
-    </p>
-
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[కంప్యూటర్ RAM నిర్మాణం: Stack vs Heap Architecture]</span>
-
-High Address ┌───────────────────────────────────────┐
-             │            STACK (స్టాక్)             │ ◄── ఫంక్షన్ లోకల్ వేరియబుల్స్
-             │        (LIFO - క్రిందికి పెరుగుతుంది)    │     వేగవంతమైనది, ఆటోమేటిక్ క్లీనప్
-             │                   ▼                   │     పరిమిత సైజ్ (1MB - 8MB)
-             ├───────────────────────────────────────┤
-             │           Free Memory Gap             │
-             ├───────────────────────────────────────┤
-             │                   ▲                   │
-             │         (పైకి పెరుగుతుంది)             │ ◄── డైనమిక్ మెమరీ ('new' ద్వారా)
-             │             HEAP (హీప్)               │     చాలా పెద్ద సైజ్ (Gigabytes)
-             │                                       │     మనం లేదా స్మార్ట్ పాయింటర్లు క్లీన్ చేయాలి
-Low Address  └───────────────────────────────────────┘
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Stack vs Heap Architecture · new & delete[] · Memory Leaks & Dangling Pointers · RAII Design Pattern · unique_ptr · shared_ptr · weak_ptr</span>
     </div>
 
-    <div class="table-container" style="margin:20px 0;">
-      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
-        <thead>
-          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-            <th style="padding:12px; color:var(--text);">లక్షణం</th>
-            <th style="padding:12px; color:var(--text);">Stack మెమరీ</th>
-            <th style="padding:12px; color:var(--text);">Heap మెమరీ</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong>నిర్వహణ (Management)</strong></td>
-            <td style="padding:12px;">CPU హార్డ్‌వేర్ (Stack Pointer) ద్వారా ఆటోమేటిక్‌గా జరుగుతుంది.</td>
-            <td style="padding:12px;">ప్రోగ్రామర్ చేతిలో ఉంటుంది (మ్యాన్యువల్ లేదా Smart Pointers).</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong>వేగం (Speed)</strong></td>
-            <td style="padding:12px;">అత్యంత వేగవంతమైనది (కేవలం CPU రిజిస్టర్ పాయింటర్ మారుతుంది).</td>
-            <td style="padding:12px;">కాస్త నెమ్మదిగా ఉంటుంది (OS ఫ్రీ మెమరీ బ్లాక్‌ను వెతకాలి).</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong>జీవితకాలం (Lifetime)</strong></td>
-            <td style="padding:12px;">ఫంక్షన్ స్కోప్ ముగియగానే ఆటోమేటిక్‌గా నాశనం అవుతుంది.</td>
-            <td style="padding:12px;">మనం స్పష్టంగా డిలీట్ చేసేవరకు లేదా ప్రోగ్రామ్ ముగిసేవరకు ఉంటుంది.</td>
-          </tr>
-          <tr>
-            <td style="padding:12px;"><strong>ప్రమాదం</strong></td>
-            <td style="padding:12px;">పెద్ద డేటా ఉంచితే <strong>Stack Overflow</strong> వస్తుంది.</td>
-            <td style="padding:12px;">క్లీన్ చేయకపోతే <strong>Memory Leak</strong> జరుగుతుంది.</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- CONCEPT 1: STACK VS HEAP -->
+    <div class="section-title"><span class="num">1</span> Stack vs Heap: కంప్యూటర్ ర్యామ్ లో రెండు ప్రపంచాలు</div>
+    <div class="section-body">
+      <p>
+        ఒక C++ ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు దానికి కేటాయించబడిన ర్యామ్ (RAM) ప్రధానంగా రెండు విభిన్నమైన ప్రాంతాలుగా పనిచేస్తుంది: <strong>Stack</strong> మరియు <strong>Heap</strong>.
+      </p>
+
+      <!-- LIGHT VISUAL RAM ARCHITECTURE CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:10px; padding:20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 12px 0; font-size:15px; font-weight:700;">🏛️ Stack vs Heap అంతర్గత పోలిక:</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <strong style="color:#0f172a; font-size:14px;">1. STACK (స్టాక్ మెమరీ)</strong>
+            <ul style="font-size:12.5px; color:#475569; line-height:1.7; margin:8px 0 0 16px;">
+              <li><strong>ఎవరి కోసం:</strong> ఫంక్షన్ లోకల్ వేరియబుల్స్.</li>
+              <li><strong>పనితీరు:</strong> LIFO (Last-In, First-Out) ప్రకారం ఆటోమేటిక్ క్లీనప్.</li>
+              <li><strong>వేగం:</strong> అత్యంత మెరుపు వేగం (CPU Stack Pointer రిజిస్టర్).</li>
+              <li><strong>పరిమితి:</strong> పరిమిత సైజ్ (1MB - 8MB). ఎక్కువ డేటా పెడితే <em>Stack Overflow</em> క్రాష్ వస్తుంది!</li>
+            </ul>
+          </div>
+          <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <strong style="color:#047857; font-size:14px;">2. HEAP (హీప్ మెమరీ)</strong>
+            <ul style="font-size:12.5px; color:#15803d; line-height:1.7; margin:8px 0 0 16px;">
+              <li><strong>ఎవరి కోసం:</strong> రన్‌టైమ్‌లో <code>new</code> ద్వారా అడిగిన డైనమిక్ డేటా.</li>
+              <li><strong>పరిమాణం:</strong> చాలా పెద్దది (గిగాబైట్ల కొద్దీ ర్యామ్).</li>
+              <li><strong>నియంత్రణ:</strong> ప్రోగ్రామర్ బాధ్యత! మనం స్వయంగా డిలీట్ చేయాలి లేదా Smart Pointers వాడాలి.</li>
+              <li><strong>ప్రమాదం:</strong> క్లీన్ చేయకపోతే <em>Memory Leak</em> సంభవిస్తుంది.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- CONCEPT 2: THE OLD C++ WAY: NEW AND DELETE -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> ప్రాచీన పద్ధతి: <code>new</code> మరియు <code>delete[]</code></div>
-    <p>
-      రన్‌టైమ్‌లో యూజర్ ఇన్‌పుట్ ఆధారంగా సైజ్ తెలిసినప్పుడు (ఉదా: యూజర్ 1,00,000 ఎలిమెంట్స్ అడిగినప్పుడు), స్టాక్ సరిపోదు. హీప్ మెమరీని అడగడానికి C++ లో <code>new</code> ఆపరేటర్ వాడతారు:
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> ప్రాచీన పద్ధతి: <code>new</code> మరియు <code>delete[]</code> ప్రమాదాలు</div>
+    <div class="section-body">
+      <p>
+        యూజర్ ఎంత డేటా ఇస్తాడో ముందుగా తెలియనప్పుడు (ఉదా: 10,00,000 గేమ్ ఎంటిటీలు), స్టాక్ మెమరీ సరిపోదు. హీప్ మెమరీని అడగడానికి పాత C++ లో <code>new</code> మరియు <code>delete</code> ఆపరేటర్లను వాడేవారు:
+      </p>
 
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[Traditional new & delete Syntax]</span>
-
-// 1. Single Object Allocation
-int* pVal = new int(100);  // Heap లో 4 బైట్లు కేటాయిస్తుంది
-delete pVal;               // మెమరీని OS కి తిరిగి ఇస్తుంది
-pVal = nullptr;            // సురక్షితమైన రక్షణ!
-
-// 2. Dynamic Array Allocation
-int* pArr = new int[5];    // Heap లో 20 బైట్లు కేటాయిస్తుంది
-delete[] pArr;             // అర్రే కోసం ఖచ్చితంగా delete[] వాడాలి!
-pArr = nullptr;
-    </div>
-
-    <div class="warn-box">
-      <strong>🚨 The Delete[] Disaster (అర్రే డిలీట్ ట్రాప్):</strong><br>
-      మీరు <code>new int[5]</code> తో కేటాయించిన మెమరీని కేవలం <code>delete pArr;</code> (స్క్వేర్ బ్రాకెట్లు లేకుండా) అని డిలీట్ చేస్తే, C++ కేవలం మొదటి ఎలిమెంట్‌ను మాత్రమే డిస్ట్రాయ్ చేయవచ్చు లేదా సిస్టమ్ క్రాష్ అవ్వవచ్చు (Undefined Behavior). అర్రే అయితే ఖచ్చితంగా <strong><code>delete[]</code></strong> నే వాడాలి!
-    </div>
-
-    <!-- CONCEPT 3: MEMORY LEAKS & DANGLING POINTERS -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> మెమరీ లీక్స్ & డ్యాంగ్లింగ్ పాయింటర్లు (Twin Nightmares)</div>
-    <p>
-      C++ లో గార్బేజ్ కలెక్టర్ (Java, C# లాంటి ఆటోమేటిక్ క్లీనర్) ఉండదు. దీనివల్ల డెవలపర్లు చేసే రెండు పెద్ద తప్పులు:
-    </p>
-
-    <ul style="color:var(--text); line-height:1.8; margin-left:20px;">
-      <li>
-        <strong>Memory Leak (మెమరీ లీక్):</strong> <code>new</code> తో మెమరీ తీసుకొని, దాన్ని <code>delete</code> చేయకుండా ఫంక్షన్ ముగిస్తే, ఆ మెమరీకి ఉన్న పాయింటర్ చనిపోతుంది కానీ హీప్‌లోని ఆ డేటా అలాగే ఉండిపోతుంది! రోజంతా నడిచే సర్వర్లు ఇలా మెమరీ లీక్ అయి కొన్ని గంటల్లో ర్యామ్ మొత్తం నిండిపోయి క్రాష్ అవుతాయి.
-      </li>
-      <li>
-        <strong>Dangling Pointer (డ్యాంగ్లింగ్ పాయింటర్):</strong> మెమరీని <code>delete ptr;</code> ద్వారా విడుదల చేసిన తర్వాత కూడా, ఆ <code>ptr</code> లో పాత అడ్రస్ అలాగే ఉంటుంది. ఆ పాయింటర్‌ను పొరపాటున యాక్సెస్ చేస్తే వేరే ఏదో డేటా కరప్ట్ అయిపోతుంది.
-      </li>
-    </ul>
-
-    <!-- CODE BLOCK 1: DYNAMIC ARRAYS & DEALLOCATION -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 1: Dynamic Array Allocation & Safe Deallocation</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <div style="background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px; margin:16px 0; color:var(--text); font-size:13.5px; line-height:1.7;">
+        <strong style="color:#ef4444;">🚨 The Delete[] Disaster (అర్రే డిలీట్ ట్రాప్):</strong><br>
+        మీరు <code>int* arr = new int[100];</code> అని అర్రే కేటాయించి, డిలీట్ చేసేటప్పుడు బ్రాకెట్లు లేకుండా కేవలం <code>delete arr;</code> అని రాస్తే తీవ్రమైన అన్‌డిఫైన్డ్ బిహేవియర్ (Undefined Behavior) జరుగుతుంది! అర్రేను డిలీట్ చేయడానికి ఖచ్చితంగా <strong><code>delete[] arr;</code></strong> అని రాయాలి!
       </div>
 
-      <div class="code-box">
-        <div class="code-header">
-          <span>heap_array_demo.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- COMPACT FOCUSED CODE BLOCK 1 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Manual Heap Allocation & Deallocation</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>raw_heap_allocation.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
           </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
+          <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    int size = 5;
-    std::cout &lt;&lt; "Allocating " &lt;&lt; size &lt;&lt; " integers dynamically on HEAP...\n";
+    int* ptr = new int(42); // Allocate 1 int on Heap
+    std::cout &lt;&lt; "Heap Value: " &lt;&lt; *ptr &lt;&lt; "\n";
+    delete ptr;             // Free the memory to OS
+    ptr = nullptr;          // Prevent Dangling Pointer!
 
-    // 1. Heap పై అర్రే కేటాయింపు
-    int* dynamicArr = new int[size];
-
-    // 2. విలువలను నింపడం
-    for (int i = 0; i &lt; size; ++i) {
-        dynamicArr[i] = (i + 1) * 10;
-    }
-
-    std::cout &lt;&lt; "Heap Array Elements: ";
-    for (int i = 0; i &lt; size; ++i) {
-        std::cout &lt;&lt; dynamicArr[i] &lt;&lt; " ";
-    }
-    std::cout &lt;&lt; "\n";
-
-    // 3. సురక్షితమైన క్లీనప్ (Safe Deallocation)
-    delete[] dynamicArr;      // మెమరీ విడుదల
-    dynamicArr = nullptr;    // Dangling pointer నివారణ
-
-    std::cout &lt;&lt; "Memory released safely & pointer set to nullptr.\n";
+    int* arr = new int[3]{10, 20, 30}; // Allocate Array on Heap
+    std::cout &lt;&lt; "arr[1]: " &lt;&lt; arr[1] &lt;&lt; "\n";
+    delete[] arr;           // Must use delete[] for arrays
+    arr = nullptr;
     return 0;
 }</code></pre>
-      </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
-    </div>
-
-    <!-- CONCEPT 4: RAII PHILOSOPHY -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> RAII: C++ యొక్క అసలైన రక్షకుడు</div>
-    <p>
-      మనిషి అన్న తర్వాత ఎప్పుడో ఒకప్పుడు <code>delete</code> రాయడం మర్చిపోవడం లేదా మధ్యలో ఒక ఎక్సెప్షన్ రావడం వల్ల <code>delete</code> లైన్ అసలు ఎగ్జిక్యూట్ అవ్వకపోవడం సహజం. దీనిని శాశ్వతంగా పరిష్కరించడానికి C++ సృష్టికర్త బ్జార్నే స్ట్రౌస్ట్రప్ (Bjarne Stroustrup) కనిపెట్టిన సూత్రమే <strong>RAII (Resource Acquisition Is Initialization)</strong>.
-    </p>
-
-    <div class="tip-box">
-      <strong>💎 RAII గోల్డెన్ ప్రిన్సిపల్:</strong><br>
-      హీప్ మెమరీని నేరుగా రా పాయింటర్లలో ఉంచవద్దు! దానిని ఒక స్టాక్ ఆబ్జెక్ట్ లోపల చుట్టండి (Wrap inside a Stack Object):<br>
-      1. ఆబ్జెక్ట్ క్రియేట్ అయినప్పుడు దాని <strong>Constructor</strong> హీప్ మెమరీని తీసుకుంటుంది.<br>
-      2. ఫంక్షన్ ముగిసి స్టాక్ క్లియర్ అయినప్పుడు ఆ ఆబ్జెక్ట్ యొక్క <strong>Destructor</strong> ఆటోమేటిక్‌గా పిలవబడి హీప్ మెమరీని క్లీన్ చేస్తుంది!<br>
-      ఈ అద్భుతమైన సూత్రం మీదే Modern C++ లోని <strong>Smart Pointers</strong> పనిచేస్తాయి.
-    </div>
-
-    <!-- CONCEPT 5: MODERN SMART POINTERS -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">5</span> Modern C++ Smart Pointers (<code>&lt;memory&gt;</code>)</div>
-    <p>
-      Modern C++ (C++11/14/17) లో <code>new</code> మరియు <code>delete</code> లను నేరుగా వాడటం పూర్తిగా బ్యాన్ చేయబడింది! వాటి స్థానంలో మూడు రకాల స్మార్ట్ పాయింటర్లు వచ్చాయి:
-    </p>
-
-    <div class="table-container" style="margin:20px 0;">
-      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
-        <thead>
-          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-            <th style="padding:12px; color:var(--text);">స్మార్ట్ పాయింటర్</th>
-            <th style="padding:12px; color:var(--text);">యాజమాన్యం (Ownership)</th>
-            <th style="padding:12px; color:var(--text);">ఎప్పుడు వాడాలి?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong><code>std::unique_ptr</code></strong></td>
-            <td style="padding:12px;">ఏకైక యాజమాన్యం (Exclusive). కాపీ చేయడం కుదరదు; కేవలం మూవ్ (<code>std::move</code>) చేయవచ్చు.</td>
-            <td style="padding:12px;"><strong>95% సందర్భాలలో ఇదే వాడాలి!</strong> అత్యంత వేగవంతమైనది (Zero Overhead). <code>std::make_unique&lt;T&gt;()</code> ద్వారా సృష్టించాలి.</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong><code>std::shared_ptr</code></strong></td>
-            <td style="padding:12px;">భాగస్వామ్య యాజమాన్యం (Shared). Reference Count ద్వారా ఎంతమంది ఓనర్లు ఉన్నారో లెక్కిస్తుంది.</td>
-            <td style="padding:12px;">ఒకే ఆబ్జెక్ట్‌ను పలువురు సమానంగా యాజమాన్యం చేయాల్సి వచ్చినప్పుడు. రిఫరెన్స్ కౌంట్ 0 అయినప్పుడు ఆటోమేటిక్‌గా డిలీట్ అవుతుంది.</td>
-          </tr>
-          <tr>
-            <td style="padding:12px;"><strong><code>std::weak_ptr</code></strong></td>
-            <td style="padding:12px;">నాన్-ఓనింగ్ అబ్జర్వర్ (Non-owning). రిఫరెన్స్ కౌంట్‌ను పెంచదు.</td>
-            <td style="padding:12px;"><code>shared_ptr</code> ల మధ్య వచ్చే సర్క్యులర్ డిపెండెన్సీ (Circular Reference Deadlock) ని విచ్ఛిన్నం చేయడానికి.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- CODE BLOCK 2: UNIQUE_PTR IN ACTION -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 2: Modern std::unique_ptr & Zero Memory Leak Safety</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
-      </div>
-
-      <div class="code-box">
-        <div class="code-header">
-          <span>smart_pointers_demo.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-          </div>
         </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;memory&gt; // Smart pointers కోసం ఇది తప్పనిసరి
+      </div>
 
-class DatabaseConnection {
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>int* ptr = new int(42);</code>: హీప్ లో 4 బైట్లు కేటాయించి అందులో 42 ని నింపి, ఆ అడ్రస్ ను స్టాక్ లో ఉన్న <code>ptr</code> కు ఇచ్చింది.</li>
+          <li><code>ptr = nullptr;</code>: మెమరీ డిలీట్ అయిన తర్వాత కూడా పాత అడ్రస్ అలాగే ఉండే ప్రమాదాన్ని (Dangling Pointer) నివారించడానికి <code>nullptr</code> సెట్ చేసాం.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CONCEPT 3: RAII PHILOSOPHY -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> RAII: C++ యొక్క అసలైన రక్షకుడు (The Golden Rule)</div>
+    <div class="section-body">
+      <p>
+        ప్రోగ్రామర్లు ఎంత జాగ్రత్తగా ఉన్నా, ఫంక్షన్ మధ్యలో ఎర్రర్ రావడం వల్ల లేదా మర్చిపోవడం వల్ల <code>delete</code> లైన్ రన్ అవ్వకపోవడం సహజం. దీనిని శాశ్వతంగా పరిష్కరించడానికి C++ సృష్టికర్త కనిపెట్టిన సూత్రమే <strong>RAII (Resource Acquisition Is Initialization)</strong>.
+      </p>
+
+      <div class="tip-box">
+        <strong>💎 RAII గోల్డెన్ ఫిలాసఫీ:</strong><br>
+        హీప్ మెమరీని నేరుగా రా పాయింటర్లలో ఉంచకండి! దానిని ఒక <strong>స్టాక్ ఆబ్జెక్ట్ లోపల చుట్టండి (Wrap in a Stack Object)</strong>:<br>
+        1. ఆబ్జెక్ట్ క్రియేట్ అయినప్పుడు దాని <strong>Constructor</strong> హీప్ మెమరీని తీసుకుంటుంది.<br>
+        2. ఫంక్షన్ ముగిసి స్టాక్ క్లియర్ అయినప్పుడు ఆ ఆబ్జెక్ట్ యొక్క <strong>Destructor</strong> ఆటోమేటిక్‌గా పిలవబడి హీప్ మెమరీని క్షణాల్లో క్లీన్ చేస్తుంది!<br>
+        దీనివల్ల మనుషులు మర్చిపోయినా కంపైలర్ ఎప్పటికీ మర్చిపోదు. జీరో మెమరీ లీక్స్!
+      </div>
+    </div>
+
+    <!-- CONCEPT 4: MODERN SMART POINTERS -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> Modern C++ Smart Pointers (<code>&lt;memory&gt;</code>)</div>
+    <div class="section-body">
+      <p>
+        Modern C++ లో <code>new</code> మరియు <code>delete</code> లను నేరుగా వాడటం బ్యాన్ చేయబడింది. వాటి స్థానంలో మూడు రకాల స్మార్ట్ పాయింటర్లు వచ్చాయి:
+      </p>
+
+      <!-- LIGHT TABLE -->
+      <div class="table-container" style="margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px; color:var(--text);">Smart Pointer</th>
+              <th style="padding:12px; color:var(--text);">యాజమాన్యం (Ownership)</th>
+              <th style="padding:12px; color:var(--text);">ఎప్పుడు వాడాలి?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px; color:#10b981; font-weight:700;"><code>std::unique_ptr</code></td>
+              <td style="padding:12px;">Exclusive (కేవలం ఒకే ఒక్క ఓనర్)</td>
+              <td style="padding:12px;">90% కేసుల్లో ఇదే వాడాలి. కాపీ కుదరదు (Move మాత్రమే చేయగలం). జీరో ఓవర్‌హెడ్ స్పీడ్!</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px; color:#58a6ff; font-weight:700;"><code>std::shared_ptr</code></td>
+              <td style="padding:12px;">Shared (బహుళ ఓనర్లు)</td>
+              <td style="padding:12px;">ఒకే ఆబ్జెక్ట్‌ను చాలామంది పంచుకున్నప్పుడు. రిఫరెన్స్ కౌంట్ (Reference Count) సున్నా అయినప్పుడు ఆటో-డిలీట్ అవుతుంది.</td>
+            </tr>
+            <tr>
+              <td style="padding:12px; color:#f59e0b; font-weight:700;"><code>std::weak_ptr</code></td>
+              <td style="padding:12px;">Non-Owning Observer (యాజమాన్యం ఉండదు)</td>
+              <td style="padding:12px;">Circular References వల్ల ఏర్పడే డెడ్‌లాక్ మెమరీ లీక్‌లను విచ్ఛిన్నం చేయడానికి.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- COMPACT FOCUSED CODE BLOCK 2 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: std::unique_ptr with Zero Leaks (std::make_unique)</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>smart_unique_ptr.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+
+class Song {
 public:
-    DatabaseConnection() {
-        std::cout &lt;&lt; "  [+] Database Connected (Resource Acquired)\n";
-    }
-    ~DatabaseConnection() {
-        std::cout &lt;&lt; "  [-] Database Closed (Resource Auto-Cleaned via Destructor!)\n";
-    }
-    void executeQuery(const std::string& query) {
-        std::cout &lt;&lt; "      Executing: " &lt;&lt; query &lt;&lt; "\n";
-    }
+    Song() { std::cout &lt;&lt; "Song started playing 🎵\n"; }
+    ~Song() { std::cout &lt;&lt; "Song finished & cleaned up automatically 🧹\n"; }
 };
 
-void processData() {
-    std::cout &lt;&lt; "Entering processData() scope...\n";
-
-    // C++14 ఉత్తమ విధానం: std::make_unique తో సృష్టించండి (No 'new' keyword needed!)
-    std::unique_ptr&lt;DatabaseConnection&gt; db = std::make_unique&lt;DatabaseConnection&gt;();
-    
-    db-&gt;executeQuery("SELECT * FROM users WHERE active = 1;");
-
-    // ఇక్కడ 'delete' రాయాల్సిన అవసరం లేదు!
-    // ఫంక్షన్ ముగియగానే db ఆటోమేటిక్‌గా నాశనం అవుతుంది
-    std::cout &lt;&lt; "Exiting processData() scope...\n";
-}
-
 int main() {
-    std::cout &lt;&lt; "=== 1. Demonstrating std::unique_ptr RAII Lifecycle ===\n";
-    processData();
-
-    std::cout &lt;&lt; "\n=== 2. Demonstrating std::shared_ptr Reference Counting ===\n";
-    std::shared_ptr&lt;int&gt; s1 = std::make_shared&lt;int&gt;(500);
-    std::cout &lt;&lt; "s1 created. Shared Count: " &lt;&lt; s1.use_count() &lt;&lt; "\n";
-
     {
-        std::shared_ptr&lt;int&gt; s2 = s1; // యాజమాన్యం పంచుకోబడింది
-        std::cout &lt;&lt; "s2 created in inner scope. Shared Count: " &lt;&lt; s1.use_count() &lt;&lt; "\n";
-        std::cout &lt;&lt; "Value via s2: " &lt;&lt; *s2 &lt;&lt; "\n";
-    } // s2 ఈ స్కోప్ వద్ద చనిపోతుంది
+        // Modern C++ Best Practice: make_unique
+        std::unique_ptr&lt;Song&gt; track = std::make_unique&lt;Song&gt;();
+        std::cout &lt;&lt; "Inside local scope block...\n";
+    } // స్కోప్ ముగియగానే delete రాయకపోయినా Destructor ఆటోమేటిక్ గా రన్ అవుతుంది!
 
-    std::cout &lt;&lt; "Inner scope ended. Shared Count: " &lt;&lt; s1.use_count() &lt;&lt; "\n";
+    std::cout &lt;&lt; "Outside scope. Zero Memory Leaks Guaranteed!\n";
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>std::make_unique&lt;Song&gt;()</code>: <code>new</code> రాయకుండా సురక్షితంగా హీప్ లో <code>Song</code> ని క్రియేట్ చేస్తుంది.</li>
+          <li><code>}</code> స్కోప్ ముగింపు: కర్లీ బ్రాకెట్ దాటగానే <code>unique_ptr</code> డెస్ట్రాయ్ అయ్యి లోపలి <code>Song</code> ను క్షణాల్లో క్లీన్ చేస్తుంది. ఎలాంటి <code>delete</code> రాయాల్సిన పనే లేదు!</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PITFALLS & BEST PRACTICES -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> సాధారణంగా బిగినర్స్ చేసే తప్పులు & బెస్ట్ ప్రాక్టీసెస్</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:10px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">⚠️ Common Beginner Traps</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Circular Dependency with shared_ptr:</strong> ఆబ్జెక్ట్ A ఆబ్జెక్ట్ B ని, ఆబ్జెక్ట్ B ఆబ్జెక్ట్ A ని <code>shared_ptr</code> ద్వారా చూపిస్తే రిఫరెన్స్ కౌంట్ ఎప్పటికీ 0 అవ్వదు (Permanent Memory Leak). ఇందులో ఒకదాన్ని <code>weak_ptr</code> గా మార్చాలి!</li>
+            <li><strong>unique_ptr ని కాపీ చేయడానికి ప్రయత్నించడం:</strong> <code>unique_ptr</code> ని కాపీ చేయలేము (Compile Error). బదిలీ చేయాలంటే <code>std::move()</code> వాడాలి.</li>
+          </ul>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">💡 Industry Best Practices</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Prefer make_unique over new:</strong> ఎప్పుడూ <code>std::make_unique&lt;T&gt;()</code> వాడండి. ఇది సింగిల్ అలొకేషన్ తో సూపర్ ఫాస్ట్ గా ఎక్సెప్షన్ సేఫ్టీ ఇస్తుంది.</li>
+            <li><strong>డిఫాల్ట్ గా unique_ptr ఎంచుకోండి:</strong> నిజంగా బహుళ ఓనర్లు అవసరమైతేనే <code>shared_ptr</code> కి వెళ్ళండి; ఎందుకంటే షేర్డ్ పాయింటర్ కు అటామిక్ రిఫరెన్స్ కౌంటింగ్ ఓవర్‌హెడ్ ఉంటుంది.</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Stack మెమరీ కి Heap మెమరీ కి ముఖ్యమైన తేడాలు ఏమిటి?</h4>
       <p>
-        Stack మెమరీ చాలా వేగవంతమైనది, ఫంక్షన్ కాల్ అయినప్పుడు వేరియబుల్స్ ఆటోమేటిక్‌గా స్టోర్ అయి ఫంక్షన్ ముగియగానే డిలీట్ అవుతాయి (పరిమిత సైజ్ ఉంటుంది, సాధారణంగా 1MB నుండి 8MB). Heap మెమరీ అనేది చాలా పెద్ద డైనమిక్ మెమరీ పూల్; ఇక్కడ <code>new</code> ద్వారా మెమరీ కేటాయించి <code>delete</code> ద్వారా మనమే స్వయంగా క్లీన్ చేయాలి లేదా Smart Pointers వాడాలి.
+        Stack మెమరీ చాలా వేగవంతమైనది, ఫంక్షన్ కాల్ అయినప్పుడు వేరియబుల్స్ ఆటోమేటిక్‌గా స్టోర్ అయి ఫంక్షన్ ముగియగానే డిలీట్ అవుతాయి (పరిమిత సైజ్ ఉంటుంది, సాధారణంగా 1MB నుండి 8MB). Heap మెమరీ అనేది చాలా పెద్ద డైనమిక్ మెమరీ పూల్; ఇక్కడ 'new' ద్వారా మెమరీ కేటాయించి 'delete' ద్వారా మనమే స్వయంగా క్లీన్ చేయాలి లేదా Smart Pointers వాడాలి.
       </p>
     </div>
 
@@ -629,7 +558,7 @@ int main() {
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++ లో Raw Pointer కి బదులుగా std::unique_ptr ఎందుకు వాడాలి?</h4>
       <p>
-        <code>std::unique_ptr</code> అనేది హీప్ ఆబ్జెక్ట్‌కు సంపూర్ణ యాజమాన్యం (Exclusive Ownership) కలిగి ఉంటుంది. ఫంక్షన్ ముగిసినా లేదా ఎక్సెప్షన్ వచ్చినా అది ఆటోమేటిక్‌గా మెమరీని <code>delete</code> చేస్తుంది. దీనివల్ల జీరో మెమరీ లీక్ గ్యారెంటీ లభిస్తుంది మరియు ఇది సాధారణ raw pointer అంతే వేగంతో పనిచేస్తుంది (Zero Overhead).
+        std::unique_ptr అనేది హీప్ ఆబ్జెక్ట్‌కు సంపూర్ణ యాజమాన్యం (Exclusive Ownership) కలిగి ఉంటుంది. ఫంక్షన్ ముగిసినా లేదా ఎక్సెప్షన్ వచ్చినా అది ఆటోమేటిక్‌గా మెమరీని 'delete' చేస్తుంది. దీనివల్ల జీరో మెమరీ లీక్ గ్యారెంటీ లభిస్తుంది మరియు ఇది సాధారణ raw pointer అంతే వేగంతో పనిచేస్తుంది (Zero Overhead).
       </p>
     </div>
 
@@ -662,4 +591,3 @@ int main() {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
-

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -117,7 +117,7 @@
       const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|Pair|Box|size_t|integral)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|vector|KeyValuePair|size_t)\b/g, m => pushToken('tp', m));
       code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
       code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
 
@@ -130,7 +130,7 @@
 
     (function() {
       // Default to Light Theme
-      const currentTheme = localStorage.getItem('theme');
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         window.addEventListener('DOMContentLoaded', () => {
@@ -184,27 +184,11 @@
             });
           }
         });
-
-        document.querySelectorAll('.try-box').forEach(tryBox => {
-          const codeEl = tryBox.querySelector('pre code');
-          const runBtn = tryBox.querySelector('.run-btn');
-          if (codeEl) {
-            const rawCode = codeEl.textContent;
-            codeEl.innerHTML = highlightCppCode(rawCode);
-            if (runBtn) {
-              runBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.setItem('code_cpp17', rawCode);
-                window.location.href = '/online-cpp-compiler.html';
-              });
-            }
-          }
-        });
       });
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -350,194 +334,195 @@
       </p>
     </div>
 
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Generic Programming · Function Templates · Type Deduction · Monomorphization · Class Templates · Specialization · C++20 Concepts</span>
+    </div>
+
     <!-- CONCEPT 1: WHAT IS GENERIC PROGRAMMING -->
     <div class="section-title"><span class="num">1</span> Generic Programming అంటే ఏమిటి? DRY సూత్రం</div>
-    <p>
-      సాంప్రదాయ ప్రోగ్రామింగ్‌లో రెండు సంఖ్యలను కూడాలంటే <code>int add(int a, int b)</code> రాయాలి. మళ్ళీ ఫ్లోటింగ్ పాయింట్ సంఖ్యల కోసం <code>double add(double a, double b)</code> రాయాలి. రేపు స్ట్రింగ్స్ లేదా ఇతర ఆబ్జెక్టుల కోసం మళ్ళీ రాయాలి. లాజిక్ ఒక్కటే అయినప్పటికీ డేటా టైప్స్ మారిన ప్రతిసారీ కోడ్‌ను డూప్లికేట్ చేయడం <strong>DRY (Don't Repeat Yourself)</strong> సూత్రానికి విరుద్ధం.
-    </p>
-    <p>
-      ఈ సమస్యను శాశ్వతంగా పరిష్కరించే ఆధునిక సాఫ్ట్‌వేర్ పద్ధతినే <strong>Generic Programming</strong> అంటారు. డేటా టైప్‌ను ఒక పారామీటర్‌గా మార్చి, ఏ డేటా టైప్‌కైనా సమర్థవంతంగా పనిచేసే సాధారణ కోడ్ రాయడానికి C++ లో <strong>Templates</strong> ఉపయోగపడతాయి.
-    </p>
+    <div class="section-body">
+      <p>
+        సాంప్రదాయ ప్రోగ్రామింగ్‌లో రెండు పూర్ణాంకాలను (integers) కూడాలంటే <code>int add(int a, int b)</code> రాయాలి. మళ్ళీ డబుల్స్ కోసం <code>double add(double a, double b)</code> రాయాలి. రేపు స్ట్రింగ్స్ కోసం మరొక ఫంక్షన్ రాయాలి. లాజిక్ ఒక్కటే అయినప్పటికీ కేవలం డేటా టైప్స్ మారిన ప్రతిసారీ కోడ్‌ను డూప్లికేట్ చేయడం <strong>DRY (Don't Repeat Yourself)</strong> సూత్రానికి పూర్తి విరుద్ధం!
+      </p>
+      <p>
+        ఈ సమస్యను శాశ్వతంగా పరిష్కరించే ఆధునిక సాఫ్ట్‌వేర్ పద్ధతినే <strong>Generic Programming</strong> అంటారు. డేటా టైప్‌ను ఒక పారామీటర్‌గా మార్చి, ఏ డేటా టైప్‌కైనా సమర్థవంతంగా పనిచేసే సాధారణ కోడ్ బ్లూప్రింట్ రాయడానికి C++ లో <strong>Templates</strong> ఉపయోగపడతాయి.
+      </p>
+    </div>
 
     <!-- CONCEPT 2: FUNCTION TEMPLATES & TYPE DEDUCTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> Function Templates & Type Deduction</div>
-    <p>
-      ఒక ఫంక్షన్ టెంప్లేట్‌ను ప్రకటించడానికి <code>template &lt;typename T&gt;</code> లేదా <code>template &lt;class T&gt;</code> ఉపయోగిస్తారు. ఇక్కడ <code>T</code> అనేది ఏదైనా డేటా టైప్‌ను సూచించే ప్లేస్‌హోల్డర్ (Type Placeholder):
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> Function Templates & ఆటోమేటిక్ Type Deduction</div>
+    <div class="section-body">
+      <p>
+        ఫంక్షన్ టెంప్లేట్‌ను ప్రకటించడానికి <code>template &lt;typename T&gt;</code> ఉపయోగిస్తారు. ఇక్కడ <code>T</code> అనేది ఏదైనా డేటా టైప్‌ను సూచించే ప్లేస్‌హోల్డర్ (Type Placeholder):
+      </p>
 
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[Function Template సింటాక్స్ & ఆటోమేటిక్ డిడక్షన్]</span>
+      <!-- COMPACT FOCUSED CODE BLOCK 1 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Function Template with Automatic Type Deduction</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>template_function.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
 
 template &lt;typename T&gt;
 T getMax(T a, T b) {
-    return (a > b) ? a : b;
-}
-
-కంపైలర్ గుర్తింపు (Template Type Deduction):
-• getMax(10, 20)       ──► కంపైలర్ T ని 'int' గా గుర్తిస్తుంది
-• getMax(3.14, 2.71)   ──► కంపైలర్ T ని 'double' గా గుర్తిస్తుంది
-• getMax('x', 'z')     ──► కంపైలర్ T ని 'char' గా గుర్తిస్తుంది
-    </div>
-
-    <!-- CONCEPT 3: COMPILER INSTANTIATION UNDER THE HOOD -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> లోపల ఏం జరుగుతుంది? Template Instantiation (Monomorphization)</div>
-    <p>
-      చాలామంది ప్రారంభకులు టెంప్లేట్లు రన్‌టైమ్‌లో నెమ్మదిగా పనిచేస్తాయేమో (Java Generics లేదా Python లాగా) అనుకుంటారు. కానీ C++ లో టెంప్లేట్లకు <strong>రన్‌టైమ్‌తో ఎలాంటి సంబంధం లేదు!</strong>
-    </p>
-
-    <!-- ASCII MONOMORPHIZATION DIAGRAM -->
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[కంపైల్-టైమ్ కోడ్ జనరేషన్ (Monomorphization Architecture)]</span>
-
-మీరు రాసినది: కేవలం ఒకే ఒక్క టెంప్లేట్ బ్లూప్రింట్:
-template &lt;typename T&gt; T add(T a, T b) { return a + b; }
-
-కంపైలేషన్ సమయంలో మీరు వాడిన కాల్స్ చూసి కంపైలర్ బైనరీలో సృష్టించే అసలైన ఫంక్షన్లు:
-1. add(5, 10) పిలిస్తే        ──► int add(int a, int b) { return a + b; }
-2. add(2.5, 4.5) పిలిస్తే    ──► double add(double a, double b) { return a + b; }
-3. add("A", "B") పిలిస్తే    ──► string add(string a, string b) { return a + b; }
-
-ఫలితం:
-ప్రతి ఫంక్షన్ నేరుగా మెషిన్ కోడ్ లో నేటివ్ స్పీడ్ తో రన్ అవుతుంది!
-"Zero Runtime Overhead — What you don't use, you don't pay for!"
-    </div>
-
-    <!-- CODE BLOCK 1: COMPACT FUNCTION TEMPLATE & SPECIALIZATION -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 1: Function Template & Explicit Specialization</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
-      </div>
-
-      <div class="code-box">
-        <div class="code-header">
-          <span>templates_func_demo.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-          </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
-
-// 1. Generic Function Template
-template &lt;typename T&gt;
-T findMax(T a, T b) {
     return (a &gt; b) ? a : b;
 }
 
-// 2. Full Template Specialization (bool కోసం ప్రత్యేకమైన లాజిక్)
-template &lt;&gt;
-bool findMax&lt;bool&gt;(bool a, bool b) {
-    std::cout &lt;&lt; "  [Specialized bool Logic]: ";
-    return a || b; // బూలియన్లలో లాజికల్ OR ఫలితాన్ని ఇస్తుంది
-}
-
 int main() {
-    std::cout &lt;&lt; "Max int   : " &lt;&lt; findMax(45, 89) &lt;&lt; "\n";
-    std::cout &lt;&lt; "Max double: " &lt;&lt; findMax(3.1415, 2.7182) &lt;&lt; "\n";
-    std::cout &lt;&lt; "Max string: " &lt;&lt; findMax(std::string("Apple"), std::string("Zebra")) &lt;&lt; "\n";
-    std::cout &lt;&lt; "Max bool  : " &lt;&lt; std::boolalpha &lt;&lt; findMax(true, false) &lt;&lt; "\n";
+    std::cout &lt;&lt; "Max int   : " &lt;&lt; getMax(10, 25) &lt;&lt; "\n";       // T is int
+    std::cout &lt;&lt; "Max double: " &lt;&lt; getMax(3.14, 2.71) &lt;&lt; "\n";   // T is double
+    std::cout &lt;&lt; "Max string: " &lt;&lt; getMax(std::string("Apple"), std::string("Zebra")) &lt;&lt; "\n";
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>template &lt;typename T&gt;</code>: కంపైలర్ కు చెప్తుంది: "ఇది సాధారణ ఫంక్షన్ కాదు, ఏదైనా టైప్ <code>T</code> కి పనిచేసే జెనరిక్ బ్లూప్రింట్".</li>
+          <li><code>getMax(10, 25)</code>: మనం <code>getMax&lt;int&gt;(10, 25)</code> అని ప్రత్యేకంగా చెప్పకపోయినా, రెండు ఆర్గ్యుమెంట్లు <code>int</code> కాబట్టి కంపైలర్ ఆటోమేటిక్ గా <code>T = int</code> అని నిర్ణయిస్తుంది (Type Deduction).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CONCEPT 3: MONOMORPHIZATION UNDER THE HOOD -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> అంతర్గత హార్డ్‌వేర్ పనితీరు: Monomorphization (Zero Overhead)</div>
+    <div class="section-body">
+      <p>
+        జావా (Java Generics) లేదా పైథాన్ (Python) లో జెనరిక్స్ రన్‌టైమ్ లో పనిచేస్తాయి, దీనివల్ల స్పీడ్ తగ్గుతుంది. కానీ C++ లో టెంప్లేట్లకు <strong>రన్‌టైమ్‌తో ఎటువంటి సంబంధం లేదు!</strong>
+      </p>
+
+      <!-- LIGHT VISUAL COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 12px 0; font-size:15px; font-weight:700;">⚙️ కంపైల్-టైమ్ కోడ్ జనరేషన్ (Monomorphization):</h4>
+        
+        <p style="font-size:13.5px; line-height:1.7; color:var(--text); margin:0;">
+          కంపైలేషన్ సమయంలో మీరు వాడిన కాల్స్‌ను బట్టి కంపైలర్ తానే స్వయంగా బైనరీ కోడ్ లో విడివిడి నేటివ్ ఫంక్షన్లను ఉత్పత్తి చేస్తుంది:<br><br>
+          • <code>getMax(10, 25)</code> పిలిచారు ──► కంపైలర్ <code>int getMax(int, int)</code> కోడ్ జనరేట్ చేస్తుంది.<br>
+          • <code>getMax(3.14, 2.71)</code> పిలిచారు ──► కంపైలర్ <code>double getMax(double, double)</code> కోడ్ జనరేట్ చేస్తుంది.<br><br>
+          <strong>ఫలితం:</strong> రన్‌టైమ్‌లో ఎలాంటి టైప్-చెక్కింగ్ లేదా స్పీడ్ లాస్ ఉండదు! <em>"Zero Runtime Overhead — What you don't use, you don't pay for!"</em>
+        </p>
+      </div>
     </div>
 
     <!-- CONCEPT 4: CLASS TEMPLATES -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> క్లాస్ టెంప్లేట్లు (Class Templates) & మల్టిపుల్ పారామీటర్లు</div>
-    <p>
-      ఫంక్షన్ల లాగే క్లాసులను కూడా జెనరిక్ గా మార్చవచ్చు. Standard Library లోని <code>std::vector&lt;T&gt;</code>, <code>std::pair&lt;T, U&gt;</code> లు క్లాస్ టెంప్లేట్లకు అత్యుత్తమ ఉదాహరణలు. ఒకే క్లాస్‌ను ఉపయోగించి పూర్ణాంకాలు, స్ట్రింగ్స్ లేదా ఏదైనా యూజర్ డిఫైన్డ్ ఆబ్జెక్టుల కోసం కస్టమ్ కంటైనర్లను నిర్మించవచ్చు.
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> క్లాస్ టెంప్లేట్లు (Class Templates) & Generic Containers</div>
+    <div class="section-body">
+      <p>
+        ఫంక్షన్ల లాగే క్లాసులను కూడా జెనరిక్ గా మార్చవచ్చు. Standard Library లోని <code>std::vector&lt;T&gt;</code>, <code>std::pair&lt;T1, T2&gt;</code> లు క్లాస్ టెంప్లేట్లకు అద్భుతమైన ఉదాహరణలు.
+      </p>
 
-    <!-- CODE BLOCK 2: GENERIC PAIR CLASS TEMPLATE -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 2: Generic Multi-Type Container Class Template</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
-      </div>
-
-      <div class="code-box">
-        <div class="code-header">
-          <span>generic_pair_class.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- COMPACT FOCUSED CODE BLOCK 2 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Generic KeyValuePair Class Template</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>class_template.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
           </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
+          <pre><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
 
-// రెండు వేర్వేరు రకాల డేటాను భద్రపరిచే Generic Pair క్లాస్
-template &lt;typename T1, typename T2&gt;
+template &lt;typename K, typename V&gt;
 class KeyValuePair {
 private:
-    T1 key;
-    T2 value;
-
+    K key;
+    V val;
 public:
-    KeyValuePair(T1 k, T2 v) : key(k), value(v) {}
-
+    KeyValuePair(K k, V v) : key(k), val(v) {}
     void print() const {
-        std::cout &lt;&lt; "Key: [" &lt;&lt; key &lt;&lt; "] =&gt; Value: [" &lt;&lt; value &lt;&lt; "]\n";
+        std::cout &lt;&lt; "[" &lt;&lt; key &lt;&lt; " : " &lt;&lt; val &lt;&lt; "]\n";
     }
 };
 
 int main() {
-    // 1. int, string తో క్లాస్ టెంప్లేట్
-    KeyValuePair&lt;int, std::string&gt; student(101, "Suresh");
+    KeyValuePair&lt;int, std::string&gt; student(101, "Mahesh");
     student.print();
 
-    // 2. string, double తో క్లాస్ టెంప్లేట్
-    KeyValuePair&lt;std::string, double&gt; product("MacBook M3", 149999.0);
+    KeyValuePair&lt;std::string, double&gt; product("Laptop", 75000.50);
     product.print();
-
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>template &lt;typename K, typename V&gt;</code>: ఒకే క్లాస్ లో ఎన్ని విభిన్న డేటా టైప్స్ నైనా పారామీటర్లుగా తీసుకోవచ్చు.</li>
+          <li><code>KeyValuePair&lt;int, std::string&gt;</code>: ఒక్కసారి రాసిన క్లాస్ ను విభిన్న కాంబినేషన్లలో రీ-యూజ్ చేసుకోవచ్చు.</li>
+        </ul>
+      </div>
     </div>
 
-    <!-- CONCEPT 5: MODERN C++20 CONCEPTS PREVIEW -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> Modern C++20: Concepts & Constraints ప్రివ్యూ</div>
-    <p>
-      పాత C++ లో టెంప్లేట్లకు ఏ విధమైన పరిమితులు ఉండేవి కావు. ఒకవేళ టెంప్లేట్ ఫంక్షన్ లో <code>a + b</code> అని ఉండి, మీరు <code>+</code> ఆపరేటర్ సపోర్ట్ చేయని ఒక ఆబ్జెక్ట్‌ను పాస్ చేస్తే, కంపైలర్ 100 లైన్ల భయంకరమైన ఎర్రర్ మెసేజ్ ఇచ్చేది!
-    </p>
-    <p>
-      దీనికి పరిష్కారంగా Modern C++20 లో <strong>Concepts</strong> పరిచయమయ్యాయి:
-    </p>
+    <!-- CONCEPT 5: TEMPLATE SPECIALIZATION & C++20 CONCEPTS -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> Template Specialization & Modern C++20 Concepts</div>
+    <div class="section-body">
+      <p>
+        సాధారణ టెంప్లేట్ లాజిక్ ఏదైనా ఒక నిర్దిష్ట డేటా టైప్ (ఉదా: <code>bool</code> లేదా <code>const char*</code>) కోసం పనిచేయనప్పుడు, ఆ ఒక్క టైప్ కోసం ప్రత్యేకమైన కోడ్ రాయడాన్ని <strong>Template Specialization</strong> అంటారు.
+      </p>
 
-    <div class="tip-box">
-      <strong>💎 Concepts తో క్లీన్ కంపైలర్ రక్షణ:</strong><br>
-      <code>template &lt;std::integral T&gt; T add(T a, T b) { return a + b; }</code><br>
-      ఇప్పుడు ఎవరైనా 실수గా ఫ్లోట్ లేదా స్ట్రింగ్ పంపితే, కంపైలర్ వెంటనే క్లియర్ గా చెబుతుంది: <em>"Constraint not satisfied: T must be an integral type!"</em>
+      <div class="tip-box">
+        <strong>🚀 Modern C++20 Concepts ప్రివ్యూ:</strong><br>
+        పాత C++ లో టెంప్లేట్లలో తప్పుడు టైప్ పంపితే (ఉదా: స్ట్రింగ్ ను కూడటానికి ప్రయత్నించినప్పుడు), కంపైలర్ 100 లైన్ల భయంకరమైన ఎర్రర్ ఇచ్చేది. C++20 లో వచ్చిన <strong>Concepts (<code>std::integral</code>, <code>std::floating_point</code>)</strong> ద్వారా మనం టెంప్లేట్ కు కచ్చితమైన నిబంధనలను విధించవచ్చు: <code>template &lt;std::integral T&gt;</code> అని రాస్తే పూర్ణాంకాలు మాత్రమే అనుమతించబడతాయి!
+      </div>
+    </div>
+
+    <!-- PITFALLS & BEST PRACTICES -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">6</span> సాధారణంగా బిగినర్స్ చేసే తప్పులు & బెస్ట్ ప్రాక్టీసెస్</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:10px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">⚠️ Common Beginner Traps</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Header & Implementation విడదీయడం:</strong> సాధారణ ఫంక్షన్ల లాగా టెంప్లేట్ డిక్లరేషన్‌ను <code>.h</code> లో, డెఫినిషన్‌ను <code>.cpp</code> లో పెడితే Linker Error (Undefined Reference) వస్తుంది! కంపైల్-టైమ్ లో కోడ్ జనరేట్ అవ్వాలి కాబట్టి టెంప్లేట్ కోడ్ మొత్తం హెడర్ ఫైల్ లోనే ఉండాలి.</li>
+            <li><strong>Mismatching Argument Types:</strong> <code>getMax(10, 20.5)</code> అని పిలిస్తే, కంపైలర్ <code>T</code> ని int అనుకోవాలో double అనుకోవాలో తెలియక ఎర్రర్ ఇస్తుంది. స్పష్టంగా <code>getMax&lt;double&gt;(10, 20.5)</code> అని రాయాలి.</li>
+          </ul>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">💡 Industry Best Practices</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Prefer typename over class:</strong> <code>template &lt;class T&gt;</code> కంటే <code>template &lt;typename T&gt;</code> వాడటం ఆధునిక C++ పరిశ్రమ ప్రమాణం.</li>
+            <li><strong>Use C++20 auto in functions:</strong> Modern C++20 లో <code>auto add(auto a, auto b)</code> అని రాస్తే కంపైలర్ ఆటోమేటిక్ గా దాన్ని టెంప్లేట్ గా మార్చేస్తుంది (Abbreviated Function Template).</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో Templates రన్‌టైమ్ లో పనిచేస్తాయా లేక కంపైల్-టైమ్ లోనా?</h4>
       <p>
-        Templates పూర్తిగా కంపైల్-టైమ్ (Compile-time) లోనే పనిచేస్తాయి! మనం కోడ్‌లో రాసే template అనేది కేవలం ఒక బ్లూప్రింట్ లేదా కోడ్-జనరేటర్ లాంటిది. కంపైలర్ ప్రోగ్రామ్‌ను కంపైల్ చేసేటప్పుడు మనం ఏయే డేటా టైప్స్ (<code>int</code>, <code>double</code>, <code>string</code>) ఉపయోగించామో చూసి, వాటికి ప్రత్యేకమైన విడివిడి ఫంక్షన్లను తానే స్వయంగా సృష్టిస్తుంది (దీనినే Template Instantiation లేదా Monomorphization అంటారు). కాబట్టి రన్‌టైమ్‌లో ఎటువంటి స్పీడ్ లాస్ ఉండదు (Zero Runtime Overhead).
+        Templates పూర్తిగా కంపైల్-టైమ్ (Compile-time) లోనే పనిచేస్తాయి! మనం కోడ్‌లో రాసే template అనేది కేవలం ఒక బ్లూప్రింట్ లేదా కోడ్-జనరేటర్ లాంటిది. కంపైలర్ ప్రోగ్రామ్‌ను కంపైల్ చేసేటప్పుడు మనం ఏయే డేటా టైప్స్ (int, double, string) ఉపయోగించామో చూసి, వాటికి ప్రత్యేకమైన విడివిడి ఫంక్షన్లను తానే స్వయంగా సృష్టిస్తుంది (దీనినే Template Instantiation లేదా Monomorphization అంటారు). కాబట్టి రన్‌టైమ్‌లో ఎటువంటి స్పీడ్ లాస్ ఉండదు (Zero Runtime Overhead).
       </p>
     </div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> template &lt;typename T&gt; కి template &lt;class T&gt; కి ఏదైనా తేడా ఉందా?</h4>
       <p>
-        సాంకేతికంగా రెండింటి మధ్య ఏ విధమైన తేడా లేదు! రెండూ ఒకేలా పనిచేస్తాయి. ప్రాచీన C++ లో కేవలం <code>class</code> మాత్రమే ఉండేది; అయితే T అనేది ప్రాథమిక రకం (int, double) కూడా కావచ్చనే ఉద్దేశంతో Modern C++ లో <code>typename</code> ప్రవేశపెట్టారు. ఆధునిక C++ కోడింగ్ స్టాండర్డ్స్ లో <code>typename</code> వాడటాన్ని ఎక్కువగా సిఫార్సు చేస్తారు.
+        సాంకేతికంగా రెండింటి మధ్య ఏ విధమైన తేడా లేదు! రెండూ ఒకేలా పనిచేస్తాయి. ప్రాచీన C++ లో కేవలం 'class' మాత్రమే ఉండేది; అయితే T అనేది ప్రాథమిక రకం (int, double) కూడా కావచ్చనే ఉద్దేశంతో Modern C++ లో 'typename' ప్రవేశపెట్టారు. ఆధునిక C++ కోడింగ్ స్టాండర్డ్స్ లో 'typename' వాడటాన్ని ఎక్కువగా సిఫార్సు చేస్తారు.
       </p>
     </div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Template Specialization అంటే ఏమిటి? ఎప్పుడు వాడతారు?</h4>
       <p>
-        సాధారణంగా టెంప్లేట్ అన్ని డేటా టైప్స్‌కు ఒకే సాధారణ లాజిక్‌ను వర్తింపజేస్తుంది. కానీ ఏదైనా ఒక నిర్దిష్ట డేటా టైప్ కోసం (ఉదాహరణకు <code>char*</code> లేదా <code>bool</code> కోసం) ఆ సాధారణ లాజిక్ సరిపోనప్పుడు లేదా ప్రత్యేక ఆప్టిమైజేషన్ అవసరమైనప్పుడు, ఆ ఒక్క టైప్ కోసం విడిగా కస్టమ్ కోడ్ రాయడాన్నే Template Specialization అంటారు.
+        సాధారణంగా టెంప్లేట్ అన్ని డేటా టైప్స్‌కు ఒకే సాధారణ లాజిక్‌ను వర్తింపజేస్తుంది. కానీ ఏదైనా ఒక నిర్దిష్ట డేటా టైప్ కోసం (ఉదాహరణకు 'char*' లేదా 'bool' కోసం) ఆ సాధారణ లాజిక్ సరిపోనప్పుడు లేదా ప్రత్యేక ఆప్టిమైజేషన్ అవసరమైనప్పుడు, ఆ ఒక్క టైప్ కోసం విడిగా కస్టమ్ కోడ్ రాయడాన్నే Template Specialization అంటారు.
       </p>
     </div>
 

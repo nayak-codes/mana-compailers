@@ -158,7 +158,7 @@
         '</nav>' +
         '<div class="app-topnav-actions">' +
           '<a href="/?lang=python3" class="app-topnav-cta">▶ Start Coding</a>' +
-          '<button type="button" class="app-topnav-toggle" aria-label="Toggle theme">☀️</button>' +
+          '<button type="button" class="app-topnav-toggle" aria-label="Toggle theme">🌙</button>' +
           '<button type="button" class="app-topnav-hamburger" aria-label="Toggle menu" aria-expanded="false">' +
             '<span></span><span></span><span></span>' +
           '</button>' +
@@ -221,7 +221,7 @@
     if (themeBtn) {
       function updateThemeIcon() {
         var isLight = document.body.classList.contains('light-theme');
-        themeBtn.textContent = isLight ? '☀️' : '🌙';
+        themeBtn.textContent = isLight ? '🌙' : '☀️';
       }
       updateThemeIcon();
       themeBtn.addEventListener('click', function () {
@@ -229,8 +229,13 @@
         document.documentElement.classList.toggle('light-theme');
         var isLight = document.body.classList.contains('light-theme');
         var isCompiler = window.location.pathname.indexOf('online-') !== -1 || window.location.pathname === '/' || window.location.pathname === '/index.html';
-        localStorage.setItem(isCompiler ? 'compiler_theme' : 'theme', isLight ? 'light' : 'dark');
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        var isTutorial = isTutorialPage();
+        if (isTutorial) {
+          localStorage.setItem('tutorial_theme_v2', isLight ? 'light' : 'dark');
+        } else {
+          localStorage.setItem(isCompiler ? 'compiler_theme' : 'theme', isLight ? 'light' : 'dark');
+          localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
         updateThemeIcon();
       });
     }
@@ -271,7 +276,7 @@
         '</nav>' +
         '<div class="app-topnav-actions">' +
           '<a href="/?lang=python3" class="app-topnav-cta">▶ Start Coding</a>' +
-          '<button type="button" class="app-topnav-toggle" aria-label="Toggle theme">☀️</button>' +
+          '<button type="button" class="app-topnav-toggle" aria-label="Toggle theme">🌙</button>' +
         '</div>' +
       '</div>'
     );
@@ -418,12 +423,13 @@
 
     // Default to Light Theme on all tutorial/blog pages unless user explicitly chose dark
     if (isTutorial) {
-      var savedTheme = localStorage.getItem('theme');
-      if (savedTheme !== 'dark') {
+      var savedTheme = localStorage.getItem('tutorial_theme_v2');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        if (document.body) document.body.classList.remove('light-theme');
+      } else {
         document.documentElement.classList.add('light-theme');
-        if (document.body) {
-          document.body.classList.add('light-theme');
-        }
+        if (document.body) document.body.classList.add('light-theme');
       }
     }
     var header = document.createElement('header');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -119,7 +119,7 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -187,7 +187,7 @@
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -344,35 +344,32 @@
     <!-- Covered Topics Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>Need for Loops · for Loop Anatomy (Init, Condition, Step) · while Loop (Entry-Controlled) · do-while Loop (Exit-Controlled) · Nested Loops & Star Patterns · Modern C++11 Range-based for loop · Infinite Loops & Server Event Loops</span>
+      <span>Repetition & Automation · The 4-Phase for Loop Execution Cycle · while vs do-while Comparison · Modern C++11 Range-based for Loop · Off-by-one Pitfalls · Performance Best Practices</span>
     </div>
 
     <!-- Intro Overview Box -->
     <div class="intro-box">
-      కంప్యూటర్లు మనుషుల కంటే వేగంగా పనిచేయడానికి ప్రధాన కారణం <strong>విసుగు లేకుండా ఒకే పనిని కోట్లాది సార్లు పునరావృతం (Looping / Iteration)</strong> చేయగలగడం. ఈ అధ్యాయంలో C++ లోని మూడు ప్రాథమిక లూప్‌లు (<code>for</code>, <code>while</code>, <code>do-while</code>), స్టార్ ప్యాటర్న్స్ కోసం <strong>Nested Loops</strong>, మరియు Modern C++11 లో వచ్చిన అత్యంత ఆధునిక <strong>Range-based for loop</strong> ను లోతుగా నేర్చుకుందాం.
+      కంప్యూటర్లకు మానవుల కంటే ఉన్న అతిపెద్ద బలం: <strong>విసుగు చెందకుండా ఒకే పనిని కోట్ల సార్లు అత్యంత వేగంగా పునరావృతం (Repeat) చేయడం</strong>. C++ లో క్లాసిక్ <code>for</code> లూప్, <code>while</code>, <code>do-while</code> మరియు మోడరన్ <code>Range-based for</code> లూప్‌ల పూర్తి అంతర్గత పనితీరును ఈ అధ్యాయంలో నేర్చుకుందాం.
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>The `for` Loop Anatomy (ఆర్కిటెక్చర్ & ఎగ్జిక్యూషన్ ఫ్లో)</div>
+    <div class="section-title"><span class="num">1</span>The Classic for Loop: 4 దశల చక్రం</div>
     <div class="section-body">
       <p>
-        ఒక పని ఎన్నిసార్లు జరగాలో మనకు ముందే ఖచ్చితంగా తెలిసినప్పుడు (ఉదా: 100 సార్లు, లేదా n సార్లు) <strong>`for` లూప్</strong> అత్యుత్తమమైన ఎంపిక:
+        ఒక పని ఎన్ని సార్లు జరగాలో ముందే ఖచ్చితంగా తెలిసినప్పుడు (Known Iteration Count) <code>for</code> లూప్ వాడతాం. ఇది 4 దశల చక్రంలా తిరుగుతుంది:
       </p>
 
-      <!-- For Loop Architecture Diagram -->
-      <div class="diagram-box">for ( [1. Initialization] ; [2. Condition Check] ; [4. Increment / Step] )
-{
-    // [3. Loop Body Code]
-}
-
-ఫ్లో ఆర్డర్:
-1. Initialization (కేవలం లూప్ మొదలైనప్పుడు ఒక్కసారి మాత్రమే రన్ అవుతుంది).
-2. Condition Check (షరతు true అయితేనే లోపలికి వెళ్తుంది, false అయితే లూప్ ఆగిపోతుంది).
-3. Loop Body (లోపల ఉన్న కోడ్ ఎగ్జిక్యూట్ అవుతుంది).
-4. Step / Increment (కౌంటర్ వేరియబుల్ పెరుగుతుంది, మళ్ళీ Step 2 కి వెళ్తుంది!).</div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0;">
+        <ol style="margin:0 0 0 18px; line-height:1.8; font-size:13.5px; color:var(--text);">
+          <li><strong>Step 1 (Initialization):</strong> లూప్ ప్రారంభంలో కేవలం ఒక్కసారి మాత్రమే జరుగుతుంది (ఉదా: <code>int i = 0;</code>).</li>
+          <li><strong>Step 2 (Condition Check):</strong> ప్రతి రౌండ్ మొదట్లో కండిషన్ ట్రూ అయితేనే లోపలికి వెళ్తుంది (ఉదా: <code>i &lt; 5;</code>).</li>
+          <li><strong>Step 3 (Loop Body Execution):</strong> బ్రాకెట్ల లోపల రాసిన కోడ్ ఎగ్జిక్యూట్ అవుతుంది.</li>
+          <li><strong>Step 4 (Increment / Step):</strong> రౌండ్ ముగిసిన వెంటనే వేరియబుల్ అప్‌డేట్ అవుతుంది (ఉదా: <code>++i</code>), ఆపై తిరిగి Step 2 కి వెళ్తుంది.</li>
+        </ol>
+      </div>
 
       <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Sum of First N Natural Numbers with for Loop</div>
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Classic for Loop Execution</div>
         <div class="code-block">
           <div class="code-block-header">
             <span class="lang-tag">C++17</span>
@@ -381,15 +378,14 @@
           <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    int targetN = 10;
-    int totalSum = 0;
-
-    // 1 నుండి 10 వరకు కూడటం
-    for (int i = 1; i &lt;= targetN; ++i) {
-        totalSum += i;
+    // 1 నుండి 5 వరకు సంఖ్యల కూడిక
+    int sum = 0;
+    for (int i = 1; i &lt;= 5; ++i) {
+        sum += i;
+        std::cout &lt;&lt; "Step " &lt;&lt; i &lt;&lt; ": Running Total = " &lt;&lt; sum &lt;&lt; "\n";
     }
 
-    std::cout &lt;&lt; "Sum of numbers from 1 to " &lt;&lt; targetN &lt;&lt; " = " &lt;&lt; totalSum &lt;&lt; "\n";
+    std::cout &lt;&lt; "Final Sum: " &lt;&lt; sum &lt;&lt; "\n";
     return 0;
 }</code></pre>
         </div>
@@ -397,251 +393,61 @@ int main() {
     </div>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>The `while` Loop (కండిషన్-ఆధారిత పునరావృతం)</div>
+    <div class="section-title"><span class="num">2</span>while vs do-while: ఎంట్రీ vs ఎగ్జిట్ కంట్రోల్</div>
     <div class="section-body">
-      <p>
-        ఒక పని ఎన్నిసార్లు జరగాలో మనకు ముందే తెలియక, కేవలం ఒక <strong>షరతు నెరవేరేంత వరకు మాత్రమే</strong> నడవాలి అనుకున్నప్పుడు <strong>`while` లూప్</strong> వాడతాం (Entry-Controlled Loop):
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Reversing a Number with while Loop</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 while</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int originalNumber = 12345;
-    int temp = originalNumber;
-    int reversedNumber = 0;
-
-    // సంఖ్య 0 అయ్యేంతవరకు చివరి అంకెను తీసి తిరగేయడం
-    while (temp &gt; 0) {
-        int lastDigit = temp % 10;
-        reversedNumber = (reversedNumber * 10) + lastDigit;
-        temp /= 10; // temp = temp / 10
-    }
-
-    std::cout &lt;&lt; "Original Number : " &lt;&lt; originalNumber &lt;&lt; "\n";
-    std::cout &lt;&lt; "Reversed Number : " &lt;&lt; reversedNumber &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">while Loop (Entry-Controlled)</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            కండిషన్ మొదట్లోనే తనిఖీ చేయబడుతుంది. మొదటి ప్రయత్నంలోనే కండిషన్ ఫాల్స్ అయితే లూప్ బాడీ ఒక్కసారి కూడా రన్ అవ్వదు!
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 8px 0; font-size:14.5px;">do-while Loop (Exit-Controlled)</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            కండిషన్ చివర్లో తనిఖీ చేయబడుతుంది. కండిషన్ ఫాల్స్ అయినా సరే, లూప్ బాడీ <strong>కనీసం ఒక్కసారి కచ్చితంగా</strong> ఎగ్జిక్యూట్ అవుతుంది (ఉదా: ATM పిన్ ఎంటర్ ప్రాంప్ట్).
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>The `do-while` Loop (కనీసం 1 సారి గ్యారెంటీ ఎగ్జిక్యూషన్)</div>
+    <!-- SECTION 3: RANGE BASED FOR -->
+    <div class="section-title"><span class="num">3</span>Modern C++11 Range-based for Loop</div>
     <div class="section-body">
       <p>
-        <code>while</code> లూప్‌లో మొదట్లోనే కండిషన్ తప్పు అయితే కోడ్ ఒక్కసారి కూడా రన్ అవ్వదు. కానీ <strong>`do-while` లూప్‌లో షరతు చివర్లో ఉంటుంది (Exit-Controlled Loop)</strong>. కాబట్టి కండిషన్ తప్పు అయినా సరే, కనీసం ఒక్కసారైనా కోడ్ రన్ అవుతుంది!
-      </p>
-      <p>
-        <strong>ఎక్కడ వాడతారు?</strong> ATM పిన్ ఎంటర్ చేయమనడం, లేదా ఇంటరాక్టివ్ యూజర్ మెనూ అడగడం లాంటి పనుల్లో వాడతారు (ఎందుకంటే యూజర్‌కు ముందు మెనూ చూపించాలి, ఆ తర్వాతే ఎగ్జిట్ అవ్వాలా వద్దా అనేది చెక్ చేయాలి!).
+        అర్రేలు లేదా వెక్టార్లలోని ప్రతి ఎలిమెంట్‌ను చదవడానికి ఇండెక్స్ <code>i = 0; i &lt; n</code> రాయాల్సిన అవసరం లేకుండా క్లీన్‌గా చదవడానికి మోడరన్ C++ Range-for లూప్‌ను ఇస్తుంది:
       </p>
 
       <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Menu-Driven Interactive Loop with do-while</div>
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Range-based for Loop</div>
         <div class="code-block">
           <div class="code-block-header">
-            <span class="lang-tag">C++17 do-while</span>
+            <span class="lang-tag">C++17</span>
             <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
           </div>
           <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    int userChoice = 0;
+    int primes[] = {2, 3, 5, 7, 11, 13};
 
-    do {
-        std::cout &lt;&lt; "\n--- MINI CALCULATOR MENU ---\n";
-        std::cout &lt;&lt; "1. Check Balance\n";
-        std::cout &lt;&lt; "2. Mini Statement\n";
-        std::cout &lt;&lt; "3. Exit System\n";
-        std::cout &lt;&lt; "Simulating selection: 3 (Exit)\n";
-        userChoice = 3; // ఉదాహరణకు యూజర్ 3 ఎంచుకున్నారు
-    } while (userChoice != 3);
-
-    std::cout &lt;&lt; "Session Ended. Thank you! 👋\n";
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>Nested Loops & Star Patterns (నెస్టెడ్ లూప్స్ మ్యాజిక్)</div>
-    <div class="section-body">
-      <p>
-        ఒక లూప్ లోపల మరొక లూప్ రాయడాన్ని <strong>Nested Loop</strong> అంటారు. సాధారణంగా మ్యాట్రిక్స్‌లు (2D Arrays) ప్రాసెస్ చేయడానికి మరియు ఆకర్షణీయమైన స్టార్ ప్యాటర్న్స్ ప్రింట్ చేయడానికి ఇది అత్యంత ప్రాచుర్యం పొందింది:
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Right-Angled Star Pyramid</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Patterns</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int totalRows = 5;
-
-    // బయట లూప్: వరుసలను (Rows) నియంత్రిస్తుంది
-    for (int row = 1; row &lt;= totalRows; ++row) {
-        // లోపలి లూప్: ఆ వరుసలో ఎన్ని స్టార్స్ ప్రింట్ చేయాలో చూస్తుంది
-        for (int star = 1; star &lt;= row; ++star) {
-            std::cout &lt;&lt; "* ";
-        }
-        std::cout &lt;&lt; "\n"; // ప్రతి వరుస ముగిశాక కొత్త లైన్
-    }
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-
-      <div class="card" style="background:var(--bg2); border:1px solid var(--border); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-        <strong style="color:#10b981;">🔍 అవుట్‌పుట్:</strong>
-        <pre style="background:transparent; margin:6px 0 0 0; padding:0; color:#a7f3d0; font-family:'JetBrains Mono',monospace;">* 
-* * 
-* * * 
-* * * * 
-* * * * * </pre>
-      </div>
-    </div>
-
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>Modern C++11 Range-based `for` Loop</div>
-    <div class="section-body">
-      <p>
-        సాంప్రదాయ <code>for (int i = 0; i &lt; n; i++)</code> లో ఇండెక్స్ తప్పులు (Index out of bounds) జరిగే అవకాశం ఉంది. Modern C++11 లో పైథాన్ లాంటి క్లీన్ సింటాక్స్‌తో <strong>Range-based for loop</strong> ప్రవేశపెట్టారు:
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: Clean Array Traversal with Range-based for</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">Modern C++11/17</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int scores[] = {98, 85, 92, 78, 100};
-
-    std::cout &lt;&lt; "Exam Scores: ";
-    // ఇండెక్స్ అవసరం లేదు! ప్రతి ఎలిమెంట్ నేరుగా score లోకి వస్తుంది
-    for (const auto&amp; score : scores) {
-        std::cout &lt;&lt; score &lt;&lt; " ";
+    // const auto& వాడటం వల్ల కాపీ అవ్వదు, మెమరీ సేవ్ అవుతుంది
+    for (const auto& num : primes) {
+        std::cout &lt;&lt; num &lt;&lt; " ";
     }
     std::cout &lt;&lt; "\n";
-
     return 0;
 }</code></pre>
         </div>
       </div>
     </div>
 
-    <!-- COMMON PITFALLS CALLOUT -->
-    <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 7</div>
-      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
-        <li>
-          <strong>లూప్ కౌంటర్ పెంచడం మర్చిపోవడం (Infinite Loop Disaster):</strong> <code>while (i &lt; 10) { ... }</code> లోపల <code>++i;</code> రాయడం మర్చిపోతే, <code>i</code> ఎప్పటికీ 0 గానే ఉండి కంప్యూటర్ CPU 100% కి చేరి ప్రోగ్రామ్ ఫ్రీజ్ అయిపోతుంది!
-        </li>
-        <li>
-          <strong>Off-by-one Error:</strong> 10 సార్లు రన్ చేయాలనుకున్నప్పుడు <code>i &lt; 10</code> బదులు <code>i &lt;= 10</code> అని రాస్తే 11 సార్లు రన్ అయ్యి అర్రే బౌండరీని దాటే ప్రమాదం ఉంటుంది.
-        </li>
-      </ul>
-    </div>
-
-    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
-    <div class="try-box">
-      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
-        <strong>టాస్క్:</strong> గణితంలో అత్యంత ప్రసిద్ధమైన <strong>Fibonacci Series</strong> (0, 1, 1, 2, 3, 5, 8, 13, 21...) లోని మొదటి 10 సంఖ్యలను <code>for</code> లూప్ ఉపయోగించి స్క్రీన్ పై ప్రింట్ చేసే ప్రోగ్రామ్ రాయండి:
-      </p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">C++17 Fibonacci Challenge</span>
-          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int totalTerms = 10;
-    long long first = 0, second = 1;
-
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "       FIBONACCI SERIES GENERATOR       \n";
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "First " &lt;&lt; totalTerms &lt;&lt; " Terms: ";
-
-    for (int i = 1; i &lt;= totalTerms; ++i) {
-        std::cout &lt;&lt; first &lt;&lt; (i == totalTerms ? "" : ", ");
-        long long nextTerm = first + second;
-        first = second;
-        second = nextTerm;
-    }
-    std::cout &lt;&lt; "\n========================================\n";
-
-    return 0;
-}</code></pre>
-      </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-cpp/06-cpp-switch-case.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 6. switch స్టేట్‌మెంట్
       </a>
-    </div>
-
-    <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> while కి do-while కి ముఖ్యమైన తేడా ఏమిటి?</h4>
-      <p>
-        <code>while</code> లూప్ మొదట్లోనే కండిషన్ చెక్ చేస్తుంది (Entry-Controlled). కండిషన్ మొదట్లోనే false అయితే లూప్ ఒక్కసారి కూడా రన్ అవ్వదు. కానీ <code>do-while</code> లూప్ కోడ్‌ను ఒకసారి రన్ చేసిన తర్వాతే చివర్లో కండిషన్ చెక్ చేస్తుంది (Exit-Controlled). కాబట్టి కండిషన్ false అయినా సరే కనీసం ఒక్కసారైనా ఎగ్జిక్యూట్ అవుతుంది.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++ లో Range-based for loop ఎందుకు వాడాలి?</h4>
-      <p>
-        సాంప్రదాయ for లూప్‌లో ఇండెక్స్ వేరియబుల్ (i = 0; i &lt; n; i++) రాయాలి, దీనివల్ల 'Off-by-one errors' మరియు అర్రే సరిహద్దులు దాటే ప్రమాదం ఉంటుంది. Range-based for loop (<code>for (const auto& x : arr)</code>) ఎలాంటి ఇండెక్స్ తప్పులు లేకుండా నేరుగా ఎలిమెంట్లను సురక్షితంగా మరియు క్లీన్‌గా ఇటరేట్ చేస్తుంది.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> ఇన్ఫినిట్ లూప్ (Infinite Loop) ఎప్పుడు వాడతారు?</h4>
-      <p>
-        ఆపరేటింగ్ సిస్టమ్‌లు, వెబ్ సర్వర్లు, మైక్రోకంట్రోలర్లు, మరియు వీడియో గేమ్‌లలో 'Game Loop' లేదా 'Event Loop' (ఉదా: <code>while (true)</code>) నిరంతరం కీబోర్డ్ ఈవెంట్‌లను వింటూ రన్ అవ్వడానికి ఉద్దేశపూర్వకంగానే ఇన్ఫినిట్ లూప్‌లను వాడతారు.
-      </p>
-    </div>
-
-    <!-- AUTHOR ATTRIBUTION -->
-    <div class="author" style="margin-top:40px;">
-      <div class="avatar">OC</div>
-      <div>
-        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
-      </div>
-    </div>
-
-    <!-- LESSON NAVIGATION FOOTER -->
-    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
-      <a href="/blog-cpp/06-cpp-switch-case.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
-        <span style="font-size:14px; font-weight:700;">6. switch స్టేట్‌మెంట్ & Fall-through</span>
-      </a>
-
-      <a href="/blog-cpp/08-cpp-break-continue.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
-        <span style="font-size:14px; font-weight:700;">8. break, continue & లూప్ కంట్రోల్</span>
+      <a href="/blog-cpp/08-cpp-break-continue.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 8. break & continue →
       </a>
     </div>
 

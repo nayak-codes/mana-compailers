@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -129,7 +129,7 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -197,7 +197,7 @@
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -342,7 +342,7 @@
       <span class="current">Chapter 2: Variables, Data Types & auto</span>
     </div>
 
-    <h1 class="page-title">వేరియబుల్స్, డేటా టైప్స్ & auto కీవర్డ్ (Variables, Data Types & auto)</h1>
+    <h1 class="page-title">వేరియబుల్స్, డేటా టైప్స్, కాన్‌స్టాంట్స్ & auto (Variables & Types)</h1>
 
     <div class="page-meta">
       <span class="badge">⚡ Modern C++20 / C++17</span>
@@ -354,191 +354,116 @@
     <!-- Covered Topics Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>What is a Variable? · RAM Memory Layout · Primitive Types (int, float, double, char, bool) · sizeof Operator · Type Modifiers (signed/unsigned, short/long) · Integer Overflow Under the Hood · const vs constexpr · Modern C++ auto Type Deduction · Variable Scope & Shadowing · Safe Type Casting (static_cast)</span>
+      <span>What is a Variable? · RAM Memory Architecture · Primitive Data Types (Sizes & Ranges) · Signed vs Unsigned Overflow Trap · Floating Point Precision · auto Type Deduction · const vs constexpr · Variable Shadowing</span>
     </div>
 
     <!-- Intro Overview Box -->
     <div class="intro-box">
-      కంప్యూటర్ ప్రోగ్రామింగ్ అంటేనే <strong>డేటాను స్టోర్ చేయడం మరియు దానిపై గణనలు చేయడం</strong>. ఈ అధ్యాయంలో C++ కంప్యూటర్ ర్యామ్ (RAM) లో మెమరీని ఎలా కేటాయిస్తుంది, ప్రాథమిక డేటా రకాలు, పరిమితులు దాటితే జరిగే Overflow విపత్తులు, మరియు ఆధునిక C++ లోని శక్తివంతమైన <code>auto</code> & <code>constexpr</code> ఫీచర్లను లోతుగా నేర్చుకుందాం.
+      ప్రోగ్రామింగ్ అంటేనే డేటాను ప్రాసెస్ చేయడం. కంప్యూటర్ మెమరీ (RAM) లో డేటాను ఎలా భద్రపరచాలి, ఎన్ని బైట్ల స్థలం అవసరం, మరియు C++ లో టైప్ సేఫ్టీ ద్వారా బగ్స్ రాకుండా ఎలా అరికట్టవచ్చో ఈ అధ్యాయంలో ప్రాక్టికల్‌గా నేర్చుకుందాం.
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>Variable అంటే ఏమిటి? (Memory Lockers in RAM)</div>
+    <div class="section-title"><span class="num">1</span>వేరియబుల్ అంటే ఏమిటి? (RAM మెమరీలో ఒక పేరున్న బాక్స్)</div>
     <div class="section-body">
       <p>
-        ఒక <strong>Variable</strong> అంటే కంప్యూటర్ RAM (Random Access Memory) లో డేటాను దాచుకోవడానికి మనం రిజర్వ్ చేసుకునే ఒక <strong>నిర్దిష్ట మెమరీ బ్లాక్‌కు ఇచ్చే పేరు (Identifier)</strong>.
+        ఒక <strong>Variable (వేరియబుల్)</strong> అంటే కంప్యూటర్ RAM మెమరీలోని ఒక నిర్దిష్ట అడ్రస్‌కు మనం పెట్టుకునే స్నేహపూర్వక పేరు (Named Memory Location).
       </p>
 
-      <div class="concept-box">
-        <h4>📦 Real-World Analogy: హోటల్ లాకర్ లేదా స్టోరేజ్ బాక్స్</h4>
-        <p>
-          మీరు ఒక సూపర్ మార్కెట్‌కి వెళ్ళినప్పుడు మీ బ్యాగ్‌ని భద్రపరచడానికి ఒక లాకర్ కేటాయించి, దానికి ఒక నంబర్ లేదా స్టిక్కర్ వేస్తారు కదా? అలాగే కంప్యూటర్ మెమరీలో లక్షలాది చిరునామాలు (Hexadecimal Memory Addresses: <code>0x7ffd5e...</code>) ఉంటాయి.
-        </p>
-        <p style="margin-bottom:0;">
-          మనం ఆ క్లిష్టమైన హెక్సాడెసిమల్ అడ్రస్‌లను గుర్తుపెట్టుకోలేం కాబట్టి, ఆ లొకేషన్‌కు <code>age</code>, <code>salary</code>, <code>score</code> అని సులభమైన పేర్లు పెట్టుకుంటాం. అదే <strong>Variable</strong>!
-        </p>
-      </div>
+      <!-- Sleek Modern Visual RAM Architecture Cards -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin:20px 0;">
+        <div style="font-size:12px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
+          🧠 హార్డ్‌వేర్ RAM మెమరీ లేఅవుట్ (Memory Slot Visualization):
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+          <div style="background:var(--bg3); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px; border-top:3px solid #10b981;">
+            <div style="font-size:11px; color:#10b981; font-family:var(--font-mono);">Address: 0x7ffd01</div>
+            <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">int userAge = 25;</div>
+            <div style="font-size:12px; color:var(--text2);">Size: 4 Bytes (32 bits) | Binary Stored</div>
+          </div>
 
-      <h4 style="color:#10b981; margin:20px 0 10px; font-size:16px;">Variable Declaration vs Initialization (C++ లో తేడా ఏమిటి?):</h4>
-      <ul>
-        <li>
-          <strong>Declaration (డిక్లరేషన్):</strong> <code>int age;</code> — కంపైలర్‌కు <em>"నాకు ఒక పూర్ణాంకం దాచుకోవడానికి మెమరీ సిద్ధం చెయ్యి"</em> అని చెప్పడం. కానీ అందులో ఏ విలువ ఉండదు (Garbage Value ఉంటుంది).
-        </li>
-        <li>
-          <strong>Initialization (ఇనిషియలైజేషన్):</strong> డిక్లేర్ చేసేటప్పుడే విలువను కేటాయించడం:
-          <br>1. <em>Copy Initialization:</em> <code>int score = 95;</code>
-          <br>2. <em>Direct Initialization:</em> <code>int score(95);</code>
-          <br>3. <strong>Brace / Uniform Initialization (Modern C++11 Recommended):</strong> <code>int score{95};</code> — ఇది డెసిమల్స్ కోల్పోయే ప్రమాదాన్ని (Narrowing Conversion) కంపైల్ టైమ్‌లోనే ఆపుతుంది!
-        </li>
-      </ul>
+          <div style="background:var(--bg3); border:1px solid rgba(59,130,246,0.3); border-radius:8px; padding:12px; border-top:3px solid #3b82f6;">
+            <div style="font-size:11px; color:#3b82f6; font-family:var(--font-mono);">Address: 0x7ffd05</div>
+            <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">double balance = 99.45;</div>
+            <div style="font-size:12px; color:var(--text2);">Size: 8 Bytes (64 bits) | IEEE 754 Stored</div>
+          </div>
+
+          <div style="background:var(--bg3); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:12px; border-top:3px solid #f59e0b;">
+            <div style="font-size:11px; color:#f59e0b; font-family:var(--font-mono);">Address: 0x7ffd0d</div>
+            <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">char grade = 'A';</div>
+            <div style="font-size:12px; color:var(--text2);">Size: 1 Byte (8 bits) | ASCII: 65 Stored</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>C++ Primitive Data Types & `sizeof` ఆపరేటర్</div>
+    <div class="section-title"><span class="num">2</span>C++ ఫండమెంటల్ డేటా టైప్స్ (Data Types Matrix)</div>
     <div class="section-body">
       <p>
-        C++ అనేది <strong>Statically Typed Language</strong>. అంటే ప్రతి వేరియబుల్‌కు ఏ రకమైన డేటా స్టోర్ చేయాలో (పూర్ణాంకమా, దశాంశమా, అక్షరమా) ముందే స్పష్టంగా చెప్పాలి.
+        C++ లో ప్రతి వేరియబుల్‌కు తప్పనిసరిగా ఒక డేటా టైప్ ఉండాలి (Statically Typed). కంపైలర్ ఆ టైప్‌ను బట్టి RAM లో ఎన్ని బైట్లు కేటాయించాలో నిర్ణయిస్తుంది:
       </p>
 
-      <!-- Memory Visual ASCII Diagram -->
-      <div class="diagram-box">┌───────────────┬────────────┬─────────────┬──────────────────────────────────────────┐
-│  Data Type    │ Size (RAM) │ Bit Width   │ Typical Value Range                      │
-├───────────────┼────────────┼─────────────┼──────────────────────────────────────────┤
-│  bool         │ 1 Byte     │ 8 Bits      │ true (1) లేదా false (0)                  │
-│  char         │ 1 Byte     │ 8 Bits      │ 'A', 'z', '$' (ASCII -128 to 127)        │
-│  int          │ 4 Bytes    │ 32 Bits     │ -2,147,483,648 to 2,147,483,647 (~2 Billion) │
-│  float        │ 4 Bytes    │ 32 Bits     │ ~7 decimal digits precision (3.14159f)   │
-│  double       │ 8 Bytes    │ 64 Bits     │ ~15-17 decimal digits precision          │
-│  long long    │ 8 Bytes    │ 64 Bits     │ -9*10^18 to 9*10^18 (Astronomical Range) │
-└───────────────┴────────────┴─────────────┴──────────────────────────────────────────┘</div>
-
-      <p>
-        మీ కంప్యూటర్ ఆర్కిటెక్చర్‌లో ఒక డేటా టైప్ ఎన్ని బైట్ల స్థలాన్ని ఆక్రమిస్తుందో తెలుసుకోవడానికి C++ లో <strong>`sizeof`</strong> ఆపరేటర్ ఉంది. కింది ఉదాహరణను పరిశీలించండి:
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Discovering Primitive Types & Memory Sizes with sizeof</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int studentId = 101;
-    double gradeAverage = 9.45;
-    char gradeSection = 'A';
-    bool isEnrolled = true;
-
-    std::cout &lt;&lt; "--- Data Types & Actual Memory Sizes in RAM ---\n";
-    std::cout &lt;&lt; "studentId (int)       : " &lt;&lt; studentId 
-              &lt;&lt; " | Size: " &lt;&lt; sizeof(studentId) &lt;&lt; " bytes\n";
-    std::cout &lt;&lt; "gradeAverage (double) : " &lt;&lt; gradeAverage 
-              &lt;&lt; " | Size: " &lt;&lt; sizeof(gradeAverage) &lt;&lt; " bytes\n";
-    std::cout &lt;&lt; "gradeSection (char)   : " &lt;&lt; gradeSection 
-              &lt;&lt; " | Size: " &lt;&lt; sizeof(gradeSection) &lt;&lt; " byte\n";
-    std::cout &lt;&lt; "isEnrolled (bool)     : " &lt;&lt; isEnrolled 
-              &lt;&lt; " | Size: " &lt;&lt; sizeof(isEnrolled) &lt;&lt; " byte\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-
-      <div class="card" style="background:var(--bg2); border:1px solid var(--border); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-        <strong style="color:#10b981;">🔍 అవుట్‌పుట్ విశ్లేషణ:</strong>
-        <p style="margin:6px 0 0 0; color:var(--text); line-height:1.7;">
-          <code>bool</code> విలువ నిజానికి 1 బిట్ (0 లేదా 1) మాత్రమే అయినప్పటికీ, ఆధునిక CPU లు 1 బైట్ కంటే తక్కువ అడ్రస్‌ను నేరుగా యాక్సెస్ చేయలేవు కాబట్టి <code>bool</code> కూడా 1 పూర్తి బైట్‌ను తీసుకుంటుంది.
-        </p>
-      </div>
-    </div>
-
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>Type Modifiers (signed vs unsigned & Overflow విపత్తు)</div>
-    <div class="section-body">
-      <p>
-        ప్రాథమిక డేటా టైప్‌ల పరిధిని పెంచడానికి లేదా మార్చడానికి C++ లో 4 ముఖ్యమైన <strong>Type Modifiers</strong> ఉన్నాయి:
-      </p>
-      <ul style="line-height:1.8;">
-        <li><code>signed</code>: పాజిటివ్ మరియు నెగెటివ్ రెంటినీ అనుమతిస్తుంది (ఇది డీఫాల్ట్).</li>
-        <li><code>unsigned</code>: కేవలం సున్నా మరియు పాజిటివ్ విలువలను మాత్రమే అనుమతిస్తుంది. దీనివల్ల పాజిటివ్ రేంజ్ రెట్టింపు అవుతుంది (0 to ~4.29 Billion for 32-bit int).</li>
-        <li><code>short</code>: మెమరీని ఆదా చేయడానికి 2 బైట్లకు పరిమితం చేస్తుంది.</li>
-        <li><code>long</code> / <code>long long</code>: భారీ సంఖ్యలను స్టోర్ చేయడానికి 8 బైట్ల వరకు పెంచుతుంది.</li>
-      </ul>
-
-      <div class="concept-box">
-        <h4>⚠️ The Dreaded "Integer Overflow" (ఓడోమీటర్ ఎఫెక్ట్)</h4>
-        <p>
-          మీ బైక్ ఓడోమీటర్ <code>99999</code> కి చేరిన తర్వాత మరో కిలోమీటర్ వెళ్తే ఏమవుతుంది? అది <code>00000</code> కి రోల్ అవుతుంది కదా!
-        </p>
-        <p style="margin-bottom:0;">
-          కంప్యూటర్ మెమరీలో కూడా అంతే. ఒక 32-bit signed int గరిష్ట విలువ <code>2147483647</code>. దానికి <code>+ 1</code> కలిపితే, అత్యంత చిన్న నెగెటివ్ నంబర్ <code>-2147483648</code> గా మారిపోతుంది! దీనిని <strong>Integer Overflow</strong> అంటారు.
-        </p>
-      </div>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Demonstrating Integer Overflow in Action</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Overflow Demo</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    // 32-bit signed int గరిష్ట విలువ
-    int maxLimit = 2147483647;
-    std::cout &lt;&lt; "Original Max int: " &lt;&lt; maxLimit &lt;&lt; "\n";
-
-    // 1 కలిపితే overflow జరిగి నెగెటివ్ అవుతుంది!
-    maxLimit = maxLimit + 1;
-    std::cout &lt;&lt; "After + 1 (Overflow!): " &lt;&lt; maxLimit &lt;&lt; "\n";
-
-    // పరిష్కారం: కాంపిటీటివ్ కోడింగ్‌లో 'long long' వాడాలి!
-    long long safeBigNumber = 2147483647LL;
-    safeBigNumber = safeBigNumber + 1;
-    std::cout &lt;&lt; "With long long (Safe!): " &lt;&lt; safeBigNumber &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>`const` vs `constexpr` (Constants in C++)</div>
-    <div class="section-body">
-      <p>
-        కొన్ని విలువలని ప్రోగ్రామ్ మధ్యలో పొరపాటున కూడా ఎవరూ మార్చకూడదు (ఉదాహరణకు: పై విలువ $\pi = 3.14159$, లేదా వారానికి 7 రోజులు). అటువంటి వాటిని కాపాడటానికి C++ లో <strong>`const`</strong> మరియు <strong>`constexpr`</strong> ఉన్నాయి.
-      </p>
-
-      <div style="overflow-x:auto; margin:16px 0;">
-        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+      <div style="overflow-x:auto; margin:18px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
           <thead>
             <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
-              <th style="padding:10px 14px; color:#10b981;">లక్షణం</th>
-              <th style="padding:10px 14px; color:var(--text);">const (Run-time or Compile-time)</th>
-              <th style="padding:10px 14px; color:#10b981;">constexpr (Pure Compile-time)</th>
+              <th style="padding:10px 12px; color:#10b981;">డేటా టైప్ (Type)</th>
+              <th style="padding:10px 12px; color:var(--text);">మెమరీ పరిమాణం (Size)</th>
+              <th style="padding:10px 12px; color:var(--text);">విలువల పరిధి (Range)</th>
+              <th style="padding:10px 12px; color:var(--text2);">సాధారణ ఉపయోగం</th>
             </tr>
           </thead>
           <tbody>
             <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:10px 14px; font-weight:700;">ఎప్పుడు సెట్ అవుతుంది?</td>
-              <td style="padding:10px 14px; color:var(--text2);">రన్ టైంలో యూజర్ ఇన్‌పుట్ ద్వారా కూడా సెట్ అవ్వచ్చు.</td>
-              <td style="padding:10px 14px; color:var(--text);">కచ్చితంగా కంపైలర్ కోడ్ బిల్డ్ చేసేటప్పుడే కాలిక్యులేట్ అవ్వాలి.</td>
+              <td style="padding:9px 12px; font-weight:700; color:#10b981;">bool</td>
+              <td style="padding:9px 12px;">1 Byte</td>
+              <td style="padding:9px 12px;">true (1) లేదా false (0)</td>
+              <td style="padding:9px 12px; color:var(--text2);">నిజం / అబద్ధం ఫ్లాగ్స్</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 12px; font-weight:700; color:#10b981;">char</td>
+              <td style="padding:9px 12px;">1 Byte</td>
+              <td style="padding:9px 12px;">-128 to 127 (లేదా 0 to 255)</td>
+              <td style="padding:9px 12px; color:var(--text2);">సింగిల్ అక్షరం ('A', 'z')</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 12px; font-weight:700; color:#10b981;">int</td>
+              <td style="padding:9px 12px;">4 Bytes</td>
+              <td style="padding:9px 12px;">-2,147,483,648 to 2,147,483,647</td>
+              <td style="padding:9px 12px; color:var(--text2);">పూర్ణాంకాలు (Numbers)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 12px; font-weight:700; color:#10b981;">long long</td>
+              <td style="padding:9px 12px;">8 Bytes</td>
+              <td style="padding:9px 12px;">$-9 	imes 10^{18}$ to $9 	imes 10^{18}$</td>
+              <td style="padding:9px 12px; color:var(--text2);">భారీ నంబర్లు, కరెన్సీ పైసలు</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 12px; font-weight:700; color:#10b981;">float</td>
+              <td style="padding:9px 12px;">4 Bytes</td>
+              <td style="padding:9px 12px;">$approx 7$ దశాంశ ఖచ్చితత్వం</td>
+              <td style="padding:9px 12px; color:var(--text2);">గ్రాఫిక్స్ కోఆర్డినేట్స్</td>
             </tr>
             <tr>
-              <td style="padding:10px 14px; font-weight:700;">Performance</td>
-              <td style="padding:10px 14px; color:var(--text2);">వేగవంతం (Read-only memory)</td>
-              <td style="padding:10px 14px; color:var(--text);">అత్యంత వేగవంతం (Zero runtime overhead, CPU కి ముందే తెలుస్తుంది)</td>
+              <td style="padding:9px 12px; font-weight:700; color:#10b981;">double</td>
+              <td style="padding:9px 12px;">8 Bytes</td>
+              <td style="padding:9px 12px;">$approx 15-17$ దశాంశ ఖచ్చితత్వం</td>
+              <td style="padding:9px 12px; color:var(--text2);">సైంటిఫిక్ గణనలు, డాలర్లు</td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>auto కీవర్డ్: మోడరన్ టైప్ డిడక్షన్</div>
+    <div class="section-body">
+      <p>
+        Modern C++11 నుండి ప్రవేశపెట్టబడిన అత్యంత శక్తివంతమైన ఫీచర్ <strong>`auto`</strong>. వేరియబుల్‌కు మనం ఇచ్చే విలువ ఆధారంగా కంపైలరే స్వయంగా సరైన టైప్‌ను పసిగడుతుంది (Type Deduction):
+      </p>
 
       <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: const and constexpr in Practice</div>
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Type Deduction with auto</div>
         <div class="code-block">
           <div class="code-block-header">
             <span class="lang-tag">C++17</span>
@@ -547,250 +472,87 @@ int main() {
           <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    // 1. const: విలువను మార్చలేరు
-    const double PI = 3.1415926535;
-    // PI = 3.15; // ❌ ERROR: assignment of read-only variable 'PI'
+    auto age = 21;          // Compiler deduces: int
+    auto price = 99.99;     // Compiler deduces: double
+    auto grade = 'A';       // Compiler deduces: char
+    auto isPassed = true;   // Compiler deduces: bool
 
-    // 2. constexpr: కంపైల్ టైంలోనే 24 * 60 * 60 లెక్కించబడుతుంది
-    constexpr int SECONDS_IN_A_DAY = 24 * 60 * 60; // 86400
-
-    std::cout &lt;&lt; "Value of PI: " &lt;&lt; PI &lt;&lt; "\n";
-    std::cout &lt;&lt; "Seconds in a day (Compile-time): " &lt;&lt; SECONDS_IN_A_DAY &lt;&lt; "\n";
-
+    std::cout &lt;&lt; "Age size in RAM: " &lt;&lt; sizeof(age) &lt;&lt; " bytes\n"
+              &lt;&lt; "Price size in RAM: " &lt;&lt; sizeof(price) &lt;&lt; " bytes\n";
     return 0;
 }</code></pre>
         </div>
       </div>
-    </div>
-
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>Modern C++ `auto` Keyword (Automatic Type Deduction)</div>
-    <div class="section-body">
-      <p>
-        C++11 కి ముందు ప్రతి వేరియబుల్‌కు తప్పనిసరిగా డేటా టైప్ చేత్తో రాయాల్సి వచ్చేది. కానీ C++11 లో ప్రవేశపెట్టిన <strong>`auto`</strong> కీవర్డ్ ద్వారా, కుడివైపు ఉన్న విలువను బట్టి కంపైలరే స్వయంచాలకంగా సరైన డేటా టైప్‌ను నిర్ణయిస్తుంది.
-      </p>
 
       <div class="concept-box">
-        <h4>⚡ Does `auto` slow down your program? (NO!)</h4>
-        <p style="margin-bottom:0;">
-          Python లేదా JavaScript లాంటి భాషల్లో రన్ టైంలో డేటా టైప్ చెక్ అవుతుంది కాబట్టి అవి స్లో అవుతాయి. కానీ C++ లో <code>auto</code> అనేది <strong>Compile-Time Type Deduction</strong>. అంటే కంపైలర్ కోడ్ కంపైల్ చేసేటప్పుడే <code>auto</code> స్థానంలో అసలైన టైప్ (ఉదా: <code>int</code>, <code>double</code>) ను భర్తీ చేస్తుంది. కాబట్టి <strong>Zero Performance Penalty</strong>!
+        <h4>⚡ Performance Fact about 'auto'</h4>
+        <p style="margin:0;">
+          చాలామంది <code>auto</code> అంటే Python లాగా రన్‌టైమ్‌లో స్లో అవుతుంది అనుకుంటారు. కానీ C++ లో <code>auto</code> పూర్తిగా కంపైల్ సమయంలోనే నిర్ణయించబడుతుంది. రన్‌టైమ్‌లో <strong>ZERO</strong> పెనాల్టీ! మీ ప్రోగ్రామ్ మెరుపు వేగంతో నడుస్తుంది.
         </p>
       </div>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Modern Type Deduction with auto</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 auto</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    auto count = 42;             // int గా గుర్తించబడుతుంది
-    auto price = 199.99;         // double గా గుర్తించబడుతుంది
-    auto grade = 'S';            // char గా గుర్తించబడుతుంది
-    auto isVerified = true;      // bool గా గుర్తించబడుతుంది
-
-    std::cout &lt;&lt; "Count (int)      : " &lt;&lt; count &lt;&lt; " | Size: " &lt;&lt; sizeof(count) &lt;&lt; " bytes\n";
-    std::cout &lt;&lt; "Price (double)   : " &lt;&lt; price &lt;&lt; " | Size: " &lt;&lt; sizeof(price) &lt;&lt; " bytes\n";
-    std::cout &lt;&lt; "Grade (char)     : " &lt;&lt; grade &lt;&lt; " | Size: " &lt;&lt; sizeof(grade) &lt;&lt; " byte\n";
-    std::cout &lt;&lt; "Verified (bool)  : " &lt;&lt; isVerified &lt;&lt; " | Size: " &lt;&lt; sizeof(isVerified) &lt;&lt; " byte\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
     </div>
 
-    <!-- SECTION 6 -->
-    <div class="section-title"><span class="num">6</span>Variable Scope (Local vs Global & Shadowing)</div>
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>const vs constexpr: స్థిర విలువల భద్రత</div>
     <div class="section-body">
       <p>
-        ఒక వేరియబుల్‌ను ప్రోగ్రామ్‌లో ఎక్కడ యాక్సెస్ చేయవచ్చు అనే పరిధిని <strong>Scope</strong> అంటారు:
+        ప్రోగ్రామ్‌లో కొన్ని విలువలు ఎప్పటికీ మారకూడదు (ఉదా: $pi = 3.14159$, కాంతి వేగం). వాటిని భద్రపరచడానికి రెండు మార్గాలు ఉన్నాయి:
       </p>
-      <ul style="line-height:1.8;">
+      <ul style="line-height:1.8; margin-left:18px;">
         <li>
-          <strong>Local Variable:</strong> ఒక ఫంక్షన్ లేదా బ్లాక్ <code>{ ... }</code> లోపల డిక్లేర్ చేయబడిన వేరియబుల్. ఆ బ్లాక్ ముగియగానే మెమరీ నుండి తుడిచిపెట్టుకుపోతుంది.
+          <strong>const:</strong> రన్‌టైమ్‌లో వేరియబుల్‌ను రీడ్-ఓన్లీగా మారుస్తుంది. ఒకసారి విలువ అసైన్ చేసిన తర్వాత మార్చడానికి ప్రయత్నిస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది.
         </li>
         <li>
-          <strong>Global Variable:</strong> అన్ని ఫంక్షన్ల కంటే పైన బయట డిక్లేర్ చేయబడే వేరియబుల్. ప్రోగ్రామ్ మొదలైనప్పటి నుండి ముగిసే వరకు బ్రతికే ఉంటుంది.
-        </li>
-        <li>
-          <strong>Variable Shadowing & Scope Resolution (`::`):</strong> ఒకే పేరుతో లోకల్ మరియు గ్లోబల్ వేరియబుల్స్ ఉన్నప్పుడు, లోకల్ దే ప్రాధాన్యత పొందుతుంది. గ్లోబల్ దాన్ని యాక్సెస్ చేయడానికి <code>::variableName</code> వాడాలి.
-        </li>
-      </ul>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: Local vs Global Scope & Scope Resolution Operator</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Scope</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-// గ్లోబల్ వేరియబుల్
-int serverPort = 8080;
-
-int main() {
-    // లోకల్ వేరియబుల్ (గ్లోబల్‌ను Shadow చేస్తుంది)
-    int serverPort = 3000;
-
-    std::cout &lt;&lt; "Local Server Port               : " &lt;&lt; serverPort &lt;&lt; "\n";
-    std::cout &lt;&lt; "Global Server Port (using ::)   : " &lt;&lt; ::serverPort &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 7 -->
-    <div class="section-title"><span class="num">7</span>Type Casting (ఆటోమేటిక్ vs `static_cast`)</div>
-    <div class="section-body">
-      <p>
-        ఒక డేటా టైప్‌ను మరొక డేటా టైప్‌లోకి మార్చడాన్ని <strong>Type Casting</strong> అంటారు.
-      </p>
-      <p>
-        <strong>1. Implicit Type Conversion (ఆటోమేటిక్):</strong> కంపైలరే చిన్న టైప్‌ను పెద్ద టైప్‌లోకి ప్రమోట్ చేస్తుంది (ఉదా: <code>int + double</code> చేసినప్పుడు రిజల్ట్ ఆటోమేటిక్‌గా <code>double</code> అవుతుంది).
-      </p>
-      <p>
-        <strong>2. Explicit Type Casting (Modern `static_cast`):</strong> బిగినర్లు C-style లో <code>(double)sum / count;</code> అని రాస్తుంటారు. కానీ మోడరన్ C++ లో కంపైలర్ భద్రత కోసం <strong>`static_cast&lt;double&gt;`</strong> వాడాలి:
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 6: Avoiding Integer Division Bug with static_cast</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 static_cast</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int totalScore = 195;
-    int totalSubjects = 2;
-
-    // ❌ BUG: రెండు ints భాగిస్తే డెసిమల్స్ పోతాయి! (195 / 2 = 97)
-    double wrongAverage = totalScore / totalSubjects;
-
-    // ✅ SOLUTION: static_cast తో సురక్షితంగా double లోకి మార్చడం
-    double correctAverage = static_cast&lt;double&gt;(totalScore) / totalSubjects;
-
-    std::cout &lt;&lt; "Wrong Integer Division  : " &lt;&lt; wrongAverage &lt;&lt; "\n";
-    std::cout &lt;&lt; "Correct with static_cast: " &lt;&lt; correctAverage &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- COMMON PITFALLS CALLOUT -->
-    <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 2</div>
-      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
-        <li>
-          <strong>గార్బేజ్ విలువలు (Uninitialized Variables):</strong> <code>int score; std::cout &lt;&lt; score;</code> అని రాస్తే 0 రాదు! మెమరీలో ఉన్న పాత చెత్త విలువ (ఉదా: <code>4201948</code>) ప్రింట్ అవుతుంది. ఎల్లప్పుడూ <code>int score = 0;</code> లేదా <code>int score{};</code> అని ఇనిషియలైజ్ చేయండి.
-        </li>
-        <li>
-          <strong>ఫ్లోటింగ్ పాయింట్ ప్రెసిషన్ ట్రాప్:</strong> కంప్యూటర్లు బైనరీలో పనిచేస్తాయి కాబట్టి <code>0.1 + 0.2 == 0.3</code> ఎప్పటికీ సమానం కాదు (చివర్లో <code>0.30000000000000004</code> వస్తుంది). ఫైనాన్షియల్ లెక్కల్లో డెసిమల్స్ పోల్చేటప్పుడు జాగ్రత్త పడాలి.
+          <strong>constexpr (C++11):</strong> ఇది కంపైల్ సమయంలోనే స్థిర విలువను లెక్కించి, ప్రోగ్రామ్ బైనరీ మెషిన్ కోడ్‌లోనే పొందుపరుస్తుంది. దీనివల్ల రన్‌టైమ్ CPU సైకిల్స్ ఆదా అవుతాయి!
         </li>
       </ul>
     </div>
 
-    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
-    <div class="try-box">
-      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
-        <strong>టాస్క్:</strong> ఒక రియల్-వరల్డ్ ఈ-కామర్స్ ఆర్డర్ ఇన్వాయిస్ క్యాలిక్యులేటర్ తయారు చేయండి. వస్తువు ధర (double), కొన్న పరిమాణం (int), GST టాక్స్ రేటు, డిస్కౌంట్ వర్తింపజేసి, ఫైనల్ బిల్లు ₹1000 దాటితే ఉచిత డెలివరీ లభిస్తుందో లేదో (bool) చెక్ చేసి కన్సోల్ పై ప్రింట్ చేయండి:
-      </p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">C++17 Invoice Challenge</span>
-          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+    <!-- SECTION 5: PITFALLS -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 1: Uninitialized Variables (గార్బేజ్ వ్యాల్యూ ట్రాష్)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            C++ లో <code>int count;</code> అని రాసి వదిలేస్తే దానికి డీఫాల్ట్‌గా 0 రాదు! ఆ సమయంలో RAM లో ఉన్న పాత చెత్త విలువ (Garbage Value: ఉదాహరణకు <code>-858993460</code>) అందులోకి వస్తుంది. ఎల్లప్పుడూ <code>int count = 0;</code> లేదా <code>int count{0};</code> అని బ్రాకెట్ ఇనిషియలైజేషన్ చేయాలి!
+          </p>
         </div>
-        <pre><code>#include &lt;iostream&gt;
 
-int main() {
-    const double GST_RATE = 0.18; // 18% GST
-    
-    // ఆర్డర్ వివరాలు
-    auto itemPrice = 450.00;
-    auto quantity = 3;
-    auto discountAmount = 100.00;
-
-    // లెక్కలు
-    double subtotal = itemPrice * quantity;
-    double tax = subtotal * GST_RATE;
-    double finalPayable = (subtotal - discountAmount) + tax;
-    bool isFreeDeliveryEligible = (finalPayable &gt;= 1000.00);
-
-    // ఇన్వాయిస్ ప్రింట్ చేద్దాం
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "        OUR COMPILER E-COMMERCE BILL    \n";
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "Subtotal (3 Items)   : Rs. " &lt;&lt; subtotal &lt;&lt; "\n";
-    std::cout &lt;&lt; "Discount Applied     : Rs. " &lt;&lt; discountAmount &lt;&lt; "\n";
-    std::cout &lt;&lt; "GST Tax (18%)        : Rs. " &lt;&lt; tax &lt;&lt; "\n";
-    std::cout &lt;&lt; "Final Total Payable  : Rs. " &lt;&lt; finalPayable &lt;&lt; "\n";
-    std::cout &lt;&lt; "Free Delivery Status : " &lt;&lt; (isFreeDeliveryEligible ? "ELIGIBLE 🚚" : "NOT ELIGIBLE ❌") &lt;&lt; "\n";
-    std::cout &lt;&lt; "========================================\n";
-
-    return 0;
-}</code></pre>
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 2: Unsigned Integer Wrap-around Overflow</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            <code>unsigned int x = 0; x--;</code> అని రాస్తే <code>-1</code> రాదు! అన్‌సైన్డ్ ఇంటిజర్‌కు నెగెటివ్ ఉండదు కాబట్టి అది డైరెక్ట్‌గా గరిష్ట విలువ <code>4294967295</code> కు వెళ్ళిపోయి లూప్స్‌లో అనంతమైన ఇన్ఫినిట్ లూప్‌ను సృష్టిస్తుంది.
+          </p>
+        </div>
       </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
     </div>
 
     <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px;">
+        <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: float మరియు double మధ్య ఏది ఎంచుకోవాలి?</h4>
+        <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.6;">
+          మోడరన్ CPU లలో <code>double</code> వాడటమే ప్రామాణికం. ఎందుకంటే ఆధునిక 64-బిట్ ప్రాసెసర్లు 8-బైట్ డబుల్ లెక్కలను అంతే వేగంగా చేస్తాయి మరియు 15 దశాంశాల ఖచ్చితత్వాన్ని ఇస్తాయి.
+        </p>
+      </div>
 
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> float కి double కి తేడా ఏమిటి? ఏది వాడాలి?</h4>
-      <p>
-        <code>float</code> 4 బైట్ల మెమరీ తీసుకుని 6-7 డెసిమల్ అంకెల ఖచ్చితత్వాన్ని ఇస్తుంది. <code>double</code> 8 బైట్లు తీసుకుని 15-17 డెసిమల్ అంకెల ఖచ్చితత్వాన్ని ఇస్తుంది. ఆధునిక కంప్యూటర్ల 64-bit ప్రాసెసర్లలో <code>double</code> చాలా సమర్థవంతంగా పనిచేస్తుంది కాబట్టి మోడరన్ C++ లో డెసిమల్స్ కోసం <code>double</code> వాడటమే ఉత్తమం.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++ లో 'auto' వాడటం వల్ల ప్రోగ్రామ్ స్పీడ్ తగ్గుతుందా?</h4>
-      <p>
-        అస్సలు తగ్గదు! <code>auto</code> రన్ టైంలో కాదు, కంపైల్ టైంలోనే డేటా టైప్‌ను కచ్చితంగా గుర్తిస్తుంది (Zero Runtime Cost). కాబట్టి <code>int</code> వాడినా <code>auto</code> వాడినా ప్రోగ్రామ్ స్పీడ్ లో ఎలాంటి వ్యత్యాసం ఉండదు.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో uninitialized వేరియబుల్స్ ఎందుకు ప్రమాదకరం?</h4>
-      <p>
-        Python లాంటి భాషల్లో వేరియబుల్స్‌కి ఆటోమేటిక్‌గా <code>None</code> లేదా 0 ఉంటుంది. కానీ C++ లో వేరియబుల్‌కు విలువ ఇవ్వకపోతే (Uninitialized), ఆ మెమరీ లొకేషన్‌లో ముందు నుంచి ఉన్న పాత వ్యర్థ విలువ (Garbage Value) అందులోకి వస్తుంది, దీనివల్ల ఊహించని తప్పుడు లెక్కలు మరియు క్రాష్‌లు వస్తాయి.
-      </p>
-    </div>
-
-    <!-- AUTHOR ATTRIBUTION -->
-    <div class="author" style="margin-top:40px;">
-      <div class="avatar">OC</div>
-      <div>
-        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+      <div class="faq-card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px;">
+        <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: sizeof ఆపరేటర్ రన్‌టైమ్‌లో పనిచేస్తుందా?</h4>
+        <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.6;">
+          లేదు! <code>sizeof</code> అనేది ఒక కంపైల్-టైమ్ ఆపరేటర్. కంపైలర్ కోడ్‌ను ప్రాసెస్ చేసేటప్పుడే ఆ టైప్ ఎన్ని బైట్లు తీసుకుంటుందో లెక్కించి స్థిర విలువను బైనరీలో రాసిపెడుతుంది.
+        </p>
       </div>
     </div>
 
-    <!-- LESSON NAVIGATION FOOTER -->
-    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
-      <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
-        <span style="font-size:14px; font-weight:700;">1. C++ పరిచయం & Hello World</span>
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 1. C++ పరిచయం
       </a>
-
-      <a href="/blog-cpp/03-cpp-input-output-cin-cout.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
-        <span style="font-size:14px; font-weight:700;">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</span>
+      <a href="/blog-cpp/03-cpp-input-output-cin-cout.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 3. ఇన్‌పుట్ & అవుట్‌పుట్ →
       </a>
     </div>
 

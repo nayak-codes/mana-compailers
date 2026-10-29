@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -120,7 +120,7 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -188,7 +188,7 @@
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -333,7 +333,7 @@
       <span class="current">Chapter 3: Input & Output (cin, cout)</span>
     </div>
 
-    <h1 class="page-title">ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout, getline & Fast I/O)</h1>
+    <h1 class="page-title">ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout, getline & I/O Formatting)</h1>
 
     <div class="page-meta">
       <span class="badge">⚡ Modern C++20 / C++17</span>
@@ -345,363 +345,146 @@
     <!-- Covered Topics Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>std::cin & Stream Extraction (>>) · Chained Input · The Whitespace Trap · std::getline() for Multi-word Strings · The cin/getline Buffer Trap & cin.ignore() Fix · Output Formatting with &lt;iomanip&gt; (fixed, setprecision, setw) · Competitive Programming Fast I/O Optimization</span>
+      <span>C++ Stream Architecture · std::cout Insertion (<<) · std::cin Extraction (>>) · std::getline() for Sentences · The Fatal Cin Buffer Newline Bug & Fix · Input Validation (cin.fail()) · I/O Formatting with <iomanip></span>
     </div>
 
     <!-- Intro Overview Box -->
     <div class="intro-box">
-      రియల్ వరల్డ్ అప్లికేషన్లు ఎల్లప్పుడూ <strong>యూజర్ ఇచ్చే డేటా ఆధారంగా</strong> నడుస్తాయి. ఈ అధ్యాయంలో కీబోర్డ్ నుండి యూజర్ డేటాను చదవడం (<code>std::cin</code>), స్పేస్‌లతో కూడిన పెద్ద వాక్యాలను తీసుకోవడం (<code>getline</code>), బిగినర్లను వేధించే ఘోరమైన బఫర్ ట్రాప్‌లను <code>cin.ignore()</code> తో పరిష్కరించడం, మరియు కాంపిటీటివ్ ప్రోగ్రామింగ్‌లో ఉపయోగించే <strong>10x Fast I/O ట్రిక్స్</strong> ను ప్రాక్టికల్‌గా నేర్చుకుందాం.
+      వినియోగదారుడి నుండి కీబోర్డ్ ద్వారా సమాచారాన్ని స్వీకరించడం మరియు ఫలితాన్ని కన్సోల్ స్క్రీన్‌పై స్పష్టంగా ప్రదర్శించడం ఏ సాఫ్ట్‌వేర్‌కైనా ప్రాథమిక అవసరం. C++ లో అత్యంత వేగవంతమైన <strong>Stream I/O సిస్టమ్</strong>, బిగినర్స్ తలపట్టుకునే <strong>cin బఫర్ న్యూలైన్ ట్రాప్</strong> మరియు దాని పరిష్కారాన్ని ఈ అధ్యాయంలో నేర్చుకుందాం.
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>`std::cin` & Stream Extraction Operator (`>>`)</div>
+    <div class="section-title"><span class="num">1</span>C++ లో Streams అంటే ఏమిటి? (కన్వేయర్ బెల్ట్ పోలిక)</div>
     <div class="section-body">
       <p>
-        C++ లో స్క్రీన్ పై డేటాను చూపించడానికి <code>std::cout</code> వాడినట్లే, కీబోర్డ్ నుండి యూజర్ టైప్ చేసిన డేటాను చదవడానికి <strong>`std::cin`</strong> (Character Input) స్ట్రీమ్ ఆబ్జెక్ట్ ఉపయోగపడుతుంది.
+        C++ లో డేటా అనేది ఒక <strong>Stream (ప్రవాహం)</strong> లాగా ప్రయాణిస్తుంది. ఒక కన్వేయర్ బెల్ట్ మీద పెట్టెలు ఎలా ఒకదాని తర్వాత ఒకటి వెళ్తాయో, కీబోర్డ్ నుండి CPU కి మరియు CPU నుండి మానిటర్ స్క్రీన్‌కు క్యారెక్టర్లు వరుస క్రమంలో ప్రవహిస్తాయి:
       </p>
 
-      <div class="concept-box">
-        <h4>🔄 Arrows Direction: `<<` vs `>>` (కన్ఫ్యూజన్ లేకుండా గుర్తుపెట్టుకోండి!)</h4>
-        <p>
-          బిగినర్లు తరచూ ఏ బాణం గుర్తు ఎక్కడ వాడాలో కన్ఫ్యూజ్ అవుతుంటారు:
-        </p>
-        <ul style="margin:0; padding-left:18px;">
-          <li><code>cout &lt;&lt; data;</code> : డేటా మీ వేరియబుల్ నుండి బయట ఉన్న కన్సోల్‌కు ప్రవహిస్తుంది (Insertion).</li>
-          <li><code>cin &gt;&gt; variable;</code> : డేటా బయట ఉన్న కీబోర్డ్ నుండి మీ వేరియబుల్ <strong>లోపలికి</strong> పంపిణీ అవుతుంది (Extraction).</li>
-        </ul>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:15px;">std::cout (Standard Output Stream)</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <strong>&lt;&lt; (Insertion Operator)</strong> ను వాడుతుంది. మీ ప్రోగ్రామ్ నుండి డేటాను స్క్రీన్ కన్సోల్‌లోకి ఇంజెక్ట్ చేస్తుంది. ఉదాహరణ: <code>std::cout &lt;&lt; "Hello";</code>
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 6px 0; font-size:15px;">std::cin (Standard Input Stream)</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <strong>&gt;&gt; (Extraction Operator)</strong> ను వాడుతుంది. కీబోర్డ్ బఫర్ నుండి డేటాను లాగి (Extract చేసి) మీ వేరియబుల్‌లో భద్రపరుస్తుంది. ఉదాహరణ: <code>std::cin &gt;&gt; age;</code>
+          </p>
+        </div>
       </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>std::cin యొక్క పరిమితి: Whitespace Truncation</div>
+    <div class="section-body">
+      <p>
+        <code>std::cin &gt;&gt;</code> ఆపరేటర్ కేవలం స్పేస్ లేని ఒకే పదాన్ని మాత్రమే చదవగలదు. వినియోగదారుడు స్పేస్ ఇచ్చిన వెంటనే (Space, Tab, Enter), అక్కడితో ఆగిపోతుంది:
+      </p>
 
       <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Basic Input with std::cin</div>
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Reading Strings with Whitespaces using std::getline</div>
         <div class="code-block">
           <div class="code-block-header">
             <span class="lang-tag">C++17</span>
             <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
           </div>
           <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
 
 int main() {
-    int userAge = 0;
-    double accountBalance = 0.0;
+    std::string fullName;
+    std::cout &lt;&lt; "Enter your full name (with spaces): ";
+    
+    // std::getline వాడటం వల్ల స్పేస్‌లతో సహా ఎంటర్‌కొట్టే వరకు లైన్ మొత్తం చదువుతుంది
+    std::getline(std::cin, fullName);
 
-    std::cout &lt;&lt; "Enter your age: ";
-    std::cin &gt;&gt; userAge;
-
-    std::cout &lt;&lt; "Enter your account balance: ";
-    std::cin &gt;&gt; accountBalance;
-
-    std::cout &lt;&lt; "\n--- User Data Captured ---\n";
-    std::cout &lt;&lt; "Age: " &lt;&lt; userAge &lt;&lt; " years | Balance: Rs. " &lt;&lt; accountBalance &lt;&lt; "\n";
-
+    std::cout &lt;&lt; "Welcome aboard, " &lt;&lt; fullName &lt;&lt; "! 🚀\n";
     return 0;
 }</code></pre>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>Chained Input: ఒకేసారి అనేక విలువలను చదవడం</div>
+    <!-- SECTION 3: THE FAMOUS CIN BUG -->
+    <div class="section-title"><span class="num">3</span>ది ఫేమస్ C++ బగ్: cin >> తర్వాత getline() స్కిప్ అవ్వడం!</div>
     <div class="section-body">
       <p>
-        C++ లో <code>cin &gt;&gt; a &gt;&gt; b &gt;&gt; c;</code> అని ఒకే లైన్‌లో గొలుసుకట్టుగా (Chaining) రాసి యూజర్ నుండి స్పేస్‌లు లేదా ఎంటర్‌లతో వేరు చేయబడిన విలువలను ఒకేసారి చదవవచ్చు:
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Chaining Multiple Inputs</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Chaining</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int length = 0, breadth = 0;
-
-    std::cout &lt;&lt; "Enter rectangle Length and Breadth (separated by space): ";
-    // యూజర్ '15 20' అని టైప్ చేస్తే ఒకేసారి చదువుతుంది
-    std::cin &gt;&gt; length &gt;&gt; breadth;
-
-    int area = length * breadth;
-    std::cout &lt;&lt; "Calculated Area: " &lt;&lt; area &lt;&lt; " sq. units\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>The Whitespace Trap & `std::getline()`</div>
-    <div class="section-body">
-      <p>
-        కీబోర్డ్ నుండి యూజర్ పేరును చదవడానికి <code>cin &gt;&gt; fullName;</code> అని రాస్తే ఒక పెద్ద సమస్య వస్తుంది!
+        ప్రతి C++ ప్రోగ్రామర్ తన జీవితంలో కనీసం వందసార్లు ఈ బగ్‌తో తలపట్టుకుంటాడు. ఒక నంబర్‌ను <code>cin &gt;&gt;</code> తో చదివిన వెంటనే <code>getline()</code> వాడితే, అది యూజర్ దగ్గర ఏమీ అడగకుండా ఖాళీగా స్కిప్ అయిపోతుంది!
       </p>
 
       <div class="concept-box">
-        <h4>⚠️ The Whitespace Bug: "Balaji Nayak" ఇస్తే ఏమవుతుంది?</h4>
+        <h4>🔍 ఎందుకు ఇలా జరుగుతుంది? (The Buffer Mystery)</h4>
         <p>
-          <code>cin &gt;&gt;</code> అనేది <strong>Whitespace Delimited</strong>. అంటే స్పేస్ (Space), ట్యాబ్ (\t), లేదా న్యూలైన్ (\n) కనిపించగానే చదవడం ఆపేస్తుంది!
-        </p>
-        <p style="margin-bottom:0;">
-          యూజర్ <code>"Balaji Nayak"</code> అని టైప్ చేస్తే, <code>cin</code> కేవలం <code>"Balaji"</code> ని మాత్రమే తీసుకుంటుంది. మిగిలిన <code>"Nayak"</code> కీబోర్డ్ బఫర్‌లో ఉండిపోయి తర్వాతి వేరియబుల్స్‌ను పాడుచేస్తుంది!
+          మీరు కీబోర్డ్‌లో <code>25</code> అని టైప్ చేసి <code>[Enter]</code> కొట్టినప్పుడు, మెమరీ బఫర్‌లో <code>'2' '5' '\n'</code> ఉంటాయి.<br>
+          <code>cin &gt;&gt; age;</code> కేవలం <code>25</code> ను మాత్రమే తీసుకుంటుంది. ఆ <code>'\n'</code> (ఎంటర్ క్యారెక్టర్) బఫర్‌లోనే ఉండిపోతుంది!<br>
+          వెంటనే తర్వాతి లైన్‌లో ఉన్న <code>getline(cin, name);</code> ఆ పాత <code>'\n'</code> ను చూసి, <em>"యూజర్ ఆల్రెడీ ఎంటర్ కొట్టేశారు"</em> అనుకుని ఖాళీ స్ట్రింగ్‌ను రీడ్ చేసి వెళ్లిపోతుంది!
         </p>
       </div>
 
-      <h4 style="color:#10b981; margin:18px 0 8px;">✅ పరిష్కారం: `std::getline(std::cin, stringVariable)`</h4>
-      <p>
-        స్పేస్‌లతో కూడిన పూర్తి వాక్యాలను లైన్ మొత్తం చదవడానికి C++ స్ట్రింగ్ లైబ్రరీలోని <strong>`std::getline()`</strong> వాడాలి:
-      </p>
-
       <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Capturing Full Lines with getline</div>
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: The Definitive cin.ignore() Fix</div>
         <div class="code-block">
           <div class="code-block-header">
-            <span class="lang-tag">C++17 getline</span>
+            <span class="lang-tag">C++17</span>
             <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
           </div>
           <pre><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
+#include &lt;limits&gt;
 
 int main() {
-    std::string fullAddress;
-
-    std::cout &lt;&lt; "Enter your complete street address: ";
-    // స్పేస్‌లతో సహా ఎంటర్ కొట్టే వరకు మొత్తం లైన్ చదువుతుంది
-    std::getline(std::cin, fullAddress);
-
-    std::cout &lt;&lt; "Delivery Address Confirmed: " &lt;&lt; fullAddress &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>ది నైట్‌మేర్ బగ్: `cin` తర్వాత `getline` వాడటం & `cin.ignore()`</div>
-    <div class="section-body">
-      <p>
-        ప్రతి C++ డెవలపర్ తన జీవితంలో కనీసం ఒక్కసారైనా తలపట్టుకునే అత్యంత ప్రమాదకరమైన బగ్ ఇది! ఒక నంబర్ తీసుకున్న తర్వాత పేరు అడిగితే ప్రోగ్రామ్ పేరు అడగకుండానే స్కిప్ అయిపోతుంది:
-      </p>
-
-      <!-- Buffer Mechanism Visual Diagram -->
-      <div class="diagram-box">కీబోర్డ్ యూజర్ టైపింగ్ :  [ 25 ] + [ ENTER (\n) ]
-                            │
-cin &gt;&gt; age; చదివింది   :  [ 25 ] మాత్రమే చదివింది!
-బఫర్ లో మిగిలింది      :  [ \n ] (Enter కీ బఫర్ లోనే ఉండిపోయింది!)
-                            │
-getline(cin, name);     :  బఫర్ లో ఉన్న [ \n ] ని చూసి "ఇన్‌పుట్ అయిపోయింది" అనుకుని ఖాళీగా ముగుస్తుంది! ❌</div>
-
-      <h4 style="color:#10b981; margin:16px 0 8px;">✅ ది అల్టిమేట్ ఫిక్స్: `std::cin.ignore()`</h4>
-      <p>
-        <code>cin &gt;&gt;</code> వాడిన వెంటనే, బఫర్‌లో మిగిలిపోయిన Enter కీని తొలగించడానికి <strong>`std::cin.ignore();`</strong> లేదా <code>std::cin.ignore(1000, '\n');</code> వాడాలి:
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: The Clean Buffer Pattern with cin.ignore()</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Buffer Clean</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
-
-int main() {
-    int rollNumber = 0;
+    int rollNumber;
     std::string studentName;
 
-    std::cout &lt;&lt; "Enter Student Roll Number: ";
+    std::cout &lt;&lt; "Enter Roll Number: ";
     std::cin &gt;&gt; rollNumber;
 
-    // 🔥 CRITICAL: బఫర్‌లో మిగిలిన '\n' ను తుడిచివేయాలి!
-    std::cin.ignore();
+    // సీక్రెట్ పరిష్కారం: బఫర్‌లో మిగిలిపోయిన '\n' ను క్లియర్ చేయండి
+    std::cin.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n');
 
-    std::cout &lt;&lt; "Enter Full Student Name: ";
-    std::getline(std::cin, studentName); // ఇప్పుడు స్కిప్ అవ్వకుండా సరిగ్గా పనిచేస్తుంది!
+    std::cout &lt;&lt; "Enter Student Full Name: ";
+    std::getline(std::cin, studentName); // ఇప్పుడు పర్ఫెక్ట్‌గా ఆగి అడుగుతుంది!
 
-    std::cout &lt;&lt; "\nRegistered: " &lt;&lt; studentName &lt;&lt; " (Roll: " &lt;&lt; rollNumber &lt;&lt; ")\n";
-
+    std::cout &lt;&lt; "ID: " &lt;&lt; rollNumber &lt;&lt; " | Name: " &lt;&lt; studentName &lt;&lt; "\n";
     return 0;
 }</code></pre>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>Output Formatting: `<iomanip>` తో ప్రొఫెషనల్ లుక్</div>
+    <!-- SECTION 4: FORMATTING -->
+    <div class="section-title"><span class="num">4</span>అవుట్‌పుట్ ఫార్మాటింగ్: &lt;iomanip&gt; తో అద్భుతమైన డిస్‌ప్లే</div>
     <div class="section-body">
       <p>
-        బ్యాంకింగ్, బిల్లింగ్ మరియు టేబులర్ రిపోర్టులలో దశాంశాలను (Decimals) నియంత్రించడానికి C++ లో <strong>`&lt;iomanip&gt;`</strong> (Input/Output Manipulators) హెడర్ ఫైల్ ఉంది:
+        కరెన్సీ లేదా పర్సంటేజీలను ప్రింట్ చేసేటప్పుడు 2 డెసిమల్ ప్లేసెస్ మాత్రమే రావాలన్నా (ఉదా: <code>99.50</code>), లేదా టేబుల్ లాగా సమానమైన వెడల్పుతో కాలమ్స్ రావాలన్నా <code>&lt;iomanip&gt;</code> హెడర్ వాడతాం:
       </p>
-      <ul style="line-height:1.8;">
-        <li><code>std::fixed</code>: సైంటిఫిక్ నోటేషన్ (1e+05) రాకుండా సాధారణ దశాంశ రూపంలో చూపిస్తుంది.</li>
-        <li><code>std::setprecision(2)</code>: దశాంశం తర్వాత కచ్చితంగా 2 స్థానాలు మాత్రమే ఉండేలా చేస్తుంది (ఉదా: <code>95.50</code>).</li>
-        <li><code>std::setw(15)</code>: కాలమ్ వెడల్పును 15 క్యారెక్టర్లుగా సెట్ చేసి పట్టికలను నిలువుగా సమలేఖనం (Alignment) చేస్తుంది.</li>
+
+      <ul style="line-height:1.8; margin-left:18px;">
+        <li><code>std::fixed &lt;&lt; std::setprecision(2)</code>: కచ్చితంగా రెండు డెసిమల్ పాయింట్లు మాత్రమే చూపిస్తుంది.</li>
+        <li><code>std::setw(15)</code>: కాలమ్ విడ్త్‌ను 15 క్యారెక్టర్లకు సెట్ చేస్తుంది.</li>
       </ul>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: Beautiful Formatting with &lt;iomanip&gt;</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 &lt;iomanip&gt;</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-#include &lt;iomanip&gt; // Manipulators కోసం అవసరం
-
-int main() {
-    double itemPrice1 = 49.9;
-    double itemPrice2 = 1250.758;
-
-    std::cout &lt;&lt; "--- Formatted Receipt ---\n";
-    // దశాంశం తర్వాత కచ్చితంగా 2 అంకెలు మాత్రమే ప్రింట్ అవ్వాలి
-    std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);
-
-    std::cout &lt;&lt; std::left &lt;&lt; std::setw(20) &lt;&lt; "Item Name" 
-              &lt;&lt; std::right &lt;&lt; std::setw(10) &lt;&lt; "Price (Rs)" &lt;&lt; "\n";
-    std::cout &lt;&lt; "------------------------------\n";
-    std::cout &lt;&lt; std::left &lt;&lt; std::setw(20) &lt;&lt; "Wireless Mouse" 
-              &lt;&lt; std::right &lt;&lt; std::setw(10) &lt;&lt; itemPrice1 &lt;&lt; "\n";
-    std::cout &lt;&lt; std::left &lt;&lt; std::setw(20) &lt;&lt; "Mechanical Keybd" 
-              &lt;&lt; std::right &lt;&lt; std::setw(10) &lt;&lt; itemPrice2 &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 6 -->
-    <div class="section-title"><span class="num">6</span>Competitive Programming Secret: 10x Fast I/O</div>
-    <div class="section-body">
-      <p>
-        LeetCode, Codeforces, లేదా CodeChef లో లక్షలాది టెస్ట్ కేస్‌లు ఉన్నప్పుడు సాధారణ <code>cin/cout</code> వాడితే <strong>TLE (Time Limit Exceeded)</strong> వస్తుంది.
-      </p>
-
-      <div class="concept-box">
-        <h4>⚡ The 2 Magical Lines for 10x Speedup</h4>
-        <p>
-          C++ డీఫాల్ట్‌గా C లాంగ్వేజ్ లోని <code>stdio</code> తో సింక్రనైజ్ అయి ఉంటుంది. ఈ 2 లైన్లను <code>main()</code> ప్రారంభంలో రాస్తే ఆ సింక్ ఆగిపోయి <code>cin/cout</code> అల్ట్రా-ఫాస్ట్‌గా పనిచేస్తాయి:
-        </p>
-        <pre style="background:var(--bg2); padding:10px 14px; border-radius:6px; border:1px solid var(--border); font-family:'JetBrains Mono',monospace; color:#a7f3d0; margin-top:8px;">std::ios_base::sync_with_stdio(false);
-std::cin.tie(NULL);</pre>
-        <p style="margin-bottom:0; font-size:13.5px; color:var(--text2); margin-top:8px;">
-          ఇది చేయడం వల్ల C++ స్ట్రీమ్స్ C బఫర్లతో మాట్లాడటం ఆపేస్తాయి మరియు ప్రతి ఇన్‌పుట్‌కు ముందు అవుట్‌పుట్‌ను ఫ్లష్ చేయవు.
-        </p>
-      </div>
-    </div>
-
-    <!-- COMMON PITFALLS CALLOUT -->
-    <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 3</div>
-      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
-        <li>
-          <strong>రాంగ్ డేటా టైప్ ఎంటర్ చేయడం (cin Fail State):</strong> ప్రోగ్రామ్ నంబర్ <code>int</code> అడిగినప్పుడు యూజర్ అక్షరాలు (ఉదా: <code>"abc"</code>) ఎంటర్ చేస్తే, <code>cin</code> ఒక <strong>Fail State</strong> లోకి వెళ్లిపోతుంది. ఆ తర్వాత ప్రోగ్రామ్ ఎలాంటి ఇన్‌పుట్‌ను తీసుకోదు.
-        </li>
-        <li>
-          <strong><code>cin &gt;&gt; str</code> వాడి స్పేస్‌లు పోగొట్టుకోవడం:</strong> ఫుల్ పేర్లు లేదా వాక్యాలు కావాలన్నప్పుడు ఎప్పుడూ <code>getline()</code> నే వాడాలి.
-        </li>
-      </ul>
-    </div>
-
-    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
-    <div class="try-box">
-      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
-        <strong>టాస్క్:</strong> ఒక స్టూడెంట్ కాలేజ్ అడ్మిషన్ కార్డును ప్రింట్ చేసే ప్రోగ్రామ్ రాయండి. విద్యార్థి పూర్తి పేరు (స్పేస్‌లతో సహా getline ద్వారా), రోల్ నంబర్, 3 సబ్జెక్టుల మార్కులు ఇన్‌పుట్‌గా తీసుకుని, మొత్తం మార్కులు మరియు సగటు (Average) ను కచ్చితంగా 2 డెసిమల్ స్థానాలతో ఫార్మాట్ చేసి ప్రింట్ చేయండి:
-      </p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">C++17 Report Card Challenge</span>
-          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;iomanip&gt;
-
-int main() {
-    int rollNo = 1042;
-    std::string fullName = "Venkata Satish Kumar";
-    double mathMarks = 94.5;
-    double physicsMarks = 88.0;
-    double csMarks = 99.5;
-
-    // గణనలు
-    double totalMarks = mathMarks + physicsMarks + csMarks;
-    double averageMarks = totalMarks / 3.0;
-
-    // ఫార్మాటెడ్ అవుట్‌పుట్
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "       COLLEGE STUDENT REPORT CARD      \n";
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "Roll Number   : " &lt;&lt; rollNo &lt;&lt; "\n";
-    std::cout &lt;&lt; "Student Name  : " &lt;&lt; fullName &lt;&lt; "\n";
-    std::cout &lt;&lt; "----------------------------------------\n";
-    std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);
-    std::cout &lt;&lt; "Mathematics   : " &lt;&lt; mathMarks &lt;&lt; " / 100\n";
-    std::cout &lt;&lt; "Physics       : " &lt;&lt; physicsMarks &lt;&lt; " / 100\n";
-    std::cout &lt;&lt; "Computer Sci  : " &lt;&lt; csMarks &lt;&lt; " / 100\n";
-    std::cout &lt;&lt; "----------------------------------------\n";
-    std::cout &lt;&lt; "Total Marks   : " &lt;&lt; totalMarks &lt;&lt; " / 300\n";
-    std::cout &lt;&lt; "Percentage    : " &lt;&lt; averageMarks &lt;&lt; " %\n";
-    std::cout &lt;&lt; "Grade Result  : " &lt;&lt; (averageMarks &gt;= 90.0 ? "DISTINCTION (A+) 🌟" : "FIRST CLASS (A) ✅") &lt;&lt; "\n";
-    std::cout &lt;&lt; "========================================\n";
-
-    return 0;
-}</code></pre>
-      </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
     </div>
 
     <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> cin తర్వాత getline() వాడినప్పుడు ఇన్పుట్ తీసుకోకుండా ఎందుకు స్కిప్ అవుతుంది?</h4>
-      <p>
-        <code>cin &gt;&gt;</code> కేవలం విలువను మాత్రమే చదువుతుంది, కానీ మీరు కీబోర్డుపై నొక్కిన Enter (Newline <code>\n</code>) కీ బఫర్‌లో అలానే ఉండిపోతుంది. తర్వాతి లైన్‌లో ఉన్న <code>getline()</code> ఆ మిగిలిపోయిన <code>\n</code> ను చదివి ముగిసిపోతుంది. దీనిని నివారించడానికి <code>cin &gt;&gt;</code> తర్వాత కచ్చితంగా <code>std::cin.ignore();</code> వాడాలి.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Competitive Programming లో Fast I/O ఎందుకు వాడతారు?</h4>
-      <p>
-        డీఫాల్ట్‌గా C++ లోని <code>cin/cout</code> C లాంగ్వేజ్ లోని <code>scanf/printf</code> తో సింక్ అయి ఉంటాయి (I/O Synchronization). <code>std::ios_base::sync_with_stdio(false); std::cin.tie(NULL);</code> వాడటం వల్ల ఆ సింక్ ఆగిపోయి, భారీ డేటాను చదవడం 5 నుండి 10 రెట్లు వేగవంతం అవుతుంది.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> డెసిమల్స్ తర్వాత కచ్చితంగా 2 అంకెలు మాత్రమే ప్రింట్ అవ్వాలంటే ఏం చేయాలి?</h4>
-      <p>
-        <code>#include &lt;iomanip&gt;</code> హెడర్ ఫైల్‌ను చేర్చి, <code>std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);</code> అని సెట్ చేస్తే డెసిమల్ తర్వాత కచ్చితంగా రెండు స్థానాలు మాత్రమే ప్రింట్ అవుతాయి (ఉదా: 98.50).
-      </p>
-    </div>
-
-    <!-- AUTHOR ATTRIBUTION -->
-    <div class="author" style="margin-top:40px;">
-      <div class="avatar">OC</div>
-      <div>
-        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div class="faq-card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px;">
+        <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: యూజర్ ఇంటిజర్ బదులు అక్షరం టైప్ చేస్తే ప్రోగ్రామ్ క్రాష్ అవుతుందా?</h4>
+        <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.6;">
+          క్రాష్ అవ్వదు, కానీ <code>std::cin</code> ఒక 'Fail State' లోకి వెళ్లిపోతుంది. తర్వాతి ఇన్‌పుట్‌లను తీసుకోదు. దీనిని పరిష్కరించడానికి <code>if (std::cin.fail()) { std::cin.clear(); }</code> వాడాలి.
+        </p>
       </div>
     </div>
 
-    <!-- LESSON NAVIGATION FOOTER -->
-    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
-      <a href="/blog-cpp/02-cpp-variables-data-types.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
-        <span style="font-size:14px; font-weight:700;">2. వేరియబుల్స్, డేటా టైప్స్ & auto</span>
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-cpp/02-cpp-variables-data-types.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 2. వేరియబుల్స్ & డేటా టైప్స్
       </a>
-
-      <a href="/blog-cpp/04-cpp-operators-and-expressions.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
-        <span style="font-size:14px; font-weight:700;">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</span>
+      <a href="/blog-cpp/04-cpp-operators-and-expressions.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ →
       </a>
     </div>
 

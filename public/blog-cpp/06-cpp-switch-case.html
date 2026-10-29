@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -119,7 +119,7 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -187,7 +187,7 @@
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -329,10 +329,10 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 6: switch Statement & Fall-through</span>
+      <span class="current">Chapter 6: switch-case & Control Branching</span>
     </div>
 
-    <h1 class="page-title">switch స్టేట్‌మెంట్ & Fall-through (switch, case, break, default)</h1>
+    <h1 class="page-title">switch స్టేట్‌మెంట్ & కంట్రోల్ బ్రాంచింగ్ (switch-case & Jump Tables)</h1>
 
     <div class="page-meta">
       <span class="badge">⚡ Modern C++20 / C++17</span>
@@ -344,47 +344,46 @@
     <!-- Covered Topics Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>switch vs if-else Performance · Jump Tables Internal Architecture · Syntax (switch, case, break, default) · The Dangerous Fall-through Trap · Modern C++17 [[fallthrough]] Attribute · Scoped Variables in Case Blocks · C++17 switch with Initializer</span>
+      <span>Why switch? · Internal Jump Table Architecture (O(1) vs O(N)) · Fall-through Mechanics & [[fallthrough]] · Variable Declarations in Case Blocks · Scoped enum class Integration · Common Traps</span>
     </div>
 
     <!-- Intro Overview Box -->
     <div class="intro-box">
-      ఒక వేరియబుల్ విలువను పదుల కొద్దీ స్థిరాంకాలతో (Constants) పోల్చాల్సి వచ్చినప్పుడు 10 <code>else-if</code> లు రాయడం కోడ్‌ను గజిబిజి చేస్తుంది. C++ లో దీనికి సమాధానమే <strong>`switch` స్టేట్‌మెంట్</strong>. కంపైలర్ లోపల <strong>Jump Table</strong> ఎలా పనిచేస్తుందో, బిగినర్లను వేధించే <strong>Fall-through</strong> మెకానిజం, మరియు C++17 లో ప్రవేశపెట్టిన ఆధునిక ఆట్రిబ్యూట్‌లను ఈ అధ్యాయంలో నేర్చుకుందాం.
+      ఒకే వేరియబుల్ యొక్క విలువను బట్టి డజన్ల కొద్దీ దారుల్లో ఒకదానిని ఎంచుకోవాల్సి వచ్చినప్పుడు పొడవైన <code>else-if</code> నిచ్చెన రాయడం అసహ్యంగా ఉంటుంది. C++ లో అత్యంత వేగవంతమైన <strong>Jump Table ఆప్టిమైజేషన్</strong> తో పనిచేసే <strong>switch-case స్టేట్‌మెంట్</strong> గురించి సమగ్రంగా తెలుసుకుందాం.
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>`switch` vs `if-else`: Jump Table రహస్యం</div>
+    <div class="section-title"><span class="num">1</span>switch ఎందుకు వాడాలి? (The Jump Table Secret)</div>
     <div class="section-body">
       <p>
-        చాలామందికి ఒక సందేహం ఉంటుంది: <code>if-else</code> ఉండగా <code>switch</code> ఎందుకు వాడాలి?
+        చాలామంది <code>switch</code> అనేది కేవలం <code>if-else</code> కి మరొక రూపం అనుకుంటారు. కానీ కంపైలర్ లెవల్‌లో చాలా పెద్ద తేడా ఉంది:
       </p>
 
-      <div class="concept-box">
-        <h4>⚡ Under the Hood: Jump Table vs Linear Search</h4>
-        <p>
-          • <strong>else-if Ladder:</strong> కంపైలర్ ప్రతి కండిషన్‌ను మొదటి నుండి ఒకదాని తర్వాత ఒకటి వరుసగా చెక్ చేసుకుంటూ వెళ్తుంది (Linear Search - $O(N)$ టైమ్ కాంప్లెక్సిటీ). 10వ కండిషన్ మ్యాచ్ అవ్వాలంటే పై 9 తప్పు అని తేలాలి!
-        </p>
-        <p style="margin-bottom:0;">
-          • <strong>switch Statement:</strong> C++ కంపైలర్ కేస్ విలువలతో మెమరీలో ఒక <strong>Jump Table</strong> (అడ్రస్‌ల అరే) తయారు చేస్తుంది. యూజర్ ఇచ్చిన విలువ ఆధారంగా ఏ లొకేషన్‌కి వెళ్లాలో నేరుగా లెక్కించి ఒకే జంప్‌తో ఆ కేస్‌కి వెళ్లిపోతుంది (Direct Jump - $O(1)$ కాన్‌స్టాంట్ టైమ్!). కాబట్టి అనేక స్థిర విలువల పోలికలో <code>switch</code> చాలా వేగవంతమైనది!
-        </p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#f59e0b; margin:0 0 8px 0; font-size:14px;">🐢 else-if Ladder: O(N) Sequential Search</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఒకవేళ మీరు 20 కండిషన్లు రాస్తే, 20వ ఆప్షన్ మ్యాచ్ అవ్వడానికి CPU వరుసగా 19 సార్లు చెక్ చేసుకుంటూ దిగాలి. కండిషన్లు పెరిగే కొద్దీ ప్రోగ్రామ్ స్లో అవుతుంది.
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">⚡ switch-case: O(1) Jump Table Dispatch</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            C++ కంపైలర్ కేస్ లేబుల్స్ ఆధారంగా బైనరీలో ఒక ఇండెక్స్డ్ <strong>Jump Table</strong> తయారు చేస్తుంది. 100 కేస్ లేబుల్స్ ఉన్నా సరే, విలువను బట్టి నేరుగా ఆ మెమరీ అడ్రస్‌కు ఒక్క క్షణంలో (O(1) Time) దూకేస్తుంది!
+          </p>
+        </div>
       </div>
     </div>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>`switch` సింటాక్స్ & బేసిక్ ఎగ్జాంపుల్</div>
+    <div class="section-title"><span class="num">2</span>switch-case సింటాక్స్ & Fall-through మెకానిక్స్</div>
     <div class="section-body">
       <p>
-        <code>switch</code> స్టేట్‌మెంట్‌లో 4 ముఖ్యమైన భాగాలు ఉంటాయి:
+        కేస్ లేబుల్ మ్యాచ్ అయిన తర్వాత కింద ఉన్న మిగతా కేస్‌లను రన్ చేయకుండా ఆపడానికి తప్పనిసరిగా <code>break;</code> వాడాలి:
       </p>
-      <ul style="line-height:1.8;">
-        <li><code>switch(expression)</code>: పరీక్షించాల్సిన పూర్ణాంక వేరియబుల్ (int, char, enum మాత్రమే!).</li>
-        <li><code>case constant:</code>: ఆ వేరియబుల్ సమానమవ్వాల్సిన విలువ.</li>
-        <li><code>break;</code>: ఆ పని ముగియగానే స్విచ్ బ్లాక్ నుండి బయటకు దూకడానికి (Jump out).</li>
-        <li><code>default:</code>: పైన ఏ కేస్ మ్యాచ్ అవ్వకపోతే ఎగ్జిక్యూట్ అయ్యే బ్యాకప్ బ్లాక్ (else లాంటిది).</li>
-      </ul>
 
       <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Day of Week with switch</div>
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Modern Menu-Driven Calculator</div>
         <div class="code-block">
           <div class="code-block-header">
             <span class="lang-tag">C++17</span>
@@ -393,17 +392,25 @@
           <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    int dayNumber = 3;
+    char operation = '+';
+    double num1 = 12.0, num2 = 4.0;
 
-    switch (dayNumber) {
-        case 1: std::cout &lt;&lt; "Monday - Work Starts! 💻\n"; break;
-        case 2: std::cout &lt;&lt; "Tuesday - Deep Work ⚙️\n"; break;
-        case 3: std::cout &lt;&lt; "Wednesday - Midweek Sync 🚀\n"; break;
-        case 4: std::cout &lt;&lt; "Thursday - Code Review 🔍\n"; break;
-        case 5: std::cout &lt;&lt; "Friday - Release & Deploy 🎉\n"; break;
-        case 6: 
-        case 7: std::cout &lt;&lt; "Weekend! Rest & Learn 🌟\n"; break;
-        default: std::cout &lt;&lt; "Invalid Day Number (Enter 1 to 7)\n"; break;
+    switch (operation) {
+        case '+':
+            std::cout &lt;&lt; "Sum: " &lt;&lt; (num1 + num2) &lt;&lt; "\n";
+            break;
+        case '-':
+            std::cout &lt;&lt; "Difference: " &lt;&lt; (num1 - num2) &lt;&lt; "\n";
+            break;
+        case '*':
+            std::cout &lt;&lt; "Product: " &lt;&lt; (num1 * num2) &lt;&lt; "\n";
+            break;
+        case '/':
+            if (num2 != 0) std::cout &lt;&lt; "Quotient: " &lt;&lt; (num1 / num2) &lt;&lt; "\n";
+            break;
+        default:
+            std::cout &lt;&lt; "Invalid Operator!\n";
+            break;
     }
 
     return 0;
@@ -412,227 +419,33 @@ int main() {
       </div>
     </div>
 
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>The Fall-through Mechanism & Modern `[[fallthrough]]`</div>
+    <!-- SECTION 3: PITFALLS -->
+    <div class="section-title"><span class="num">3</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
     <div class="section-body">
-      <p>
-        ఒక <code>case</code> చివర <code>break;</code> పెట్టడం మర్చిపోతే ఏమవుతుంది? కంపైలర్ అక్కడితో ఆగదు! తర్వాతి case కండిషన్ మ్యాచ్ అవ్వకపోయినా సరే, ఆ కింది కోడ్‌ను కూడా ఎగ్జిక్యూట్ చేసుకుంటూ వెళ్లిపోతుంది! దీనినే <strong>Fall-through</strong> అంటారు.
-      </p>
+      <div style="display:flex; flex-direction:column; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 1: strings లేదా floats ను switch లో వాడటం</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            C++ లో <code>switch</code> కేవలం <strong>Integral Types</strong> (<code>int, char, enum, short, long</code>) పై మాత్రమే పనిచేస్తుంది. <code>std::string</code> లేదా <code>float/double</code> ను switch ఎక్స్‌ప్రెషన్‌లో వాడితే కంపైల్-టైమ్ ఎర్రర్ వస్తుంది. స్ట్రింగ్స్ కోసం <code>if-else</code> లేదా హాష్ మ్యాప్ వాడాలి.
+          </p>
+        </div>
 
-      <div class="concept-box">
-        <h4>🛡️ Modern C++17 `[[fallthrough]]` Attribute</h4>
-        <p>
-          కొన్నిసార్లు మనం ఉద్దేశపూర్వకంగానే ఒక కేస్ నుండి మరొక కేస్‌కి జారిపోవాలని కోరుకుంటాం. పాత C++ లో ఇలా చేస్తే కంపైలర్ <em>"Warning: this statement may fall through"</em> అని హెచ్చరిక ఇచ్చేది.
-        </p>
-        <p style="margin-bottom:0;">
-          C++17 లో <strong>`[[fallthrough]];`</strong> అని రాస్తే, కంపైలర్‌కు <em>"నేను కావాలనే బ్రేక్ లేకుండా కిందికి వెళ్తున్నాను, వార్నింగ్ ఇవ్వకు"</em> అని స్పష్టంగా చెప్పవచ్చు.
-        </p>
-      </div>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Intentional Fall-through with C++17 Attribute</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 [[fallthrough]]</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int userTier = 1; // 1 = Admin, 2 = Moderator, 3 = Normal User
-
-    std::cout &lt;&lt; "--- User Granted Permissions ---\n";
-    switch (userTier) {
-        case 1:
-            std::cout &lt;&lt; "[+] Full System Root Access\n";
-            [[fallthrough]]; // C++17: కావాలనే కింది పర్మిషన్లు కూడా ఇస్తున్నాం!
-        case 2:
-            std::cout &lt;&lt; "[+] Moderate Content & Ban Users\n";
-            [[fallthrough]];
-        case 3:
-            std::cout &lt;&lt; "[+] Read & Write Comments\n";
-            break;
-        default:
-            std::cout &lt;&lt; "[-] Guest: Read-only Access\n";
-            break;
-    }
-
-    return 0;
-}</code></pre>
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 2: Case లోపల వేరియబుల్స్ ఇనిషియలైజేషన్ (Cross-initialization Error)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            ఒక కేస్ లోపల <code>case 1: int x = 10; break;</code> అని రాస్తే, కంపైలర్ <em>"cross-initialization"</em> ఎర్రర్ ఇస్తుంది. ఎందుకంటే కేస్ 2 మ్యాచ్ అయితే <code>int x</code> డిక్లరేషన్‌ను దాటి వెళ్లిపోతుంది. పరిష్కారం: ఆ కేస్ కోడ్‌ను కర్లీ బ్రేసెస్ <code>case 1: { int x = 10; break; }</code> తో ఎన్‌క్లోజ్ చేసి లోకల్ స్కోప్ ఇవ్వాలి!
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>Scoped Variables in Case Blocks (బగ్ నివారణ)</div>
-    <div class="section-body">
-      <p>
-        C++ లో ఒక కేస్ లోపల వేరియబుల్‌ను డిక్లేర్ చేస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది:
-      </p>
-      <pre style="background:var(--bg2); padding:10px 14px; border-radius:6px; border:1px solid var(--border); font-family:'JetBrains Mono',monospace; color:#f87171; font-size:13.5px;">case 1:
-    int discount = 50; // ❌ ERROR: jump to case label crosses initialization
-    break;</pre>
-      <p>
-        ఎందుకంటే స్విచ్ స్టేట్‌మెంట్‌లో కంపైలర్ ఏ కేస్‌కైనా డైరెక్ట్‌గా జంప్ అవ్వవచ్చు. అలా జంప్ అయినప్పుడు ఆ వేరియబుల్ ఇనిషియలైజేషన్ స్కిప్ అయిపోయి మెమరీ కరప్ట్ అవుతుంది.
-      </p>
-      <p>
-        <strong>✅ సరైన పరిష్కారం:</strong> కేస్ లోపల వేరియబుల్ కావాలంటే, కచ్చితంగా కర్లీ బ్రేసెస్ <code>{ ... }</code> పెట్టి ప్రత్యేక పరిధి (Local Scope) సృష్టించాలి:
-      </p>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Scoped Variable in switch-case</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Scoped Case</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int planType = 2;
-
-    switch (planType) {
-        case 1: { // ✅ కర్లీ బ్రేసెస్‌తో పరిధి సెట్ చేసాం
-            int basePrice = 499;
-            std::cout &lt;&lt; "Basic Plan Selected: Rs. " &lt;&lt; basePrice &lt;&lt; "\n";
-            break;
-        }
-        case 2: {
-            int premiumPrice = 999;
-            int freeBonusCredits = 100;
-            std::cout &lt;&lt; "Premium Plan: Rs. " &lt;&lt; premiumPrice 
-                      &lt;&lt; " (Bonus Credits: " &lt;&lt; freeBonusCredits &lt;&lt; ")\n";
-            break;
-        }
-        default:
-            std::cout &lt;&lt; "Standard Free Tier\n";
-            break;
-    }
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- COMMON PITFALLS CALLOUT -->
-    <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 6</div>
-      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
-        <li>
-          <strong><code>case</code> పక్కన డూప్లికేట్ విలువలు రాయడం:</strong> ఒకే స్విచ్‌లో <code>case 1:</code> అని రెండుసార్లు రాస్తే కంపైలర్ <code>error: duplicate case value</code> అని ప్రోగ్రామ్‌ను తిరస్కరిస్తుంది.
-        </li>
-        <li>
-          <strong>ఫ్లోటింగ్ పాయింట్ విలువలు వాడటం:</strong> <code>switch (3.14)</code> లేదా <code>case 2.5:</code> అని రాయడం C++ లో చట్టవిరుద్ధం (Illegal). డెసిమల్స్ కోసం <code>if-else</code> వాడాలి.
-        </li>
-      </ul>
-    </div>
-
-    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
-    <div class="try-box">
-      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
-        <strong>టాస్క్:</strong> ఒక స్మార్ట్ కాఫీ వెండింగ్ మెషిన్ కంట్రోలర్ రాయండి. కస్టమర్ ఎంపిక (char: 'E'=Espresso, 'C'=Cappuccino, 'L'=Latte, 'M'=Mocha) ఆధారంగా ధర లెక్కించి, తగిన కప్పు సైజు వివరాలను <code>switch</code> ద్వారా ప్రింట్ చేయండి:
-      </p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">C++17 Coffee Machine Challenge</span>
-          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    char beverageChoice = 'C'; // Cappuccino
-    double beveragePrice = 0.0;
-    std::string beverageName = "";
-
-    switch (beverageChoice) {
-        case 'E':
-        case 'e':
-            beverageName = "Double Shot Espresso";
-            beveragePrice = 120.00;
-            break;
-        case 'C':
-        case 'c':
-            beverageName = "Creamy Cappuccino";
-            beveragePrice = 180.00;
-            break;
-        case 'L':
-        case 'l':
-            beverageName = "Classic Cafe Latte";
-            beveragePrice = 160.00;
-            break;
-        case 'M':
-        case 'm':
-            beverageName = "Dark Chocolate Mocha";
-            beveragePrice = 210.00;
-            break;
-        default:
-            std::cout &lt;&lt; "[-] Error: Selected beverage not available in machine.\n";
-            return 1;
-    }
-
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "       SMART COFFEE DISPENSER ☕        \n";
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "Selected Beverage : " &lt;&lt; beverageName &lt;&lt; "\n";
-    std::cout &lt;&lt; "Dispense Price    : Rs. " &lt;&lt; beveragePrice &lt;&lt; "\n";
-    std::cout &lt;&lt; "Brewing Status    : READY TO DISPENSE ✅\n";
-    std::cout &lt;&lt; "========================================\n";
-
-    return 0;
-}</code></pre>
-      </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-cpp/05-cpp-if-else-conditionals.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 5. కండిషనల్స్
       </a>
-    </div>
-
-    <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> switch లో break మర్చిపోతే ఏమవుతుంది? (Fall-through అంటే ఏమిటి?)</h4>
-      <p>
-        case చివర <code>break;</code> రాయకపోతే, ఆ తర్వాతి case కండిషన్ మ్యాచ్ అవ్వకపోయినా, అందులో ఉన్న కోడ్ కూడా వరుసగా ఎగ్జిక్యూట్ అయిపోతుంది. దీనిని Fall-through అంటారు. ఉద్దేశపూర్వకంగా ఇది చేయాలనుకుంటే C++17 లో <code>[[fallthrough]];</code> అని రాయాలి.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ switch లో float లేదా string విలువలను ఎందుకు వాడలేము?</h4>
-      <p>
-        C++ కంపైలర్ switch స్టేట్‌మెంట్‌ను ఆప్టిమైజ్ చేయడానికి మెమరీలో Jump Table అనే బైనరీ అడ్రస్ టేబుల్‌ను నిర్మిస్తుంది. Jump Table కేవలం పూర్ణాంకాలు (Integral Types: int, char, enum) పై మాత్రమే పనిచేస్తుంది. ఫ్లోటింగ్ పాయింట్ లేదా స్ట్రింగ్స్ కోసం <code>if-else</code> వాడాలి.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> case లోపల కొత్త వేరియబుల్ డిక్లేర్ చేస్తే ఎర్రర్ ఎందుకు వస్తుంది?</h4>
-      <p>
-        ఒక case లో <code>int x = 10;</code> అని రాస్తే, కంపైలర్ ఆ వేరియబుల్ ఇనిషియలైజేషన్‌ను దాటి మరో case కి జంప్ చేయలేక ఎర్రర్ ఇస్తుంది. దీనిని నివారించడానికి ఆ case కు కర్లీ బ్రేసెస్ <code>{ int x = 10; ... }</code> పెట్టి ప్రత్యేక పరిధి (Local Scope) ఇవ్వాలి.
-      </p>
-    </div>
-
-    <!-- AUTHOR ATTRIBUTION -->
-    <div class="author" style="margin-top:40px;">
-      <div class="avatar">OC</div>
-      <div>
-        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
-      </div>
-    </div>
-
-    <!-- LESSON NAVIGATION FOOTER -->
-    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
-      <a href="/blog-cpp/05-cpp-if-else-conditionals.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
-        <span style="font-size:14px; font-weight:700;">5. డెసిషన్ మేకింగ్ (if, else if, else)</span>
-      </a>
-
-      <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
-        <span style="font-size:14px; font-weight:700;">7. లూప్స్ (for, while, do-while)</span>
+      <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 7. లూప్స్ (for, while) →
       </a>
     </div>
 

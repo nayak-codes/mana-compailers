@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -73,7 +73,7 @@
   }
   </script>
 
-  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Default Light Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -117,7 +117,7 @@
       const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|BankAccount|Empty|size_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|BankAccount|Calculator|EmptyClass|size_t)\b/g, m => pushToken('tp', m));
       code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
       code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
 
@@ -129,13 +129,15 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      // Default to Light Theme
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         window.addEventListener('DOMContentLoaded', () => {
           if (document.body) document.body.classList.add('light-theme');
         });
       }
+
       window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('pre code').forEach(codeBlock => {
           const pre = codeBlock.parentElement;
@@ -202,7 +204,7 @@
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -348,270 +350,231 @@
       </p>
     </div>
 
-    <!-- CONCEPT 1: PROCEDURAL VS OOP -->
-    <div class="section-title"><span class="num">1</span> Procedural vs Object-Oriented Programming (OOP)</div>
-    <p>
-      సాంప్రదాయ C ప్రోగ్రామింగ్‌లో (Procedural Programming) డేటా మరియు ఫంక్షన్లు విడివిడిగా ఉంటాయి. వేరియబుల్స్ ఒకచోట ఉంటాయి, వాటిని ప్రాసెస్ చేసే ఫంక్షన్లు ఇంకొక చోట ఉంటాయి. ప్రాజెక్ట్ పరిమాణం పెరిగేకొద్దీ ఎవరైనా పొరపాటున డేటాను కరప్ట్ చేసే ప్రమాదం ఉంటుంది.
-    </p>
-    <p>
-      దీనికి పరిష్కారంగా వచ్చినదే <strong>Object-Oriented Programming (OOP)</strong>. నిజ జీవితంలో ఒక వస్తువుకు లక్షణాలు (Attributes/State) మరియు పనులు (Behaviors/Methods) రెండూ కలిసి ఉంటాయి. ఉదాహరణకు ఒక <strong>Car</strong> కు రంగు, మోడల్ (డేటా) ఉంటాయి; అలాగే <code>start()</code>, <code>accelerate()</code>, <code>brake()</code> (ఫంక్షన్లు) ఉంటాయి. డేటాను మరియు ఫంక్షన్లను ఒకే రక్షణాత్మక క్యాప్సూల్ లోపల కలిపి ఉంచే పద్ధతినే OOP అంటారు.
-    </p>
-
-    <!-- CONCEPT 2: CLASS VS OBJECT & MEMORY ALLOCATION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> Class అంటే ఏమిటి? Object అంటే ఏమిటి?</div>
-    <p>
-      చాలామంది క్లాస్‌కు ఆబ్జెక్ట్‌కు మధ్య తేడాను అర్థం చేసుకోవడంలో తడబడతారు:
-    </p>
-
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[బ్లూప్రింట్ vs రియల్ ఇన్‌స్టాన్స్ అనలాజీ]</span>
-
-1. Class (బ్లూప్రింట్ / ప్లాన్):
-   ఒక ఇంజనీర్ కాగితం మీద గీసిన ఇంటి ప్లాన్ లాంటిది.
-   • ప్లాన్ కాగితం మీద మాత్రమే ఉంటుంది; భూమి మీద ఏ స్థలాన్నీ ఆక్రమించదు!
-   • కంపైలర్ క్లాస్ డిక్లరేషన్‌ను చూసినప్పుడు రామ్ (RAM) లో ఏ మెమరీనీ కేటాయించదు.
-
-2. Object (నిజమైన ఇల్లు):
-   ఆ ప్లాన్ ఆధారంగా భౌతికంగా నిర్మించిన అసలైన భవనం.
-   • రామ్ (RAM) లో స్థలాన్ని ఆక్రమిస్తుంది.
-   • ఒకే క్లాస్ (ప్లాన్) నుండి మనం ఎన్ని ఆబ్జెక్టులైనా (ఇళ్ళు) సృష్టించవచ్చు!
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Procedural vs OOP · Class Blueprint vs Object in RAM · Empty Class 1-Byte Rule · Access Specifiers · Getters & Setters · 'this' Pointer · Method Chaining</span>
     </div>
 
-    <div class="tip-box">
-      <strong>🔥 ఇంటర్వ్యూ గోల్డెన్ క్వశ్చన్: Empty Class సైజ్ ఎంత?</strong><br>
-      ఒక క్లాస్‌లో ఏ వేరియబుల్స్ లేకపోతే: <code>class Empty {};</code><br>
-      దాని సైజ్ <code>sizeof(Empty)</code> ఎంత ఉంటుంది? చాలామంది 0 బైట్లు అనుకుంటారు! కానీ C++ లో దీని సైజ్ ఖచ్చితంగా <strong>1 Byte</strong> ఉంటుంది.<br>
-      ఎందుకంటే C++ నియమం ప్రకారం: <em>"ప్రతి ప్రత్యేకమైన ఆబ్జెక్ట్‌కు మెమరీలో ఒక విశిష్టమైన అడ్రస్ (&amp;obj) ఉండాలి."</em> ఒకవేళ సైజ్ 0 అయితే, పక్కపక్కనే సృష్టించిన రెండు వేర్వేరు ఆబ్జెక్టులకు ఒకే మెమరీ అడ్రస్ వచ్చే ప్రమాదం ఉంటుంది! అందుకని కంపైలర్ డమ్మీగా 1 బైట్ స్పేస్ కేటాయిస్తుంది.
+    <!-- CONCEPT 1: PROCEDURAL VS OOP -->
+    <div class="section-title"><span class="num">1</span> Procedural vs Object-Oriented Programming (OOP)</div>
+    <div class="section-body">
+      <p>
+        సాంప్రదాయ C లాంగ్వేజ్‌లో (Procedural Programming) డేటా మరియు ఆ డేటాపై పనిచేసే ఫంక్షన్లు వేర్వేరు ప్రదేశాలలో ఉంటాయి. వేరియబుల్స్ ఒకచోట గ్లోబల్ గా పడి ఉంటాయి, వాటిని మార్చే ఫంక్షన్లు ఇంకొక చోట ఉంటాయి. ప్రాజెక్ట్ పరిమాణం పెరిగేకొద్దీ వేల లైన్ల కోడ్‌లో ఎవరు ఏ వేరియబుల్‌ను మార్చారో కనిపెట్టడం అసాధ్యంగా మారి సాఫ్ట్‌వేర్ బగ్స్‌తో నిండిపోతుంది.
+      </p>
+      <p>
+        దీనికి శాశ్వత పరిష్కారంగా వచ్చినదే <strong>Object-Oriented Programming (OOP)</strong>. నిజ జీవితంలో ఏ వస్తువూ కేవలం డేటా మాత్రమే లేదా కేవలం ఫంక్షన్ మాత్రమే అయి ఉండదు. ఒక <strong>కారు (Car)</strong> ను తీసుకుంటే: రంగు, ఇంధనం, స్పీడ్ (Attributes/Data) ఉంటాయి; అలాగే <code>start()</code>, <code>accelerate()</code>, <code>brake()</code> (Methods/Actions) ఉంటాయి. ఈ డేటాను మరియు ఫంక్షన్లను ఒకే రక్షణాత్మక యూనిట్ (Capsule) లోపల కలిపి ఉంచే అత్యున్నత సాఫ్ట్‌వేర్ విధానమే OOP.
+      </p>
+
+      <!-- VISUAL COMPARISON CARD -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">⚙️ Procedural Programming (C Style)</h4>
+          <p style="font-size:13px; line-height:1.6; margin:0; color:var(--text2);">
+            • ఫంక్షన్లు మరియు డేటా వేర్వేరు.<br>
+            • గ్లోబల్ డేటాను ఎవరైనా సులభంగా కరప్ట్ చేయవచ్చు.<br>
+            • భారీ ప్రాజెక్టులలో నిర్వహణ (Maintenance) అత్యంత కష్టం.
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">🏗️ Object-Oriented OOP (C++ Style)</h4>
+          <p style="font-size:13px; line-height:1.6; margin:0; color:var(--text2);">
+            • డేటా మరియు ఫంక్షన్లు ఒకే క్లాస్ లోపల బంధించబడి ఉంటాయి.<br>
+            • ప్రైవేట్ డేటాను బయటి ప్రపంచం నుండి రక్షించవచ్చు (Data Hiding).<br>
+            • కోడ్ పునర్వినియోగం (Reusability), భద్రత, స్కేలబిలిటీ అత్యున్నతం.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 2: CLASS VS OBJECT -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> Class (బ్లూప్రింట్) vs Object (నిజమైన ఇన్‌స్టాన్స్)</div>
+    <div class="section-body">
+      <p>
+        చాలామంది క్లాస్ అంటే ఏమిటి, ఆబ్జెక్ట్ అంటే ఏమిటి అనే ప్రాథమిక తేడాను అర్థం చేసుకోవడంలో తికమక పడతారు. ఈ సులభమైన రియల్-వరల్డ్ అనలాజీని గుర్తుంచుకోండి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:10px; padding:18px 22px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px; font-weight:700;">🏠 ఆర్కిటెక్ట్ ప్లాన్ vs అసలైన భవనం:</h4>
+        <ul style="margin:0; padding-left:20px; line-height:1.8; color:var(--text);">
+          <li><strong>Class (బ్లూప్రింట్ / ప్లాన్):</strong> ఒక ఇంజనీర్ కాగితం మీద గీసిన ఇంటి ప్లాన్ లాంటిది. ప్లాన్ కాగితం పైనే ఉంటుంది కానీ భూమి మీద ఏ స్థలాన్నీ ఆక్రమించదు. అలాగే C++ లో క్లాస్ డిక్లరేషన్ చూసినప్పుడు కంపైలర్ ర్యామ్ (RAM) లో ఏ మెమరీనీ కేటాయించదు!</li>
+          <li><strong>Object (అసలైన ఇల్లు):</strong> ఆ ప్లాన్ ఆధారంగా భౌతికంగా నిర్మించిన అసలైన ఇల్లు. ఇది రామ్‌లో ఖచ్చితంగా బైట్ల స్థలాన్ని ఆక్రమిస్తుంది. ఒకే ప్లాన్ (Class) ఉపయోగించి వేలాది ఇళ్ళు (Objects) నిర్మించవచ్చు!</li>
+        </ul>
+      </div>
+
+      <!-- TIP BOX: EMPTY CLASS 1 BYTE -->
+      <div class="tip-box">
+        <strong>🔥 ఇంటర్వ్యూ గోల్డెన్ క్వశ్చన్: Empty Class సైజ్ ఎంత?</strong><br>
+        ఒక క్లాస్‌లో ఏ వేరియబుల్స్ లేకపోతే: <code>class EmptyClass {};</code><br>
+        దాని సైజ్ <code>sizeof(EmptyClass)</code> ఎంత ఉంటుంది? చాలామంది 0 బైట్లు అనుకుంటారు!<br>
+        కానీ C++ లో దీని సైజ్ ఖచ్చితంగా <strong>1 Byte</strong> ఉంటుంది. ఎందుకంటే C++ నియమం ప్రకారం: <em>"ప్రతి ప్రత్యేకమైన ఆబ్జెక్ట్‌కు మెమరీలో ఒక విశిష్టమైన చిరునామా (&amp;obj) ఉండాలి."</em> ఒకవేళ సైజ్ 0 అయితే, పక్కపక్కనే సృష్టించిన రెండు వేర్వేరు ఆబ్జెక్టులకు ఒకే మెమరీ అడ్రస్ వచ్చే ప్రమాదం ఉంటుంది. అందుకే కంపైలర్ కనీస గుర్తింపు కోసం 1 బైట్ స్పేస్ కేటాయిస్తుంది.
+      </div>
     </div>
 
     <!-- CONCEPT 3: ACCESS SPECIFIERS & CLASS VS STRUCT -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> Access Specifiers: private, public & protected</div>
-    <p>
-      క్లాస్ లోపల ఉండే డేటాను ఎవరెవరు యాక్సెస్ చేయవచ్చో నిర్ణయించే సెక్యూరిటీ గేట్లే <strong>Access Specifiers</strong>:
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> Access Specifiers (private, public, protected)</div>
+    <div class="section-body">
+      <p>
+        క్లాస్ లోపల ఉండే డేటాను ఎవరెవరు యాక్సెస్ చేయవచ్చో నిర్ణయించే సెక్యూరిటీ గేట్లే <strong>Access Specifiers</strong>:
+      </p>
 
-    <div class="table-container" style="margin:20px 0;">
-      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
-        <thead>
-          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-            <th style="padding:12px; color:var(--text);">Access Specifier</th>
-            <th style="padding:12px; color:var(--text);">యాక్సెస్ పరిధి (Visibility Scope)</th>
-            <th style="padding:12px; color:var(--text);">ఎందుకు వాడాలి?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong><code>private</code></strong> (డిఫాల్ట్)</td>
-            <td style="padding:12px;">కేవలం ఆ క్లాస్ లోపలి ఫంక్షన్లకు మాత్రమే కనిపిస్తుంది. బయటి నుండి డైరెక్ట్ యాక్సెస్ ఉండదు.</td>
-            <td style="padding:12px;">డేటా భద్రత కోసం (Data Hiding). బ్యాంక్ బ్యాలెన్స్, పాస్‌వర్డ్‌లు లాంటి కీలక వేరియబుల్స్‌కు వాడతారు.</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong><code>public</code></strong></td>
-            <td style="padding:12px;">ప్రోగ్రామ్‌లో ఎక్కడి నుంచైనా నేరుగా యాక్సెస్ చేయవచ్చు.</td>
-            <td style="padding:12px;">యూజర్‌కు అందుబాటులో ఉంచాల్సిన పబ్లిక్ ఇంటర్‌ఫేస్ మెథడ్స్ (Getters, Setters, Actions) కోసం.</td>
-          </tr>
-          <tr>
-            <td style="padding:12px;"><strong><code>protected</code></strong></td>
-            <td style="padding:12px;">ఆ క్లాస్ లోపల మరియు దాని నుండి పుట్టిన చైల్డ్ క్లాసులలో (Inheritance) మాత్రమే కనిపిస్తుంది.</td>
-            <td style="padding:12px;">వారసత్వ సంబంధాలు ఉన్నప్పుడు పేరెంట్ డేటాను పిల్లలకు అందించడానికి.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="table-container" style="margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px; color:var(--text);">Access Specifier</th>
+              <th style="padding:12px; color:var(--text);">యాక్సెస్ పరిధి (Visibility Scope)</th>
+              <th style="padding:12px; color:var(--text);">ఎందుకు వాడాలి?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px;"><strong><code>private</code></strong> (డిఫాల్ట్)</td>
+              <td style="padding:12px;">కేవలం ఆ క్లాస్ లోపలి ఫంక్షన్లకు మాత్రమే కనిపిస్తుంది. బయటి నుండి డైరెక్ట్ యాక్సెస్ ఉండదు.</td>
+              <td style="padding:12px;">డేటా భద్రత కోసం (Data Hiding). బ్యాంక్ బ్యాలెన్స్, పాస్‌వర్డ్‌లు లాంటి కీలక వేరియబుల్స్‌కు వాడతారు.</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px;"><strong><code>public</code></strong></td>
+              <td style="padding:12px;">ప్రోగ్రామ్‌లో ఎక్కడి నుంచైనా నేరుగా యాక్సెస్ చేయవచ్చు.</td>
+              <td style="padding:12px;">యూజర్‌కు అందుబాటులో ఉంచాల్సిన పబ్లిక్ ఇంటర్‌ఫేస్ మెథడ్స్ (Getters, Setters, Actions) కోసం.</td>
+            </tr>
+            <tr>
+              <td style="padding:12px;"><strong><code>protected</code></strong></td>
+              <td style="padding:12px;">ఆ క్లాస్ లోపల మరియు దాని నుండి పుట్టిన చైల్డ్ క్లాసులలో (Inheritance) మాత్రమే కనిపిస్తుంది.</td>
+              <td style="padding:12px;">వారసత్వ సంబంధాలు ఉన్నప్పుడు పేరెంట్ డేటాను పిల్లలకు అందించడానికి.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <div class="tip-box">
-      <strong>💡 C++ లో Class కి Struct కి అసలైన తేడా ఏమిటి?</strong><br>
-      చాలామంది C లాంగ్వేజ్ అలవాటుతో Struct లో కేవలం డేటా మాత్రమే ఉంటుందేమో అనుకుంటారు. కానీ C++ లో <code>struct</code> లో కూడా ఫంక్షన్లు, కన్‌స్ట్రక్టర్లు అన్నీ రాయవచ్చు! రెండింటి మధ్య తేడా కేవలం ఒక్కటే:<br>
-      • <code>class</code> లోపల మెంబర్లు డిఫాల్ట్‌గా <strong><code>private</code></strong>.<br>
-      • <code>struct</code> లోపల మెంబర్లు డిఫాల్ట్‌గా <strong><code>public</code></strong>.
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin:14px 0; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981;">💡 C++ లో Class కి Struct కి అసలైన తేడా ఏమిటి?</strong><br>
+        చాలామంది Struct లో కేవలం డేటా మాత్రమే ఉంటుందేమో అనుకుంటారు. కానీ C++ లో <code>struct</code> లో కూడా ఫంక్షన్లు, కన్‌స్ట్రక్టర్లు అన్నీ రాయవచ్చు! రెండింటి మధ్య తేడా కేవలం ఒక్కటే: <code>class</code> లో మెంబర్లు డిఫాల్ట్‌గా <strong><code>private</code></strong>, కానీ <code>struct</code> లో మెంబర్లు డిఫాల్ట్‌గా <strong><code>public</code></strong>.
+      </div>
     </div>
 
     <!-- CONCEPT 4: ENCAPSULATION & DATA HIDING -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">4</span> ఎన్‌క్యాప్సులేషన్ (Encapsulation) & Data Hiding సూత్రం</div>
-    <p>
-      డేటాను పబ్లిక్‌గా వదిలేస్తే ఎవరైనా తప్పుడు విలువలను అసైన్ చేయవచ్చు. ఉదాహరణకు <code>bankAccount.balance = -50000;</code> అని నేరుగా రాస్తే బ్యాంక్ దివాలా తీస్తుంది! 
-    </p>
-    <p>
-      అందుకే వేరియబుల్స్‌ను <strong><code>private</code></strong> లో దాచి (Data Hiding), వాటిని చదవడానికి <strong>Getters</strong> మరియు వాటిని మార్చడానికి ఖచ్చితమైన వాలిడేషన్ లాజిక్ ఉన్న <strong>Setters</strong> ను పబ్లిక్‌గా అందించే డిజైన్ పద్ధతినే <strong>Encapsulation</strong> అంటారు.
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> ఎన్‌క్యాప్సులేషన్ (Encapsulation) & Data Hiding సూత్రం</div>
+    <div class="section-body">
+      <p>
+        ఒకవేళ మనం వేరియబుల్స్‌ను పబ్లిక్‌గా వదిలేస్తే, ప్రోగ్రామ్‌లో ఎవరైనా వాటిని నేరుగా మార్చేయవచ్చు (ఉదాహరణకు <code>account.balance = -50000;</code>). ఒక బ్యాంక్ అకౌంట్ బ్యాలెన్స్ రుణాత్మకం కాకుండా అడ్డుకోవాలంటే, డేటాను <strong><code>private</code></strong> లో దాచాలి (Data Hiding).
+      </p>
+      <p>
+        ఆ డేటాను చదవడానికి <strong>Getters</strong> మరియు మార్చడానికి కచ్చితమైన వాలిడేషన్ లాజిక్ ఉన్న <strong>Setters</strong> ను పబ్లిక్‌గా అందించే పద్ధతినే <strong>Encapsulation</strong> అంటారు:
+      </p>
 
-    <!-- CODE BLOCK 1: CLASS, PRIVATE DATA & GETTERS/SETTERS -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 1: Robust Encapsulation with Getters, Setters & Validation</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
-      </div>
-
-      <div class="code-box">
-        <div class="code-header">
-          <span>bank_account_oop.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- COMPACT CODE SNIPPET (Clean & concise) -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Encapsulation with Getters & Setters</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>bank_account_compact.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
           </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
+          <pre><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
 
 class BankAccount {
 private:
-    // ప్రైవేట్ డేటా మెంబర్లు - బయటి నుండి డైరెక్ట్ గా మార్చలేరు!
-    std::string accountHolder;
-    double balance;
+    double balance = 0.0; // ప్రైవేట్ డేటా (Data Hiding)
 
 public:
-    // Setter ఫంక్షన్ - కచ్చితమైన వాలిడేషన్ తర్వాతే డేటాను అంగీకరిస్తుంది
-    void setAccountDetails(const std::string& name, double initialDeposit) {
-        accountHolder = name;
-        if (initialDeposit >= 0.0) {
-            balance = initialDeposit;
-        } else {
-            balance = 0.0;
-            std::cout &lt;&lt; "Warning: Initial deposit cannot be negative! Set to 0.0\n";
-        }
-    }
-
-    // డిపాజిట్ మెథడ్
+    // Setter with Validation
     void deposit(double amount) {
-        if (amount > 0) {
+        if (amount &gt; 0) {
             balance += amount;
             std::cout &lt;&lt; "Deposited: $" &lt;&lt; amount &lt;&lt; "\n";
         }
     }
 
-    // విత్ డ్రా మెథడ్ (బ్యాలెన్స్ చెక్ రక్షణ)
-    void withdraw(double amount) {
-        if (amount > balance) {
-            std::cout &lt;&lt; "Error: Insufficient Funds! Withdrawal Denied.\n";
-        } else if (amount > 0) {
-            balance -= amount;
-            std::cout &lt;&lt; "Withdrawn: $" &lt;&lt; amount &lt;&lt; "\n";
-        }
-    }
-
-    // Getter ఫంక్షన్ (Read-Only access - const method)
+    // Read-only Getter (const method)
     double getBalance() const {
         return balance;
     }
-
-    std::string getHolder() const {
-        return accountHolder;
-    }
 };
 
 int main() {
-    BankAccount myAccount; // ఆబ్జెక్ట్ ఇన్స్టాన్సియేషన్
-    myAccount.setAccountDetails("Balaji Rao", 1000.0);
-
-    // myAccount.balance = 50000; // ❌ ERROR! balance is private
-
-    std::cout &lt;&lt; "Account Holder : " &lt;&lt; myAccount.getHolder() &lt;&lt; "\n";
-    std::cout &lt;&lt; "Initial Balance: $" &lt;&lt; myAccount.getBalance() &lt;&lt; "\n\n";
-
-    myAccount.deposit(500.0);
-    myAccount.withdraw(2000.0); // తిరస్కరించబడుతుంది!
-    myAccount.withdraw(300.0);  // విజయవంతం అవుతుంది
-
-    std::cout &lt;&lt; "\nFinal Balance  : $" &lt;&lt; myAccount.getBalance() &lt;&lt; "\n";
+    BankAccount myAcc;
+    myAcc.deposit(500.0);
+    std::cout &lt;&lt; "Current Balance: $" &lt;&lt; myAcc.getBalance() &lt;&lt; "\n";
     return 0;
 }</code></pre>
-      </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
-    </div>
-
-    <!-- CONCEPT 5: THE 'THIS' POINTER & METHOD CHAINING -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> <code>this</code> Pointer అంటే ఏమిటి? Method Chaining మ్యాజిక్</div>
-    <p>
-      మనం ఒక క్లాస్ నుండి 10 వేర్వేరు ఆబ్జెక్టులను సృష్టించినప్పుడు, ప్రతి ఆబ్జెక్ట్‌కు దాని స్వంత వేరియబుల్స్ ఉంటాయి. కానీ క్లాస్ ఫంక్షన్లు మాత్రం మెమరీలో <strong>ఒకే కాపీ</strong> ఉంటాయి. 
-    </p>
-    <p>
-      అయితే ఒక ఫంక్షన్ రన్ అవుతున్నప్పుడు, అది ఏ ఆబ్జెక్ట్ యొక్క డేటాపై పనిచేయాలో ఎలా తెలుసుకుంటుంది? ఇక్కడే కంపైలర్ రహస్యంగా <strong><code>this</code> పాయింటర్</strong> ను ప్రతి నాన్-స్టాటిక్ మెంబర్ ఫంక్షన్‌కు మొదటి పారామీటర్‌గా పాస్ చేస్తుంది:
-    </p>
-
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[Compiler Transformation: 'this' under the hood]</span>
-
-మనం రాసే కోడ్:
-obj1.deposit(100);
-
-కంపైలర్ అంతర్గతంగా మార్చే విధానం:
-BankAccount::deposit(&obj1, 100);
-                     ▲
-                     └─── 'this' పాయింటర్ గా obj1 అడ్రస్ వెళ్తుంది!
-    </div>
-
-    <p>
-      <code>this</code> పాయింటర్ వల్ల రెండు అద్భుతమైన ప్రయోజనాలు ఉన్నాయి:
-    </p>
-    <ol style="color:var(--text); line-height:1.8; margin-left:20px;">
-      <li><strong>Name Conflict Resolution:</strong> ఫంక్షన్ పారామీటర్ పేరు మరియు క్లాస్ వేరియబుల్ పేరు ఒకటే అయినప్పుడు: <code>this-&gt;name = name;</code> అని స్పష్టంగా వేరు చేయవచ్చు.</li>
-      <li><strong>Method Chaining (Fluent Interface):</strong> ఫంక్షన్ నుండి <code>return *this;</code> అని రిటర్న్ చేస్తే, ఒకే లైన్‌లో వరుసగా మెథడ్లను కాల్ చేయవచ్చు: <code>builder.setName().setAge().build();</code>!</li>
-    </ol>
-
-    <!-- CODE BLOCK 2: THIS POINTER & METHOD CHAINING -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 2: 'this' Pointer & Method Chaining in Action</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
-      </div>
-
-      <div class="code-box">
-        <div class="code-header">
-          <span>this_pointer_chaining.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-          </div>
         </div>
-        <pre><code>#include &lt;iostream&gt;
+      </div>
+
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>private: double balance</code>: బయటి నుండి ఎవరూ డైరెక్ట్ గా <code>myAcc.balance = -100</code> చేయలేరు. కంపైలర్ అడ్డుకుంటుంది.</li>
+          <li><code>deposit(double amount)</code>: అమౌంట్ పాజిటివ్ గా ఉన్నప్పుడు మాత్రమే బ్యాలెన్స్ పెరుగుతుంది. సెక్యూరిటీ వాలిడేషన్ ఇక్కడే జరుగుతుంది.</li>
+          <li><code>getBalance() const</code>: ఈ ఫంక్షన్ కేవలం బ్యాలెన్స్ ను చదవడానికి మాత్రమే. <code>const</code> ఉండటం వల్ల ఇది డేటాను ప్రమాదవశాత్తూ కూడా మార్చలేదు.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CONCEPT 5: THIS POINTER & METHOD CHAINING -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> <code>this</code> Pointer అంటే ఏమిటి? Method Chaining మ్యాజిక్</div>
+    <div class="section-body">
+      <p>
+        మనం ఒక క్లాస్ నుండి ఎన్ని ఆబ్జెక్టులను సృష్టించినా, రామ్‌లో ఫంక్షన్ల కోడ్ మాత్రం ఒకే ఒక్క కాపీ ఉంటుంది. ఒక మెంబర్ ఫంక్షన్ కాల్ అయినప్పుడు అది ఏ ఆబ్జెక్ట్ యొక్క డేటాపై పనిచేయాలో తెలియజేయడానికి కంపైలర్ రహస్యంగా ఆ ఆబ్జెక్ట్ మెమరీ అడ్రస్‌ను <strong><code>this</code> పాయింటర్</strong> ద్వారా పాస్ చేస్తుంది.
+      </p>
+
+      <!-- VISUAL CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">⚡ 'this' పాయింటర్ రెండు ప్రధాన ప్రయోజనాలు:</h4>
+        <ol style="margin:0; padding-left:20px; line-height:1.8; color:var(--text); font-size:13.5px;">
+          <li><strong>పేర్ల గందరగోళం నివారణ:</strong> ఫంక్షన్ పారామీటర్ పేరు మరియు క్లాస్ వేరియబుల్ పేరు ఒకటే అయినప్పుడు <code>this-&gt;name = name;</code> అని వేరు చేయవచ్చు.</li>
+          <li><strong>Method Chaining (Fluent API):</strong> ఫంక్షన్ చివర <code>return *this;</code> అని రాస్తే, ఒకే లైన్‌లో వరుసగా మెథడ్లను పిలవవచ్చు: <code>calc.add(10).multiply(2).show();</code>!</li>
+        </ol>
+      </div>
+
+      <!-- COMPACT CODE SNIPPET -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Method Chaining with 'this' Pointer</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>this_chaining_compact.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
 
 class Calculator {
-private:
-    double result = 0.0;
-
 public:
-    // return *this ద్వారా ప్రస్తుత ఆబ్జెక్ట్ రిఫరెన్స్ రిటర్న్ అవుతుంది
-    Calculator& add(double val) {
-        this->result += val; // 'this' పాయింటర్ ద్వారా ప్రస్తుత ఆబ్జెక్ట్ డేటా యాక్సెస్
-        return *this;
+    double value = 0.0;
+
+    Calculator& add(double v) {
+        this-&gt;value += v;
+        return *this; // ప్రస్తుత ఆబ్జెక్ట్ రిఫరెన్స్ రిటర్న్ చేస్తుంది
     }
 
-    Calculator& multiply(double val) {
-        this->result *= val;
+    Calculator& multiply(double v) {
+        this-&gt;value *= v;
         return *this;
-    }
-
-    Calculator& subtract(double val) {
-        this->result -= val;
-        return *this;
-    }
-
-    void show() const {
-        std::cout &lt;&lt; "Current Result: " &lt;&lt; this->result &lt;&lt; "\n";
     }
 };
 
-class EmptyClass {};
-
 int main() {
-    std::cout &lt;&lt; "=== 1. Method Chaining using 'this' pointer ===\n";
-    Calculator calc;
-
-    // ఒకే లైన్ లో వరుసగా ఆపరేషన్స్ (Fluent Interface)
-    calc.add(10).multiply(5).subtract(8).show(); // (0 + 10) * 5 - 8 = 42
-
-    std::cout &lt;&lt; "\n=== 2. Memory Sizes of Objects ===\n";
-    std::cout &lt;&lt; "sizeof(Calculator) : " &lt;&lt; sizeof(calc) &lt;&lt; " bytes\n";
-    std::cout &lt;&lt; "sizeof(EmptyClass) : " &lt;&lt; sizeof(EmptyClass) &lt;&lt; " byte (Guaranteed Unique Address)\n";
-
+    Calculator c;
+    c.add(10).multiply(5); // Method Chaining: (0 + 10) * 5 = 50
+    std::cout &lt;&lt; "Calculated Result: " &lt;&lt; c.value &lt;&lt; "\n";
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>Calculator&amp; add(...)</code>: ఫంక్షన్ రిటర్న్ టైప్ క్లాస్ రిఫరెన్స్ (<code>Calculator&amp;</code>) గా ఉంది.</li>
+          <li><code>return *this;</code>: <code>this</code> అనేది ప్రస్తుత ఆబ్జెక్ట్ అడ్రస్ కాగా, <code>*this</code> అంటే ఆ అసలైన ఆబ్జెక్ట్. దీనివల్ల వెంటనే పక్కనే ఇంకొక మెథడ్ (<code>.multiply(5)</code>) కాల్ చేయడానికి అవకాశం లభిస్తుంది.</li>
+        </ul>
+      </div>
     </div>
 
     <!-- FAQ SECTION -->
@@ -667,4 +630,3 @@ int main() {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
-

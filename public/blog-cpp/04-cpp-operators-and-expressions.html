@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -120,7 +120,7 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
@@ -188,7 +188,7 @@
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -333,7 +333,7 @@
       <span class="current">Chapter 4: Operators & Expressions</span>
     </div>
 
-    <h1 class="page-title">ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ (Operators & Expressions in C++)</h1>
+    <h1 class="page-title">ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ (Operators, Precedence & Associativity)</h1>
 
     <div class="page-meta">
       <span class="badge">⚡ Modern C++20 / C++17</span>
@@ -345,39 +345,38 @@
     <!-- Covered Topics Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>Arithmetic Operators & Integer Division Trap · Pre-increment (++x) vs Post-increment (x++) · Relational & Comparison Operators · Logical Operators & Short-Circuit Evaluation · Fast Bitwise Operations (&, |, ^, ~, &lt;&lt;, &gt;&gt;) · Ternary Operator (? :) · Operator Precedence & Associativity Table</span>
+      <span>Arithmetic, Relational & Logical Operators · Prefix (++i) vs Postfix (i++) Deep Dive · Short-Circuit Evaluation (&&, ||) · Bitwise Operators & Flag Masking · Operator Precedence Hierarchy · Integer Division Trap</span>
     </div>
 
     <!-- Intro Overview Box -->
     <div class="intro-box">
-      ప్రోగ్రామింగ్‌లో వేరియబుల్స్ అనేవి ఇటుకలైతే, వాటిని కలిపి అద్భుతమైన లాజిక్‌ను నిర్మించే సిమెంట్ <strong>ఆపరేటర్లు (Operators)</strong>. ఈ అధ్యాయంలో లెక్కలు చేసే గణిత ఆపరేటర్ల నుండి CPU హార్డ్‌వేర్ లెవల్‌లో మెరుపు వేగంతో పనిచేసే <strong>Bitwise Operators</strong> వరకు, మరియు కంపైలర్ ఆర్డర్ ఆఫ్ ఎగ్జిక్యూషన్ ఎలా చేస్తుందో లోతుగా విశ్లేషిద్దాం.
+      వేరియబుల్స్‌పై లెక్కలు చేయాలన్నా, రెండు విలువలను పోల్చాలన్నా, లేదా హార్డ్‌వేర్ లెవల్‌లో బిట్లను మార్చాలన్నా <strong>ఆపరేటర్లు (Operators)</strong> ప్రాణాధారం. ఈ అధ్యాయంలో ఇంటర్వ్యూలలో ఎక్కువగా అడిగే <code>++i</code> vs <code>i++</code> తేడా, షార్ట్-సర్క్యూట్ ఇవాల్యుయేషన్ మరియు ఆపరేటర్ ప్రాధాన్యతా నియమాలను నేర్చుకుందాం.
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>Arithmetic Operators (గణిత ఆపరేటర్లు & Division Trap)</div>
+    <div class="section-title"><span class="num">1</span>Prefix (++i) vs Postfix (i++): అసలైన అంతర్గత తేడా</div>
     <div class="section-body">
       <p>
-        C++ లో ప్రాథమిక గణిత పనుల కోసం 5 ముఖ్యమైన <strong>Arithmetic Operators</strong> ఉన్నాయి:
+        చాలామంది <code>++i</code> మరియు <code>i++</code> రెండూ ఒకటే అనుకుంటారు, ఎందుకంటే రెండూ విలువను 1 పెంచుతాయి. కానీ కంప్యూటర్ మెమరీలో జరిగే ప్రక్రియ పూర్తిగా వేరు:
       </p>
-      <ul style="line-height:1.8;">
-        <li><code>+</code> (Addition): రెండు సంఖ్యలను కలుపుతుంది.</li>
-        <li><code>-</code> (Subtraction): తీసివేత చేస్తుంది.</li>
-        <li><code>*</code> (Multiplication): గుణకారం చేస్తుంది.</li>
-        <li><code>/</code> (Division): భాగాహారం చేస్తుంది.</li>
-        <li><code>%</code> (Modulo / Remainder): భాగాహారంలో శేషాన్ని (Remainder) ఇస్తుంది (కేవలం ఇంటిజర్లపై మాత్రమే పనిచేస్తుంది).</li>
-      </ul>
 
-      <div class="concept-box">
-        <h4>⚠️ The Silent Killer: Integer Division Trap (5 / 2 = 2)</h4>
-        <p>
-          గణితంలో $5 \div 2 = 2.5$. కానీ C++ లో రెండు <code>int</code> విలువలను భాగిస్తే, రిజల్ట్ కూడా కచ్చితంగా <code>int</code> మాత్రమే అవుతుంది! అంటే పాయింట్ తర్వాత ఉన్న దశాంశం తుడిచిపెట్టుకుపోతుంది:
-        </p>
-        <pre style="background:var(--bg2); padding:10px 14px; border-radius:6px; border:1px solid var(--border); font-family:'JetBrains Mono',monospace; color:#f87171; margin-top:8px;">int result = 5 / 2; // ఫలితం: 2 (0.5 పోయింది! ❌)
-double correct = 5.0 / 2; // ఫలితం: 2.5 (ఒక్కటి డబుల్ అయినా సరిపోతుంది! ✅)</pre>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">⚡ Prefix: ++i (Increment Then Use)</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ముందుగా మెమరీలోని విలువను వెంటనే 1 పెంచి, ఆ తర్వాత నవీకరించబడిన తాజా విలువనే నేరుగా రిటర్న్ చేస్తుంది. ఎటువంటి తాత్కాలిక కాపీ క్రియేట్ కాదు. అందుకే ఇది అత్యంత వేగవంతమైనది!
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">🐢 Postfix: i++ (Use Then Increment)</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఇది పాత విలువను ఒక తాత్కాలిక వేరియబుల్‌లో కాపీ చేసుకుంటుంది, ఆ తర్వాత ఒరిజినల్ వేరియబుల్‌ను 1 పెంచుతుంది, కానీ ఈ ఎక్స్‌ప్రెషన్‌కు మాత్రం పాత విలువను ఇస్తుంది. తాత్కాలిక కాపీ వల్ల కొద్దిగా ఓవర్‌హెడ్ ఉంటుంది.
+          </p>
+        </div>
       </div>
 
       <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Arithmetic Operators & Modulo</div>
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Prefix vs Postfix in Action</div>
         <div class="code-block">
           <div class="code-block-header">
             <span class="lang-tag">C++17</span>
@@ -386,15 +385,14 @@ double correct = 5.0 / 2; // ఫలితం: 2.5 (ఒక్కటి డబు�
           <pre><code>#include &lt;iostream&gt;
 
 int main() {
-    int totalMinutes = 145;
+    int a = 5;
+    int b = 5;
 
-    // గంటలు మరియు మిగిలిన నిమిషాలు లెక్కించడం
-    int hours = totalMinutes / 60;     // 145 / 60 = 2 గంటలు
-    int remainingMins = totalMinutes % 60; // 145 % 60 = 25 నిమిషాలు
+    int res1 = ++a; // a becomes 6, res1 receives 6
+    int res2 = b++; // res2 receives 5, then b becomes 6
 
-    std::cout &lt;&lt; totalMinutes &lt;&lt; " minutes = " 
-              &lt;&lt; hours &lt;&lt; " hours and " &lt;&lt; remainingMins &lt;&lt; " minutes.\n";
-
+    std::cout &lt;&lt; "Prefix:  a = " &lt;&lt; a &lt;&lt; ", res1 = " &lt;&lt; res1 &lt;&lt; "\n"
+              &lt;&lt; "Postfix: b = " &lt;&lt; b &lt;&lt; ", res2 = " &lt;&lt; res2 &lt;&lt; "\n";
     return 0;
 }</code></pre>
         </div>
@@ -402,341 +400,83 @@ int main() {
     </div>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>Pre-increment (`++x`) vs Post-increment (`x++`)</div>
+    <div class="section-title"><span class="num">2</span>Short-Circuit Evaluation: లాజికల్ సేఫ్టీ షీల్డ్</div>
     <div class="section-body">
       <p>
-        ఒక వేరియబుల్ విలువను 1 పెంచడానికి ఇంక్రిమెంట్ (<code>++</code>) వాడతాం. కానీ అది వేరియబుల్ కంటే ముందుందా (Pre), వెనకాల ఉందా (Post) అనేదాన్ని బట్టి ఫలితం పూర్తిగా మారిపోతుంది!
+        C++ లో <code>&amp;&amp;</code> (AND) మరియు <code>||</code> (OR) ఆపరేటర్లు <strong>షార్ట్-సర్క్యూట్</strong> సూత్రంపై పనిచేస్తాయి:
       </p>
-
-      <!-- Increment Mechanism Diagram -->
-      <div class="diagram-box">┌─────────────────────┬─────────────────────────────────────────────────────────┐
-│     Operator        │  ఎలా పనిచేస్తుంది? (Execution Order)                      │
-├─────────────────────┼─────────────────────────────────────────────────────────┤
-│ ++x (Pre-increment) │  1. ముందు విలువ 1 పెరుగుతుంది.                           │
-│                     │  2. పెరిగిన కొత్త విలువ ఆ స్టేట్‌మెంట్‌లో వాడబడుతుంది.   │
-├─────────────────────┼─────────────────────────────────────────────────────────┤
-│ x++ (Post-increment)│  1. ముందు పాత విలువ ఆ స్టేట్‌మెంట్‌లో వాడబడుతుంది.       │
-│                     │  2. ఆ తర్వాత మాత్రమే మెమరీలో 1 పెరుగుతుంది.              │
-└─────────────────────┴─────────────────────────────────────────────────────────┘</div>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Pre vs Post Increment in Action</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Increment</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int a = 10;
-    int b = 10;
-
-    // Pre-increment: ముందు పెరుగుతుంది
-    int preResult = ++a; 
-    std::cout &lt;&lt; "Pre-increment  : preResult = " &lt;&lt; preResult &lt;&lt; ", a = " &lt;&lt; a &lt;&lt; "\n";
-
-    // Post-increment: పాత విలువ అసైన్ అయ్యాక పెరుగుతుంది
-    int postResult = b++;
-    std::cout &lt;&lt; "Post-increment : postResult = " &lt;&lt; postResult &lt;&lt; ", b = " &lt;&lt; b &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-
-      <div class="card" style="background:var(--bg2); border:1px solid var(--border); padding:16px; border-radius:8px; margin-top:12px; font-size:13.5px;">
-        <strong style="color:#10b981;">💡 Performance Tip:</strong>
-        <p style="margin:6px 0 0 0; color:var(--text); line-height:1.7;">
-          <code>x++</code> పాత విలువను తాత్కాలిక కాపీ (Temporary Object) గా దాచుకోవాలి కాబట్టి, లూప్‌లలో లేదా ఇటరేటర్లలో (Iterators) ఎల్లప్పుడూ <strong>`++x`</strong> వాడటమే వేగవంతమైన ప్రొఫెషనల్ పద్ధతి.
-        </p>
-      </div>
-    </div>
-
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>Relational Operators (పోలిక ఆపరేటర్లు)</div>
-    <div class="section-body">
-      <p>
-        రెండు విలువలని పోల్చి చూసి <code>true</code> (1) లేదా <code>false</code> (0) బూలియన్ ఫలితాన్ని ఇవ్వడానికి ఇవి వాడబడతాయి:
-      </p>
-      <ul>
-        <li><code>==</code> (Equal to): రెండు విలువలూ సమానమైతే true. (సింగిల్ <code>=</code> అసైన్‌మెంట్ కోసం వాడతాం, సమానత్వం కోసం డబుల్ <code>==</code> వాడాలి!).</li>
-        <li><code>!=</code> (Not Equal to): సమానం కాకపోతే true.</li>
-        <li><code>&gt;</code>, <code>&lt;</code>: గ్రేటర్ దాన్, లెస్ దాన్.</li>
-        <li><code>&gt;=</code>, <code>&lt;=</code>: గ్రేటర్ దాన్ ఆర్ ఈక్వల్ టు, లెస్ దాన్ ఆర్ ఈక్వల్ టు.</li>
-      </ul>
-    </div>
-
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>Logical Operators & Short-Circuit Evaluation</div>
-    <div class="section-body">
-      <p>
-        అనేక షరతులను (Multiple Conditions) ఒకేసారి పరీక్షించడానికి లాజికల్ ఆపరేటర్లు వాడతాం:
-      </p>
-      <ul style="line-height:1.8;">
-        <li><code>&&</code> (Logical AND): ఇచ్చిన అన్ని షరతులూ true అయితేనే true.</li>
-        <li><code>||</code> (Logical OR): ఇచ్చిన వాటిలో ఏదైనా ఒక్క షరతు true అయినా true.</li>
-        <li><code>!</code> (Logical NOT): ఉన్న విలువను తిరగేస్తుంది (true ని false గా, false ని true గా).</li>
+      <ul style="line-height:1.8; margin-left:18px;">
+        <li><code>A &amp;&amp; B</code>: మొదటి కండిషన్ <code>A</code> గనుక <strong>false</strong> అయితే, రెండవ కండిషన్ <code>B</code> ని కంపైలర్ అస్సలు టచ్ చేయదు! ఎందుకంటే ఒకటి false అయితే మొత్తం false అని CPU కి ముందే తెలుసు.</li>
+        <li><code>A || B</code>: మొదటి కండిషన్ <code>A</code> గనుక <strong>true</strong> అయితే, రెండవ కండిషన్ <code>B</code> ని అస్సలు రన్ చేయదు.</li>
       </ul>
 
       <div class="concept-box">
-        <h4>⚡ Short-Circuit Evaluation (స్మార్ట్ కంపైలర్ ఆప్టిమైజేషన్)</h4>
-        <p>
-          C++ అనవసరమైన పనులు చేయదు:
+        <h4>🛡️ Real-World Lifesaver: Crash Prevention</h4>
+        <p style="margin:0;">
+          పాయింటర్లు చెక్ చేసేటప్పుడు <code>if (ptr != nullptr &amp;&amp; ptr-&gt;hasData())</code> అని రాస్తాం. ఒకవేళ <code>ptr</code> నల్ అయితే మొదటి కండిషన్ ఫెయిల్ అయి అక్కడితో ఆగిపోతుంది; రెండవ పార్ట్ రన్ అవ్వదు కాబట్టి సాఫ్ట్‌వేర్ క్రాష్ అవ్వకుండా సురక్షితంగా రక్షించబడుతుంది!
         </p>
-        <ul style="margin:0; padding-left:18px;">
-          <li><strong>AND (&&) లో:</strong> మొదటి కండిషన్ <code>false</code> అయితే, మొత్తం స్టేట్‌మెంట్ ఎప్పటికీ <code>true</code> కాలేదు కాబట్టి, రెండవ కండిషన్‌ను కంపైలర్ అస్సలు ఎగ్జిక్యూట్ చేయదు!</li>
-          <li><strong>OR (||) లో:</strong> మొదటి కండిషన్ <code>true</code> అయితే, మొత్తం స్టేట్‌మెంట్ ఆటోమేటిక్‌గా true కాబట్టి, రెండవదాన్ని పరీక్షించకుండా వదిలేస్తుంది!</li>
-        </ul>
-      </div>
-
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Logical Operators & Eligibility Check</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Logical</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int age = 21;
-    bool hasDrivingLicense = true;
-    bool hasCarInsurance = false;
-
-    // కారు నడపడానికి వయస్సు 18 దాటాలి మరియు లైసెన్స్ ఉండాలి
-    bool canDrive = (age &gt;= 18) &amp;&amp; hasDrivingLicense;
-
-    // ప్రయాణం చేయడానికి సొంత కారు ఇన్సూరెన్స్ ఉండాలి లేదా ట్యాక్సీ పిలవాలి
-    bool canTravel = hasCarInsurance || true; // Taxi option is always true
-
-    std::cout &lt;&lt; std::boolalpha; // 1, 0 కి బదులుగా true, false ప్రింట్ చేస్తుంది
-    std::cout &lt;&lt; "Eligible to Drive : " &lt;&lt; canDrive &lt;&lt; "\n";
-    std::cout &lt;&lt; "Able to Travel    : " &lt;&lt; canTravel &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
-        </div>
       </div>
     </div>
 
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>Bitwise Operators (ట్రాన్సిస్టర్ లెవల్ మెరుపు వేగం)</div>
+    <!-- SECTION 3: OPERATOR PRECEDENCE (CLEAN HTML HIERARCHY CARDS INSTEAD OF ASCII) -->
+    <div class="section-title"><span class="num">3</span>ఆపరేటర్ ప్రాధాన్యతా నియమాలు (Operator Precedence)</div>
     <div class="section-body">
       <p>
-        కాంపిటీటివ్ ప్రోగ్రామింగ్, గేమింగ్ ఇంజిన్లు, మరియు ఎంబెడెడ్ డివైసెస్‌లో మెమరీలోని బైనరీ బిట్స్ (0s & 1s) పై నేరుగా పనిచేయడానికి <strong>Bitwise Operators</strong> వాడతారు:
+        గణితంలో BODMAS లాగే C++ లో కూడా ఏ ఆపరేటర్ మొదట సాల్వ్ అవ్వాలో కంపైలర్‌కు కచ్చితమైన నియమాలు ఉంటాయి:
       </p>
-      <ul>
-        <li><code>&</code> (Bitwise AND): రెండు బిట్స్ 1 అయితేనే 1.</li>
-        <li><code>|</code> (Bitwise OR): ఏదో ఒక బిట్ 1 అయినా 1.</li>
-        <li><code>^</code> (Bitwise XOR): రెండు బిట్స్ వేర్వేరుగా ఉంటేనే 1 (1^0=1, 1^1=0).</li>
-        <li><code>~</code> (Bitwise NOT / Complement): 0 ని 1 గా, 1 ని 0 గా మారుస్తుంది.</li>
-        <li><code>&lt;&lt;</code> (Left Shift): బిట్లను ఎడమవైపు జరుపుతుంది (2 తో గుణించినట్లు: <code>x &lt;&lt; 1</code> అంటే <code>x * 2</code>).</li>
-        <li><code>&gt;&gt;</code> (Right Shift): బిట్లను కుడివైపు జరుపుతుంది (2 తో భాగించినట్లు: <code>x &gt;&gt; 1</code> అంటే <code>x / 2</code>).</li>
-      </ul>
 
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Competitive Programming Bit Manipulation Tricks</div>
-        <div class="code-block">
-          <div class="code-block-header">
-            <span class="lang-tag">C++17 Bitwise</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-int main() {
-    int num = 14; // Binary: 00001110
-
-    // ట్రిక్ 1: సరిసంఖ్యో బేసిసంఖ్యో కనుగొనడం (Even or Odd)
-    // బేసిసంఖ్య చివరి బిట్ ఎల్లప్పుడూ 1 ఉంటుంది
-    bool isOdd = (num &amp; 1);
-    std::cout &lt;&lt; num &lt;&lt; " is " &lt;&lt; (isOdd ? "ODD" : "EVEN") &lt;&lt; "\n";
-
-    // ట్రిక్ 2: Left Shift తో 2 తో గుణకారం (Fastest Multiply by 2)
-    int doubled = num &lt;&lt; 1; // 14 * 2 = 28
-    std::cout &lt;&lt; "Fast Multiply 14 * 2 (num &lt;&lt; 1) : " &lt;&lt; doubled &lt;&lt; "\n";
-
-    // ట్రిక్ 3: Right Shift తో 2 తో భాగాహారం (Fastest Divide by 2)
-    int halved = num &gt;&gt; 1; // 14 / 2 = 7
-    std::cout &lt;&lt; "Fast Divide 14 / 2 (num &gt;&gt; 1)   : " &lt;&lt; halved &lt;&lt; "\n";
-
-    return 0;
-}</code></pre>
+      <!-- Sleek Modern Precedence Hierarchy Cards -->
+      <div style="display:flex; flex-direction:column; gap:8px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:700; color:var(--text); font-size:13.5px;">Level 1 (Highest): Parentheses & Scope</span>
+          <code style="color:#10b981; font-weight:700;">()  []  ::  .  -&gt;</code>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:700; color:var(--text); font-size:13.5px;">Level 2: Unary Operators</span>
+          <code style="color:#3b82f6; font-weight:700;">++  --  !  ~  sizeof  * (deref)  & (address)</code>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f59e0b; border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:700; color:var(--text); font-size:13.5px;">Level 3: Multiplicative & Additive</span>
+          <code style="color:#f59e0b; font-weight:700;">*  /  %  (పై లెవల్) | +  -  (కింది లెవల్)</code>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:700; color:var(--text); font-size:13.5px;">Level 4: Relational & Equality</span>
+          <code style="color:#8b5cf6; font-weight:700;">&lt;  &lt;=  &gt;  &gt;=  |  ==  !=</code>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ec4899; border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:700; color:var(--text); font-size:13.5px;">Level 5 (Lowest): Logical & Assignment</span>
+          <code style="color:#ec4899; font-weight:700;">&amp;&amp;  |  ||  |  =  +=  -=  *=  /=</code>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 6 -->
-    <div class="section-title"><span class="num">6</span>Ternary Operator (`? :`) & Operator Precedence</div>
+    <!-- SECTION 4: PITFALLS -->
+    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
     <div class="section-body">
-      <p>
-        చిన్న <code>if-else</code> కండిషన్‌ను ఒకే లైన్‌లో రాసేందుకు <strong>Ternary Operator</strong> వాడతాం:
-        <br><code>condition ? value_if_true : value_if_false;</code>
-      </p>
-
-      <h4 style="color:#10b981; margin:16px 0 8px;">ఆపరేటర్ ప్రాధాన్యత (Operator Precedence Table):</h4>
-      <p>
-        గణితంలో BODMAS లాగే C++ లో కూడా ఏ ఆపరేషన్ ముందు జరగాలో ఒక నిర్దిష్ట ఆర్డర్ ఉంటుంది:
-      </p>
-
-      <div style="overflow-x:auto; margin:14px 0;">
-        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
-          <thead>
-            <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
-              <th style="padding:10px 14px; color:#10b981;">Priority</th>
-              <th style="padding:10px 14px; color:var(--text);">Operators</th>
-              <th style="padding:10px 14px; color:var(--text2);">Associativity</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">1 (Highest)</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>()</code> Parentheses, <code>::</code> Scope, <code>++ --</code> (Post)</td>
-              <td style="padding:8px 14px;">Left to Right</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">2</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>++ --</code> (Pre), <code>! ~</code>, Unary <code>+ -</code></td>
-              <td style="padding:8px 14px;">Right to Left</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">3</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>* / %</code> (Multiplicative)</td>
-              <td style="padding:8px 14px;">Left to Right</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">4</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>+ -</code> (Additive)</td>
-              <td style="padding:8px 14px;">Left to Right</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">5</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>&lt;&lt; &gt;&gt;</code> (Bitwise Shifts & Streams)</td>
-              <td style="padding:8px 14px;">Left to Right</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">6</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>&lt; &lt;= &gt; &gt;=</code>, <code>== !=</code></td>
-              <td style="padding:8px 14px;">Left to Right</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">7</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>&amp; ^ |</code> (Bitwise)</td>
-              <td style="padding:8px 14px;">Left to Right</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:8px 14px; font-weight:700;">8</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>&amp;&amp; ||</code> (Logical)</td>
-              <td style="padding:8px 14px;">Left to Right</td>
-            </tr>
-            <tr>
-              <td style="padding:8px 14px; font-weight:700;">9 (Lowest)</td>
-              <td style="padding:8px 14px; color:#10b981;"><code>? :</code> (Ternary), <code>= += -= *=</code> (Assignment)</td>
-              <td style="padding:8px 14px;">Right to Left</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- COMMON PITFALLS CALLOUT -->
-    <div class="callout">
-      <div class="callout-title">⚠️ Common Developer Pitfalls in Chapter 4</div>
-      <ul style="margin:8px 0 0 18px; line-height:1.75; font-size:14px; color:var(--text);">
-        <li>
-          <strong><code>=</code> కి <code>==</code> కి తేడా మర్చిపోవడం:</strong> <code>if (x = 5)</code> అని రాస్తే, x లోకి 5 అసైన్ అయ్యి అది ఎల్లప్పుడూ <code>true</code> అయిపోతుంది! పోల్చడానికి కచ్చితంగా <code>if (x == 5)</code> అని రెండు సమాన గుర్తులు వాడాలి.
-        </li>
-        <li>
-          <strong>ఒకే స్టేట్‌మెంట్‌లో వేరియబుల్‌ను మార్చి వాడటం (Undefined Behavior):</strong> <code>int y = x++ + ++x;</code> అని రాస్తే కంపైలర్‌కు కచ్చితమైన రూల్ ఉండదు (Undefined Behavior). ఇలాంటి గందరగోళ కోడ్ ఎప్పుడూ రాయకూడదు.
-        </li>
-      </ul>
-    </div>
-
-    <!-- HANDS-ON INTERACTIVE CHALLENGE -->
-    <div class="try-box">
-      <div class="try-title">💻 Hands-on Interactive Practice Challenge</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:14px;">
-        <strong>టాస్క్:</strong> ఒక సంవత్సరం లీప్ ఇయరా (Leap Year) కాదా అనేదాన్ని లాజికల్ ఆపరేటర్లు మరియు టెర్నరీ ఆపరేటర్ వాడి ఒకే స్టేట్‌మెంట్‌లో కనిపెట్టే ప్రోగ్రామ్ రాయండి:
-        <br><em>నియమం: 4 తో భాగించబడాలి మరియు 100 తో భాగించబడకూడదు, లేదా 400 తో భాగించబడాలి.</em>
-      </p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">C++17 Leap Year Challenge</span>
-          <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+      <div style="display:flex; flex-direction:column; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 1: Integer Division Trap (5 / 2 = 2)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            రెండు పూర్ణాంకాలను భాగిస్తే (<code>5 / 2</code>) C++ లో ఫలితం <code>2</code> మాత్రమే వస్తుంది (దశాంస భాగం కత్తిరించబడుతుంది). కనీసం ఒక్క వేరియబుల్‌నైనా <code>static_cast&lt;double&gt;(a) / b</code> అని డబుల్‌గా మార్చితేనే కచ్చితమైన <code>2.5</code> వస్తుంది!
+          </p>
         </div>
-        <pre><code>#include &lt;iostream&gt;
 
-int main() {
-    int testYear1 = 2024;
-    int testYear2 = 1900;
-    int testYear3 = 2000;
-
-    // లీప్ ఇయర్ లాజిక్: (year % 4 == 0 &amp;&amp; year % 100 != 0) || (year % 400 == 0)
-    auto isLeapYear = [](int y) {
-        return ((y % 4 == 0 &amp;&amp; y % 100 != 0) || (y % 400 == 0));
-    };
-
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "       LEAP YEAR LOGICAL EVALUATOR      \n";
-    std::cout &lt;&lt; "========================================\n";
-    std::cout &lt;&lt; "Year " &lt;&lt; testYear1 &lt;&lt; " : " &lt;&lt; (isLeapYear(testYear1) ? "LEAP YEAR 🎉" : "COMMON YEAR") &lt;&lt; "\n";
-    std::cout &lt;&lt; "Year " &lt;&lt; testYear2 &lt;&lt; " : " &lt;&lt; (isLeapYear(testYear2) ? "LEAP YEAR" : "COMMON YEAR (Div by 100!) ❌") &lt;&lt; "\n";
-    std::cout &lt;&lt; "Year " &lt;&lt; testYear3 &lt;&lt; " : " &lt;&lt; (isLeapYear(testYear3) ? "LEAP YEAR (Div by 400!) 🎉" : "COMMON YEAR") &lt;&lt; "\n";
-    std::cout &lt;&lt; "========================================\n";
-
-    return 0;
-}</code></pre>
-      </div>
-
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
-    </div>
-
-    <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> ++x (Pre-increment) కి x++ (Post-increment) కి తేడా ఏమిటి?</h4>
-      <p>
-        <code>++x</code> ముందుగా వేరియబుల్ విలువను 1 పెంచి, ఆ తర్వాత ప్రస్తుత ఎక్స్‌ప్రెషన్‌లో ఉపయోగిస్తుంది. <code>x++</code> ముందు పాత విలువను ఉపయోగించి, ఆ స్టేట్‌మెంట్ పూర్తయిన తర్వాత మాత్రమే 1 పెంచుతుంది. లూప్‌లలో సాధారణంగా <code>++x</code> వాడటమే ఎక్కువ ఆప్టిమైజ్డ్.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> లాజికల్ ఆపరేటర్లలో Short-Circuit Evaluation అంటే ఏమిటి?</h4>
-      <p>
-        C++ లో AND (<code>&&</code>) ఆపరేషన్‌లో మొదటి కండిషన్ false అయితే, రెండవ కండిషన్‌ను కంపైలర్ అస్సలు పరీక్షించదు. అలాగే OR (<code>||</code>) లో మొదటిది true అయితే రెండవదాన్ని పరీక్షించదు. దీనిని Short-Circuit Evaluation అంటారు. ఇది ప్రోగ్రామ్ స్పీడ్‌ను పెంచుతుంది.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో Bitwise ఆపరేటర్లు ఎందుకు అంత ఫాస్ట్ గా ఉంటాయి?</h4>
-      <p>
-        Bitwise ఆపరేటర్లు కంప్యూటర్ మెమరీలోని బైనరీ బిట్స్ (0s & 1s) పై నేరుగా CPU ట్రాన్సిస్టర్ లెవల్‌లో పనిచేస్తాయి. ఉదాహరణకు <code>n & 1</code> ద్వారా ఒక సంఖ్య సరిసంఖ్యో బేసిసంఖ్యో కనుగొనడం సాధారణ డివిజన్ <code>%</code> కంటే చాలా రెట్లు వేగవంతమైనది.
-      </p>
-    </div>
-
-    <!-- AUTHOR ATTRIBUTION -->
-    <div class="author" style="margin-top:40px;">
-      <div class="avatar">OC</div>
-      <div>
-        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 2: = (Assignment) vs == (Equality Check)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            కండిషన్‌లో <code>if (score == 100)</code> రాయడానికి బదులుగా పొరపాటున <code>if (score = 100)</code> రాస్తే అది ఎప్పటికీ <strong>true</strong> అవుతుంది! ఎందుకంటే 100 ని అసైన్ చేసి ఆ నాన్-జీరో విలువనే కండిషన్‌గా తీసుకుంటుంది.
+          </p>
+        </div>
       </div>
     </div>
 
-    <!-- LESSON NAVIGATION FOOTER -->
-    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
-      <a href="/blog-cpp/03-cpp-input-output-cin-cout.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
-        <span style="font-size:14px; font-weight:700;">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</span>
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-cpp/03-cpp-input-output-cin-cout.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 3. ఇన్‌పుట్ & అవుట్‌పుట్
       </a>
-
-      <a href="/blog-cpp/05-cpp-if-else-conditionals.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
-        <span style="font-size:14px; font-weight:700;">5. డెసిషన్ మేకింగ్ (if, else if, else)</span>
+      <a href="/blog-cpp/05-cpp-if-else-conditionals.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 5. కండిషనల్స్ (if-else) →
       </a>
     </div>
 

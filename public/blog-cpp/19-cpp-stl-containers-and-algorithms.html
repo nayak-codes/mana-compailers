@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -117,7 +117,7 @@
       const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|vector|map|unordered_map|set|sort|find|binary_search|size_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|vector|unordered_map|map|set|sort|find|size_t)\b/g, m => pushToken('tp', m));
       code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
       code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
 
@@ -130,7 +130,7 @@
 
     (function() {
       // Default to Light Theme
-      const currentTheme = localStorage.getItem('theme');
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         window.addEventListener('DOMContentLoaded', () => {
@@ -184,27 +184,11 @@
             });
           }
         });
-
-        document.querySelectorAll('.try-box').forEach(tryBox => {
-          const codeEl = tryBox.querySelector('pre code');
-          const runBtn = tryBox.querySelector('.run-btn');
-          if (codeEl) {
-            const rawCode = codeEl.textContent;
-            codeEl.innerHTML = highlightCppCode(rawCode);
-            if (runBtn) {
-              runBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.setItem('code_cpp17', rawCode);
-                window.location.href = '/online-cpp-compiler.html';
-              });
-            }
-          }
-        });
       });
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -346,227 +330,242 @@
       <span class="badge">Phase 05 · Modern C++ & STL · Chapter 19 of 20</span>
       <h1 class="lesson-title">STL కంటైనర్లు & అల్గారిథమ్స్ (C++ STL Guide)</h1>
       <p class="lesson-desc">
-        ప్రపంచస్థాయి కాంపిటేటివ్ ప్రోగ్రామింగ్ టూల్‌కిట్! Standard Template Library (STL) నిర్మాణం: Sequence Containers (<code>std::vector</code>, <code>std::deque</code>), Associative Red-Black Trees (<code>std::map</code>, <code>std::set</code>), $O(1)$ Hash Tables (<code>std::unordered_map</code>), Iterators, Iterator Invalidation ముప్పు, మరియు IntroSort (<code>std::sort</code>) తో పాటు ఆధునిక Lambdas.
+        C++ ప్రపంచానికి కిరీటం లాంటి లైబ్రరీ! STL యొక్క 3 స్తంభాలు (Containers, Iterators, Algorithms), <code>std::vector</code> మెమరీ డబ్లింగ్ సూత్రం, <code>std::map</code> (Red-Black Tree) vs <code>std::unordered_map</code> (Hash Table) మధ్య ఉన్న తేడాలు, Iterator Invalidation ప్రమాదం, మరియు <code>std::sort</code> వెనుక ఉన్న ఇంజనీరింగ్ అద్భుతం <strong>IntroSort</strong>.
       </p>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>STL 3 Pillars · Vector Capacity Scaling · Map vs Unordered_Map · Iterators & Invalidation · IntroSort (std::sort) · Modern Lambdas</span>
     </div>
 
     <!-- CONCEPT 1: STL ARCHITECTURE -->
     <div class="section-title"><span class="num">1</span> STL ఆర్కిటెక్చర్: 3 స్తంభాలు (Containers, Iterators, Algorithms)</div>
-    <p>
-      C++ లో డేటా స్ట్రక్చర్లను స్క్రాచ్ నుండి మళ్ళీ మళ్ళీ రాయాల్సిన అవసరం లేకుండా, ప్రపంచంలోని అత్యుత్తమ కంప్యూటర్ ఇంజనీర్లు ఆప్టిమైజ్ చేసి అందించిన రెడీమేడ్ టూల్‌కిట్టే <strong>Standard Template Library (STL)</strong>. STL ప్రధానంగా 3 పరస్పర అనుసంధాన స్తంభాలపై ఆధారపడి ఉంటుంది:
-    </p>
+    <div class="section-body">
+      <p>
+        C++ లో లింక్డ్ లిస్టులు, బైనరీ ట్రీలు, హ్యాష్ టేబుల్స్ లాంటి సంక్లిష్టమైన డేటా స్ట్రక్చర్లను ప్రతిసారీ స్క్రాచ్ నుండి రాయాల్సిన అవసరం లేకుండా, ప్రపంచంలోని అత్యుత్తమ ఇంజనీర్లు ఆప్టిమైజ్ చేసి అందించిన రెడీమేడ్ టూల్‌కిట్టే <strong>Standard Template Library (STL)</strong>.
+      </p>
 
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[STL త్రయం: Containers ◄──► Iterators ◄──► Algorithms]</span>
-
-┌────────────────────────┐         ┌────────────────────────┐         ┌────────────────────────┐
-│   CONTAINERS           │         │   ITERATORS            │         │   ALGORITHMS           │
-│   (డేటాను భద్రపరిచేవి)   │ ◄─────► │   (వారధి / స్మార్ట్ పాయింటర్లు)│ ◄─────► │   (ప్రాసెస్ చేసే లాజిక్)  │
-│   vector, map, set     │         │   begin(), end(), ++   │         │   sort(), find(), count│
-└────────────────────────┘         └────────────────────────┘         └────────────────────────┘
+      <!-- LIGHT VISUAL TRINITY CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:10px; padding:20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 12px 0; font-size:15px; font-weight:700;">🏛️ STL త్రయం: పరస్పర అనుసంధాన స్తంభాలు:</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#0f172a; font-size:14px;">1. Containers</strong><br>
+            <span style="font-size:12px; color:#475569;">డేటాను భద్రపరిచేవి<br>(vector, map, set, deque)</span>
+          </div>
+          <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#047857; font-size:14px;">2. Iterators</strong><br>
+            <span style="font-size:12px; color:#15803d;">కంటైనర్లకు అల్గారిథమ్స్ కు వారధి<br>(begin(), end(), ++)</span>
+          </div>
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:12px; text-align:center;">
+            <strong style="color:#0f172a; font-size:14px;">3. Algorithms</strong><br>
+            <span style="font-size:12px; color:#475569;">డేటాను ప్రాసెస్ చేసే లాజిక్<br>(sort, find, count)</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- CONCEPT 2: CONTAINERS COMPARISON MATRIX -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> STL కంటైనర్ల వర్గీకరణ & టైమ్ కాంప్లెక్సిటీ మ్యాట్రిక్స్</div>
-    <p>
-      సరైన సందర్భంలో సరైన కంటైనర్‌ను ఎంచుకోవడమే కోడింగ్ ఇంటర్వ్యూలలో కీలకమైన నైపుణ్యం:
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> STL కంటైనర్ల వర్గీకరణ & కాంప్లెక్సిటీ మ్యాట్రిక్స్</div>
+    <div class="section-body">
+      <p>
+        ఏ సందర్భంలో ఏ కంటైనర్‌ను ఎంచుకోవాలో తెలియడమే కోడింగ్ ఇంటర్వ్యూలలో సెలెక్ట్ అవ్వడానికి కీలకమైన రహస్యం:
+      </p>
 
-    <div class="table-container" style="margin:20px 0;">
-      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
-        <thead>
-          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-            <th style="padding:12px; color:var(--text);">కంటైనర్</th>
-            <th style="padding:12px; color:var(--text);">అంతర్గత డేటా స్ట్రక్చర్</th>
-            <th style="padding:12px; color:var(--text);">యాక్సెస్ స్పీడ్</th>
-            <th style="padding:12px; color:var(--text);">శోధన (Search)</th>
-            <th style="padding:12px; color:var(--text);">సార్టెడ్ గా ఉంటుందా?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong><code>std::vector</code></strong></td>
-            <td style="padding:12px;">Dynamic Contiguous RAM Array</td>
-            <td style="padding:12px; color:#10b981; font-weight:700;">$O(1)$ Direct Indexing</td>
-            <td style="padding:12px;">$O(N)$ (లేదా $O(\log N)$ సార్ట్ అయితే)</td>
-            <td style="padding:12px;">లేదు (మనం వేసిన ఆర్డర్)</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong><code>std::map</code></strong></td>
-            <td style="padding:12px;">Red-Black Tree (Self-balancing BST)</td>
-            <td style="padding:12px;">$O(\log N)$</td>
-            <td style="padding:12px; color:#10b981; font-weight:700;">$O(\log N)$ Guaranteed</td>
-            <td style="padding:12px; color:#10b981; font-weight:700;">అవును (కీల క్రమం ఆటోమేటిక్)</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:12px;"><strong><code>std::unordered_map</code></strong></td>
-            <td style="padding:12px;">Hash Table (Buckets + Hash Function)</td>
-            <td style="padding:12px;">$O(1)$ Average</td>
-            <td style="padding:12px; color:#10b981; font-weight:700;">$O(1)$ Average Case!</td>
-            <td style="padding:12px;">లేదు (ర్యాండమ్ ఆర్డర్)</td>
-          </tr>
-          <tr>
-            <td style="padding:12px;"><strong><code>std::set</code></strong></td>
-            <td style="padding:12px;">Red-Black Tree (Only unique keys)</td>
-            <td style="padding:12px;">$O(\log N)$</td>
-            <td style="padding:12px; color:#10b981; font-weight:700;">$O(\log N)$ (డూప్లికేట్స్ తీసేస్తుంది)</td>
-            <td style="padding:12px; color:#10b981; font-weight:700;">అవును (Strictly Ascending)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- CONCEPT 3: VECTOR CAPACITY GROWTH & ITERATOR INVALIDATION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> Vector మెమరీ డబ్లింగ్ & Iterator Invalidation ముప్పు</div>
-    <p>
-      <code>std::vector</code> లో <code>push_back()</code> చేసినప్పుడు మెమరీ ఎలా పెరుగుతుందో అర్థం చేసుకోవడం చాలా ముఖ్యం:
-    </p>
-
-    <div class="tip-box">
-      <strong>⚡ Capacity Doubling Formula (Amortized $O(1)$):</strong><br>
-      ఒక వెక్టర్ ప్రస్తుత సైజ్ దాని కెపాసిటీని చేరుకోగానే, C++ పాత ఎరేను రీసైజ్ చేయదు! అది రామ్‌లో వేరే చోట <strong>2 రెట్లు పెద్దదైన (2x Capacity) కొత్త మెమరీ బ్లాక్‌ను</strong> రిజర్వ్ చేసి, పాత ఎలిమెంట్లను అక్కడికి మూవ్ చేస్తుంది.<br><br>
-      <strong>🚨 Iterator Invalidation Trap:</strong> ఈ మెమరీ రీ-అలొకేషన్ జరిగినప్పుడు, పాత మెమరీ డిలీట్ అయిపోతుంది! కాబట్టి ఆ పాత అడ్రస్‌లను పట్టుకున్న పాయింటర్లు లేదా Iterators వెంటనే డ్యాంగ్లింగ్ (Invalid) అయిపోతాయి. రీసైజ్ అయ్యే లూప్స్ లో పాత ఇటరేటర్లను వాడితే సిస్టమ్ క్రాష్ అవుతుంది!
-    </div>
-
-    <!-- CODE BLOCK 1: VECTOR & UNORDERED_MAP -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 1: Compact Vector Capacity & Fast O(1) Hash Table</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <!-- LIGHT TABLE -->
+      <div class="table-container" style="margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px; color:var(--text);">కంటైనర్</th>
+              <th style="padding:12px; color:var(--text);">అంతర్గత డేటా స్ట్రక్చర్</th>
+              <th style="padding:12px; color:var(--text);">యాక్సెస్ స్పీడ్</th>
+              <th style="padding:12px; color:var(--text);">శోధన (Search)</th>
+              <th style="padding:12px; color:var(--text);">సార్టెడ్ గా ఉంటుందా?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px; color:#10b981; font-weight:700;"><code>std::vector</code></td>
+              <td style="padding:12px;">Dynamic Contiguous RAM Array</td>
+              <td style="padding:12px; color:#10b981; font-weight:700;">O(1) Direct Indexing</td>
+              <td style="padding:12px;">O(N) Linear Search</td>
+              <td style="padding:12px;">లేదు (మనం ఇన్సర్ట్ చేసిన క్రమం)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px; color:#58a6ff; font-weight:700;"><code>std::map</code></td>
+              <td style="padding:12px;">Red-Black Tree (Self-balancing BST)</td>
+              <td style="padding:12px;">O(log N)</td>
+              <td style="padding:12px; color:#10b981; font-weight:700;">O(log N) Guaranteed</td>
+              <td style="padding:12px; color:#10b981;">అవును (కీలు క్రమపద్ధతిలో ఉంటాయి)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:12px; color:#f59e0b; font-weight:700;"><code>std::unordered_map</code></td>
+              <td style="padding:12px;">Hash Table (Buckets + Hash Function)</td>
+              <td style="padding:12px;">O(1) Average</td>
+              <td style="padding:12px; color:#10b981; font-weight:700;">O(1) Average Case!</td>
+              <td style="padding:12px;">లేదు (ర్యాండమ్ ఆర్డర్)</td>
+            </tr>
+            <tr>
+              <td style="padding:12px; color:#8b5cf6; font-weight:700;"><code>std::set</code></td>
+              <td style="padding:12px;">Red-Black Tree (Only unique keys)</td>
+              <td style="padding:12px;">O(log N)</td>
+              <td style="padding:12px; color:#10b981; font-weight:700;">O(log N) (డూప్లికేట్స్ ఉండవు)</td>
+              <td style="padding:12px; color:#10b981;">అవును (Ascending Order)</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="code-box">
-        <div class="code-header">
-          <span>stl_containers_compact.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- COMPACT FOCUSED CODE BLOCK 1 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Vector Scaling & Fast O(1) Hash Map</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>stl_containers_quick.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
           </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
+          <pre><code>#include &lt;iostream&gt;
 #include &lt;vector&gt;
 #include &lt;unordered_map&gt;
 #include &lt;string&gt;
 
 int main() {
-    // 1. Vector Size vs Capacity Growth
-    std::vector&lt;int&gt; v;
-    std::cout &lt;&lt; "--- Vector Dynamic Capacity Scaling ---\n";
-    for (int i = 1; i &lt;= 5; ++i) {
-        v.push_back(i * 10);
-        std::cout &lt;&lt; "Pushed " &lt;&lt; i * 10 &lt;&lt; " | Size: " &lt;&lt; v.size() 
-                  &lt;&lt; " | Capacity: " &lt;&lt; v.capacity() &lt;&lt; "\n";
-    }
+    // 1. Vector: Contiguous RAM
+    std::vector&lt;int&gt; numbers = {10, 20, 30};
+    numbers.push_back(40);
+    std::cout &lt;&lt; "Vector size: " &lt;&lt; numbers.size() &lt;&lt; " | Element 0: " &lt;&lt; numbers[0] &lt;&lt; "\n";
 
-    // 2. Fast O(1) Hash Table Lookup (unordered_map)
-    std::cout &lt;&lt; "\n--- O(1) Key-Value Hash Map Lookup ---\n";
-    std::unordered_map&lt;std::string, double&gt; salaries = {
-        {"Software Engineer", 120000.0},
-        {"Cloud Architect", 160000.0}
-    };
+    // 2. Unordered_map: O(1) Hash Table
+    std::unordered_map&lt;std::string, double&gt; prices;
+    prices["Book"] = 499.0;
+    prices["Pen"] = 25.0;
 
-    salaries["AI Researcher"] = 185000.0; // ఇన్సర్షన్
-
-    // శోధన (Lookup)
-    auto it = salaries.find("Cloud Architect");
-    if (it != salaries.end()) {
-        std::cout &lt;&lt; "Found: " &lt;&lt; it-&gt;first &lt;&lt; " -&gt; $" &lt;&lt; it-&gt;second &lt;&lt; "\n";
-    }
-
+    std::cout &lt;&lt; "Price of Book: Rs " &lt;&lt; prices["Book"] &lt;&lt; "\n";
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
-    </div>
-
-    <!-- CONCEPT 4: STL ALGORITHMS & INTROSORT -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> STL Algorithms: <code>std::sort</code> (IntroSort) & Lambdas</div>
-    <p>
-      <code>&lt;algorithm&gt;</code> హెడర్ లోని ఫంక్షన్లు నేరుగా కంటైనర్లతో పనిచేయవు; అవి Iterators ద్వారా పనిచేస్తాయి. దీనివల్ల ఒకే సార్ట్ ఫంక్షన్ ఎరేస్, వెక్టర్స్, లేదా డెక్స్ పై సమానంగా పనిచేస్తుంది.
-    </p>
-
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[IntroSort: std::sort ఇంజనీరింగ్ అద్భుతం]</span>
-
-C++ std::sort అనేది సాధారణ క్విక్ సార్ట్ కాదు, అది 3 అల్గారిథమ్స్ కలయిక (IntroSort):
-1. Phase 1 (QuickSort): చాలా వేగంగా విభజిస్తూ సార్ట్ చేస్తుంది.
-2. Phase 2 (HeapSort): ఒకవేళ రికర్షన్ డెప్త్ 2 * log(N) దాటితే, క్విక్‌సార్ట్ O(N^2) వర్స్ట్ కేస్ కి వెళ్లకుండా వెంటనే హీప్‌సార్ట్‌కు మారిపోతుంది!
-3. Phase 3 (InsertionSort): ఎలిమెంట్ల సంఖ్య 16 కంటే తక్కువైతే ఇన్‌సర్షన్‌సార్ట్ మెరుపు వేగంతో ముగిస్తుంది.
-    </div>
-
-    <!-- CODE BLOCK 2: COMPACT ALGORITHMS & LAMBDA -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 2: std::sort with Custom Lambda Comparator & Binary Search</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>std::vector&lt;int&gt; numbers</code>: ర్యామ్‌లో ఒకదాని పక్కన ఒకటి ఉండే మెమరీ కాబట్టి CPU Cache కి అత్యంత అనుకూలమైనది (Cache Friendly).</li>
+          <li><code>prices["Book"] = 499.0;</code>: హ్యాష్ టేబుల్ ద్వారా "Book" అనే కీని మెరుపు వేగంతో O(1) లో ఇన్సర్ట్ చేస్తుంది.</li>
+        </ul>
       </div>
+    </div>
 
-      <div class="code-box">
-        <div class="code-header">
-          <span>stl_algorithms_compact.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+    <!-- CONCEPT 3: INTROSORT ALGORITHM -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> STL Algorithms: <code>std::sort</code> (IntroSort) & Lambdas</div>
+    <div class="section-body">
+      <p>
+        C++ లోని <code>std::sort</code> అనేది సాధారణ సార్టింగ్ కాదు; అది ప్రపంచ ప్రఖ్యాత <strong>IntroSort (Introspective Sort)</strong> అనే 3 హైబ్రిడ్ అల్గారిథమ్స్ కలయిక:
+      </p>
+
+      <!-- LIGHT INTROSORT VISUAL CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 12px 0; font-size:15px; font-weight:700;">🚀 IntroSort యొక్క 3-దశల ఆర్కిటెక్చర్:</h4>
+        <div style="display:flex; flex-direction:column; gap:10px; font-size:13.5px; line-height:1.7;">
+          <div style="background:#ffffff; border-left:4px solid #10b981; padding:10px 14px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <strong style="color:#047857;">1. Phase 1 (QuickSort):</strong> వేగంగా విభజిస్తూ సార్టింగ్ ప్రారంభిస్తుంది.
+          </div>
+          <div style="background:#ffffff; border-left:4px solid #f59e0b; padding:10px 14px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <strong style="color:#b45309;">2. Phase 2 (HeapSort Fallback):</strong> రికర్షన్ లోతు ఎక్కువైతే QuickSort $O(N^2)$ కి పడిపోకుండా వెంటనే HeapSort కి మారిపోయి ఖచ్చితమైన $O(N \log N)$ గ్యారెంటీ ఇస్తుంది!
+          </div>
+          <div style="background:#ffffff; border-left:4px solid #3b82f6; padding:10px 14px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <strong style="color:#1d4ed8;">3. Phase 3 (InsertionSort):</strong> సబ్‌అర్రే సైజ్ 16 కంటే తక్కువైతే ఇన్సర్షన్ సార్ట్ తో మెరుపు వేగంతో ముగిస్తుంది.
           </div>
         </div>
-        <pre><code>#include &lt;iostream&gt;
+      </div>
+
+      <!-- COMPACT FOCUSED CODE BLOCK 2 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: std::sort with Modern Lambda Comparator</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>stl_sort_lambda.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
 #include &lt;vector&gt;
 #include &lt;algorithm&gt;
 
 int main() {
-    std::vector&lt;int&gt; scores = {45, 12, 89, 73, 23, 99, 56};
+    std::vector&lt;int&gt; scores = {45, 12, 89, 73, 23};
 
-    // 1. Ascending Sort via std::sort
-    std::sort(scores.begin(), scores.end());
-    std::cout &lt;&lt; "Ascending Sort : ";
-    for (int n : scores) std::cout &lt;&lt; n &lt;&lt; " ";
-    std::cout &lt;&lt; "\n";
-
-    // 2. Custom Lambda Comparator తో Descending Sort
+    // Descending Sort using Modern C++ Lambda
     std::sort(scores.begin(), scores.end(), [](int a, int b) {
-        return a &gt; b; // పెద్ద సంఖ్యలు ముందు రావాలి
+        return a &gt; b; // Largest first
     });
 
-    std::cout &lt;&lt; "Descending Sort: ";
-    for (int n : scores) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; "Sorted Scores: ";
+    for (int s : scores) std::cout &lt;&lt; s &lt;&lt; " ";
     std::cout &lt;&lt; "\n";
-
-    // 3. Fast Binary Search (O(log N))
-    std::sort(scores.begin(), scores.end()); // సార్టెడ్ గా ఉండాలి
-    bool exists = std::binary_search(scores.begin(), scores.end(), 73);
-    std::cout &lt;&lt; "Does 73 exist? : " &lt;&lt; (exists ? "FOUND ✔️" : "NOT FOUND ❌") &lt;&lt; "\n";
-
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>scores.begin(), scores.end()</code>: అల్గారిథమ్స్ నేరుగా వెక్టర్ కాకుండా ఇటరేటర్ల పరిధిని తీసుకుంటాయి.</li>
+          <li><code>[](int a, int b) { return a > b; }</code>: ప్రత్యేకమైన ఫంక్షన్ రాయకుండా ఇన్-లైన్ గా లాంబ్డా ద్వారా కస్టమ్ కంపేరిజన్ లాజిక్ ను అందించాం.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PITFALLS & BEST PRACTICES -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> సాధారణంగా బిగినర్స్ చేసే తప్పులు & బెస్ట్ ప్రాక్టీసెస్</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:10px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">⚠️ Common Beginner Traps</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Iterator Invalidation Trap:</strong> వెక్టర్‌లో లూప్ తిరుగుతున్న సమయంలో కొత్త ఎలిమెంట్లను <code>push_back</code> చేస్తే పాత ఇటరేటర్లు చెల్లవు (Crash).</li>
+            <li><strong>map[key] Silent Insertion:</strong> మ్యాప్‌లో లేని కీ కోసం <code>map[key]</code> అని పిలిస్తే, C++ సైలెంట్ గా డిఫాల్ట్ వాల్యూతో ఆ కీని ఇన్సర్ట్ చేస్తుంది! కేవలం చెక్ చేయడానికి <code>map.find()</code> వాడాలి.</li>
+          </ul>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">💡 Industry Best Practices</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Always use vector.reserve(N):</strong> లూప్‌లో వేలాది ఎలిమెంట్లు వేసేటప్పుడు ముందుగానే <code>v.reserve(10000)</code> కాల్ చేయండి; 2x రీ-అలొకేషన్ కాపీ వేస్ట్ పూర్తిగా ఆగిపోతుంది.</li>
+            <li><strong>Prefer emplace_back over push_back:</strong> <code>emplace_back()</code> ఆబ్జెక్ట్ ను డైరెక్ట్ గా వెక్టర్ మెమరీలోనే కన్‌స్ట్రక్ట్ చేస్తుంది, అనవసరమైన కాపీలను నివారిస్తుంది.</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> std::map కి std::unordered_map కి మధ్య ప్రధాన వ్యత్యాసాలు ఏమిటి?</h4>
       <p>
-        <code>std::map</code> అనేది అంతర్గతంగా Red-Black Tree (Self-balancing Binary Search Tree) పై ఆధారపడి ఉంటుంది; కీలు క్రమపద్ధతిలో (Sorted order) ఉంటాయి మరియు శోధన సమయం $O(\log N)$. <code>std::unordered_map</code> అనేది Hash Table పై ఆధారపడి ఉంటుంది; కీలు సార్ట్ అయి ఉండవు కానీ సగటు శోధన సమయం మెరుపు వేగంతో $O(1)$ లో పూర్తవుతుంది.
+        std::map అనేది అంతర్గతంగా Red-Black Tree (Self-balancing Binary Search Tree) పై ఆధారపడి ఉంటుంది; కీలు క్రమపద్ధతిలో (Sorted order) ఉంటాయి మరియు శోధన సమయం O(log N). std::unordered_map అనేది Hash Table పై ఆధారపడి ఉంటుంది; కీలు సార్ట్ అయి ఉండవు కానీ సగటు శోధన సమయం మెరుపు వేగంతో O(1) లో పూర్తవుతుంది.
       </p>
     </div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> std::vector లో 'size' కి 'capacity' కి తేడా ఏమిటి?</h4>
       <p>
-        <code>size</code> అనేది ప్రస్తుతం వెక్టర్‌లో ఉన్న అసలైన ఎలిమెంట్ల సంఖ్య. <code>capacity</code> అనేది కొత్తగా మెమరీ రీ-అలొకేషన్ అవసరం లేకుండా వెక్టర్ గరిష్టంగా ఉంచుకోగల స్థలం. ఎలిమెంట్లు కెపాసిటీని దాటినప్పుడు వెక్టర్ ఆటోమేటిక్‌గా తన కెపాసిటీని దాదాపు రెట్టింపు (2x) చేసుకుంటుంది (Amortized $O(1)$ push_back).
+        'size' అనేది ప్రస్తుతం వెక్టర్‌లో ఉన్న అసలైన ఎలిమెంట్ల సంఖ్య. 'capacity' అనేది కొత్తగా మెమరీ రీ-అలొకేషన్ అవసరం లేకుండా వెక్టర్ గరిష్టంగా ఉంచుకోగల స్థలం. ఎలిమెంట్లు కెపాసిటీని దాటినప్పుడు వెక్టర్ ఆటోమేటిక్‌గా తన కెపాసిటీని దాదాపు రెట్టింపు (2x) చేసుకుంటుంది (Amortized O(1) push_back).
       </p>
     </div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> std::sort అల్గారిథమ్ వెనుక ఏ సార్టింగ్ టెక్నిక్ ఉంటుంది?</h4>
       <p>
-        C++ <code>std::sort</code> అనేది <strong>IntroSort (Introspective Sort)</strong> అనే ఒక హైబ్రిడ్ అల్గారిథమ్‌ను ఉపయోగిస్తుంది. ఇది QuickSort తో ప్రారంభమై, రికర్షన్ లోతు ఎక్కువైతే HeapSort కి మారి, చిన్న సబ్‌అర్రేల కోసం InsertionSort కి మారుతుంది. దీనివల్ల అధ్వాన్నమైన సందర్భంలోనూ (Worst Case) ఖచ్చితమైన $O(N \log N)$ టైమ్ కాంప్లెక్సిటీని ఇస్తుంది.
+        C++ std::sort అనేది 'IntroSort' (Introspective Sort) అనే ఒక హైబ్రిడ్ అల్గారిథమ్‌ను ఉపయోగిస్తుంది. ఇది QuickSort తో ప్రారంభమై, రికర్షన్ లోతు ఎక్కువైతే HeapSort కి మారి, చిన్న సబ్‌అర్రేల కోసం InsertionSort కి మారుతుంది. దీనివల్ల అధ్వాన్నమైన సందర్భంలోనూ (Worst Case) ఖచ్చితమైన O(N log N) టైమ్ కాంప్లెక్సిటీని ఇస్తుంది.
       </p>
     </div>
 

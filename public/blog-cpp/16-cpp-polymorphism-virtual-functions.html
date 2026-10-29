@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -107,18 +107,17 @@
         'default', 'delete', 'do', 'double', 'dynamic_cast', 'else', 'enum',
         'explicit', 'export', 'extern', 'false', 'float', 'for', 'friend', 'goto',
         'if', 'inline', 'int', 'long', 'mutable', 'namespace', 'new', 'noexcept',
-        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'override', 'final',
-        'private', 'protected', 'public', 'register', 'reinterpret_cast', 'requires',
-        'return', 'short', 'signed', 'sizeof', 'static', 'static_assert',
-        'static_cast', 'struct', 'switch', 'template', 'this', 'thread_local',
-        'throw', 'true', 'try', 'typedef', 'typeid', 'typename', 'union',
-        'unsigned', 'using', 'virtual', 'void', 'volatile', 'wchar_t', 'while',
-        'xor', 'xor_eq'
+        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'override', 'private',
+        'protected', 'public', 'register', 'reinterpret_cast', 'requires', 'return',
+        'short', 'signed', 'sizeof', 'static', 'static_assert', 'static_cast', 'struct',
+        'switch', 'template', 'this', 'thread_local', 'throw', 'true', 'try',
+        'typedef', 'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual',
+        'void', 'volatile', 'wchar_t', 'while', 'xor', 'xor_eq'
       ];
       const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|vector|unique_ptr|make_unique|PaymentGateway|PayPalPayment|UPIPayment|Animal|Dog|Cat|size_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|vector|unique_ptr|make_unique|Animal|Dog|Cat|Shape|Circle|size_t)\b/g, m => pushToken('tp', m));
       code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
       code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
 
@@ -130,13 +129,15 @@
     }
 
     (function() {
-      const currentTheme = localStorage.getItem('theme');
+      // Default to Light Theme
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
       if (currentTheme !== 'dark') {
         document.documentElement.classList.add('light-theme');
         window.addEventListener('DOMContentLoaded', () => {
           if (document.body) document.body.classList.add('light-theme');
         });
       }
+
       window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('pre code').forEach(codeBlock => {
           const pre = codeBlock.parentElement;
@@ -183,27 +184,11 @@
             });
           }
         });
-
-        document.querySelectorAll('.try-box').forEach(tryBox => {
-          const codeEl = tryBox.querySelector('pre code');
-          const runBtn = tryBox.querySelector('.run-btn');
-          if (codeEl) {
-            const rawCode = codeEl.textContent;
-            codeEl.innerHTML = highlightCppCode(rawCode);
-            if (runBtn) {
-              runBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.setItem('code_cpp17', rawCode);
-                window.location.href = '/online-cpp-compiler.html';
-              });
-            }
-          }
-        });
       });
     })();
   </script>
 </head>
-<body class="lang-cpp">
+<body class="lang-cpp light-theme">
 
 <!-- TOP NAVIGATION FALLBACK -->
 <nav class="topnav">
@@ -343,284 +328,291 @@
 
     <div class="lesson-header">
       <span class="badge">Phase 04 · Object-Oriented Programming · Chapter 16 of 20</span>
-      <h1 class="lesson-title">పాలిమార్ఫిజమ్ & Virtual Functions (C++ Polymorphism)</h1>
+      <h1 class="lesson-title">పాలిమార్ఫిజమ్ & Virtual Functions (తెలుగులో)</h1>
       <p class="lesson-desc">
-        ఒకే ఇంటర్‌ఫేస్, విభిన్న ప్రవర్తనలు! Static vs Dynamic Polymorphism, Base Pointer ద్వారా డైనమిక్ డిస్పాచ్, <code>virtual</code> మరియు <code>override</code> కీవర్డ్స్, కంపైలర్ లోపల జరిగే <strong>vtable &amp; vptr</strong> ఆర్కిటెక్చర్, <strong>Virtual Destructors</strong> తో జీరో మెమరీ లీక్ గ్యారెంటీ, మరియు Pure Virtual Functions తో <strong>Abstract Classes</strong> నిర్మాణం.
+        ఒకే ఇంటర్‌ఫేస్, విభిన్న రూపాలు! Compile-Time vs Run-Time Polymorphism, Early Binding Trap, <code>virtual</code> మరియు <code>override</code> కీవర్డ్స్, అంతర్గత <strong>vtable & vptr హార్డ్‌వేర్ ఆర్కిటెక్చర్</strong>, వర్చువల్ డిస్ట్రక్టర్ యొక్క గోల్డెన్ రూల్, మరియు Pure Virtual Functions తో Abstract Classes (ఇంటర్‌ఫేస్) నిర్మాణం.
       </p>
     </div>
 
-    <!-- CONCEPT 1: WHAT IS POLYMORPHISM -->
-    <div class="section-title"><span class="num">1</span> పాలిమార్ఫిజమ్ (Polymorphism) అంటే ఏమిటి?</div>
-    <p>
-      గ్రీకు భాషలో <em>Poly</em> అంటే అనేక, <em>Morph</em> అంటే రూపాలు. ప్రోగ్రామింగ్‌లో <strong>ఒకే ఫంక్షన్ కాల్ వేర్వేరు సందర్భాలలో వేర్వేరు ఆబ్జెక్టుల ఆధారంగా విభిన్నమైన పనులను నిర్వహించగలగడాన్నే</strong> పాలిమార్ఫిజమ్ అంటారు.
-    </p>
-
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[రెండు రకాల పాలిమార్ఫిజమ్ (Static vs Dynamic)]</span>
-
-1. Compile-Time (Static) Polymorphism:
-   • కంపైలేషన్ సమయంలోనే ఏ ఫంక్షన్ రన్ అవ్వాలో స్థిరపడిపోతుంది (Early Binding).
-   • ఉదాహరణ: Function Overloading, Operator Overloading, Templates.
-   • ప్రయోజనం: మెరుపు వేగం (Zero Runtime Overhead).
-
-2. Run-Time (Dynamic) Polymorphism:
-   • ప్రోగ్రామ్ రన్ అవుతున్న సమయంలో, Base Pointer ఏ ఆబ్జెక్ట్‌ను చూపిస్తుందో చూసి ఆ ఫంక్షన్ కాల్ అవుతుంది (Late Binding).
-   • సాధించే విధానం: Virtual Functions & Base Pointers (Base* ptr).
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Static vs Dynamic Polymorphism · Virtual Functions · vtable & vptr · Virtual Destructor Rule · Pure Virtual Functions · Abstract Classes</span>
     </div>
 
-    <!-- CONCEPT 2: BASE POINTER TRAP & VIRTUAL KEYWORD -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> The Early Binding Trap & <code>virtual</code> కీవర్డ్</div>
-    <p>
-      ఒక పేరెంట్ పాయింటర్ (<code>Animal*</code>) లో చైల్డ్ ఆబ్జెక్ట్ అడ్రస్‌ను (<code>new Dog()</code>) స్టోర్ చేయవచ్చు. కానీ సాధారణ పద్ధతిలో <code>ptr-&gt;makeSound()</code> అని పిలిస్తే, కంపైలర్ పాయింటర్ రకాన్ని మాత్రమే చూసి <code>Animal::makeSound()</code> నే పిలుస్తుంది! దీనినే <strong>Early Binding Trap</strong> అంటారు.
-    </p>
+    <!-- CONCEPT 1: WHAT IS POLYMORPHISM -->
+    <div class="section-title"><span class="num">1</span> పాలిమార్ఫిజమ్ (Polymorphism) అంటే ఏమిటి? Real-World Analogy</div>
+    <div class="section-body">
+      <p>
+        గ్రీకు భాషలో <em>"Poly"</em> అంటే అనేక, <em>"Morph"</em> అంటే రూపాలు. ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) లో <strong>ఒకే ఫంక్షన్ కాల్ వేర్వేరు సందర్భాలలో వేర్వేరు ఆబ్జెక్టుల ఆధారంగా విభిన్నమైన పనులను నిర్వహించగలగడాన్నే</strong> పాలిమార్ఫిజమ్ అంటారు.
+      </p>
+      <p>
+        <strong>రియల్-వరల్డ్ ఉదాహరణ (Daily Life Analogy):</strong><br>
+        ఒక మనిషి ఇంట్లో ఉన్నప్పుడు <em>కుమారుడిగా</em> ప్రవర్తిస్తాడు, ఆఫీస్‌లో <em>సాఫ్ట్‌వేర్ ఇంజనీర్‌గా</em> పని చేస్తాడు, బస్సులో ప్రయాణించేటప్పుడు <em>ప్యాసింజర్‌గా</em> ఉంటాడు, మార్కెట్‌లో ఉన్నప్పుడు <em>కస్టమర్‌గా</em> ఉంటాడు. వ్యక్తి ఒక్కడే, కానీ సందర్భాన్ని బట్టి అతని ప్రవర్తన మారుతుంది. ప్రోగ్రామింగ్‌లో కూడా ఇదే సూత్రం పనిచేస్తుంది!
+      </p>
 
-    <div class="tip-box">
-      <strong>⚡ Solution: virtual & override</strong><br>
-      మనం Base క్లాస్ ఫంక్షన్ ముందు <strong><code>virtual</code></strong> అని చేర్చినప్పుడు, కంపైలర్ ఎర్లీ బైండింగ్‌ను ఆపివేసి రన్‌టైమ్ వరకు నిర్ణయాన్ని వాయిదా వేస్తుంది (Dynamic Dispatch). అలాగే Derived క్లాస్‌లో ఆ ఫంక్షన్‌ను తిరిగి రాసేటప్పుడు <strong><code>override</code></strong> అని రాయాలి. స్పెల్లింగ్ పొరపాట్లు లేదా పారామీటర్ తప్పులు జరిగితే கంపైలర్ వెంటనే హెచ్చరిస్తుంది!
+      <!-- LIGHT VISUAL COMPARISON CARD (Static vs Dynamic) -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:10px; padding:18px 22px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px; font-weight:700;">⚖️ రెండు రకాల పాలిమార్ఫిజమ్ (Static vs Dynamic):</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
+          <div style="background:rgba(16, 185, 129, 0.06); border:1px solid rgba(16, 185, 129, 0.2); border-radius:8px; padding:12px 14px;">
+            <strong style="color:#10b981;">⚡ Compile-Time (Static) Polymorphism:</strong>
+            <p style="font-size:13px; line-height:1.6; margin:6px 0 0; color:var(--text2);">
+              కంపైలేషన్ సమయంలోనే ఏ ఫంక్షన్ రన్ అవ్వాలో కంపైలర్ ఫిక్స్ చేస్తుంది (Early Binding).<br>
+              • <em>పద్ధతులు:</em> Function Overloading, Operator Overloading, Templates.<br>
+              • <em>లాభం:</em> మెరుపు వేగం (Zero Runtime Overhead).
+            </p>
+          </div>
+          <div style="background:rgba(88, 166, 255, 0.06); border:1px solid rgba(88, 166, 255, 0.2); border-radius:8px; padding:12px 14px;">
+            <strong style="color:#58a6ff;">🎯 Run-Time (Dynamic) Polymorphism:</strong>
+            <p style="font-size:13px; line-height:1.6; margin:6px 0 0; color:var(--text2);">
+              ప్రోగ్రామ్ రన్ అవుతున్న సమయంలో, బేస్ పాయింటర్ ఏ చైల్డ్ ఆబ్జెక్ట్‌ను చూపిస్తుందో చూసి ఆ ఫంక్షన్ కాల్ అవుతుంది (Late Binding).<br>
+              • <em>పద్ధతులు:</em> <code>virtual</code> Functions, Base Pointers/References.<br>
+              • <em>లాభం:</em> అపరిమితమైన ఫ్లెక్సిబిలిటీ.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 2: THE EARLY BINDING TRAP -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> The Early Binding Trap & <code>virtual</code> కీవర్డ్ పరిష్కారం</div>
+    <div class="section-body">
+      <p>
+        C++ లో Base క్లాస్ పాయింటర్ (<code>Animal* ptr</code>) ద్వారా Derived క్లాస్ ఆబ్జెక్ట్ అడ్రస్‌ను (<code>new Dog()</code>) హోల్డ్ చేయవచ్చు. కానీ సాధారణ పద్ధతిలో <code>ptr->makeSound()</code> అని పిలిస్తే, కంపైలర్ కేవలం పాయింటర్ రకాన్ని మాత్రమే చూసి <code>Animal::makeSound()</code> నే ఎగ్జిక్యూట్ చేస్తుంది! డాగ్ ఆబ్జెక్ట్ ఉన్నప్పటికీ దాని ఫంక్షన్ రన్ అవ్వదు! దీనినే <strong>The Early Binding Trap</strong> అంటారు.
+      </p>
+
+      <div class="tip-box">
+        <strong>⚡ మంత్రదండం లాంటి 'virtual' కీవర్డ్:</strong><br>
+        Base క్లాస్ లోని ఫంక్షన్ ముందు <strong><code>virtual</code></strong> అని చేర్చిన వెంటనే, కంపైలర్ ఎర్లీ బైండింగ్‌ను ఆపివేసి: <em>"రన్‌టైమ్‌లో పాయింటర్ ఏ అసలైన ఆబ్జెక్ట్‌ను చూపిస్తుందో చూసి, ఆ చైల్డ్ క్లాస్ ఫంక్షన్‌నే రన్ చెయ్యి"</em> అని Late Binding (Dynamic Dispatch) ను ప్రారంభిస్తుంది.
+      </div>
+
+      <!-- COMPACT FOCUSED CODE BLOCK 1 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Virtual Function & Dynamic Dispatch in Action</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>virtual_functions_demo.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+class Animal {
+public:
+    virtual void speak() { std::cout &lt;&lt; "Animal makes generic sound\n"; }
+};
+
+class Dog : public Animal {
+public:
+    void speak() override { std::cout &lt;&lt; "Dog barks: Woof! Woof!\n"; }
+};
+
+int main() {
+    Animal* pet = new Dog(); // Base Pointer points to Derived Object
+    pet-&gt;speak();            // Calls Dog::speak() at Runtime via virtual!
+    delete pet;
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>virtual void speak()</code>: Base క్లాస్ లో <code>virtual</code> అని ఉండటం వల్ల ఇది రన్‌టైమ్ పాలిమార్ఫిజమ్ లోకి ప్రవేశిస్తుంది.</li>
+          <li><code>void speak() override</code>: C++11 లోని <code>override</code> కీవర్డ్ మనం Base క్లాస్ ఫంక్షన్‌ను సరిగ్గా ఓవర్‌రైడ్ చేస్తున్నామో లేదో కంపైలర్ ద్వారా వెరిఫై చేయిస్తుంది.</li>
+          <li><code>pet->speak()</code>: <code>pet</code> అనేది <code>Animal*</code> అయినప్పటికీ, రన్‌టైమ్‌లో <code>Dog::speak()</code> పిలవబడింది.</li>
+        </ul>
+      </div>
     </div>
 
     <!-- CONCEPT 3: VTABLE & VPTR UNDER THE HOOD -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> లోపల ఏం జరుగుతుంది? vtable & vptr ఆర్కిటెక్చర్</div>
-    <p>
-      ప్రపంచవ్యాప్తంగా C++ ఇంటర్వ్యూలలో అడిగే అత్యంత ప్రసిద్ధ ప్రశ్న: <em>"వర్చువల్ ఫంక్షన్లు రన్‌టైమ్‌లో సరైన ఫంక్షన్‌ను ఎలా గుర్తిస్తాయి?"</em>
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> అంతర్గత హార్డ్‌వేర్ పనితీరు: vtable & vptr ఆర్కిటెక్చర్</div>
+    <div class="section-body">
+      <p>
+        ప్రపంచవ్యాప్తంగా టెక్ ఇంటర్వ్యూలలో (Google, Microsoft, Meta) అడిగే క్లాసిక్ ప్రశ్న: <em>"రన్‌టైమ్‌లో C++ కంపైలర్ సరైన చైల్డ్ ఫంక్షన్‌ను మెమరీలో ఎలా వెతుకుతుంది? దాని వెనుక ఉన్న హార్డ్‌వేర్ మెకానిజం ఏమిటి?"</em>
+      </p>
 
-    <!-- ASCII VTABLE DIAGRAM -->
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[vtable & vptr అంతర్గత హార్డ్‌వేర్ లేఅవుట్]</span>
+      <!-- LIGHT ARCHITECTURE CARD (Visual vtable & vptr) -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 14px 0; font-size:15px; font-weight:700;">⚙️ vtable & vptr మెమరీ లేఅవుట్ (Hardware Memory Model):</h4>
+        
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:12px 16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <strong style="color:#0f172a;">1. vtable (Virtual Method Table):</strong><br>
+            <span style="font-size:13px; color:#475569; line-height:1.6;">
+              క్లాస్‌లో ఒక్క <code>virtual</code> ఫంక్షన్ ఉన్నా, కంపైలర్ ఆ క్లాస్ కోసం మెమరీలో ఒక స్టాటిక్ ఫంక్షన్ పాయింటర్ల పట్టికను (Array of Function Pointers) ఉంచుతుంది. ఇందులో ఆ క్లాస్ ఓవర్‌రైడ్ చేసిన ఫంక్షన్ల రామ్ అడ్రస్‌లు ఉంటాయి.
+            </span>
+          </div>
 
-1. vtable (Virtual Table):
-   ఒక క్లాస్‌లో ఒక్క virtual ఫంక్షన్ ఉన్నా, కంపైలర్ ఆ క్లాస్ కోసం మెమరీలో 
-   స్టాటిక్ ఫంక్షన్ పాయింటర్ టేబుల్ (Array of Function Pointers) ను సృష్టిస్తుంది:
-   ┌───────────────────────────────────────────────┐
-   │ Dog vtable                                    │
-   ├───────────────────────┬───────────────────────┤
-   │ &Dog::makeSound()     │ &Dog::~Dog()          │
-   └───────────────────────┴───────────────────────┘
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:12px 16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <strong style="color:#0f172a;">2. vptr (Virtual Table Pointer):</strong><br>
+            <span style="font-size:13px; color:#475569; line-height:1.6;">
+              ఆ క్లాస్ నుండి పుట్టిన ప్రతి ఆబ్జెక్ట్ లోపల కంపైలర్ ఒక రహస్య <strong>8-బైట్ల పాయింటర్ (*vptr)</strong> ను మొదటి వేరియబుల్ గా చొప్పిస్తుంది! ఈ <code>*vptr</code> ఆ క్లాస్ యొక్క vtable ను సూచిస్తుంది.
+            </span>
+          </div>
 
-2. vptr (Virtual Pointer):
-   ఆ క్లాస్ నుండి పుట్టిన ప్రతి ఆబ్జెక్ట్ లోపల కంపైలర్ రహస్యంగా 8 బైట్ల
-   హిడెన్ పాయింటర్ (*vptr) ను మొదటి వేరియబుల్ గా చొప్పిస్తుంది!
-   
-   Dog myDog ఆబ్జెక్ట్ (RAM లో):
-   ┌───────────────────────┬───────────────────────┐
-   │  *vptr (8 Bytes)      │   name / data         │
-   └──────────┬────────────┴───────────────────────┘
-              │
-              └───────────────► Points to Dog vtable!
-
-రన్‌టైమ్ స్టెప్:
-ptr->makeSound() పిలవగానే ──► ptr లోని vptr కి వెళ్తుంది ──► vtable లోని అడ్రస్ చదువుతుంది ──► Dog::makeSound() రన్ అవుతుంది!
+          <div style="background:#f0fdf4; border-left:4px solid #10b981; border-radius:4px; padding:10px 14px;">
+            <strong style="color:#047857; font-size:13.5px;">🔄 3-స్టెప్ రన్‌టైమ్ ఎగ్జిక్యూషన్ ఫ్లో:</strong><br>
+            <span style="font-size:13px; color:#334155; line-height:1.7;">
+              <code>pet->speak()</code> పిలవగానే ──► 1. <code>pet</code> లోపలి <code>vptr</code> అడ్రస్ చదువుతుంది ──► 2. <code>Dog vtable</code> లోని ఫంక్షన్ అడ్రస్ చూస్తుంది ──► 3. నేరుగా <code>Dog::speak()</code> ను ఎగ్జిక్యూట్ చేస్తుంది!
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- CONCEPT 4: VIRTUAL DESTRUCTOR RULE -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">4</span> The Virtual Destructor Rule: మెమరీ లీక్ నివారణ</div>
-    <p>
-      పాలిమార్ఫిజమ్ ఉపయోగించే ప్రతి C++ డెవలపర్ గుర్తుపెట్టుకోవాల్సిన పరమ పవిత్రమైన సూత్రం: <strong>Base క్లాస్ Destructor ఎల్లప్పుడూ <code>virtual</code> గా ఉండాలి!</strong>
-    </p>
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> The Virtual Destructor Rule: మెమరీ లీక్ నివారణ</div>
+    <div class="section-body">
+      <p>
+        పాలిమార్ఫిజమ్ ఉపయోగించే ప్రతి C++ డెవలపర్ తప్పనిసరిగా పాటించాల్సిన పరమ పవిత్రమైన నిబంధన: <strong>Base క్లాస్ Destructor ఎల్లప్పుడూ <code>virtual</code> గా ఉండాలి!</strong>
+      </p>
 
-    <div class="warn-box">
-      <strong>🚨 The Leaking Derived Destructor Catastrophe:</strong><br>
-      ఒకవేళ మీరు <code>Animal* ptr = new Dog(); delete ptr;</code> అని రాసినప్పుడు, Base Destructor వర్చువల్ కాకపోతే: కంపైలర్ కేవలం <code>~Animal()</code> ని మాత్రమే పిలుస్తుంది! <code>~Dog()</code> ఎప్పటికీ పిలవబడదు! డాగ్ క్లాస్ లోపల కేటాయించిన హీప్ మెమరీ మొత్తం రామ్‌లోనే ఉండిపోయి తీవ్రమైన <strong>Memory Leak</strong> కు దారితీస్తుంది.<br><br>
-      <code>virtual ~Animal() = default;</code> అని పెట్టగానే, ముందుగా Derived Destructor రన్ అయి, తర్వాత Base Destructor సురక్షితంగా క్లీన్ అవుతుంది!
-    </div>
-
-    <!-- CODE BLOCK 1: DYNAMIC POLYMORPHISM & VIRTUAL DESTRUCTOR -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 1: Dynamic Polymorphism with Safe Virtual Destructors</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <div style="background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px; margin:18px 0; color:var(--text); font-size:13.5px; line-height:1.7;">
+        <strong style="color:#ef4444;">🚨 The Leaking Destructor Catastrophe (భయంకరమైన మెమరీ లీక్):</strong><br>
+        ఒకవేళ మీరు <code>Animal* ptr = new Dog(); delete ptr;</code> అని రాసినప్పుడు, Base Destructor వర్చువల్ కాకపోతే: కంపైలర్ కేవలం <code>~Animal()</code> ని మాత్రమే పిలుస్తుంది! <code>~Dog()</code> ఎప్పటికీ రన్ అవ్వదు! డాగ్ ఆబ్జెక్ట్ లో కేటాయించిన హీప్ మెమరీ మొత్తం రామ్‌లోనే ఉండిపోయి సిస్టమ్ మెమరీ లీక్ అవుతుంది.<br><br>
+        <code>virtual ~Animal() = default;</code> అని పెట్టగానే, ముందుగా Derived Destructor రన్ అయ్యి, తర్వాత Base Destructor సురక్షితంగా క్లీన్ అవుతుంది!
       </div>
 
-      <div class="code-box">
-        <div class="code-header">
-          <span>polymorphism_virtual_destructor.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- COMPACT CODE EXAMPLE 2 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Safe Cleanup with Virtual Destructor</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>virtual_destructor_safe.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
           </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;vector&gt;
-#include &lt;memory&gt;
+          <pre><code>#include &lt;iostream&gt;
 
-// Base Class
-class Animal {
+class Base {
 public:
-    // వర్చువల్ ఫంక్షన్ - రన్‌టైమ్ బైండింగ్‌ను ఎనేబుల్ చేస్తుంది
-    virtual void makeSound() const {
-        std::cout &lt;&lt; "Generic Animal Sound...\n";
-    }
-
-    // గోల్డెన్ రూల్: వర్చువల్ డిస్ట్రక్టర్ తప్పనిసరి!
-    virtual ~Animal() {
-        std::cout &lt;&lt; "  [-] Animal Base Destructor cleaned.\n";
-    }
+    virtual ~Base() { std::cout &lt;&lt; "Base Destructor (Safe Cleanup)\n"; }
 };
 
-// Derived Class 1
-class Dog : public Animal {
-private:
-    std::string breed;
-
+class Derived : public Base {
+    int* buffer;
 public:
-    Dog(const std::string& b) : breed(b) {}
-
-    void makeSound() const override { // C++11 override check
-        std::cout &lt;&lt; "🐕 Dog (" &lt;&lt; breed &lt;&lt; "): Woof! Woof!\n";
-    }
-
-    ~Dog() override {
-        std::cout &lt;&lt; "  [-] Dog (" &lt;&lt; breed &lt;&lt; ") Derived Destructor cleaned.\n";
-    }
-};
-
-// Derived Class 2
-class Cat : public Animal {
-public:
-    void makeSound() const override {
-        std::cout &lt;&lt; "🐈 Cat: Meow! Meow!\n";
-    }
-
-    ~Cat() override {
-        std::cout &lt;&lt; "  [-] Cat Derived Destructor cleaned.\n";
+    Derived() : buffer(new int[100]) { }
+    ~Derived() override {
+        delete[] buffer;
+        std::cout &lt;&lt; "Derived Destructor (Memory Freed!)\n";
     }
 };
 
 int main() {
-    std::cout &lt;&lt; "=== 1. Storing Heterogeneous Objects in Base Pointer Vector ===\n";
-    std::vector&lt;std::unique_ptr&lt;Animal&gt;&gt; zoo;
-    zoo.push_back(std::make_unique&lt;Dog&gt;("German Shepherd"));
-    zoo.push_back(std::make_unique&lt;Cat&gt;());
-
-    std::cout &lt;&lt; "\n=== 2. Dynamic Dispatch in Action (One Loop, Multiple Behaviors) ===\n";
-    for (const auto& animal : zoo) {
-        animal->makeSound(); // రన్‌టైమ్‌లో సరైన చైల్డ్ మెథడ్ పిలవబడుతుంది!
-    }
-
-    std::cout &lt;&lt; "\n=== 3. Cleaning Up (Watch Virtual Destructor Dual Cleanup) ===\n";
-    zoo.clear(); // రెండు చైల్డ్ డిస్ట్రక్టర్లు మరియు బేస్ డిస్ట్రక్టర్లు సేఫ్‌గా రన్ అవుతాయి
-
+    Base* b = new Derived();
+    delete b; // Virtual Destructor వల్ల Derived ముందుగా క్లీన్ అవుతుంది!
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>virtual ~Base()</code>: వర్చువల్ డిస్ట్రక్టర్ వల్ల డైనమిక్ డిస్పాచ్ జరిగి ముందుగా <code>~Derived()</code> కాల్ అవుతుంది, <code>buffer</code> మెమరీ డిలీట్ అవుతుంది.</li>
+          <li><code>delete b</code>: ఒకవేళ <code>virtual</code> లేకపోతే <code>buffer</code> మెమరీ రామ్‌లో లీక్ అయిపోయి ఉండేది.</li>
+        </ul>
+      </div>
     </div>
 
     <!-- CONCEPT 5: PURE VIRTUAL FUNCTIONS & ABSTRACT CLASSES -->
     <div class="section-title" style="margin-top:40px;"><span class="num">5</span> Pure Virtual Functions & Abstract Classes (ఇంటర్‌ఫేస్ డిజైన్)</div>
-    <p>
-      కొన్ని సందర్భాలలో Base క్లాస్ అసలు ఏ నిర్దిష్ట పనిని చేయలేదు; అది కేవలం నియమాలను మాత్రమే నిర్దేశించాలి. ఉదాహరణకు <code>Shape</code> అనే బేస్ క్లాస్‌కు స్వంత ఆకారం ఉండదు; దాన్ని ఇన్హెరిట్ చేసుకునే <code>Circle</code> లేదా <code>Rectangle</code> మాత్రమే ఏరియాను లెక్కించగలవు.
-    </p>
-    <p>
-      ఇటువంటి సందర్భాలలో ఫంక్షన్ చివర <strong><code>= 0</code></strong> పెడతారు. దీనినే <strong>Pure Virtual Function</strong> అంటారు:
-    </p>
+    <div class="section-body">
+      <p>
+        కొన్ని సందర్భాలలో Base క్లాస్ ఎలాంటి పనిని చేయలేదు; అది కేవలం నియమాలను మాత్రమే నిర్దేశించాలి. ఉదాహరణకు <code>Shape</code> అనే బేస్ క్లాస్‌కు స్వంత ఆకారం ఉండదు కాబట్టి దానికి ఏరియా లెక్కించలేము. కేవలం దానిని ఇన్హెరిట్ చేసుకునే <code>Circle</code> లేదా <code>Rectangle</code> మాత్రమే ఏరియాను లెక్కించగలవు.
+      </p>
+      <p>
+        ఇటువంటి సందర్భాలలో ఫంక్షన్ బాడీ రాయకుండా చివర <strong><code>= 0</code></strong> పెడతారు. దీనినే <strong>Pure Virtual Function</strong> అంటారు.
+      </p>
 
-    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
-<span style="color:#10b981; font-weight:700;">[Pure Virtual Function Syntax & Properties]</span>
-
-class PaymentGateway {
-public:
-    virtual void processPayment(double amount) = 0; // Pure Virtual!
-    virtual ~PaymentGateway() = default;
-};
-
-నియమాలు:
-1. ఈ క్లాస్ ఇప్పుడు 'Abstract Class' గా మారిపోయింది.
-2. PaymentGateway obj; అని ఆబ్జెక్ట్ ను సృష్టించలేము (కంపల్సరీ కంపైలర్ ఎర్రర్).
-3. దీన్ని ఇన్హెరిట్ చేసుకునే UPI, PayPal క్లాసులు తప్పనిసరిగా processPayment() ని 
-   ఇంప్లిమెంట్ చేయాలి; లేకపోతే అవి కూడా ఆబ్‌స్ట్రాక్ట్ క్లాసులే అవుతాయి!
-    </div>
-
-    <!-- CODE BLOCK 2: ABSTRACT CLASS INTERFACE -->
-    <div class="try-box" style="margin-top:28px;">
-      <div class="try-box-title">
-        <span>💻 Code Example 2: Clean Interface Architecture via Abstract Classes</span>
-        <button class="run-btn">▶ Run C++ Code Live</button>
+      <div class="tip-box">
+        <strong>🏛️ Abstract Class యొక్క నియమాలు:</strong><br>
+        1. క్లాస్‌లో ఒక్క Pure Virtual Function ఉన్నా ఆ క్లాస్ <strong>Abstract Class</strong> అవుతుంది.<br>
+        2. Abstract Class కు నేరుగా ఆబ్జెక్టులను (<code>Shape s;</code>) సృష్టించలేము (Compile Error వస్తుంది).<br>
+        3. దీనిని ఇన్హెరిట్ చేసుకునే చైల్డ్ క్లాసులు ఆ Pure Virtual Function కు ఖచ్చితంగా బాడీని రాయాలి.
       </div>
 
-      <div class="code-box">
-        <div class="code-header">
-          <span>abstract_payment_interface.cpp</span>
-          <div class="code-actions">
-            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+      <!-- COMPACT CODE EXAMPLE 3 -->
+      <div style="margin-top:20px; margin-bottom:12px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Abstract Class & Pure Virtual Function Interface</div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>abstract_interface.cpp</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
           </div>
-        </div>
-        <pre><code>#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;memory&gt;
+          <pre><code>#include &lt;iostream&gt;
 
-// Abstract Class (C++ Interface Contract)
-class PaymentGateway {
+// Abstract Class (Interface)
+class Shape {
 public:
-    virtual void processPayment(double amount) = 0; // Pure Virtual Function
-    virtual std::string getGatewayName() const = 0;
-    virtual ~PaymentGateway() = default;
+    virtual double area() const = 0; // Pure Virtual Function
+    virtual ~Shape() = default;
 };
 
-// Concrete Implementation 1: UPI
-class UPIPayment : public PaymentGateway {
-private:
-    std::string vpaId;
+class Circle : public Shape {
+    double radius;
 public:
-    UPIPayment(const std::string& upi) : vpaId(upi) {}
-
-    void processPayment(double amount) override {
-        std::cout &lt;&lt; "  [UPI] Successfully debited ₹" &lt;&lt; amount 
-                  &lt;&lt; " via VPA: " &lt;&lt; vpaId &lt;&lt; "\n";
-    }
-
-    std::string getGatewayName() const override { return "NPCI-UPI"; }
+    Circle(double r) : radius(r) { }
+    double area() const override { return 3.14159 * radius * radius; }
 };
-
-// Concrete Implementation 2: PayPal
-class PayPalPayment : public PaymentGateway {
-private:
-    std::string email;
-public:
-    PayPalPayment(const std::string& mail) : email(mail) {}
-
-    void processPayment(double amount) override {
-        std::cout &lt;&lt; "  [PayPal] Successfully charged $" &lt;&lt; amount 
-                  &lt;&lt; " to account: " &lt;&lt; email &lt;&lt; "\n";
-    }
-
-    std::string getGatewayName() const override { return "PayPal Global"; }
-};
-
-// Client Checkout System - PaymentGateway ఇంటర్‌ఫేస్ పై మాత్రమే ఆధారపడుతుంది
-void checkout(const PaymentGateway& gateway, double bill) {
-    std::cout &lt;&lt; "Routing transaction via: " &lt;&lt; gateway.getGatewayName() &lt;&lt; "...\n";
-    const_cast&lt;PaymentGateway&&gt;(gateway); // const safe
-    // gateway.processPayment(bill);
-}
 
 int main() {
-    std::cout &lt;&lt; "=== Production Interface Pattern ===\n";
-    UPIPayment upi("balaji@okhdfcbank");
-    PayPalPayment paypal("user@enterprise.com");
-
-    upi.processPayment(1500.00);
-    paypal.processPayment(49.99);
-
+    Shape* s = new Circle(5.0);
+    std::cout &lt;&lt; "Circle Area: " &lt;&lt; s-&gt;area() &lt;&lt; "\n";
+    delete s;
     return 0;
 }</code></pre>
+        </div>
       </div>
 
-      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
-        ⚡ Open This Code in C++ Online Compiler →
-      </a>
+      <!-- BREAKDOWN CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
+        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li><code>virtual double area() const = 0;</code>: <code>= 0</code> ఉండటం వల్ల <code>Shape</code> ఒక స్వచ్ఛమైన ఇంటర్‌ఫేస్ (Abstract Class) గా మారింది.</li>
+          <li><code>Circle : public Shape</code>: <code>Circle</code> తప్పనిసరిగా <code>area()</code> మెథడ్ కు ఇంప్లిమెంటేషన్ ఇవ్వాలి, లేకపోతే <code>Circle</code> కూడా Abstract Class గా మారిపోయి ఆబ్జెక్ట్ పుట్టదు.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PITFALLS & BEST PRACTICES -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">6</span> సాధారణంగా బిగినర్స్ చేసే తప్పులు & బెస్ట్ ప్రాక్టీసెస్</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:10px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">⚠️ Common Beginner Traps</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>override రాయడం మర్చిపోవడం:</strong> Base ఫంక్షన్ సిగ్నేచర్ (ఉదా: <code>const</code> లేదా పారామీటర్ టైప్) కొద్దిగా మారినా, <code>override</code> లేకపోతే కంపైలర్ దానిని కొత్త ఫంక్షన్ గా భావించి ఓవర్‌రైడ్ చేయదు (Silent Bug).</li>
+            <li><strong>కన్‌స్ట్రక్టర్ లో వర్చువల్ ఫంక్షన్ పిలవడం:</strong> Constructor లేదా Destructor రన్ అవుతున్న సమయంలో వర్చువల్ ఫంక్షన్ కాల్ చేస్తే Late Binding జరగదు! కేవలం ప్రస్తుత క్లాస్ ఫంక్షన్ మాత్రమే పిలవబడుతుంది.</li>
+          </ul>
+        </div>
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">💡 Industry Best Practices</h4>
+          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
+            <li><strong>Smart Pointers వాడండి:</strong> రా పాయింటర్లు (<code>Animal*</code>) మరియు <code>delete</code> బదులుగా <code>std::unique_ptr&lt;Animal&gt;</code> వాడండి. మెమరీ లీక్స్ శాశ్వతంగా అదృశ్యమవుతాయి.</li>
+            <li><strong>final కీవర్డ్ తో ఆప్టిమైజ్ చేయండి:</strong> ఇకపై ఏ చైల్డ్ క్లాస్ కూడా ఒక ఫంక్షన్‌ను ఓవర్‌రైడ్ చేయకూడదు అనుకుంటే <code>final</code> కీవర్డ్ వాడండి. కంపైలర్ దాన్ని devirtualize చేసి మరింత స్పీడ్ ఇస్తుంది.</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
 
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో vtable మరియు vptr ఎలా పనిచేస్తాయి?</h4>
       <p>
-        ఒక క్లాస్‌లో కనీసం ఒక్క <code>virtual</code> ఫంక్షన్ ఉన్నా, కంపైలర్ ఆ క్లాస్ కోసం ఒక స్టాటిక్ ఫంక్షన్ పాయింటర్ల పట్టికను (vtable) సృష్టిస్తుంది. ఆ క్లాస్ యొక్క ప్రతి ఆబ్జెక్ట్ లోపల ఒక హిడెన్ 8-బైట్ పాయింటర్ (vptr) ఉంటుంది, అది ఆ vtable ను సూచిస్తుంది. రన్‌టైమ్‌లో ఫంక్షన్ కాల్ జరిగినప్పుడు vptr ద్వారా vtable లోని సరైన చైల్డ్ ఫంక్షన్ అడ్రస్‌ను వెతికి ఎగ్జిక్యూట్ చేస్తుంది (Late Binding).
+        ఒక క్లాస్‌లో కనీసం ఒక్క 'virtual' ఫంక్షన్ ఉన్నా, కంపైలర్ ఆ క్లాస్ కోసం ఒక స్టాటిక్ ఫంక్షన్ పాయింటర్ల పట్టికను (vtable) సృష్టిస్తుంది. ఆ క్లాస్ యొక్క ప్రతి ఆబ్జెక్ట్ లోపల ఒక హిడెన్ 8-బైట్ పాయింటర్ (vptr) ఉంటుంది, అది ఆ vtable ను సూచిస్తుంది. రన్‌టైమ్‌లో ఫంక్షన్ కాల్ జరిగినప్పుడు vptr ద్వారా vtable లోని సరైన చైల్డ్ ఫంక్షన్ అడ్రస్‌ను వెతికి ఎగ్జిక్యూట్ చేస్తుంది (Late Binding).
       </p>
     </div>
 
@@ -634,7 +626,7 @@ int main() {
     <div class="faq-card">
       <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Pure Virtual Function అంటే ఏమిటి? దానివల్ల క్లాస్ ఎలా మారుతుంది?</h4>
       <p>
-        ఏ బాడీ లేకుండా కేవలం <code>= 0</code> తో ప్రకటించబడిన ఫంక్షన్‌ను Pure Virtual Function అంటారు (ఉదా: <code>virtual void draw() = 0;</code>). క్లాస్‌లో ఒక్క Pure Virtual Function ఉన్నా ఆ క్లాస్ <strong>Abstract Class</strong> గా మారిపోతుంది. దీనికి నేరుగా ఆబ్జెక్టులను సృష్టించలేము; కేవలం చైల్డ్ క్లాసులు ఆ ఫంక్షన్‌ను తప్పనిసరిగా ఇంప్లిమెంట్ చేయాల్సిన ఒక పక్కా బ్లూప్రింట్ లేదా Interface లాగా పనిచేస్తుంది.
+        ఏ బాడీ లేకుండా కేవలం <code>= 0</code> తో ప్రకటించబడిన ఫంక్షన్‌ను Pure Virtual Function అంటారు (ఉదా: <code>virtual void draw() = 0;</code>). క్లాస్‌లో ఒక్క Pure Virtual Function ఉన్నా ఆ క్లాస్ 'Abstract Class' గా మారిపోతుంది. దీనికి నేరుగా ఆబ్జెక్టులను సృష్టించలేము; కేవలం చైల్డ్ క్లాసులు ఆ ఫంక్షన్‌ను తప్పనిసరిగా ఇంప్లిమెంట్ చేయాల్సిన ఒక పక్కా బ్లూప్రింట్ లేదా Interface లాగా పనిచేస్తుంది.
       </p>
     </div>
 
@@ -651,7 +643,7 @@ int main() {
     <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
       <a href="/blog-cpp/15-cpp-inheritance.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
         <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
-        <span style="font-size:14px; font-weight:700;">15. ఇన్హెరిటెన్స్ & Diamond Problem</span>
+        <span style="font-size:14px; font-weight:700;">15. ఇన్హెరిటెన్స్ (Inheritance)</span>
       </a>
 
       <a href="/blog-cpp/17-cpp-operator-overloading.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
@@ -667,4 +659,3 @@ int main() {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
-
