@@ -1,0 +1,632 @@
+const fs = require('fs');
+const path = require('path');
+
+const cIndexHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Programming Tutorial తెలుగులో (20 Chapters Complete Master Roadmap) | Our Compiler</title>
+  <meta name="description" content="C ప్రోగ్రామింగ్ తెలుగులో సులభంగా నేర్చుకోండి. 20 చాప్టర్లలో Basics, Variables, Scanf, Control Flow, Loops, Functions, Pointers, Arrays, Strings, Structs, Dynamic Memory (malloc), File Handling మరియు Real-world Projects తో పూర్తి గైడ్." />
+  <meta name="keywords" content="c tutorial in telugu, learn c language telugu, c programming telugu, c pointers in telugu, c structures telugu, c malloc telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org Course Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "C Programming Master Course తెలుగులో (2026 Edition)",
+    "description": "20 సమగ్ర అధ్యాయాలలో C బేసిక్స్, వేరియబుల్స్, scanf బఫర్స్, కంట్రోల్ ఫ్లో, లూప్స్, ఫంక్షన్స్, పాయింటర్లు, అర్రేస్, స్ట్రింగ్స్, స్ట్రక్చర్స్, డైనమిక్ మెమరీ (malloc/free), ఫైల్ హ్యాండ్లింగ్ మరియు రియల్-వరల్డ్ ప్రాజెక్ట్.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "educationalLevel": "Beginner to Advanced",
+    "inLanguage": "te",
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <!-- Accordion Toggle & Initial Theme Script -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme !== 'dark') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-c light-theme">
+
+<!-- TOP NAVIGATION FALLBACK (Replaced seamlessly by site-nav.js) -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html" class="active">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION (ALL 20 CHAPTERS) -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C Master Course (తెలుగు)</div>
+    <a href="/blog-c.html" class="sidebar-home-link active">⚡ C Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- PHASE 1 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & మెమరీ ఆర్కిటెక్చర్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-c/01-c-introduction-and-hello-world.html">1. C పరిచయం & Hello World</a>
+        <a href="/blog-c/02-c-variables-data-types-constants.html">2. వేరియబుల్స్, డేటా టైప్స్ & మెమరీ మోడల్</a>
+        <a href="/blog-c/03-c-user-input-scanf-format-specifiers.html">3. యూజర్ ఇన్‌పుట్ (scanf) & బఫర్ హ్యాండ్లింగ్</a>
+        <a href="/blog-c/04-c-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- PHASE 2 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/05-c-if-else-conditionals.html">5. డెసిషన్ మేకింగ్ (if, else if, else)</a>
+        <a href="/blog-c/06-c-switch-case-decision-making.html">6. switch స్టేట్‌మెంట్ & మెనూ ప్రోగ్రామింగ్</a>
+        <a href="/blog-c/07-c-loops-while-do-while-for.html">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-c/08-c-break-continue-nested-loops.html">8. break, continue & ప్యాటర్న్స్</a>
+      </div>
+
+      <!-- PHASE 3 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, స్కోప్ & రికర్షన్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/09-c-functions-and-prototypes.html">9. ఫంక్షన్స్ & కాల్ స్టాక్ (Call Stack)</a>
+        <a href="/blog-c/10-c-parameter-passing-call-by-value-reference.html">10. Call by Value vs Reference (పాయింటర్లు)</a>
+        <a href="/blog-c/11-c-storage-classes-and-scope.html">11. వేరియబుల్ స్కోప్ & స్టోరేజ్ క్లాసెస్</a>
+        <a href="/blog-c/12-c-recursion-call-stack.html">12. రికార్షన్ (Recursion) & బేస్ కండిషన్</a>
+      </div>
+
+      <!-- PHASE 4 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📊</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">అర్రేస్, స్ట్రింగ్స్ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/13-c-arrays-1d-and-2d-matrices.html">13. అర్రేలు (Arrays) & 2D Matrices</a>
+        <a href="/blog-c/14-c-strings-character-arrays-string-h.html">14. స్ట్రింగ్స్ (Strings) & &lt;string.h&gt;</a>
+        <a href="/blog-c/15-c-pointers-basics-and-address-arithmetic.html">15. పాయింటర్లు: బేసిక్స్ & అడ్రస్ అరిథ్‌మెటిక్</a>
+        <a href="/blog-c/16-c-pointers-with-arrays-and-double-pointers.html">16. పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr)</a>
+      </div>
+
+      <!-- PHASE 5 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">స్ట్రక్చర్స్, డైనమిక్ మెమరీ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-c/17-c-structures-unions-and-typedef.html">17. స్ట్రక్చర్స్ (struct), యూనియన్స్ & typedef</a>
+        <a href="/blog-c/18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html">18. డైనమిక్ మెమరీ (malloc, free) & Heap</a>
+        <a href="/blog-c/19-c-file-handling-fopen-fclose-text-binary.html">19. ఫైల్ హ్యాండ్లింగ్ (Files) & I/O ఆపరేషన్స్</a>
+        <a href="/blog-c/20-c-mini-project-student-record-management.html">20. కంప్లీట్ మినీ ప్రాజెక్ట్ (Student Records System)</a>
+      </div>
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-c-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN CONTENT ROADMAP -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">C Programming (తెలుగులో)</span>
+    </div>
+
+    <h1 class="page-title">C Programming Master Course తెలుగులో (20 Chapters Complete Roadmap)</h1>
+    
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
+      <span class="badge">🟢 20 Comprehensive Chapters</span>
+      <span class="badge">📂 Collapsible Interactive Roadmap (5 Phases)</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- HERO STATS BAR -->
+    <div style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:28px;">
+      <div class="hero-stat-card">
+        <span class="hero-stat-num">20</span>
+        <span class="hero-stat-label">మొత్తం చాప్టర్లు</span>
+      </div>
+      <div class="hero-stat-card">
+        <span class="hero-stat-num">5</span>
+        <span class="hero-stat-label">మాస్టర్ ఫేజ్‌లు</span>
+      </div>
+      <div class="hero-stat-card">
+        <span class="hero-stat-num">100+</span>
+        <span class="hero-stat-label">లైవ్ కోడింగ్ ఉదాహరణలు</span>
+      </div>
+      <div class="hero-stat-card">
+        <span class="hero-stat-num">100%</span>
+        <span class="hero-stat-label">ఉచిత తెలుగు కంటెంట్</span>
+      </div>
+    </div>
+
+    <!-- TELUGU INTRODUCTORY GUIDE -->
+    <div class="concept-box">
+      <h4>💡 C లాంగ్వేజ్ ఎందుకు నేర్చుకోవాలి? (Mother of All Modern Programming Languages)</h4>
+      <p style="color:var(--text, #ffffff); font-size:15px; line-height:1.8; margin-bottom:10px;">
+        కంప్యూటర్ సైన్స్ ప్రపంచంలో <strong>C లాంగ్వేజ్</strong> ను అన్ని ప్రోగ్రామింగ్ భాషలకు తల్లి (Mother of Programming) అంటారు. C++, Java, Python, C#, PHP, JavaScript ఇంజిన్లు అన్నింటి కోర్ ఆర్కిటెక్చర్ C భాష పునాదులపైనే నిర్మించబడ్డాయి. Linux Kernel, Windows OS కోర్ భాగాలు, మైక్రోకంట్రోలర్లు, మరియు ఆటోమోటివ్ సాఫ్ట్‌వేర్ నేటికీ C తోనే రన్ అవుతాయి.
+      </p>
+      <p style="color:var(--text2, #94a3b8); font-size:14.5px; line-height:1.8; margin-bottom:0;">
+        ఈ 20 అధ్యాయాల సమగ్ర కోర్సులో మీరు కంప్యూటర్ మెమరీ (RAM) అంతర్గత నిర్మాణం, పాయింటర్లు, అడ్రస్ అరిథ్‌మెటిక్, డైనమిక్ మెమరీ (malloc/free), స్ట్రక్చర్స్ మరియు ఫైల్ హ్యాండ్లింగ్‌ను లోతైన విశ్లేషణలతో, సులభమైన తెలుగు ఉదాహరణలతో మాస్టర్ చేయవచ్చు.
+      </p>
+    </div>
+
+    <!-- CURRICULUM TITLE -->
+    <div class="section-title" style="margin-top:32px;"><span class="num">📚</span> C Master Course Curriculum (20 సమగ్ర అధ్యాయాలు)</div>
+
+    <!-- ROADMAP CONTAINER -->
+    <div class="curriculum-roadmap-container">
+
+      <!-- PHASE 01 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap">
+            <span class="phase-roadmap-icon">⚡</span>
+            <div>
+              <div class="phase-roadmap-tag">PHASE 01: BASICS & MEMORY ARCHITECTURE</div>
+              <h3 class="phase-roadmap-title">భాగం 1: C బేసిక్స్ & మెమరీ ఆర్కిటెక్చర్</h3>
+            </div>
+          </div>
+          <span class="phase-roadmap-badge">4 Chapters</span>
+        </div>
+        <p class="phase-roadmap-desc">C లాంగ్వేజ్ చరిత్ర, డెన్నిస్ రిట్చీ ఫిలాసఫీ, GCC కంపైలేషన్ దశలు, వేరియబుల్స్, డేటా టైప్స్ మరియు scanf బఫర్ రహస్యాలు.</p>
+        
+        <div class="curriculum-lessons-list">
+          <a href="/blog-c/01-c-introduction-and-hello-world.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">01</span>
+              <div class="lesson-info">
+                <span class="lesson-title">C పరిచయం, చరిత్ర & మొదటి ప్రోగ్రామ్ (Hello World)</span>
+                <span class="lesson-subtopics">Dennis Ritchie హిస్టరీ · GCC కంపైలర్ పైప్‌లైన్ (4 Stages) · main() ఎగ్జిక్యూషన్ · printf() మెకానిక్స్ · return 0 ప్రాముఖ్యత</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/02-c-variables-data-types-constants.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">02</span>
+              <div class="lesson-info">
+                <span class="lesson-title">వేరియబుల్స్, డేటా టైప్స్, కాన్‌స్టాంట్స్ & మెమరీ మోడల్</span>
+                <span class="lesson-subtopics">RAM మెమరీ స్లాట్లు (Bytes) · char, int, float, double · sizeof ఆపరేటర్ · const కీవర్డ్ · Signed vs Unsigned ఓవర్‌ఫ్లో</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/03-c-user-input-scanf-format-specifiers.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">03</span>
+              <div class="lesson-info">
+                <span class="lesson-title">యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు & బఫర్ హ్యాండ్లింగ్</span>
+                <span class="lesson-subtopics">%d, %f, %c, %s స్పెసిఫైయర్లు · & (Address-of) రహస్యం · ది డేంజరస్ scanf న్యూలైన్ బఫర్ ట్రాప్ & getchar() పరిష్కారం</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/04-c-operators-and-expressions.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">04</span>
+              <div class="lesson-info">
+                <span class="lesson-title">ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & ప్రిసిడెన్స్ నియమాలు</span>
+                <span class="lesson-subtopics">అరిథ్‌మెటిక్, రిలేషనల్, లాజికల్ · Prefix (++i) vs Postfix (i++) మెమరీ తేడా · షార్ట్-సర్క్యూట్ · టైప్ కాస్టింగ్ ((float)a/b)</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 02 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap">
+            <span class="phase-roadmap-icon">🔀</span>
+            <div>
+              <div class="phase-roadmap-tag">PHASE 02: CONTROL FLOW & LOOPS</div>
+              <h3 class="phase-roadmap-title">భాగం 2: కంట్రోల్ ఫ్లో & లూప్స్</h3>
+            </div>
+          </div>
+          <span class="phase-roadmap-badge">4 Chapters</span>
+        </div>
+        <p class="phase-roadmap-desc">షరతుల ఆధారంగా నిర్ణయాలు తీసుకోవడం, ATM లాజిక్, O(1) Jump Table switch-case, మరియు రిపిటీటివ్ లూప్స్.</p>
+        
+        <div class="curriculum-lessons-list">
+          <a href="/blog-c/05-c-if-else-conditionals.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">05</span>
+              <div class="lesson-info">
+                <span class="lesson-title">కండిషనల్ స్టేట్‌మెంట్స్ (if, else if, else & Nested Branches)</span>
+                <span class="lesson-subtopics">డెసిషన్ మేకింగ్ లాజిక్ · ATM క్యాష్ విత్‌డ్రా చెక్ · గ్రేడింగ్ సిస్టమ్ · డాంగ్లింగ్ else సమస్య · అసైన్‌మెంట్ ట్రాప్ if (x = 5)</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/06-c-switch-case-decision-making.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">06</span>
+              <div class="lesson-info">
+                <span class="lesson-title">switch-case స్టేట్‌మెంట్ & మెనూ డ్రివెన్ ప్రోగ్రామింగ్</span>
+                <span class="lesson-subtopics">O(1) Jump Table ఆర్కిటెక్చర్ vs else-if · break ప్రాముఖ్యత · Fall-through మెకానిక్స్ · క్యాలిక్యులేటర్ ప్రాజెక్ట్</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/07-c-loops-while-do-while-for.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">07</span>
+              <div class="lesson-info">
+                <span class="lesson-title">లూప్స్ (for, while, do-while)</span>
+                <span class="lesson-subtopics">4 దశల ఎగ్జిక్యూషన్ చక్రం · ఎంట్రీ vs ఎగ్జిట్ కంట్రోల్ తేడాలు · ఇన్ఫినిట్ లూప్స్ · ఆఫ్-బై-వన్ బగ్స్ నివారణ</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/08-c-break-continue-nested-loops.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">08</span>
+              <div class="lesson-info">
+                <span class="lesson-title">break, continue, నెస్టెడ్ లూప్స్ & ప్యాటర్న్స్</span>
+                <span class="lesson-subtopics">లీనియర్ సెర్చ్ ఎర్లీ ఎగ్జిట్ · continue స్కిప్పింగ్ · పిరమిడ్/స్టార్ ప్యాటర్న్స్ · goto వివాదం & స్ట్రక్చర్డ్ కోడ్</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 03 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap">
+            <span class="phase-roadmap-icon">🧠</span>
+            <div>
+              <div class="phase-roadmap-tag">PHASE 03: FUNCTIONS, SCOPE & RECURSION</div>
+              <h3 class="phase-roadmap-title">భాగం 3: ఫంక్షన్స్, స్కోప్ & రికర్షన్</h3>
+            </div>
+          </div>
+          <span class="phase-roadmap-badge">4 Chapters</span>
+        </div>
+        <p class="phase-roadmap-desc">మాడ్యులర్ ప్రోగ్రామింగ్, హార్డ్‌వేర్ కాల్ స్టాక్ ఫ్రేమ్‌లు, స్టోరేజ్ క్లాసెస్ మరియు రికర్సివ్ అల్గారిథమ్స్.</p>
+        
+        <div class="curriculum-lessons-list">
+          <a href="/blog-c/09-c-functions-and-prototypes.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">09</span>
+              <div class="lesson-info">
+                <span class="lesson-title">ఫంక్షన్స్, ఫార్వర్డ్ డిక్లరేషన్ & కాల్ స్టాక్ (Call Stack)</span>
+                <span class="lesson-subtopics">DRY సూత్రం · Function Prototypes ఎందుకు అవసరం? · RAM Call Stack & Activation Records · LIFO డిస్ట్రక్షన్ ఆర్డర్</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/10-c-parameter-passing-call-by-value-reference.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">10</span>
+              <div class="lesson-info">
+                <span class="lesson-title">Call by Value vs Call by Reference (పాయింటర్స్ ద్వారా)</span>
+                <span class="lesson-subtopics">మెమరీ కాపీ vs ఒరిజినల్ అడ్రస్ పాసింగ్ · swap(&a, &b) స్వాపింగ్ పోస్ట్‌మార్టం · ఫంక్షన్ల నుండి మల్టిపుల్ విలువలను రిటర్న్ చేయడం</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/11-c-storage-classes-and-scope.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">11</span>
+              <div class="lesson-info">
+                <span class="lesson-title">వేరియబుల్ స్కోప్ & స్టోరేజ్ క్లాసెస్ (auto, static, extern, register)</span>
+                <span class="lesson-subtopics">లోకల్ vs గ్లోబల్ స్కోప్ · static వేరియబుల్ లైఫ్‌టైమ్ · CPU Register వేరియబుల్స్ · మల్టీ-ఫైల్ extern లింకేజ్</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/12-c-recursion-call-stack.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">12</span>
+              <div class="lesson-info">
+                <span class="lesson-title">రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్</span>
+                <span class="lesson-subtopics">బేస్ కండిషన్ ప్రాముఖ్యత · ఫ్యాక్టోరియల్ & ఫిబోనాకి కాల్ ట్రీ · స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow) ఎర్రర్ నివారణ</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 04 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap">
+            <span class="phase-roadmap-icon">📊</span>
+            <div>
+              <div class="phase-roadmap-tag">PHASE 04: ARRAYS, STRINGS & POINTERS</div>
+              <h3 class="phase-roadmap-title">భాగం 4: అర్రేస్, స్ట్రింగ్స్ & పాయింటర్లు</h3>
+            </div>
+          </div>
+          <span class="phase-roadmap-badge">4 Chapters</span>
+        </div>
+        <p class="phase-roadmap-desc">C లాంగ్వేజ్‌కు గుండెకాయ వంటి మెమరీ పాయింటర్లు, అర్రేల అంతర్గత కంటిగ్యుయస్ నిర్మాణం, మరియు స్ట్రింగ్ సెక్యూరిటీ.</p>
+        
+        <div class="curriculum-lessons-list">
+          <a href="/blog-c/13-c-arrays-1d-and-2d-matrices.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">13</span>
+              <div class="lesson-info">
+                <span class="lesson-title">అర్రేలు (1D Arrays & 2D Matrices)</span>
+                <span class="lesson-subtopics">కంటిగ్యుయస్ మెమరీ బ్లాక్స్ · ఇండెక్సింగ్ మెకానిక్స్ · మ్యాట్రిక్స్ కూడిక/గుణకారం · Row-Major Order మెమరీ ఫార్ములా</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/14-c-strings-character-arrays-string-h.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">14</span>
+              <div class="lesson-info">
+                <span class="lesson-title">స్ట్రింగ్స్ (Character Arrays, '\\0' Null Terminator & &lt;string.h&gt;)</span>
+                <span class="lesson-subtopics">క్యారెక్టర్ అర్రేస్ · strlen, strcpy, strcat, strcmp ఫంక్షన్స్ · బఫర్ ఓవర్‌ఫ్లో సెక్యూరిటీ వల్నరబిలిటీస్</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/15-c-pointers-basics-and-address-arithmetic.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">15</span>
+              <div class="lesson-info">
+                <span class="lesson-title">పాయింటర్లు: బేసిక్స్, మెమరీ అడ్రస్లు & Dereferencing (*, &)</span>
+                <span class="lesson-subtopics">పాయింటర్ అంటే ఏమిటి? · & (Address) vs * (Value-at) · పాయింటర్ అరిథ్‌మెటిక్ (ptr + 1) · NULL vs డాంగ్లింగ్ పాయింటర్లు</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/16-c-pointers-with-arrays-and-double-pointers.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">16</span>
+              <div class="lesson-info">
+                <span class="lesson-title">పాయింటర్లు, అర్రేస్ & Double Pointers (**ptr)</span>
+                <span class="lesson-subtopics">అర్రే డికే (Array Decay) రహస్యం · *(arr + i) నోటేషన్ · డబుల్ పాయింటర్లు (**ptr) · ఫంక్షన్ పాయింటర్లు (Callbacks)</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 05 -->
+      <div class="phase-roadmap-card">
+        <div class="phase-roadmap-header">
+          <div class="phase-roadmap-title-wrap">
+            <span class="phase-roadmap-icon">🚀</span>
+            <div>
+              <div class="phase-roadmap-tag">PHASE 05: STRUCTURES, DYNAMIC MEMORY & PROJECT</div>
+              <h3 class="phase-roadmap-title">భాగం 5: స్ట్రక్చర్స్, డైనమిక్ మెమరీ & ప్రాజెక్ట్</h3>
+            </div>
+          </div>
+          <span class="phase-roadmap-badge">4 Chapters</span>
+        </div>
+        <p class="phase-roadmap-desc">యూజర్ డిఫైన్డ్ డేటా టైప్స్, హీప్ మెమరీ మేనేజ్మెంట్ (malloc/free), ఫైల్స్ శాశ్వత భద్రపరచడం మరియు క్యాప్‌స్టోన్ ప్రాజెక్ట్.</p>
+        
+        <div class="curriculum-lessons-list">
+          <a href="/blog-c/17-c-structures-unions-and-typedef.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">17</span>
+              <div class="lesson-info">
+                <span class="lesson-title">స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef</span>
+                <span class="lesson-subtopics">హెటిరోజీనియస్ డేటా గ్రూపింగ్ · . డాట్ vs -&gt; యారో ఆపరేటర్ · Memory Padding & Alignment · union షేర్డ్ మెమరీ</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">18</span>
+              <div class="lesson-info">
+                <span class="lesson-title">డైనమిక్ మెమరీ కేటాయింపు (malloc, calloc, realloc, free)</span>
+                <span class="lesson-subtopics">Stack vs Heap మెమరీ · రన్‌టైమ్ అర్రే సైజింగ్ · మెమరీ లీక్స్ (Memory Leaks) · free() ప్రాముఖ్యత</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/19-c-file-handling-fopen-fclose-text-binary.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">19</span>
+              <div class="lesson-info">
+                <span class="lesson-title">ఫైల్ హ్యాండ్లింగ్ (&lt;stdio.h&gt;, fopen, fclose, fprintf, fscanf, fread, fwrite)</span>
+                <span class="lesson-subtopics">టెక్స్ట్ vs బైనరీ ఫైల్స్ · r, w, a, rb, wb మోడ్స్ · FILE* పాయింటర్ · ఎర్రర్ హ్యాండ్లింగ్</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+
+          <a href="/blog-c/20-c-mini-project-student-record-management.html" class="curriculum-lesson-row">
+            <div class="lesson-row-left">
+              <span class="lesson-idx">20</span>
+              <div class="lesson-info">
+                <span class="lesson-title">కంప్లీట్ మినీ ప్రాజెక్ట్: స్టూడెంట్ రికార్డ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
+                <span class="lesson-subtopics">Structs · Pointers · Dynamic Allocation · File Persistence తో పూర్తి స్థాయి రియల్-వరల్డ్ C ప్రాజెక్ట్!</span>
+              </div>
+            </div>
+            <div class="lesson-row-right">
+              <span class="lesson-btn">చదవండి <span class="arrow">→</span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- QUICK CALL TO ACTION BOX -->
+    <div class="try-box" style="text-align:center; padding:32px 24px; margin-top:36px;">
+      <h3 style="color:#10b981; font-size:20px; margin:0 0 10px 0; font-weight:800;">కోడింగ్ ప్రాక్టీస్ చేయడానికి రెడీగా ఉన్నారా?</h3>
+      <p style="color:var(--text2); font-size:14.5px; margin:0 0 18px 0; max-width:650px; margin-left:auto; margin-right:auto;">
+        ఎలాంటి సాఫ్ట్‌వేర్ ఇన్‌స్టాల్ చేయకుండా బ్రౌజర్‌లోనే క్షణాల్లో C కోడ్ రన్ చేసి ఫలితం చూడండి!
+      </p>
+      <a href="/online-c-compiler.html" class="run-btn" style="display:inline-flex; text-decoration:none;">
+        ⚡ Open C Online Compiler
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Curated by Our Compiler Technical Editorial Team</strong><br>
+        <span>Published for 2026 Academic & Industry Reference · 100% Free & Open Access</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+fs.writeFileSync(path.join(__dirname, '../public/blog-c.html'), cIndexHtml, 'utf8');
+console.log('✅ Generated public/blog-c.html Master 20-Chapter Roadmap Index');
+
