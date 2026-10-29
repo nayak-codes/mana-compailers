@@ -232,39 +232,138 @@
 
     
     <div class="intro-box">
-      ఫంక్షన్‌కు ఆర్గ్యుమెంట్లను పంపేటప్పుడు విలువ కాపీ అవుతుందా (Call by Value), లేక అసలైన మెమరీ అడ్రస్ వెళ్తుందా (Call by Reference) అనేది C ప్రోగ్రామింగ్‌లో అత్యంత కీలకమైన అంశం. పాయింటర్ల ద్వారా విలువలను స్వాప్ చేసే విధానాన్ని నేర్చుకుందాం.
+      C లాంగ్వేజ్‌లో ఫంక్షన్లకు డేటాను పంపేటప్పుడు జరిగే అంతర్గత మెమరీ మార్పిడిని అర్థం చేసుకోవడం అత్యంత కీలకమైన అంశం. ఒక వేరియబుల్‌ను ఫంక్షన్‌కు పాస్ చేసినప్పుడు అది కేవలం ఒక కాపీగా వెళ్తుందా లేక అసలు వేరియబుల్ మెమరీనే మారుస్తుందా? ఇంటర్వ్యూలలో అత్యంత ప్రాచుర్యం పొందిన <strong>Call by Value</strong> vs <strong>Call by Reference</strong> (పాయింటర్ల ద్వారా) మరియు స్వాపింగ్ మెకానిక్స్‌ను ఈ అధ్యాయంలో సమగ్రంగా పరిశీలిద్దాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>Call by Value లో స్వాపింగ్ ఎందుకు ఫెయిల్ అవుతుంది?</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>Call by Value — సేఫ్ బట్ ఐసోలేటెడ్ మెమరీ క్లోన్</div>
     <div class="section-body">
       <p>
-        సాధారణంగా ఫంక్షన్‌కు పంపినప్పుడు వేరియబుల్స్ కాపీ మాత్రమే వెళ్తాయి. ఫంక్షన్ లోపల మార్పులు చేస్తే కేవలం లోకల్ కాపీలు మాత్రమే మారుతాయి, <code>main()</code> లోని అసలు వేరియబుల్స్ అలాగే ఉంటాయి.
+        డీఫాల్ట్‌గా C లాంగ్వేజ్ అన్ని ఫంక్షన్ కాల్స్‌లో <strong>Call by Value</strong> పద్ధతినే అనుసరిస్తుంది. అంటే కాలర్ (Caller) నుండి పాస్ చేయబడిన వేరియబుల్ యొక్క విలువను మాత్రమే కాపీ చేసి, కాల్ చేయబడిన ఫంక్షన్ యొక్క ప్రత్యేక స్టాక్ ఫ్రేమ్‌లో నిల్వ చేస్తుంది.
       </p>
 
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Swapping using Pointers (Call by Reference)</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Call by Value (No modification in caller)</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-// పాయింటర్లు (*x, *y) మెమరీ అడ్రస్‌ను సూచిస్తాయి
-void swap(int* x, int* y) {
-    int temp = *x;
-    *x = *y;
-    *y = temp;
+void modifyValue(int num) {
+    num = 1000; // ఇది కేవలం లోకల్ కాపీని మాత్రమే మారుస్తుంది
 }
 
-int main() {
-    int a = 10, b = 20;
-    printf("Before: a = %d, b = %d\n", a, b);
-
-    // &a, &b అంటే మెమరీ అడ్రస్‌లను పంపడం
-    swap(&a, &b);
-
-    printf("After:  a = %d, b = %d (Swapped! ✅)\n", a, b);
+int main(void) {
+    int x = 50;
+    modifyValue(x);
+    printf("x విలువ మారలేదు: %d\n", x); // x ఇప్పటికీ 50 మాత్రమే!
     return 0;
 }</code></pre>
+      </div>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 <code>modifyValue()</code> ఫంక్షన్ లోపల <code>num</code> ను ఎంత మార్చినా, <code>main()</code> లోని అసలు వేరియబుల్ <code>x</code> సురక్షితంగా ఉంటుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>Call by Reference (పాయింటర్స్ ద్వారా) — డైరెక్ట్ మెమరీ యాక్సెస్</div>
+    <div class="section-body">
+      <p>
+        ఒక ఫంక్షన్ కాలర్‌లోని అసలు వేరియబుల్‌ను నేరుగా మార్చాలనుకుంటే (లేదా రెండు వేరియబుల్స్ విలువలను తారుమారు చేయాలనుకుంటే), మనం విలువను కాకుండా ఆ వేరియబుల్ యొక్క <strong>RAM అడ్రస్ (&amp;)</strong> ను పాయింటర్ పారామీటర్‌గా పంపాలి.
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Swap using Pointers (Call by Reference)</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// పాయింటర్లు స్వీకరించే ఫంక్షన్
+void swap(int *p1, int *p2) {
+    int temp = *p1; // *p1 అంటే ఆ అడ్రస్ లోని విలువను చదవడం (Dereferencing)
+    *p1 = *p2;      // p1 అడ్రస్ లోకి p2 విలువను రాయడం
+    *p2 = temp;     // p2 అడ్రస్ లోకి temp విలువను రాయడం
+}
+
+int main(void) {
+    int a = 10, b = 20;
+    printf("స్వాప్‌కు ముందు : a = %d, b = %d\n", a, b);
+
+    // అడ్రస్‌లను పాస్ చేయడం (&amp;a, &amp;b)
+    swap(&a, &b);
+
+    printf("స్వాప్ తర్వాత : a = %d, b = %d\n", a, b);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>ఒకే ఫంక్షన్ నుండి బహుళ విలువలను రిటర్న్ చేయడం (Output Parameters)</div>
+    <div class="section-body">
+      <p>
+        C లో ఒక ఫంక్షన్ కేవలం ఒకే ఒక్క విలువను మాత్రమే <code>return</code> చేయగలదు. కానీ రెండు లేదా అంతకంటే ఎక్కువ ఫలితాలు అవసరమైనప్పుడు (ఉదా: భాగహారం చేసి భాగఫలం మరియు శేషం రెండూ కావాలన్నప్పుడు) పాయింటర్లను <strong>అవుట్‌పుట్ పారామీటర్లు (Output Parameters)</strong> గా వాడతాం:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Multiple Return Values with Pointers</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+void divide(int dividend, int divisor, int *quotient, int *remainder) {
+    if (divisor != 0) {
+        *quotient = dividend / divisor;
+        *remainder = dividend % divisor;
+    }
+}
+
+int main(void) {
+    int q, r;
+    divide(17, 5, &q, &r);
+    printf("17/5 భాగఫలం (Quotient): %d | శేషం (Remainder): %d\n", q, r);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. పాయింటర్స్ లేకుండా స్వాపింగ్ ప్రయత్నించడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">void swap(int a, int b) { ... } // ఇది main లోని విలువలను మార్చలేదు!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">ఇది బిగినర్స్ చేసే అత్యంత కామన్ తప్పు. పాయింటర్లు వాడకపోతే స్వాపింగ్ కేవలం ఫంక్షన్ లోపల లోకల్ కాపీలలోనే జరిగి బయట ఎలాంటి ప్రభావం ఉండదు.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. డీరిఫరెన్సింగ్ ఆపరేటర్ (*) మర్చిపోవడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">p1 = p2; // అడ్రస్‌లను మారుస్తుంది కానీ మెమరీలోని విలువలను కాదు!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">మెమరీ లోపలి విలువను మార్చడానికి ఎల్లప్పుడూ <code>*p1 = *p2;</code> అని ఆస్టెరిస్క్ <code>*</code> ఉపయోగించాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C లాంగ్వేజ్‌లో C++ లాంటి Reference (&amp;var) వేరియబుల్స్ ఉన్నాయా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            లేవు! C++ లో <code>void swap(int &amp;a, int &amp;b)</code> అని రాస్తే ఆటోమేటిక్ రిఫరెన్స్ పాసింగ్ జరుగుతుంది. కానీ స్వచ్ఛమైన C లో రిఫరెన్స్ పాస్ చేయాలంటే ఖచ్చితంగా ఎక్స్‌ప్లిసిట్ పాయింటర్స్ (<code>int *a</code>) మరియు అడ్రస్ ఆపరేటర్ (<code>&amp;a</code>) వాడాల్సిందే.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: పెద్ద స్ట్రక్చర్లు (Structures) పాస్ చేసేటప్పుడు పాయింటర్లు ఎందుకు వాడాలి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            1000 బైట్ల భారీ స్ట్రక్చర్‌ను Call by Value తో పాస్ చేస్తే ప్రతిసారీ 1000 బైట్లు స్టాక్ మెమరీలోకి కాపీ కావడానికి CPU సమయం వృధా అవుతుంది. పాయింటర్ పాస్ చేస్తే కేవలం 8 బైట్ల మెమరీ అడ్రస్ మాత్రమే పాస్ అయి ప్రోగ్రామ్ వేగంగా నడుస్తుంది.
+          </p>
+        </div>
       </div>
     </div>
   

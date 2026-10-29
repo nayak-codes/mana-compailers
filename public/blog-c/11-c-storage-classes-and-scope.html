@@ -232,34 +232,113 @@
 
     
     <div class="intro-box">
-      వేరియబుల్స్ RAM లో ఎంతకాలం బతికి ఉంటాయి (Lifetime) మరియు ప్రోగ్రామ్‌లో ఎక్కడివరకు అందుబాటులో ఉంటాయి (Scope) అనే విషయాన్ని C లోని <strong>Storage Classes</strong> నిర్ణయిస్తాయి. <code>auto</code>, <code>static</code>, <code>extern</code>, మరియు <code>register</code> ల పూర్తి పనితీరును నేర్చుకుందాం.
+      C లో ఒక వేరియబుల్‌ను డిక్లేర్ చేసినప్పుడు దానికి కేవలం డేటా టైప్ మాత్రమే కాకుండా, అది మెమరీలో ఎక్కడ నిల్వ ఉంటుంది, ప్రోగ్రామ్‌లో ఎక్కడి నుండి యాక్సెస్ చేయవచ్చు (Scope), మరియు ఎంతకాలం బతికి ఉంటుంది (Lifetime) అనే అంశాలను <strong>స్టోరేజ్ క్లాసెస్ (Storage Classes)</strong> నిర్ణయిస్తాయి. ఈ అధ్యాయంలో <code>auto</code>, <code>static</code>, <code>extern</code>, మరియు <code>register</code> ల అంతర్గత ఆర్కిటెక్చర్‌ను లోతుగా నేర్చుకుందాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>static కీవర్డ్: విలువను గుర్తుంచుకునే వేరియబుల్</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>లోకల్ vs గ్లోబల్ స్కోప్ & షాడోయింగ్ (Scope Rules)</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">1. బ్లాక్ స్కోప్ / లోకల్ వేరియబుల్స్:</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">
+            ఫంక్షన్ లేదా <code>{ }</code> లోపల డిక్లేర్ చేయబడతాయి. అవి ఉన్న స్టాక్ ఫ్రేమ్ ముగియగానే అవి మెమరీ నుండి తుడిచిపెట్టుకుపోతాయి. డీఫాల్ట్ స్టోరేజ్ క్లాస్ <strong>auto</strong>.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 8px 0; font-size:14px;">2. ఫైల్ స్కోప్ / గ్లోబల్ వేరియబుల్స్:</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">
+            అన్ని ఫంక్షన్ల బయట డిక్లేర్ చేయబడతాయి. ప్రోగ్రామ్ స్టార్ట్ అయినప్పటి నుండి ముగిసేంత వరకు RAM లోని డేటా సెగ్మెంట్‌లో జీవించి ఉంటాయి.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>static వేరియబుల్స్ — మెమరీ నిలుపుదల సూత్రం</div>
     <div class="section-body">
       <p>
-        సాధారణ లోకల్ వేరియబుల్ ఫంక్షన్ ముగియగానే నశిస్తుంది. కానీ <code>static</code> అని పెడితే, అది ప్రోగ్రామ్ ముగిసేవరకు RAM మెమరీలోని Data Segment లో శాశ్వతంగా ఉండి, తన పాత విలువను గుర్తుంచుకుంటుంది:
+        సాధారణ లోకల్ వేరియబుల్ ఫంక్షన్ పూర్తవగానే నశిస్తుంది. కానీ ఒక లోకల్ వేరియబుల్‌కు ముందు <strong>static</strong> అని రాస్తే, ఫంక్షన్ ముగిసినా దాని విలువ మెమరీలోనే భద్రంగా ఉంటుంది! తర్వాతి సారి ఆ ఫంక్షన్‌ను పిలిచినప్పుడు పాత విలువ నుండే కొనసాగుతుంది.
       </p>
 
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
           <span class="lang-tag">C — static variable persistence</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-void countVisits() {
-    static int visitCount = 0; // కేవలం ఒక్కసారే ఇనిషియలైజ్ అవుతుంది
+void countVisits(void) {
+    // ప్రోగ్రామ్ జీవితకాలంలో ఒక్కసారి మాత్రమే ఇనీషియలైజ్ అవుతుంది
+    static int visitCount = 0;
     visitCount++;
-    printf("Visitor Number: %d\n", visitCount);
+    printf("విజిట్ సంఖ్య: %d\n", visitCount);
 }
 
-int main() {
-    countVisits(); // 1
-    countVisits(); // 2
-    countVisits(); // 3
+int main(void) {
+    countVisits(); // విజిట్ సంఖ్య: 1
+    countVisits(); // విజిట్ సంఖ్య: 2
+    countVisits(); // విజిట్ సంఖ్య: 3
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>register & extern స్టోరేజ్ క్లాసెస్</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f59e0b; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#f59e0b; font-size:14.5px;">⚡ register: CPU రిజిస్టర్ అలొకేషన్ హింట్</div>
+          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            <code>register int i;</code> అని రాస్తే, కంపైలర్ ఆ వేరియబుల్‌ను RAM లో కాకుండా నేరుగా CPU లోని హై-స్పీడ్ రిజిస్టర్‌లో పెట్టడానికి ప్రయత్నిస్తుంది. ముఖ్య గమనిక: <strong>రిజిస్టర్ వేరియబుల్స్ కు మెమరీ అడ్రస్ ఉండదు కాబట్టి <code>&amp;i</code> వాడటం నిషిద్ధం</strong>.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:8px; padding:14px 18px;">
+          <div style="font-weight:700; color:#8b5cf6; font-size:14.5px;">🌐 extern: మల్టీ-ఫైల్ గ్లోబల్ లింకేజ్</div>
+          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            ఒక వేరియబుల్ వేరే ఏదో <code>.c</code> ఫైల్‌లో డిక్లేర్ చేయబడిందని, ఇక్కడ కేవలం వాడుకోవడానికి మాత్రమే రిఫర్ చేస్తున్నామని లింకర్‌కు చెప్పడానికి <code>extern int globalMax;</code> వాడతాం.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. register వేరియబుల్ అడ్రస్ తీసుకోవడానికి ప్రయత్నించడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">register int count = 10; scanf("%d", &amp;count); // Compiler Error!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">రిజిస్టర్లకు RAM మెమరీ అడ్రస్ ఉండదు కాబట్టి అడ్రస్-ఆఫ్ <code>&amp;</code> ఆపరేటర్ వాడితే కంపైలర్ ఎర్రర్ ఇస్తుంది.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. గ్లోబల్ వేరియబుల్స్‌ను విచ్చలవిడిగా వాడడం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">గ్లోబల్ వేరియబుల్స్‌ను ఏ ఫంక్షన్ అయినా మార్చగలదు కాబట్టి బగ్స్ ఎక్కడ వచ్చాయో కనిపెట్టడం దాదాపు అసాధ్యం అవుతుంది. వీలైనంత వరకు లోకల్ వేరియబుల్స్ మరియు పారామీటర్లనే వాడాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: static వేరియబుల్స్‌కు ప్రారంభ విలువ ఇవ్వకపోతే ఏమవుతుంది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            సాధారణ లోకల్ వేరియబుల్స్‌లాగా గార్బేజ్ వాల్యూ ఉండదు! <code>static</code> మరియు గ్లోబల్ వేరియబుల్స్ BSS సెగ్మెంట్‌లో నిల్వ ఉంటాయి కాబట్టి కంపైలర్ వాటిని స్వయంచాలకంగా <strong>0 (సున్నా)</strong> తో ఇనీషియలైజ్ చేస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C++ లో auto కీవర్డ్ మరియు C లో auto కీవర్డ్ మధ్య తేడా ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            C లాంగ్వేజ్‌లో <code>auto</code> అనేది డీఫాల్ట్ లోకల్ స్టోరేజ్ క్లాస్ (దాదాపు ఎవరూ రాయరు). కానీ ఆధునిక C++ (C++11+) లో <code>auto</code> అంటే టైప్ ఇన్ఫరెన్స్ (Type Inference) — విలువను బట్టి డేటా టైప్‌ను కంపైలర్ స్వయంగా ఊహించడం.
+          </p>
+        </div>
       </div>
     </div>
   

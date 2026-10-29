@@ -232,29 +232,158 @@
 
     
     <div class="intro-box">
-      ఒక ఫంక్షన్ తనను తాను మళ్లీ మళ్లీ కాల్ చేసుకోవడాన్ని <strong>రికార్షన్ (Recursion)</strong> అంటారు. రికార్షన్‌లో అత్యంత ముఖ్యమైన <strong>Base Condition</strong>, మరియు అది లేకపోతే వచ్చే ప్రమాదకరమైన <strong>Stack Overflow</strong> ఎర్రర్‌ను నేర్చుకుందాం.
+      కంప్యూటర్ సైన్స్‌లో అత్యంత శక్తివంతమైన మరియు అందమైన అల్గారిథమిక్ టెక్నిక్ <strong>రికార్షన్ (Recursion)</strong>. ఒక పెద్ద సమస్యను పరిష్కరించడానికి ఒక ఫంక్షన్ తనను తాను మళ్లీ మళ్లీ పిలుచుకోవడమే రికార్షన్. అయితే రికార్షన్‌ను నియంత్రించే <strong>బేస్ కండిషన్ (Base Condition)</strong> లేకపోతే కంప్యూటర్ మెమరీ నిండిపోయి <strong>స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow)</strong> క్రాష్ ఎలా సంభవిస్తుందో, ఫ్యాక్టోరియల్ మరియు ఫిబోనాకి కాల్ ట్రీల ద్వారా లోతుగా నేర్చుకుందాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>ఫ్యాక్టోరియల్ కాలిక్యులేషన్ (Recursive Factorial)</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>రికార్షన్ 2 మూలస్తంభాలు — బేస్ కండిషన్ & రికర్సివ్ స్టెప్</div>
     <div class="section-body">
+      <p>
+        ఏదైనా రికర్సివ్ ఫంక్షన్ సరిగ్గా పనిచేయాలంటే అది ఖచ్చితంగా రెండు నియమాలను కలిగి ఉండాలి:
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">1. బేస్ కండిషన్ (The Base Case):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఇది రికార్షన్ ఆగాల్సిన గమ్యస్థానం. ఫంక్షన్ ఇకపై తనను తాను పిలవకుండా ఖచ్చితమైన సమాధానాన్ని రిటర్న్ చేసి వెనక్కి మళ్ళే షరతు (ఉదా: <code>if (n &lt;= 1) return 1;</code>).
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 6px 0; font-size:14.5px;">2. రికర్సివ్ స్టెప్ (The Recursive Step):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            సమస్య పరిమాణాన్ని కుదిస్తూ (Reducing problem size) బేస్ కండిషన్ దిశగా తీసుకువెళ్లే పిలుపు (ఉదా: <code>n * factorial(n - 1)</code>).
+          </p>
+        </div>
+      </div>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Recursion</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Recursive Factorial</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
 long long factorial(int n) {
-    // బేస్ కండిషన్: ఇది లేకపోతే స్టాక్ మెమరీ నిండిపోయి క్రాష్ అవుతుంది
-    if (n &lt;= 1) return 1;
+    // బేస్ కండిషన్
+    if (n &lt;= 1) {
+        return 1;
+    }
+    // రికర్సివ్ కాల్
     return n * factorial(n - 1);
 }
 
-int main() {
+int main(void) {
     int num = 5;
-    printf("Factorial of %d = %lld\n", num, factorial(num));
+    printf("%d యొక్క ఫ్యాక్టోరియల్ = %lld\n", num, factorial(num));
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>కాల్ స్టాక్ విజువలైజేషన్ & స్టాక్ ఫ్రేమ్‌ల పేర్చివేత (Call Tree Trace)</div>
+    <div class="section-body">
+      <p>
+        <code>factorial(4)</code> పిలిచినప్పుడు RAM కాల్ స్టాక్‌లో రెండు విభిన్న దశలు జరుగుతాయి:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px;">
+          <strong style="color:#3b82f6; font-size:14px;">దశ 1: వైండింగ్ ఫేజ్ (Winding Phase - ఫార్వర్డ్ కాల్స్):</strong>
+          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            <code>factorial(4)</code> ➔ <code>factorial(3)</code> ➔ <code>factorial(2)</code> ➔ <code>factorial(1)</code>. ప్రతి కాల్‌కు కొత్త స్టాక్ ఫ్రేమ్ మెమరీలో పేర్చబడుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px;">
+          <strong style="color:#10b981; font-size:14px;">దశ 2: అన్‌వైండింగ్ ఫేజ్ (Unwinding Phase - ఫలితాల రిటర్న్):</strong>
+          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            బేస్ కండిషన్ <code>factorial(1) = 1</code> రీచ్ అవ్వగానే ఫ్రేమ్‌లు పాప్ అవుతూ గుణకారం పూర్తవుతుంది: <code>1</code> ➔ <code>2 * 1 = 2</code> ➔ <code>3 * 2 = 6</code> ➔ <code>4 * 6 = 24</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow) ఎర్రర్ నివారణ</div>
+    <div class="section-body">
+      <p>
+        బేస్ కండిషన్ రాయడం మర్చిపోయినా లేదా ఇన్పుట్ సైజ్ చాలా పెద్దదై వేల సంఖ్యలో రికర్సివ్ కాల్స్ జరిగినా, కాల్ స్టాక్ కోసం OS కేటాయించిన మెమరీ (8MB) పూర్తిగా నిండిపోతుంది.
+      </p>
+
+      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#ef4444; font-size:14px;">💥 Segmentation fault (core dumped):</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          స్టాక్ బౌండరీ దాటి పక్కనున్న మెమరీ గార్డ్ పేజీలోకి వెళ్ళిన క్షణంలో ఆపరేటింగ్ సిస్టమ్ ప్రోగ్రామ్‌ను బలవంతంగా క్రాష్ చేస్తుంది. దీనినే <strong>Stack Overflow</strong> అంటారు.
+        </p>
+      </div>
+
+      <h4 style="color:#10b981; margin:20px 0 10px; font-size:15px; font-weight:700;">⚖️ లూప్స్ vs రికార్షన్ (Comparison Matrix):</h4>
+      <div style="overflow-x:auto; margin-bottom:16px;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+              <th style="padding:10px 14px; color:var(--text);">లక్షణం</th>
+              <th style="padding:10px 14px; color:var(--text);">లూప్స్ (Iteration)</th>
+              <th style="padding:10px 14px; color:var(--text);">రికార్షన్ (Recursion)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">మెమరీ వినియోగం</td>
+              <td style="padding:10px 14px;">$O(1)$ స్థిరమైన మెమరీ</td>
+              <td style="padding:10px 14px;">$O(N)$ స్టాక్ ఫ్రేమ్‌ల మెమరీ ఓవర్‌హెడ్</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">వేగం (Speed)</td>
+              <td style="padding:10px 14px;">అత్యంత వేగవంతమైనది</td>
+              <td style="padding:10px 14px;">ఫంక్షన్ కాల్ ఓవర్‌హెడ్ వల్ల కొద్దిగా నెమ్మది</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">కోడ్ పరిశుభ్రత</td>
+              <td style="padding:10px 14px;">ట్రీస్/గ్రాఫ్స్‌కు సంక్లిష్టమైన కోడ్</td>
+              <td style="padding:10px 14px;">డివైడ్ & కాంకర్ సమస్యలకు అత్యంత సూక్ష్మమైన కోడ్</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. బేస్ కండిషన్ లేకపోవడం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">బేస్ కండిషన్ లేకపోతే అనంతమైన రికర్సివ్ కాల్స్‌తో ప్రోగ్రామ్ తక్షణమే క్రాష్ అవుతుంది.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. ఫిబోనాకి డూప్లికేట్ కాల్స్ ట్రాప్:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;"><code>fib(n-1) + fib(n-2)</code> అని రాస్తే ఒకే విలువను లెక్కించడానికి వందల సార్లు డూప్లికేట్ కాల్స్ జరిగి $O(2^N)$ తో సిస్టమ్ ఫ్రీజ్ అవుతుంది. డైనమిక్ ప్రోగ్రామింగ్ లేదా లూప్స్ వాడాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Tail Recursion అంటే ఏమిటి? కంపైలర్ దాన్ని ఎలా ఆప్టిమైజ్ చేస్తుంది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఒక రికర్సివ్ ఫంక్షన్‌లో రికర్సివ్ కాల్ అనేది ఆ ఫంక్షన్ యొక్క ఆఖరి స్టేట్‌మెంట్ అయితే దాన్ని <strong>Tail Recursion</strong> అంటారు. ఆధునిక GCC కంపైలర్లు (Tail Call Optimization - TCO) ద్వారా కొత్త స్టాక్ ఫ్రేమ్స్ సృష్టించకుండా దాన్ని స్వయంచాలకంగా ఒక సాధారణ లూప్‌గా మార్చి మెమరీని ఆదా చేస్తాయి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: పరిశ్రమల్లో రియల్-వరల్డ్ ప్రాజెక్టులలో రికార్షన్‌ను ఎక్కడ వాడతారు?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఫైల్ సిస్టమ్ డైరెక్టరీలను ట్రావర్స్ చేయడానికి, JSON / XML పార్సింగ్ చేయడానికి, బైనరీ సెర్చ్ ట్రీస్ (BST) మరియు క్విక్ సార్ట్ (QuickSort), మెర్జ్ సార్ట్ (MergeSort) వంటి అల్గారిథమ్‌లలో రికార్షన్ విస్తృతంగా వాడతారు.
+          </p>
+        </div>
       </div>
     </div>
   

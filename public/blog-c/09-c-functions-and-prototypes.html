@@ -232,35 +232,143 @@
 
     
     <div class="intro-box">
-      పెద్ద సాఫ్ట్‌వేర్‌లను చిన్న చిన్న స్వతంత్ర భాగాలుగా విభజించి, కోడ్ డూప్లికేషన్ లేకుండా చేయడానికి <strong>ఫంక్షన్స్ (Functions)</strong> వెన్నెముక లాంటివి. Function Prototype మరియు కంప్యూటర్ RAM లో <strong>Call Stack</strong> ఎలా పెరుగుతుందో తెలుసుకుందాం.
+      సాఫ్ట్‌వేర్ డెవలప్‌మెంట్‌లో వందల వేల లైన్ల కోడ్‌ను ఒకే <code>main()</code> ఫంక్షన్‌లో రాయడం అసాధ్యం మరియు నిర్వహణకు అత్యంత కష్టం. కోడ్‌ను చిన్న చిన్న మాడ్యూల్స్‌గా విడగొట్టడానికి, పునరావృతాన్ని తగ్గించడానికి (DRY Principle - Don't Repeat Yourself) <strong>ఫంక్షన్స్ (Functions)</strong> మూలస్తంభాలు. ఈ అధ్యాయంలో ఫంక్షన్ అనాటమీ, ఫార్వర్డ్ డిక్లరేషన్ (Prototypes) ఎందుకు తప్పనిసరి, మరియు RAM లోని <strong>కాల్ స్టాక్ (Call Stack)</strong> లో యాక్టివేషన్ రికార్డ్స్ ఎలా సృష్టించబడతాయో పరిశీలిద్దాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>ఫంక్షన్ ప్రోటోటైప్ & మెమరీ కాల్ స్టాక్</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>C ఫంక్షన్ అనాటమీ — డిక్లరేషన్, డెఫినిషన్ & కాల్</div>
     <div class="section-body">
       <p>
-        C కంపైలర్ పైనుంచి కిందకి కోడ్‌ను చదువుతుంది. <code>main()</code> కింద రాసిన ఫంక్షన్‌ను పైన కాల్ చేయాలంటే తప్పనిసరిగా ఫైల్ ప్రారంభంలో <strong>Function Prototype</strong> డిక్లేర్ చేయాలి:
+        ఒక నిర్దిష్టమైన పనిని చేయడానికి రూపొందించిన స్వతంత్ర కోడ్ బ్లాక్‌ను ఫంక్షన్ అంటారు. C లో ఫంక్షన్ మూడు ముఖ్యమైన భాగాలను కలిగి ఉంటుంది:
       </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">1. రిటర్న్ టైప్ (Return Type):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఫంక్షన్ తన పని పూర్తి చేసుకున్న తర్వాత కాలర్ (Caller) కు తిరిగి ఇచ్చే డేటా రకం (ఉదా: <code>int</code>, <code>double</code>). ఒకవేళ ఏ విలువా రిటర్న్ చేయకపోతే <strong>void</strong> అని పేర్కొనాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 6px 0; font-size:14.5px;">2. పారామీటర్లు (Parameters):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఫంక్షన్ పని చేయడానికి అవసరమైన ఇన్‌పుట్ డేటాను స్వీకరించే వేరియబుల్స్ (Formal Arguments). ఉదా: <code>(int a, int b)</code>.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:8px; padding:16px;">
+          <h4 style="color:#8b5cf6; margin:0 0 6px 0; font-size:14.5px;">3. ఫంక్షన్ బాడీ (Function Body):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            కర్లీ బ్రేసెస్ <code>{ ... }</code> లోపల ఉండే వాస్తవ ఎగ్జిక్యూటబుల్ స్టేట్‌మెంట్లు మరియు ఫలితాన్ని పంపే <code>return</code> స్టేట్‌మెంట్.
+          </p>
+        </div>
+      </div>
 
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Functions & Prototypes</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Simple Function Definition & Call</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-// Forward Declaration (Prototype)
-int addNumbers(int a, int b);
-
-int main() {
-    int result = addNumbers(15, 25);
-    printf("Sum: %d\n", result);
-    return 0;
+// ఫంక్షన్ డెఫినిషన్: రెండు సంఖ్యల మొత్తం లెక్కించడం
+int calculateSum(int a, int b) {
+    return a + b;
 }
 
-// Function Definition
-int addNumbers(int a, int b) {
-    return a + b;
+int main(void) {
+    int x = 25, y = 75;
+    // ఫంక్షన్ కాల్: ఫలితాన్ని స్వీకరించడం
+    int result = calculateSum(x, y);
+
+    printf("మొత్తం (Sum): %d\n", result);
+    return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>ఫంక్షన్ ప్రోటోటైప్స్ (Function Prototypes) ఎందుకు తప్పనిసరి?</div>
+    <div class="section-body">
+      <p>
+        C కంపైలర్ మీ సోర్స్ కోడ్‌ను పై నుండి క్రిందికి ఒకే పాస్ (Single-pass compilation) లో చదువుతుంది. ఒకవేళ మీరు <code>main()</code> ఫంక్షన్ తర్వాత మీ కస్టమ్ ఫంక్షన్‌ను రాస్తే, కంపైలర్ <code>main()</code> లో ఆ ఫంక్షన్ పిలుపును చూడగానే "ఈ ఫంక్షన్ ఏమిటో నాకు తెలియదు" అని భావిస్తుంది.
+      </p>
+
+      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#ef4444; font-size:14px;">⚠️ Implicit Declaration Warning / Error:</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          పాత C ప్రమాణాలలో కంపైలర్ అన్-డిక్లేర్డ్ ఫంక్షన్‌ను డీఫాల్ట్‌గా <code>int</code> రిటర్న్ చేస్తుందని భావించేది. కానీ ఆధునిక <strong>C99 / C11 / C23</strong> లలో ఇది కంపైలర్ వార్నింగ్ లేదా ఎర్రర్ ఇస్తుంది.
+        </p>
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">✅ ది సొల్యూషన్: Function Prototype (Forward Declaration)</h4>
+        <code style="font-size:13px; color:var(--text); display:block; background:var(--bg3); padding:8px 12px; border-radius:4px; margin-bottom:8px;">
+          double calculateTax(double amount, double rate); // ప్రోటోటైప్ చివర సెమికోలన్ తప్పనిసరి!
+        </code>
+        <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+          <code>main()</code> కు ముందే ఈ ప్రోటోటైప్ రాయడం వల్ల కంపైలర్‌కు "ఈ పేరుతో ఒక ఫంక్షన్ క్రింద ఉంది, అది ఏ పారామీటర్లు తీసుకుంటుందో, ఏ డేటా టైప్ రిటర్న్ చేస్తుందో చూసుకో" అని ముందస్తు సమాచారం అందుతుంది.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>RAM కాల్ స్టాక్ & యాక్టివేషన్ రికార్డ్స్ (Call Stack Architecture)</div>
+    <div class="section-body">
+      <p>
+        ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు మెమరీ (RAM) లోని <strong>కాల్ స్టాక్ (Call Stack)</strong> విభాగం ఫంక్షన్ల ఎగ్జిక్యూషన్‌ను ట్రాక్ చేస్తుంది. ప్రతి ఫంక్షన్ కాల్ జరిగినప్పుడు స్టాక్ పై ఒక <strong>Stack Frame (లేదా Activation Record)</strong> పుష్ అవుతుంది.
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px;">
+          <strong style="color:var(--text); font-size:14px;">📦 ఒక స్టాక్ ఫ్రేమ్ లోపల ఏముంటుంది?</strong>
+          <ul style="margin:6px 0 0 0; padding-left:20px; font-size:13px; color:var(--text2); line-height:1.7;">
+            <li><strong>Return Address:</strong> ఫంక్షన్ పని ముగిశాక CPU తిరిగి కాలర్‌లో ఏ లైన్‌కు వెళ్లాలో తెలిపే ఇన్స్ట్రక్షన్ పాయింటర్.</li>
+            <li><strong>Function Arguments:</strong> ఫంక్షన్‌కు పాస్ చేసిన ఇన్‌పుట్ పారామీటర్లు.</li>
+            <li><strong>Local Variables:</strong> ఆ ఫంక్షన్ లోపల డిక్లేర్ చేసిన లోకల్ వేరియబుల్స్.</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 స్టాక్ <strong>LIFO (Last-In, First-Out)</strong> సూత్రంపై పనిచేస్తుంది. ఫంక్షన్ పూర్తయి <code>return</code> అవ్వగానే దాని స్టాక్ ఫ్రేమ్ మెమరీ నుండి పాప్ (Pop) అయి పూర్తిగా క్లియర్ అవుతుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. ఫంక్షన్ ప్రోటోటైప్ మిస్ అవ్వడం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;"><code>main()</code> తర్వాత ఫంక్షన్ రాసి పైభాగంలో ప్రోటోటైప్ ఇవ్వకపోతే కంపైలర్ టైప్ మిస్‌మ్యాచ్ వార్నింగ్‌లు ఇస్తుంది.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. లోకల్ వేరియబుల్ అడ్రస్‌ను రిటర్న్ చేయడం (Dangling Pointer Trap):</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">int* getNumber() { int x = 10; return &amp;x; } // ప్రమాదకరమైన బగ్!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">ఫంక్షన్ ముగియగానే <code>x</code> ఉన్న స్టాక్ ఫ్రేమ్ ధ్వంసమైపోతుంది. దాని అడ్రస్‌ను రిటర్న్ చేస్తే గార్బేజ్ డేటా లేదా సెగ్మెంటేషన్ ఫాల్ట్ వస్తుంది.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C లాంగ్వేజ్‌లో ఫంక్షన్ ఓవర్‌లోడింగ్ (Function Overloading) సాధ్యమేనా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            సాధ్యం కాదు! C++ లో ఒకే పేరుతో వేర్వేరు పారామీటర్లతో బహుళ ఫంక్షన్లు రాయవచ్చు కానీ C లాంగ్వేజ్‌లో ప్రతి ఫంక్షన్‌కు ఖచ్చితమైన ప్రత్యేకమైన పేరు ఉండాలి. C కంపైలర్ నేమ్ మాంగ్లింగ్ (Name Mangling) చేయదు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Call Stack గరిష్ట పరిమాణం (Stack Limit) ఎంత ఉంటుంది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఇది ఆపరేటింగ్ సిస్టమ్ మరియు కంపైలర్ కాన్ఫిగరేషన్‌పై ఆధారపడి ఉంటుంది. సాధారణంగా లైనక్స్/మాక్‌లలో డీఫాల్ట్‌గా 8MB, మరియు విండోస్‌లో 1MB స్టాక్ మెమరీ కేటాయించబడుతుంది.
+          </p>
+        </div>
       </div>
     </div>
   
