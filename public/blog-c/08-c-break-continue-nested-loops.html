@@ -232,52 +232,162 @@
 
     
     <div class="intro-box">
-      లూప్‌ను మధ్యలోనే ముగించడానికి <code>break</code>, లేదా నిర్దిష్ట రౌండ్‌ను దాటేయడానికి <code>continue</code> ఉపయోగపడతాయి. నెస్టెడ్ లూప్స్ ద్వారా స్టార్ ప్యాటర్న్స్ గీయడం మరియు <code>goto</code> వివాదాన్ని విశ్లేషిద్దాం.
+      లూప్స్ ఎగ్జిక్యూట్ అవుతున్నప్పుడు సాధారణ ఫ్లోను నియంత్రించడానికి, అవసరమైన సమాచారం దొరకగానే లూప్ నుండి వెంటనే బయటకు రావడానికి లేదా కొన్ని అనవసరమైన ఇటరేషన్లను దాటవేయడానికి <strong>break</strong> మరియు <strong>continue</strong> కీవర్డ్లు తప్పనిసరి. 2D మ్యాట్రిక్స్ ప్రాసెసింగ్ మరియు ఇంటర్వ్యూలలో ఎక్కువగా అడిగే <strong>నెస్టెడ్ లూప్స్ (Nested Loops)</strong> మరియు ప్యాటర్న్లను ఈ అధ్యాయంలో లోతుగా తెలుసుకుందాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>break & continue కంట్రోల్ ఫ్లో</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>break కీవర్డ్ — అత్యవసర లూప్ ఎగ్జిట్ (Early Exit)</div>
     <div class="section-body">
+      <p>
+        లూప్ ఎన్నిసార్లు తిరగాలని నిర్ణయించబడిందో ఆ లక్ష్యం ఇంకా పూర్తికాకముందే, ఒక నిర్దిష్ట పరిస్థితి రాగానే ఆ లూప్‌ను తక్షణమే శాశ్వతంగా ముగించి బయటకు రావడానికి <strong>break</strong> ఉపయోగపడుతుంది.
+      </p>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Linear Search with break</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Linear Search with break optimization</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    int arr[] = {10, 25, 42, 88, 99};
-    int target = 42;
+int main(void) {
+    int numbers[7] = {12, 45, 78, 23, 56, 89, 90};
+    int target = 23;
+    int foundAt = -1;
 
-    for (int i = 0; i &lt; 5; ++i) {
-        if (arr[i] == target) {
-            printf("Found target %d at index %d! 🎯\n", target, i);
-            break; // దొరికింది, మిగిలిన అర్రే చూడాల్సిన పనిలేదు!
+    for (int i = 0; i &lt; 7; i++) {
+        if (numbers[i] == target) {
+            foundAt = i;
+            break; // ఎలిమెంట్ దొరికింది! మిగిలిన ఇటరేషన్లు అనవసరం కాబట్టి లూప్ ఆపేస్తున్నాం
         }
+    }
+
+    if (foundAt != -1) {
+        printf("లక్ష్యం %d ఇండెక్స్ %d వద్ద లభించింది!\n", target, foundAt);
     }
     return 0;
 }</code></pre>
       </div>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 <code>break</code> లేకపోతే టార్గెట్ మొదట్లోనే దొరికినా అరే చివరి వరకు అనవసరంగా లూప్ రన్ అవుతూ విలువైన CPU సమయాన్ని వృధా చేస్తుంది.
+      </p>
     </div>
 
-    <div class="section-title"><span class="num">2</span>నెస్టెడ్ లూప్స్: స్టార్ పిరమిడ్ ప్యాటర్న్</div>
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>continue కీవర్డ్ — ప్రస్తుత ఇటరేషన్ స్కిప్ చేయడం</div>
     <div class="section-body">
+      <p>
+        లూప్‌ను పూర్తిగా ఆపేయకుండా, కేవలం ఆ <em>ప్రస్తుత ఒక్క ఇటరేషన్‌లోని తర్వాతి లైన్లను మాత్రమే స్కిప్ చేసి</em> వెంటనే తర్వాతి రౌండ్‌కు దూకడానికి <strong>continue</strong> వాడతాం.
+      </p>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Star Pattern</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — continue (Skip Multiples of 3)</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    int rows = 4;
-    for (int i = 1; i &lt;= rows; ++i) {
-        for (int j = 1; j &lt;= i; ++j) {
+int main(void) {
+    // 1 నుండి 10 వరకు ప్రింట్ చేస్తూ 3 యొక్క గుణిజాలను స్కిప్ చేయడం
+    for (int i = 1; i &lt;= 10; i++) {
+        if (i % 3 == 0) {
+            continue; // ఈ రౌండ్ మిగిలిన భాగం స్కిప్ అయి i++ కి వెళ్తుంది
+        }
+        printf("%d ", i);
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+      </div>
+
+      <div style="background:rgba(245, 158, 11, 0.08); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#d97706; font-size:14px;">⚠️ while లూప్‌లో continue వాడేటప్పుడు అత్యంత జాగ్రత్త!</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          <code>for</code> లూప్‌లో <code>continue</code> ఆటోమేటిక్‌గా <code>i++</code> ఇంక్రిమెంట్‌కు వెళ్తుంది. కానీ <code>while</code> లూప్‌లో ఇంక్రిమెంట్ బాడీ చివర ఉంటే, <code>continue</code> వల్ల ఆ ఇంక్రిమెంట్ లైన్ ఎప్పటికీ రన్ కాక <strong>ప్రోగ్రామ్ ఇన్ఫినిట్ లూప్‌లో ఇరుక్కుపోతుంది</strong>! కాబట్టి <code>continue</code> కి ముందే ఇంక్రిమెంట్ చేయాలి.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>నెస్టెడ్ లూప్స్ (Nested Loops) & స్టార్ ప్యాటర్న్స్</div>
+    <div class="section-body">
+      <p>
+        ఒక లూప్ లోపల మరొక లూప్ ఉండడాన్ని <strong>నెస్టెడ్ లూప్ (Nested Loop)</strong> అంటారు. బయటి లూప్ (Outer Loop) అడ్డు వరుసలను (Rows) నియంత్రిస్తే, లోపలి లూప్ (Inner Loop) నిలువు వరుసలను (Columns) నియంత్రిస్తుంది.
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Right Angled Star Pyramid</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int rows = 5;
+
+    for (int r = 1; r &lt;= rows; r++) {
+        // లోపలి లూప్: ప్రతి వరుసలో నక్షత్రాలను ముద్రించడం
+        for (int c = 1; c &lt;= r; c++) {
             printf("* ");
         }
-        printf("\n");
+        printf("\n"); // వరుస పూర్తయిన తర్వాత కొత్త లైన్‌కు వెళ్లడం
     }
     return 0;
 }</code></pre>
+      </div>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 నెస్టెడ్ లూప్స్ యొక్క టైమ్ కాంప్లెక్సిటీ సాధారణంగా $O(N 	imes M)$ లేదా $O(N^2)$ అవుతుంది. కాబట్టి 3 లేదా 4 స్థాయిల కంటే ఎక్కువ నెస్టెడ్ లూప్స్ రాయడం పెర్ఫార్మెన్స్‌కు హానికరం.
+      </p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>goto వివాదం: ప్రొఫెషనల్ కోడింగ్‌లో అనుమతించబడే సందర్భం</div>
+    <div class="section-body">
+      <p>
+        ప్రముఖ కంప్యూటర్ శాస్త్రవేత్త Edsger Dijkstra తన ప్రసిద్ధ పత్రం <em>"Go To Statement Considered Harmful"</em> లో <code>goto</code> ను నిషేధించాలని పేర్కొన్నారు. కారణం అది కోడ్‌ను అర్థం చేసుకోవడం అసాధ్యమైన స్పఘెట్టి కోడ్ (Spaghetti Code) గా మారుస్తుంది.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">🐧 Linux Kernel ఎక్సెప్షన్:</h4>
+        <p style="font-size:13px; color:var(--text); margin:0; line-height:1.6;">
+          లైనక్స్ కర్నల్ సోర్స్ కోడ్‌లో ఎర్రర్ సంభవించినప్పుడు కేటాయించిన మెమరీ మరియు ఫైల్ డిస్క్రిప్టర్లను రివర్స్ ఆర్డర్‌లో క్లీనప్ చేయడానికి (<strong>Centralized Error Unwinding</strong>) మాత్రమే <code>goto out_error;</code> ను అనుమతిస్తారు. మిగిలిన సాధారణ ప్రోగ్రామింగ్‌లో <code>goto</code> వాడరాదు.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. break అన్ని నెస్టెడ్ లూప్స్ నుండి బయటకు తెస్తుందని భావించడం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;"><code>break</code> కేవలం తాను ఉన్న <em>అత్యంత సమీపంలోని ఇన్నర్ లూప్‌ను మాత్రమే</em> రద్దు చేస్తుంది. ఔటర్ లూప్ సాధారణంగానే కొనసాగుతుంది. అన్నింటి నుండి బయటకు రావాలంటే బూలియన్ ఫ్లాగ్ లేదా <code>return</code> వాడాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. నెస్టెడ్ లూప్స్ లో వేరియబుల్ షాడోయింగ్:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">for (int i = 0; ... ) { for (int i = 0; ... ) } // గందరగోళం</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">ఔటర్ మరియు ఇన్నర్ లూప్‌లకు ఒకే వేరియబుల్ పేరు వాడకూడదు. ఎల్లప్పుడూ <code>i, j</code> లేదా <code>r, c</code> (Row, Column) అని వేర్వేరు పేర్లు వాడాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: break మరియు exit(0) ల మధ్య ముఖ్యమైన తేడా ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>break</code> కేవలం ఆ లూప్ లేదా switch నుండి మాత్రమే బయటకు తీసుకువస్తుంది; ఆ తర్వాత ఉన్న మిగిలిన ప్రోగ్రామ్ నడుస్తుంది. కానీ <code>exit(0)</code> మొత్తం ప్రోగ్రామ్‌నే అక్కడికక్కడే ఆపేసి ఆపరేటింగ్ సిస్టమ్‌కి కంట్రోల్‌ను తిరిగి ఇస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: నెస్టెడ్ లూప్స్ నుండి ఒకేసారి పూర్తిగా బయటకు రావడానికి ఉత్తమ పద్ధతి ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఒక ఫ్లాగ్ వేరియబుల్ (ఉదా: <code>int found = 1</code>) వాడి ఔటర్ లూప్‌లో కూడా బ్రేక్ చేయడం, లేదా ఆ మొత్తం నెస్టెడ్ లూప్ కోడ్‌ను ఒక ప్రత్యేక ఫంక్షన్‌లో ఉంచి కండిషన్ మ్యాచ్ కాగానే నేరుగా <strong>return</strong> చేయడం ఆధునిక క్లీన్ కోడ్ పద్ధతి.
+          </p>
+        </div>
       </div>
     </div>
   
