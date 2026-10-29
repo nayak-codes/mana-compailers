@@ -11,6 +11,19 @@ const PORT = 3002  // Changed to 3002 to avoid conflicts
 // Reuse HTTPS connections to reduce cold-start latency
 const agent = new https.Agent({ keepAlive: true })
 
+const PAIZA_LANG_MAP = {
+  python3: 'python3',
+  nodejs: 'javascript',
+  c: 'c',
+  cpp17: 'cpp',
+  java: 'java',
+  go: 'go',
+  rust: 'rust',
+  php: 'php',
+  ruby: 'ruby',
+  csharp: 'csharp'
+}
+
 // Detect if Java code uses Scanner/BufferedReader/System.in
 function javaUsesInput(code) {
   return /scanner|bufferedreader|system\.in/i.test(code);
@@ -125,14 +138,17 @@ app.get('/api/clipboard', (req, res) => {
   })
 })
 
-async function runJavaFastRunner(code, stdin) {
+async function runFastRunner(language, code, stdin = '') {
+  const paizaLang = PAIZA_LANG_MAP[language]
+  if (!paizaLang) return null
+
   try {
-    const processedCode = preprocessJavaCode(code)
+    const processedCode = language === 'java' ? preprocessJavaCode(code) : code
     const createRes = await fetch('https://api.paiza.io/runners/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        language: 'java',
+        language: paizaLang,
         source_code: processedCode,
         input: stdin || '',
         api_key: 'guest'
@@ -142,20 +158,30 @@ async function runJavaFastRunner(code, stdin) {
     if (!createData || !createData.id) return null
 
     const id = createData.id
-    let maxTries = 35
+    let maxTries = 40
     while (maxTries-- > 0) {
-      await new Promise(r => setTimeout(r, 150))
+      await new Promise(r => setTimeout(r, 120))
       const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`)
       const details = await detailsRes.json()
       if (details.status === 'completed') {
-        if (details.build_stderr) {
-          return { error: details.build_stderr, output: details.stdout || '' }
+        if (details.result === 'timeout') {
+          return { output: '', error: 'Time Limit Exceeded (10s)', type: 'runtime_error' }
         }
-        return { output: (details.stdout || '') + (details.stderr || ''), error: details.stderr || null }
+        if (details.build_stderr) {
+          return { output: details.stdout || '', error: details.build_stderr, type: 'compile_error' }
+        }
+        if (details.stderr && !details.stdout) {
+          return { output: '', error: details.stderr, type: 'runtime_error' }
+        }
+        return {
+          output: details.stdout || (details.stderr ? '' : '(no output)'),
+          error: details.stderr || null,
+          type: details.stderr ? 'runtime_error' : 'success'
+        }
       }
     }
   } catch (e) {
-    console.warn('[Fast Java Runner Server] Exception, falling back:', e.message)
+    console.warn(`[Fast Runner Server] Exception for ${language}, falling back:`, e.message)
   }
   return null
 }
@@ -172,9 +198,7 @@ app.post('/api/run', async (req, res) => {
     const startTime = Date.now()
     let data = null
 
-    if (language === 'java') {
-      data = await runJavaFastRunner(code, stdin)
-    }
+    data = await runFastRunner(language, code, stdin)
 
     if (!data) {
       // ✅ Fallback to Render Docker backend

@@ -1587,7 +1587,7 @@ export default function App() {
       const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       const apiUrl = isLocal
         ? 'http://localhost:3002/api/run'
-        : (lang.id === 'java' ? '/api/run' : `${RENDER_BACKEND}/api/run`)
+        : '/api/run'
 
       // If backend might be cold, show warming message first
       if (!isBackendWarm() && !isLocal && lang.id !== 'java') {
@@ -1598,16 +1598,34 @@ export default function App() {
       const timeoutId = setTimeout(() => controller.abort(), 55000)
 
       try {
-        const res = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            language: lang.id,
-            code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
-            stdin: inputToSend || ''
-          }),
-          signal: controller.signal
-        })
+        let res;
+        try {
+          res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              language: lang.id,
+              code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+              stdin: inputToSend || ''
+            }),
+            signal: controller.signal
+          });
+        } catch (initialErr) {
+          if (!isLocal && apiUrl !== `${RENDER_BACKEND}/api/run`) {
+            res = await fetch(`${RENDER_BACKEND}/api/run`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                language: lang.id,
+                code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+                stdin: inputToSend || ''
+              }),
+              signal: controller.signal
+            });
+          } else {
+            throw initialErr;
+          }
+        }
         clearTimeout(timeoutId)
         data = await res.json()
         if (lang.id !== 'java') {

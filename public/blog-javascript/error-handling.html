@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>29. Error Handling: try-catch — JavaScript Tutorial | Our Compiler</title>
-  <meta name="description" content="Learn 29. Error Handling: try-catch in JavaScript with clear Telugu explanations and live runnable code." />
-  <meta name="keywords" content="javascript tutorial, 29. error handling: try-catch, learn javascript, javascript online compiler" />
+  <title>JavaScript Error Handling & localStorage తెలుగులో | try, catch, finally & Web Storage — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="JavaScript లో ఎర్రర్లను ఎలా ఎదుర్కోవాలి? try, catch, finally, custom throw ఎర్రర్స్ మరియు బ్రౌజర్ లో శాశ్వతంగా డేటా దాచే localStorage & sessionStorage గురించి తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="javascript error handling telugu, try catch finally javascript telugu, localstorage javascript telugu, throw custom error js, sessionstorage vs localstorage, web storage api telugu, javascript tutorial telugu" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/error-handling.html" />
@@ -14,7 +14,108 @@
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="/site-nav.css" />
-  
+
+  <style>
+    /* Content Anchor Navigation */
+    .toc-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 30px;
+    }
+    .toc-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #f7df1e;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .toc-col h4 {
+      font-size: 15px;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    .toc-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .toc-list li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .toc-list a {
+      color: var(--text2);
+      text-decoration: none;
+      transition: color 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-list a:hover {
+      color: #f7df1e;
+      text-decoration: underline;
+    }
+
+    /* Custom Tables */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 14.5px;
+      background: var(--bg2);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .custom-table th, .custom-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .custom-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #38bdf8;
+      font-weight: 700;
+    }
+    body.light-theme .custom-table th {
+      background: #f1f5f9;
+      color: #0369a1;
+    }
+    .custom-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .concept-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #f7df1e;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-card h4 {
+      margin: 0 0 8px 0;
+      color: var(--text);
+      font-size: 16px;
+    }
+    .concept-card p {
+      margin: 0;
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+    }
+  </style>
+
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -42,7 +143,7 @@
       const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN','localStorage'];
+      const typeList = ['console','document','window','Math','Array','Object','String','Number','Boolean','Promise','JSON','Set','Map','Date','Error','TypeError','SyntaxError','ReferenceError','RangeError','URIError','RegExp','Symbol','BigInt','undefined','null','true','false','alert','prompt','confirm','parseInt','parseFloat','isNaN','localStorage','sessionStorage','Storage'];
       const typeRegex = new RegExp(`\\b(${typeList.join('|')})\\b`, 'g');
       code = code.replace(typeRegex, m => pushToken('vr', m));
 
@@ -157,24 +258,18 @@
   <a href="/blog-c.html">C</a>
   <a href="/blog-cpp.html">C++</a>
   <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <!-- SIDEBAR NAVIGATION -->
   <aside class="sidebar">
-    <div class="sidebar-heading">JavaScript Course</div>
-    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+    <div class="sidebar-title">JavaScript Masterclass</div>
 
-    <div class="sidebar-accordion">
+    <div class="accordion">
       <!-- Part 01: Basics -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
-          <span class="phase-icon-box">🟨</span>
+          <span class="phase-icon-box">🔰</span>
           <div class="phase-info">
             <span class="phase-tag">Part 01</span>
             <span class="phase-title">Basics</span>
@@ -189,12 +284,12 @@
       </button>
       <div class="accordion-content">
         <a href="/blog-javascript/01-javascript-fundamentals.html">1. JavaScript ante enti?</a>
-        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Setup & Environment</a>
-        <a href="/blog-javascript/variables.html">3. Variables: var, let, const</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Setup & First Program</a>
+        <a href="/blog-javascript/variables.html">3. Variables: let, const, var</a>
         <a href="/blog-javascript/data-types.html">4. Data Types</a>
-        <a href="/blog-javascript/operators.html">5. Operators</a>
+        <a href="/blog-javascript/operators.html">5. Operators & Expressions</a>
         <a href="/blog-javascript/type-conversion.html">6. Type Conversion & Template Literals</a>
-        <a href="/blog-javascript/input-output.html">7. Input/Output (I/O)</a>
+        <a href="/blog-javascript/input-output.html">7. Input & Output</a>
       </div>
 
       <!-- Part 02: Control Flow -->
@@ -230,7 +325,7 @@
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">7 Ch</span>
+          <span class="phase-count-badge">6 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
@@ -239,66 +334,58 @@
       <div class="accordion-content">
         <a href="/blog-javascript/functions.html">12. Functions: declaration, parameters, return</a>
         <a href="/blog-javascript/arrow-functions.html">13. Arrow Functions</a>
-        <a href="/blog-javascript/arrays.html">14. Arrays: create, access, push/pop</a>
-        <a href="/blog-javascript/array-methods.html">15. Array Methods: map, filter, reduce, forEach</a>
-        <a href="/blog-javascript/objects.html">16. Objects: properties, methods</a>
-        <a href="/blog-javascript/strings.html">17. Strings: common methods</a>
-        <a href="/blog-javascript/math-date.html">18. Math & Date objects</a>
+        <a href="/blog-javascript/arrays.html">14. Arrays & Array Methods</a>
+        <a href="/blog-javascript/objects.html">15. Objects: properties, methods & JSON</a>
+        <a href="/blog-javascript/strings.html">16. Strings: common methods</a>
+        <a href="/blog-javascript/math-date.html">17. Math & Date objects</a>
       </div>
 
-      <!-- Part 04: DOM (Document Object Model) -->
+      <!-- Part 04: DOM & Events -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🌐</span>
           <div class="phase-info">
             <span class="phase-tag">Part 04</span>
-            <span class="phase-title">DOM (Document Object Model)</span>
+            <span class="phase-title">DOM & Events</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
+          <span class="phase-count-badge">4 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/dom.html">19. DOM ante enti? Elements select cheyyadam</a>
-        <a href="/blog-javascript/dom-manipulation.html">20. Content & style marchadam</a>
-        <a href="/blog-javascript/events.html">21. Events: click, input, submit</a>
-        <a href="/blog-javascript/form-validation.html">22. Form validation</a>
-        <a href="/blog-javascript/todo-list-project.html">23. Mini project: To-Do List</a>
+        <a href="/blog-javascript/dom.html">18. DOM: Selecting & Manipulation</a>
+        <a href="/blog-javascript/events.html">19. Events: click, input, submit</a>
+        <a href="/blog-javascript/form-validation.html">20. Form Validation</a>
+        <a href="/blog-javascript/todo-list-project.html">21. Mini project: To-Do List</a>
       </div>
 
-      <!-- Part 05: Intermediate JavaScript -->
+      <!-- Part 05: Modern & Advanced JS -->
       <button class="accordion-header active" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🚀</span>
           <div class="phase-info">
             <span class="phase-tag">Part 05</span>
-            <span class="phase-title">Intermediate JavaScript</span>
+            <span class="phase-title">Modern & Advanced JS</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">8 Ch</span>
+          <span class="phase-count-badge">4 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content open">
-        <a href="/blog-javascript/scope-hoisting.html">24. Scope & Hoisting</a>
-        <a href="/blog-javascript/destructuring-spread.html">25. Destructuring, Spread, Rest</a>
-        <a href="/blog-javascript/closures.html">26. Closures</a>
-        <a href="/blog-javascript/promises.html">27. Callbacks, Promises</a>
-        <a href="/blog-javascript/async-await-fetch.html">28. async / await & fetch API</a>
-        <a href="/blog-javascript/error-handling.html" class="active">29. Error Handling: try-catch</a>
-        <a href="/blog-javascript/modules.html">30. ES6 Modules</a>
-        <a href="/blog-javascript/localstorage.html">31. localStorage</a>
+        <a href="/blog-javascript/scope-hoisting.html">22. Scope, Hoisting & Closures</a>
+        <a href="/blog-javascript/destructuring-spread.html">23. Destructuring, Spread, Rest & ES6 Modules</a>
+        <a href="/blog-javascript/async-await-fetch.html">24. Asynchronous JS: Promises, async/await & Fetch</a>
+        <a href="/blog-javascript/error-handling.html" class="active">25. Error Handling & localStorage</a>
       </div>
-
     </div>
-
 
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=nodejs" style="color:#f7df1e; font-weight:700;">▶ Try JavaScript Online</a>
@@ -316,119 +403,400 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
-      <span class="current">Lesson 29: 29. Error Handling: try-catch</span>
+      <span class="current">Lesson 25: Error Handling & localStorage</span>
     </div>
 
-    <h1 class="page-title">29. Error Handling: try-catch</h1>
+    <h1 class="page-title">JavaScript Error Handling & localStorage: ప్రొడక్షన్-గ్రేడ్ యాప్ భద్రత మరియు డేటా స్టోరేజ్ (మాస్టర్ గైడ్)</h1>
 
     <div class="page-meta">
       <span class="badge">🟨 JavaScript (ES2026+)</span>
-      <span class="badge">🟢 Lesson 29</span>
-      <span class="badge">📂 Part 05: Intermediate JavaScript</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">🟢 Lesson 25 of 25 (గ్రాండ్ ఫినాలే)</span>
+      <span class="badge">📂 Part 05: Modern & Advanced JS (Page 4 of 4)</span>
+      <span class="badge">⏱️ 18 min read</span>
     </div>
 
     <!-- Subtopics Pill Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#f7df1e; font-weight:700;">📌 Covered in this lesson:</span>
-      <span>try block · catch block · finally block · throw new Error() · Graceful degradation</span>
+      <span>Circus Safety Net Analogy · try, catch, finally, throw Architecture · JS Error Types · Fridge Magnet Analogy for Web Storage · localStorage vs sessionStorage · Safe JSON Persistence Pattern · 5 Production Pitfalls · Course Completion Roadmap</span>
     </div>
 
-
-    <!-- ====================================================================
-         👇 CHAPTER CONTENT START (ఇక్కడ నుండి మీ పాఠం కంటెంట్ రాయండి) 👇
-         ==================================================================== -->
-
+    <!-- Intro Box with 2 Dual Mental Models -->
     <div class="intro-box">
-      <p>ఈ పాఠంలో మనం JavaScript లోని ముఖ్యమైన <strong>29. Error Handling: try-catch</strong> గురించి స్పష్టంగా, సులభమైన ఉదాహరణలతో నేర్చుకుందాం.</p>
-      <p>రియల్ వరల్డ్ ప్రాజెక్టులలో మరియు ఇంటర్వ్యూలలో ఈ కాన్సెప్ట్ చాలా కీలకం.</p>
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        సాధారణ కోడర్ రాసే ప్రోగ్రామ్ సరైన ఇన్‌పుట్ ఇచ్చినప్పుడు మాత్రమే పనిచేస్తుంది; కానీ ఒక సీనియర్ సాఫ్ట్‌వేర్ ఇంజనీర్ రాసే కోడ్, ఊహించని సర్వర్ వైఫల్యాలు లేదా తప్పుడు డేటా వచ్చినా <strong>యాప్ క్రాష్ అవ్వకుండా</strong> హుందాగా ఎదుర్కొంటుంది (Graceful Degradation). అదే సమయంలో, యూజర్ పేజీని రీఫ్రెష్ చేసినా లేదా బ్రౌజర్ మూసి మళ్ళీ తెరిచినా తన సెట్టింగ్స్, థీమ్, మరియు కార్ట్ ఐటమ్స్ చెక్కుచెదరకుండా ఉంచడం ప్రొడక్షన్ యాప్స్‌కి ప్రాణం.
+      </p>
+      
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        🎪 <strong>1. సర్కస్ సేఫ్టీ నెట్ రూపకం (Circus Safety Net Analogy - Error Handling):</strong>
+        <br>
+        సర్కస్ గుడారంలో ఎత్తైన తాడుపై లేదా ట్రాపెజ్ ఊయల మీద విన్యాసాలు చేసే కళాకారుడు <strong><code>try</code></strong> బ్లాక్ లాంటివాడు. కింద పెద్ద ఎత్తున కట్టిన రక్షక వల (Safety Net) <strong><code>catch</code></strong> బ్లాక్.
+        ఒకవేళ గాల్లో పట్టు తప్పి కళాకారుడు జారినా, కింద నేలకు గుద్దుకుని ప్రాణం పోకుండా (బ్రౌజర్ వైట్ స్క్రీన్ అయి మొత్తం యాప్ ఆగిపోకుండా), ఆ సేఫ్టీ నెట్ అతడిని ఒడిసి పట్టుకుంటుంది! యూజర్‌కి ఒక మర్యాదపూర్వక సందేశం ఇచ్చి యాప్ సేఫ్‌గా నడుస్తుంది. ఇక విన్యాసం విజయవంతమైనా లేదా నెట్‌లో పడిపోయినా.. షో ముగిశాక స్టేజ్ లైట్లు ఆపి హాల్ శుభ్రపరిచే పనివాడే <strong><code>finally</code></strong> (రిసోర్స్‌లు క్లీనప్ చేయడం, లోడింగ్ స్పిన్నర్లు దాచడం).
+      </p>
+
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        🧲 <strong>2. ఫ్రిజ్ అయస్కాంతం రూపకం (Fridge Magnet Analogy - localStorage):</strong>
+        <br>
+        జావాస్క్రిప్ట్ వేరియబుల్స్ కంప్యూటర్ RAM లో ఉంటాయి — అవి వైట్‌బోర్డు మీద చాక్ పీస్‌తో రాసిన రాతల్లాంటివి. పేజీ రీఫ్రెష్ అవ్వగానే తుడిచిపెట్టుకుపోతాయి. 
+        అదే <strong><code>localStorage</code></strong> అనేది మీ వంటింటి ఫ్రిజ్ డోర్‌కు తగిలించిన అయస్కాంతం (Fridge Magnet) లాంటిది! రాత్రి లైట్లు ఆపేసినా, పవర్ పోయి మళ్ళీ వచ్చినా, ఫ్రిజ్ రీస్టార్ట్ అయినా ఆ అయస్కాంత స్టిక్కర్ అక్కడే భద్రంగా ఉంటుంది. బ్రౌజర్ క్లోజ్ చేసి మరుసటి రోజు కంప్యూటర్ ఆన్ చేసినా యూజర్ డేటా సేఫ్‌గా లభిస్తుంది.
+      </p>
     </div>
 
-    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
-    <div class="section-body">
-      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li><code>try block</code> గురించి అవగాహన</li>
-        <li><code>catch block</code> గురించి అవగాహన</li>
-        <li><code>finally block</code> గురించి అవగాహన</li>
-        <li><code>throw new Error()</code> గురించి అవగాహన</li>
-        <li><code>Graceful degradation</code> గురించి అవగాహన</li>
-      </ul>
-    </div>
-
-    <div class="section-title"><span class="num">2</span>సిద్ధాంతం & ప్రాథమిక కాన్సెప్ట్</div>
-    <div class="section-body">
-      <p>ఇక్కడ కాన్సెప్ట్ గురించిన పూర్తి వివరణ రాయండి...</p>
-
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="lang-tag">JavaScript — ఉదాహరణ 1</span>
-          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#f7df1e; text-decoration:none;">విభాగం A: ఎర్రర్ హ్యాండ్లింగ్ (try, catch, finally, throw)</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. జావాస్క్రిప్ట్ లో ఎర్రర్స్ ఎందుకు వస్తాయి? అన్‌హ్యాండిల్డ్ ఎర్రర్ ప్రమాదం</a></li>
+            <li><a href="#sec-2">2. try...catch...finally నిర్మాణ క్రమం</a></li>
+            <li><a href="#sec-3">3. throw new Error() తో కస్టమ్ బిజినెస్ రూల్స్ నిర్మించడం</a></li>
+            <li><a href="#sec-4">4. JS లోని ముఖ్యమైన 5 Error రకాలు (TypeError, ReferenceError మొదలైనవి)</a></li>
+            <li><a href="#sec-5">5. లైవ్ కోడ్ ఉదాహరణ: ప్రొడక్షన్ బ్యాంకింగ్ ట్రాన్సాక్షన్ ఇంజిన్</a></li>
+          </ul>
         </div>
-        <pre><code>// 29. Error Handling: try-catch కోడ్ ఉదాహరణ
-console.log("29. Error Handling: try-catch మొదలైంది");
-</code></pre>
+        <div class="toc-col">
+          <h4><a href="#sec-6" style="color:#38bdf8; text-decoration:none;">విభాగం B: బ్రౌజర్ వెబ్ స్టోరేజ్ (localStorage & sessionStorage)</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-6">6. Web Storage పరిచయం: localStorage vs sessionStorage vs Cookies</a></li>
+            <li><a href="#sec-7">7. Core Storage API: setItem, getItem, removeItem, clear</a></li>
+            <li><a href="#sec-8">8. Strings-Only నియమం & JSON బ్రిడ్జి (stringify / parse)</a></li>
+            <li><a href="#sec-9">9. లైవ్ కోడ్ ఉదాహరణ: ఫెయిల్-సేఫ్ లోకల్ స్టోరేజ్ స్టేట్ మేనేజర్</a></li>
+            <li><a href="#sec-10">10. 5 ప్రమాదకరమైన ప్రొడక్షన్ తప్పులు (Pitfalls) & పరిష్కారాలు</a></li>
+            <li><a href="#sec-11">11. ఇంటర్వ్యూ & ప్రాక్టీస్ ప్రశ్నలు (సమాధానాలతో)</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 id="sec-1" class="section-title">1. జావాస్క్రిప్ట్ లో ఎర్రర్స్ ఎందుకు వస్తాయి? అన్‌హ్యాండిల్డ్ ఎర్రర్ ప్రమాదం</h2>
+    <p>
+      జావాస్క్రిప్ట్ లైన్-బై-లైన్ ఎగ్జిక్యూట్ అయ్యే లాంగ్వేజ్. మీ ప్రోగ్రామ్‌లో 100 లైన్ల కోడ్ ఉండి, 15వ లైన్ వద్ద ఒక వేరియబుల్ తప్పుగా డిక్లేర్ అయినా లేదా లేని ప్రాపర్టీని చదవబోయినా (ఉదా: <code>user.address.city</code> లో address `undefined` అయితే), జావాస్క్రిప్ట్ ఇంజిన్ వెంటనే <strong>Fatal Exception</strong> ని త్రో చేస్తుంది.
+    </p>
+
+    <div class="concept-card">
+      <h4>🚨 అన్‌హ్యాండిల్డ్ ఎర్రర్ జరిగితే యూజర్‌కు ఏం జరుగుతుంది?</h4>
+      <p>
+        మీరు రక్షక కవచం (try...catch) ఏర్పాటు చేయకపోతే, ఆ ఎర్రర్ వచ్చిన మరుక్షణమే స్క్రిప్ట్ ఎగ్జిక్యూషన్ శాశ్వతంగా ఆగిపోతుంది! కింద ఉన్న 16 నుండి 100 వరకు లైన్లు ఎప్పటికీ రన్ కావు. బటన్లు క్లిక్ చేయడం ఆగిపోతాయి, పేజీ ఫ్రీజ్ అవుతుంది, యూజర్ నిస్సహాయంగా పేజీని వదిలి వెళ్ళిపోతాడు. ఈ పరిస్థితి రాకుండా అడ్డుకోవడమే <strong>Exception Handling</strong>.
+      </p>
+    </div>
+
+    <!-- SECTION 2 & 3 -->
+    <h2 id="sec-2" class="section-title">2. try...catch...finally నిర్మాణ క్రమం & throw new Error()</h2>
+    <p>
+      జావాస్క్రిప్ట్ ఎర్రర్ హ్యాండ్లింగ్ సింటాక్స్ నాలుగు మూలస్తంభాలపై ఆధారపడి ఉంటుంది:
+    </p>
+
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th style="width: 20%;">కీవర్డ్</th>
+          <th style="width: 30%;">బాధ్యత / పాత్ర</th>
+          <th style="width: 50%;">వాస్తవ ప్రవర్తన (Real Behavior)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong><code>try</code></strong></td>
+          <td>రిస్క్ ఉన్న కోడ్ ప్రాంతం</td>
+          <td>ఎర్రర్ వచ్చే అవకాశం ఉన్న కోడ్‌ను ఈ బ్లాక్‌లో ఉంచుతారు. ఇక్కడ ఎర్రర్ రాకపోతే ప్రశాంతంగా పూర్తవుతుంది; ఎర్రర్ రాగానే తదుపరి లైన్లు ఆగి వెంటనే <code>catch</code> కి జంప్ అవుతుంది.</td>
+        </tr>
+        <tr>
+          <td><strong><code>catch (error)</code></strong></td>
+          <td>సేఫ్టీ నెట్ / రక్షకుడు</td>
+          <td><code>try</code> లో ఎర్రర్ తలెత్తినప్పుడు మాత్రమే ఇది రన్ అవుతుంది. ఆ ఎర్రర్ యొక్క పూర్తి సమాచారాన్ని (<code>error.message</code>, <code>error.name</code>) అందుకుని లాగ్ చేస్తుంది లేదా యూజర్‌కి అర్థమయ్యేలా అలర్ట్ ఇస్తుంది.</td>
+        </tr>
+        <tr>
+          <td><strong><code>finally</code></strong></td>
+          <td>గ్యారెంటీడ్ క్లీనప్ వర్కర్</td>
+          <td><code>try</code> విజయవంతమైనా, లేదా <code>catch</code> లో ఎర్రర్ పడినా.. <strong>ఖచ్చితంగా ప్రతిసారీ రన్ అవుతుంది</strong>! నెట్‌వర్క్ లోడింగ్ స్పిన్నర్లను దాచడానికి, డేటాబేస్ లేదా ఫైల్ కనెక్షన్లను మూసివేయడానికి ఇది ఉపయోగపడుతుంది.</td>
+        </tr>
+        <tr>
+          <td><strong><code>throw</code></strong></td>
+          <td>మ్యానువల్ ఎలక్ట్రిక్ అలారం</td>
+          <td>సిస్టమ్ ఎర్రర్ కోసం ఎదురుచూడకుండా, మీ వ్యాపార నిబంధనలు (Business Rules) ఉల్లంఘించబడినప్పుడు మీరే స్వయంగా <code>throw new Error("సందేశం")</code> ద్వారా ఎర్రర్‌ను సృష్టించవచ్చు.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- SECTION 4 -->
+    <h2 id="sec-4" class="section-title">4. జావాస్క్రిప్ట్ లోని 5 ముఖ్యమైన బిల్ట్-ఇన్ Error రకాలు</h2>
+    <p>
+      జావాస్క్రిప్ట్ ఏదైనా పొరపాటు జరిగినప్పుడు ఒక ప్రామాణిక <code>Error</code> ఆబ్జెక్ట్‌ను సృష్టిస్తుంది. అందులో తరచుగా కనిపించే 5 రకాలు:
+    </p>
+
+    <ul style="margin-left: 20px; line-height: 1.9; color: var(--text2); font-size: 15px;">
+      <li><strong><code>ReferenceError:</code></strong> ఉనికిలో లేని లేదా ఇంకా డిక్లేర్ చేయని వేరియబుల్‌ను యాక్సెస్ చేయబోయినప్పుడు (ఉదా: <code>console.log(totalSum)</code> — where totalSum does not exist).</li>
+      <li><strong><code>TypeError:</code></strong> చెల్లని డేటాటైప్‌పై ఆపరేషన్ చేయడం లేదా `undefined`/`null` పై ప్రాపర్టీస్ పిలవడం (ఉదా: <code>null.toUpperCase()</code> లేదా <code>const x = 5; x();</code>).</li>
+      <li><strong><code>SyntaxError:</code></strong> బ్రాకెట్లు మూయకపోవడం, తప్పుడు కామాలు పెట్టడం వల్ల కోడ్ పార్సింగ్ విఫలమైనప్పుడు (ఉదా: <code>JSON.parse("చెల్లని డేటా")</code>).</li>
+      <li><strong><code>RangeError:</code></strong> సంఖ్య అనుమతించిన పరిధి కంటే ఎక్కువగా లేదా తక్కువగా ఉన్నప్పుడు (ఉదా: <code>new Array(-1)</code> లేదా ఇన్ఫినిట్ రికర్షన్ వల్ల స్టాక్ ఓవర్‌ఫ్లో కావడం).</li>
+      <li><strong><code>URIError:</code></strong> <code>decodeURI('%')</code> లాంటి తప్పుడు ఎన్‌కోడింగ్ ఉన్న URL పారామీటర్లను డీకోడ్ చేయబోయినప్పుడు వస్తుంది.</li>
+    </ul>
+
+    <!-- CODE BLOCK 1 -->
+    <h2 id="sec-5" class="section-title">5. లైవ్ కోడ్ ఉదాహరణ: ప్రొడక్షన్ బ్యాంకింగ్ లావాదేవీల ఇంజిన్</h2>
+    <p>
+      కింది కోడ్‌లో మనం ఒక బ్యాంకింగ్ ఫండ్ ట్రాన్స్‌ఫర్ ఫంక్షన్‌ను నిర్మించాం. తప్పుడు అమౌంట్ లేదా ఖాతాలో డబ్బు లేనప్పుడు <code>throw new Error()</code> ట్రిగ్గర్ అవుతుంది. విఫలమైనా లేదా గెలిచినా <code>finally</code> లోడింగ్ స్పిన్నర్‌ను శాశ్వతంగా ఆపివేస్తుంది:
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span>JavaScript: Safe Transaction with try, catch, finally & throw</span>
+        <div class="code-actions">
+          <a href="/?lang=nodejs" class="try-btn">▶ Try Online</a>
+        </div>
+      </div>
+      <pre><code>function processTransfer(fromAcc, toAcc, amount) {
+  let spinner = true;
+  try {
+    if (amount <= 0) throw new Error("చెల్లని మొత్తం: 0 కంటే ఎక్కువ ఉండాలి!");
+    if (fromAcc.balance < amount) throw new Error("ఖాతాలో నిధులు సరిపోవు!");
+    fromAcc.balance -= amount;
+    toAcc.balance += amount;
+    console.log(`✅ విజయవంతం: ₹${amount} పంపబడింది. మిగిలిన నిల్వ: ₹${fromAcc.balance}`);
+  } catch (err) {
+    console.error(`❌ బదిలీ విఫలమైంది [${err.name}]: ${err.message}`);
+  } finally {
+    spinner = false;
+    console.log("🔄 లోడింగ్ స్పిన్నర్ ఆపివేయబడింది. కనెక్షన్ ముగిసింది.");
+  }
+}
+processTransfer({ id: 101, balance: 500 }, { id: 102, balance: 100 }, 800);</code></pre>
+    </div>
+
+    <!-- SECTION 6: WEB STORAGE -->
+    <h2 id="sec-6" class="section-title">6. బ్రౌజర్ వెబ్ స్టోరేజ్: localStorage vs sessionStorage vs Cookies</h2>
+    <p>
+      వెబ్‌సైట్లలో యూజర్ సెట్టింగులు, లాగిన్ సెషన్లు లేదా కార్ట్ వివరాలను స్టోర్ చేయడానికి ఆధునిక HTML5 Web Storage API అత్యంత శక్తివంతమైన సాధనం. పూర్వకాలంలో దీనికోసం కుకీలు (Cookies) వాడేవారు, కానీ ఆధునిక యాప్స్‌లో వ్యత్యాసం ఇలా ఉంటుంది:
+    </p>
+
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>లక్షణం (Feature)</th>
+          <th><code>localStorage</code></th>
+          <th><code>sessionStorage</code></th>
+          <th><code>Cookies</code></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>జీవితకాలం (Lifespan)</strong></td>
+          <td>శాశ్వతం (యూజర్ స్వయంగా క్లియర్ చేసేవరకు ఉంటుంది)</td>
+          <td>ట్యాబ్ క్లోజ్ చేయగానే ఆటోమేటిక్‌గా డిలీట్ అవుతుంది</td>
+          <td>ఎక్స్‌పైరీ డేట్ సెట్ చేసుకోవచ్చు</td>
+        </tr>
+        <tr>
+          <td><strong>నిల్వ సామర్థ్యం (Capacity)</strong></td>
+          <td><strong>~5MB నుండి 10MB</strong> పర్ డొమైన్</td>
+          <td><strong>~5MB</strong> పర్ ట్యాబ్</td>
+          <td>కేవలం <strong>~4KB</strong> మాత్రమే</td>
+        </tr>
+        <tr>
+          <td><strong>నెట్‌వర్క్ బదిలీ</strong></td>
+          <td>క్లయింట్ బ్రౌజర్‌లోనే ఉంటుంది (సర్వర్‌కు వెళ్ళదు)</td>
+          <td>క్లయింట్ బ్రౌజర్‌లోనే ఉంటుంది</td>
+          <td>ప్రతి HTTP రిక్వెస్ట్‌తో పాటు సర్వర్‌కు వెళ్తుంది</td>
+        </tr>
+        <tr>
+          <td><strong>ట్యాబ్‌ల మధ్య భాగస్వామ్యం</strong></td>
+          <td>అన్ని విండోలు/ట్యాబ్‌లలో షేర్ అవుతుంది</td>
+          <td>ఆ నిర్దిష్ట ఒక్క ట్యాబ్‌కే పరిమితం</td>
+          <td>అన్ని ట్యాబ్‌లలో షేర్ అవుతుంది</td>
+        </tr>
+        <tr>
+          <td><strong>ఉత్తమ వినియోగం</strong></td>
+          <td>డార్క్ మోడ్ థీమ్, ఫేవరెట్స్, భాష ఎంపిక</td>
+          <td>సింగిల్ సెషన్ ఫారమ్ డేటా, పేజీ విజార్డ్స్</td>
+          <td>సర్వర్ సైడ్ సెషన్ ఐడీలు, ఆథెంటికేషన్ టోకెన్లు</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- SECTION 7 & 8 -->
+    <h2 id="sec-7" class="section-title">7. Core Storage API పద్ధతులు & JSON బ్రిడ్జి</h2>
+    <p>
+      <code>localStorage</code> మరియు <code>sessionStorage</code> రెండూ ఒకే రకమైన పద్ధతులను (Methods) కలిగి ఉంటాయి:
+    </p>
+
+    <ul style="margin-left: 20px; line-height: 1.8; color: var(--text2); font-size: 15px;">
+      <li><code>localStorage.setItem(key, value)</code>: ఒక కీ మరియు విలువను నిల్వ చేస్తుంది.</li>
+      <li><code>localStorage.getItem(key)</code>: కీ ద్వారా విలువను తిరిగి తెస్తుంది (కీ లేకపోతే <code>null</code> వస్తుంది).</li>
+      <li><code>localStorage.removeItem(key)</code>: నిర్దిష్ట కీని మాత్రమే తొలగిస్తుంది.</li>
+      <li><code>localStorage.clear()</code>: ఆ డొమైన్‌కు సంబంధించిన మొత్తం స్టోరేజ్‌ను తుడిచివేస్తుంది.</li>
+      <li><code>localStorage.length</code>: ప్రస్తుతం ఎన్ని కీలు ఉన్నాయో లెక్కిస్తుంది.</li>
+    </ul>
+
+    <div class="concept-card" style="border-left-color: #38bdf8;">
+      <h4>⚠️ అతి ముఖ్యమైన పరిమితి: localStorage Strings మాత్రమే తీసుకుంటుంది!</h4>
+      <p>
+        మీరు పొరపాటున ఒక JavaScript Object ని నేరుగా <code>localStorage.setItem('user', {name: 'Ravi'})</code> అని రాస్తే, బ్రౌజర్ దాన్ని స్ట్రింగ్‌గా మార్చే క్రమంలో <code>"[object Object]"</code> అని సేవ్ చేసి డేటాను నాశనం చేస్తుంది!
+        <br><br>
+        <strong>రక్షణాత్మక మార్గం (The JSON Bridge):</strong>
+        <br>
+        1. సేవ్ చేసే ముందు: <code>JSON.stringify(object)</code> వాడి ఆబ్జెక్ట్‌ను స్ట్రింగ్‌గా మార్చాలి.
+        <br>
+        2. బయటకు తీశాక: <code>JSON.parse(string)</code> వాడి తిరిగి అసలైన జావాస్క్రిప్ట్ ఆబ్జెక్ట్‌గా మార్చుకోవాలి.
+      </p>
+    </div>
+
+    <!-- CODE BLOCK 2 -->
+    <h2 id="sec-9" class="section-title">8. లైవ్ కోడ్ ఉదాహరణ: ఫెయిల్-సేఫ్ లోకల్ స్టోరేజ్ స్టేట్ మేనేజర్</h2>
+    <p>
+      ప్రొడక్షన్ సైట్లలో బ్రౌజర్ స్టోరేజ్ నిండిపోయినా (QuotaExceededError) లేదా యూజర్ ప్రైవేట్ బ్రౌజింగ్ వల్ల స్టోరేజ్ బ్లాక్ అయినా యాప్ క్రాష్ కాకుండా రక్షించే ప్రొడక్షన్-గ్రేడ్ హెల్పర్ ఆబ్జెక్ట్:
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span>JavaScript: Safe LocalStorage Manager with JSON & Fallback</span>
+        <div class="code-actions">
+          <a href="/?lang=nodejs" class="try-btn">▶ Try Online</a>
+        </div>
+      </div>
+      <pre><code>const Storage = {
+  save(key, val) {
+    try {
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch (e) {
+      console.warn("స్టోరేజ్ కోటా దాటిపోయింది లేదా ప్రైవేట్ మోడ్ లోపం!", e.message);
+    }
+  },
+  load(key, fallback = null) {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+};
+Storage.save("user_pref", { theme: "dark", fontSize: 16 });
+console.log("తేబడిన యూజర్ అమరికలు:", Storage.load("user_pref"));</code></pre>
+    </div>
+
+    <!-- SECTION 10: PITFALLS -->
+    <h2 id="sec-10" class="section-title">9. డెవలపర్లు చేసే 5 ప్రమాదకరమైన ప్రొడక్షన్ తప్పులు (Pitfalls)</h2>
+    <p>
+      రియల్ వరల్డ్ ప్రాజెక్టులలో డెవలపర్లు తరచుగా చేసే ఈ 5 తప్పులను మీరు నివారించగలిగితే మీ కోడ్ అత్యంత పటిష్టంగా మారుతుంది:
+    </p>
+
+    <div style="display:flex; flex-direction:column; gap:14px; margin: 20px 0;">
+      <div style="background:var(--bg2); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+        <h4 style="margin:0 0 6px 0; color:#ef4444; font-size:15.5px;">1. నిశ్శబ్ద క్యాచ్ బ్లాక్స్ (Silent / Empty Catch Blocks - బ్లాక్ హోల్ ప్రమాదం)</h4>
+        <p style="margin:0; color:var(--text2); font-size:14px; line-height:1.7;">
+          <code>catch (err) { }</code> అని ఖాళీగా వదిలేయడం అత్యంత ప్రమాదకరం. దీనివల్ల ప్రొడక్షన్‌లో బగ్స్ ఎందుకు వస్తున్నాయో ఎవ్వరికీ అర్థం కాదు. కనీసం కన్సోల్ వార్నింగ్ ఇవ్వడం లేదా Sentry/LogRocket లాంటి మోనిటరింగ్ టూల్స్‌కు పంపడం అలవాటు చేసుకోవాలి.
+        </p>
       </div>
 
-      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
-        <span style="color:#64748b;">Output:</span><br>
-        29. Error Handling: try-catch మొదలైంది
+      <div style="background:var(--bg2); border-left:4px solid #f59e0b; border-radius:8px; padding:16px 20px;">
+        <h4 style="margin:0 0 6px 0; color:#f59e0b; font-size:15.5px;">2. ఆబ్జెక్ట్‌ను నేరుగా స్టోర్ చేసి `[object Object]` గా మార్చడం</h4>
+        <p style="margin:0; color:var(--text2); font-size:14px; line-height:1.7;">
+          <code>localStorage.setItem('cart', cartArray)</code> రాస్తే అది డేటాను పాడుచేస్తుంది. ఆరేలు, ఆబ్జెక్టులు నిల్వ చేసే ప్రతిసారీ <code>JSON.stringify()</code> ను తప్పనిసరిగా వాడాలి.
+        </p>
+      </div>
+
+      <div style="background:var(--bg2); border-left:4px solid #38bdf8; border-radius:8px; padding:16px 20px;">
+        <h4 style="margin:0 0 6px 0; color:#38bdf8; font-size:15.5px;">3. అసురక్షిత `JSON.parse()` వాడకం వల్ల యాప్ క్రాష్ అవ్వడం</h4>
+        <p style="margin:0; color:var(--text2); font-size:14px; line-height:1.7;">
+          కీ లేనప్పుడు <code>localStorage.getItem('unknown')</code> ఇచ్చేది <code>null</code>. కానీ పొరపాటున స్టోరేజ్ లో చెల్లని టెక్స్ట్ ఉంటే <code>JSON.parse()</code> మొత్తం యాప్‌ను క్రాష్ చేస్తుంది. కాబట్టి <code>JSON.parse()</code> ను ఎల్లప్పుడూ <code>try...catch</code> లోపు లేదా డిఫాల్ట్ ఫాల్‌బ్యాక్‌తో మాత్రమే వాడాలి.
+        </p>
+      </div>
+
+      <div style="background:var(--bg2); border-left:4px solid #ec4899; border-radius:8px; padding:16px 20px;">
+        <h4 style="margin:0 0 6px 0; color:#ec4899; font-size:15.5px;">4. localStorage లో రహస్య పాస్‌వర్డ్‌లు, సెన్సిటివ్ బ్యాంకింగ్ టోకెన్లు దాచడం</h4>
+        <p style="margin:0; color:var(--text2); font-size:14px; line-height:1.7;">
+          బ్రౌజర్‌లో రన్ అయ్యే ఏ 3rd-party స్క్రిప్ట్ లేదా XSS (Cross-Site Scripting) అటాక్ అయినా <code>localStorage</code> లోని డేటాను సులభంగా దొంగిలించగలదు. కాబట్టి బ్యాంకింగ్ పాస్‌వర్డ్‌లు, యూజర్ క్రెడిట్ కార్డుల సమాచారాన్ని ఎప్పుడూ లోకల్ స్టోరేజ్‌లో పెట్టకూడదు. దీనికి <strong>HttpOnly Cookies</strong> మాత్రమే సురక్షితమైనవి.
+        </p>
+      </div>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:8px; padding:16px 20px;">
+        <h4 style="margin:0 0 6px 0; color:#10b981; font-size:15.5px;">5. Asynchronous కోడ్ లో Synchronous try/catch వాడటం</h4>
+        <p style="margin:0; color:var(--text2); font-size:14px; line-height:1.7;">
+          <code>setTimeout</code> లేదా సాధారణ Promise కాల్స్ చుట్టూ సాధారణ <code>try/catch</code> పెడితే అది పనిచేయదు! ఎందుకంటే ఎర్రర్ వచ్చే సమయానికి కాల్ స్టాక్ ఖాళీ అయిపోతుంది. అసింక్రోనస్ కోడ్‌లో ఎర్రర్ పట్టాలంటే ఫంక్షన్ ముందు <strong><code>async</code></strong> పెట్టి లోపల <strong><code>await</code></strong> రాస్తేనే <code>try/catch</code> క్యాచ్ చేయగలదు.
+        </p>
       </div>
     </div>
 
-    <div class="section-title"><span class="num">3</span>రియల్-లైఫ్ ఉదాహరణ & ప్రాక్టీస్</div>
-    <div class="section-body">
-      <p>రెండో ఉదాహరణ లేదా వాస్తవ ప్రపంచంలో దీని ఉపయోగం ఇక్కడ రాయండి...</p>
-    </div>
+    <!-- SECTION 11: PRACTICE QUESTIONS -->
+    <h2 id="sec-11" class="section-title">10. ఇంటర్వ్యూ & ప్రాక్టీస్ ప్రశ్నలు (రియల్-వరల్డ్ వివరణలతో)</h2>
+    <div style="background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <p style="font-weight: 600; color: #f7df1e; margin-bottom: 15px;">
+        ఈ క్రింది ప్రశ్నలకు స్వయంగా సమాధానం చెప్పడానికి ప్రయత్నించండి, ఆపై మీ సమాధానాన్ని పరిశీలించండి:
+      </p>
 
-    <div class="callout callout-warning">
-      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు (Common Mistakes)</div>
-      <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">ఈ టాపిక్ నేర్చుకునేటప్పుడు విద్యార్థులు తరచుగా చేసే తప్పులు మరియు వాటిని ఎలా సరిచేయాలో ఇక్కడ పేర్కొనండి.</p>
-    </div>
-
-    <div class="section-title"><span class="num">4</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
-    <div class="section-body">
-      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li>మొదటి ప్రాక్టీస్ ప్రశ్న?</li>
-        <li>రెండో ప్రాక్టీస్ ప్రశ్న?</li>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>try</code> బ్లాక్‌లో <code>return</code> స్టేట్‌మెంట్ ఉన్నప్పటికీ <code>finally</code> బ్లాక్ రన్ అవుతుందా?</li>
+        <li>యూజర్ బ్రౌజర్‌లో 5MB పరిమితి మించి డేటా సేవ్ చేయబోతే ఏ ఎర్రర్ వస్తుంది?</li>
+        <li><code>JSON.parse(null)</code> మరియు <code>JSON.parse(undefined)</code> ఏమి ఫలితాలు ఇస్తాయి?</li>
+        <li>జావాస్క్రిప్ట్ లో <code>throw "error"</code> కంటే <code>throw new Error("error")</code> ఎందుకు ఉత్తమం?</li>
+        <li>యూజర్ Incognito (ప్రైవేట్ బ్రౌజింగ్) మోడ్ లో ఉన్నప్పుడు <code>localStorage</code> ఎలా ప్రవర్తిస్తుంది?</li>
+        <li>ఒకే డొమైన్ లోని రెండు వేర్వేరు ట్యాబ్‌ల మధ్య <code>sessionStorage</code> షేర్ అవుతుందా?</li>
       </ol>
 
-      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
-        <summary style="font-weight: bold; color: var(--text);">👉 సమాధానాలు చూడండి</summary>
-        <div style="margin-top: 10px; font-size: 14px; color: var(--text2); line-height: 1.6;">
-          <p>సమాధానం వివరణ ఇక్కడ రాయండి...</p>
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: #f7df1e;">👉 సమాధానాలు మరియు వివరణలు చూడండి (Click to Expand)</summary>
+        <div style="margin-top: 14px; font-size: 14px; color: var(--text2); line-height: 1.8;">
+          <p><strong>1. సమాధానం:</strong> <strong>అవును, ఖచ్చితంగా రన్ అవుతుంది!</strong> <code>try</code> లో <code>return 10;</code> రాసినా కూడా, ఆ ఫంక్షన్ ఎగ్జిట్ అయ్యే ముందే <code>finally</code> లోని కోడ్ తప్పకుండా ఎగ్జిక్యూట్ అవుతుంది.</p>
+          <p><strong>2. సమాధానం:</strong> <strong><code>QuotaExceededError</code> (DOMException)</strong> తలెత్తుతుంది. అందుకే స్టోరేజ్ సేవ్ ఆపరేషన్లను ఎల్లప్పుడూ <code>try...catch</code> లో ఉంచాలి.</p>
+          <p><strong>3. సమాధానం:</strong> <code>JSON.parse(null)</code> సురక్షితంగా <code>null</code> ని ఇస్తుంది; కానీ <code>JSON.parse(undefined)</code> మాత్రం భయంకరమైన <strong><code>SyntaxError: Unexpected token u in JSON</code></strong> ని విసురుతుంది!</p>
+          <p><strong>4. సమాధానం:</strong> <code>new Error()</code> వాడటం వల్ల ఎర్రర్ ఎక్కడ, ఏ ఫైల్ లో, ఎన్నో లైన్ లో వచ్చిందో చెప్పే <strong>Call Stack Trace (<code>err.stack</code>)</strong> ఆటోమేటిక్‌గా అటాచ్ అవుతుంది. సాధారణ స్ట్రింగ్‌కు స్టాక్ ట్రేస్ ఉండదు.</p>
+          <p><strong>5. సమాధానం:</strong> చాలా ఆధునిక బ్రౌజర్లలో ప్రైవేట్ విండో ఓపెన్ ఉన్నంతవరకు మాత్రమే ఇన్-మెమరీగా స్టోర్ అవుతుంది, విండో మూయగానే తుడిచిపెట్టుకుపోతుంది. కొన్ని పాత బ్రౌజర్లు ఏకంగా ఎక్సెప్షన్ త్రో చేస్తాయి.</p>
+          <p><strong>6. సమాధానం:</strong> <strong>షేర్ అవ్వదు.</strong> <code>sessionStorage</code> అనేది కేవలం ఆ ఒక్క నిర్దిష్ట ట్యాబ్‌కే పరిమితం. పక్క ట్యాబ్‌లో అదే సైట్ తెరిచినా దానికి సరికొత్త ఖాళీ సెషన్ ప్రారంభమవుతుంది.</p>
         </div>
       </details>
     </div>
 
-    <div class="try-box">
-      <div class="try-title">🚀 మీరే try చేయండి</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">మన ఆన్‌లైన్ కంపైలర్ లో ఈ కోడ్‌ను ఎడిట్ చేసి రన్ చేయండి:</p>
-      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript రన్ చేయండి</a>
-    </div>
-
+    <!-- SUMMARY BOX -->
     <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
-      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary (సారాంశం):</h3>
-      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.6;">
-        <li><strong>29. Error Handling: try-catch:</strong> try block · catch block · finally block · throw new Error() · Graceful degradation</li>
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 సారాంశం (Quick Summary):</h3>
+      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.8; font-size: 14.5px;">
+        <li><strong>try...catch:</strong> యాప్ క్రాష్ అవ్వకుండా ఆపి గౌరవప్రదంగా ఎర్రర్‌ను హ్యాండిల్ చేస్తుంది.</li>
+        <li><strong>finally:</strong> ఫెయిలైనా లేదా గెలిచినా క్లీనప్ పనులు చేయడానికి గ్యారెంటీగా రన్ అవుతుంది.</li>
+        <li><strong>throw:</strong> మీ బిజినెస్ లాజిక్‌కు భంగం కలిగినప్పుడు స్వయంగా కస్టమ్ ఎర్రర్‌ను త్రో చేస్తుంది.</li>
+        <li><strong>localStorage:</strong> 5-10MB సామర్థ్యంతో బ్రౌజర్‌లో డేటాను శాశ్వతంగా దాచే ఫ్రిజ్ అయస్కాంతం.</li>
+        <li><strong>JSON Bridge:</strong> స్టోరేజ్ కేవలం స్ట్రింగ్స్ మాత్రమే తీసుకుంటుంది కాబట్టి <code>JSON.stringify</code> మరియు <code>JSON.parse</code> వాడటం తప్పనిసరి.</li>
       </ul>
     </div>
 
-    <!-- ====================================================================
-         👆 CHAPTER CONTENT END (ఇక్కడితో మీ కంటెంట్ పూర్తవుతుంది) 👆
-         ==================================================================== -->
-
-
-        <div class="nav-footer">
+    <!-- GRAND FINALE CELEBRATION CARD -->
+    <div class="intro-box" style="background: linear-gradient(135deg, rgba(247, 223, 30, 0.15) 0%, rgba(34, 197, 94, 0.18) 50%, rgba(56, 189, 248, 0.15) 100%); border: 2px solid #f7df1e; margin-top: 35px; padding: 28px; border-radius: 14px; text-align: center;">
+      <div style="font-size: 48px; margin-bottom: 10px;">🏆 🎓 🚀</div>
+      <h2 style="color: #f7df1e; font-size: 24px; margin-bottom: 12px; font-family: 'Sora', sans-serif;">అభినందనలు! జావాస్క్రిప్ట్ 25 అధ్యాయాల మాస్టర్‌క్లాస్ పూర్తయింది!</h2>
+      <p style="font-size: 16px; line-height: 1.8; color: var(--text); max-width: 780px; margin: 0 auto 18px auto;">
+        మీరు మొదటి అధ్యాయంలో <strong>Variables, Data Types, Operators</strong> నుండి ప్రారంభించి.. <strong>Loops, Functions, Arrays, Objects</strong> నేర్చుకుని.. బ్రౌజర్ లో <strong>DOM Manipulation, Events, Form Validation, To-Do List Project</strong> నిర్మించి.. ఆపై అత్యంత శక్తివంతమైన <strong>Closures, Destructuring, Promises, async/await, Fetch API</strong> మరియు ఈ చివరి పాఠంలో <strong>Error Handling & localStorage</strong> వరకు విజయవంతంగా నేర్చుకున్నారు!
+      </p>
       
+      <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px; max-width: 650px; margin: 0 auto 20px auto; text-align: left;">
+        <h4 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 15px;">🗺️ మీ తదుపరి అడుగులు (Next Level Developer Roadmap):</h4>
+        <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: var(--text2); line-height: 1.8;">
+          <li><strong>Frontend Frameworks:</strong> React.js లేదా Next.js నేర్చుకుని కాంపోనెంట్ బేస్డ్ మోడరన్ యాప్స్ నిర్మించండి.</li>
+          <li><strong>Backend Engineering:</strong> Node.js మరియు Express.js ద్వారా మీ స్వంత REST APIs మరియు డేటాబేస్ లను అనుసంధానించండి.</li>
+          <li><strong>Type Safety:</strong> పెద్ద ఎంటర్‌ప్రైజ్ ప్రాజెక్టుల కోసం TypeScript నేర్చుకోండి.</li>
+        </ul>
+      </div>
+
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        <a href="/blog-javascript.html" style="background: #f7df1e; color: #000000; font-weight: 700; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 15px; display: inline-flex; align-items: center; gap: 8px;">
+          📚 జావాస్క్రిప్ట్ మెయిన్ ఇండెక్స్ & అన్ని అధ్యాయాలు →
+        </a>
+        <a href="/?lang=nodejs" style="background: rgba(255,255,255,0.1); color: #ffffff; border: 1px solid rgba(255,255,255,0.25); font-weight: 600; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-size: 15px; display: inline-flex; align-items: center; gap: 8px;">
+          ▶ లైవ్ కోడ్ ఎడిటర్‌లో ప్రాక్టీస్ చేయండి
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="nav-footer">
       <a href="async-await-fetch.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">28. async / await & fetch API</span>
+        <span class="title">24. Asynchronous JS: Promises, async/await & Fetch</span>
       </a>
 
-      
-      <a href="modules.html" class="nav-btn" style="text-align:right;">
-        <span class="label">Next Lesson →</span>
-        <span class="title">30. ES6 Modules</span>
+      <a href="/blog-javascript.html" class="nav-btn" style="text-align:right;">
+        <span class="label">Course Completed 🎉</span>
+        <span class="title">JavaScript Master Index 🏠</span>
       </a>
     </div>
   </main>

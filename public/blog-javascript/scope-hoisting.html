@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>24. Scope & Hoisting — JavaScript Tutorial | Our Compiler</title>
-  <meta name="description" content="Learn 24. Scope & Hoisting in JavaScript with clear Telugu explanations and live runnable code." />
-  <meta name="keywords" content="javascript tutorial, 24. scope & hoisting, learn javascript, javascript online compiler" />
+  <title>JavaScript Scope, Hoisting & Closures తెలుగులో | TDZ, Execution Context — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="JavaScript లో Scope, Hoisting మరియు Closures ఎలా పనిచేస్తాయి? Global vs Block scope, TDZ (Temporal Dead Zone), Function vs Variable Hoisting మరియు క్లోజర్స్ మెమరీ బ్యాక్‌ప్యాక్ అనాలజీ తెలుగులో స్పష్టంగా నేర్చుకోండి." />
+  <meta name="keywords" content="javascript scope hoisting telugu, js closures telugu, temporal dead zone tdz javascript, var let const hoisting difference, execution context javascript telugu, javascript tutorial telugu" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/scope-hoisting.html" />
@@ -14,7 +14,108 @@
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="/site-nav.css" />
-  
+
+  <style>
+    /* Content Anchor Navigation */
+    .toc-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 30px;
+    }
+    .toc-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #f7df1e;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .toc-col h4 {
+      font-size: 15px;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    .toc-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .toc-list li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .toc-list a {
+      color: var(--text2);
+      text-decoration: none;
+      transition: color 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-list a:hover {
+      color: #f7df1e;
+      text-decoration: underline;
+    }
+
+    /* Custom Tables */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 14.5px;
+      background: var(--bg2);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .custom-table th, .custom-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .custom-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #38bdf8;
+      font-weight: 700;
+    }
+    body.light-theme .custom-table th {
+      background: #f1f5f9;
+      color: #0369a1;
+    }
+    .custom-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .concept-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #f7df1e;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .concept-card h4 {
+      margin: 0 0 8px 0;
+      color: var(--text);
+      font-size: 16px;
+    }
+    .concept-card p {
+      margin: 0;
+      color: var(--text2);
+      font-size: 14.5px;
+      line-height: 1.7;
+    }
+  </style>
+
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -157,24 +258,18 @@
   <a href="/blog-c.html">C</a>
   <a href="/blog-cpp.html">C++</a>
   <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
 </nav>
 
 <div class="layout">
-  <!-- LEFT SIDEBAR WITH COLLAPSIBLE ACCORDION -->
+  <!-- SIDEBAR NAVIGATION -->
   <aside class="sidebar">
-    <div class="sidebar-heading">JavaScript Course</div>
-    <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
+    <div class="sidebar-title">JavaScript Masterclass</div>
 
-    <div class="sidebar-accordion">
+    <div class="accordion">
       <!-- Part 01: Basics -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
-          <span class="phase-icon-box">🟨</span>
+          <span class="phase-icon-box">🔰</span>
           <div class="phase-info">
             <span class="phase-tag">Part 01</span>
             <span class="phase-title">Basics</span>
@@ -189,12 +284,12 @@
       </button>
       <div class="accordion-content">
         <a href="/blog-javascript/01-javascript-fundamentals.html">1. JavaScript ante enti?</a>
-        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Setup & Environment</a>
-        <a href="/blog-javascript/variables.html">3. Variables: var, let, const</a>
+        <a href="/blog-javascript/02-javascript-syntax-and-errors.html">2. Setup & First Program</a>
+        <a href="/blog-javascript/variables.html">3. Variables: let, const, var</a>
         <a href="/blog-javascript/data-types.html">4. Data Types</a>
-        <a href="/blog-javascript/operators.html">5. Operators</a>
+        <a href="/blog-javascript/operators.html">5. Operators & Expressions</a>
         <a href="/blog-javascript/type-conversion.html">6. Type Conversion & Template Literals</a>
-        <a href="/blog-javascript/input-output.html">7. Input/Output (I/O)</a>
+        <a href="/blog-javascript/input-output.html">7. Input & Output</a>
       </div>
 
       <!-- Part 02: Control Flow -->
@@ -230,7 +325,7 @@
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">7 Ch</span>
+          <span class="phase-count-badge">6 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
@@ -239,66 +334,58 @@
       <div class="accordion-content">
         <a href="/blog-javascript/functions.html">12. Functions: declaration, parameters, return</a>
         <a href="/blog-javascript/arrow-functions.html">13. Arrow Functions</a>
-        <a href="/blog-javascript/arrays.html">14. Arrays: create, access, push/pop</a>
-        <a href="/blog-javascript/array-methods.html">15. Array Methods: map, filter, reduce, forEach</a>
-        <a href="/blog-javascript/objects.html">16. Objects: properties, methods</a>
-        <a href="/blog-javascript/strings.html">17. Strings: common methods</a>
-        <a href="/blog-javascript/math-date.html">18. Math & Date objects</a>
+        <a href="/blog-javascript/arrays.html">14. Arrays & Array Methods</a>
+        <a href="/blog-javascript/objects.html">15. Objects: properties, methods & JSON</a>
+        <a href="/blog-javascript/strings.html">16. Strings: common methods</a>
+        <a href="/blog-javascript/math-date.html">17. Math & Date objects</a>
       </div>
 
-      <!-- Part 04: DOM (Document Object Model) -->
+      <!-- Part 04: DOM & Events -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🌐</span>
           <div class="phase-info">
             <span class="phase-tag">Part 04</span>
-            <span class="phase-title">DOM (Document Object Model)</span>
+            <span class="phase-title">DOM & Events</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
+          <span class="phase-count-badge">4 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/dom.html">19. DOM ante enti? Elements select cheyyadam</a>
-        <a href="/blog-javascript/dom-manipulation.html">20. Content & style marchadam</a>
-        <a href="/blog-javascript/events.html">21. Events: click, input, submit</a>
-        <a href="/blog-javascript/form-validation.html">22. Form validation</a>
-        <a href="/blog-javascript/todo-list-project.html">23. Mini project: To-Do List</a>
+        <a href="/blog-javascript/dom.html">18. DOM: Selecting & Manipulation</a>
+        <a href="/blog-javascript/events.html">19. Events: click, input, submit</a>
+        <a href="/blog-javascript/form-validation.html">20. Form Validation</a>
+        <a href="/blog-javascript/todo-list-project.html">21. Mini project: To-Do List</a>
       </div>
 
-      <!-- Part 05: Intermediate JavaScript -->
+      <!-- Part 05: Modern & Advanced JS -->
       <button class="accordion-header active" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🚀</span>
           <div class="phase-info">
             <span class="phase-tag">Part 05</span>
-            <span class="phase-title">Intermediate JavaScript</span>
+            <span class="phase-title">Modern & Advanced JS</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">8 Ch</span>
+          <span class="phase-count-badge">4 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content open">
-        <a href="/blog-javascript/scope-hoisting.html" class="active">24. Scope & Hoisting</a>
-        <a href="/blog-javascript/destructuring-spread.html">25. Destructuring, Spread, Rest</a>
-        <a href="/blog-javascript/closures.html">26. Closures</a>
-        <a href="/blog-javascript/promises.html">27. Callbacks, Promises</a>
-        <a href="/blog-javascript/async-await-fetch.html">28. async / await & fetch API</a>
-        <a href="/blog-javascript/error-handling.html">29. Error Handling: try-catch</a>
-        <a href="/blog-javascript/modules.html">30. ES6 Modules</a>
-        <a href="/blog-javascript/localstorage.html">31. localStorage</a>
+        <a href="/blog-javascript/scope-hoisting.html" class="active">22. Scope, Hoisting & Closures</a>
+        <a href="/blog-javascript/destructuring-spread.html">23. Destructuring, Spread, Rest & ES6 Modules</a>
+        <a href="/blog-javascript/async-await-fetch.html">24. Asynchronous JS: Promises, async/await & Fetch</a>
+        <a href="/blog-javascript/error-handling.html">25. Error Handling & localStorage</a>
       </div>
-
     </div>
-
 
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=nodejs" style="color:#f7df1e; font-weight:700;">▶ Try JavaScript Online</a>
@@ -316,119 +403,363 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
-      <span class="current">Lesson 24: 24. Scope & Hoisting</span>
+      <span class="current">Lesson 22: Scope, Hoisting & Closures</span>
     </div>
 
-    <h1 class="page-title">24. Scope & Hoisting</h1>
+    <h1 class="page-title">JavaScript Scope, Hoisting & Closures: అంతర్గత మెమరీ రహస్యాలు (Master Guide)</h1>
 
     <div class="page-meta">
       <span class="badge">🟨 JavaScript (ES2026+)</span>
-      <span class="badge">🟢 Lesson 24</span>
-      <span class="badge">📂 Part 05: Intermediate JavaScript</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">🟢 Lesson 22 of 25</span>
+      <span class="badge">📂 Part 05: Modern & Advanced JS (Page 1 of 4)</span>
+      <span class="badge">⏱️ 17 min read</span>
     </div>
 
     <!-- Subtopics Pill Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#f7df1e; font-weight:700;">📌 Covered in this lesson:</span>
-      <span>Global scope · Function scope · Block scope · Variable & function hoisting · TDZ</span>
+      <span>3 Layers of Scope · TDZ (Temporal Dead Zone) · Hoisting Reality · The Memory Backpack (Closures) · Private Variables & Encapsulation · 5 Scope Traps</span>
     </div>
 
-
-    <!-- ====================================================================
-         👇 CHAPTER CONTENT START (ఇక్కడ నుండి మీ పాఠం కంటెంట్ రాయండి) 👇
-         ==================================================================== -->
-
+    <!-- Intro Box with 3 Layers Analogy -->
     <div class="intro-box">
-      <p>ఈ పాఠంలో మనం JavaScript లోని ముఖ్యమైన <strong>24. Scope & Hoisting</strong> గురించి స్పష్టంగా, సులభమైన ఉదాహరణలతో నేర్చుకుందాం.</p>
-      <p>రియల్ వరల్డ్ ప్రాజెక్టులలో మరియు ఇంటర్వ్యూలలో ఈ కాన్సెప్ట్ చాలా కీలకం.</p>
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        జావాస్క్రిప్ట్ ఇంటర్వ్యూలలో <em>"ఒక జూనియర్ డెవలపర్ ని మరియు సీనియర్ ఇంజనీర్ ని వేరు చేసేది ఏది?"</em> అని అడిగితే వచ్చే సమాధానం — <strong>Scope, Hoisting & Closures</strong>! పైపైకి సింటాక్స్ రాసేవారికి బ్రౌజర్ తెరవెనుక మెమరీ ఎలా కేటాయిస్తుందో తెలియదు; కానీ వీటిని అర్థం చేసుకున్నవారే బగ్‌లు లేని ప్రొడక్షన్ కోడ్ రాయగలరు.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>ప్రైవసీ యొక్క 3 పొరల అనాలజీ (The 3 Layers of Privacy):</strong>
+        <br>
+        1. <strong>Global Scope (ఊరి ప్రధాన కూడలి / Public Park):</strong> అక్కడ పెట్టిన వస్తువును ఎవరైనా చూడవచ్చు, ఎవరైనా మార్చవచ్చు. (గ్లోబల్ వేరియబుల్స్ అందరికీ అందుబాటులో ఉంటాయి).
+        <br>
+        2. <strong>Function Scope (ఇంటి హాల్):</strong> ఆ ఇంట్లోని కుటుంబ సభ్యులకు మాత్రమే కనిపిస్తుంది; బయటి వ్యక్తులు చూడలేరు.
+        <br>
+        3. <strong>Block Scope (వ్యక్తిగత తాళం వేసిన లాకర్):</strong> <code>let</code> మరియు <code>const</code> లు కేవలం కర్లీ బ్రాకెట్ల <code>{ }</code> లోపల మాత్రమే బ్రతుకుతాయి. తాళం వేసిన లాకర్ లాగా బయటి వారు చూడలేరు! (కానీ పాత <code>var</code> కి ఈ గోడలు తెలియవు, లీక్ అయిపోతుంది!).
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ పాఠంలో మనం టెక్స్ట్‌బుక్ డెఫినిషన్లు కాకుండా — జావాస్క్రిప్ట్ ఇంజిన్ కోడ్‌ను ఎగ్జిక్యూట్ చేసే <strong>టూ-ఫేజ్ మెకానిజం</strong>, ప్రమాదకరమైన <strong>TDZ (Temporal Dead Zone)</strong>, మరియు <strong>మెమరీ బ్యాక్‌ప్యాక్ అనాలజీ</strong>తో క్లోజర్ల లోతులను స్పష్టంగా నేర్చుకుందాం.
+      </p>
     </div>
 
-    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
-    <div class="section-body">
-      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li><code>Global scope</code> గురించి అవగాహన</li>
-        <li><code>Function scope</code> గురించి అవగాహన</li>
-        <li><code>Block scope</code> గురించి అవగాహన</li>
-        <li><code>Variable & function hoisting</code> గురించి అవగాహన</li>
-        <li><code>TDZ</code> గురించి అవగాహన</li>
-      </ul>
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#f7df1e; text-decoration:none;">విభాగం A: స్కోప్ & హోయిస్టింగ్ ఇంజిన్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. Scope అంటే ఏమిటి? (Global, Function, Block)</a></li>
+            <li><a href="#sec-2">2. Hoisting వాస్తవం: Two-Phase Execution రహస్యం</a></li>
+            <li><a href="#sec-3">3. TDZ (Temporal Dead Zone): కరెంట్ వైర్ లాంటి ప్రమాదం</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-4" style="color:#38bdf8; text-decoration:none;">విభాగం B: క్లోజర్స్ & ప్రైవేట్ వాల్ట్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-4">4. Closures: ది మెమరీ బ్యాక్‌ప్యాక్ అనాలజీ</a></li>
+            <li><a href="#sec-5">5. Master Code Demo: Hoisting & Block Scope</a></li>
+            <li><a href="#sec-6">6. ఇంటర్వ్యూలలో బురిడీ కొట్టించే 5 స్కోప్ ట్రాప్స్</a></li>
+            <li><a href="#sec-7">7. Try It: Closure ఆధారిత Private Bank Vault</a></li>
+            <li><a href="#sec-8">8. 6 ఆలోచింపజేసే ఇంటర్వ్యూ ప్రశ్నలు & సమాధానాలు</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
 
-    <div class="section-title"><span class="num">2</span>సిద్ధాంతం & ప్రాథమిక కాన్సెప్ట్</div>
+    <!-- Section 1 -->
+    <div class="section-title" id="sec-1"><span class="num">1</span>Scope అంటే ఏమిటి? (Global, Function, Block)</div>
     <div class="section-body">
-      <p>ఇక్కడ కాన్సెప్ట్ గురించిన పూర్తి వివరణ రాయండి...</p>
+      <p>
+        <strong>Scope</strong> అంటే మీ కోడ్‌లోని ఒక వేరియబుల్ ఎక్కడివరకు కనిపిస్తుంది (Visibility) మరియు ఎక్కడ అందుబాటులో ఉంటుంది (Accessibility) అని నిర్ణయించే సరిహద్దు గీత.
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>స్కోప్ రకం</th>
+            <th>సరిహద్దు (Boundary)</th>
+            <th>ఏ కీవర్డ్స్ కి వర్తిస్తుంది?</th>
+            <th>యాక్సెస్ పరిధి</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Global Scope</strong></td>
+            <td>ఫంక్షన్లు లేదా బ్లాక్స్ బయట రాయడం.</td>
+            <td>అన్నింటికీ (<code>var</code>, <code>let</code>, <code>const</code>)</td>
+            <td>వెబ్ పేజీలోని ఏ ఫైల్ అయినా, ఏ ఫంక్షన్ అయినా చూడవచ్చు.</td>
+          </tr>
+          <tr>
+            <td><strong>Function Scope</strong></td>
+            <td><code>function() { ... }</code> లోపల.</td>
+            <td><code>var</code>, <code>let</code>, <code>const</code></td>
+            <td>కేవలం ఆ ఫంక్షన్ లోపల మాత్రమే బ్రతుకుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>Block Scope</strong></td>
+            <td>కర్లీ బ్రాకెట్లు <code>{ if, for, while }</code> లోపల.</td>
+            <td><strong>కేవలం <code>let</code> & <code>const</code> మాత్రమే!</strong></td>
+            <td>ఆ బ్రాకెట్ల బయట అస్సలు కనిపించదు. (గమనిక: <code>var</code> బ్లాక్ స్కోప్ ని పాటించదు).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-title" id="sec-2"><span class="num">2</span>Hoisting వాస్తవం: Two-Phase Execution రహస్యం</div>
+    <div class="section-body">
+      <p>
+        చాలామంది ట్యుటోరియల్స్ లో <em>"వేరియబుల్స్ ఫైల్ పైకి భౌతికంగా ఎగిరిపోవడాన్ని హోయిస్టింగ్ అంటారు"</em> అని చెబుతారు. ఇది అక్షరాలా అబద్ధం! అసలు కోడ్ ఎక్కడికీ కదలదు.
+      </p>
+
+      <div class="concept-card">
+        <h4>🎬 సినిమా స్క్రిప్ట్ రీడింగ్ అనాలజీ (Two-Phase Execution):</h4>
+        <p style="color:var(--text2); line-height:1.8; font-size:14.5px;">
+          ఒక దర్శకుడు సినిమా షూటింగ్ మొదలుపెట్టే ముందు నటీనటులందరికీ పాత్రలు కేటాయించినట్లు (Audition), జావాస్క్రిప్ట్ ఇంజిన్ కోడ్‌ను రెండు దశల్లో ప్రాసెస్ చేస్తుంది:
+          <br><br>
+          • <strong>దశ 1: Creation Phase (మెమరీ రిజిస్ట్రేషన్):</strong> ఒక్క లైన్ కోడ్ కూడా రన్ కాకముందే, ఇంజిన్ మొత్తం కోడ్‌ను స్కాన్ చేసి వేరియబుల్స్ మరియు ఫంక్షన్లకు మెమరీలో స్థలం కేటాయిస్తుంది!
+          <br>
+          • <strong>దశ 2: Execution Phase (లైవ్ రన్నింగ్):</strong> ఇప్పుడు కోడ్‌ను పైనుండి కిందికి లైన్ బై లైన్ రన్ చేస్తుంది.
+          <br><br>
+          <strong>ఫలితం:</strong> ఫంక్షన్ డిక్లరేషన్‌కు ముందే మనం దాన్ని కాల్ చేసినా, Creation phase లోనే దానికి మెమరీ ఉండటం వల్ల అది సజావుగా పనిచేస్తుంది! దీనినే మనం <strong>Hoisting</strong> అంటాం.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-title" id="sec-3"><span class="num">3</span>TDZ (Temporal Dead Zone): కరెంట్ వైర్ లాంటి ప్రమాదం</div>
+    <div class="section-body">
+      <p>
+        <code>var</code> కి మరియు ఆధునిక <code>let</code> / <code>const</code> కి మధ్య హోయిస్టింగ్ జరిగేటప్పుడు వచ్చే అత్యంత కీలకమైన తేడా ఇది:
+      </p>
+
+      <div class="concept-card" style="border-left-color: #ef4444;">
+        <h4 style="color:#ef4444;">⚡ Temporal Dead Zone అంటే ఏమిటి?</h4>
+        <p style="color:var(--text2); line-height:1.8; font-size:14.5px;">
+          • <strong><code>var</code> ప్రవర్తన:</strong> Creation phase లో <code>var</code> కి మెమరీ ఇచ్చినప్పుడు, దానికి వెంటనే <code>undefined</code> అనే విలువను ముందే తగిలిస్తుంది. అందుకే డిక్లరేషన్ కంటే ముందు ప్రింట్ చేసినా ఎర్రర్ రాదు, <code>undefined</code> వస్తుంది.
+          <br><br>
+          • <strong><code>let</code> & <code>const</code> ప్రవర్తన:</strong> వీటికి కూడా మెమరీ కేటాయించబడుతుంది (హోయిస్టింగ్ జరుగుతుంది), కానీ వీటికి ప్రారంభ విలువ ఏదీ ఇవ్వరు! కోడ్ ఎగ్జిక్యూషన్ ఆ లైన్ కి వచ్చే వరకు ఆ వేరియబుల్ ఒక <strong>"డేంజర్ జోన్" (TDZ)</strong> లో ఉంటుంది.
+          <br>
+          ఆ లైన్ రాకముందే దాన్ని ముట్టుకుంటే కరెంట్ వైర్ తాకినట్లు <strong>ReferenceError: Cannot access 'x' before initialization</strong> అని బ్రౌజర్ ఎగిరిపడుతోంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section-title" id="sec-4"><span class="num">4</span>Closures: ది మెమరీ బ్యాక్‌ప్యాక్ అనాలజీ</div>
+    <div class="section-body">
+      <p>
+        సాధారణ కంప్యూటర్ ఆర్కిటెక్చర్‌లో ఒక ఫంక్షన్ రన్ అయి ముగియగానే (returned), దాని లోపలి లోకల్ వేరియబుల్స్ అన్నీ మెమరీ నుండి తుడిచిపెట్టుకుపోవాలి. మరి ఈ క్లోజర్స్ మ్యాజిక్ ఏమిటి?
+      </p>
+
+      <div class="concept-card" style="border-left-color: #38bdf8;">
+        <h4 style="color:#38bdf8;">🎒 ది మెమరీ బ్యాక్‌ప్యాక్ అనాలజీ (The Backpack Analogy):</h4>
+        <p style="color:var(--text2); line-height:1.8; font-size:14.5px;">
+          ఒక పేరెంట్ ఫంక్షన్ లోపల మరో చైల్డ్ ఫంక్షన్ ఉండి, ఆ పేరెంట్ ఫంక్షన్ ముగిసిపోయే సమయంలో చైల్డ్ ఫంక్షన్‌ను బయటకు రిటర్న్ చేసిందనుకోండి:
+          <br>
+          ఆ చైల్డ్ ఫంక్షన్ ఒంటరిగా బయటకు రాదు! అది తన వీపుపై ఒక <strong>మెమరీ బ్యాక్‌ప్యాక్ (Backpack / Closure Scope)</strong> తగిలించుకుని బయటకు వస్తుంది. ఆ బ్యాక్‌ప్యాక్ లోపల తన పేరెంట్ ఫంక్షన్ యొక్క అన్ని లోకల్ వేరియబుల్స్ భద్రంగా ఉంటాయి!
+          <br><br>
+          <strong>సాంకేతిక నిర్వచనం:</strong> ఒక ఫంక్షన్ తన చుట్టూ ఉన్న పరిసరాల వేరియబుల్స్‌ను (Lexical Environment) జీవితాంతం గుర్తుపెట్టుకోవడమే <strong>Closure</strong>.
+          <br>
+          <strong>ఉపయోగం:</strong> డేటాను ప్రైవేట్ గా దాచడానికి (Data Privacy & Encapsulation). బయటి వ్యక్తులు ఆ వేరియబుల్స్‌ను నేరుగా మార్చలేరు!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 5: Master Code Box 1 (Super Compact Code) -->
+    <div class="section-title" id="sec-5"><span class="num">5</span>Master Code Demo: Hoisting & Block Scope</div>
+    <div class="section-body">
+      <p>
+        <code>var</code> యొక్క లీకేజీ ప్రవర్తన మరియు <code>let</code> యొక్క బ్లాక్ స్కోప్ రక్షణను చూపే <strong>కేవలం 12 లైన్ల సంక్షిప్త కోడ్</strong> ఇది:
+      </p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — ఉదాహరణ 1</span>
+          <span class="lang-tag">JavaScript — Hoisting & Scope Engine</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>// 24. Scope & Hoisting కోడ్ ఉదాహరణ
-console.log("24. Scope & Hoisting మొదలైంది");
-</code></pre>
+        <pre><code>// 1. var హోయిస్టింగ్: undefined ఇస్తుంది (ఎర్రర్ ఇవ్వదు)
+console.log("var విలువ:", testVar); // undefined
+var testVar = 100;
+
+// 2. బ్లాక్ స్కోప్ తేడా: { } లోపల లీకేజీ టెస్ట్
+{
+  var leakedVar = "నేను బ్లాక్ దాటి బయటకు వచ్చేశాను!";
+  let lockedVar = "నేను బ్లాక్ లోపలే లాక్ అయ్యాను";
+}
+
+console.log("leakedVar:", leakedVar); // విజయవంతంగా ప్రింట్ అవుతుంది!
+// console.log(lockedVar); // ❌ ReferenceError: lockedVar is not defined</code></pre>
       </div>
 
-      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px; line-height:1.6;">
         <span style="color:#64748b;">Output:</span><br>
-        24. Scope & Hoisting మొదలైంది
+        var విలువ: undefined<br>
+        leakedVar: నేను బ్లాక్ దాటి బయటకు వచ్చేశాను!
+      </div>
+
+      <ul style="margin: 14px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>testVar</code> డిక్లేర్ చేయడానికి ముందే ప్రింట్ చేసినా ఎర్రర్ రాలేదు, ఎందుకంటే Creation phase లో దానికి <code>undefined</code> కేటాయించబడింది.</li>
+        <li><code>var leakedVar</code> బ్లాక్ సరిహద్దులను లెక్కచేయకుండా బయటకు వచ్చేసింది; అందుకే ఆధునిక కోడింగ్‌లో <code>var</code> ని నిషేధించి <code>let/const</code> మాత్రమే వాడతాం!</li>
+      </ul>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section-title" id="sec-6"><span class="num">6</span>ఇంటర్వ్యూలలో బురిడీ కొట్టించే 5 స్కోప్ ట్రాప్స్</div>
+    <div class="section-body">
+      <p>
+        టెక్ ఇంటర్వ్యూలలో డెవలపర్లను ఇబ్బంది పెట్టడానికి అడిగే అత్యంత ప్రమాదకరమైన కోడింగ్ చిక్కులు:
+      </p>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">1. ప్రఖ్యాత setTimeout లూప్ ట్రాప్ (var vs let):</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">
+          <code>for (var i = 0; i &lt; 3; i++) { setTimeout(() => console.log(i), 100); }</code>
+          <br>
+          <strong>ఫలితం:</strong> <code>3, 3, 3</code> అని ప్రింట్ అవుతుంది! ఎందుకంటే <code>var</code> ఒకే ఒక్క గ్లోబల్ వేరియబుల్ ని షేర్ చేసుకుంటుంది.
+          <br>
+          <strong>పరిష్కారం:</strong> <code>for (let i = 0; ...)</code> వాడితే ప్రతి లూప్‌కు కొత్త బ్లాక్ స్కోప్ ఏర్పడి సరిగ్గా <code>0, 1, 2</code> వస్తుంది!
+        </p>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">2. Function Declaration vs Expression Hoisting:</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">
+          సాధారణ ఫంక్షన్ <code>function greet() {}</code> పైకి హోయిస్ట్ అవుతుంది (ముందే కాల్ చేయవచ్చు).
+          <br>
+          కానీ వేరియబుల్ లో పెట్టిన ఫంక్షన్ <code>var greet = () => {}</code> ని ముందే కాల్ చేస్తే <strong>TypeError: greet is not a function</strong> వస్తుంది (ఎందుకంటే అప్పటికి దాని విలువ కేవలం <code>undefined</code>)!
+        </p>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">3. డిక్లరేషన్ లేకుండా వేరియబుల్ రాయడం (Accidental Global):</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">
+          ఒక ఫంక్షన్ లోపల <code>x = 50;</code> అని రాస్తే, జావాస్క్రిప్ట్ దాన్ని గ్లోబల్ విండో <code>window.x</code> లో కలిపేస్తుంది! ఎల్లప్పుడూ <code>const</code> లేదా <code>let</code> రాయాలి.
+        </p>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">4. TDZ లో కాల్చబడటం:</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">
+          <code>let a = a;</code> అని రాసినా కూడా TDZ ఎర్రర్ వస్తుంది, ఎందుకంటే కుడివైపు ఉన్న <code>a</code> ఇంకా ప్రారంభం కాలేదు.
+        </p>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">5. మెమరీ లీక్స్ (Unwanted Closures):</div>
+        <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">
+          క్లోజర్ అవసరం లేకపోయినా పెద్ద పెద్ద డేటాబేస్ ఆబ్జెక్టులను లోపలి ఫంక్షన్లలో ఉంచితే, గార్బేజ్ కలెక్టర్ వాటిని తొలగించలేక మెమరీ ఫుల్ అయిపోతుంది.
+        </p>
       </div>
     </div>
 
-    <div class="section-title"><span class="num">3</span>రియల్-లైఫ్ ఉదాహరణ & ప్రాక్టీస్</div>
+    <!-- Section 7: Master Code Box 2 (Super Compact Try-It Box) -->
+    <div class="section-title" id="sec-7"><span class="num">7</span>Real-World Try-It: Closure ఆధారిత Private Bank Vault</div>
     <div class="section-body">
-      <p>రెండో ఉదాహరణ లేదా వాస్తవ ప్రపంచంలో దీని ఉపయోగం ఇక్కడ రాయండి...</p>
+      <p>
+        ఒక బ్యాంక్ లాకర్ లోని నగదు మరియు రహస్య పిన్ నంబర్‌ను బయటి వ్యక్తులు నేరుగా దొంగిలించకుండా, కేవలం అధికారిక ఫంక్షన్ల ద్వారా మాత్రమే నియంత్రించే <strong>ప్రొఫెషనల్ క్లోజర్ ఆర్కిటెక్చర్</strong>:
+      </p>
+
+      <div class="try-box">
+        <div class="try-title">🚀 మీరే స్వయంగా Try చేయండి! (Secure Bank Vault via Closure)</div>
+        <p style="color:var(--text2); font-size:14.5px; margin-bottom:12px; line-height:1.6;">
+          ఈ కోడ్‌ను కంపైలర్ లో రన్ చేసి నేరుగా పిన్ దొంగిలించడానికి ప్రయత్నించండి:
+        </p>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">JavaScript — Closure Encapsulation Vault</span>
+            <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+          </div>
+          <pre><code>// క్లోజర్ ద్వారా ప్రైవేట్ డేటాను దాచే బ్యాంక్ వాల్ట్ ఫ్యాక్టరీ
+function createVault(secretPin) {
+  let pin = secretPin; // ప్రైవేట్ వేరియబుల్ (బ్యాక్‌ప్యాక్ లో భద్రం)
+  let balance = 1000;   // ప్రైవేట్ నగదు నిల్వ
+
+  return {
+    deposit: (amount) => { balance += amount; return balance; },
+    checkBalance: (enteredPin) => (enteredPin === pin ? balance : "తప్పుడు పిన్! ❌")
+  };
+}
+
+const myVault = createVault(1234);
+
+console.log("డిపాజిట్ తర్వాత బ్యాలెన్స్:", myVault.deposit(500));
+console.log("సరైన పిన్ తో తనిఖీ:", myVault.checkBalance(1234));
+console.log("తప్పుడు పిన్ తో తనిఖీ:", myVault.checkBalance(9999));
+console.log("డైరెక్ట్ పిన్ యాక్సెస్ ప్రయత్నం:", myVault.pin); // undefined!</code></pre>
+        </div>
+        <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+          <span style="color:#64748b;">Output:</span><br>
+          డిపాజిట్ తర్వాత బ్యాలెన్స్: 1500<br>
+          సరైన పిన్ తో తనిఖీ: 1500<br>
+          తప్పుడు పిన్ తో తనిఖీ: తప్పుడు పిన్! ❌<br>
+          డైరెక్ట్ పిన్ యాక్సెస్ ప్రయత్నం: undefined
+        </div>
+        <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript రన్ చేయండి</a>
+      </div>
     </div>
 
-    <div class="callout callout-warning">
-      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు (Common Mistakes)</div>
-      <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">ఈ టాపిక్ నేర్చుకునేటప్పుడు విద్యార్థులు తరచుగా చేసే తప్పులు మరియు వాటిని ఎలా సరిచేయాలో ఇక్కడ పేర్కొనండి.</p>
-    </div>
-
-    <div class="section-title"><span class="num">4</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <!-- Section 8 -->
+    <div class="section-title" id="sec-8"><span class="num">8</span>ఆలోచింపజేసే ఇంటర్వ్యూ ప్రశ్నలు & సమాధానాలు</div>
     <div class="section-body">
-      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li>మొదటి ప్రాక్టీస్ ప్రశ్న?</li>
-        <li>రెండో ప్రాక్టీస్ ప్రశ్న?</li>
+      <p>
+        ఈ క్రింది ప్రశ్నలకు స్వయంగా సమాధానాలు ఆలోచించి, డ్రాప్‌డౌన్ తెరిచి పరిశీలించండి:
+      </p>
+
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>var</code> మరియు <code>let</code> హోయిస్టింగ్ మధ్య ప్రధాన తేడా ఏమిటి?</li>
+        <li>Temporal Dead Zone (TDZ) ఎప్పుడు ప్రారంభమై ఎప్పుడు ముగుస్తుంది?</li>
+        <li>ఒక పేరెంట్ ఫంక్షన్ ఎగ్జిక్యూషన్ ముగిసిన తర్వాత కూడా చైల్డ్ ఫంక్షన్ దాని వేరియబుల్స్‌ను ఎలా యాక్సెస్ చేయగలదు?</li>
+        <li>బ్లాక్ స్కోప్ అంటే ఏమిటి? జావాస్క్రిప్ట్ లో ఏ కీవర్డ్స్ దీనిని పాటిస్తాయి?</li>
+        <li>Function Expression ని అది డిక్లేర్ చేసిన లైన్ కంటే ముందే కాల్ చేస్తే ఏ ఎర్రర్ వస్తుంది?</li>
+        <li>రియల్-వరల్డ్ ప్రాజెక్టులలో క్లోజర్ల యొక్క అతిపెద్ద ప్రయోజనం ఏమిటి?</li>
       </ol>
 
-      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
-        <summary style="font-weight: bold; color: var(--text);">👉 సమాధానాలు చూడండి</summary>
-        <div style="margin-top: 10px; font-size: 14px; color: var(--text2); line-height: 1.6;">
-          <p>సమాధానం వివరణ ఇక్కడ రాయండి...</p>
+      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px; cursor: pointer;">
+        <summary style="font-weight: bold; color: #f7df1e;">👉 సమాధానాలు మరియు వివరణలు చూడండి (Click to Expand)</summary>
+        <div style="margin-top: 14px; font-size: 14px; color: var(--text2); line-height: 1.8;">
+          <p><strong>1. సమాధానం:</strong> <code>var</code> కి Creation phase లోనే <code>undefined</code> విలువ కేటాయిస్తారు. <code>let</code> కి మెమరీ కేటాయించినా విలువ ఇవ్వరు, కాబట్టి ప్రారంభించకముందు ముట్టుకుంటే ReferenceError వస్తుంది.</p>
+          <p><strong>2. సమాధానం:</strong> స్కోప్ ప్రారంభమైన క్షణం నుండి ఆ <code>let/const</code> వేరియబుల్ డిక్లేర్ చేయబడిన లైన్ చేరే వరకు ఉన్న సమయమే <strong>TDZ</strong>.</p>
+          <p><strong>3. సమాధానం:</strong> <strong>Closure</strong> ద్వారా. చైల్డ్ ఫంక్షన్ తన Lexical Scope ని రిఫరెన్స్ రూపంలో మెమరీలో పట్టి ఉంచుకుంటుంది.</p>
+          <p><strong>4. సమాధానం:</strong> కర్లీ బ్రాకెట్లు <code>{ }</code> మధ్య మాత్రమే వేరియబుల్ పరిమితమై ఉండటం. <strong><code>let</code> మరియు <code>const</code></strong> మాత్రమే దీనిని పాటిస్తాయి.</p>
+          <p><strong>5. సమాధానం:</strong> <strong><code>TypeError: fn is not a function</code></strong> (ఎందుకంటే అప్పటికి ఆ వేరియబుల్ విలువ <code>undefined</code> గా ఉంటుంది).</p>
+          <p><strong>6. సమాధానం:</strong> <strong>Data Privacy & Encapsulation</strong>. క్లాసులు వాడకుండానే ప్రైవేట్ వేరియబుల్స్‌ను నిర్మించి బయటి ట్యాంపరింగ్ నుండి కాపాడుకోవచ్చు.</p>
         </div>
       </details>
     </div>
 
-    <div class="try-box">
-      <div class="try-title">🚀 మీరే try చేయండి</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">మన ఆన్‌లైన్ కంపైలర్ లో ఈ కోడ్‌ను ఎడిట్ చేసి రన్ చేయండి:</p>
-      <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript రన్ చేయండి</a>
-    </div>
-
+    <!-- SUMMARY BOX -->
     <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
-      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary (సారాంశం):</h3>
-      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.6;">
-        <li><strong>24. Scope & Hoisting:</strong> Global scope · Function scope · Block scope · Variable & function hoisting · TDZ</li>
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 సారాంశం (Quick Summary):</h3>
+      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.8; font-size: 14.5px;">
+        <li><strong>స్కోప్ 3 పొరలు:</strong> Global, Function, మరియు Block (let/const).</li>
+        <li><strong>Two-Phase Execution:</strong> Creation phase (మెమరీ కేటాయింపు) + Execution phase (లైవ్ రన్).</li>
+        <li><strong>TDZ:</strong> <code>let</code> మరియు <code>const</code> లైన్ వచ్చే వరకు వాటిని తాకకూడదు.</li>
+        <li><strong>Closure (బ్యాక్‌ప్యాక్):</strong> బయటకు వెళ్లిన ఫంక్షన్ తన పేరెంట్ వేరియబుల్స్‌ను శాశ్వతంగా గుర్తుపెట్టుకునే సూపర్ పవర్.</li>
+        <li><strong>గోల్డెన్ రూల్:</strong> <code>var</code> ని పూర్తిగా మర్చిపోండి, ఎల్లప్పుడూ <code>const</code> (లేదా అవసరమైతే <code>let</code>) మాత్రమే వాడండి!</li>
       </ul>
     </div>
 
-    <!-- ====================================================================
-         👆 CHAPTER CONTENT END (ఇక్కడితో మీ కంటెంట్ పూర్తవుతుంది) 👆
-         ==================================================================== -->
+    <!-- Next Chapter Announcement -->
+    <div class="intro-box" style="background: linear-gradient(135deg, rgba(247, 223, 30, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%); border: 1px solid rgba(247, 223, 30, 0.35); margin-top: 30px; padding: 24px;">
+      <h2 style="color: #f7df1e; font-size: 20px; margin-bottom: 10px; font-family: 'Sora', sans-serif;">👉 తర్వాతి పాఠం: Destructuring, Spread, Rest & ES6 Modules →</h2>
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        జావాస్క్రిప్ట్ మెమరీ రహస్యాలు తెలుసుకున్నాం. తర్వాతి అధ్యాయంలో ఆధునిక వెబ్ డెవలపర్లు ప్రతిరోజూ వాడే <strong>Destructuring, Spread/Rest Operators (...) మరియు కోడ్‌ను ఫైల్స్‌గా విడదీసే ES6 Modules (import/export)</strong> గురించి స్పష్టంగా నేర్చుకుందాం!
+      </p>
+      <div style="margin-top: 14px;">
+        <a href="destructuring-spread.html" style="color: #38bdf8; font-weight: 700; text-decoration: underline; font-size: 15px;">23. Destructuring, Spread, Rest & ES6 Modules →</a>
+      </div>
+    </div>
 
-
-        <div class="nav-footer">
-      
+    <!-- Navigation Footer -->
+    <div class="nav-footer">
       <a href="todo-list-project.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
-        <span class="title">23. Mini project: To-Do List</span>
+        <span class="title">21. Mini project: To-Do List</span>
       </a>
 
-      
       <a href="destructuring-spread.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">25. Destructuring, Spread, Rest</span>
+        <span class="title">23. Destructuring, Spread, Rest & ES6 Modules</span>
       </a>
     </div>
   </main>

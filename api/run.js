@@ -1,7 +1,20 @@
 // api/run.js — Vercel serverless
-// Redirects to Render Docker backend
+// High-speed multi-language runner with Render Docker backend fallback
 
 const BACKEND_URL = 'https://mana-compailer-backend-docker.onrender.com'
+
+const PAIZA_LANG_MAP = {
+  python3: 'python3',
+  nodejs: 'javascript',
+  c: 'c',
+  cpp17: 'cpp',
+  java: 'java',
+  go: 'go',
+  rust: 'rust',
+  php: 'php',
+  ruby: 'ruby',
+  csharp: 'csharp'
+}
 
 function preprocessJavaCode(code) {
   // 1. Escape non-ASCII characters to \uXXXX unicode escapes
@@ -40,37 +53,53 @@ function preprocessJavaCode(code) {
   return code;
 }
 
-async function runJavaFastRunner(code, stdin) {
+async function runFastRunner(language, code, stdin = '') {
+  const paizaLang = PAIZA_LANG_MAP[language]
+  if (!paizaLang) return null
+
   try {
-    const processedCode = preprocessJavaCode(code)
+    const processedCode = language === 'java' ? preprocessJavaCode(code) : code
     const createRes = await fetch('https://api.paiza.io/runners/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        language: 'java',
+        language: paizaLang,
         source_code: processedCode,
         input: stdin || '',
         api_key: 'guest'
-      })
+      }),
+      signal: AbortSignal.timeout(8000)
     })
     const createData = await createRes.json()
     if (!createData || !createData.id) return null
 
     const id = createData.id
-    let maxTries = 35
+    let maxTries = 40
     while (maxTries-- > 0) {
-      await new Promise(r => setTimeout(r, 150))
-      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`)
+      await new Promise(r => setTimeout(r, 120))
+      const detailsRes = await fetch(`https://api.paiza.io/runners/get_details?id=${id}&api_key=guest`, {
+        signal: AbortSignal.timeout(4000)
+      })
       const details = await detailsRes.json()
       if (details.status === 'completed') {
-        if (details.build_stderr) {
-          return { error: details.build_stderr, output: details.stdout || '' }
+        if (details.result === 'timeout') {
+          return { output: '', error: 'Time Limit Exceeded (10s)', type: 'runtime_error' }
         }
-        return { output: (details.stdout || '') + (details.stderr || ''), error: details.stderr || null }
+        if (details.build_stderr) {
+          return { output: details.stdout || '', error: details.build_stderr, type: 'compile_error' }
+        }
+        if (details.stderr && !details.stdout) {
+          return { output: '', error: details.stderr, type: 'runtime_error' }
+        }
+        return {
+          output: details.stdout || (details.stderr ? '' : '(no output)'),
+          error: details.stderr || null,
+          type: details.stderr ? 'runtime_error' : 'success'
+        }
       }
     }
   } catch (e) {
-    console.warn('[Fast Java Runner Vercel] Exception, falling back:', e.message)
+    console.warn(`[Fast Runner Vercel] Exception for ${language}, falling back to Docker:`, e.message)
   }
   return null
 }
@@ -93,8 +122,8 @@ export default async function handler(req, res) {
     const payload = { ...req.body }
     let data = null
 
-    if (payload.language === 'java' && payload.code) {
-      data = await runJavaFastRunner(payload.code, payload.stdin)
+    if (payload.language && payload.code) {
+      data = await runFastRunner(payload.language, payload.code, payload.stdin)
     }
 
     if (!data) {

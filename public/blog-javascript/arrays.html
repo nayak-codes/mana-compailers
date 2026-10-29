@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>14. Arrays: create, access, push/pop — JavaScript Tutorial | Our Compiler</title>
-  <meta name="description" content="Learn 14. Arrays: create, access, push/pop in JavaScript with clear Telugu explanations and live runnable code." />
-  <meta name="keywords" content="javascript tutorial, 14. arrays: create, access, push/pop, learn javascript, javascript online compiler" />
+  <title>JavaScript Arrays తెలుగులో | Array Methods: push, pop, map, filter, reduce — JavaScript Tutorial | Our Compiler</title>
+  <meta name="description" content="JavaScript లో arrays అంటే ఏమిటి, create, access, push, pop, loops, 2D arrays మరియు map, filter, reduce, find, sort, slice, splice వంటి array methods తెలుగులో ఉదాహరణలతో నేర్చుకోండి." />
+  <meta name="keywords" content="javascript arrays telugu, array methods telugu, push pop map filter reduce javascript telugu, javascript tutorial telugu, 2d arrays javascript, array operations telugu" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-javascript/arrays.html" />
@@ -14,7 +14,304 @@
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="/site-nav.css" />
-  
+
+  <style>
+    /* Interactive Quiz Widget Styles */
+    .quiz-widget {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 32px 0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    .quiz-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .quiz-badge {
+      display: inline-block;
+      background: rgba(247, 223, 30, 0.15);
+      color: #f7df1e;
+      border: 1px solid rgba(247, 223, 30, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    body.light-theme .quiz-badge {
+      background: #fefce8;
+      color: #a16207;
+      border-color: #fde047;
+    }
+    .quiz-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .quiz-desc {
+      font-size: 14.5px;
+      color: var(--text2);
+      margin: 0;
+      line-height: 1.6;
+    }
+    .quiz-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+    .quiz-q-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quiz-q-text {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiz-opt-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14.5px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      user-select: none;
+      font-family: inherit;
+      width: 100%;
+    }
+    .quiz-opt-btn:hover:not(:disabled) {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      transform: translateX(3px);
+    }
+    .quiz-opt-btn .opt-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .quiz-opt-btn.correct {
+      background: rgba(34, 197, 94, 0.15) !important;
+      border-color: #22c55e !important;
+      color: #4ade80 !important;
+      font-weight: 600;
+    }
+    .quiz-opt-btn.correct .opt-letter {
+      background: #22c55e;
+      color: #ffffff;
+      border-color: #22c55e;
+    }
+    .quiz-opt-btn.wrong {
+      background: rgba(239, 68, 68, 0.15) !important;
+      border-color: #ef4444 !important;
+      color: #f87171 !important;
+    }
+    .quiz-opt-btn.wrong .opt-letter {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #ef4444;
+    }
+    .quiz-opt-btn.highlight-correct {
+      border-color: #22c55e !important;
+      background: rgba(34, 197, 94, 0.08) !important;
+      color: #86efac !important;
+    }
+    .quiz-feedback {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+    .quiz-feedback.show {
+      display: block;
+    }
+    .quiz-feedback.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #86efac;
+    }
+    .quiz-feedback.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+    body.light-theme .quiz-feedback.success {
+      background: #f0fdf4;
+      border-color: #86efac;
+      color: #166534;
+    }
+    body.light-theme .quiz-feedback.error {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+    .quiz-score-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .quiz-score-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .quiz-reset-btn {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quiz-reset-btn:hover {
+      background: #38bdf8;
+      color: #0b1120;
+    }
+
+    /* Content Anchor Navigation */
+    .toc-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 30px;
+    }
+    .toc-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #f7df1e;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .toc-col h4 {
+      font-size: 15px;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    .toc-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .toc-list li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .toc-list a {
+      color: var(--text2);
+      text-decoration: none;
+      transition: color 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-list a:hover {
+      color: #f7df1e;
+      text-decoration: underline;
+    }
+
+    /* Custom Tables */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14.5px;
+      background: var(--bg2);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .custom-table th, .custom-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .custom-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #38bdf8;
+      font-weight: 700;
+    }
+    body.light-theme .custom-table th {
+      background: #f1f5f9;
+      color: #0369a1;
+    }
+    .custom-table tr:last-child td {
+      border-bottom: none;
+    }
+    .part-banner {
+      background: linear-gradient(135deg, rgba(247, 223, 30, 0.15) 0%, rgba(56, 189, 248, 0.12) 100%);
+      border: 1px solid rgba(247, 223, 30, 0.35);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 36px 0 20px 0;
+    }
+    .part-banner h2 {
+      margin: 0 0 6px 0;
+      font-size: 22px;
+      color: #f7df1e;
+      font-family: 'Sora', sans-serif;
+    }
+    .part-banner p {
+      margin: 0;
+      font-size: 14.5px;
+      color: var(--text2);
+    }
+  </style>
+
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -144,6 +441,88 @@
         });
       });
     })();
+
+    // Interactive Quiz State & Handlers
+    const quizAnswers = {
+      1: { correct: 'b', explanation: "Array index ఎప్పుడూ 0 నుంచి మొదలవుతుంది! మొదటి విలువ ['Apple', 'Banana', 'Mango'][0] అంటే 'Apple'." },
+      2: { correct: 'd', explanation: "push() మెథడ్ array చివరన కొత్త element ని జోడిస్తుంది మరియు array యొక్క కొత్త length ని return చేస్తుంది." },
+      3: { correct: 'b', explanation: "JavaScript లో typeof array ని 'object' గా చెబుతుంది. అందుకే నిజమైన array అవునా కాదా తెలుసుకోవడానికి Array.isArray(arr) వాడతాం, ఇది true ఇస్తుంది." },
+      4: { correct: 'b', explanation: "map() అసలు array లోని ప్రతి element ని transform చేసి, అంతే సమాన పొడవున్న కొత్త array ని [20, 40, 60] గా ఇస్తుంది. అసలు array మారదు." },
+      5: { correct: 'b', explanation: "JavaScript లో arrays రిఫరెన్స్ టైప్స్. [1, 2] === [1, 2] చేసినప్పుడు మెమరీలోని వేర్వేరు అడ్రస్‌లను పోల్చడం వల్ల ఎప్పుడూ false వస్తుంది." }
+    };
+
+    let userScore = 0;
+    let answeredQuestions = new Set();
+
+    function selectQuizOption(btn, qNum, chosenOpt) {
+      if (answeredQuestions.has(qNum)) return;
+      answeredQuestions.add(qNum);
+
+      const card = btn.closest('.quiz-card');
+      const allBtns = card.querySelectorAll('.quiz-opt-btn');
+      const feedbackEl = card.querySelector('.quiz-feedback');
+      const qData = quizAnswers[qNum];
+      const isCorrect = chosenOpt === qData.correct;
+
+      allBtns.forEach(b => {
+        b.disabled = true;
+        b.style.cursor = 'default';
+        const opt = b.getAttribute('data-opt');
+        if (opt === qData.correct) {
+          b.classList.add(isCorrect ? 'correct' : 'highlight-correct');
+        }
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedbackEl.className = 'quiz-feedback show success';
+        feedbackEl.innerHTML = '<strong>✅ సరైన సమాధానం!</strong> ' + qData.explanation;
+        userScore++;
+      } else {
+        btn.classList.add('wrong');
+        feedbackEl.className = 'quiz-feedback show error';
+        feedbackEl.innerHTML = '<strong>❌ తప్పు సమాధానం!</strong> ' + qData.explanation;
+      }
+
+      updateQuizScore();
+    }
+
+    function updateQuizScore() {
+      const scoreEl = document.getElementById('quizScoreText');
+      if (!scoreEl) return;
+      const total = Object.keys(quizAnswers).length;
+      const answeredCount = answeredQuestions.size;
+      if (answeredCount === total) {
+        if (userScore === total) {
+          scoreEl.innerHTML = `🏆 అద్భుతం! మీ స్కోర్: <strong>${userScore} / ${total}</strong> (100% Correct) — Arrays & Methods పై పూర్తి పట్టు సాధించారు!`;
+        } else if (userScore >= 3) {
+          scoreEl.innerHTML = `👏 చాలా బాగుంది! మీ స్కోర్: <strong>${userScore} / ${total}</strong> — కాన్సెప్ట్స్ బాగా అర్థమయ్యాయి!`;
+        } else {
+          scoreEl.innerHTML = `📚 మీ స్కోర్: <strong>${userScore} / ${total}</strong> — ఒకసారి పాఠాన్ని మళ్ళీ చదివి 'రీట్రై' చేయండి!`;
+        }
+      } else {
+        scoreEl.innerHTML = `పూర్తయినవి: <strong>${answeredCount} / ${total}</strong> | ప్రస్తుత స్కోర్: <strong>${userScore}</strong>`;
+      }
+    }
+
+    function resetQuiz() {
+      userScore = 0;
+      answeredQuestions.clear();
+      document.querySelectorAll('.quiz-card').forEach(card => {
+        card.querySelectorAll('.quiz-opt-btn').forEach(b => {
+          b.disabled = false;
+          b.style.cursor = 'pointer';
+          b.classList.remove('correct', 'wrong', 'highlight-correct');
+        });
+        const fb = card.querySelector('.quiz-feedback');
+        fb.className = 'quiz-feedback';
+        fb.innerHTML = '';
+      });
+      const scoreEl = document.getElementById('quizScoreText');
+      if (scoreEl) {
+        scoreEl.innerHTML = 'క్విజ్ ప్రారంభించండి! (మొత్తం 5 ప్రశ్నలు)';
+      }
+    }
   </script>
 </head>
 <body class="lang-javascript">
@@ -170,7 +549,7 @@
     <div class="sidebar-heading">JavaScript Course</div>
     <a href="/blog-javascript.html" class="sidebar-home-link">🟨 JavaScript HOME</a>
 
-    <div class="sidebar-accordion">
+        <div class="sidebar-accordion">
       <!-- Part 01: Basics -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
@@ -230,7 +609,7 @@
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">7 Ch</span>
+          <span class="phase-count-badge">6 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
@@ -239,67 +618,59 @@
       <div class="accordion-content open">
         <a href="/blog-javascript/functions.html">12. Functions: declaration, parameters, return</a>
         <a href="/blog-javascript/arrow-functions.html">13. Arrow Functions</a>
-        <a href="/blog-javascript/arrays.html" class="active">14. Arrays: create, access, push/pop</a>
-        <a href="/blog-javascript/array-methods.html">15. Array Methods: map, filter, reduce, forEach</a>
-        <a href="/blog-javascript/objects.html">16. Objects: properties, methods</a>
-        <a href="/blog-javascript/strings.html">17. Strings: common methods</a>
-        <a href="/blog-javascript/math-date.html">18. Math & Date objects</a>
+        <a href="/blog-javascript/arrays.html" class="active">14. Arrays & Array Methods</a>
+        <a href="/blog-javascript/objects.html">15. Objects: properties, methods & JSON</a>
+        <a href="/blog-javascript/strings.html">16. Strings: common methods</a>
+        <a href="/blog-javascript/math-date.html">17. Math & Date objects</a>
       </div>
 
-      <!-- Part 04: DOM (Document Object Model) -->
+      <!-- Part 04: DOM & Events -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🌐</span>
           <div class="phase-info">
             <span class="phase-tag">Part 04</span>
-            <span class="phase-title">DOM (Document Object Model)</span>
+            <span class="phase-title">DOM & Events</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
+          <span class="phase-count-badge">4 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/dom.html">19. DOM ante enti? Elements select cheyyadam</a>
-        <a href="/blog-javascript/dom-manipulation.html">20. Content & style marchadam</a>
-        <a href="/blog-javascript/events.html">21. Events: click, input, submit</a>
-        <a href="/blog-javascript/form-validation.html">22. Form validation</a>
-        <a href="/blog-javascript/todo-list-project.html">23. Mini project: To-Do List</a>
+        <a href="/blog-javascript/dom.html">18. DOM: Selecting & Manipulation</a>
+        <a href="/blog-javascript/events.html">19. Events: click, input, submit</a>
+        <a href="/blog-javascript/form-validation.html">20. Form Validation</a>
+        <a href="/blog-javascript/todo-list-project.html">21. Mini project: To-Do List</a>
       </div>
 
-      <!-- Part 05: Intermediate JavaScript -->
+      <!-- Part 05: Modern & Advanced JS -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🚀</span>
           <div class="phase-info">
             <span class="phase-tag">Part 05</span>
-            <span class="phase-title">Intermediate JavaScript</span>
+            <span class="phase-title">Modern & Advanced JS</span>
           </div>
         </div>
         <div class="accordion-header-meta">
-          <span class="phase-count-badge">8 Ch</span>
+          <span class="phase-count-badge">4 Ch</span>
           <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
       </button>
       <div class="accordion-content">
-        <a href="/blog-javascript/scope-hoisting.html">24. Scope & Hoisting</a>
-        <a href="/blog-javascript/destructuring-spread.html">25. Destructuring, Spread, Rest</a>
-        <a href="/blog-javascript/closures.html">26. Closures</a>
-        <a href="/blog-javascript/promises.html">27. Callbacks, Promises</a>
-        <a href="/blog-javascript/async-await-fetch.html">28. async / await & fetch API</a>
-        <a href="/blog-javascript/error-handling.html">29. Error Handling: try-catch</a>
-        <a href="/blog-javascript/modules.html">30. ES6 Modules</a>
-        <a href="/blog-javascript/localstorage.html">31. localStorage</a>
+        <a href="/blog-javascript/scope-hoisting.html">22. Scope, Hoisting & Closures</a>
+        <a href="/blog-javascript/destructuring-spread.html">23. Destructuring, Spread, Rest & ES6 Modules</a>
+        <a href="/blog-javascript/async-await-fetch.html">24. Asynchronous JS: Promises, async/await & Fetch</a>
+        <a href="/blog-javascript/error-handling.html">25. Error Handling & localStorage</a>
       </div>
 
     </div>
-
-
     <div class="sidebar-heading">Interactive IDE</div>
     <a href="/?lang=nodejs" style="color:#f7df1e; font-weight:700;">▶ Try JavaScript Online</a>
     <a href="/blog.html">📚 All Tutorials</a>
@@ -316,120 +687,1313 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-javascript.html">JavaScript</a><span class="sep">›</span>
-      <span class="current">Lesson 14: 14. Arrays: create, access, push/pop</span>
+      <span class="current">Lesson 14: Arrays & Array Methods</span>
     </div>
 
-    <h1 class="page-title">14. Arrays: create, access, push/pop</h1>
+    <h1 class="page-title">JavaScript లో Arrays & Array Methods</h1>
 
     <div class="page-meta">
       <span class="badge">🟨 JavaScript (ES2026+)</span>
-      <span class="badge">🟢 Lesson 14</span>
-      <span class="badge">📂 Part 03: Functions & Data</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">🟢 Lesson 14 (Ch 14 & 15 Merged)</span>
+      <span class="badge">📂 Part 03: Functions & Data (Page 2 of 4)</span>
+      <span class="badge">⏱️ 18 min read</span>
     </div>
 
     <!-- Subtopics Pill Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#f7df1e; font-weight:700;">📌 Covered in this lesson:</span>
-      <span>Array creation · Indexing · length · push/pop · shift/unshift · splice</span>
+      <span>Array creation · 0-based Indexing · push/pop/shift/unshift · Loops · 2D Arrays · map, filter, reduce · find & some · slice vs splice · sort & chaining</span>
     </div>
 
+    <!-- Intro Box with Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        మీ క్లాస్ లో 50 మంది విద్యార్థుల మార్కులను store చేయాలనుకోండి. 50 వేర్వేరు variables తయారు చేస్తారా? <code>mark1, mark2, mark3 ... mark50</code>? అది రాయడం చాలా కష్టం, పైగా వాటన్నిటి సగటు (average) తీయడం ఇంకా కష్టం!
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        దీనికి అద్భుతమైన పరిష్కారం <strong>Array</strong>. Array అంటే ఒకే చోట చాలా విలువలను వరుసగా నిల్వ చేసే లిస్ట్. ఒక పుస్తకాల అరలో (bookshelf) పుస్తకాలను వరుసగా పేర్చినట్లు: ప్రతి దానికి ఒక స్థానం (నంబర్/index) ఉంటుంది. ఒక్క పేరుతో (<code>marks</code>) మొత్తం 50 మార్కులనూ దాచుకోవచ్చు.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ సమగ్ర పేజీలో మనం రెండు ముఖ్యమైన భాగాలు నేర్చుకుంటాం: <strong>Part A</strong> లో Arrays బేసిక్స్ (నిర్మించడం, యాక్సెస్ చేయడం, మార్చడం, loops, 2D arrays). <strong>Part B</strong> లో ఆధునిక ప్రాజెక్ట్‌లు మరియు జాబ్ ఇంటర్వ్యూలలో అత్యంత ప్రాధాన్యత కలిగిన శక్తివంతమైన <strong>Array Methods</strong> (<code>map</code>, <code>filter</code>, <code>reduce</code>, <code>sort</code> మొదలైనవి).
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#part-a" style="color:#f7df1e; text-decoration:none;">Part A: Arrays Basics</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. Array ని తయారు చేయడం (create)</a></li>
+            <li><a href="#sec-2">2. విలువలను తీసుకోవడం (access) & Index</a></li>
+            <li><a href="#sec-3">3. విలువను మార్చడం (update)</a></li>
+            <li><a href="#sec-4">4. push, pop, unshift, shift</a></li>
+            <li><a href="#sec-5">5. Array ని loop చేయడం</a></li>
+            <li><a href="#sec-6">6. ప్రాక్టికల్ ఉదాహరణలు: sum, average, max</a></li>
+            <li><a href="#sec-7">7. Nested arrays (2D Arrays)</a></li>
+            <li><a href="#sec-8">8. Part A లో సాధారణ తప్పులు</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#part-b" style="color:#f7df1e; text-decoration:none;">Part B: Array Methods</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. forEach, map, filter, reduce</a></li>
+            <li><a href="#sec-10">10. find, findIndex, some, every</a></li>
+            <li><a href="#sec-11">11. includes మరియు indexOf</a></li>
+            <li><a href="#sec-12">12. slice మరియు splice (ముఖ్యమైన తేడాలు)</a></li>
+            <li><a href="#sec-13">13. sort, reverse, join, concat</a></li>
+            <li><a href="#sec-14">14. Methods ని కలపడం (Chaining)</a></li>
+            <li><a href="#sec-15">15. Part B లో సాధారణ తప్పులు</a></li>
+            <li><a href="#sec-16">16. ప్రాక్టీస్ ప్రశ్నలు, Try It & Quiz</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
     <!-- ====================================================================
-         👇 CHAPTER CONTENT START (ఇక్కడ నుండి మీ పాఠం కంటెంట్ రాయండి) 👇
+         PART A: ARRAYS BASICS
          ==================================================================== -->
-
-    <div class="intro-box">
-      <p>ఈ పాఠంలో మనం JavaScript లోని ముఖ్యమైన <strong>14. Arrays: create, access, push/pop</strong> గురించి స్పష్టంగా, సులభమైన ఉదాహరణలతో నేర్చుకుందాం.</p>
-      <p>రియల్ వరల్డ్ ప్రాజెక్టులలో మరియు ఇంటర్వ్యూలలో ఈ కాన్సెప్ట్ చాలా కీలకం.</p>
+    <div class="part-banner" id="part-a">
+      <h2>Part A: Arrays Basics</h2>
+      <p>డేటాను సమూహంగా నిల్వ చేయడం, ఇండెక్సింగ్, మ్యుటేషన్ మరియు ప్రాథమిక లూపింగ్ పద్ధతులు</p>
     </div>
 
-    <div class="section-title"><span class="num">1</span>ఈ chapter లో మీరు నేర్చుకునేవి</div>
+    <!-- Section 1 -->
+    <div class="section-title" id="sec-1"><span class="num">1</span>Array ని తయారు చేయడం (Creation)</div>
     <div class="section-body">
-      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li><code>Array creation</code> గురించి అవగాహన</li>
-        <li><code>Indexing</code> గురించి అవగాహన</li>
-        <li><code>length</code> గురించి అవగాహన</li>
-        <li><code>push/pop</code> గురించి అవగాహన</li>
-        <li><code>shift/unshift</code> గురించి అవగాహన</li>
-        <li><code>splice</code> గురించి అవగాహన</li>
-      </ul>
-    </div>
-
-    <div class="section-title"><span class="num">2</span>సిద్ధాంతం & ప్రాథమిక కాన్సెప్ట్</div>
-    <div class="section-body">
-      <p>ఇక్కడ కాన్సెప్ట్ గురించిన పూర్తి వివరణ రాయండి...</p>
+      <p>Array ని చతురస్ర బ్రాకెట్లు <code>[ ]</code> లో, విలువలను కామాలతో వేరు చేసి (comma-separated) రాస్తాం.</p>
 
       <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">JavaScript — ఉదాహరణ 1</span>
+          <span class="lang-tag">JavaScript — Simple Array Creation</span>
           <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
         </div>
-        <pre><code>// 14. Arrays: create, access, push/pop కోడ్ ఉదాహరణ
-console.log("14. Arrays: create, access, push/pop మొదలైంది");
-</code></pre>
+        <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+console.log(fruits);
+console.log(fruits.length);</code></pre>
       </div>
 
       <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
         <span style="color:#64748b;">Output:</span><br>
-        14. Arrays: create, access, push/pop మొదలైంది
+        [ 'Apple', 'Banana', 'Mango' ]<br>
+        3
+      </div>
+
+      <ul style="margin: 14px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>fruits</code> అనేది array పేరు. లోపల 3 విలువలు (elements) ఉన్నాయి.</li>
+        <li><code>.length</code> అనే property array లో మొత్తం ఎన్ని elements ఉన్నాయో ఖచ్చితంగా చెబుతుంది.</li>
+      </ul>
+
+      <h3 style="color: var(--text); font-size: 17px; margin: 20px 0 8px 0;">ఏ రకం విలువలైనా పెట్టొచ్చు (Mixed Data Types)</h3>
+      <p>
+        JavaScript arrays చాలా సరళమైనవి (flexible). Array లో numbers, strings, booleans, null, ఇంకా వేరే arrays కూడా పెట్టొచ్చు. ఒకే array లో వేర్వేరు రకాల డేటాను కలిపి కూడా ఉంచవచ్చు (కానీ నిజ జీవితంలో క్లీన్ కోడ్ కోసం ఒకే రకం డేటాను పెడతాం).
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Mixed & Empty Arrays</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const mixed = ["రవి", 25, true, null];
+const empty = [];
+console.log(mixed);
+console.log(empty, empty.length);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 'రవి', 25, true, null ]<br>
+        [] 0
+      </div>
+
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14px;">
+        <code>[]</code> అనేది ఖాళీ array (empty array). మొదట ఖాళీ array ని తయారుచేసి, ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు డేటాను దాచుకోవడానికి ఇది బాగా ఉపయోగపడుతుంది.
+      </p>
+
+      <h3 style="color: var(--text); font-size: 17px; margin: 20px 0 8px 0;">Array అంటే ఏ డేటా రకం? (Type of Array)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Array Type Check</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+console.log(typeof fruits, Array.isArray(fruits));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        object true
+      </div>
+
+      <div class="callout callout-info" style="margin-top: 14px;">
+        <div class="callout-title">💡 ముఖ్యమైన ఇంటర్వ్యూ పాయింట్:</div>
+        <p style="margin-top: 6px; color: var(--text2); font-size: 14px; line-height: 1.6;">
+          <code>typeof</code> ఆపరేటర్ array ని కూడా <code>"object"</code> అనే చెబుతుంది (Chapter 4 లో <code>typeof null === "object"</code> లాగా ఇది JavaScript లో ఒక చారిత్రక విచిత్రం). కాబట్టి ఒక variable నిజంగా array అవునా కాదా ఖచ్చితంగా నిర్ధారించుకోవడానికి ఎప్పుడూ <strong><code>Array.isArray(variable)</code></strong> వాడాలి!
+        </p>
       </div>
     </div>
 
-    <div class="section-title"><span class="num">3</span>రియల్-లైఫ్ ఉదాహరణ & ప్రాక్టీస్</div>
+    <!-- Section 2 -->
+    <div class="section-title" id="sec-2"><span class="num">2</span>విలువలను తీసుకోవడం (Access) మరియు Index</div>
     <div class="section-body">
-      <p>రెండో ఉదాహరణ లేదా వాస్తవ ప్రపంచంలో దీని ఉపయోగం ఇక్కడ రాయండి...</p>
+      <p>
+        Array లోని ప్రతి విలువకు ఒక <strong>index</strong> (స్థాన సంఖ్య) ఉంటుంది. కంప్యూటర్ సైన్స్ లో అతి ముఖ్యమైన నియమం: <strong>ఇండెక్స్ ఎప్పుడూ 0 నుంచి మొదలవుతుంది</strong>, 1 నుంచి కాదు!
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఇండెక్స్ (Index)</th>
+            <th>0</th>
+            <th>1</th>
+            <th>2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>విలువ (Element)</strong></td>
+            <td><code>"Apple"</code></td>
+            <td><code>"Banana"</code></td>
+            <td><code>"Mango"</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="color: var(--text2); font-size: 14.5px;">
+        రైలు పెట్టెలకు (train compartments) 0 నుంచి నంబర్లు వేసినట్లు ఊహించుకోండి. మొదటి విలువ index 0 లో, రెండోది index 1 లో, మూడోది index 2 లో ఉంటుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Accessing Elements</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+console.log(fruits[0], fruits[2], fruits[3]);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        Apple Mango undefined
+      </div>
+
+      <ul style="margin: 12px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>fruits[0]</code> → మొదటి విలువ <code>"Apple"</code>.</li>
+        <li><code>fruits[2]</code> → మూడో విలువ <code>"Mango"</code>.</li>
+        <li><code>fruits[3]</code> → అలాంటి స్థానమే లేదు (ఎందుకంటే ఉన్నవే 3 elements, వాటి ఇండెక్సులు 0, 1, 2). కాబట్టి JavaScript లో ఎర్రర్ రాకుండా <strong><code>undefined</code></strong> వస్తుంది.</li>
+      </ul>
+
+      <h3 style="color: var(--text); font-size: 17px; margin: 20px 0 8px 0;">చివరి విలువను తీసుకోవడం (Last Element)</h3>
+      <p>Array లో చివరి index ఎప్పుడూ <strong><code>length - 1</code></strong> అవుతుంది (3 elements ఉంటే చివరి index 2).</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Accessing Last Element</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+console.log(fruits[fruits.length - 1]);
+console.log(fruits.at(-1));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        Mango<br>
+        Mango
+      </div>
+
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14px; line-height: 1.6;">
+        <code>.at(-1)</code> అనేది ఆధునిక (ES2022+) చిన్న పద్ధతి: ఋణ సంఖ్య (negative index) ఇస్తే చివరి నుంచి లెక్కిస్తుంది (-1 చివరిది, -2 చివరి నుంచి రెండోది). పాత బ్రౌజర్లను దృష్టిలో పెట్టుకున్నప్పుడు <code>arr[arr.length - 1]</code> పద్ధతి కూడా తెలుసుకోవడం ఉత్తమం.
+      </p>
     </div>
 
-    <div class="callout callout-warning">
-      <div class="callout-title">⚠️ Beginners చేసే సాధారణ తప్పులు (Common Mistakes)</div>
-      <p style="margin-top: 8px; color: var(--text2); font-size: 14.5px;">ఈ టాపిక్ నేర్చుకునేటప్పుడు విద్యార్థులు తరచుగా చేసే తప్పులు మరియు వాటిని ఎలా సరిచేయాలో ఇక్కడ పేర్కొనండి.</p>
+    <!-- Section 3 -->
+    <div class="section-title" id="sec-3"><span class="num">3</span>విలువను మార్చడం (Update)</div>
+    <div class="section-body">
+      <p>ఇండెక్స్ ద్వారా ఒక స్థానంలోని విలువను నేరుగా కొత్త విలువతో రీప్లేస్ చేయవచ్చు.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Modifying Element</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+fruits[1] = "Orange";
+console.log(fruits);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 'Apple', 'Orange', 'Mango' ]
+      </div>
+
+      <h3 style="color: var(--text); font-size: 17px; margin: 20px 0 8px 0;">const తో పెట్టిన Array ని మార్చవచ్చా?</h3>
+      <p>
+        <strong>అవును, ఖచ్చితంగా మార్చవచ్చు!</strong> చాలా మంది బిగినర్స్ <code>const</code> ఉంది కదా, లోపలి విలువలు ఎలా మారతాయి అని అయోమయానికి గురవుతారు. <code>const</code> అంటే "ఈ వేరియబుల్ కి వేరే సరికొత్త array అడ్రస్ ని అసైన్ చేయలేం" అని మాత్రమే అర్థం. కానీ array లోపలి బాక్సుల్లోని విలువలను సులభంగా మార్చుకోవచ్చు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Reassignment vs Mutation</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const f2 = ["a"];
+f2 = []; // ❌ Error! Reassignment not allowed</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#ef4444; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        TypeError: Assignment to constant variable.
+      </div>
+      <p style="margin-top: 8px; color: var(--text2); font-size: 14px;">
+        కొత్త array ని <code>f2 = []</code> అని ఇవ్వలేం. కానీ <code>f2[0] = "b"</code> లేదా <code>f2.push("c")</code> చేయడం 100% చెల్లుబాటు అవుతుంది.
+      </p>
     </div>
 
-    <div class="section-title"><span class="num">4</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <!-- Section 4 -->
+    <div class="section-title" id="sec-4"><span class="num">4</span>Elements ని చేర్చడం మరియు తీసివేయడం (push, pop, unshift, shift)</div>
     <div class="section-body">
-      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.6;">
-        <li>మొదటి ప్రాక్టీస్ ప్రశ్న?</li>
-        <li>రెండో ప్రాక్టీస్ ప్రశ్న?</li>
+      <p>Array చివరన లేదా మొదట్లో elements ని చేర్చడానికి, తీసేయడానికి 4 ప్రధాన మెథడ్స్ ఉన్నాయి. వీటిని సినిమా టికెట్ క్యూ లైన్ లో నిల్చున్న వ్యక్తుల్లా ఊహించుకోండి:</p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>పని (Operation)</th>
+            <th>ఎక్కడ జరుగుతుంది?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>push(x)</code></td>
+            <td>చివర్లో కొత్త element ని చేర్చుతుంది</td>
+            <td>క్యూ వరుస చివర (End)</td>
+          </tr>
+          <tr>
+            <td><code>pop()</code></td>
+            <td>చివరి element ని తొలగిస్తుంది</td>
+            <td>క్యూ వరుస చివర (End)</td>
+          </tr>
+          <tr>
+            <td><code>unshift(x)</code></td>
+            <td>మొదట్లో కొత్త element ని చేర్చుతుంది</td>
+            <td>క్యూ వరుస మొదట (Start)</td>
+          </tr>
+          <tr>
+            <td><code>shift()</code></td>
+            <td>మొదటి element ని తొలగిస్తుంది</td>
+            <td>క్యూ వరుస మొదట (Start)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — push, pop, unshift, shift Live Demo</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const nums = [10, 20, 30];
+
+console.log(nums.push(40));   // 40 ని చివర చేర్చింది
+console.log(nums);
+
+console.log(nums.pop());      // చివరిది తీసేసింది
+console.log(nums);
+
+console.log(nums.unshift(5)); // 5 ని మొదట్లో చేర్చింది
+console.log(nums);
+
+console.log(nums.shift());    // మొదటిది తీసేసింది
+console.log(nums);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        4<br>
+        [ 10, 20, 30, 40 ]<br>
+        40<br>
+        [ 10, 20, 30 ]<br>
+        4<br>
+        [ 5, 10, 20, 30 ]<br>
+        5<br>
+        [ 10, 20, 30 ]
+      </div>
+
+      <h3 style="color: var(--text); font-size: 17px; margin: 20px 0 8px 0;">ఈ Methods ఏమి రిటర్న్ చేస్తాయి? (Return Values)</h3>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>తిరిగి ఇచ్చే ఫలితం (Return Value)</th>
+            <th>పై ఉదాహరణలో ఫలితం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>push</code></td>
+            <td>ఎలిమెంట్ చేర్చిన తర్వాత వచ్చే <strong>కొత్త length</strong></td>
+            <td><code>4</code></td>
+          </tr>
+          <tr>
+            <td><code>pop</code></td>
+            <td>అరే నుండి <strong>తొలగించిన element</strong></td>
+            <td><code>40</code></td>
+          </tr>
+          <tr>
+            <td><code>unshift</code></td>
+            <td>ఎలిమెంట్ చేర్చిన తర్వాత వచ్చే <strong>కొత్త length</strong></td>
+            <td><code>4</code></td>
+          </tr>
+          <tr>
+            <td><code>shift</code></td>
+            <td>అరే నుండి <strong>తొలగించిన element</strong></td>
+            <td><code>5</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning" style="margin-top: 14px;">
+        <div class="callout-title">⚠️ గమనిక (Mutation Alert):</div>
+        <p style="margin-top: 6px; color: var(--text2); font-size: 14px; line-height: 1.6;">
+          ఈ నాలుగు methods కూడా నేరుగా అసలు array లోని డేటాను మార్చివేస్తాయి (దీన్ని ప్రోగ్రామింగ్ లో <strong>"mutate చేయడం"</strong> అంటారు). ఖాళీ array మీద <code>pop()</code> చేస్తే ఎలాంటి crash లేదా error రాదు, కేవలం <code>undefined</code> వస్తుంది:
+        </p>
+        <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin-top:8px; color:#f7df1e; font-size:13px;"><code>console.log([].pop()); // Output: undefined</code></pre>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section-title" id="sec-5"><span class="num">5</span>Array ని Loop చేయడం (Traversing an Array)</div>
+    <div class="section-body">
+      <p>Array లోని ప్రతి ఎలిమెంట్‌ని ఒక్కొక్కటిగా విజిట్ చేసి చూడాలంటే loops వాడతాం (Chapter 10 లో మనం నేర్చుకున్న లూప్స్ ఇక్కడ ఎంతగానో తోడ్పడతాయి).</p>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 16px 0 8px 0;">1. సాధారణ for loop (ఇండెక్స్ అవసరమైనప్పుడు):</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Standard for Loop</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const marks = [80, 65, 90, 55];
+for (let i = 0; i &lt; marks.length; i++) {
+  console.log(`marks[${i}] = ${marks[i]}`);
+}</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        marks[0] = 80<br>
+        marks[1] = 65<br>
+        marks[2] = 90<br>
+        marks[3] = 55
+      </div>
+
+      <ul style="margin: 12px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>let i = 0</code>: array index ఎప్పుడూ 0 తో మొదలవుతుంది.</li>
+        <li><code>i &lt; marks.length</code>: ఇక్కడ <code>&lt;</code> మాత్రమే వాడాలి, <code>&lt;=</code> వాడకూడదు! ఒకవేళ <code>&lt;=</code> వాడితే, <code>marks[4]</code> ని కూడా చదువుతుంది, అక్కడ ఏమీ ఉండదు కాబట్టి <code>undefined</code> వస్తుంది (దీన్ని off-by-one బగ్ అంటారు).</li>
+      </ul>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 20px 0 8px 0;">2. for...of loop (విలువలు మాత్రమే కావాలంటే — అత్యంత సులభం):</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — for...of Loop</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+for (const fruit of fruits) {
+  console.log(fruit);
+}</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        Apple<br>
+        Banana<br>
+        Mango
+      </div>
+      <p style="margin-top: 8px; color: var(--text2); font-size: 14px;">
+        మీకు index నంబర్ తో పనిలేకుండా కేవలం అరే లోని విలువలు (values) మాత్రమే కావాలంటే <code>for...of</code> రాయడం మరియు చదవడం రెండూ ఎంతో సులభం.
+      </p>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section-title" id="sec-6"><span class="num">6</span>ప్రాక్టికల్ ఉదాహరణలు (Practical Examples)</div>
+    <div class="section-body">
+      <h3 style="color: var(--text); font-size: 16px; margin: 12px 0 8px 0;">ఉదాహరణ 1: మార్కుల మొత్తం మరియు సగటు (Sum & Average)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Sum and Average</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const marks = [80, 65, 90, 55];
+let sum = 0;
+for (let i = 0; i &lt; marks.length; i++) {
+  sum += marks[i];
+}
+console.log("మొత్తం:", sum);
+console.log("సగటు:", sum / marks.length);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        మొత్తం: 290<br>
+        సగటు: 72.5
+      </div>
+      <p style="margin-top: 8px; color: var(--text2); font-size: 14px;">
+        <code>sum</code> ని లూప్ బయట 0 తో ప్రారంభించాం. లూప్ లో ప్రతి మార్కుని దానికి జోడిస్తూ వెళ్ళాం.
+      </p>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 24px 0 8px 0;">ఉదాహరణ 2: అత్యధిక విలువను కనుగొనడం (Find Maximum)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Find Largest Element</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const marks = [80, 65, 90, 55];
+let max = marks[0];
+for (const m of marks) {
+  if (m &gt; max) {
+    max = m;
+  }
+}
+console.log("అతి పెద్ద మార్కు:", max);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        అతి పెద్ద మార్కు: 90
+      </div>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 24px 0 8px 0;">ఉదాహరణ 3: సరి సంఖ్యలను లెక్కించడం (Count Evens)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Count Even Numbers</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>let count = 0;
+for (const n of [3, 8, 12, 7, 4]) {
+  if (n % 2 === 0) {
+    count++;
+  }
+}
+console.log("సరి సంఖ్యలు:", count);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        సరి సంఖ్యలు: 3
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="section-title" id="sec-7"><span class="num">7</span>Nested Arrays (Array లోపల Array — 2D Arrays)</div>
+    <div class="section-body">
+      <p>
+        ఒక array లోపల మరిన్ని arrays ని పెట్టవచ్చు. దీన్ని <strong>2D Array (పట్టిక, matrix లేదా గ్రిడ్)</strong> అంటారు. ఒక క్లాస్ రూమ్ లో వరుసలు (rows) మరియు కాలమ్ లు (columns) లాగా ఊహించుకోవచ్చు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — 2D Matrix</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const matrix = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+];
+
+console.log(matrix[1][2]);
+console.log(matrix[0]);
+console.log(matrix);
+console.log(matrix[0][0], matrix[1][1], matrix[2][2]);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        6<br>
+        [ 1, 2, 3 ]<br>
+        [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]<br>
+        1 5 9
+      </div>
+
+      <ul style="margin: 12px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>matrix[1]</code> అంటే రెండవ అడ్డు వరుస (row): <code>[4, 5, 6]</code>.</li>
+        <li><code>matrix[1][2]</code> అంటే రెండవ వరుసలో మూడవ విలువ: <code>6</code>. మొదటి <code>[ ]</code> వరుసను (row), రెండవ <code>[ ]</code> నిలువు కాలమ్‌ను (column) సూచిస్తుంది.</li>
+        <li><code>matrix[0][0], matrix[1][1], matrix[2][2]</code> అనేవి ప్రధాన వికర్ణం (diagonal) విలువలు: <code>1 5 9</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="section-title" id="sec-8"><span class="num">8</span>Part A లో బిగినర్స్ చేసే సాధారణ తప్పులు (Common Mistakes)</div>
+    <div class="section-body">
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ జాగ్రత్తగా ఉండాల్సిన 5 ప్రధాన తప్పులు:</div>
+        <ol style="margin: 10px 0 0 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+          <li>
+            <strong>Index 1 నుంచి మొదలవుతుందనుకోవడం:</strong> మొదటి element <code>arr[0]</code> అవుతుంది కానీ <code>arr[1]</code> కాదు. ఇది ప్రతి ప్రారంభ ప్రోగ్రామర్ చేసే అత్యంత సాధారణ తప్పు.
+          </li>
+          <li>
+            <strong>చివరి index ని length అనుకోవడం:</strong> array లో 3 elements ఉంటే చివరి index 2 మాత్రమే. <code>arr[arr.length]</code> ఎల్లప్పుడూ <code>undefined</code> ఇస్తుంది.
+          </li>
+          <li>
+            <strong>Arrays ని <code>===</code> తో పోల్చడం (Reference Comparison):</strong>
+            <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin:6px 0; color:#f87171; font-size:13px;"><code>console.log([1, 2] === [1, 2]); // Output: false</code></pre>
+            రెండు arrays లో ఒకేలాంటి సమాన విలువలు ఉన్నప్పటికీ, కంప్యూటర్ ర్యామ్ (memory) లో అవి వేర్వేరు ప్రదేశాల్లో ఉంటాయి. <code>===</code> కేవలం మెమరీ అడ్రస్‌లను మాత్రమే పోలుస్తుంది, కాబట్టి <code>false</code> వస్తుంది.
+          </li>
+          <li>
+            <strong>Array ని కాపీ చేశాననుకోవడం (కానీ ఒకే రిఫరెన్స్ ఉండటం):</strong>
+            <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin:6px 0; color:#f87171; font-size:13px;"><code>const a = [1, 2, 3];
+const b = a; // ❌ కొత్త కాపీ కాదు! అదే అరే కి మరో పేరు.
+b.push(4);
+console.log(a); // Output: [ 1, 2, 3, 4 ]</code></pre>
+            నిజమైన కాపీ కావాలంటే <code>a.slice()</code> లేదా స్ప్రెడ్ ఆపరేటర్ <code>[...a]</code> వాడాలి:
+            <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin:6px 0; color:#4ade80; font-size:13px;"><code>const a = [1, 2, 3];
+const copy = a.slice();
+copy.push(99);
+console.log(a);    // [ 1, 2, 3 ] (అసలుది సేఫ్!)
+console.log(copy); // [ 1, 2, 3, 99 ]</code></pre>
+          </li>
+          <li>
+            <strong>const array కి కొత్త array ని ఇవ్వడం:</strong> <code>const f2 = ["a"]; f2 = [];</code> రాస్తే <code>TypeError: Assignment to constant variable</code> వస్తుంది.
+          </li>
+        </ol>
+      </div>
+    </div>
+
+
+    <!-- ====================================================================
+         PART B: ARRAY METHODS
+         ==================================================================== -->
+    <div class="part-banner" id="part-b">
+      <h2>Part B: Array Methods</h2>
+      <p>ఆధునిక JavaScript లో map, filter, reduce, sort, find వంటి అత్యంత కీలకమైన ఫంక్షనల్ మెథడ్స్</p>
+    </div>
+
+    <div class="intro-box" style="margin-bottom: 24px;">
+      <h3 style="color: #38bdf8; font-size: 17px; margin-bottom: 8px;">ముందుగా తెలుసుకోవాల్సిన ముఖ్యమైన వర్గీకరణ:</h3>
+      <p style="font-size: 14.5px; line-height: 1.7; margin-bottom: 10px;">
+        JavaScript array methods ని రెండు రకాలుగా వర్గీకరించవచ్చు:
+      </p>
+      <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8; color: var(--text2);">
+        <li><strong>Mutating Methods (అసలు array ని మార్చేవి):</strong> <code>push, pop, shift, unshift, splice, sort, reverse</code>.</li>
+        <li><strong>Non-mutating Methods (అసలు array ని మార్చకుండా సరికొత్త array ఇచ్చేవి):</strong> <code>map, filter, slice, concat, join, find, includes, reduce</code>.</li>
+      </ul>
+      <p style="font-size: 14px; margin: 10px 0 0 0; color: var(--text);">
+        ఈ పార్ట్‌లోని చాలా మెథడ్స్ ఒక <strong>callback function</strong> (Chapter 13 లో నేర్చుకున్న Arrow Function) ని ఇన్పుట్ గా తీసుకుంటాయి. అంటే "ప్రతి ఎలిమెంట్‌తో ఈ పని చెయ్యి" అని మనం JavaScript కి సూచన ఇస్తాం.
+      </p>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="section-title" id="sec-9"><span class="num">9</span>forEach, map, filter, reduce (అత్యంత శక్తివంతమైన 4 స్తంభాలు)</div>
+    <div class="section-body">
+      <h3 style="color: var(--text); font-size: 16px; margin: 16px 0 8px 0;">1. forEach: ప్రతి element తో ఏదైనా ఒక పని చేయడం</h3>
+      <p><code>forEach</code> ప్రతి ఎలిమెంట్ కి ఇచ్చిన ఫంక్షన్‌ని ఒకసారి రన్ చేస్తుంది. ఇది ఎలాంటి కొత్త array ని return చేయదు; కేవలం ప్రింట్ చేయడం లేదా ఏదైనా పని చేయడానికి వాడతాం.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — forEach</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>["Apple", "Banana", "Mango"].forEach((fruit, index) => {
+  console.log(`${index}: ${fruit}`);
+});</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        0: Apple<br>
+        1: Banana<br>
+        2: Mango
+      </div>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 24px 0 8px 0;">2. map: ప్రతి element ని మార్చి (transform) కొత్త array తయారు చేయడం</h3>
+      <p><code>map</code> ప్రతి విలువపై ఫంక్షన్ ని అప్లై చేసి, అసలు array కి సమానమైన పొడవు (length) ఉన్న సరికొత్త array ని ఇస్తుంది. అసలు array ఏమాత్రం మారదు.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — map Method</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>// డబుల్ చేయడం
+console.log([10, 20, 30].map(n => n * 2));
+
+// షాప్ వస్తువుల ధరలకు 18% GST కలపడం
+console.log([100, 250, 400].map(p => p + p * 18 / 100));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 20, 40, 60 ]<br>
+        [ 118, 295, 472 ]
+      </div>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 24px 0 8px 0;">3. filter: షరతుకు సరిపోయే elements ని మాత్రమే వడకట్టడం (Filtering)</h3>
+      <p>మనం ఇచ్చే ఫంక్షన్ ఏ ఎలిమెంట్స్ కి అయితే <code>true</code> ని రిటర్న్ చేస్తుందో, వాటిని మాత్రమే ఎంపిక చేసి కొత్త array లో ఉంచుతుంది.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — filter Method</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>// పాస్ మార్కులు (35 లేదా అంతకంటే ఎక్కువ) మాత్రమే వడకట్టడం
+console.log([80, 30, 55, 20, 90].filter(m => m >= 35));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 80, 55, 90 ]
+      </div>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 24px 0 8px 0;">4. reduce: అన్ని విలువలనూ కలిపి ఒకే విలువగా సంగ్రహించడం (Accumulator)</h3>
+      <p>మొత్తం array ని చదివి, చివరకు ఒకే సంఖ్య లేదా స్ట్రింగ్ వంటి ఒకే ఒక్క విలువగా మార్చడానికి <code>reduce</code> వాడతాం.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — reduce Method</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>console.log([10, 20, 30].reduce((total, n) => total + n, 0));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        60
+      </div>
+
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px;">
+        <strong>ఇది తెరవెనుక ఎలా పనిచేసిందో దశలవారీగా చూద్దాం:</strong> <code>reduce</code> కి ఫంక్షన్ తో పాటు ప్రారంభ విలువగా <code>0</code> ఇచ్చాం:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>రౌండ్ (Round)</th>
+            <th>total (మునుపటి నిల్వ)</th>
+            <th>n (ప్రస్తుత element)</th>
+            <th>total + n (కొత్త నిల్వ)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>0</td>
+            <td>10</td>
+            <td><strong>10</strong></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>10</td>
+            <td>20</td>
+            <td><strong>30</strong></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>30</td>
+            <td>30</td>
+            <td><strong>60</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="color: var(--text); font-size: 17px; margin: 24px 0 10px 0;">ఈ నాలుగింటి మధ్య స్పష్టమైన తేడా (Quick Comparison Table)</h3>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>ఏం తిరిగి ఇస్తుంది? (Return Value)</th>
+            <th>ఎప్పుడు వాడాలి?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>forEach</code></td>
+            <td>ఏమీ ఇవ్వదు (undefined)</td>
+            <td>ప్రతి ఎలిమెంట్ తో ఒక పని చేయాలి (print, DB save వంటివి)</td>
+          </tr>
+          <tr>
+            <td><code>map</code></td>
+            <td>అంతే పొడవు ఉన్న సరికొత్త array</td>
+            <td>ప్రతి element ని మార్చి కొత్త array తయారు చేయాలి</td>
+          </tr>
+          <tr>
+            <td><code>filter</code></td>
+            <td>చిన్నదైన (లేదా సమాన) కొత్త array</td>
+            <td>కొన్ని షరతులకు సరిపోయేవి మాత్రమే ఎంపిక చేసుకోవాలి</td>
+          </tr>
+          <tr>
+            <td><code>reduce</code></td>
+            <td>ఒకే ఒక్క విలువ (Single value)</td>
+            <td>అన్నిటినీ కలపాలి (మొత్తం సంకలనం, గరిష్ట విలువ మొదలైనవి)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 10 -->
+    <div class="section-title" id="sec-10"><span class="num">10</span>find, findIndex, some, every</div>
+    <div class="section-body">
+      <p>అరే లోని నిర్దిష్ట విలువలను శోధించడానికి మరియు ధృవీకరించడానికి ఈ మెథడ్స్ వాడతాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — find & findIndex</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const numbers = [5, 12, 8, 130, 44];
+
+console.log(numbers.find(n => n > 10));
+console.log(numbers.findIndex(n => n > 10));
+console.log(numbers.find(n => n > 1000));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        12<br>
+        1<br>
+        undefined
+      </div>
+
+      <ul style="margin: 10px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>find</code>: షరతుకు సరిపోయే <strong>మొట్టమొదటి element</strong> ని ఇస్తుంది (12). ఏదీ సరిపోకపోతే <code>undefined</code> వస్తుంది.</li>
+        <li><code>findIndex</code>: ఆ మొట్టమొదటి element యొక్క <strong>index స్థానాన్ని</strong> ఇస్తుంది (1). సరిపోయేది ఏదీ లేకపోతే <code>-1</code> ఇస్తుంది.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — some & every</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const numbers = [5, 12, 8, 130];
+
+console.log(numbers.some(n => n > 100)); // కనీసం ఒక్కటైనా ఉందా?
+console.log(numbers.every(n => n > 0));   // అన్నీ 0 కంటే పెద్దవేనా?
+console.log(numbers.every(n => n > 10));  // అన్నీ 10 కంటే పెద్దవేనా?</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        true<br>
+        true<br>
+        false
+      </div>
+
+      <ul style="margin: 10px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>some</code>: కనీసం ఒక్క element అయినా షరతును పాటిస్తే <code>true</code> ఇస్తుంది (130 > 100 ఉంది కాబట్టి true).</li>
+        <li><code>every</code>: అన్నీ elements ఖచ్చితంగా షరతును పాటిస్తేనే <code>true</code> ఇస్తుంది. (5 మరియు 8 లు 10 కంటే పెద్దవి కావు కాబట్టి ఆఖరి దానికి false వచ్చింది).</li>
+      </ul>
+    </div>
+
+    <!-- Section 11 -->
+    <div class="section-title" id="sec-11"><span class="num">11</span>includes మరియు indexOf</div>
+    <div class="section-body">
+      <p>ఒక సాధారణ విలువ array లో ఉందా లేదా అని త్వరగా తెలుసుకోవడానికి:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — includes & indexOf</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+
+console.log(fruits.includes("Mango"), fruits.includes("Grapes"));
+console.log(fruits.indexOf("Banana"), fruits.indexOf("Grapes"));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        true false<br>
+        1 -1
+      </div>
+
+      <ul style="margin: 10px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>includes(x)</code>: ఉందా లేదా అని సింపుల్ గా <code>true / false</code> చెబుతుంది.</li>
+        <li><code>indexOf(x)</code>: అది ఏ index స్థానంలో ఉందో నంబర్ ఇస్తుంది. ఒకవేళ లిస్ట్ లో లేకపోతే <code>-1</code> ఇస్తుంది.</li>
+      </ul>
+    </div>
+
+    <!-- Section 12 -->
+    <div class="section-title" id="sec-12"><span class="num">12</span>slice మరియు splice (అత్యంత ముఖ్యమైన తేడా)</div>
+    <div class="section-body">
+      <p>పేర్లు దాదాపు ఒకేలా ఉన్నా, ఈ రెండూ పూర్తిగా భిన్నమైన పనులు చేస్తాయి. ఇంటర్వ్యూలలో ఇది రెగ్యులర్ ప్రశ్న!</p>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 16px 0 8px 0;">slice(start, end): ఒక భాగాన్ని కాపీ చేయడం (అసలు array మారదు)</h3>
+      <p>కేక్ ముక్కను చూసి ఫోటో తీసుకున్నట్లు. అసలు కేక్ అలాగే ఉంటుంది.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — slice Method</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const arr = [1, 2, 3, 4, 5];
+console.log(arr.slice(1, 3));
+console.log(arr);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 2, 3 ]<br>
+        [ 1, 2, 3, 4, 5 ]
+      </div>
+
+      <p style="margin-top: 8px; color: var(--text2); font-size: 14px;">
+        <code>slice(1, 3)</code> index 1 నుండి మొదలుపెట్టి, index 3 కంటే ముందు వరకు (3 ని కలపకుండా) కాపీ చేస్తుంది: అంటే index 1 మరియు 2 విలువలు <code>[2, 3]</code>. అసలు array <code>arr</code> ఏమాత్రం మారలేదు.
+      </p>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 24px 0 8px 0;">splice(start, deleteCount, ...items): array ని కత్తిరించడం / అతికించడం (అసలు array మారుతుంది)</h3>
+      <p>కేక్ లోని భాగాన్ని కత్తిరించి తీసివేయడం లేదా కొత్త ముక్కను అతికించడం వంటిది. అసలు array మారిపోతుంది.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — splice Method</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const letters = ["a", "b", "c", "d"];
+
+// index 1 వద్ద 2 elements ని తీసేయడం
+console.log(letters.splice(1, 2));
+console.log(letters);
+
+// index 1 వద్ద ఏదీ తీసేయకుండా (0) "X" ని చేర్చడం
+console.log(letters.splice(1, 0, "X"));
+console.log(letters);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 'b', 'c' ]<br>
+        [ 'a', 'd' ]<br>
+        []<br>
+        [ 'a', 'X', 'd' ]
+      </div>
+
+      <div class="callout callout-info" style="margin-top: 14px;">
+        <div class="callout-title">💡 గోల్డెన్ టిప్ గుర్తుంచుకోండి:</div>
+        <p style="margin-top: 6px; color: var(--text2); font-size: 14.5px;">
+          <strong>slice = Slice of cake to look at (కాపీ తీసుకో, అసలుది మారదు).</strong><br>
+          <strong>splice = Splice rope / Cut & Insert (కత్తిరించు, అసలు array మార్చబడుతుంది).</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 13 -->
+    <div class="section-title" id="sec-13"><span class="num">13</span>sort, reverse, join, concat</div>
+    <div class="section-body">
+      <h3 style="color: var(--text); font-size: 16px; margin: 16px 0 8px 0;">sort: క్రమంలో అమర్చడం</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Default sort() Quirk</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>console.log(["Mango", "Apple", "Banana"].sort());
+console.log([10, 9, 1, 100].sort());</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 'Apple', 'Banana', 'Mango' ]<br>
+        [ 1, 10, 100, 9 ]
+      </div>
+
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        అక్షరాలకి (strings) చక్కగా ఆల్ఫాబెటికల్ ఆర్డర్ లో పని చేసింది. కానీ సంఖ్యలకు చూడండి: <code>[ 1, 10, 100, 9 ]</code> అని వచ్చింది! <code>[1, 9, 10, 100]</code> రావాలి కదా? 9 కంటే 100 ముందెందుకు వచ్చింది?
+      </p>
+      <p style="color: var(--text2); font-size: 14px; line-height: 1.6;">
+        <strong>కారణం:</strong> <code>sort()</code> మెథడ్ డిఫాల్ట్‌గా సంఖ్యలను కూడా టెక్స్ట్ (String) గా మార్చి ఆల్ఫాబెటికల్ ఆర్డర్ లో చూస్తుంది. డిక్షనరీ లో "100" అనేది "1" తో మొదలవుతుంది కాబట్టి "9" కంటే ముందు వస్తుంది!
+      </p>
+      <p style="color: #4ade80; font-weight: 600; font-size: 14.5px;">
+        <strong>పరిష్కారం:</strong> సంఖ్యలను sort చేసేటప్పుడు ఎప్పుడూ ఒక <strong>compare function</strong> ఇవ్వాలి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Numerical Sort</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>// పెరుగుతున్న క్రమం (Ascending)
+console.log([10, 9, 1, 100].sort((a, b) => a - b));
+
+// తగ్గుతున్న క్రమం (Descending)
+console.log([10, 9, 1, 100].sort((a, b) => b - a));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 1, 9, 10, 100 ]<br>
+        [ 100, 10, 9, 1 ]
+      </div>
+
+      <h3 style="color: var(--text); font-size: 16px; margin: 24px 0 8px 0;">reverse, join, concat:</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — reverse, join, concat</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>console.log([1, 2, 3].reverse());
+console.log(["a", "b", "c"].join("-"));
+console.log(["a", "b", "c"].join(""));
+console.log([1, 2].concat([3, 4]));</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        [ 3, 2, 1 ]<br>
+        a-b-c<br>
+        abc<br>
+        [ 1, 2, 3, 4 ]
+      </div>
+
+      <ul style="margin: 10px 0 16px 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>reverse()</code>: array ని వెనక్కి తిప్పుతుంది (ఇది అసలు array నే మారుస్తుంది).</li>
+        <li><code>join(separator)</code>: array లోని అన్ని అంశాలను కలిపి ఒక string గా మారుస్తుంది.</li>
+        <li><code>concat(other)</code>: రెండు arrays ని కలిపి ఒక కొత్త సంయుక్త array ని ఇస్తుంది.</li>
+      </ul>
+    </div>
+
+    <!-- Section 14 -->
+    <div class="section-title" id="sec-14"><span class="num">14</span>Methods ని కలపడం (Method Chaining)</div>
+    <div class="section-body">
+      <p>
+        <code>map</code>, <code>filter</code> వంటి non-mutating methods కొత్త array ని ఇస్తాయి కాబట్టి, వాటి వెంటనే డాట్ <code>.</code> పెట్టి ఇంకో మెథడ్‌ని అనుసంధానించవచ్చు. దీనిని <strong>Method Chaining</strong> అంటారు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — Filter & Reduce Chaining</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run Code</a>
+        </div>
+        <pre><code>const total = [80, 30, 55, 20, 90]
+  .filter(m => m >= 35)         // మొదట పాస్ అయిన మార్కులు: [80, 55, 90]
+  .reduce((t, m) => t + m, 0);  // తర్వాత వాటి మొత్తం: 80 + 55 + 90
+
+console.log(total);</code></pre>
+      </div>
+
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        225
+      </div>
+
+      <p style="margin-top: 10px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        "క్లాస్ లో పాస్ అయిన విద్యార్థుల మొత్తం మార్కులు ఎంత?" అనే పెద్ద సమస్యను లూప్స్, తాత్కాలిక వేరియబుల్స్ లేకుండా కేవలం 3 లైన్లలో సాధించాం. ఇదే ఆధునిక JavaScript Array Methods యొక్క సూపర్ పవర్!
+      </p>
+    </div>
+
+    <!-- Section 15 -->
+    <div class="section-title" id="sec-15"><span class="num">15</span>Part B లో సాధారణ తప్పులు (Common Mistakes)</div>
+    <div class="section-body">
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ ఇంటర్వ్యూలు & రియల్ కోడింగ్ లో దొర్లే 6 తప్పులు:</div>
+        <ol style="margin: 10px 0 0 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+          <li>
+            <strong>సంఖ్యలను compare function లేకుండా sort() చేయడం:</strong> <code>[10, 9, 1, 100].sort()</code> అనేది <code>[1, 10, 100, 9]</code> ని ఇస్తుంది. నంబర్స్ కి ఎప్పుడూ <code>.sort((a, b) => a - b)</code> రాయడం మర్చిపోకండి.
+          </li>
+          <li>
+            <strong>map లో <code>{ }</code> వాడి <code>return</code> మర్చిపోవడం:</strong>
+            <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin:6px 0; color:#f87171; font-size:13px;"><code>console.log([1, 2, 3].map(n => { n * 2; }));
+// Output: [ undefined, undefined, undefined ]</code></pre>
+            Chapter 13 లో నేర్చుకున్నట్లు బాడీలో <code>{ }</code> కర్లీ బ్రాకెట్లు పెడితే explicit గా <code>return n * 2;</code> అని రాయాలి. లేదా ఒకే లైన్ అయితే <code>n => n * 2</code> అని బ్రాకెట్లు లేకుండా రాయాలి.
+          </li>
+          <li>
+            <strong>ఖాళీ array పై reduce కి ప్రారంభ విలువ ఇవ్వకపోవడం:</strong>
+            <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin:6px 0; color:#ef4444; font-size:13px;"><code>[].reduce((t, n) => t + n);
+// Output: TypeError: Reduce of empty array with no initial value</code></pre>
+            ఎల్లప్పుడూ ప్రారంభ విలువగా <code>0</code> లేదా తగిన విలువను తప్పనిసరిగా ఇవ్వండి: <code>reduce((t, n) => t + n, 0)</code>.
+          </li>
+          <li>
+            <strong>sort మరియు reverse అసలు array ని మారుస్తాయని మర్చిపోవడం:</strong>
+            <pre style="background:#0b1120; padding:8px 12px; border-radius:6px; margin:6px 0; color:#f87171; font-size:13px;"><code>const o = [1, 2, 3];
+const r = o.reverse();
+console.log(o, o === r); // Output: [ 3, 2, 1 ] true</code></pre>
+            అసలు array సేఫ్ గా ఉండాలంటే, ముందుగా <code>o.slice().reverse()</code> లేదా ఆధునిక బ్రౌజర్లలో <code>o.toReversed()</code> వాడాలి.
+          </li>
+          <li>
+            <strong>slice మరియు splice ల పేర్లను కలగాపులగం చేయడం:</strong> <code>slice</code> కేవలం కాపీ చేస్తుంది (Safe), <code>splice</code> అసలు array లోని అంశాలను కట్ చేస్తుంది (Mutates).
+          </li>
+          <li>
+            <strong>forEach లో break వాడాలనుకోవడం:</strong> <code>forEach</code> ని మధ్యలో ఆపలేం. <code>break</code> రాస్తే <code>SyntaxError</code> వస్తుంది. మధ్యలోనే ఆపాల్సిన అవసరం ఉంటే <code>for...of</code> లూప్ లేదా <code>some / find</code> వాడాలి.
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Section 16 -->
+    <div class="section-title" id="sec-16"><span class="num">16</span>ప్రాక్టీస్ ప్రశ్నలు & సమాధానాలు</div>
+    <div class="section-body">
+      <p style="margin-bottom: 12px; color: var(--text2); font-size: 15px;">
+        ఈ క్రింది 8 ప్రశ్నలకు మీ సొంతంగా కోడ్ రాయడానికి ప్రయత్నించండి. ఆ తర్వాత సమాధానాలను పరిశీలించండి:
+      </p>
+
+      <ol style="margin-left: 20px; color: var(--text); font-size: 14.5px; line-height: 1.8;">
+        <li><code>[12, 18, 25, 30, 15]</code> array లోని సంఖ్యల మొత్తం మరియు సగటు కనుక్కోండి (loop తో).</li>
+        <li><code>[45, 12, 89, 34]</code> లో అతి పెద్ద సంఖ్యను loop తో కనుక్కోండి.</li>
+        <li><code>[20, 60, 45, 80, 55]</code> లో 50 కంటే ఎక్కువ ఉన్న సంఖ్యలు ఎన్ని? (filter వాడండి).</li>
+        <li><code>[100, 200]</code> ధరలను "₹100", "₹200" రూపంలో మార్చండి (map వాడండి).</li>
+        <li><code>[3, 14, 21, 8]</code> లో 7 తో భాగింపబడే మొదటి సంఖ్యను కనుక్కోండి (find).</li>
+        <li><code>[5, 1, 9, 3]</code> ని తగ్గుతున్న క్రమంలో (descending order) sort చేయండి.</li>
+        <li><code>[1, 2, 3, 4, 5, 6]</code> లో సరి సంఖ్యల మొత్తం కనుక్కోండి (filter + reduce chaining).</li>
+        <li><code>[1, 2, 3, 4]</code> ని reverse() వాడకుండా, loop తో తిరగేసి కొత్త array తయారు చేయండి.</li>
       </ol>
 
-      <details style="margin-top: 15px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer;">
-        <summary style="font-weight: bold; color: var(--text);">👉 సమాధానాలు చూడండి</summary>
-        <div style="margin-top: 10px; font-size: 14px; color: var(--text2); line-height: 1.6;">
-          <p>సమాధానం వివరణ ఇక్కడ రాయండి...</p>
+      <details style="margin-top: 18px; background: var(--bg2); border: 1px solid var(--border); padding: 16px 20px; border-radius: 10px; cursor: pointer;">
+        <summary style="font-weight: 700; color: #f7df1e; font-size: 15px;">👉 8 ప్రశ్నల సమాధానాలు చూడండి (Answers with Code & Output)</summary>
+        <div style="margin-top: 16px; font-size: 14px; color: var(--text2); line-height: 1.7;">
+          <p><strong>1. మొత్తం & సగటు:</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>const nums = [12, 18, 25, 30, 15];
+let sum = 0;
+for (const n of nums) {
+  sum += n;
+}
+console.log(sum, sum / nums.length);
+// Output: 100 20</code></pre>
+
+          <p style="margin-top:14px;"><strong>2. అతి పెద్ద సంఖ్య:</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>const nums = [45, 12, 89, 34];
+let max = nums[0];
+for (const n of nums) {
+  if (n > max) {
+    max = n;
+  }
+}
+console.log(max);
+// Output: 89</code></pre>
+
+          <p style="margin-top:14px;"><strong>3. 50 కంటే ఎక్కువ ఉన్న సంఖ్యల లెక్కింపు:</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>console.log([20, 60, 45, 80, 55].filter(n => n > 50).length);
+// Output: 3 (filter ఫలితం [60, 80, 55], దాని .length 3)</code></pre>
+
+          <p style="margin-top:14px;"><strong>4. కరెన్సీ సింబల్ మ్యాపింగ్:</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>console.log([100, 200].map(p => `₹${p}`));
+// Output: [ '₹100', '₹200' ]</code></pre>
+
+          <p style="margin-top:14px;"><strong>5. 7 తో భాగింపబడే మొదటి సంఖ్య:</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>console.log([3, 14, 21, 8].find(n => n % 7 === 0));
+// Output: 14</code></pre>
+
+          <p style="margin-top:14px;"><strong>6. తగ్గుతున్న క్రమంలో sort:</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>console.log([5, 1, 9, 3].sort((a, b) => b - a));
+// Output: [ 9, 5, 3, 1 ]</code></pre>
+
+          <p style="margin-top:14px;"><strong>7. సరి సంఖ్యల మొత్తం (Chaining):</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>const total = [1, 2, 3, 4, 5, 6]
+  .filter(n => n % 2 === 0)
+  .reduce((t, n) => t + n, 0);
+console.log(total);
+// Output: 12 (సరి సంఖ్యలు [2, 4, 6], మొత్తం 12)</code></pre>
+
+          <p style="margin-top:14px;"><strong>8. లూప్ తో అరే రివర్స్ చేయడం:</strong></p>
+          <pre style="background:#0b1120; padding:10px 14px; border-radius:6px; color:#4ade80;"><code>const original = [1, 2, 3, 4];
+const reversed = [];
+for (let i = original.length - 1; i >= 0; i--) {
+  reversed.push(original[i]);
+}
+console.log(reversed);
+// Output: [ 4, 3, 2, 1 ]</code></pre>
+          <p style="font-size:13px; color:var(--text2); margin-top:4px;">(చివరి index నుండి మొదలుపెట్టి, వెనక్కి వస్తూ ప్రతి విలువను కొత్త array లోకి push చేశాం.)</p>
         </div>
       </details>
     </div>
 
+    <!-- TRY IT BOX -->
     <div class="try-box">
-      <div class="try-title">🚀 మీరే try చేయండి</div>
-      <p style="color:var(--text2); font-size:14px; margin-bottom:12px;">మన ఆన్‌లైన్ కంపైలర్ లో ఈ కోడ్‌ను ఎడిట్ చేసి రన్ చేయండి:</p>
+      <div class="try-title">🚀 మీరే స్వయంగా Try చేయండి! (Shopping Cart Simulation)</div>
+      <p style="color:var(--text2); font-size:14.5px; margin-bottom:12px; line-height:1.6;">
+        ఈ కోడ్ ను మన ఆన్‌లైన్ కంపైలర్ లో రన్ చేసి చూడండి. ఇది ఒక ఇ-కామర్స్ షాపింగ్ కార్ట్. ధరలను మార్చండి, కొత్త వస్తువులను push చేయండి మరియు filter, reduce లు ఎలా పనిచేస్తున్నాయో గమనించండి:
+      </p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">JavaScript — E-Commerce Cart</span>
+          <a class="try-btn" href="/?lang=nodejs">▶ Run in Compiler</a>
+        </div>
+        <pre><code>const cart = [250, 120, 80, 300];
+
+const total = cart.reduce((t, p) => t + p, 0);
+const expensive = cart.filter(p => p > 100);
+
+console.log("మొత్తం బిల్లు:", total);
+console.log("₹100 కంటే ఎక్కువ ధర ఉన్నవి:", expensive);
+
+cart.push(150);
+console.log("కొత్త item తో మొత్తం:", cart.reduce((t, p) => t + p, 0));</code></pre>
+      </div>
+      <div class="code-output" style="background:#0b1120; border:1px solid #1e293b; border-radius:8px; padding:12px 16px; margin-top:10px; margin-bottom:14px; font-family:monospace; color:#38bdf8; font-size:13.5px;">
+        <span style="color:#64748b;">Output:</span><br>
+        మొత్తం బిల్లు: 750<br>
+        ₹100 కంటే ఎక్కువ ధర ఉన్నవి: [ 250, 120, 300 ]<br>
+        కొత్త item తో మొత్తం: 900
+      </div>
       <a class="run-btn" href="/?lang=nodejs">👉 Our Compiler లో JavaScript రన్ చేయండి</a>
     </div>
 
-    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
-      <h3 style="color:#22c55e; margin-bottom:8px;">📌 Quick Summary (సారాంశం):</h3>
-      <ul style="margin-left: 20px; color: var(--text2); line-height: 1.6;">
-        <li><strong>14. Arrays: create, access, push/pop:</strong> Array creation · Indexing · length · push/pop · shift/unshift · splice</li>
-      </ul>
+    <!-- ====================================================================
+         🧠 INTERACTIVE QUIZ FEATURE (AdSense Engagement Booster) 🧠
+         ==================================================================== -->
+    <div class="quiz-widget" id="quizSection">
+      <div class="quiz-header">
+        <span class="quiz-badge">🧠 Interactive Telugu Quiz</span>
+        <h3 class="quiz-title">JavaScript Arrays & Methods నాలెడ్జ్ చెక్</h3>
+        <p class="quiz-desc">ఈ క్రింది 5 ప్రశ్నలకు సరైన సమాధానాలు ఎంచుకుని మీ అవగాహనను పరీక్షించుకోండి. వెంటనే ఫలితం మరియు తెలుగు వివరణ కనిపిస్తాయి:</p>
+      </div>
+
+      <!-- Question 1 -->
+      <div class="quiz-card" data-q="1">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 1 / 5</span></div>
+        <div class="quiz-q-text">1. <code>const items = ["Apple", "Banana", "Mango"];</code> లో <code>items[0]</code> విలువ ఏమిటి?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 1, 'a')">
+            <span class="opt-letter">A</span> Banana
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 1, 'b')">
+            <span class="opt-letter">B</span> Apple
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 1, 'c')">
+            <span class="opt-letter">C</span> Mango
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 1, 'd')">
+            <span class="opt-letter">D</span> undefined
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="quiz-card" data-q="2">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 2 / 5</span></div>
+        <div class="quiz-q-text">2. Array చివరన ఒక కొత్త element ని చేర్చడానికి క్రింది వాటిలో ఏ method ని ఉపయోగిస్తాం?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 2, 'a')">
+            <span class="opt-letter">A</span> pop()
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 2, 'b')">
+            <span class="opt-letter">B</span> shift()
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 2, 'c')">
+            <span class="opt-letter">C</span> unshift()
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 2, 'd')">
+            <span class="opt-letter">D</span> push()
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="quiz-card" data-q="3">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 3 / 5</span></div>
+        <div class="quiz-q-text">3. <code>typeof [1, 2, 3]</code> మరియు <code>Array.isArray([1, 2, 3])</code> ల ఫలితాలు వరుసగా ఏమిటి?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 3, 'a')">
+            <span class="opt-letter">A</span> "array" మరియు true
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 3, 'b')">
+            <span class="opt-letter">B</span> "object" మరియు true
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 3, 'c')">
+            <span class="opt-letter">C</span> "object" మరియు false
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 3, 'd')">
+            <span class="opt-letter">D</span> "list" మరియు true
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="quiz-card" data-q="4">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 4 / 5</span></div>
+        <div class="quiz-q-text">4. <code>[10, 20, 30].map(n => n * 2)</code> ఏమి return చేస్తుంది?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 4, 'a')">
+            <span class="opt-letter">A</span> 60 (మొత్తం సంకలనం)
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 4, 'b')">
+            <span class="opt-letter">B</span> [ 20, 40, 60 ]
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 4, 'c')">
+            <span class="opt-letter">C</span> [ 10, 20, 30 ] (అసలు array మారదు కాబట్టి)
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 4, 'd')">
+            <span class="opt-letter">D</span> undefined
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Question 5 -->
+      <div class="quiz-card" data-q="5">
+        <div class="quiz-q-num"><span>❓ ప్రశ్న 5 / 5</span></div>
+        <div class="quiz-q-text">5. JavaScript లో <code>[1, 2] === [1, 2]</code> రాస్తే వచ్చే ఫలితం ఏమిటి?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" data-opt="a" onclick="selectQuizOption(this, 5, 'a')">
+            <span class="opt-letter">A</span> true (రెండింటిలో ఒకే విలువలు ఉన్నాయి కాబట్టి)
+          </button>
+          <button class="quiz-opt-btn" data-opt="b" onclick="selectQuizOption(this, 5, 'b')">
+            <span class="opt-letter">B</span> false (అవి మెమరీలో వేర్వేరు ఆబ్జెక్ట్ రిఫరెన్స్‌లు కాబట్టి)
+          </button>
+          <button class="quiz-opt-btn" data-opt="c" onclick="selectQuizOption(this, 5, 'c')">
+            <span class="opt-letter">C</span> TypeError
+          </button>
+          <button class="quiz-opt-btn" data-opt="d" onclick="selectQuizOption(this, 5, 'd')">
+            <span class="opt-letter">D</span> undefined
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Score Box & Reset -->
+      <div class="quiz-score-box">
+        <div class="quiz-score-text" id="quizScoreText">క్విజ్ ప్రారంభించండి! (మొత్తం 5 ప్రశ్నలు)</div>
+        <button class="quiz-reset-btn" onclick="resetQuiz()">🔄 మళ్ళీ ప్రయత్నించండి (Reset)</button>
+      </div>
     </div>
 
-    <!-- ====================================================================
-         👆 CHAPTER CONTENT END (ఇక్కడితో మీ కంటెంట్ పూర్తవుతుంది) 👆
-         ==================================================================== -->
+    <!-- SUMMARY BOX -->
+    <div class="intro-box" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); margin-top:30px;">
+      <h3 style="color:#22c55e; margin-bottom:8px;">📌 సారాంశం (Quick Summary):</h3>
+      <div style="font-size: 14.5px; line-height: 1.8; color: var(--text2);">
+        <p><strong>Part A: Arrays Basics</strong></p>
+        <ul style="margin: 0 0 12px 20px;">
+          <li><strong>Array =</strong> ఒకే చోట చాలా విలువలను వరుసగా నిల్వ చేసే లిస్ట్: <code>const fruits = ["Apple", "Banana"];</code></li>
+          <li><strong>Index 0 నుంచి మొదలవుతుంది:</strong> చివరి element: <code>arr[arr.length - 1]</code> (లేదా ఆధునిక <code>arr.at(-1)</code>). లేని index <code>undefined</code> ఇస్తుంది.</li>
+          <li><strong>push</strong> (చివరన చేర్చు), <strong>pop</strong> (చివరిది తీసేయి), <strong>unshift</strong> (మొదట చేర్చు), <strong>shift</strong> (మొదటిది తీసేయి). ఇవి అసలు array ని మారుస్తాయి (Mutate).</li>
+          <li><code>const</code> array లోపలి విలువలను మార్చొచ్చు, కానీ సరికొత్త array ని reassignment చేయలేం.</li>
+          <li>లూపింగ్ కోసం ఇండెక్స్ కావాలంటే సాధారణ <code>for</code> loop, కేవలం విలువలు కావాలంటే <code>for...of</code> loop.</li>
+          <li>Arrays ని <code>===</code> తో పోల్చవద్దు. <code>const b = a</code> కొత్త కాపీ కాదు, అదే రిఫరెన్స్. నిజమైన కాపీకి <code>a.slice()</code> వాడాలి.</li>
+          <li>2D array: <code>matrix[row][column]</code>.</li>
+        </ul>
 
+        <p><strong>Part B: Array Methods</strong></p>
+        <ul style="margin: 0 0 0 20px;">
+          <li><strong>forEach</strong> (పని చేయి), <strong>map</strong> (మార్చి కొత్త array ఇవ్వు), <strong>filter</strong> (షరతుతో వడకట్టు), <strong>reduce</strong> (అన్నింటినీ ఒకే విలువగా కలుపు).</li>
+          <li><strong>find / findIndex</strong> (మొదటి దానిని వెతుకు), <strong>some</strong> (కనీసం ఒక్కటైనా), <strong>every</strong> (అన్నీ), <strong>includes / indexOf</strong> (ఉందా?).</li>
+          <li><strong>slice</strong> (కాపీ మాత్రమే చేస్తుంది, అసలుది మారదు) vs <strong>splice</strong> (కత్తిరించి అసలు array ని మారుస్తుంది).</li>
+          <li><code>sort</code> కి సంఖ్యల కోసం <code>(a, b) => a - b</code> కంపేర్ ఫంక్షన్ తప్పనిసరి. <code>sort</code> మరియు <code>reverse</code> అసలు array నే మారుస్తాయి.</li>
+          <li><code>join</code> array ని string గా మారుస్తుంది, <code>concat</code> రెండు arrays ని కలుపుతుంది.</li>
+          <li><code>map</code>, <code>filter</code>, <code>reduce</code> లను ఒకదాని తర్వాత ఒకటి chain చేయవచ్చు.</li>
+        </ul>
+      </div>
+    </div>
 
-        <div class="nav-footer">
-      
+    <!-- Next Chapter Announcement -->
+    <div class="intro-box" style="background: linear-gradient(135deg, rgba(247, 223, 30, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%); border: 1px solid rgba(247, 223, 30, 0.35); margin-top: 30px; padding: 24px;">
+      <h2 style="color: #f7df1e; font-size: 20px; margin-bottom: 10px; font-family: 'Sora', sans-serif;">👉 తర్వాతి పాఠం: Objects (JSON intro తో) →</h2>
+      <p style="font-size: 15px; line-height: 1.8; color: var(--text);">
+        ఇప్పటివరకు మనం నంబర్ల (ఇండెక్సుల) ఆధారంగా వరుస క్రమంలో డేటాను నిల్వ చేసే Arrays గురించి నేర్చుకున్నాం. తర్వాతి పాఠంలో ఒక వస్తువు లేదా వ్యక్తి యొక్క సమగ్ర వివరాలను (పేరు, వయసు, చిరునామా) ప్రాపర్టీ పేర్లతో సహా ఒకే చోట నిల్వ చేసే అత్యంత ముఖ్యమైన <strong>Objects (మరియు JSON బేసిక్స్)</strong> గురించి నేర్చుకుందాం!
+      </p>
+      <div style="margin-top: 14px;">
+        <a href="objects.html" style="color: #38bdf8; font-weight: 700; text-decoration: underline; font-size: 15px;">15. Objects: properties, methods & JSON intro →</a>
+      </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="nav-footer">
       <a href="arrow-functions.html" class="nav-btn">
         <span class="label">← Previous Lesson</span>
         <span class="title">13. Arrow Functions</span>
       </a>
 
-      
-      <a href="array-methods.html" class="nav-btn" style="text-align:right;">
+      <a href="objects.html" class="nav-btn" style="text-align:right;">
         <span class="label">Next Lesson →</span>
-        <span class="title">15. Array Methods: map, filter, reduce, forEach</span>
+        <span class="title">15. Objects: properties, methods & JSON</span>
       </a>
     </div>
   </main>
