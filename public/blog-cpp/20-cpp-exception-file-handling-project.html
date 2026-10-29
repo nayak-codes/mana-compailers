@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ఎక్సెప్షన్ హ్యాండ్లింగ్ & మినీ ప్రాజెక్ట్ — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ ఎక్సెప్షన్ హ్యాండ్లింగ్, ఫైల్ I/O మరియు మినీ ప్రాజెక్ట్ సమగ్ర తెలుగు గైడ్: try, catch, throw, Stack Unwinding, fstream ఫైల్ ఆపరేషన్లు, మరియు విద్యార్థి రికార్డుల రియల్-వరల్డ్ మినీ ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ exception handling in telugu, file handling fstream c++, stack unwinding c++, c++ mini project in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/20-cpp-exception-file-handling-project.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "ఎక్సెప్షన్ హ్యాండ్లింగ్, ఫైల్ I/O & మినీ ప్రాజెక్ట్ (C++ Capstone Project) తెలుగులో",
+    "description": "C++ ఎక్సెప్షన్స్ మరియు ఫైల్ హ్యాండ్లింగ్: try-catch-throw, Stack Unwinding, fstream, మరియు Student Management System Capstone Project.",
+    "articleSection": "Phase 5: Advanced C++, STL & Project",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-20",
+    "dateModified": "2026-10-29"
+  }
+  </script>
+
+  <!-- Schema.org FAQPage Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "C++ లో 'Stack Unwinding' అంటే ఏమిటి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ఒక ఫంక్షన్ లో 'throw' ద్వారా ఎక్సెప్షన్ విడుదలైనప్పుడు, దానికి సరిపడే 'catch' బ్లాక్ దొరికే వరకు కంపైలర్ కాల్ స్టాక్ లోని ఫంక్షన్లను వెనక్కి రివర్స్ చేస్తుంది. ఈ ప్రక్రియలో మధ్యలో సృష్టించబడిన అన్ని లోకల్ స్టాక్ ఆబ్జెక్టుల Destructors ఆటోమేటిక్‌గా ఎగ్జిక్యూట్ అయి మెమరీ మరియు రిసోర్సెస్ శుభ్రపరచబడతాయి. దీనినే Stack Unwinding అంటారు."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "C++ లో ఫైల్ ఆపరేషన్ల కోసం <fstream> లోని క్లాసెస్ ఏమిటి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ప్రధానంగా మూడు క్లాసెస్ ఉంటాయి: 1. std::ifstream (Input File Stream) - ఫైల్ నుండి డేటాను చదవడానికి. 2. std::ofstream (Output File Stream) - ఫైల్ లోకి కొత్త డేటాను రాయడానికి. 3. std::fstream - ఒకే ఫైల్ పై చదవడం మరియు రాయడం రెండూ చేయడానికి. RAII సూత్రం ప్రకారం ఆబ్జెక్ట్ స్కోప్ దాటగానే ఫైల్ ఆటోమేటిక్‌గా క్లోజ్ అవుతుంది."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "catch (const std::exception& e) ద్వారా పట్టుకోవడం ఎందుకు మంచి పద్ధతి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "std::exception అనేది C++ లోని అన్ని స్టాండర్డ్ ఎక్సెప్షన్లకు (runtime_error, out_of_range, bad_alloc) మూల పేరెంట్ క్లాస్. దీనిని కాన్స్ట్ రిఫరెన్స్ (&) ద్వారా పట్టుకోవడం వల్ల ఆబ్జెక్ట్ స్లైసింగ్ (Object Slicing) జరగదు మరియు 'e.what()' ద్వారా ఎర్రర్ ఖచ్చితమైన కారణాన్ని తెలుసుకోవచ్చు."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CPP_TOK_${id}___`;
+      };
+
+      let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const keywords = [
+        'alignas', 'alignof', 'and', 'and_eq', 'asm', 'auto', 'bitand', 'bitor',
+        'bool', 'break', 'case', 'catch', 'char', 'char8_t', 'char16_t', 'char32_t',
+        'class', 'compl', 'concept', 'const', 'consteval', 'constexpr', 'constinit',
+        'const_cast', 'continue', 'co_await', 'co_return', 'co_yield', 'decltype',
+        'default', 'delete', 'do', 'double', 'dynamic_cast', 'else', 'enum',
+        'explicit', 'export', 'extern', 'false', 'float', 'for', 'friend', 'goto',
+        'if', 'inline', 'int', 'long', 'mutable', 'namespace', 'new', 'noexcept',
+        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'private', 'protected',
+        'public', 'register', 'reinterpret_cast', 'requires', 'return', 'short',
+        'signed', 'sizeof', 'static', 'static_assert', 'static_cast', 'struct',
+        'switch', 'template', 'this', 'thread_local', 'throw', 'true', 'try',
+        'typedef', 'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual',
+        'void', 'volatile', 'wchar_t', 'while', 'xor', 'xor_eq'
+      ];
+      const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|vector|ifstream|ofstream|fstream|exception|runtime_error|invalid_argument|Student|size_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
+      code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split(`___CPP_TOK_${idx}___`).join(tok);
+      });
+
+      return code;
+    }
+
+    (function() {
+      // Default to Light Theme
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme !== 'dark') {
+        document.documentElement.classList.add('light-theme');
+        window.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre code').forEach(codeBlock => {
+          const pre = codeBlock.parentElement;
+          if (pre.closest('.code-box') || pre.closest('.try-box')) return;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-box';
+
+          const header = document.createElement('div');
+          header.className = 'code-header';
+          header.innerHTML = `
+            <span>C++ Source</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          `;
+
+          pre.parentNode.insertBefore(wrapper, pre);
+          wrapper.appendChild(header);
+          wrapper.appendChild(pre);
+
+          const rawCode = codeBlock.textContent;
+          codeBlock.innerHTML = highlightCppCode(rawCode);
+
+          const actionsContainer = header.querySelector('.code-actions');
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_cpp17', rawCode);
+              window.location.href = '/online-cpp-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightCppCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_cpp17', rawCode);
+                window.location.href = '/online-cpp-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course (తెలుగు)</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- PHASE 1: BASICS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & ఫండమెంటల్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html">1. C++ పరిచయం & Hello World</a>
+        <a href="/blog-cpp/02-cpp-variables-data-types.html">2. వేరియబుల్స్, డేటా టైప్స్ & auto</a>
+        <a href="/blog-cpp/03-cpp-input-output-cin-cout.html">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</a>
+        <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- PHASE 2: CONTROL FLOW -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-if-else-conditionals.html">5. డెసిషన్ మేకింగ్ (if, else if, else)</a>
+        <a href="/blog-cpp/06-cpp-switch-case.html">6. switch స్టేట్‌మెంట్ & Fall-through</a>
+        <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
+      </div>
+
+      <!-- PHASE 3: FUNCTIONS & MEMORY -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, మెమరీ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html">9. ఫంక్షన్స్ & Function Overloading</a>
+        <a href="/blog-cpp/10-cpp-arrays-and-strings.html">10. అర్రేలు (Arrays) & std::string</a>
+        <a href="/blog-cpp/11-cpp-pointers-and-references.html">11. పాయింటర్లు & రిఫరెన్సెస్</a>
+        <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
+      </div>
+
+      <!-- PHASE 4: OOPS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-classes-and-objects.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & Encapsulation</a>
+        <a href="/blog-cpp/14-cpp-constructors-and-destructors.html">14. Constructors, Destructors & RAII</a>
+        <a href="/blog-cpp/15-cpp-inheritance.html">15. ఇన్హెరిటెన్స్ (Inheritance)</a>
+        <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html">16. పాలిమార్ఫిజమ్ & Virtual Functions</a>
+        <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
+      </div>
+
+      <!-- PHASE 5: ADVANCED STL (ACTIVE) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C++, STL & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/18-cpp-templates-generic-programming.html">18. టెంప్లేట్లు & Generic Programming</a>
+        <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
+        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html" class="active">20. ఎక్సెప్షన్ హ్యాండ్లింగ్ & మినీ ప్రాజెక్ట్</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a> » <a href="/blog-cpp.html">C++ Masterclass</a> » <span>Chapter 20: ఎక్సెప్షన్ హ్యాండ్లింగ్ & మినీ ప్రాజెక్ట్</span>
+    </div>
+
+    <div class="lesson-header">
+      <span class="badge">Phase 05 · Modern C++ & STL · Chapter 20 of 20 (Course Finale)</span>
+      <h1 class="lesson-title">ఎక్సెప్షన్ హ్యాండ్లింగ్, ఫైల్ I/O & మినీ ప్రాజెక్ట్</h1>
+      <p class="lesson-desc">
+        నిజమైన ప్రొడక్షన్ సాఫ్ట్‌వేర్ నిర్మాణం! Runtime Errors ను సురక్షితంగా ఎదుర్కొనే <code>try</code>, <code>catch</code>, మరియు <code>throw</code> మెకానిజమ్స్, కాల్ స్టాక్ ఆటో-క్లీనప్ <strong>Stack Unwinding</strong>, <code>std::fstream</code> ద్వారా హార్డ్‌డిస్క్‌లో ఫైల్స్ రాయడం/చదవడం, మరియు అన్ని C++ కాన్సెప్టులను కలిపి రూపొందించిన <strong>Student Management System Capstone Project</strong>.
+      </p>
+    </div>
+
+    <!-- CONCEPT 1: WHAT IS EXCEPTION HANDLING -->
+    <div class="section-title"><span class="num">1</span> ఎక్సెప్షన్ హ్యాండ్లింగ్ (Exception Handling) అంటే ఏమిటి?</div>
+    <p>
+      ఒక ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు అనుకోకుండా సున్నాతో భాగహారం చేయడం (Division by Zero), ఫైల్ లభించకపోవడం, లేదా రామ్ మెమరీ అయిపోవడం వంటి అనూహ్య సమస్యలు రావచ్చు. వీటిని ముందస్తుగా హ్యాండిల్ చేయకపోతే ఆపరేటింగ్ సిస్టమ్ ప్రోగ్రామ్‌ను బలవంతంగా క్రాష్ చేస్తుంది (Crash/Abort).
+    </p>
+    <p>
+      క్రాష్ అవ్వకుండా ఎర్రర్‌ను గుర్తించి, ప్రత్యామ్నాయ మార్గాన్ని అందించడమే <strong>Exception Handling</strong>. C++ లో ఇది మూడు కీవర్డ్స్ తో పనిచేస్తుంది:
+    </p>
+
+    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
+<span style="color:#10b981; font-weight:700;">[try - throw - catch ట్రయాంగిల్ ఆర్కిటెక్చర్]</span>
+
+1. try { ... }
+   ప్రమాదం జరిగే అవకాశం ఉన్న అనుమానాస్పద కోడ్‌ను ఈ బ్లాక్ లోపల ఉంచుతాము.
+
+2. throw ExceptionObject;
+   ఏదైనా సమస్య వచ్చినప్పుడు తగిన ఎర్రర్ ఆబ్జెక్ట్‌ను బయటకు విసురుతాము (Throw).
+
+3. catch (const std::exception& e) { ... }
+   విసిరిన ఆ ఎర్రర్‌ను సురక్షితంగా ఒడిసిపట్టుకుని, e.what() ద్వారా యూజర్‌కు స్పష్టమైన కారణాన్ని తెలియజేస్తాము.
+    </div>
+
+    <!-- CONCEPT 2: STACK UNWINDING UNDER THE HOOD -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> లోపల ఏం జరుగుతుంది? Stack Unwinding మ్యాజిక్</div>
+    <p>
+      ఎక్సెప్షన్ వచ్చినప్పుడు మెమరీ లీక్ అవ్వకుండా C++ ఎలా కాపాడుతుంది? ఇక్కడే C++ యొక్క అద్భుతమైన మెకానిజమ్ <strong>Stack Unwinding</strong> పనికొస్తుంది:
+    </p>
+
+    <!-- ASCII STACK UNWINDING DIAGRAM -->
+    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
+<span style="color:#10b981; font-weight:700;">[Stack Unwinding సమయంలో ఆటోమేటిక్ Destructor క్లీనప్]</span>
+
+main() ──► processOrder() ──► chargeCard() [ఇక్కడ throw జరిగింది!]
+
+కాల్ స్టాక్ లో జరిగే ప్రక్రియ:
+1. chargeCard() లోని throw వెంటనే catch కోసం వెతుకుతుంది.
+2. స్థానికంగా catch లేకపోతే ఆ ఫంక్షన్ స్టాక్ ఫ్రేమ్ నుండి బయటకు దూకుతుంది.
+3. దూకే ముందు: chargeCard() లో ఉన్న అన్ని లోకల్ ఆబ్జెక్టుల Destructors ఆటోమేటిక్‌గా రన్ అవుతాయి!
+4. ఆ తర్వాత processOrder() లోని ఆబ్జెక్టుల Destructors రన్ అవుతాయి!
+5. చివరకు main() లోని catch బ్లాక్ వద్ద ఆగిపోతుంది.
+
+ఫలితం:
+RAII సూత్రం పాటించిన ప్రతి ఆబ్జెక్ట్ ఎక్సెప్షన్ వచ్చినా సురక్షితంగా క్లీన్ అవుతుంది!
+    </div>
+
+    <!-- CODE BLOCK 1: COMPACT EXCEPTION HANDLING -->
+    <div class="try-box" style="margin-top:28px;">
+      <div class="try-box-title">
+        <span>💻 Code Example 1: Custom Exception with Safe Division & Stack Cleanup</span>
+        <button class="run-btn">▶ Run C++ Code Live</button>
+      </div>
+
+      <div class="code-box">
+        <div class="code-header">
+          <span>exception_handling_compact.cpp</span>
+          <div class="code-actions">
+            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+#include &lt;string&gt;
+
+// సురక్షిత భాగహార ఫంక్షన్
+double safeDivide(double numerator, double denominator) {
+    if (denominator == 0.0) {
+        // స్టాండర్డ్ లైబ్రరీ ఎక్సెప్షన్ విసరడం
+        throw std::invalid_argument("Math Error: Division by Zero is not allowed!");
+    }
+    return numerator / denominator;
+}
+
+int main() {
+    std::cout &lt;&lt; "=== Testing C++ Exception Handling ===\n";
+
+    try {
+        std::cout &lt;&lt; "100 / 4 = " &lt;&lt; safeDivide(100.0, 4.0) &lt;&lt; "\n";
+        std::cout &lt;&lt; "Attempting 50 / 0...\n";
+        double result = safeDivide(50.0, 0.0); // ఎక్సెప్షన్ విసురుతుంది!
+        std::cout &lt;&lt; "Result: " &lt;&lt; result &lt;&lt; "\n"; // ఈ లైన్ ఎగ్జిక్యూట్ అవ్వదు!
+    } 
+    catch (const std::invalid_argument& e) {
+        std::cerr &lt;&lt; "  [CAUGHT EXCEPTION]: " &lt;&lt; e.what() &lt;&lt; "\n";
+    }
+    catch (const std::exception& e) {
+        std::cerr &lt;&lt; "  [GENERIC EXCEPTION]: " &lt;&lt; e.what() &lt;&lt; "\n";
+    }
+
+    std::cout &lt;&lt; "Program resumed normally without crashing! ✔️\n";
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- CONCEPT 3: FILE I/O WITH FSTREAM -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> ఫైల్ హ్యాండ్లింగ్ (File I/O with <code>&lt;fstream&gt;</code>)</div>
+    <p>
+      ప్రోగ్రామ్ ముగిసిన తర్వాత కూడా డేటా కంప్యూటర్ హార్డ్‌డిస్క్‌లో పదిలంగా ఉండాలంటే (Persistence), మనం ఫైల్స్‌లో రాయడం మరియు చదవడం చేయాలి:
+    </p>
+
+    <div class="table-container" style="margin:20px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:12px; color:var(--text);">స్ట్రీమ్ క్లాస్</th>
+            <th style="padding:12px; color:var(--text);">దిశ (Direction)</th>
+            <th style="padding:12px; color:var(--text);">ఎప్పుడు వాడాలి?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong><code>std::ofstream</code></strong></td>
+            <td style="padding:12px; color:#10b981; font-weight:700;">Output (రాయడం)</td>
+            <td style="padding:12px;">కొత్త ఫైల్ సృష్టించి టెక్స్ట్/డేటాను సేవ్ చేయడానికి. <code>std::ios::app</code> వాడితే అపెండ్ అవుతుంది.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong><code>std::ifstream</code></strong></td>
+            <td style="padding:12px; color:#10b981; font-weight:700;">Input (చదవడం)</td>
+            <td style="padding:12px;">ఇప్పటికే ఉన్న ఫైల్ నుండి డేటాను లైన్ బై లైన్ లేదా వర్డ్ బై వర్డ్ చదవడానికి.</td>
+          </tr>
+          <tr>
+            <td style="padding:12px;"><strong><code>std::fstream</code></strong></td>
+            <td style="padding:12px;">రెండు వైపులా (Bi-directional)</td>
+            <td style="padding:12px;">ఒకే ఫైల్ పై చదవడం మరియు రాయడం రెండూ అవసరమైనప్పుడు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CONCEPT 4: CAPSTONE MINI PROJECT -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> కోర్స్ ఫినాలే: Student Management System Mini Project</div>
+    <p>
+      ఇప్పటివరకు మనం నేర్చుకున్న C++ కాన్సెప్టులన్నింటినీ — <strong>Classes, Encapsulation, Constructors, Vectors, Exception Handling, మరియు File I/O</strong> — కలిపి రూపొందించిన సంపూర్ణ ప్రాజెక్ట్ ఇది!
+    </p>
+
+    <!-- CODE BLOCK 2: CAPSTONE MINI PROJECT -->
+    <div class="try-box" style="margin-top:28px;">
+      <div class="try-box-title">
+        <span>💻 Code Example 2: Complete Student Records File Management Capstone Project</span>
+        <button class="run-btn">▶ Run C++ Code Live</button>
+      </div>
+
+      <div class="code-box">
+        <div class="code-header">
+          <span>student_management_capstone.cpp</span>
+          <div class="code-actions">
+            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;stdexcept&gt;
+
+class Student {
+public:
+    int id;
+    std::string name;
+    double gpa;
+
+    Student(int i, const std::string& n, double g) : id(i), name(n), gpa(g) {
+        if (gpa &lt; 0.0 || gpa &gt; 10.0) {
+            throw std::invalid_argument("Invalid GPA! Must be between 0.0 and 10.0");
+        }
+    }
+};
+
+int main() {
+    std::cout &lt;&lt; "=== C++ Capstone: Student Records System ===\n";
+    std::vector&lt;Student&gt; roster;
+
+    // 1. రికార్డులను ఎక్సెప్షన్ సేఫ్టీ తో లోడ్ చేయడం
+    try {
+        roster.push_back(Student(101, "Kavya Sharma", 9.4));
+        roster.push_back(Student(102, "Rahul Varma", 8.8));
+    } catch (const std::exception& e) {
+        std::cerr &lt;&lt; "Creation Error: " &lt;&lt; e.what() &lt;&lt; "\n";
+    }
+
+    // 2. ofstream ద్వారా ఫైల్ లోకి శాశ్వతంగా రాయడం
+    std::ofstream outFile("students.txt");
+    if (outFile.is_open()) {
+        for (const auto& s : roster) {
+            outFile &lt;&lt; s.id &lt;&lt; "," &lt;&lt; s.name &lt;&lt; "," &lt;&lt; s.gpa &lt;&lt; "\n";
+        }
+        outFile.close(); // ఫైల్ సేవ్ అయింది
+        std::cout &lt;&lt; "Successfully exported " &lt;&lt; roster.size() &lt;&lt; " students to 'students.txt'\n";
+    }
+
+    // 3. ifstream ద్వారా ఫైల్ నుండి చదివి కన్సోల్ లో చూపించడం
+    std::cout &lt;&lt; "\n--- Reading Back from 'students.txt' ---\n";
+    std::ifstream inFile("students.txt");
+    std::string line;
+    while (std::getline(inFile, line)) {
+        std::cout &lt;&lt; "File Record: " &lt;&lt; line &lt;&lt; "\n";
+    }
+    inFile.close();
+
+    std::cout &lt;&lt; "\n🎉 Congratulations! You have completed the 20-Chapter C++ Masterclass!\n";
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో 'Stack Unwinding' అంటే ఏమిటి?</h4>
+      <p>
+        ఒక ఫంక్షన్ లో <code>throw</code> ద్వారా ఎక్సెప్షన్ విడుదలైనప్పుడు, దానికి సరిపడే <code>catch</code> బ్లాక్ దొరికే వరకు కంపైలర్ కాల్ స్టాక్ లోని ఫంక్షన్లను వెనక్కి రివర్స్ చేస్తుంది. ఈ ప్రక్రియలో మధ్యలో సృష్టించబడిన అన్ని లోకల్ స్టాక్ ఆబ్జెక్టుల Destructors ఆటోమేటిక్‌గా ఎగ్జిక్యూట్ అయి మెమరీ మరియు రిసోర్సెస్ శుభ్రపరచబడతాయి. దీనినే <strong>Stack Unwinding</strong> అంటారు.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో ఫైల్ ఆపరేషన్ల కోసం &lt;fstream&gt; లోని క్లాసెస్ ఏమిటి?</h4>
+      <p>
+        ప్రధానంగా మూడు క్లాసెస్ ఉంటాయి: 1. <code>std::ifstream</code> (Input File Stream) - ఫైల్ నుండి డేటాను చదవడానికి. 2. <code>std::ofstream</code> (Output File Stream) - ఫైల్ లోకి కొత్త డేటాను రాయడానికి. 3. <code>std::fstream</code> - ఒకే ఫైల్ పై చదవడం మరియు రాయడం రెండూ చేయడానికి. RAII సూత్రం ప్రకారం ఆబ్జెక్ట్ స్కోప్ దాటగానే ఫైల్ ఆటోమేటిక్‌గా క్లోజ్ అవుతుంది.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> catch (const std::exception&amp; e) ద్వారా పట్టుకోవడం ఎందుకు మంచి పద్ధతి?</h4>
+      <p>
+        <code>std::exception</code> అనేది C++ లోని అన్ని స్టాండర్డ్ ఎక్సెప్షన్లకు (<code>runtime_error</code>, <code>out_of_range</code>, <code>bad_alloc</code>) మూల పేరెంట్ క్లాస్. దీనిని కాన్స్ట్ రిఫరెన్స్ (<code>&amp;</code>) ద్వారా పట్టుకోవడం వల్ల ఆబ్జెక్ట్ స్లైసింగ్ (Object Slicing) జరగదు మరియు <code>e.what()</code> ద్వారా ఎర్రర్ ఖచ్చితమైన కారణాన్ని తెలుసుకోవచ్చు.
+      </p>
+    </div>
+
+    <!-- AUTHOR ATTRIBUTION -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+      </div>
+    </div>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
+        <span style="font-size:14px; font-weight:700;">19. STL కంటైనర్లు & అల్గారిథమ్స్</span>
+      </a>
+
+      <a href="/blog-cpp.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">Complete Roadmap →</span>
+        <span style="font-size:14px; font-weight:700;">⚡ C++ Course HOME (ఇండెక్స్)</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
