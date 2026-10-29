@@ -415,6 +415,17 @@
 
     var ctx = detectContext();
     var isTutorial = isTutorialPage();
+
+    // Default to Light Theme on all tutorial/blog pages unless user explicitly chose dark
+    if (isTutorial) {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme !== 'dark') {
+        document.documentElement.classList.add('light-theme');
+        if (document.body) {
+          document.body.classList.add('light-theme');
+        }
+      }
+    }
     var header = document.createElement('header');
     header.className = 'app-topnav' + (isTutorial ? ' app-topnav--tutorial' : '');
     header.innerHTML = isTutorial ? buildTutorialNavHTML(ctx) : buildNavHTML(ctx);
