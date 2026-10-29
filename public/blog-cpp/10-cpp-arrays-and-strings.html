@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>అర్రేలు (Arrays) & std::string — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ అర్రేలు (Arrays) మరియు std::string సమగ్ర తెలుగు గైడ్: Contiguous Memory Allocation, Address Formula, Array Decay, 2D Arrays & Row-Major Order, C-String vs std::string, SSO, std::string_view, మరియు Buffer Overflow నివారణ." />
+  <meta name="keywords" content="c++ arrays in telugu, std string c++ telugu, std string_view c++ 17, contiguous memory allocation c++, 2d arrays in c++, buffer overflow c++, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/10-cpp-arrays-and-strings.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "అర్రేలు (Arrays) & std::string (Arrays, Strings & string_view in C++) తెలుగులో",
+    "description": "C++ అర్రేలు: Contiguous Memory Allocation, Base Address calculation, Array Decay, 2D Arrays Row-Major Order, std::string, Small String Optimization (SSO), మరియు C++17 std::string_view.",
+    "articleSection": "Phase 3: Functions, Memory & Pointers",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-10",
+    "dateModified": "2026-10-29"
+  }
+  </script>
+
+  <!-- Schema.org FAQPage Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "C++ లో అర్రే ఇండెక్స్ 0 తో ఎందుకు మొదలవుతుంది (0-based Indexing)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "అర్రే ఇండెక్స్ అనేది కేవలం సీరియల్ నంబర్ కాదు, అది మెమరీలో 'ఆఫ్‌సెట్' (Offset/Distance). మొదటి ఎలిమెంట్ బేస్ అడ్రస్ వద్దే (0 దూరంలో) ఉంటుంది: Address = Base_Address + (Index * sizeof(type)). ఇండెక్స్ 0 అయితే Address = Base_Address అవుతుంది, దీనివల్ల అదనపు కూడికలు లేదా తీసివేతలు లేకుండా కంపైలర్ మెరుపు వేగంతో మెమరీని యాక్సెస్ చేస్తుంది."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "C-style char array కి Modern C++ std::string కి తేడా ఏమిటి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "C-style string అనేది చివరిలో null character ('\\0') కలిగి ఉండే ఫిక్స్‌డ్ క్యారెక్టర్ అర్రే; దీని పరిమాణాన్ని మార్చడం కష్టం మరియు బఫర్ ఓవర్‌ఫ్లో ప్రమాదం ఎక్కువ. Modern std::string అనేది డైనమిక్ క్లాస్; సైజ్ ఆటోమేటిక్‌గా పెరుగుతుంది, మెమరీ సేఫ్టీ ఉంటుంది, +, substr(), find() వంటి ఎన్నో రెడీమేడ్ మెథడ్స్ ఉంటాయి."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Modern C++17 లో 'std::string_view' ఎందుకు ఉపయోగించాలి?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "std::string_view అనేది కేవలం పాయింటర్ మరియు లెంత్ మాత్రమే కలిగి ఉండే లైట్‌వెయిట్ రీడ్-ఓన్లీ వ్యూ (Non-owning view). పెద్ద స్ట్రింగ్‌లను ఫంక్షన్‌కు పాస్ చేసినా లేదా సబ్‌స్ట్రింగ్స్ కట్ చేసినా ఎలాంటి కొత్త మెమరీ అలొకేషన్ (Heap Allocation) లేదా కాపీ జరగదు. ఇది ప్రోగ్రామ్ స్పీడ్‌ను గణనీయంగా పెంచుతుంది."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(`<span class="${cls}">${text}</span>`);
+        return `___CPP_TOK_${id}___`;
+      };
+
+      let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const keywords = [
+        'alignas', 'alignof', 'and', 'and_eq', 'asm', 'auto', 'bitand', 'bitor',
+        'bool', 'break', 'case', 'catch', 'char', 'char8_t', 'char16_t', 'char32_t',
+        'class', 'compl', 'concept', 'const', 'consteval', 'constexpr', 'constinit',
+        'const_cast', 'continue', 'co_await', 'co_return', 'co_yield', 'decltype',
+        'default', 'delete', 'do', 'double', 'dynamic_cast', 'else', 'enum',
+        'explicit', 'export', 'extern', 'false', 'float', 'for', 'friend', 'goto',
+        'if', 'inline', 'int', 'long', 'mutable', 'namespace', 'new', 'noexcept',
+        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'private', 'protected',
+        'public', 'register', 'reinterpret_cast', 'requires', 'return', 'short',
+        'signed', 'sizeof', 'static', 'static_assert', 'static_cast', 'struct',
+        'switch', 'template', 'this', 'thread_local', 'throw', 'true', 'try',
+        'typedef', 'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual',
+        'void', 'volatile', 'wchar_t', 'while', 'xor', 'xor_eq', 'string_view'
+      ];
+      const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      code = code.replace(/\b(std|cout|cin|cerr|endl|string|string_view|vector|array|size_t|int32_t|int64_t)\b/g, m => pushToken('tp', m));
+      code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
+      code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split(`___CPP_TOK_${idx}___`).join(tok);
+      });
+
+      return code;
+    }
+
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre code').forEach(codeBlock => {
+          const pre = codeBlock.parentElement;
+          if (pre.closest('.code-box') || pre.closest('.try-box')) return;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-box';
+
+          const header = document.createElement('div');
+          header.className = 'code-header';
+          header.innerHTML = `
+            <span>C++ Source</span>
+            <div class="code-actions">
+              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+            </div>
+          `;
+
+          pre.parentNode.insertBefore(wrapper, pre);
+          wrapper.appendChild(header);
+          wrapper.appendChild(pre);
+
+          const rawCode = codeBlock.textContent;
+          codeBlock.innerHTML = highlightCppCode(rawCode);
+
+          const actionsContainer = header.querySelector('.code-actions');
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_cpp17', rawCode);
+              window.location.href = '/online-cpp-compiler.html';
+            });
+          }
+        });
+
+        document.querySelectorAll('.try-box').forEach(tryBox => {
+          const codeEl = tryBox.querySelector('pre code');
+          const runBtn = tryBox.querySelector('.run-btn');
+          if (codeEl) {
+            const rawCode = codeEl.textContent;
+            codeEl.innerHTML = highlightCppCode(rawCode);
+            if (runBtn) {
+              runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.setItem('code_cpp17', rawCode);
+                window.location.href = '/online-cpp-compiler.html';
+              });
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html" class="active">C++</a>
+  <a href="/?lang=csharp">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">C++ Master Course (తెలుగు)</div>
+    <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- PHASE 1: BASICS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">బేసిక్స్ & ఫండమెంటల్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html">1. C++ పరిచయం & Hello World</a>
+        <a href="/blog-cpp/02-cpp-variables-data-types.html">2. వేరియబుల్స్, డేటా టైప్స్ & auto</a>
+        <a href="/blog-cpp/03-cpp-input-output-cin-cout.html">3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout)</a>
+        <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- PHASE 2: CONTROL FLOW -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో & లూప్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/05-cpp-if-else-conditionals.html">5. డెసిషన్ మేకింగ్ (if, else if, else)</a>
+        <a href="/blog-cpp/06-cpp-switch-case.html">6. switch స్టేట్‌మెంట్ & Fall-through</a>
+        <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html">7. లూప్స్ (for, while, do-while)</a>
+        <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
+      </div>
+
+      <!-- PHASE 3: FUNCTIONS & MEMORY (ACTIVE) -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧠</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">ఫంక్షన్స్, మెమరీ & పాయింటర్లు</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html">9. ఫంక్షన్స్ & Function Overloading</a>
+        <a href="/blog-cpp/10-cpp-arrays-and-strings.html" class="active">10. అర్రేలు (Arrays) & std::string</a>
+        <a href="/blog-cpp/11-cpp-pointers-and-references.html">11. పాయింటర్లు & రిఫరెన్సెస్</a>
+        <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
+      </div>
+
+      <!-- PHASE 4: OOPS -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏗️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/13-cpp-classes-and-objects.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & Encapsulation</a>
+        <a href="/blog-cpp/14-cpp-constructors-and-destructors.html">14. Constructors, Destructors & RAII</a>
+        <a href="/blog-cpp/15-cpp-inheritance.html">15. ఇన్హెరిటెన్స్ (Inheritance)</a>
+        <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html">16. పాలిమార్ఫిజమ్ & Virtual Functions</a>
+        <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
+      </div>
+
+      <!-- PHASE 5: ADVANCED STL -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C++, STL & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">3 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-cpp/18-cpp-templates-generic-programming.html">18. టెంప్లేట్లు & Generic Programming</a>
+        <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
+        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. ఎక్సెప్షన్ హ్యాండ్లింగ్ & మినీ ప్రాజెక్ట్</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a> » <a href="/blog-cpp.html">C++ Masterclass</a> » <span>Chapter 10: అర్రేలు & std::string</span>
+    </div>
+
+    <div class="lesson-header">
+      <span class="badge">Phase 03 · Core Memory Mechanics · Chapter 10 of 20</span>
+      <h1 class="lesson-title">అర్రేలు (Arrays) & std::string (తెలుగులో)</h1>
+      <p class="lesson-desc">
+        C++ లో డేటాను మెమరీలో ఒకే వరుసలో ఎలా నిల్వ చేస్తారు? Contiguous Memory Layout, Base Address గణిత సూత్రం, Array Decay ప్రభావం, 2D Arrays & Row-Major Order, C-String vs std::string, Small String Optimization (SSO), మరియు C++17 లో పరిచయమైన జీరో-కాపీ <code>std::string_view</code> సమగ్ర వివరణ.
+      </p>
+    </div>
+
+    <!-- CONCEPT 1: CONTIGUOUS MEMORY LAYOUT -->
+    <div class="section-title"><span class="num">1</span> అర్రే అంటే ఏమిటి? Contiguous Memory Allocation సూత్రం</div>
+    <p>
+      ఒకే డేటా టైప్‌కు చెందిన అనేక విలువలను కంప్యూటర్ ర్యామ్ (RAM) లో ఒకే వరుసలో (<strong>Contiguous Memory Blocks</strong>) నిల్వ చేసే అత్యంత ప్రాథమికమైన డేటా స్ట్రక్చర్ <strong>Array</strong>. వేర్వేరు వేరియబుల్స్ సృష్టించి రామ్‌లో ఎక్కడెక్కడో విసిరేయడానికి బదులుగా, ఒకే వరుస క్రమంలో పక్కపక్కనే ఉంచడం వల్ల CPU Cache Hit రేటు అత్యధికంగా ఉంటుంది.
+    </p>
+
+    <div class="tip-box">
+      <strong>💡 CPU Cache Locality (స్పీడ్ సీక్రెట్):</strong> CPU రామ్ నుండి డేటాను ఒక్కొక్క బైట్ చొప్పున చదవదు; "Cache Line" (సాధారణంగా 64 బైట్లు) రూపంలో మొత్తం బ్లాక్‌ను కాపీ చేసుకుంటుంది. అర్రే ఎలిమెంట్స్ పక్కపక్కనే ఉండటం వల్ల, మొదటి ఎలిమెంట్ చదవగానే మిగిలిన ఎలిమెంట్స్ అన్నీ ఆటోమేటిక్‌గా L1/L2 Cache లోకి వచ్చేస్తాయి. అందుకే లింక్డ్ లిస్టుల కంటే అర్రేలు వందల రెట్లు వేగంగా రన్ అవుతాయి!
+    </div>
+
+    <h3 style="color:var(--text); margin-top:24px; font-size:18px;">ఇండెక్స్ 0 తో ఎందుకు మొదలవుతుంది? (The Offset Formula)</h3>
+    <p>
+      చాలామంది ప్రారంభకులు అర్రే ఇండెక్స్ 1 కాకుండా 0 తో ఎందుకు మొదలవుతుందని ఆశ్చర్యపోతారు. C++ లో అర్రే ఇండెక్స్ అనేది కేవలం సీరియల్ నంబర్ కాదు, అది బేస్ అడ్రస్ నుండి ఎంత దూరం ఉందో సూచించే <strong>Memory Offset</strong>:
+    </p>
+
+    <!-- ASCII MEMORY DIAGRAM -->
+    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
+<span style="color:#10b981; font-weight:700;">[RAM లో int arr[4] = {10, 20, 30, 40} యొక్క మెమరీ మ్యాప్]</span>
+
+   Index:          arr[0]          arr[1]          arr[2]          arr[3]
+   Value:         [  10  ]        [  20  ]        [  30  ]        [  40  ]
+   Memory:        [4 Bytes]       [4 Bytes]       [4 Bytes]       [4 Bytes]
+   RAM Address:   0x1000          0x1004          0x1008          0x100C
+                   ▲
+                   └─── Base Address (ఇక్కడి నుంచే అర్రే ప్రారంభం అవుతుంది)
+
+   గణిత సూత్రం (Hardware Calculation):
+   Address(arr[i]) = Base_Address + (i × sizeof(Type))
+
+   • arr[0] = 0x1000 + (0 × 4) = 0x1000 (సున్నా దూరం! అదనపు లెక్కలు అవసరం లేదు)
+   • arr[1] = 0x1000 + (1 × 4) = 0x1004
+   • arr[2] = 0x1000 + (2 × 4) = 0x1008
+   • arr[3] = 0x1000 + (3 × 4) = 0x100C
+    </div>
+
+    <p>
+      కంప్యూటర్ హార్డ్‌వేర్ లెవల్లో <code>arr[i]</code> ని వెతకడానికి కేవలం ఒక మల్టిప్లికేషన్ మరియు ఒక అడిషన్ మాత్రమే సరిపోతుంది. ఇండెక్స్ 1 తో మొదలైతే ప్రతిసారీ <code>(i - 1)</code> చేయాల్సి వచ్చేది, ఇది కోట్ల ఆపరేషన్లలో విలువైన CPU సైకిళ్లను వృధా చేసేది.
+    </p>
+
+    <!-- CONCEPT 2: DECLARATION & ARRAY DECAY -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">2</span> అర్రే ప్రకటన, సైజ్ పరిమితులు & Array Decay Trap</div>
+    <p>
+      C++ లో సాంప్రదాయక C-Style Array ని ప్రకటించేటప్పుడు దాని సైజ్ కంపైల్-టైమ్ లోనే స్థిరంగా (Compile-time Constant) ఉండాలి:
+    </p>
+
+    <div class="table-container" style="margin:20px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:12px; color:var(--text);">రకం (Syntax)</th>
+            <th style="padding:12px; color:var(--text);">ఉదాహరణ</th>
+            <th style="padding:12px; color:var(--text);">మెమరీలో జరిగే ప్రక్రియ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong>Explicit Size</strong></td>
+            <td style="padding:12px;"><code>int scores[5];</code></td>
+            <td style="padding:12px;">రామ్‌లో 20 బైట్ల మెమరీ కేటాయించబడుతుంది; ఇనిషియలైజ్ చేయకపోతే గార్బేజ్ విలువలు ఉంటాయి.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong>List Initialization</strong></td>
+            <td style="padding:12px;"><code>int marks[] = {85, 92, 78};</code></td>
+            <td style="padding:12px;">కంపైలర్ ఎలిమెంట్లను లెక్కించి స్వయంగా సైజ్ 3 గా నిర్ణయిస్తుంది (12 బైట్లు).</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong>Partial Init (Zero Fill)</strong></td>
+            <td style="padding:12px;"><code>int nums[5] = {1, 2};</code></td>
+            <td style="padding:12px;">మొదటి రెండు ఎలిమెంట్లు 1, 2 కాగా, మిగిలిన 3 స్థానాలు ఆటోమేటిక్‌గా 0 తో నింపబడతాయి.</td>
+          </tr>
+          <tr>
+            <td style="padding:12px;"><strong>All Zero Initialization</strong></td>
+            <td style="padding:12px;"><code>int zeroArr[100] = {0};</code></td>
+            <td style="padding:12px;">మొత్తం 100 ఎలిమెంట్లు సున్నా (0) కు సెట్ చేయబడతాయి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn-box">
+      <strong>⚠️ Array Decay Trap (ఫంక్షన్లకు అర్రే పంపేటప్పుడు జాగ్రత్త):</strong><br>
+      మనం ఒక అర్రేని ఫంక్షన్‌కు ఆర్గ్యుమెంట్‌గా పంపినప్పుడు, C++ ఆ అర్రే మొత్తం కాపీ చేయదు. దానికి బదులుగా అర్రే యొక్క మొదటి ఎలిమెంట్ అడ్రస్‌గా (Pointer to first element) మారిపోతుంది. దీనినే <strong>Array Decay</strong> అంటారు!<br>
+      దీనివల్ల ఫంక్షన్ లోపల <code>sizeof(arr)</code> అని రాస్తే మొత్తం అర్రే సైజ్ రాదు, కేవలం 8 బైట్ల పాయింటర్ సైజ్ మాత్రమే వస్తుంది. కాబట్టి C-Style అర్రేను ఫంక్షన్‌కు పంపుతున్నప్పుడు అర్రే సైజ్‌ను విడిగా రెండో పారామీటర్‌గా తప్పక పాస్ చేయాలి: <code>void printArr(int arr[], int size)</code>.
+    </div>
+
+    <!-- CONCEPT 3: MULTIDIMENSIONAL ARRAYS & ROW-MAJOR ORDER -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">3</span> 2D Arrays & Row-Major Memory Order</div>
+    <p>
+      గ్రిడ్లు, మ్యాట్రిక్స్ లెక్కలు లేదా గేమ్ బోర్డుల (ఉదా: టిక్-టాక్-టో, చదరంగం) కోసం మనం <strong>Two-Dimensional (2D) Arrays</strong> ఉపయోగిస్తాము. మనం కోడ్‌లో 2D గ్రిడ్ లాగా చూసినప్పటికీ, కంప్యూటర్ రామ్ (RAM) అనేది కేవలం ఒక సరళరేఖ (1D Linear strip) లాంటిది!
+    </p>
+
+    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
+<span style="color:#10b981; font-weight:700;">[2D Matrix vs Linear RAM Layout (Row-Major Order)]</span>
+
+మనం రాసే 2x3 మ్యాట్రిక్స్:
+int matrix[2][3] = {
+    {1, 2, 3},   // Row 0
+    {4, 5, 6}    // Row 1
+};
+
+RAM లో భౌతికంగా ఎలా నిల్వ ఉంటుంది (Row-Major):
+┌─────────────────────────┬─────────────────────────┐
+│         Row 0           │          Row 1          │
+├─────────┬─────────┬─────┼─────────┬─────────┬─────┤
+│    1    │    2    │  3  │    4    │    5    │  6  │
+└─────────┴─────────┴─────┴─────────┴─────────┴─────┘
+ 0x1000    0x1004   0x1008 0x100C    0x1010   0x1014
+
+హార్డ్‌వేర్ 2D ఇండెక్స్ ఫార్ములా:
+Flat_Index = (row × total_columns) + column
+    </div>
+
+    <p>
+      దీనివల్ల మనం 2D లూప్స్ రాసేటప్పుడు <strong>బాహ్య లూప్ (Outer loop) లో Row</strong>, <strong>అంతర్గత లూప్ (Inner loop) లో Column</strong> ఉంచడం అత్యంత వేగవంతమైన పద్ధతి (Row-by-Row access). ఒకవేళ కాలమ్-ఫస్ట్ క్రమంలో చదివితే ప్రతిసారీ మెమరీలో దూకాల్సి వచ్చి (Cache Miss) ప్రోగ్రామ్ స్లో అయిపోతుంది.
+    </p>
+
+    <!-- CODE BLOCK 1: ARRAYS & MEMORY IN ACTION -->
+    <div class="try-box" style="margin-top:28px;">
+      <div class="try-box-title">
+        <span>💻 Code Example 1: 1D, 2D Arrays & Hexadecimal Addresses in RAM</span>
+        <button class="run-btn">▶ Run C++ Code Live</button>
+      </div>
+
+      <div class="code-box">
+        <div class="code-header">
+          <span>arrays_memory_demo.cpp</span>
+          <div class="code-actions">
+            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;cstdint&gt;
+
+// ఫంక్షన్‌కు అర్రే పాస్ చేసినప్పుడు Array Decay జరుగుతుంది (int arr[] -> int* arr)
+void displayArray(const int arr[], int size) {
+    std::cout &lt;&lt; "--- 1D Array Memory Addresses & Elements ---\n";
+    for (int i = 0; i &lt; size; ++i) {
+        // &arr[i] తో రామ్‌లో ఆ ఎలిమెంట్ యొక్క ఖచ్చితమైన అడ్రస్ ప్రింట్ అవుతుంది
+        std::cout &lt;&lt; "Index [" &lt;&lt; i &lt;&lt; "] = " &lt;&lt; arr[i] 
+                  &lt;&lt; " | RAM Address: " &lt;&lt; &arr[i] &lt;&lt; "\n";
+    }
+}
+
+int main() {
+    // 1. 1D Array Declaration
+    int numbers[4] = {10, 20, 30, 40};
+    int totalElements = sizeof(numbers) / sizeof(numbers[0]);
+
+    std::cout &lt;&lt; "numbers array total size: " &lt;&lt; sizeof(numbers) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; "single element size     : " &lt;&lt; sizeof(numbers[0]) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; "total element count     : " &lt;&lt; totalElements &lt;&lt; "\n\n";
+
+    displayArray(numbers, totalElements);
+
+    // 2. 2D Array (2 Rows x 3 Columns)
+    std::cout &lt;&lt; "\n--- 2D Array Matrix (Row-Major Traversal) ---\n";
+    int matrix[2][3] = {
+        {101, 102, 103},
+        {201, 202, 203}
+    };
+
+    for (int r = 0; r &lt; 2; ++r) {
+        for (int c = 0; c &lt; 3; ++c) {
+            std::cout &lt;&lt; "matrix[" &lt;&lt; r &lt;&lt; "][" &lt;&lt; c &lt;&lt; "] = " 
+                      &lt;&lt; matrix[r][c] &lt;&lt; " (" &lt;&lt; &matrix[r][c] &lt;&lt; ")  ";
+        }
+        std::cout &lt;&lt; "\n";
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- CONCEPT 4: C-STRINGS VS STD::STRING -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> C-Style Strings vs Modern std::string</div>
+    <p>
+      C లాంగ్వేజ్ కాలం నుండి వచ్చిన పాత పద్ధతి <strong>C-Style Strings</strong> (`char str[]`), కాగా C++ ప్రోగ్రామర్లకు వరం లాంటిది Standard Library లోని <strong><code>std::string</code></strong>. వీటి మధ్య ఉండే ప్రధాన వ్యత్యాసాలను తెలుసుకుందాం:
+    </p>
+
+    <div class="table-container" style="margin:20px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:12px; color:var(--text);">లక్షణం (Feature)</th>
+            <th style="padding:12px; color:var(--text);">C-Style String (<code>char[]</code>)</th>
+            <th style="padding:12px; color:var(--text);">Modern <code>std::string</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong>ముగింపు గుర్తు (Termination)</strong></td>
+            <td style="padding:12px;">ఖచ్చితంగా చివర <code>'\0'</code> (Null character) ఉండాలి. పొరపాటున ఇది లేకపోతే గార్బేజ్ ప్రింట్ అవుతుంది.</td>
+            <td style="padding:12px;">అంతర్గతంగా సైజ్ స్టోర్ చేసుకుంటుంది. నల్ క్యారెక్టర్‌తో పనిలేదు (అయినా C-లైబ్రరీల కోసం <code>.c_str()</code> ఇస్తుంది).</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong>పరిమాణం (Sizing)</strong></td>
+            <td style="padding:12px;">స్థిరమైనది (Fixed). ముందుగానే ఎంత సైజ్ కావాలో చెప్పాలి.</td>
+            <td style="padding:12px;">డైనమిక్. మనం ఎంత టెక్స్ట్ యాడ్ చేసినా మెమరీ దానంతట అదే ఆటోమేటిక్‌గా రీసైజ్ అవుతుంది.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong>కలపడం (Concatenation)</strong></td>
+            <td style="padding:12px;"><code>strcat(s1, s2)</code> లాంటి ప్రమాదకరమైన ఫంక్షన్లు వాడాలి.</td>
+            <td style="padding:12px;">చాలా సులభం: <code>s1 + s2</code> లేదా <code>s1 += s2</code> తో నేరుగా కలిపేయవచ్చు.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px;"><strong>పోలిక (Comparison)</strong></td>
+            <td style="padding:12px;"><code>strcmp(s1, s2) == 0</code> వాడాలి (== వాడితే అడ్రస్ పోలుస్తుంది).</td>
+            <td style="padding:12px;">నేరుగా సమానత్వ ఆపరేటర్ వాడవచ్చు: <code>if (s1 == s2)</code>.</td>
+          </tr>
+          <tr>
+            <td style="padding:12px;"><strong>మెమరీ భద్రత</strong></td>
+            <td style="padding:12px;">అత్యంత ప్రమాదకరం (Buffer Overflow కు దారితీస్తుంది).</td>
+            <td style="padding:12px;">పూర్తిగా సురక్షితం. RAII ద్వారా ఆటోమేటిక్ డిస్ట్రక్షన్ జరుగుతుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CONCEPT 5: SMALL STRING OPTIMIZATION (SSO) -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">5</span> Small String Optimization (SSO) అంటే ఏమిటి?</div>
+    <p>
+      సాధారణంగా <code>std::string</code> డైనమిక్ సైజ్ కోసం హీప్ మెమరీ (Heap) లో స్పేస్ కేటాయిస్తుంది. కానీ హీప్ అలొకేషన్ అనేది చాలా నెమ్మదిగా జరిగే ప్రక్రియ. అందుకోసం ఆధునిక C++ కంపైలర్లు (GCC, Clang, MSVC) <strong>Small String Optimization (SSO)</strong> అనే ఇంజనీరింగ్ టెక్నిక్‌ను అమలు చేస్తాయి.
+    </p>
+
+    <div class="tip-box">
+      <strong>⚡ SSO ఎలా పనిచేస్తుంది?</strong><br>
+      ఒక స్ట్రింగ్ ఆబ్జెక్ట్ పరిమాణం సాధారణంగా 24 నుండి 32 బైట్లు ఉంటుంది (పాయింటర్, సైజ్, కెపాసిటీ కోసం). స్ట్రింగ్ యొక్క అక్షరాల పొడవు చిన్నదిగా ఉన్నప్పుడు (ఉదాహరణకు 15 లేదా 22 అక్షరాల లోపు, కంపైలర్‌ను బట్టి), అది హీప్ మెమరీని అడగదు! ఆ స్ట్రింగ్ ఆబ్జెక్ట్ యొక్క స్టాక్ మెమరీ బఫర్ లోపలే అక్షరాలను భద్రపరుస్తుంది. దీనివల్ల చిన్న పేర్లు, యూజర్‌నేమ్స్ హ్యాండిల్ చేసేటప్పుడు C++ జీరో-ఓవర్‌హెడ్ స్పీడ్‌ను సాధిస్తుంది!
+    </div>
+
+    <!-- CONCEPT 6: STD::STRING_VIEW (MODERN C++17) -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">6</span> Modern C++17: std::string_view తో Zero-Copy Slicing</div>
+    <p>
+      ఒక ఫంక్షన్‌కు రీడ్-ఓన్లీ టెక్స్ట్‌ను పాస్ చేయాలంటే పూర్వం <code>const std::string&amp;</code> వాడేవాళ్ళం. కానీ దానికి C-String లిటరల్ (ఉదా: <code>"Hello World"</code>) పంపినప్పుడు, తాత్కాలికంగా ఒక <code>std::string</code> ఆబ్జెక్ట్ క్రియేట్ అయి మెమరీ అలొకేషన్ జరిగేది. అలాగే ఒక పెద్ద టెక్స్ట్‌లో సబ్‌స్ట్రింగ్ (ఉదా: <code>str.substr(0, 5)</code>) తీసినప్పుడు కూడా కొత్త స్ట్రింగ్ కాపీ అవుతుంది.
+    </p>
+    <p>
+      దీనికి పరిష్కారంగా C++17 లో <strong><code>std::string_view</code></strong> పరిచయమైంది. ఇది మెమరీని ఓన్ చేసుకోదు (Non-owning). కేవలం ఒక పాయింటర్ మరియు లెంత్ మాత్రమే కలిగి ఉండే ఒక "కిటికీ" (View/Window) లాంటిది.
+    </p>
+
+    <!-- ASCII STRING_VIEW DIAGRAM -->
+    <div class="code-box" style="background:#090d16; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; line-height:1.6;">
+<span style="color:#10b981; font-weight:700;">[std::string vs std::string_view Memory Representation]</span>
+
+1. Original Text in Memory:
+   ['C', '+', '+', ' ', 'P', 'r', 'o', 'g', 'r', 'a', 'm', 'm', 'i', 'n', 'g', '\0']
+    ▲                                  ▲
+    │                                  │
+    └── sv1 points here (len = 3)      └── sv2 points here (len = 11)
+        "C++"                              "Programming"
+
+   std::string_view ఆబ్జెక్ట్ లోపల ఉండేది కేవలం 16 బైట్లు మాత్రమే:
+   ┌───────────────────────┬───────────────────────┐
+   │  const char* data_ptr │      size_t length    │
+   └───────────────────────┴───────────────────────┘
+   Zero Copy! Zero Heap Allocation! Instant Substring!
+    </div>
+
+    <!-- CODE BLOCK 2: STD::STRING & STD::STRING_VIEW -->
+    <div class="try-box" style="margin-top:28px;">
+      <div class="try-box-title">
+        <span>💻 Code Example 2: Modern std::string Methods & C++17 std::string_view</span>
+        <button class="run-btn">▶ Run C++ Code Live</button>
+      </div>
+
+      <div class="code-box">
+        <div class="code-header">
+          <span>modern_string_view_demo.cpp</span>
+          <div class="code-actions">
+            <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+// C++17 బెస్ట్ ప్రాక్టీస్: రీడ్-ఓన్లీ స్ట్రింగ్స్ కోసం string_view వాడండి
+void printPrefix(std::string_view sv, std::size_t count) {
+    // remove_suffix లేదా substr జీరో-కాపీ తో పనిచేస్తాయి
+    std::string_view prefix = sv.substr(0, count);
+    std::cout &lt;&lt; "Extracted Prefix (" &lt;&lt; count &lt;&lt; " chars): \"" &lt;&lt; prefix &lt;&lt; "\"\n";
+}
+
+int main() {
+    std::cout &lt;&lt; "=== 1. Modern std::string Manipulation ===\n";
+    std::string title = "Modern C++ ";
+    title += "Masterclass"; // Concatenation (+)
+
+    std::cout &lt;&lt; "Full Title : " &lt;&lt; title &lt;&lt; "\n";
+    std::cout &lt;&lt; "Length     : " &lt;&lt; title.length() &lt;&lt; " characters\n";
+    std::cout &lt;&lt; "Capacity   : " &lt;&lt; title.capacity() &lt;&lt; " bytes allocated\n";
+
+    // Substring శోధన (Find)
+    std::size_t pos = title.find("Master");
+    if (pos != std::string::npos) {
+        std::cout &lt;&lt; "'Master' found at index: " &lt;&lt; pos &lt;&lt; "\n";
+    }
+
+    std::cout &lt;&lt; "\n=== 2. C++17 std::string_view (Zero-Copy) ===\n";
+    // C-string లిటరల్ పై ఎటువంటి మెమరీ అలొకేషన్ లేకుండా వ్యూ పనిచేస్తుంది
+    const char* rawArticle = "Hyderabad Tech Hub 2026";
+
+    // ఫంక్షన్‌కు C-string పాస్ చేసినా కొత్త ఆబ్జెక్ట్ కాపీ అవ్వదు
+    printPrefix(rawArticle, 9);  // "Hyderabad"
+    printPrefix(title, 6);       // "Modern"
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <a class="run-btn" href="/online-cpp-compiler.html" style="margin-top:16px;">
+        ⚡ Open This Code in C++ Online Compiler →
+      </a>
+    </div>
+
+    <!-- CONCEPT 7: BUFFER OVERFLOW SECURITY VULNERABILITY -->
+    <div class="section-title" style="margin-top:40px;"><span class="num">7</span> బఫర్ ఓవర్‌ఫ్లో (Buffer Overflow) భద్రతా ప్రమాదం</div>
+    <p>
+      అర్రేలతో పనిచేసేటప్పుడు ప్రతి ప్రోగ్రామర్ తెలుసుకోవాల్సిన అతిపెద్ద ముప్పు <strong>Buffer Overflow (Out-of-Bounds Memory Access)</strong>. జావా లేదా పైథాన్‌లో అర్రే లిమిట్ దాటితే <code>IndexOutOfBoundsException</code> వచ్చి ప్రోగ్రామ్ ఆగిపోతుంది. కానీ C++ లో డిఫాల్ట్‌గా <strong>ఎలాంటి బౌండ్స్ చెకింగ్ ఉండదు</strong>!
+    </p>
+
+    <div class="warn-box">
+      <strong>🚨 Undefined Behavior & Hackers:</strong><br>
+      ఒకవేళ మీరు 5 సైజ్ ఉన్న అర్రేలో <code>arr[10] = 99;</code> అని రాస్తే, C++ కంపైలర్ మిమ్మల్ని ఆపదు! అది రామ్‌లో ఆ ఆఫ్‌సెట్ వద్ద ఉన్న వేరే వేరియబుల్ డేటాను లేదా ఫంక్షన్ రిటర్న్ అడ్రస్‌ను ఓవర్‌రైట్ చేస్తుంది. కంప్యూటర్ చరిత్రలో అతిపెద్ద సైబర్ దాడులకు (ఉదా: Morris Worm, Heartbleed) ఈ బఫర్ ఓవర్‌ఫ్లో కారణం.<br><br>
+      <strong>సేఫ్టీ సొల్యూషన్:</strong> బౌండ్స్ చెకింగ్ కావాలనుకుంటే <code>std::array</code> లేదా <code>std::vector</code> లో <code>.at(i)</code> మెథడ్ వాడండి. ఇండెక్స్ దాటితే అది సురక్షితంగా <code>std::out_of_range</code> ఎక్సెప్షన్ విసురుతుంది.
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="section-title" style="margin-top:36px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో అర్రే ఇండెక్స్ 0 తో ఎందుకు మొదలవుతుంది (0-based Indexing)?</h4>
+      <p>
+        అర్రే ఇండెక్స్ అనేది కేవలం సీరియల్ నంబర్ కాదు, అది మెమరీలో 'ఆఫ్‌సెట్' (Offset/Distance). మొదటి ఎలిమెంట్ బేస్ అడ్రస్ వద్దే (0 దూరంలో) ఉంటుంది: <code>Address = Base_Address + (Index * sizeof(type))</code>. ఇండెక్స్ 0 అయితే <code>Address = Base_Address</code> అవుతుంది, దీనివల్ల అదనపు కూడికలు లేదా తీసివేతలు లేకుండా కంపైలర్ మెరుపు వేగంతో మెమరీని యాక్సెస్ చేస్తుంది.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C-style char array కి Modern C++ std::string కి తేడా ఏమిటి?</h4>
+      <p>
+        C-style string అనేది చివరిలో null character (<code>'\0'</code>) కలిగి ఉండే ఫిక్స్‌డ్ క్యారెక్టర్ అర్రే; దీని పరిమాణాన్ని మార్చడం కష్టం మరియు బఫర్ ఓవర్‌ఫ్లో ప్రమాదం ఎక్కువ. Modern <code>std::string</code> అనేది డైనమిక్ క్లాస్; సైజ్ ఆటోమేటిక్‌గా పెరుగుతుంది, మెమరీ సేఫ్టీ ఉంటుంది, +, substr(), find() వంటి ఎన్నో రెడీమేడ్ మెథడ్స్ ఉంటాయి.
+      </p>
+    </div>
+
+    <div class="faq-card">
+      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Modern C++17 లో 'std::string_view' ఎందుకు ఉపయోగించాలి?</h4>
+      <p>
+        <code>std::string_view</code> అనేది కేవలం పాయింటర్ మరియు లెంత్ మాత్రమే కలిగి ఉండే లైట్‌వెయిట్ రీడ్-ఓన్లీ వ్యూ (Non-owning view). పెద్ద స్ట్రింగ్‌లను ఫంక్షన్‌కు పాస్ చేసినా లేదా సబ్‌స్ట్రింగ్స్ కట్ చేసినా ఎలాంటి కొత్త మెమరీ అలొకేషన్ (Heap Allocation) లేదా కాపీ జరగదు. ఇది ప్రోగ్రామ్ స్పీడ్‌ను గణనీయంగా పెంచుతుంది.
+      </p>
+    </div>
+
+    <!-- AUTHOR ATTRIBUTION -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
+      </div>
+    </div>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <a href="/blog-cpp/09-cpp-functions-and-overloading.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
+        <span style="font-size:14px; font-weight:700;">9. ఫంక్షన్స్ & Overloading</span>
+      </a>
+
+      <a href="/blog-cpp/11-cpp-pointers-and-references.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
+        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
+        <span style="font-size:14px; font-weight:700;">11. పాయింటర్లు & రిఫరెన్సెస్</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
