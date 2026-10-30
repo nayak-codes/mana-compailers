@@ -232,30 +232,139 @@
 
     
     <div class="intro-box">
-      C లో స్ట్రింగ్ అనేది ప్రత్యేకమైన డేటా టైప్ కాదు; అది కేవలం <code>'\0'</code> (నల్ టెర్మినేటర్) తో ముగిసే <strong>క్యారెక్టర్ అర్రే (char[])</strong> మాత్రమే. <code>&lt;string.h&gt;</code> ఫంక్షన్లు మరియు బఫర్ ఓవర్‌ఫ్లో సెక్యూరిటీని పరిశీలిద్దాం.
+      జావా లేదా పైథాన్‌లో స్ట్రింగ్స్ అంటే ప్రత్యేకమైన ఆబ్జెక్టులు. కానీ C లాంగ్వేజ్‌లో స్ట్రింగ్స్ కోసం ఎటువంటి ప్రత్యేక డేటా టైప్ లేదు! C లో స్ట్రింగ్ అంటే కేవలం <strong>చివరలో '\\0' (Null Terminator) కలిగిన క్యారెక్టర్ అర్రే (Character Array)</strong> మాత్రమే. ఈ అధ్యాయంలో నల్ టెర్మినేటర్ ప్రాముఖ్యత, స్ట్రింగ్ లిటరల్స్ vs క్యారెక్టర్ అర్రేస్, <code>&lt;string.h&gt;</code> లోని ప్రముఖ ఫంక్షన్లు, మరియు ప్రపంచాన్ని గడగడలాడించిన <strong>బఫర్ ఓవర్‌ఫ్లో సెక్యూరిటీ వల్నరబిలిటీస్</strong> ను సమగ్రంగా పరిశీలిద్దాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>స్ట్రింగ్ ఫంక్షన్స్: strlen, strcpy, strcmp</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>నల్ టెర్మినేటర్ ('\0') అంతర్గత సూత్రం & మెమరీ లేఅవుట్</div>
     <div class="section-body">
+      <p>
+        C లో ఒక స్ట్రింగ్‌ను మెమరీలో స్టోర్ చేసినప్పుడు, అది ఎక్కడ ముగిసిందో కంపైలర్‌కు తెలియజేయడానికి చివరలో ప్రత్యేకమైన <strong>'\\0' (ASCII విలువ 0 - Null Character)</strong> తప్పనిసరిగా ఉండాలి.
+      </p>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981; font-size:14.5px;">🔍 "Hello" మెమరీలో ఎన్ని బైట్లు తీసుకుంటుంది?</strong>
+        <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          <code>char greeting[] = "Hello";</code> అని రాసినప్పుడు అక్షరాలు 5 ఉన్నప్పటికీ, కంపైలర్ చివర ఆటోమేటిక్‌గా <code>'\\0'</code> ను జోడిస్తుంది. కాబట్టి ఇది RAM లో <strong>6 బైట్ల</strong> స్థలాన్ని ఆక్రమిస్తుంది:
+        </p>
+        <div style="display:flex; gap:6px; margin:12px 0; font-family:monospace; font-size:14px; font-weight:700;">
+          <span style="background:var(--bg3); border:1px solid var(--border); padding:8px 12px; border-radius:4px;">'H'</span>
+          <span style="background:var(--bg3); border:1px solid var(--border); padding:8px 12px; border-radius:4px;">'e'</span>
+          <span style="background:var(--bg3); border:1px solid var(--border); padding:8px 12px; border-radius:4px;">'l'</span>
+          <span style="background:var(--bg3); border:1px solid var(--border); padding:8px 12px; border-radius:4px;">'l'</span>
+          <span style="background:var(--bg3); border:1px solid var(--border); padding:8px 12px; border-radius:4px;">'o'</span>
+          <span style="background:rgba(16,185,129,0.15); border:1px solid #10b981; color:#10b981; padding:8px 12px; border-radius:4px;">'\\0'</span>
+        </div>
+        <p style="font-size:13px; color:var(--text2); margin:0;">
+          ఒకవేళ ఈ <code>'\\0'</code> లేకపోతే, <code>printf("%s")</code> మెమరీలో ఎక్కడో ఒక నల్ బైట్ దొరికేంత వరకు పక్కనున్న గార్బేజ్ డేటాను ప్రింట్ చేస్తూనే ఉంటుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>String Literal (Read-Only) vs Character Array (Stack)</div>
+    <div class="section-body">
+      <p>
+        స్ట్రింగ్స్‌ను డిక్లేర్ చేసేటప్పుడు బిగినర్స్‌ను ఎక్కువగా గందరగోళానికి గురిచేసే అంశం:
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">1. Character Array (మార్చవచ్చు):</h4>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-bottom:8px;">char s[] = "Hello";<br>s[0] = 'M'; // ✅ Allowed: "Mello"</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">ఇది స్టాక్ మెమరీలో నిల్వ ఉంటుంది. దీనిలోని అక్షరాలను స్వేచ్ఛగా మార్చవచ్చు.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">2. Pointer to String Literal (రీడ్-ఓన్లీ):</h4>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-bottom:8px;">char *p = "Hello";<br>// p[0] = 'M'; // ❌ CRASH! Bus error / Segfault</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">ఇది RAM లోని రీడ్-ఓన్లీ డేటా సెగ్మెంట్ (ROData) లో ఉంటుంది. దీన్ని మార్చడానికి ప్రయత్నిస్తే OS ప్రోగ్రామ్‌ను వెంటనే క్రాష్ చేస్తుంది.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>&lt;string.h&gt; లైబ్రరీ ఫంక్షన్లు & భద్రతా నియమాలు</div>
+    <div class="section-body">
+      <p>
+        C స్టాండర్డ్ లైబ్రరీ <code>&lt;string.h&gt;</code> లోని అత్యంత ముఖ్యమైన ఫంక్షన్ల డెమో:
+      </p>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — String operations</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Standard string library functions</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 #include &lt;string.h&gt;
 
-int main() {
-    char source[] = "Dennis Ritchie";
-    char destination[30];
+int main(void) {
+    char str1[30] = "Our";
+    char str2[] = " Compiler";
+    char copy[30];
 
-    // కాపీ చేయడం
-    strcpy(destination, source);
+    // 1. strlen: స్ట్రింగ్ పొడవు ('\\0' ను లెక్కించదు)
+    printf("str1 పొడవు: %zu\n", strlen(str1));
 
-    printf("Original: %s (Length: %zu)\n", source, strlen(source));
-    printf("Copied:   %s\n", destination);
+    // 2. strcat: స్ట్రింగ్స్ కలపడం (Concatenation)
+    strcat(str1, str2);
+    printf("కలిపిన తర్వాత: %s\n", str1);
+
+    // 3. strcpy: స్ట్రింగ్ కాపీ చేయడం
+    strcpy(copy, str1);
+    printf("కాపీ చేయబడిన స్ట్రింగ్: %s\n", copy);
+
+    // 4. strcmp: స్ట్రింగ్స్ పోలిక (0 వస్తే సమానం)
+    if (strcmp(str1, copy) == 0) {
+        printf("రెండు స్ట్రింగ్స్ ఖచ్చితంగా సమానం!\n");
+    }
     return 0;
 }</code></pre>
+      </div>
+
+      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#ef4444; font-size:14px;">🛡️ ఆధునిక సెక్యూర్ ఫంక్షన్స్: strncpy & strncat ఎందుకు వాడాలి?</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          <code>strcpy()</code> మరియు <code>strcat()</code> డెస్టినేషన్ అర్రేలో తగినంత స్థలం ఉందో లేదో చూడకుండా డేటాను రాసేస్తాయి. ఇది భయంకరమైన <strong>Buffer Overflow</strong> దాడికి దారితీస్తుంది. అందుకే ప్రొడక్షన్ కోడ్‌లో గరిష్ట సైజ్ పరిమితిని స్వీకరించే <code>strncpy(dest, src, sizeof(dest) - 1)</code> మరియు <code>strncat()</code> మాత్రమే వాడాలి.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. స్ట్రింగ్స్‌ను == తో పోల్చడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">if (str1 == str2) { ... } // తప్పు! ఇది టెక్స్ట్‌ను కాకుండా మెమరీ అడ్రస్‌లను పోలుస్తుంది</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">రెండు వేర్వేరు అర్రేలలో ఒకే టెక్స్ట్ ఉన్నా వాటి అడ్రస్‌లు వేర్వేరు కాబట్టి <code>==</code> ఎల్లప్పుడూ FALSE అవుతుంది. ఎల్లప్పుడూ <code>strcmp(str1, str2) == 0</code> వాడాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. నల్ క్యారెక్టర్‌కు స్థలం కేటాయించకపోవడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">char word[5] = "Hello"; // తప్పు! 5 అక్షరాలు + '\\0' కలిపి 6 బైట్లు కావాలి</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">ఈ విధంగా రాస్తే నల్ టెర్మినేటర్ మిస్ అయి స్ట్రింగ్ ఫంక్షన్లు మెమరీ లోపాల బారిన పడతాయి. కనీసం <code>char word[6]</code> అని ఇవ్వాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: sizeof("Hello") మరియు strlen("Hello") ల మధ్య తేడా ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>sizeof("Hello")</code> కంపైల్-టైమ్‌లో నల్ క్యారెక్టర్‌తో కలిపి మొత్తం మెమరీ బైట్లను లెక్కిస్తుంది (ఫలితం: <strong>6</strong>). కానీ <code>strlen("Hello")</code> రన్‌టైమ్‌లో నల్ క్యారెక్టర్ వచ్చేంత వరకు అక్షరాలను మాత్రమే లెక్కిస్తుంది (ఫలితం: <strong>5</strong>).
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: strcmp() ఎందుకు కేవలం true/false కాకుండా నెగటివ్ లేదా పాజిటివ్ సంఖ్యలను ఇస్తుంది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>strcmp()</code> రెండు స్ట్రింగ్స్‌లోని మొదటి అసమాన అక్షరాల ASCII విలువల తేడాను (<code>str1[i] - str2[i]</code>) రిటర్న్ చేస్తుంది. నెగటివ్ విలువ వస్తే మొదటి స్ట్రింగ్ డిక్షనరీ ఆర్డర్‌లో ముందుందని, పాజిటివ్ వస్తే వెనుక ఉందని అర్థం. ఇది సార్టింగ్ చేయడానికి ఉపకరిస్తుంది.
+          </p>
+        </div>
       </div>
     </div>
   

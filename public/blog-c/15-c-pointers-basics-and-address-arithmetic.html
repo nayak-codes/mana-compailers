@@ -232,32 +232,164 @@
 
     
     <div class="intro-box">
-      C ప్రోగ్రామింగ్‌కు కిరీటం వంటిది <strong>పాయింటర్లు (Pointers)</strong>. కంప్యూటర్ RAM మెమరీ అడ్రస్‌లను నేరుగా యాక్సెస్ చేయడం, డీరిఫరెన్సింగ్ (<code>*</code>), మరియు పాయింటర్ అరిథ్‌మెటిక్ యొక్క పూర్తి రహస్యాలను ఈ అధ్యాయంలో ఛేదిద్దాం.
+      సిస్టమ్స్ ప్రోగ్రామింగ్‌లో C లాంగ్వేజ్‌ను తిరుగులేని రారాజుగా నిలబెట్టిన అత్యంత శక్తివంతమైన ఫీచర్ <strong>పాయింటర్లు (Pointers)</strong>. కంప్యూటర్ సైన్స్ విద్యార్థులను ఎక్కువగా భయపెట్టే కాన్సెప్ట్ కూడా ఇదే! అయితే వాస్తవానికి పాయింటర్ అంటే మరేమీ కాదు — అది కేవలం <strong>మరొక వేరియబుల్ యొక్క RAM మెమరీ అడ్రస్‌ను నిల్వ చేసే సాధారణ వేరియబుల్</strong> మాత్రమే. <code>&amp;</code> (Address) vs <code>*</code> (Value-at), పాయింటర్ అరిథ్‌మెటిక్, మరియు ప్రమాదకరమైన వైల్డ్ / డ్యాంగ్లింగ్ పాయింటర్లను ఈ అధ్యాయంలో అత్యంత సరళంగా నేర్చుకుందాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>పాయింటర్ అంటే ఏమిటి? (* మరియు & ఆపరేటర్లు)</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>పాయింటర్ అంటే ఏమిటి? మెమరీ అడ్రస్ & డి-రిఫరెన్సింగ్ (*, &)</div>
     <div class="section-body">
       <p>
-        ఒక వేరియబుల్ యొక్క <strong>RAM మెమరీ అడ్రస్</strong> ను భద్రపరిచే ప్రత్యేక వేరియబుల్‌నే పాయింటర్ అంటారు.
+        కంప్యూటర్ RAM లోని ప్రతి బైట్‌కు ఒక ప్రత్యేకమైన చిరునామా (Hexadecimal Address, e.g. <code>0x7ffd9a</code>) ఉంటుంది. ఒక సాధారణ వేరియబుల్ డేటాను నిల్వ చేస్తే, ఒక <strong>పాయింటర్ వేరియబుల్ ఆ డేటా ఉన్న మెమరీ అడ్రస్‌ను</strong> నిల్వ చేస్తుంది.
       </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">&amp; (Address-of Operator):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఒక వేరియబుల్ మెమరీలో ఎక్కడ ఉందో దాని RAM చిరునామాను అందిస్తుంది (ఉదా: <code>&amp;age</code>).
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 6px 0; font-size:14.5px;">* (Dereferencing Operator):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఒక పాయింటర్ పట్టుకున్న అడ్రస్ వద్దకు వెళ్లి, అక్కడ నిల్వ ఉన్న వాస్తవ విలువను చదవడానికి లేదా మార్చడానికి వాడతాం (ఉదా: <code>*ptr</code>).
+          </p>
+        </div>
+      </div>
 
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Pointers Basics</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Pointer Declaration & Dereferencing</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    int salary = 75000;
-    int* ptr = &salary; // salary అడ్రస్‌ను ptr లో భద్రపరుస్తున్నాం
+int main(void) {
+    int target = 42;
+    // target యొక్క అడ్రస్‌ను నిల్వ చేసే పాయింటర్
+    int *ptr = &target;
 
-    printf("Salary Value:        %d\n", salary);
-    printf("Salary RAM Address:  %p\n", (void*)&salary);
-    printf("Pointer Stored Addr: %p\n", (void*)ptr);
-    printf("Dereferenced Value:  %d (*ptr)\n", *ptr);
+    printf("target విలువ          : %d\n", target);
+    printf("target మెమరీ అడ్రస్   : %p\n", (void*)&target);
+    printf("ptr నిల్వ చేసుకున్నది : %p\n", (void*)ptr);
+    printf("*ptr (డీరిఫరెన్సింగ్) : %d\n", *ptr);
+
+    // పాయింటర్ ద్వారా అసలు విలువను మార్చడం
+    *ptr = 99;
+    printf("నవీకరించబడిన target   : %d\n", target);
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>పాయింటర్ సైజు & డేటా టైప్స్ యొక్క ఆవశ్యకత</div>
+    <div class="section-body">
+      <p>
+        ఆధునిక 64-బిట్ ఆపరేటింగ్ సిస్టమ్స్‌లో ఏదైనా పాయింటర్ (అది <code>char*</code> అయినా, <code>int*</code> అయినా లేదా <code>double*</code> అయినా) ఖచ్చితంగా <strong>8 బైట్ల పరిమాణంలోనే</strong> ఉంటుంది. ఎందుకంటే 64-బిట్ ఆర్కిటెక్చర్‌లో ప్రతి మెమరీ అడ్రస్ 64 బిట్లు (8 బైట్లు) ఉంటుంది.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">🤔 అన్ని పాయింటర్లు 8 బైట్లే అయితే DataType ఎందుకు చెప్పాలి?</h4>
+        <ul style="margin:0; padding-left:20px; font-size:13.5px; color:var(--text); line-height:1.7;">
+          <li><strong>డీరిఫరెన్సింగ్ బౌండరీ:</strong> <code>*ptr</code> అన్నప్పుడు మెమరీ నుండి కేవలం 1 బైట్ చదవాలా (<code>char</code>), 4 బైట్లు చదవాలా (<code>int</code>) లేదా 8 బైట్లు చదవాలా (<code>double</code>) అనేది డేటా టైప్ నిర్ణయిస్తుంది.</li>
+          <li><strong>పాయింటర్ అరిథ్‌మెటిక్ స్కేల్:</strong> <code>ptr + 1</code> అన్నప్పుడు ఎన్ని బైట్లు ముందుకు జంప్ చేయాలో కంపైలర్‌కు డేటా టైప్ ద్వారానే తెలుస్తుంది.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>పాయింటర్ అరిథ్‌మెటిక్ (Pointer Arithmetic Scale Factor)</div>
+    <div class="section-body">
+      <p>
+        పాయింటర్లకు ఒక సంఖ్యను కలిపినప్పుడు సాధారణ గణితం లాగా 1 బైట్ పెరగదు. అది ఆ డేటా టైప్ పరిమాణానికి గుణించబడి ముందుకు వెళ్తుంది:
+      </p>
+      <code style="font-size:13.5px; color:#10b981; display:block; background:var(--bg3); padding:8px 12px; border-radius:4px; margin:8px 0; font-weight:700;">
+        ptr + n = ptr_address + (n × sizeof(*ptr))
+      </code>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Pointer Arithmetic Scale Demo</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int arr[3] = {10, 20, 30};
+    int *p = arr; // arr[0] అడ్రస్
+
+    printf("p   యొక్క అడ్రస్: %p (విలువ: %d)\n", (void*)p, *p);
+    p++; // 4 బైట్లు ముందుకు దూకుతుంది!
+    printf("p++ యొక్క అడ్రస్: %p (విలువ: %d)\n", (void*)p, *p);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ప్రమాదకరమైన పాయింటర్లు: NULL, Wild & Dangling Pointers</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#10b981; font-size:14px;">1. NULL Pointer (రక్షణ కవచం):</strong>
+          <p style="font-size:13px; color:var(--text2); margin:4px 0 0 0; line-height:1.6;">
+            ప్రస్తుతం ఏ మెమరీనీ పాయింట్ చేయని సురక్షిత సూచిక (<code>int *p = NULL;</code>). ఏదైనా పాయింటర్‌ను వాడే ముందు అది NULL కాదని <code>if (p != NULL)</code> అని చెక్ చేసుకోవడం ఉత్తమ భద్రతా పద్ధతి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14px;">2. Wild Pointer (ఇనీషియలైజ్ చేయని రాక్షసుడు):</strong>
+          <p style="font-size:13px; color:var(--text2); margin:4px 0 0 0; line-height:1.6;">
+            కేవలం <code>int *p;</code> అని డిక్లేర్ చేసి దేనికీ అసైన్ చేయకపోతే, అందులో గార్బేజ్ అడ్రస్ ఉంటుంది. దీనిలోకి డేటా రాస్తే క్రాష్ ఖాయం.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f59e0b; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#f59e0b; font-size:14px;">3. Dangling Pointer (గాలిలో వేలాడే పాయింటర్):</strong>
+          <p style="font-size:13px; color:var(--text2); margin:4px 0 0 0; line-height:1.6;">
+            ఒక మెమరీని విడుదల చేసిన తర్వాత (లేదా ఫంక్షన్ లోకల్ వేరియబుల్ నాశనమైన తర్వాత) కూడా పాత చిరునామాను అలాగే గుర్తుంచుకునే పాయింటర్. విడుదల చేసిన వెంటనే <code>p = NULL;</code> చేయాలి.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. అన్-ఇనీషియలైజ్డ్ పాయింటర్‌ను డీరిఫరెన్స్ చేయడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">int *ptr; *ptr = 100; // ఘోరమైన సెగ్మెంటేషన్ ఫాల్ట్!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">పాయింటర్ ఏ వాలిడ్ మెమరీ అడ్రస్‌నూ పాయింట్ చేయకుండా నేరుగా <code>*ptr = 100</code> రాయడం వల్ల అపరిచిత మెమరీని టచ్ చేసి సిస్టమ్ వెంటనే క్రాష్ అవుతుంది.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. డిక్లరేషన్‌లో బహుళ పాయింటర్లు రాసేటప్పుడు * మిస్ అవ్వడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">int* a, b; // ఇక్కడ 'a' మాత్రమే పాయింటర్; 'b' సాధారణ int అవుతుంది!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">రెండూ పాయింటర్లు కావాలంటే <code>int *a, *b;</code> అని రెండింటికీ విడివిడిగా ఆస్టెరిస్క్ పెట్టాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: void* (Generic Pointer) అంటే ఏమిటి? దాన్ని ఎప్పుడు వాడతారు?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>void*</code> అనేది ఏ డేటా టైప్ యొక్క మెమరీ అడ్రస్‌నైనా నిల్వ చేయగల సార్వత్రిక పాయింటర్. డైనమిక్ మెమరీ ఫంక్షన్లైన <code>malloc()</code> మరియు <code>calloc()</code> ఫలితంగా <code>void*</code> నే రిటర్న్ చేస్తాయి. దీనిని డీరిఫరెన్స్ చేయడానికి ముందు సంబంధిత డేటా టైప్‌కు టైప్ కాస్ట్ చేయాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: రెండు పాయింటర్లను కూడడం (ptr1 + ptr2) ఎందుకు అనుమతించబడదు?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            రెండు మెమరీ అడ్రస్‌లను కలపడం అనేది భౌతికంగా అర్థం లేని ప్రక్రియ (రెండు ఇంటి అడ్రస్‌లను కలిపితే సరిహద్దులు దాటి ఎక్కడికో వెళ్ళిపోతుంది). అయితే రెండు పాయింటర్లను తీసివేస్తే (<code>ptr2 - ptr1</code>) వాటి మధ్య ఎన్ని ఎలిమెంట్లు ఉన్నాయో తెలుస్తుంది కాబట్టి తీసివేత అనుమతించబడుతుంది.
+          </p>
+        </div>
       </div>
     </div>
   

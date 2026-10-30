@@ -232,26 +232,157 @@
 
     
     <div class="intro-box">
-      అర్రే పేరు స్వయంగా ఒక పాయింటర్‌గా క్షీణించడం (Array Decay), డబుల్ పాయింటర్లు (<code>**ptr</code>), మరియు C లో ఈవెంట్ సిస్టమ్స్‌ను నిర్మించే <strong>ఫంక్షన్ పాయింటర్లు (Function Pointers)</strong> గురించి నేర్చుకుందాం.
+      C లాంగ్వేజ్ అంతర్గత ఆర్కిటెక్చర్‌లో అర్రేలు మరియు పాయింటర్లు ఒకే నాణేనికి ఉన్న రెండు ముఖాలు లాంటివి. ఒక ఎక్స్‌ప్రెషన్‌లో అర్రే పేరు రాసినప్పుడు అది పాయింటర్‌గా ఎలా రూపాంతరం చెందుతుంది (<strong>Array Decay</strong>), <code>arr[i]</code> వెనుక ఉన్న అసలు పాయింటర్ సింటాక్స్, మెమరీ పాయింటర్‌ను పాయింట్ చేసే <strong>డబుల్ పాయింటర్లు (**ptr)</strong>, మరియు హైయర్ ఆర్డర్ ప్రోగ్రామింగ్‌కు మూలమైన <strong>ఫంక్షన్ పాయింటర్లు (Callbacks)</strong> ను ఈ అధ్యాయంలో లోతుగా శోధిద్దాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>డబుల్ పాయింటర్లు: Pointer to a Pointer</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>అర్రే డికే (Array Decay) రహస్యం & arr[i] == *(arr + i)</div>
     <div class="section-body">
+      <p>
+        C లో ఒక అర్రే పేరును ఎక్స్‌ప్రెషన్‌లో వాడినప్పుడు, అది స్వయంచాలకంగా తన మొదటి ఎలిమెంట్ యొక్క మెమరీ అడ్రస్ పాయింటర్‌గా దిగజారుతుంది (Decays to a pointer to its first element).
+      </p>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981; font-size:14.5px;">🔑 అర్రే ఇండెక్సింగ్ అనేది కేవలం షుగర్ సింటాక్స్ (Syntactic Sugar):</strong>
+        <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          కంపైలర్ దృష్టిలో <code>arr[i]</code> అనే ప్రత్యేకమైన ఆపరేషన్ లేదు! మీరు <code>arr[i]</code> అని రాసిన ప్రతిసారీ కంపైలర్ అంతర్గతంగా దానిని <strong><code>*(arr + i)</code></strong> గా మారుస్తుంది.
+        </p>
+        <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0; line-height:1.5;">
+          💡 <strong>ఇంటర్వ్యూ ఫన్ ఫ్యాక్ట్:</strong> కూడికలో స్థానాలు మారినా విలువ మారదు కాబట్టి, <code>*(arr + i)</code> అనేది <code>*(i + arr)</code> కి సమానం. దీని అర్థం C లో <strong><code>i[arr]</code></strong> అని రాసినా ప్రోగ్రామ్ ఖచ్చితంగా సరైన ఫలితాన్నే ఇస్తుంది!
+        </p>
+      </div>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Double Pointer</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Array Pointer Equivalence & i[arr]</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    int val = 99;
-    int* p1 = &val;
-    int** p2 = &p1; // పాయింటర్ p1 యొక్క అడ్రస్‌ను పట్టుకునే డబుల్ పాయింటర్
+int main(void) {
+    int nums[4] = {10, 20, 30, 40};
 
-    printf("Direct: %d | Via P1: %d | Via P2: %d\n", val, *p1, **p2);
+    printf("nums[2]     = %d\n", nums[2]);
+    printf("*(nums + 2) = %d\n", *(nums + 2));
+    printf("2[nums]     = %d (వాలిడ్ సింటాక్స్!)\n", 2[nums]);
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>అర్రేలను ఫంక్షన్లకు పంపినప్పుడు పాయింటర్ డికే</div>
+    <div class="section-body">
+      <p>
+        ఒక ఫంక్షన్ హెడర్‌లో <code>void print(int arr[])</code> అని రాసినప్పటికీ, కంపైలర్ దానిని అంతర్గతంగా <strong><code>void print(int *arr)</code></strong> గానే మారుస్తుంది. అర్రే కాపీ చేయబడదు; కేవలం మొదటి ఎలిమెంట్ అడ్రస్ మాత్రమే వెళ్తుంది.
+      </p>
+
+      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#ef4444; font-size:14px;">⚠️ ఫంక్షన్ లోపల sizeof(arr) ట్రాప్:</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          <code>main()</code> లో <code>sizeof(arr)</code> అర్రే మొత్తం బైట్లను ఇస్తుంది. కానీ ఫంక్షన్ లోపల <code>sizeof(arr)</code> వాడితే అది కేవలం పాయింటర్ సైజు (8 బైట్లు) మాత్రమే ఇస్తుంది! అందుకే <strong>C లో అర్రేను ఫంక్షన్‌కు పంపినప్పుడు దాని సైజ్‌ను ప్రత్యేక పారామీటర్‌గా పంపడం తప్పనిసరి</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>డబుల్ పాయింటర్లు (Double Pointers **ptr)</div>
+    <div class="section-body">
+      <p>
+        ఒక పాయింటర్ కూడా మెమరీలో ఒక వేరియబుల్ కాబట్టి దానికి కూడా ఒక RAM అడ్రస్ ఉంటుంది. <strong>ఒక పాయింటర్ యొక్క మెమరీ అడ్రస్‌ను నిల్వ చేసే పాయింటర్‌ను డబుల్ పాయింటర్ (Pointer to Pointer)</strong> అంటారు.
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Double Pointer Architecture</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int val = 500;
+    int *ptr = &val;     // సింగిల్ పాయింటర్: val అడ్రస్
+    int **dptr = &ptr;   // డబుల్ పాయింటర్: ptr అడ్రస్
+
+    printf("val విలువ          : %d\n", val);
+    printf("*ptr (సింగిల్)     : %d\n", *ptr);
+    printf("**dptr (డబుల్)      : %d\n", **dptr);
+
+    // డబుల్ పాయింటర్ ద్వారా మార్చడం
+    **dptr = 999;
+    printf("నవీకరించబడిన val    : %d\n", val);
+    return 0;
+}</code></pre>
+      </div>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 డబుల్ పాయింటర్లను డైనమిక్ 2D అర్రేస్ (Dynamic 2D Arrays) సృష్టించడానికి మరియు ఫంక్షన్ ద్వారా వేరొక పాయింటర్ అడ్రస్‌ను మార్చడానికి (Modifying a pointer in a function) వాడతారు.
+      </p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ఫంక్షన్ పాయింటర్లు (Function Pointers & Callbacks)</div>
+    <div class="section-body">
+      <p>
+        వేరియబుల్స్ లాగే ఫంక్షన్లు కూడా RAM లోని కోడ్ సెగ్మెంట్ (Text Segment) లో నిల్వ ఉంటాయి. ఒక ఫంక్షన్ యొక్క ఎగ్జిక్యూటబుల్ మెమరీ అడ్రస్‌ను స్టోర్ చేసే పాయింటర్‌ను <strong>ఫంక్షన్ పాయింటర్</strong> అంటారు. దీని ద్వారా రన్‌టైమ్‌లో ఏ ఫంక్షన్ పిలవాలో డైనమిక్‌గా నిర్ణయించవచ్చు (Callbacks).
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Function Pointer Callback Demo</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int add(int a, int b) { return a + b; }
+int multiply(int a, int b) { return a * b; }
+
+// ఫంక్షన్ పాయింటర్‌ను ఆర్గ్యుమెంట్‌గా స్వీకరించే ఫంక్షన్
+void computeAndPrint(int x, int y, int (*operation)(int, int)) {
+    int res = operation(x, y); // కాల్‌బ్యాక్ ఎగ్జిక్యూషన్
+    printf("ఆపరేషన్ ఫలితం: %d\n", res);
+}
+
+int main(void) {
+    computeAndPrint(10, 5, add);      // ఫలితం: 15
+    computeAndPrint(10, 5, multiply); // ఫలితం: 50
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. int *arr[] మరియు int (*arr)[] ల మధ్య కన్‌ఫ్యూజన్:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;"><code>int *arr[5];</code> అంటే 5 పాయింటర్ల అర్రే (Array of Pointers). కానీ <code>int (*arr)[5];</code> అంటే 5 పూర్ణాంకాలు గల ఒక అర్రేని పాయింట్ చేసే ఏకైక పాయింటర్. బ్రాకెట్ ప్రాధాన్యత మొత్తం అర్థాన్నే మారుస్తుంది.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. డబుల్ పాయింటర్‌ను సింగిల్ ఆస్టెరిస్క్ తో విలువ అనుకోవడం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;"><code>dptr</code> వద్ద <code>*dptr</code> అంటే కేవలం మధ్యలోని పాయింటర్ అడ్రస్ మాత్రమే వస్తుంది. అసలు విలువ కావాలంటే ఖచ్చితంగా రెండుసార్లు డీరిఫరెన్స్ (<code>**dptr</code>) చేయాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C స్టాండర్డ్ లైబ్రరీ qsort() ఫంక్షన్ పాయింటర్లను ఎలా వాడుతుంది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>qsort()</code> అనేది జెనరిక్ క్విక్ సార్ట్ ఫంక్షన్. ఏ రెండు ఎలిమెంట్లను పోల్చాలో దానికి తెలియదు కాబట్టి, డెవలపర్ రాసిన కంపారేటర్ ఫంక్షన్ అడ్రస్‌ను (Function Pointer <code>int (*compar)(const void*, const void*)</code>) ఆర్గ్యుమెంట్‌గా తీసుకుని సార్టింగ్ పూర్తి చేస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: main ఫంక్షన్‌లో char *argv[] మరియు char **argv రెండూ ఒకటేనా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            అవును! ఫంక్షన్ పారామీటర్లలో అర్రే డికే నియమం ప్రకారం <code>char *argv[]</code> అనేది స్వయంచాలకంగా <code>char **argv</code> (Pointer to char pointer) గా మారుతుంది. రెండూ కమాండ్ లైన్ ఆర్గ్యుమెంట్లను రీడ్ చేయడానికి పూర్తిగా సమానమైనవి.
+          </p>
+        </div>
       </div>
     </div>
   
