@@ -4,12 +4,10 @@ const COMPILER_LANGS = [
   { name: 'Python', url: '/online-python-compiler.html', blog: '/blog-python.html' },
   { name: 'Java', url: '/online-java-compiler.html', blog: '/blog-java.html' },
   { name: 'HTML / CSS / JS', url: '/online-html-editor.html', blog: '/blog-html.html' },
-  { name: 'JavaScript', url: '/online-javascript-compiler.html', blog: '/blog-javascript.html' },
   { name: 'C', url: '/online-c-compiler.html', blog: '/blog-c.html' },
   { name: 'C++', url: '/online-cpp-compiler.html', blog: '/blog-cpp.html' },
-  { name: 'Go', url: '/online-go-compiler.html', blog: '/blog-go.html' },
-  { name: 'PHP', url: '/online-php-compiler.html', blog: '/blog-php.html' },
-  { name: 'Ruby', url: '/online-ruby-compiler.html', blog: '/blog-ruby.html' },
+  { name: 'JavaScript', url: '/online-javascript-compiler.html', blog: '/blog-javascript.html' },
+  { name: 'C#', url: '/online-csharp-compiler.html', blog: '/blog-csharp.html' },
 ]
 
 const TUTORIAL_LANGS = [
@@ -20,10 +18,6 @@ const TUTORIAL_LANGS = [
   { name: 'C++', url: '/blog-cpp.html' },
   { name: 'JavaScript', url: '/blog-javascript.html' },
   { name: 'C#', url: '/blog-csharp.html' },
-  { name: 'Go', url: '/blog-go.html' },
-  { name: 'Rust', url: '/blog-rust.html' },
-  { name: 'PHP', url: '/blog-php.html' },
-  { name: 'Ruby', url: '/blog-ruby.html' },
 ]
 
 const STATIC_LINKS = [

@@ -7,14 +7,10 @@
     { name: 'Python', url: '/online-python-compiler.html', blog: '/blog-python.html', slug: 'python' },
     { name: 'Java', url: '/online-java-compiler.html', blog: '/blog-java.html', slug: 'java' },
     { name: 'HTML / CSS / JS', url: '/online-html-editor.html', blog: '/blog-html.html', slug: 'html' },
-    { name: 'JavaScript', url: '/online-javascript-compiler.html', blog: '/blog-javascript.html', slug: 'javascript' },
     { name: 'C', url: '/online-c-compiler.html', blog: '/blog-c.html', slug: 'c' },
     { name: 'C++', url: '/online-cpp-compiler.html', blog: '/blog-cpp.html', slug: 'cpp' },
-    { name: 'C#', url: '/online-csharp-compiler.html', blog: '/blog-csharp.html', slug: 'csharp' },
-    { name: 'Go', url: '/online-go-compiler.html', blog: '/blog-go.html', slug: 'go' },
-    { name: 'Rust', url: '/online-rust-compiler.html', blog: '/blog-rust.html', slug: 'rust' },
-    { name: 'PHP', url: '/online-php-compiler.html', blog: '/blog-php.html', slug: 'php' },
-    { name: 'Ruby', url: '/online-ruby-compiler.html', blog: '/blog-ruby.html', slug: 'ruby' }
+    { name: 'JavaScript', url: '/online-javascript-compiler.html', blog: '/blog-javascript.html', slug: 'javascript' },
+    { name: 'C#', url: '/online-csharp-compiler.html', blog: '/blog-csharp.html', slug: 'csharp' }
   ];
 
   var TUTORIAL_GROUPS = [
@@ -27,11 +23,7 @@
         { name: 'C', url: '/blog-c.html' },
         { name: 'C++', url: '/blog-cpp.html' },
         { name: 'JavaScript', url: '/blog-javascript.html' },
-        { name: 'C#', url: '/blog-csharp.html' },
-        { name: 'Go', url: '/blog-go.html' },
-        { name: 'Rust', url: '/blog-rust.html' },
-        { name: 'PHP', url: '/blog-php.html' },
-        { name: 'Ruby', url: '/blog-ruby.html' }
+        { name: 'C#', url: '/blog-csharp.html' }
       ]
     }
   ];
