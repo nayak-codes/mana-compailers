@@ -316,14 +316,245 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. abstract classes vs interfaces · Multiple Interface Implementation · Decoupling & DI పునాది · record ఇమ్యుటబుల్ డేటా ఆబ్జెక్ట్స్.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  లార్జ్-స్కేల్ ఎంటర్‌ప్రైజ్ సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌లో కోడ్‌ను విడదీసి (Decoupling) నిర్వహించడానికి <strong>Abstract Classes</strong> మరియు <strong>Interfaces</strong> గుండెకాయ లాంటివి. వీటితో పాటు, ఆధునిక C# లో డేటాను ఇమ్మ్యూటబుల్‌గా మరియు సురక్షితంగా నిర్వహించడానికి C# 9+ లో ప్రవేశపెట్టబడిన <strong><code>record</code></strong> టైప్స్ విప్లవాత్మక మార్పు తెచ్చాయి. ఈ అధ్యాయంలో అబ్‌స్ట్రాక్షన్, మల్టిపుల్ ఇంటర్‌ఫేస్ ఇంప్లిమెంటేషన్ మరియు రికార్డ్స్ యొక్క Value Equality మెకానిజమ్స్‌ను లోతుగా నేర్చుకుందాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> Abstract Classes & Abstract Methods: అసంపూర్ణ బ్లూప్రింట్</div>
+<div class="section-body">
+  <p><strong><code>abstract</code> class:</strong> దీనికి నేరుగా <code>new</code> ఆపరేటర్ ద్వారా ఆబ్జెక్ట్‌ను క్రియేట్ చేయలేము (ఉదా: <code>new Shape()</code> కుదరదు). ఇది చైల్డ్ క్లాసులకు ఒక కామన్ బేస్ క్లాస్‌గా మాత్రమే ఉపయోగపడుతుంది.</p>
+  <p><strong><code>abstract</code> method:</strong> దీనికి బాడీ (ఇంప్లిమెంటేషన్) ఉండదు. చైల్డ్ క్లాసులు తప్పనిసరిగా <code>override</code> కీవర్డ్ వాడి బాడీని రాసి తీరాలి.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>AbstractShapeDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+abstract class Shape
+{
+    public string Color { get; set; } = "Red";
+
+    // Abstract method: MUST be implemented by child classes
+    public abstract double GetArea();
+
+    // Regular concrete method: Can be directly shared
+    public void Display() => Console.WriteLine($"Shape [{Color}] -> Area = {GetArea():F2}");
+}
+
+class Circle : Shape
+{
+    public double Radius { get; set; }
+    public Circle(double radius) => Radius = radius;
+
+    public override double GetArea() => Math.PI * Radius * Radius;
+}
+
+class Program
+{
+    static void Main()
+    {
+        Shape s = new Circle(5.0);
+        s.Display();
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span> Interfaces (interface): సంపూర్ణ కాంట్రాక్ట్ & Multiple Implementation</div>
+<div class="section-body">
+  <p>ఇంటర్‌ఫేస్ అనేది క్లాస్ పాటించాల్సిన నియమాలను నిర్దేశించే ఒక <strong>కాంట్రాక్ట్ (Contract)</strong>. ఇంటర్‌ఫేస్‌లో ఏ మెథడ్స్, ప్రాపర్టీస్ ఉండాలో డిక్లేర్ చేస్తాం తప్ప వాటికి సొంత స్టేట్ (ఇన్స్టాన్స్ ఫీల్డ్స్) ఉండదు.</p>
+
+  <p>C# లో ఒక క్లాస్ ఎన్ని ఇంటర్‌ఫేస్‌లనైనా ఇంప్లిమెంట్ చేసుకోవచ్చు (Multiple Interface Implementation). .NET నేమింగ్ కన్వెన్షన్ ప్రకారం ఇంటర్‌ఫేస్ పేరు ఎల్లప్పుడూ <strong><code>I</code></strong> తో మొదలవ్వాలి (ఉదా: <code>IDisposable</code>, <code>ILogger</code>, <code>IPaymentGateway</code>).</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>MultipleInterfaces.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+interface IPrintable
+{
+    void Print();
+}
+
+interface ISerializable
+{
+    string ToJson();
+}
+
+// Class implementing multiple interfaces
+class Invoice : IPrintable, ISerializable
+{
+    public int InvoiceNumber { get; set; }
+    public decimal Amount { get; set; }
+
+    public void Print() => Console.WriteLine($"Printing Invoice #{InvoiceNumber}: {Amount:C}");
+
+    public string ToJson() => $"{{"id": {InvoiceNumber}, "amount": {Amount}}}";
+}
+
+class Program
+{
+    static void Main()
+    {
+        Invoice inv = new Invoice { InvoiceNumber = 501, Amount = 1250m };
+        inv.Print();
+        Console.WriteLine($"JSON Payload: {inv.ToJson()}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> Abstract Class vs Interface: ఆర్కిటెక్చరల్ నిర్ణయం</div>
+<div class="section-body">
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; margin-top:12px; font-size:13.5px;">
+      <thead>
+        <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+          <th style="padding:10px; text-align:left;">ఫీచర్</th>
+          <th style="padding:10px; text-align:left;">Abstract Class</th>
+          <th style="padding:10px; text-align:left;">Interface</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;">సంబంధం (Relationship)</td>
+          <td style="padding:10px;"><strong>IS-A</strong> (Dog is an Animal)</td>
+          <td style="padding:10px;"><strong>CAN-DO</strong> (Car can be Serialized)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;">Multiple Inheritance</td>
+          <td style="padding:10px;">కుదరదు (ఒక్క బేస్ క్లాస్ మాత్రమే)</td>
+          <td style="padding:10px;">సాధ్యం (ఎన్ని ఇంటర్‌ఫేసులైనా చేయవచ్చు)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;">Fields & State</td>
+          <td style="padding:10px;">ఇన్స్టాన్స్ ఫీల్డ్స్ మరియు స్టేట్ ఉండవచ్చు</td>
+          <td style="padding:10px;">ఇన్స్టాన్స్ ఫీల్డ్స్ ఉండకూడదు</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;">కన్‌స్ట్రక్టర్లు</td>
+          <td style="padding:10px;">కన్‌స్ట్రక్టర్లు ఉండవచ్చు</td>
+          <td style="padding:10px;">కన్‌స్ట్రక్టర్లు ఉండవు</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> Modern C# Records: Value Equality & Immutability</div>
+<div class="section-body">
+  <p>సాధారణ C# క్లాసుల్లో రెండు వేర్వేరు ఆబ్జెక్టులు ఒకే డేటాను కలిగి ఉన్నా, <code>==</code> తో పోల్చినప్పుడు మెమరీ అడ్రస్ ఆధారంగా <code>false</code> వస్తుంది. దీనికి విరుద్ధంగా, C# 9+ లో వచ్చిన <strong><code>record</code></strong> టైప్స్ విలువల సమానత్వాన్ని (<strong>Value-based Equality</strong>) ఆధారం చేసుకుంటాయి.</p>
+
+  <p>ఒకే ఒక్క లైన్‌లో ఇమ్మ్యూటబుల్ డేటా ఆబ్జెక్ట్‌ను డిక్లేర్ చేయడానికి <strong>Positional Record</strong> సింటాక్స్ వాడతాం. అదనంగా <strong><code>with</code> expression</strong> ద్వారా ఉన్న రికార్డును మార్చకుండా కొత్త కాపీని సృష్టించవచ్చు (Nondestructive Mutation).</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>RecordDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// Single line immutable record declaration
+record Person(string FirstName, string LastName, int Age);
+
+class Program
+{
+    static void Main()
+    {
+        Person p1 = new Person("Rajesh", "Sharma", 30);
+        Person p2 = new Person("Rajesh", "Sharma", 30);
+
+        // 1. Value-based Equality check
+        Console.WriteLine($"Are p1 and p2 equal? {p1 == p2}"); // True! (In class it would be false)
+
+        // 2. Built-in Pretty ToString()
+        Console.WriteLine(p1); // Person { FirstName = Rajesh, LastName = Sharma, Age = 30 }
+
+        // 3. Nondestructive Mutation with 'with' keyword
+        Person p3 = p1 with { Age = 31 };
+        Console.WriteLine($"Original: {p1.Age}, Updated Copy: {p3.Age}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> రియల్-వరల్డ్ కేస్ స్టడీ: పేమెంట్ గేట్‌వే ప్రాసెసర్ (Dependency Injection పునాది)</div>
+<div class="section-body">
+  <p>వాస్తవ ASP.NET Core ప్రాజెక్టులలో ఇంటర్‌ఫేసెస్ వాడి లూజ్ కప్లింగ్ (Loose Coupling) ఎలా సాధిస్తారో పరిశీలిద్దాం:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>PaymentServiceArchitecture.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+interface IPaymentGateway
+{
+    bool ProcessPayment(decimal amount);
+}
+
+class UpiPayment : IPaymentGateway
+{
+    public bool ProcessPayment(decimal amount)
+    {
+        Console.WriteLine($"[UPI] Processing payment of {amount:C} via GooglePay");
+        return true;
+    }
+}
+
+class CreditCardPayment : IPaymentGateway
+{
+    public bool ProcessPayment(decimal amount)
+    {
+        Console.WriteLine($"[Card] Processing payment of {amount:C} via Visa/MasterCard");
+        return true;
+    }
+}
+
+class OrderService
+{
+    private readonly IPaymentGateway _gateway;
+    public OrderService(IPaymentGateway gateway) => _gateway = gateway;
+
+    public void Checkout(decimal total) => _gateway.ProcessPayment(total);
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Effortlessly swap payment modes without touching OrderService!
+        OrderService order1 = new OrderService(new UpiPayment());
+        order1.Checkout(499m);
+
+        OrderService order2 = new OrderService(new CreditCardPayment());
+        order2.Checkout(2499m);
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: ఇంటర్‌ఫేస్ ఇంప్లిమెంట్ చేసేటప్పుడు public పెట్టకపోవడం</strong><br>
+    <span style="font-size:13.5px; color:#475569;">ఒక క్లాస్‌లో ఇంటర్‌ఫేస్ మెథడ్‌ను ఇంప్లిమెంట్ చేసేటప్పుడు కచ్చితంగా <code>public</code> అని రాయాలి. ఎందుకంటే ఇంటర్‌ఫేస్ కాంట్రాక్ట్ ఎల్లప్పుడూ పబ్లిక్ అయి ఉండాలి. <code>public</code> మిస్ అయితే కంపైలర్ ఎర్రర్ ఇస్తుంది.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong>Record మరియు Class మధ్య ప్రధాన తేడా ఏమిటి?</strong><br>
+    Class రిఫరెన్స్ ఆధారంగా సమానత్వాన్ని (Reference Equality) కొలుస్తుంది. Record విలువల ఆధారంగా సమానత్వాన్ని (Value Equality) కొలుస్తుంది మరియు డిఫాల్ట్‌గా ఇమ్మ్యూటబుల్ ప్రాపర్టీలను అందిస్తుంది.</li>
+    <li><strong>C# లో Default Interface Methods అంటే ఏమిటి?</strong><br>
+    C# 8.0 నుండి ఇంటర్‌ఫేస్‌లలో కూడా డీఫాల్ట్ బాడీతో కూడిన మెథడ్స్ రాయవచ్చు. దీనివల్ల పాత క్లాసులను బ్రేక్ చేయకుండా ఇంటర్‌ఫేస్‌కు కొత్త ఫీచర్లు జోడించవచ్చు.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

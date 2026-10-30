@@ -316,14 +316,232 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్ (Primary Constructors)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. క్లాస్ బ్లూప్రింట్ · new ఆపరేటర్ & Heap అలోకేషన్ · డీఫాల్ట్ & పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్స్ · C# 12 Primary Constructors.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్ (Primary Constructors) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) అనేది ఆధునిక సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌కు పునాది. C# లో ప్రతి లాజిక్ క్లాసెస్ మరియు ఆబ్జెక్ట్స్ చుట్టూ కేంద్రీకృతమై ఉంటుంది. ఒక క్లాస్ అనేది డేటా (ఫీల్డ్స్) మరియు బిహేవియర్ (మెథడ్స్) లను కలిపి ఉంచే బ్లూప్రింట్. C# 12 మరియు .NET 8 లో కోడ్‌ను అత్యంత క్లీన్‌గా ఉంచే <strong>Primary Constructors</strong> అందుబాటులోకి వచ్చాయి. ఈ అధ్యాయంలో క్లాస్ డిజైన్, హీప్ అలోకేషన్, కన్‌స్ట్రక్టర్ చైనింగ్ మరియు స్టాటిక్ మెంబర్లను క్షుణ్ణంగా పరిశీలిద్దాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> క్లాస్ బ్లూప్రింట్ & new ఆపరేటర్: Heap మెమరీ వర్కింగ్</div>
+<div class="section-body">
+  <p><strong>Class:</strong> ఒక ఇంటిని నిర్మించడానికి ఇంజనీర్ వేసే బ్లూప్రింట్ (నమూనా) ఎలాంటిదో, సాఫ్ట్‌వేర్‌లో క్లాస్ అలాంటిది. ఇది ఆబ్జెక్ట్‌కు అవసరమైన లక్షణాలను నిర్వచిస్తుంది కానీ దీనికి స్వతంత్రంగా మెమరీ ఉండదు.</p>
+  <p><strong>Object:</strong> బ్లూప్రింట్ చూసి నిర్మించిన అసలైన ఇంటిలాంటిదే ఆబ్జెక్ట్ (Instance). <code>new</code> కీవర్డ్ వాడినప్పుడు CLR మేనేజ్డ్ హీప్ (Managed Heap) పై మెమరీ కేటాయించి, ఆబ్జెక్ట్‌ను ఇనిషియలైజ్ చేస్తుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ClassAndObjectBasics.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// Blueprint
+class BankAccount
+{
+    // Fields
+    public string AccountNumber;
+    public decimal Balance;
+
+    // Method
+    public void Deposit(decimal amount)
+    {
+        Balance += amount;
+        Console.WriteLine($"Deposited: {amount:C}, Current Balance: {Balance:C}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Object Creation on Heap
+        BankAccount acc1 = new BankAccount();
+        acc1.AccountNumber = "SB-10029";
+        acc1.Deposit(5000m);
+
+        BankAccount acc2 = new BankAccount();
+        acc2.AccountNumber = "SB-10030";
+        acc2.Deposit(12000m);
+    }
+}</code></pre>
+  </div>
+
+  <p><strong>మెమరీ వర్కింగ్ విశ్లేషణ:</strong> <code>acc1</code> మరియు <code>acc2</code> అనేవి స్టాక్ (Stack) మెమరీలోని రిఫరెన్స్ పాయింటర్లు. అసలైన <code>BankAccount</code> డేటా అంతా మేనేజ్డ్ హీప్ (Heap) లో వేర్వేరు మెమరీ అడ్రస్‌లలో స్వతంత్రంగా ఉంటుంది.</p>
+</div>
+
+<div class="section-title"><span class="num">2</span> this కీవర్డ్ & ఫీల్డ్ కన్‌ఫ్లిక్ట్ నివారణ</div>
+<div class="section-body">
+  <p>ఒక క్లాస్ లోపల ప్రస్తుతం ఏ ఇన్స్టాన్స్ (ఆబ్జెక్ట్) అయితే కోడ్‌ను రన్ చేస్తోందో ఆ ఆబ్జెక్ట్‌ను సూచించడానికి <strong><code>this</code></strong> కీవర్డ్ ఉపయోగపడుతుంది. మెథడ్ పారామీటర్ పేరు మరియు క్లాస్ ఫీల్డ్ పేరు రెండూ ఒకేలా ఉన్నప్పుడు కన్‌ఫ్యూజన్ లేకుండా స్పష్టత ఇవ్వడానికి ఇది అత్యవసరం.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ThisKeywordDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Employee
+{
+    public int Id;
+    public string Name;
+
+    public void SetDetails(int Id, string Name)
+    {
+        // this.Id points to the Class Field
+        // Id points to the Method Parameter
+        this.Id = Id;
+        this.Name = Name;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Employee emp = new Employee();
+        emp.SetDetails(101, "Suresh");
+        Console.WriteLine($"Employee ID: {emp.Id}, Name: {emp.Name}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> కన్‌స్ట్రక్టర్లు & కన్‌స్ట్రక్టర్ ఓవర్‌లోడింగ్ (Constructor Chaining)</div>
+<div class="section-body">
+  <p>ఆబ్జెక్ట్ పుట్టగానే (క్రియేట్ అవ్వగానే) దానికి అవసరమైన ప్రారంభ విలువలను కేటాయించడానికి <strong>Constructor</strong> అనే ప్రత్యేక మెథడ్ రన్ అవుతుంది. దీని పేరు కచ్చితంగా క్లాస్ పేరుతో సమానంగా ఉండాలి మరియు దీనికి ఎటువంటి రిటర్న్ టైప్ (<code>void</code> కూడా) ఉండదు.</p>
+
+  <p><strong>Constructor Chaining (<code>: this(...)</code>):</strong> ఒక కన్‌స్ట్రక్టర్ నుండి అదే క్లాస్‌లోని మరొక కన్‌స్ట్రక్టర్‌ను కాల్ చేయడానికి <code>this</code> కీవర్డ్ వాడతారు. దీనివల్ల డూప్లికేట్ కోడ్ పూర్తిగా తొలగిపోతుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ConstructorChaining.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Product
+{
+    public string Name;
+    public decimal Price;
+    public int Stock;
+
+    // Primary detailed constructor
+    public Product(string name, decimal price, int stock)
+    {
+        this.Name = name;
+        this.Price = price;
+        this.Stock = stock;
+    }
+
+    // Overloaded Constructor calling the main one with defaults
+    public Product(string name, decimal price) : this(name, price, 10)
+    {
+    }
+
+    public void PrintInfo() => 
+        Console.WriteLine($"Product: {Name} | Price: {Price:C} | Stock: {Stock}");
+}
+
+class Program
+{
+    static void Main()
+    {
+        Product p1 = new Product("Mechanical Keyboard", 3500m, 50);
+        Product p2 = new Product("Mouse Pad", 450m); // Uses default stock 10
+
+        p1.PrintInfo();
+        p2.PrintInfo();
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> C# 12 Primary Constructors: మోడరన్ క్లీన్ కోడ్</div>
+<div class="section-body">
+  <p>C# 12 లో ప్రవేశపెట్టబడిన <strong>Primary Constructors</strong> ద్వారా క్లాస్ డిక్లరేషన్ హెడర్ వద్దనే పారామీటర్లను నిర్దేశించవచ్చు. దీనివల్ల ప్రైవేట్ ఫీల్డ్స్ డిక్లేర్ చేసి, కన్‌స్ట్రక్టర్ బాడీలో <code>this.x = x;</code> అని రాసే బోరింగ్ బాయిలర్‌ప్లేట్ కోడ్ పూర్తిగా తొలగిపోతుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>PrimaryConstructorDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// C# 12 Primary Constructor directly in class signature
+class Student(int id, string name, double gpa)
+{
+    public void DisplayReport()
+    {
+        // Parameters (id, name, gpa) are in scope across the whole class!
+        Console.WriteLine($"Student #{id}: {name} -> GPA: {gpa:F2}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Student s1 = new Student(101, "Deepika", 9.4);
+        s1.DisplayReport();
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> Static Members vs Instance Members</div>
+<div class="section-body">
+  <p>ఒక క్లాస్‌లోని మెంబర్‌కు <code>static</code> అని పెడితే, అది ఏ ఒక్క ఆబ్జెక్ట్‌కు కాకుండా మొత్తం క్లాస్‌కు మాత్రమే చెందుతుంది. మెమరీలో దీనికి ఒకే ఒక్క కాపీ ఉంటుంది.</p>
+  <ul>
+    <li><strong>Instance Members:</strong> ప్రతి ఆబ్జెక్ట్‌కు విడివిడిగా మెమరీ ఉంటుంది. <code>obj.Field</code> ద్వారా యాక్సెస్ చేస్తాం.</li>
+    <li><strong>Static Members:</strong> క్లాస్ పేరుతో నేరుగా కాల్ చేస్తాం (ఉదా: <code>Math.Sqrt()</code> లేదా <code>User.TotalUsers</code>). ఆబ్జెక్ట్ లేకుండానే పని చేస్తాయి.</li>
+  </ul>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>StaticCounterDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class User
+{
+    public string Username;
+    public static int UserCount = 0; // Shared across all instances
+
+    public User(string username)
+    {
+        this.Username = username;
+        UserCount++; // Increments the shared global counter
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        User u1 = new User("alice");
+        User u2 = new User("bob");
+        User u3 = new User("charlie");
+
+        Console.WriteLine($"Total Users Registered: {User.UserCount}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: NullReferenceException</strong><br>
+    <span style="font-size:13.5px; color:#475569;"><code>BankAccount acc;</code> అని కేవలం రిఫరెన్స్ వేరియబుల్ మాత్రమే డిక్లేర్ చేసి, <code>new BankAccount()</code> చేయకుండా <code>acc.Deposit(100)</code> అని కాల్ చేస్తే ప్రోగ్రామ్ క్రాష్ అవుతుంది. ఎందుకంటే ఆ రిఫరెన్స్ మెమరీలో <code>null</code> ను పాయింట్ చేస్తోంది.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong>డీఫాల్ట్ కన్‌స్ట్రక్టర్ ఎప్పుడు అదృశ్యమవుతుంది?</strong><br>
+    మనం ఏ కన్‌స్ట్రక్టర్ రాయకపోతే C# కంపైలర్ ఉచితంగా డీఫాల్ట్ పారామీటర్-లెస్ కన్‌స్ట్రక్టర్ ఇస్తుంది. కానీ మనం ఏదైనా ఒక్క పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ రాస్తే, కంపైలర్ ఇచ్చే డీఫాల్ట్ కన్‌స్ట్రక్టర్ రద్దవుతుంది.</li>
+    <li><strong>Static Class లో ఇన్స్టాన్స్ కన్‌స్ట్రక్టర్ ఎందుకు ఉండదు?</strong><br>
+    Static క్లాస్‌లకు ఆబ్జెక్ట్స్ క్రియేట్ చేయడం సాధ్యం కాదు (<code>new MyStaticClass()</code> అని రాయలేము). అందువల్ల కేవలం క్లాస్ లోడ్ అయినప్పుడు ఒకసారి రన్ అయ్యే <code>static</code> కన్‌స్ట్రక్టర్ మాత్రమే ఉండగలదు.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

@@ -316,14 +316,203 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. public, private, protected, internal · Getters & Setters · Auto-Implemented Properties { get; set; } · init-only యాక్సెసర్స్.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
+<div class="intro-box">
+  ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ యొక్క ముఖ్య ఉద్దేశం డేటా భద్రత. క్లాస్ లోపల ఉండే డేటాను బాహ్య ప్రపంచం ఇష్టారాజ్యంగా తప్పు విలువల (invalid values) తో మార్చకుండా నిరోధించే ప్రక్రియనే <strong>Encapsulation (ఎన్‌క్యాప్సులేషన్)</strong> అంటారు. C# లో ఎన్‌క్యాప్సులేషన్ సాధించడానికి శక్తివంతమైన యాక్సెస్ మోడిఫైయర్లు, <strong>Properties ({ get; set; })</strong>, మరియు ఇమ్మ్యూటబిలిటీ కోసం C# 9+ లో ప్రవేశపెట్టిన <strong><code>init</code>-only accessors</strong> అందుబాటులో ఉన్నాయి.
+</div>
+
+<div class="section-title"><span class="num">1</span> ఎన్‌క్యాప్సులేషన్ ప్రాముఖ్యత: డేటా హైడింగ్ & వాలిడేషన్</div>
+<div class="section-body">
+  <p>ఒక బ్యాంకు ఖాతాలో <code>public decimal Balance;</code> అని ఉంచితే, ఎవరైనా బయటి నుండి <code>acc.Balance = -99999;</code> అని నెగటివ్ వ్యాల్యూ కేటాయించి సిస్టమ్‌ను పాడు చేయవచ్చు. డేటా ఫీల్డ్స్‌ను <code>private</code> గా దాచిపెట్టి, కేవలం తనిఖీ చేయబడిన (validated) మెథడ్స్ లేదా ప్రాపర్టీల ద్వారా మాత్రమే యాక్సెస్ ఇవ్వడమే ఎన్‌క్యాప్సులేషన్ యొక్క అసలు రహస్యం.</p>
+
+  <p><strong>నిజ జీవిత ఉదాహరణ:</strong> ATM మెషిన్‌లో డబ్బులు డ్రా చేయాలంటే పిన్ నెంబర్ కొట్టి, తగిన బ్యాలెన్స్ ఉందో లేదో చెక్ చేసిన తర్వాతే క్యాష్ బయటకు వస్తుంది; నేరుగా లాకర్‌లోని కరెన్సీని చేతితో తీసుకోలేము.</p>
+</div>
+
+<div class="section-title"><span class="num">2</span> C# Access Modifiers విశ్లేషణ</div>
+<div class="section-body">
+  <p>క్లాస్ మరియు దాని మెంబర్లను ఎవరు యాక్సెస్ చేయవచ్చో నియంత్రించడానికి C# లో 6 రకాల యాక్సెస్ లెవెల్స్ ఉన్నాయి:</p>
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; margin-top:12px; font-size:13.5px;">
+      <thead>
+        <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+          <th style="padding:10px; text-align:left;">Modifier</th>
+          <th style="padding:10px; text-align:left;">యాక్సెస్ పరిధి (Scope)</th>
+          <th style="padding:10px; text-align:left;">ఎప్పుడు వాడాలి?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;"><code>public</code></td>
+          <td style="padding:10px;">ఎక్కడి నుండైనా (ఏ ప్రాజెక్ట్/అసెంబ్లీ నుండైనా) యాక్సెస్ చేయవచ్చు.</td>
+          <td style="padding:10px;">ఏపీఐ మెథడ్స్, ఎక్స్‌టర్నల్ ఇంటర్‌ఫేస్</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;"><code>private</code></td>
+          <td style="padding:10px;">కేవలం అదే క్లాస్ లోపల మాత్రమే యాక్సెస్ ఉంటుంది.</td>
+          <td style="padding:10px;">ఇంటర్నల్ ఫీల్డ్స్, హెల్పర్ మెథడ్స్ (Default in classes)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;"><code>protected</code></td>
+          <td style="padding:10px;">అదే క్లాస్ మరియు దాని నుండి ఉద్భవించిన చైల్డ్ క్లాసుల్లో మాత్రమే.</td>
+          <td style="padding:10px;">ఇన్‌హెరిటెన్స్ డిజైన్ కోసం</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;"><code>internal</code></td>
+          <td style="padding:10px;">అదే అసెంబ్లీ (.dll/.exe ప్రాజెక్ట్) లోపల మాత్రమే.</td>
+          <td style="padding:10px;">లైబ్రరీ ఇంటర్నల్ ఇంప్లిమెంటేషన్ (Default for types)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> C# Properties: Classic Getters/Setters vs Modern Properties</div>
+<div class="section-body">
+  <p>జావా (Java) వంటి భాషల్లో <code>getBalance()</code> మరియు <code>setBalance(val)</code> అని రెండు విడివిడి మెథడ్స్ రాస్తారు. కానీ C# లో <strong>Properties</strong> ఒకే చోట <code>get</code> మరియు <code>set</code> యాక్సెసర్స్ కలిగి ఉండి, బయటి ప్రపంచానికి సాధారణ ఫీల్డ్‌లా కనిపిస్తాయి.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>PropertyValidation.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class BankAccount
+{
+    // Private backing field
+    private decimal _balance;
+
+    // Full Property with Validation
+    public decimal Balance
+    {
+        get => _balance;
+        set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException("Balance cannot be negative!");
+            }
+            _balance = value;
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        BankAccount acc = new BankAccount();
+        acc.Balance = 1500m; // Calls 'set' accessor seamlessly
+        Console.WriteLine($"Balance: {acc.Balance:C}"); // Calls 'get' accessor
+
+        try
+        {
+            acc.Balance = -500m; // Throws ArgumentException!
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Security Check: {ex.Message}");
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> Auto-Implemented Properties & C# 9+ init Accessors</div>
+<div class="section-body">
+  <p>ప్రత్యేకమైన వాలిడేషన్ అవసరం లేని సాధారణ ప్రాపర్టీల కోసం C# 3.0 లో <strong>Auto-Implemented Properties (<code>{ get; set; }</code>)</strong> ప్రవేశపెట్టబడ్డాయి. బ్యాక్‌గ్రౌండ్‌లో కంపైలరే ఒక సీక్రెట్ ప్రైవేట్ ఫీల్డ్‌ను మేనేజ్ చేస్తుంది.</p>
+
+  <p><strong>init Accessor (C# 9+):</strong> ఆబ్జెక్ట్ తయారయ్యేటప్పుడు (Object Initializer లో) మాత్రమే విలువను సెట్ చేసి, ఆ తర్వాత ఎవరూ మార్చకుండా <strong>ఇమ్మ్యూటబుల్ (Immutable)</strong> గా లాక్ చేయడానికి <code>init</code> వాడతారు.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>AutoAndInitProperties.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Customer
+{
+    // Immutable ID: Can only be set during initialization!
+    public int Id { get; init; }
     
+    // Read-write Auto Property
+    public string Name { get; set; }
+
+    // Read-only externally, settable only inside this class
+    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Object Initializer syntax
+        Customer c = new Customer 
+        { 
+            Id = 1001, 
+            Name = "Kavitha" 
+        };
+
+        c.Name = "Kavitha Rao"; // Allowed!
+        // c.Id = 1002; // Compile Error! 'init' property cannot be modified after creation!
+        
+        Console.WriteLine($"Customer #{c.Id}: {c.Name} (Created: {c.CreatedAt:g})");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> Computed (Calculated) Properties</div>
+<div class="section-body">
+  <p>మెమరీలో ప్రత్యేకంగా ఫీల్డ్ లేకుండా, ఇప్పటికే ఉన్న ఇతర ప్రాపర్టీల ఆధారంగా ఎప్పటికప్పుడు ఆటోమేటిక్‌గా లెక్కించబడే ప్రాపర్టీలను <strong>Computed Properties</strong> అంటారు. వీటి కోసం ఎక్స్‌ప్రెషన్ బాడీడ్ సింటాక్స్ అత్యద్భుతంగా సరిపోతుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ComputedProperty.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Rectangle
+{
+    public double Width { get; set; }
+    public double Height { get; set; }
+
+    // Computed Property (No backing field in memory)
+    public double Area => Width * Height;
+    public bool IsSquare => Width == Height;
+}
+
+class Program
+{
+    static void Main()
+    {
+        Rectangle rect = new Rectangle { Width = 10, Height = 5 };
+        Console.WriteLine($"Area: {rect.Area}, Is Square? {rect.IsSquare}");
+
+        rect.Height = 10;
+        Console.WriteLine($"After change -> Is Square? {rect.IsSquare}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: Property Setter లో ఇన్ఫైనైట్ రికర్షన్ (StackOverflowException)</strong><br>
+    <span style="font-size:13.5px; color:#475569;"><code>public int Age { get => _age; set => Age = value; }</code> అని రాస్తే, <code>set</code> లోపలే మళ్ళీ ప్రాపర్టీ <code>Age</code> ని కాల్ చేయడం వల్ల ఇన్ఫైనైట్ లూప్ ఏర్పడి వెంటనే <code>StackOverflowException</code> తో ప్రోగ్రామ్ పేలిపోతుంది! సెట్టర్ లోపల ఎల్లప్పుడూ ప్రైవేట్ బ్యాకింగ్ ఫీల్డ్ <code>_age = value;</code> కే కేటాయించాలి.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong><code>{ get; private set; }</code> మరియు <code>{ get; init; }</code> మధ్య తేడా ఏమిటి?</strong><br>
+    <code>private set</code> ఉన్నప్పుడు క్లాస్ లోపలి మెథడ్స్ ఎప్పుడైనా వ్యాల్యూను మార్చవచ్చు. కానీ <code>init</code> వాడితే ఆబ్జెక్ట్ ఇనిషియలైజ్ అయిన తర్వాత ఆ క్లాస్ లోపలి మెథడ్స్ కూడా దాన్ని మార్చలేవు (True Immutability).</li>
+    <li><strong>C# లో క్లాస్‌లకు డీఫాల్ట్ యాక్సెస్ మోడిఫైయర్ ఏమిటి?</strong><br>
+    నేరుగా నేమ్‌స్పేస్‌లో రాసే క్లాస్‌లకు డీఫాల్ట్‌గా <code>internal</code> ఉంటుంది. అదే క్లాస్ లోపల ఉండే ఫీల్డ్స్ మరియు మెథడ్స్‌కు డీఫాల్ట్‌గా <code>private</code> ఉంటుంది.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

@@ -316,14 +316,241 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. base కీవర్డ్ · Method Overriding vs Hiding (new) · virtual & override మెకానిక్స్ · sealed క్లాసులు & మెథడ్స్.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  సాఫ్ట్‌వేర్ అభివృద్ధిలో కోడ్‌ను మళ్ళీ మళ్ళీ రాయకుండా (DRY - Don't Repeat Yourself), ఇప్పటికే ఉన్న క్లాస్ లక్షణాలను మరొక క్లాస్‌కు వారసత్వంగా అందించే పద్ధతినే <strong>Inheritance (ఇన్‌హెరిటెన్స్)</strong> అంటారు. దీనితో పాటు, ఒకే యాక్షన్ వివిధ ఆబ్జెక్ట్‌లలో వివిధ రూపాల్లో ప్రవర్తించేలా చేయడాన్ని <strong>Polymorphism (పాలిమార్ఫిజం)</strong> అంటారు. C# లో రన్‌టైమ్ పాలిమార్ఫిజం కోసం <code>virtual</code>, <code>override</code>, మరియు ఇన్‌హెరిటెన్స్‌ను నిరోధించడానికి <code>sealed</code> కీవర్డ్స్ ఎలా పనిచేస్తాయో ఈ అధ్యాయంలో నేర్చుకుందాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> ఇన్‌హెరిటెన్స్ పునాది: Base & Derived Classes</div>
+<div class="section-body">
+  <p>C# లో ఒక క్లాస్ మరొక క్లాస్ నుండి వారసత్వం పొందడానికి కోలన్ (<code>:</code>) సింటాక్స్ వాడతారు. లక్షణాలను ఇచ్చే క్లాస్‌ను <strong>Base Class (Parent)</strong> అని, లక్షణాలను స్వీకరించే క్లాస్‌ను <strong>Derived Class (Child)</strong> అని పిలుస్తారు.</p>
+
+  <p><strong>సింగిల్ క్లాస్ ఇన్‌హెరిటెన్స్:</strong> C# లో ఒక క్లాస్ ఒకే ఒక బేస్ క్లాస్ నుండి మాత్రమే వారసత్వం పొందగలదు (Multiple Class Inheritance అనుమతించబడదు, దీనివల్ల వచ్చే డైమండ్ ప్రాబ్లమ్‌ను నివారించడానికి .NET ఇంటర్‌ఫేసెస్ వాడుతుంది). అయితే .NET లోని అన్ని క్లాసులకు <strong><code>System.Object</code></strong> అనేది అల్టిమేట్ రూట్ బేస్ క్లాస్.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>InheritanceBasics.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// Base Class (Parent)
+class Animal
+{
+    public string Name { get; set; }
+
+    public void Sleep() => Console.WriteLine($"{Name} is sleeping... Zzz");
+}
+
+// Derived Class (Child inherits Animal)
+class Dog : Animal
+{
+    public void Bark() => Console.WriteLine($"{Name} says: Woof! Woof!");
+}
+
+class Program
+{
+    static void Main()
+    {
+        Dog myDog = new Dog();
+        myDog.Name = "Snoopy"; // Inherited property from Animal!
+        myDog.Sleep();         // Inherited method from Animal!
+        myDog.Bark();          // Dog's own method!
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span> base కీవర్డ్ & Base Constructor చైనింగ్</div>
+<div class="section-body">
+  <p>చైల్డ్ క్లాస్ ఆబ్జెక్ట్ తయారైనప్పుడు, చైల్డ్ కన్‌స్ట్రక్టర్ కంటే ముందే బేస్ క్లాస్ కన్‌స్ట్రక్టర్ రన్ అవుతుంది. బేస్ క్లాస్‌కు అవసరమైన పారామీటర్లను పంపించడానికి <strong><code>base(...)</code></strong> కీవర్డ్ ఉపయోగిస్తాం.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>BaseConstructorDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Vehicle
+{
+    public string Brand { get; }
+    public Vehicle(string brand)
+    {
+        Brand = brand;
+        Console.WriteLine($"1. Vehicle Constructor initialized for {Brand}");
+    }
+}
+
+class Car : Vehicle
+{
+    public int MaxSpeed { get; }
+    // Calling base class constructor
+    public Car(string brand, int maxSpeed) : base(brand)
+    {
+        MaxSpeed = maxSpeed;
+        Console.WriteLine($"2. Car Constructor initialized: {MaxSpeed} km/h");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Car myCar = new Car("Tata", 180);
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> Polymorphism: virtual, override & V-Table డిస్పాచ్</div>
+<div class="section-body">
+  <p>పేరెంట్ క్లాస్‌లోని ఒక మెథడ్‌ను చైల్డ్ క్లాస్ తన సొంత లాజిక్‌తో మార్చుకోవడానికి (Override చేయడానికి) C# రన్‌టైమ్ పాలిమార్ఫిజంను అందిస్తుంది:</p>
+  <ul>
+    <li><strong><code>virtual</code> కీవర్డ్:</strong> బేస్ క్లాస్‌లో మెథడ్‌కు <code>virtual</code> అని పెడితే, "ఈ మెథడ్‌ను చైల్డ్ క్లాసులు తమ ఇష్టం వచ్చినట్లు మార్చుకోవచ్చు" అని అర్థం.</li>
+    <li><strong><code>override</code> కీవర్డ్:</strong> డిరైవ్డ్ క్లాస్‌లో ఆ మెథడ్‌ను రీడిఫైన్ చేయడానికి <code>override</code> కీవర్డ్ తప్పనిసరి.</li>
+  </ul>
+
+  <p><strong>V-Table (Virtual Method Table):</strong> రన్‌టైమ్‌లో CLR ఆబ్జెక్ట్ యొక్క వాస్తవ టైప్‌ను బట్టి సరైన మెథడ్‌ను ఎగ్జిక్యూట్ చేస్తుంది. దీనివల్ల బేస్ క్లాస్ రిఫరెన్స్‌తో చైల్డ్ ఆబ్జెక్ట్‌ను కాల్ చేసినా చైల్డ్ మెథడే రన్ అవుతుంది!</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>PolymorphismInAction.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+
+class Employee
+{
+    public string Name { get; set; }
+    public virtual decimal CalculateSalary() => 20000m;
+}
+
+class Developer : Employee
+{
+    public decimal CodingBonus { get; set; } = 15000m;
+    public override decimal CalculateSalary() => base.CalculateSalary() + CodingBonus;
+}
+
+class Manager : Employee
+{
+    public override decimal CalculateSalary() => 55000m;
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Polymorphic Collection
+        List<Employee> team = new List<Employee>
+        {
+            new Employee { Name = "Ravi" },
+            new Developer { Name = "Sneha" },
+            new Manager { Name = "Arun" }
+        };
+
+        foreach (Employee emp in team)
+        {
+            // Dynamic Dispatch: Calls the right overridden method at runtime!
+            Console.WriteLine($"{emp.Name} Salary: {emp.CalculateSalary():C}");
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> Method Hiding (new) vs Overriding (override)</div>
+<div class="section-body">
+  <p>ఇంటర్వ్యూలలో అత్యంత ప్రాచుర్యం పొందిన ప్రశ్న: <code>override</code> మరియు <code>new</code> మధ్య తేడా ఏమిటి?</p>
+  <ul>
+    <li><strong><code>override</code>:</strong> బేస్ క్లాస్ రిఫరెన్స్ వాడినా చైల్డ్ క్లాస్ మెథడే రన్ అవుతుంది (True Runtime Polymorphism).</li>
+    <li><strong><code>new</code> (Method Hiding):</strong> పాలిమార్ఫిజం తెగిపోతుంది. బేస్ క్లాస్ రిఫరెన్స్‌తో పిలిస్తే బేస్ మెథడ్ రన్ అవుతుంది; కేవలం చైల్డ్ క్లాస్ రిఫరెన్స్‌తో పిలిచినప్పుడు మాత్రమే కొత్త మెథడ్ రన్ అవుతుంది.</li>
+  </ul>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>OverrideVsNew.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Parent
+{
+    public virtual void Show() => Console.WriteLine("Parent Show");
+}
+
+class ChildA : Parent
+{
+    public override void Show() => Console.WriteLine("ChildA (Override) Show");
+}
+
+class ChildB : Parent
+{
+    public new void Show() => Console.WriteLine("ChildB (New/Hidden) Show");
+}
+
+class Program
+{
+    static void Main()
+    {
+        Parent p1 = new ChildA();
+        p1.Show(); // Prints: "ChildA (Override) Show" (Polymorphic!)
+
+        Parent p2 = new ChildB();
+        p2.Show(); // Prints: "Parent Show" (Hiding broke polymorphism!)
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> sealed కీవర్డ్: ఇన్‌హెరిటెన్స్ నిరోధించడం</div>
+<div class="section-body">
+  <p>సెక్యూరిటీ లేదా పెర్ఫార్మెన్స్ కారణాల రీత్యా ఒక క్లాస్‌ను మరెవరూ ఇన్‌హెరిట్ చేసుకోకుండా ఆపడానికి <strong><code>sealed</code></strong> కీవర్డ్ వాడతారు. ఉదాహరణకు .NET లోని <code>System.String</code> క్లాస్ ఒక <code>sealed</code> క్లాస్.</p>
+
+  <p><strong>JIT ఆప్టిమైజేషన్:</strong> ఒక క్లాస్ <code>sealed</code> అయినప్పుడు, వర్చువల్ మెథడ్ కాల్స్ అవసరం లేదని JIT కంపైలర్‌కు తెలుస్తుంది. దీనివల్ల డైరెక్ట్ మెథడ్ ఇన్లైనింగ్ జరిగి అప్లికేషన్ వేగం పెరుగుతుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>SealedDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// Nobody can inherit from SecurityVault!
+sealed class SecurityVault
+{
+    public void OpenSafe() => Console.WriteLine("Vault unlocked safely.");
+}
+
+// class HackerVault : SecurityVault {} // Compile Error: Cannot inherit from sealed class!
+
+class Program
+{
+    static void Main()
+    {
+        SecurityVault vault = new SecurityVault();
+        vault.OpenSafe();
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: override రాయడం మర్చిపోయి వార్నింగ్ రావడం</strong><br>
+    <span style="font-size:13.5px; color:#475569;">చైల్డ్ క్లాస్‌లో బేస్ క్లాస్ మెథడ్ పేరు రాసి <code>override</code> కీవర్డ్ పెట్టకపోతే కంపైలర్ <code>CS0114</code> వార్నింగ్ ఇస్తుంది మరియు ఆటోమేటిక్‌గా <code>new</code> (Hiding) గా పరిగణిస్తుంది. దీనివల్ల పాలిమార్ఫిక్ కాల్స్ పని చేయవు.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong>C# లో Multiple Inheritance ఎందుకు లేదు?</strong><br>
+    రెండు వేర్వేరు పేరెంట్ క్లాసుల్లో ఒకే పేరుతో మెథడ్స్ ఉన్నప్పుడు చైల్డ్ క్లాస్‌కు ఏది రావాలో తెలియని డెడ్‌లాక్ (Diamond Problem) వస్తుంది. దీని నివారణకు C# మల్టిపుల్ ఇంటర్‌ఫేసెస్‌ను మాత్రమే అనుమతిస్తుంది.</li>
+    <li><strong>కన్‌స్ట్రక్టర్లను override చేయవచ్చా?</strong><br>
+    లేదు! కన్‌స్ట్రక్టర్లు ఇన్‌హెరిట్ అవ్వవు, కాబట్టి వాటిని ఓవర్‌రైడ్ చేయడం సాధ్యం కాదు. కేవలం <code>base(...)</code> ద్వారా కాల్ చేయవచ్చు.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
