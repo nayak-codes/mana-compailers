@@ -316,14 +316,218 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. రన్‌టైమ్ ఎర్రర్ హ్యాండ్లింగ్ · Exception hierarchy · when ఫిల్టర్లు · using స్టేట్‌మెంట్ & IDisposable రీసోర్స్ క్లీనప్.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  సాఫ్ట్‌వేర్ అభివృద్ధిలో బగ్‌లు లేదా ఊహించని పరిస్థితులు (ఉదా: నెట్‌వర్క్ ఫెయిల్యూర్, డేటాబేస్ డౌన్ అవ్వడం, ఫైల్ లేకపోవడం) రావడం సహజం. అటువంటి సందర్భాలలో అప్లికేషన్ అకస్మాత్తుగా క్రాష్ అవ్వకుండా, సమస్యను గౌరవప్రదంగా నియంత్రించే పద్ధతినే <strong>Exception Handling (ఎక్సెప్షన్ హ్యాండ్లింగ్)</strong> అంటారు. C# లో <code>try</code>, <code>catch</code>, <code>finally</code> తో పాటు ఆధునిక C# 6+ లో వచ్చిన శక్తివంతమైన <strong>Exception Filters (<code>when</code>)</strong> మరియు రిసోర్స్ లీక్స్ నివారించే <strong><code>using</code> స్టేట్‌మెంట్</strong> పనితీరును ఈ అధ్యాయంలో సమగ్రంగా నేర్చుకుందాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> Runtime Exceptions vs Compile-time Errors: .NET Hierarchy</div>
+<div class="section-body">
+  <p><strong>Compile-time Errors:</strong> కోడ్ సింటాక్స్ లేదా టైప్ మిస్‌మ్యాచ్ ఉన్నప్పుడు కంపైలరే ప్రోగ్రామ్‌ను రన్ అవ్వకుండా ఆపుతుంది. ఉదాహరణకు సెమీకోలన్ మర్చిపోవడం లేదా తప్పు డేటా టైప్ కేటాయించడం.</p>
+  <p><strong>Runtime Exceptions:</strong> ప్రోగ్రామ్ విజయవంతంగా కంపైల్ అయిన తర్వాత, ఎగ్జిక్యూట్ అయ్యే సమయంలో వచ్చే ఊహించని లోపాలు (ఉదాహరణకు 0 తో భాగించడం, లేని ఫైల్‌ను తెరవడానికి ప్రయత్నించడం).</p>
+
+  <p><strong>.NET Exception Hierarchy:</strong> C# లోని అన్ని ఎక్సెప్షన్లు <strong><code>System.Exception</code></strong> అనే బేస్ క్లాస్ నుండి ఉద్భవిస్తాయి. ప్రతి ఎక్సెప్షన్ ఆబ్జెక్ట్‌లో లోపం వివరాలను తెలిపే <code>Message</code>, ఏ లైన్‌లో ఎర్రర్ వచ్చిందో చూపించే <code>StackTrace</code>, మరియు మూల కారణాన్ని తెలిపే <code>InnerException</code> ఉంటాయి.</p>
+</div>
+
+<div class="section-title"><span class="num">2</span> try, catch, finally వర్కింగ్ మెకానిజమ్స్</div>
+<div class="section-body">
+  <p>ఎర్రర్ వచ్చే అవకాశం ఉన్న కోడ్‌ను <strong><code>try</code></strong> బ్లాక్‌లో ఉంచుతాం. ఏదైనా లోపం తలెత్తితే రన్‌టైమ్ వెంటనే దాన్ని గుర్తించి తగిన <strong><code>catch</code></strong> బ్లాక్‌కు పంపుతుంది.</p>
+
+  <p><strong><code>finally</code> బ్లాక్ యొక్క ప్రత్యేకత:</strong> ఎక్సెప్షన్ వచ్చినా రాకపోయినా, ఈవెన్ <code>try</code> బ్లాక్ మధ్యలోనే <code>return</code> స్టేట్‌మెంట్ ఎగ్జిక్యూట్ అయినా సరే <code>finally</code> బ్లాక్ కచ్చితంగా రన్ అవుతుంది! అందువల్ల ఓపెన్ చేసిన ఫైల్స్ లేదా నెట్‌వర్క్ కనెక్షన్లు క్లోజ్ చేయడానికి ఇది అనువైన ప్రదేశం.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>TryCatchFinallyDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Application Started...");
+        try
+        {
+            int numerator = 100;
+            int denominator = 0; // Triggering DivideByZeroException
+            int result = numerator / denominator;
+            Console.WriteLine($"Result: {result}");
+        }
+        catch (DivideByZeroException ex)
+        {
+            Console.WriteLine($"[Math Error Handled]: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            // Generic Fallback Handler
+            Console.WriteLine($"[Unexpected Error]: {ex.Message}");
+        }
+        finally
+        {
+            Console.WriteLine("Cleanup: Finally block executed safely.");
+        }
+        Console.WriteLine("Application continues running smoothly!");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> Modern C# 6+ Exception Filters (when keyword)</div>
+<div class="section-body">
+  <p>C# 6.0 లో ప్రవేశపెట్టబడిన <strong>Exception Filters (<code>when</code>)</strong> అత్యంత అధునాతనమైన ఫీచర్. సాధారణంగా ఒక ఎక్సెప్షన్‌ను క్యాచ్ చేసిన తర్వాత లోపల <code>if</code> కండిషన్ రాస్తే, అప్పటికే కాల్ స్టాక్ అన్‌వైండ్ (Stack Unwinding) అయిపోతుంది. కానీ <code>when</code> కీవర్డ్ వాడితే, కండిషన్ నిజమైతేనే స్టాక్ అన్‌వైండ్ చేసి ఆ క్యాచ్ బ్లాక్‌లోకి వెళ్తుంది. దీనివల్ల డయాగ్నోస్టిక్స్ మరియు డీబగ్గింగ్ అత్యంత ఖచ్చితంగా జరుగుతాయి.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ExceptionFiltersDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.IO;
+
+class Program
+{
+    static void ProcessFile(int errorCode)
+    {
+        if (errorCode == 404)
+            throw new FileNotFoundException("Report file missing on server!");
+        else if (errorCode == 403)
+            throw new UnauthorizedAccessException("Admin access denied!");
+        else
+            throw new Exception("General internal error");
+    }
+
+    static void Main()
+    {
+        try
+        {
+            ProcessFile(404);
+        }
+        // Specific exception filter with 'when'
+        catch (FileNotFoundException ex) when (ex.Message.Contains("missing"))
+        {
+            Console.WriteLine($"[Logged as Warning]: {ex.Message}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Console.WriteLine($"[Security Alert]: {ex.Message}");
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> using డిక్లరేషన్ & IDisposable రీసోర్స్ క్లీనప్</div>
+<div class="section-body">
+  <p>ఫైల్ హ్యాండిల్స్, డేటాబేస్ కనెక్షన్లు లేదా సాకెట్స్ వంటి అన్‌మేనేజ్డ్ రీసోర్సెస్ గార్బేజ్ కలెక్టర్ ద్వారా వెంటనే క్లీన్ కావు. వీటి కోసం .NET <strong><code>IDisposable</code></strong> ఇంటర్‌ఫేస్ మరియు <code>Dispose()</code> మెథడ్‌ను అందిస్తుంది.</p>
+
+  <p>C# లో <strong><code>using</code></strong> స్టేట్‌మెంట్ వాడితే, కంపైలర్ బ్యాక్‌గ్రౌండ్‌లో దాన్ని ఒక <code>try-finally</code> బ్లాక్‌గా మార్చి, చివర్లో ఆటోమేటిక్‌గా <code>Dispose()</code> ని కాల్ చేస్తుంది. C# 8+ లో కర్లీ బ్రేసెస్ అవసరం లేకుండా నేరుగా <code>using var reader = ...;</code> అని రాసే మోడరన్ డిక్లరేషన్ సింటాక్స్ అందుబాటులోకి వచ్చింది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>UsingResourceCleanup.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string samplePath = "test_log.txt";
+        
+        // Modern C# 8+ using declaration (Auto disposes at scope end)
+        using (StreamWriter writer = new StreamWriter(samplePath))
+        {
+            writer.WriteLine("Transaction Log #1029: SUCCESS");
+            writer.WriteLine("Timestamp: " + DateTime.UtcNow);
+        } // File handle is automatically closed and disposed here!
+
+        // Reading back safely
+        using var reader = new StreamReader(samplePath);
+        string content = reader.ReadToEnd();
+        Console.WriteLine("File Content Read Safely:
+" + content);
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> Custom Exceptions (కస్టమ్ ఎక్సెప్షన్లు సృష్టించడం)</div>
+<div class="section-body">
+  <p>మన బిజినెస్ లాజిక్‌కు సంబంధించిన ప్రత్యేకమైన ఎర్రర్లను సూచించడానికి కస్టమ్ ఎక్సెప్షన్ క్లాసులను తయారు చేసుకోవచ్చు. ఇవి ఎల్లప్పుడూ <code>System.Exception</code> క్లాస్ నుండి వారసత్వం పొందాలి.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>CustomExceptionDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// Custom Business Exception
+class InsufficientFundsException : Exception
+{
+    public decimal CurrentBalance { get; }
+    public decimal AttemptedAmount { get; }
+
+    public InsufficientFundsException(decimal balance, decimal amount)
+        : base($"Transaction failed! Attempted to withdraw {amount:C}, but balance is only {balance:C}.")
+    {
+        CurrentBalance = balance;
+        AttemptedAmount = amount;
+    }
+}
+
+class BankAccount
+{
+    private decimal _balance = 1000m;
+
+    public void Withdraw(decimal amount)
+    {
+        if (amount > _balance)
+            throw new InsufficientFundsException(_balance, amount);
+
+        _balance -= amount;
+        Console.WriteLine($"Withdrew: {amount:C}, Remaining: {_balance:C}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        BankAccount account = new BankAccount();
+        try
+        {
+            account.Withdraw(500m);
+            account.Withdraw(800m); // Triggers custom exception!
+        }
+        catch (InsufficientFundsException ex)
+        {
+            Console.WriteLine($"[ALERT] {ex.Message}");
+            Console.WriteLine($"Deficit: {ex.AttemptedAmount - ex.CurrentBalance:C}");
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: throw ex; vs throw; (స్టాక్ ట్రేస్ పోగొట్టుకోవడం)</strong><br>
+    <span style="font-size:13.5px; color:#475569;">క్యాచ్ బ్లాక్‌లో ఎక్సెప్షన్‌ను రీ-త్రో (re-throw) చేసేటప్పుడు <code>throw ex;</code> అని రాస్తే అసలైన ఎర్రర్ ఎక్కడ వచ్చిందో తెలిపే స్టాక్ ట్రేస్ తుడిచిపెట్టుకుపోతుంది. ఎల్లప్పుడూ కేవలం <strong><code>throw;</code></strong> అని మాత్రమే రాయాలి. దీనివల్ల అసలైన కాల్ స్టాక్ సురక్షితంగా పైకి పాస్ అవుతుంది.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong>ఎక్సెప్షన్లను Swallow చేయడం అంటే ఏమిటి?</strong><br>
+    <code>catch (Exception) { }</code> అని ఏ లాగింగ్ లేకుండా ఖాళీ క్యాచ్ బ్లాక్ రాయడాన్ని "Swallowing an exception" అంటారు. ఇది ప్రొడక్షన్‌లో బగ్‌లను కనుగొనడం అసాధ్యంగా మారుస్తుంది.</li>
+    <li><strong><code>using</code> స్టేట్‌మెంట్ ఏ క్లాసులపై మాత్రమే పనిచేస్తుంది?</strong><br>
+    <code>System.IDisposable</code> లేదా <code>System.IAsyncDisposable</code> ఇంటర్‌ఫేస్‌ను ఇంప్లిమెంట్ చేసిన ఆబ్జెక్టులపై మాత్రమే <code>using</code> పనిచేస్తుంది.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

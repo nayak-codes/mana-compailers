@@ -316,14 +316,348 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ (LINQ & JSON)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. OOPs · Generics · LINQ క్వెరీలు · System.Text.Json ఫైల్ సేవింగ్ తో పూర్తి స్థాయి రియల్-వరల్డ్ C# ప్రాజెక్ట్!.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ (LINQ & JSON) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  అభినందనలు! మీరు C# బేసిక్స్, OOP సూత్రాలు, జెనెరిక్ కలెక్షన్స్, ఎక్సెప్షన్ హ్యాండ్లింగ్ మరియు LINQ వరకు C# ప్రయాణాన్ని విజయవంతంగా పూర్తి చేశారు. ఇప్పుడు మనం నేర్చుకున్న ప్రతి ఒక్క సాంకేతిక అంశాన్ని ఏకీకృతం చేస్తూ ఒక సంపూర్ణ ఎంటర్‌ప్రైజ్-గ్రేడ్ <strong>Employee Management System (క్యాప్‌స్టోన్ మినీ ప్రాజెక్ట్)</strong> ను నిర్మిద్దాం. ఇందులో డొమైన్ మోడలింగ్, CRUD ఆపరేషన్స్, LINQ అనలిటిక్స్ మరియు <strong><code>System.Text.Json</code></strong> ద్వారా డిస్క్‌పై డేటాను శాశ్వతంగా భద్రపరిచే (Persistence) రియల్-వరల్డ్ ఆర్కిటెక్చర్ ఉంటుంది!
+</div>
+
+<div class="section-title"><span class="num">1</span> ప్రాజెక్ట్ ఆర్కిటెక్చర్ & డొమైన్ మోడల్స్ డిజైన్</div>
+<div class="section-body">
+  <p>ఈ క్యాప్‌స్టోన్ ప్రాజెక్ట్‌లో మనం పాటించే ప్రొఫెషనల్ ఆర్కిటెక్చరల్ పద్ధతులు:</p>
+  <ul>
+    <li><strong><code>Department</code> (Enum):</strong> ఐటీ, హెచ్ఆర్, ఫైనాన్స్, సేల్స్ వంటి స్థిరమైన విభాగాలు.</li>
+    <li><strong><code>Employee</code> (Class):</strong> ఐడీ, పేరు, డిపార్ట్‌మెంట్, మరియు జీతం లక్షణాలతో కూడిన ఎన్‌క్యాప్సులేటెడ్ మోడల్.</li>
+    <li><strong><code>EmployeeSummary</code> (Record):</strong> DTO (Data Transfer Object) మరియు రిపోర్టింగ్ కోసం ఇమ్మ్యూటబుల్ రికార్డ్.</li>
+    <li><strong><code>IEmployeeRepository</code> (Interface):</strong> డికప్లింగ్ మరియు డిపెండెన్సీ ఇంజెక్షన్ పునాది.</li>
+    <li><strong><code>System.Text.Json</code>:</strong> అప్లికేషన్ రీస్టార్ట్ అయినా డేటా పోకుండా <code>employees.json</code> ఫైల్‌లో భద్రపరచడం.</li>
+  </ul>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>DomainModels.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// Department Enum
+public enum Department
+{
+    IT,
+    HR,
+    Finance,
+    Sales
+}
+
+// Domain Model
+public class Employee
+{
+    public int Id { get; init; }
+    public string Name { get; set; } = string.Empty;
+    public Department Dept { get; set; }
+    public decimal Salary { get; set; }
+
+    public Employee() { }
+
+    public Employee(int id, string name, Department dept, decimal salary)
+    {
+        Id = id;
+        Name = name;
+        Dept = dept;
+        Salary = salary;
+    }
+
+    public override string ToString() =>
+        $"ID: {Id,4} | Name: {Name,-15} | Dept: {Dept,-8} | Salary: {Salary:C}";
+}
+
+// Immutable Summary Record for Analytics
+public record DepartmentSummary(string Department, int HeadCount, decimal AvgSalary, decimal MaxSalary);</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span> Repository Interface & Service Implementation</div>
+<div class="section-body">
+  <p>డేటాను ప్రాసెస్ చేసే బిజినెస్ లాజిక్‌ను కన్సోల్ యూజర్ ఇంటర్‌ఫేస్ నుండి వేరు చేయడం క్లీన్ కోడ్ సూత్రం. దీనికోసం <code>IEmployeeService</code> ఇంటర్‌ఫేస్ మరియు దాని ఇంప్లిమెంటేషన్‌ను పరిశీలిద్దాం:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>EmployeeService.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+
+public class EmployeeService
+{
+    private List<Employee> _employees = new List<Employee>();
+    private readonly string _filePath;
+
+    public EmployeeService(string filePath = "employees.json")
+    {
+        _filePath = filePath;
+        LoadFromFile();
+    }
+
+    public bool AddEmployee(Employee emp)
+    {
+        if (_employees.Any(e => e.Id == emp.Id))
+            return false; // Duplicate ID
+
+        _employees.Add(emp);
+        SaveToFile();
+        return true;
+    }
+
+    public List<Employee> GetAll() => _employees.OrderBy(e => e.Id).ToList();
+
+    public Employee? FindById(int id) => _employees.FirstOrDefault(e => e.Id == id);
+
+    public bool DeleteEmployee(int id)
+    {
+        var emp = FindById(id);
+        if (emp == null) return false;
+
+        _employees.Remove(emp);
+        SaveToFile();
+        return true;
+    }
+
+    // LINQ Analytics: Group by Department
+    public List<DepartmentSummary> GetDepartmentSummaries()
+    {
+        return _employees
+            .GroupBy(e => e.Dept)
+            .Select(g => new DepartmentSummary(
+                g.Key.ToString(),
+                g.Count(),
+                g.Average(e => e.Salary),
+                g.Max(e => e.Salary)
+            ))
+            .ToList();
+    }
+
+    private void SaveToFile()
+    {
+        try
+        {
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(_employees, options);
+            File.WriteAllText(_filePath, json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Storage Error]: {ex.Message}");
+        }
+    }
+
+    private void LoadFromFile()
+    {
+        if (!File.Exists(_filePath)) return;
+        try
+        {
+            string json = File.ReadAllText(_filePath);
+            _employees = JsonSerializer.Deserialize<List<Employee>>(json) ?? new List<Employee>();
+        }
+        catch
+        {
+            _employees = new List<Employee>();
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> ఇంటరాక్టివ్ కన్సోల్ UI మెనూ & ఎగ్జిక్యూషన్ లాజిక్</div>
+<div class="section-body">
+  <p>యూజర్ ఫ్రెండ్లీ కమాండ్-లైన్ ఇంటర్‌ఫేస్ (CLI) ద్వారా ఉద్యోగులను జోడించడం, జాబితాను చూడటం, డిపార్ట్‌మెంట్ వారీగా LINQ రిపోర్టులను వీక్షించడం ఎలాగో ఈ క్రింది పూర్తి కోడ్‌లో చూడవచ్చు:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>Program.cs (Complete Application)</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        EmployeeService service = new EmployeeService("company_data.json");
+
+        // Seed initial data if empty
+        if (service.GetAll().Count == 0)
+        {
+            service.AddEmployee(new Employee(101, "Ravi Teja", Department.IT, 75000m));
+            service.AddEmployee(new Employee(102, "Sneha Latha", Department.HR, 52000m));
+            service.AddEmployee(new Employee(103, "Manoj Kumar", Department.IT, 82000m));
+            service.AddEmployee(new Employee(104, "Priya Sharma", Department.Finance, 68000m));
+        }
+
+        bool running = true;
+        while (running)
+        {
+            Console.WriteLine("
+========================================");
+            Console.WriteLine("🏢 EMPLOYEE MANAGEMENT SYSTEM (.NET 8)");
+            Console.WriteLine("========================================");
+            Console.WriteLine("1. View All Employees");
+            Console.WriteLine("2. Add New Employee");
+            Console.WriteLine("3. Search Employee by ID");
+            Console.WriteLine("4. View Department Analytics (LINQ)");
+            Console.WriteLine("5. Delete Employee");
+            Console.WriteLine("6. Exit");
+            Console.Write("Enter your choice (1-6): ");
+
+            string? choice = Console.ReadLine();
+            Console.WriteLine();
+
+            switch (choice)
+            {
+                case "1":
+                    var list = service.GetAll();
+                    Console.WriteLine($"Total Employees: {list.Count}");
+                    list.ForEach(e => Console.WriteLine(e));
+                    break;
+
+                case "2":
+                    AddNewEmployeeUI(service);
+                    break;
+
+                case "3":
+                    Console.Write("Enter Employee ID: ");
+                    if (int.TryParse(Console.ReadLine(), out int searchId))
+                    {
+                        var found = service.FindById(searchId);
+                        Console.WriteLine(found != null ? found.ToString() : "Employee not found!");
+                    }
+                    break;
+
+                case "4":
+                    var summaries = service.GetDepartmentSummaries();
+                    Console.WriteLine("--- Department Analytics (LINQ GroupBy) ---");
+                    foreach (var s in summaries)
+                    {
+                        Console.WriteLine($"Dept: {s.Department,-8} | Count: {s.HeadCount} | Avg: {s.AvgSalary:C} | Max: {s.MaxSalary:C}");
+                    }
+                    break;
+
+                case "5":
+                    Console.Write("Enter ID to delete: ");
+                    if (int.TryParse(Console.ReadLine(), out int delId))
+                    {
+                        bool deleted = service.DeleteEmployee(delId);
+                        Console.WriteLine(deleted ? "Deleted successfully!" : "ID not found!");
+                    }
+                    break;
+
+                case "6":
+                    Console.WriteLine("Thank you for using the application! Goodbye.");
+                    running = false;
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid choice! Please select 1-6.");
+                    break;
+            }
+        }
+    }
+
+    static void AddNewEmployeeUI(EmployeeService service)
+    {
+        Console.Write("Enter Employee ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int id)) { Console.WriteLine("Invalid ID!"); return; }
+
+        Console.Write("Enter Name: ");
+        string name = Console.ReadLine() ?? "Unknown";
+
+        Console.Write("Select Dept (0=IT, 1=HR, 2=Finance, 3=Sales): ");
+        if (!Enum.TryParse(Console.ReadLine(), out Department dept)) dept = Department.IT;
+
+        Console.Write("Enter Monthly Salary: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal salary)) salary = 30000m;
+
+        bool added = service.AddEmployee(new Employee(id, name, dept, salary));
+        Console.WriteLine(added ? "Employee added successfully and saved to JSON!" : "Failed: ID already exists!");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> ప్రోగ్రామ్ రన్ రిజల్ట్స్ (Sample Output)</div>
+<div class="section-body">
+  <div class="output-block">========================================
+🏢 EMPLOYEE MANAGEMENT SYSTEM (.NET 8)
+========================================
+1. View All Employees
+2. Add New Employee
+3. Search Employee by ID
+4. View Department Analytics (LINQ)
+5. Delete Employee
+6. Exit
+Enter your choice (1-6): 4
+
+--- Department Analytics (LINQ GroupBy) ---
+Dept: IT       | Count: 2 | Avg: ₹78,500.00 | Max: ₹82,000.00
+Dept: HR       | Count: 1 | Avg: ₹52,000.00 | Max: ₹52,000.00
+Dept: Finance  | Count: 1 | Avg: ₹68,000.00 | Max: ₹68,000.00</div>
+</div>
+
+<div class="section-title"><span class="num">5</span> సేవ్ చేయబడిన employees.json ఫైల్ స్ట్రక్చర్</div>
+<div class="section-body">
+  <p><code>System.Text.Json</code> ద్వారా డిస్క్‌పై క్రియేట్ అయిన పర్సిస్టెన్స్ ఫైల్ ఇలా అందంగా ఫార్మాట్ చేయబడి ఉంటుంది:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>company_data.json</span>
+    </div>
+    <pre><code>[
+  {
+    "Id": 101,
+    "Name": "Ravi Teja",
+    "Dept": 0,
+    "Salary": 75000
+  },
+  {
+    "Id": 102,
+    "Name": "Sneha Latha",
+    "Dept": 1,
+    "Salary": 52000
+  },
+  {
+    "Id": 103,
+    "Name": "Manoj Kumar",
+    "Dept": 0,
+    "Salary": 82000
+  },
+  {
+    "Id": 104,
+    "Name": "Priya Sharma",
+    "Dept": 2,
+    "Salary": 68000
+  }
+]</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> మీ తదుపరి అడుగు: .NET డెవలపర్ కెరీర్ రోడ్‌మ్యాప్</div>
+<div class="section-body">
+  <div style="background:var(--bg3); border-left:4px solid #10b981; padding:16px 20px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <h3 style="margin-top:0; color:#10b981;">🚀 మీరు సాధించిన మైలురాళ్ళు:</h3>
+    <p>ఈ 20 అధ్యాయాల సమగ్ర C# మాస్టర్‌క్లాస్‌తో మీరు C# లాంగ్వేజ్ సింటాక్స్, మెమరీ మేనేజ్‌మెంట్ (Stack vs Heap), ఆబ్జెక్ట్ ఓరియెంటెడ్ డిజైన్, జెనెరిక్స్, డెలిగేట్స్ & ఈవెంట్స్, అధునాతన LINQ క్వెరీలు మరియు ఫైల్ I/O లలో బలమైన పట్టు సాధించారు.</p>
+  </div>
+
+  <h3>తదుపరి ప్రయాణం (Next Steps in Your .NET Journey):</h3>
+  <ol>
+    <li><strong>ASP.NET Core Web APIs:</strong> రెస్ట్‌ఫుల్ (RESTful) వెబ్ సర్వీసెస్, Swagger డాక్యుమెంటేషన్, మరియు JWT అథెంటికేషన్ నేర్చుకోండి.</li>
+    <li><strong>Entity Framework Core (EF Core):</strong> డేటాబేస్ ఆపరేషన్స్ కోసం ఆధునిక ORM టూల్. Code-First మైగ్రేషన్లు మరియు SQL సర్వర్ ఇంటిగ్రేషన్.</li>
+    <li><strong>Dependency Injection & Clean Architecture:</strong> లార్జ్ స్కేల్ ప్రాజెక్టులలో రిపోజిటరీ పాటర్న్, యూనిట్ ఆఫ్ వర్క్, మరియు సర్వీస్ లేయర్ల నిర్మాణం.</li>
+    <li><strong>Microservices & Cloud (.NET 8 & Azure):</strong> డాకర్ కంటైనర్లు, కుబెర్నెటిస్, మరియు క్లౌడ్ నేటివ్ అప్లికేషన్ల అభివృద్ధి.</li>
+  </ol>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

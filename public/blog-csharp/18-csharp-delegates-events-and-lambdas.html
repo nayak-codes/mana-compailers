@@ -316,14 +316,212 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>డెలిగేట్స్ (Delegates), ఈవెంట్స్ & లాంబ్డా ఎక్స్‌ప్రెషన్స్ (=>)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. Function Pointers C# సమానం · Func<T>, Action<T>, Predicate<T> · Publisher-Subscriber Events · Lambda Expressions (x => x * 2).
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో డెలిగేట్స్ (Delegates), ఈవెంట్స్ & లాంబ్డా ఎక్స్‌ప్రెషన్స్ (=>) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  ఆధునిక C# మరియు .NET ప్రపంచంలో ఈవెంట్-డ్రైవెన్ ఆర్కిటెక్చర్, అసమకాలిక ప్రోగ్రామింగ్ (Async), మరియు ఫంక్షనల్ ప్రోగ్రామింగ్ పద్ధతులకు <strong>Delegates</strong> వెన్నెముక వంటివి. డెలిగేట్ అనేది ఒక మెథడ్‌ను వేరియబుల్ లాగా పారామీటర్‌గా పంపే వీలు కల్పించే <strong>Type-Safe Function Pointer</strong>. దీనితో పాటు .NET లో అత్యంత విస్తృతంగా ఉపయోగించే <strong><code>Func&lt;T&gt;</code></strong>, <strong><code>Action&lt;T&gt;</code></strong>, మోడరన్ <strong>Lambda Expressions (<code>=&gt;</code>)</strong>, మరియు <strong>Events (Publisher-Subscriber)</strong> పనితీరును ఈ అధ్యాయంలో లోతుగా ఆవిష్కరిస్తాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> డెలిగేట్స్ అంటే ఏమిటి? Type-Safe Function Pointers</div>
+<div class="section-body">
+  <p>C మరియు C++ లలో ఫంక్షన్ పాయింటర్లు ఉంటాయి, కానీ వాటికి టైప్ సేఫ్టీ ఉండదు (మెమరీ క్రాష్ అయ్యే ప్రమాదం ఉంటుంది). C# లో <strong>Delegate</strong> అనేది ఆబ్జెక్ట్ ఓరియెంటెడ్ మరియు 100% టైప్-సేఫ్ ఫంక్షన్ పాయింటర్.</p>
+
+  <p>ఒక డెలిగేట్ నిర్దిష్ట రిటర్న్ టైప్ మరియు పారామీటర్ సిగ్నేచర్‌ను కలిగి ఉంటుంది. ఆ సిగ్నేచర్‌తో సరిపోలే ఏ మెథడ్‌నైనా ఆ డెలిగేట్ వేరియబుల్‌కు అసైన్ చేసి కాల్ చేయవచ్చు.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>CustomDelegateBasics.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// 1. Delegate Declaration: accepts string, returns void
+delegate void LogDelegate(string message);
+
+class Program
+{
+    static void ConsoleLogger(string msg) => Console.WriteLine($"[CONSOLE]: {msg}");
+    static void AlertLogger(string msg) => Console.WriteLine($"[ALERT ***]: {msg.ToUpper()}");
+
+    static void Main()
+    {
+        // 2. Delegate Instantiation pointing to a method
+        LogDelegate logger = ConsoleLogger;
+        logger("Server started on port 5000");
+
+        // 3. Pointing to a different method at runtime
+        logger = AlertLogger;
+        logger("High CPU load detected!");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span> Multicast Delegates (+, -= ఆపరేటర్లు)</div>
+<div class="section-body">
+  <p>C# లోని అన్ని డెలిగేట్లు అంతర్గతంగా <code>System.MulticastDelegate</code> క్లాస్ నుండి ఉద్భవిస్తాయి. దీనివల్ల <strong><code>+=</code></strong> ఆపరేటర్ ఉపయోగించి ఒకే డెలిగేట్‌కు బహుళ మెథడ్స్‌ను ఒక ఇన్వోకేషన్ లిస్ట్ (Invocation List) లో చేర్చవచ్చు. డెలిగేట్‌ను కాల్ చేయగానే ఆ లిస్టులోని అన్ని మెథడ్స్ వరుసగా ఎగ్జిక్యూట్ అవుతాయి. అనవసరమైన మెథడ్‌ను తొలగించడానికి <strong><code>-=</code></strong> ఆపరేటర్ వాడతాం.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>MulticastDelegateDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+delegate void NotifyUser(string user);
+
+class Program
+{
+    static void SendEmail(string user) => Console.WriteLine($"Email sent to {user}");
+    static void SendSms(string user) => Console.WriteLine($"SMS sent to {user}");
+
+    static void Main()
+    {
+        NotifyUser notifier = SendEmail;
+        notifier += SendSms; // Multicast chaining
+
+        Console.WriteLine("--- Triggering Notifications ---");
+        notifier("Ravi Kumar");
+
+        notifier -= SendSms; // Unregistering SMS
+        Console.WriteLine("--- After removing SMS ---");
+        notifier("Sneha");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> Built-in Generic Delegates: Action&lt;T&gt;, Func&lt;T&gt;, Predicate&lt;T&gt;</div>
+<div class="section-body">
+  <p>ప్రతి చిన్న లాజిక్ కోసం కొత్త డెలిగేట్ టైప్‌ను డిక్లేర్ చేయాల్సిన అవసరం లేకుండా, ఆధునిక .NET మూడు ప్రామాణిక జెనెరిక్ డెలిగేట్లను అందిస్తుంది:</p>
+  <ul>
+    <li><strong><code>Action&lt;T1, T2...&gt;</code>:</strong> ఎటువంటి విలువను రిటర్న్ చేయని (<strong><code>void</code></strong>) మెథడ్స్ కోసం వాడతారు. (0 నుండి 16 పారామీటర్ల వరకు సపోర్ట్ చేస్తుంది).</li>
+    <li><strong><code>Func&lt;T1, TResult&gt;</code>:</strong> విలువను రిటర్న్ చేసే మెథడ్స్ కోసం వాడతారు. ఇందులో చివరి టైప్ పారామీటర్ ఎల్లప్పుడూ <strong>Return Type</strong> అవుతుంది.</li>
+    <li><strong><code>Predicate&lt;T&gt;</code>:</strong> ఒక ఆబ్జెక్ట్‌ను చెక్ చేసి <strong><code>bool</code></strong> (true/false) రిటర్న్ చేసే కండిషన్స్ కోసం వాడతారు. (నిజానికి ఇది <code>Func&lt;T, bool&gt;</code> తో సమానం).</li>
+  </ul>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ActionAndFuncDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Action: takes string, returns void
+        Action<string> printGreeting = name => Console.WriteLine($"Namaste, {name}!");
+        printGreeting("Kiran");
+
+        // Func: takes int and int, returns int (last type)
+        Func<int, int, int> multiply = (a, b) => a * b;
+        Console.WriteLine($"Product: {multiply(8, 5)}");
+
+        // Predicate: takes int, returns bool
+        Predicate<int> isAdult = age => age >= 18;
+        Console.WriteLine($"Is 20 an adult? {isAdult(20)}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> Lambda Expressions (=&gt;) & Anonymous Methods</div>
+<div class="section-body">
+  <p>C# లో కోడ్‌ను సూక్ష్మీకరించడానికి లాంబ్డా ఎక్స్‌ప్రెషన్స్ (<strong><code>(parameters) =&gt; expression</code></strong>) అత్యంత శక్తివంతమైనవి. ప్రత్యేకంగా మెథడ్ రాయకుండానే, ఇన్‌లైన్‌లో ఇన్స్టాంట్‌గా ఫంక్షన్ బాడీని డిఫైన్ చేయవచ్చు.</p>
+
+  <p><strong>Closures:</strong> లాంబ్డా ఎక్స్‌ప్రెషన్లు తమ వెలుపల ఉన్న లోకల్ వేరియబుల్స్‌ను క్యాప్చర్ (capture) చేసుకుని గుర్తుపెట్టుకోగలవు. దీనినే క్లోజర్ అంటారు.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>LambdaClosures.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        List<int> numbers = new List<int> { 12, 45, 68, 23, 89, 90 };
+
+        // Lambda used as a filter condition
+        List<int> evenNumbers = numbers.FindAll(n => n % 2 == 0);
+        Console.WriteLine($"Evens: {string.Join(", ", evenNumbers)}");
+
+        // Closure Example: Capturing external factor
+        int multiplier = 10;
+        Func<int, int> scale = n => n * multiplier; // multiplier captured!
+        Console.WriteLine($"Scaled 7: {scale(7)}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> Events & Publisher-Subscriber Pattern</div>
+<div class="section-body">
+  <p>డెలిగేట్‌ను నేరుగా వాడితే బయటి క్లాసులు ప్రమాదవశాత్తు <code>delegate = null;</code> అని అసైన్ చేసి పాత లిజనర్లను తుడిచిపెట్టే ప్రమాదం ఉంది. దీని నివారణకు C# లో <strong><code>event</code></strong> కీవర్డ్ వాడతారు.</p>
+  <ul>
+    <li><strong>Publisher:</strong> ఏదైనా సంఘటన జరిగినప్పుడు ఈవెంట్‌ను ట్రిగ్గర్ (Raise/Fire) చేసే క్లాస్.</li>
+    <li><strong>Subscriber:</strong> ఆ ఈవెంట్ జరిగినప్పుడు స్పందించడానికి <code>+=</code> ద్వారా రిజిస్టర్ చేసుకునే క్లాస్. బయటి క్లాసులు ఈవెంట్‌ను కేవలం <code>+=</code> లేదా <code>-=</code> మాత్రమే చేయగలవు; నేరుగా ఇన్వోక్ చేయలేవు!</li>
+  </ul>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>StockTickerEventDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+// Publisher Class
+class StockMarket
+{
+    // Event declaration using Action
+    public event Action<string, decimal> PriceChanged;
+
+    public void UpdatePrice(string symbol, decimal newPrice)
+    {
+        Console.WriteLine($"[Market Alert] {symbol} updated to {newPrice:C}");
+        // Safe null-conditional invoke
+        PriceChanged?.Invoke(symbol, newPrice);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        StockMarket market = new StockMarket();
+
+        // Subscribers registering via +=
+        market.PriceChanged += (sym, price) => 
+            Console.WriteLine($"-> Investor App: Notified about {sym} at {price:C}");
+        market.PriceChanged += (sym, price) => 
+            Console.WriteLine($"-> Broker Bot: Auto-trading analysis for {sym}");
+
+        // Firing the event
+        market.UpdatePrice("TCS", 3950.50m);
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: Event Unsubscribe చేయకపోవడం (Memory Leak)</strong><br>
+    <span style="font-size:13.5px; color:#475569;">ఒక లాంగ్-లివ్డ్ పబ్లిషర్ క్లాస్ ఈవెంట్‌కు షార్ట్-లివ్డ్ సబ్‌స్క్రైబర్ రిజిస్టర్ అయ్యి, పని పూర్తయిన తర్వాత <code>-=</code> ద్వారా అన్‌సబ్‌స్క్రైబ్ చేసుకోకపోతే, గార్బేజ్ కలెక్టర్ ఆ సబ్‌స్క్రైబర్‌ను మెమరీ నుండి తొలగించలేదు (Lapsed Listener Problem). దీనివల్ల తీవ్రమైన మెమరీ లీక్ ఏర్పడుతుంది.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong>Delegate మరియు Event మధ్య ప్రాథమిక తేడా ఏమిటి?</strong><br>
+    Delegate అనేది ఒక ఫంక్షన్ పాయింటర్ టైప్. Event అనేది ఆ డెలిగేట్‌పై ఒక ఎన్‌క్యాప్సులేషన్ లేయర్; బయటి క్లాసులు ఈవెంట్‌ను కేవలం <code>+=</code> మరియు <code>-=</code> మాత్రమే చేయగలవు తప్ప నేరుగా ఓవర్‌రైట్ చేయలేవు లేదా ఇన్వోక్ చేయలేవు.</li>
+    <li><strong><code>Action</code> మరియు <code>Func</code> లలో ఏది రిటర్న్ చేస్తుంది?</strong><br>
+    <code>Action</code> ఎల్లప్పుడూ <code>void</code> (ఏమీ రిటర్న్ చేయదు). <code>Func</code> ఎల్లప్పుడూ కచ్చితంగా ఏదో ఒక వ్యాల్యూను రిటర్న్ చేస్తుంది.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
