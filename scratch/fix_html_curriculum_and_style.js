@@ -388,3 +388,4 @@ module.exports = { LESSONS, PHASES, buildSidebar, escapeHtml };
 
 fs.writeFileSync(path.join(__dirname, 'html_curriculum_data.js'), curriculumDataContent, 'utf8');
 console.log('✅ Sanitized scratch/html_curriculum_data.js');
+

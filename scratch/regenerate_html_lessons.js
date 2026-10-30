@@ -13,3 +13,4 @@ LESSONS.forEach(lesson => {
 });
 
 console.log('✅ All 20 HTML lesson files regenerated with clean sanitized sidebar and light theme!');
+
