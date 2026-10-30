@@ -39,3 +39,4 @@ console.log(`Total Phase 1 Characters: ${totalChars} characters`);
 console.log(`ALL PHASE 1 CHAPTERS PASSED: ${allPassed}`);
 
 if (!allPassed) process.exit(1);
+

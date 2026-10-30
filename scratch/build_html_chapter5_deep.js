@@ -1,0 +1,663 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./html_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 5);
+const sidebarHtml = buildSidebar(5);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-html.html">HTML5 Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 5: యాంకర్ ట్యాగ్ (a tag), హైపర్‌లింక్స్, రిలేటివ్/అబ్సల్యూట్ పాత్స్ & లింక్ టార్గెట్స్</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">యాంకర్ ట్యాగ్ (a tag), హైపర్‌లింక్స్, రిలేటివ్/అబ్సల్యూట్ పాత్స్ & లింక్ టార్గెట్స్</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern HTML5 (W3C/WHATWG)</span>
+      <span class="badge">🟢 Chapter 5 of 20 (Phase 2 Starter)</span>
+      <span class="badge">📂 Phase 02: లింకులు, లిస్టులు, టేబుల్స్ & మల్టీమీడియా</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>యాంకర్ ట్యాగ్ (&lt;a&gt;) అనాటమీ & href · Absolute URLs vs Relative URLs · లింక్ టార్గెట్స్ (_blank, _self, _parent, _top) · భద్రతా నియమాలు (rel="noopener noreferrer") · పేజీ ఇంటర్నల్ బుక్‌మార్క్స్ & స్మూత్ స్క్రోలింగ్ (#id) · ప్రోటోకాల్ లింకులు (mailto, tel, sms, whatsapp) · డౌన్‌లోడ్ ఆట్రిబ్యూట్ (download) · బిగినర్స్ తప్పులు & క్విజ్</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>ఒక సాధారణ ప్రింటెడ్ పుస్తకంలో మీరు ఒక అధ్యాయం చదువుతున్నప్పుడు, మధ్యలో ఏదైనా సంబంధిత సమాచారం కోసం వేరే పుస్తకంలోని పేజీకి వెళ్లాలంటే మీరు ఆ పుస్తకాన్ని మూసివేసి, లైబ్రరీకి వెళ్లి వెతకాల్సిందే. కానీ కంప్యూటర్ స్క్రీన్ మీద కేవలం ఒక్క నీలిరంగు అండర్‌లైన్ చేసిన పదంపై క్లిక్ చేయగానే, ప్రపంచంలో ఎక్కడో ఉన్న మరో దేశపు సర్వర్ లోని సరికొత్త పేజీ మీ కళ్లముందు తక్షణమే ప్రత్యక్షమవుతుంది!</p>
+      <p>దీనినే <strong>హైపర్‌లింక్ (Hyperlink)</strong> అంటారు. అసలు ఇంటర్నెట్‌ను <strong>"World Wide Web" (ప్రపంచవ్యాప్త సాలెగూడు)</strong> అని పిలవడానికి మూలకారణం — ప్రపంచంలోని కోట్లాది వెబ్‌పేజీలను ఒకదానితో ఒకటి అనుసంధానిస్తూ నిర్మించిన ఈ లింకుల అల్లికే! ఈ అద్భుతం వెనుక ఉన్న ఒకే ఒక్క శక్తివంతమైన ట్యాగ్ — <strong>యాంకర్ ట్యాగ్ (Anchor Tag: <code>&lt;a&gt;</code>)</strong>.</p>
+      <p>కానీ చాలామంది డెవలపర్లు <code>target="_blank"</code> వాడినప్పుడు <code>rel="noopener noreferrer"</code> భద్రతా కవచాన్ని మర్చిపోయి హ్యాకర్లకు వెబ్‌సైట్ కంట్రోల్ ఇచ్చే ప్రమాదకరమైన బగ్స్ (Reverse Tabnabbing) చేస్తారు! ఈ ఐదవ అధ్యాయంలో మనం లింకుల అంతర్గత శక్తులను, రిలేటివ్ vs అబ్సల్యూట్ పాత్‌ల రహస్యాలను, ఒకే పేజీలో పైకి కిందకు దూకే ఇంటర్నల్ బుక్‌మార్క్‌లను, మరియు ఫోన్ కాల్స్/ఈమెయిల్స్ ట్రిగ్గర్ చేసే ప్రోటోకాల్ లింకులను పూర్తి తెలుగులో, ప్రాక్టికల్ లైవ్ కోడింగ్‌తో నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే అంశాలు</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>యాంకర్ ట్యాగ్ అనాటమీ:</strong> <code>&lt;a&gt;</code> మరియు <code>href</code> (Hypertext Reference) ఆట్రిబ్యూట్ పనిచేసే విధానం.</li>
+        <li><strong>ఫైల్ పాత్‌ల సైన్స్:</strong> Absolute URLs (పూర్తి డొమైన్ చిరునామా) vs Relative URLs (అంతర్గత సాపేక్ష పాత్స్) సమగ్ర విశ్లేషణ.</li>
+        <li><strong>లింక్ టార్గెట్స్:</strong> <code>_self</code>, <code>_blank</code>, <code>_parent</code>, <code>_top</code> ల వ్యత్యాసాలు మరియు ఎప్పుడు ఏది వాడాలి.</li>
+        <li><strong>సైబర్ సెక్యూరిటీ షీల్డ్:</strong> <code>target="_blank"</code> తో పాటు <code>rel="noopener noreferrer"</code> ఎందుకు తప్పనిసరిగా వాడాలి?</li>
+        <li><strong>ఇంటర్నల్ బుక్‌మార్క్స్ (#id):</strong> ఒకే పేజీలో నిర్దిష్ట విభాగానికి జంప్ చేయడం మరియు "Back to Top" లింక్స్ నిర్మాణం.</li>
+        <li><strong>స్పెషల్ ప్రోటోకాల్స్:</strong> <code>mailto:</code> (ఈమెయిల్), <code>tel:</code> (ఫోన్ కాల్), <code>sms:</code>, మరియు <code>download</code> ఆట్రిబ్యూట్.</li>
+        <li><strong>SEO Anchor Text గైడ్‌లైన్స్:</strong> "Click Here" రాయడం ఎందుకు పెద్ద తప్పు? బిగినర్స్ పొరపాట్లు & ప్రాక్టీస్ క్విజ్.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>యాంకర్ ట్యాగ్ అనాటమీ &amp; href ఆట్రిబ్యూట్</div>
+    <div class="section-body">
+      <p>సముద్రంలో ఓడ ఒకే చోట స్థిరంగా ఉండటానికి నావికులు పెద్ద ఇనుప లంగరు (Anchor) ను నీటిలోకి విసురుతారు. అదేవిధంగా వెబ్‌పేజీలోని ఒక పదాన్ని లేదా బొమ్మను వేరొక గమ్యస్థాన వెబ్ చిరునామాకు కట్టిపడేసే సాధనమే <strong>Anchor Tag (<code>&lt;a&gt;</code>)</strong>.</p>
+
+      <div class="diagram-box">
+  ┌───────────────────────────────── ANCHOR TAG ───────────────────────────────────┐
+  │                                                                                │
+  │     &lt;a   href="https://www.google.com"&gt;     గూగుల్ సెర్చ్ చేయండి     &lt;/a&gt;       │
+  │    └─┬┘ └──────────────┬──────────────┘    └───────────┬────────────┘  └─┬──┘       │
+  │      │                 │                               │                 │         │
+  │   Anchor           Destination                    Anchor Text         Closing      │
+  │     Tag          (Hypertext Ref)                (Visible to User)       Tag        │
+  └────────────────────────────────────────────────────────────────────────────────┘
+      </div>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>href</code> (Hypertext Reference): యూజర్ ఆ టెక్స్ట్‌పై క్లిక్ చేసినప్పుడు బ్రౌజర్ ఏ URL లేదా ఫైల్ వద్దకు వెళ్ళాలో చెప్పే గమ్యస్థాన చిరునామా.</li>
+        <li><strong>Anchor Text (యాంకర్ టెక్స్ట్):</strong> ప్రారంభ మరియు ముగింపు ట్యాగ్‌ల మధ్య మనం రాసే అక్షరాలు. వినియోగదారుడి కంటికి నీలిరంగు అండర్‌లైన్ తో కనిపించేది ఇదే.</li>
+      </ul>
+
+      <p><strong>బ్రౌజర్ లో లింకుల డిఫాల్ట్ రంగుల ప్రవర్తన:</strong></p>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>లింక్ స్థితి (State)</th>
+            <th>డిఫాల్ట్ రంగు</th>
+            <th>అర్థం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Unvisited Link</strong></td>
+            <td><span style="color:#2563eb; font-weight:700;">నీలి రంగు (Blue)</span></td>
+            <td>యూజర్ ఆ లింక్‌ను ఇంకా సందర్శించలేదు (చూడలేదు).</td>
+          </tr>
+          <tr>
+            <td><strong>Visited Link</strong></td>
+            <td><span style="color:#7c3aed; font-weight:700;">ఊదా రంగు (Purple)</span></td>
+            <td>యూజర్ ఇప్పటికే ఆ లింక్‌ను ఒకసారి క్లిక్ చేసి సందర్శించారు.</td>
+          </tr>
+          <tr>
+            <td><strong>Active Link</strong></td>
+            <td><span style="color:#dc2626; font-weight:700;">ఎరుపు రంగు (Red)</span></td>
+            <td>మౌస్ బటన్ లేదా వేలితో ఆ లింక్‌ను నొక్కి పట్టుకున్న క్షణంలో.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>Absolute URLs vs Relative URLs — ఫైల్ పాత్‌ల సైన్స్</div>
+    <div class="section-body">
+      <p>వెబ్ డెవలప్‌మెంట్‌లో లింక్ చిరునామాలు (Paths) రెండు రకాలుగా ఉంటాయి. ఈ రెండింటి మధ్య తేడా తెలియకపోతే ప్రాజెక్ట్ లైవ్ చేసినప్పుడు లింకులు విరిగిపోయి 404 Not Found ఎర్రర్లు వస్తాయి:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <div style="font-weight:700; color:#10b981; font-size:16px; margin-bottom:8px;">🌐 Absolute URL (సంపూర్ణ చిరునామా)</div>
+          <p style="color:var(--text2); font-size:14px; line-height:1.6; margin-bottom:10px;">
+            ప్రోటోకాల్ (<code>https://</code>), డొమైన్ పేరు మరియు పేజీ పాత్‌తో కూడిన పూర్తి గ్లోబల్ అడ్రస్. వేరే వెబ్‌సైట్లకు లింక్ ఇచ్చేటప్పుడు ఇది మాత్రమే పనిచేస్తుంది.
+          </p>
+          <div style="background:var(--bg3); padding:8px 12px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; word-break:break-all;">
+            &lt;a href="https://www.ourcompiler.com/blog-html.html"&gt;
+          </div>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <div style="font-weight:700; color:#10b981; font-size:16px; margin-bottom:8px;">📁 Relative URL (సాపేక్ష అంతర్గత చిరునామా)</div>
+          <p style="color:var(--text2); font-size:14px; line-height:1.6; margin-bottom:10px;">
+            మీ సొంత వెబ్‌సైట్ లోపల ప్రస్తుత ఫైల్ ఉన్న ప్రదేశాన్ని బట్టి మరొక ఫైల్‌ను అనుసంధానించే అంతర్గత షార్ట్‌కట్ చిరునామా.
+          </p>
+          <div style="background:var(--bg3); padding:8px 12px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; word-break:break-all;">
+            &lt;a href="./about.html"&gt; లేదా &lt;a href="../index.html"&gt;
+          </div>
+        </div>
+      </div>
+
+      <p><strong>సాపేక్ష పాత్‌లు (Relative Paths) ఎలా పనిచేస్తాయి? (The Folder Navigation Rules):</strong></p>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>సింటాక్స్</th>
+            <th>వాడే విధానం</th>
+            <th>బ్రౌజర్ ఎక్కడికి వెళుతుంది?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>about.html</code> లేదా <code>./about.html</code></td>
+            <td>ప్రస్తుత ఫోల్డర్ లోని ఫైల్</td>
+            <td>ప్రస్తుత ఫైల్ ఎక్కడ ఉందో అదే ఫోల్డర్‌లోని <code>about.html</code> వద్దకు.</td>
+          </tr>
+          <tr>
+            <td><code>tutorials/html.html</code></td>
+            <td>సబ్-ఫోల్డర్ లోని ఫైల్</td>
+            <td>ప్రస్తుత ఫోల్డర్ లోపల ఉన్న <code>tutorials</code> ఫోల్డర్‌లోకి వెళ్లి ఫైల్ తెరుస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><code>../index.html</code></td>
+            <td>ఒక మెట్టు పై ఫోల్డర్ (Parent Folder)</td>
+            <td><code>..</code> అంటే ప్రస్తుత ఫోల్డర్ నుండి ఒక మెట్టు పైకి (Parent) వెళ్లి ఫైల్ తెరుస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><code>/contact.html</code></td>
+            <td>రూట్ డైరెక్టరీ (Root Directory)</td>
+            <td>వెబ్‌సైట్ యొక్క ప్రధాన మెయిన్ రూట్ ఫోల్డర్ నుండి నేరుగా ఫైల్ తెరుస్తుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>లింక్ టార్గెట్స్ (target attribute: _blank, _self, _parent, _top)</div>
+    <div class="section-body">
+      <p>యూజర్ ఒక లింక్‌పై క్లిక్ చేసినప్పుడు ఆ గమ్యస్థాన పేజీ ఎక్కడ ఓపెన్ కావాలి? ప్రస్తుత ట్యాబ్‌లోనేనా, లేక కొత్త ట్యాబ్‌లోనా? దీనిని నిర్ణయించేది <code>target</code> ఆట్రిబ్యూట్:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Target Value</th>
+            <th>వాడే విధానం</th>
+            <th>ఫలితం &amp; ప్రవర్తన</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>_self</code></td>
+            <td><code>target="_self"</code> (డిఫాల్ట్)</td>
+            <td>ప్రస్తుత విండో లేదా ట్యాబ్‌లోనే ఓపెన్ అవుతుంది. మీరు target ఇవ్వకపోయినా ఇదే వర్తిస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><code>_blank</code></td>
+            <td><code>target="_blank"</code></td>
+            <td>సరికొత్త బ్రౌజర్ ట్యాబ్‌లో (New Tab) లేదా విండోలో ఓపెన్ అవుతుంది.</td>
+          </tr>
+          <tr>
+            <td><code>_parent</code></td>
+            <td><code>target="_parent"</code></td>
+            <td>ఒకవేళ పేజీ iframe లో ఉంటే, దాని పేరెంట్ ఫ్రేమ్‌లో ఓపెన్ అవుతుంది.</td>
+          </tr>
+          <tr>
+            <td><code>_top</code></td>
+            <td><code>target="_top"</code></td>
+            <td>అన్ని ఫ్రేమ్‌లను విచ్ఛిన్నం చేసి, మొత్తం బ్రౌజర్ విండోలో ఫుల్ స్క్రీన్‌గా ఓపెన్ అవుతుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout-title">💡 ఎప్పుడు ఏ target వాడాలి?</div>
+        <p>1. <strong>సొంత వెబ్‌సైట్ పేజీలు (Internal Links):</strong> మీ వెబ్‌సైట్ హోమ్ పేజీ నుండి అబౌట్ పేజీకి వెళ్ళేటప్పుడు <code>_self</code> (డిఫాల్ట్) వాడండి.<br>
+        2. <strong>బయటి వెబ్‌సైట్లు (External Links):</strong> గూగుల్, యూట్యూబ్, వికీపీడియా లాంటి బయటి సైట్లకు లింక్ ఇస్తున్నప్పుడు <code>target="_blank"</code> వాడండి. దీనివల్ల మీ వెబ్‌సైట్ ట్యాబ్ అలాగే ఓపెన్ అయి ఉంటుంది, యూజర్ మిమ్మల్ని వదిలి వెళ్ళిపోరు!</p>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>సైబర్ సెక్యూరిటీ షీల్డ్: rel="noopener noreferrer" ఎందుకు తప్పనిసరి?</div>
+    <div class="section-body">
+      <p>ఇది సీనియర్ వెబ్ డెవలపర్లు మరియు సైబర్ సెక్యూరిటీ ఇంజనీర్లు మాత్రమే గమనించే అత్యంత కీలకమైన అంశం. మీరు కేవలం <code>target="_blank"</code> అని రాసి వదిలేస్తే, మీ వెబ్‌సైట్‌కు తీవ్రమైన ప్రమాదం పొంచి ఉంటుంది!</p>
+
+      <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:10px; padding:18px; margin:20px 0; color:#881337;">
+        <div style="font-weight:700; font-size:16px; margin-bottom:8px;">⚠️ Reverse Tabnabbing హ్యాకింగ్ దాడి అంటే ఏమిటి?</div>
+        <p style="font-size:14px; line-height:1.7; margin:0;">
+          మీరు మీ సైట్ నుండి వేరే అపరిచిత వెబ్‌సైట్‌కు <code>target="_blank"</code> తో లింక్ ఇచ్చారనుకోండి. ఆ కొత్త పేజీ తన లోపల ఉండే జావాస్క్రిప్ట్ <code>window.opener</code> ఆబ్జెక్ట్ ద్వారా మీ అసలు వెబ్‌సైట్ ట్యాబ్‌ను నియంత్రించగలదు! మీరు ఆ కొత్త ట్యాబ్ చూస్తున్న సమయంలోనే, వెనుక మీ అసలు పేజీని నకిలీ లాగిన్ పేజీగా (Phishing clone) మార్చేయవచ్చు. యూజర్ తిరిగి మీ ట్యాబ్‌లోకి రాగానే నిజమైన పేజీ అనుకుని పాస్‌వర్డ్ టైప్ చేసి హ్యాకర్ల బారిన పడతారు!
+        </p>
+      </div>
+
+      <p><strong>ఈ దాడిని తిప్పికొట్టే భద్రతా కవచం (Security Shield):</strong></p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Secure External Link</span>
+        </div>
+        <pre><code>&lt;!-- సురక్షితమైన ఆధునిక లింక్ కోడింగ్ --&gt;
+&lt;a href="https://example.com" target="_blank" rel="noopener noreferrer"&gt;
+  సురక్షితమైన బాహ్య వెబ్‌సైట్ సందర్శించండి
+&lt;/a&gt;</code></pre>
+      </div>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>rel="noopener"</code>: కొత్తగా తెరిచిన పేజీకి మీ పేజీతో ఉన్న <code>window.opener</code> కనెక్షన్‌ను శాశ్వతంగా తెంచేస్తుంది. కొత్త పేజీ స్వతంత్రమైన వేరే ప్రాసెస్‌లో రన్ అవుతుంది.</li>
+        <li><code>rel="noreferrer"</code>: మీ వెబ్‌సైట్ అడ్రస్ వివరాలను ఆ అవతలి సర్వర్‌కు HTTP Referer హెడర్ ద్వారా పంపకుండా దాచి ఉంచుతుంది. యూజర్ ప్రైవసీకి ఇది రక్షణ.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>ఇంటర్నల్ బుక్‌మార్క్స్ &amp; స్మూత్ స్క్రోలింగ్ (#id Jump Links)</div>
+    <div class="section-body">
+      <p>వికీపీడియా ఆర్టికల్స్‌లో పైభాగంలో 'విషయ సూచిక' (Table of Contents) ఉంటుంది. అందులోని 3వ పాయింట్‌పై క్లిక్ చేయగానే పేజీ ఆటోమేటిక్‌గా కిందకు స్క్రోల్ అయి ఆ విభాగాన్ని చూపిస్తుంది కదా! దీనినే <strong>ఇంటర్నల్ బుక్‌మార్కింగ్ (Internal Jump Links)</strong> అంటారు.</p>
+
+      <p><strong>ఇది ఎలా పని చేస్తుంది? (2 సరళమైన స్టెప్స్):</strong></p>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><strong>గమ్యస్థాన ఎలిమెంట్‌కు ఒక యూనిక్ ID ఇవ్వండి:</strong><br>
+        <code>&lt;section id="contact-us"&gt;...మమ్మల్ని సంప్రదించండి...&lt;/section&gt;</code></li>
+        <li><strong>యాంకర్ ట్యాగ్ లో హ్యాష్ గుర్తు (#) తో ఆ ID ని లింక్ చేయండి:</strong><br>
+        <code>&lt;a href="#contact-us"&gt;సంప్రదింపుల విభాగానికి వెళ్ళండి ⬇&lt;/a&gt;</code></li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Smooth Page Jump Links</span>
+        </div>
+        <pre><code>&lt;!-- నావిగేషన్ మెనూ --&gt;
+&lt;nav&gt;
+  &lt;a href="#features"&gt;ఫీచర్లు&lt;/a&gt; |
+  &lt;a href="#pricing"&gt;ధరల వివరాలు&lt;/a&gt; |
+  &lt;a href="#faq"&gt;ప్రశ్నోత్తరాలు&lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;!-- పేజీలోని విభాగాలు --&gt;
+&lt;section id="features" style="margin-top:400px;"&gt;
+  &lt;h2&gt;మా సాఫ్ట్‌వేర్ ఫీచర్లు&lt;/h2&gt;
+  &lt;p&gt;అద్భుతమైన ఫీచర్ల వివరాలు ఇక్కడ ఉన్నాయి.&lt;/p&gt;
+  &lt;a href="#top"&gt;⬆ పైకి వెళ్ళండి (Back to Top)&lt;/a&gt;
+&lt;/section&gt;</code></pre>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">⚡ స్మూత్ స్క్రోలింగ్ మ్యాజిక్:</div>
+        <p>లింక్ క్లిక్ చేయగానే ఝల్లుమని ఒక్కసారిగా దూకకుండా, నెమ్మదిగా స్మూత్‌గా జారేలా (Smooth Scrolling) చేయడానికి CSS లో <code>html { scroll-behavior: smooth; }</code> ఒక్క లైన్ రాస్తే సరిపోతుంది!</p>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>స్పెషల్ ప్రోటోకాల్స్: mailto, tel, sms మరియు download ఆట్రిబ్యూట్</div>
+    <div class="section-body">
+      <p>కేవలం వెబ్ పేజీలకే కాకుండా, మొబైల్ ఫోన్లలో మరియు కంప్యూటర్లలో స్థానిక యాప్‌లను నేరుగా ట్రిగ్గర్ చేయడానికి ప్రత్యేక ప్రోటోకాల్ లింకులు ఉన్నాయి:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ప్రోటోకాల్</th>
+            <th>సింటాక్స్ ఉదాహరణ</th>
+            <th>క్లిక్ చేసినప్పుడు ఏం జరుగుతుంది?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>mailto:</code></td>
+            <td><code>&lt;a href="mailto:support@ourcompiler.com?subject=సహాయం"&gt;</code></td>
+            <td>యూజర్ డివైస్‌లోని ఇమెయిల్ యాప్ (Gmail, Outlook) ఓపెన్ అయి 'To' అడ్రస్ ఆటోమేటిక్‌గా నిండుతుంది.</td>
+          </tr>
+          <tr>
+            <td><code>tel:</code></td>
+            <td><code>&lt;a href="tel:+919876543210"&gt;కాల్ చేయండి&lt;/a&gt;</code></td>
+            <td>స్మార్ట్‌ఫోన్‌లో నేరుగా ఫోన్ డయలర్ ఓపెన్ అయి ఆ నంబర్ డైల్ చేయడానికి రెడీ అవుతుంది.</td>
+          </tr>
+          <tr>
+            <td><code>sms:</code></td>
+            <td><code>&lt;a href="sms:+919876543210?body=హలో"&gt;</code></td>
+            <td>మెసేజింగ్ యాప్ ఓపెన్ అయి ఎస్సెమ్మెస్ పంపడానికి సిద్ధమవుతుంది.</td>
+          </tr>
+          <tr>
+            <td><code>download</code></td>
+            <td><code>&lt;a href="cheatsheet.pdf" download="HTML5_Telugu.pdf"&gt;</code></td>
+            <td>ఫైల్ బ్రౌజర్‌లో ఓపెన్ కాకుండా నేరుగా కంప్యూటర్‌లోకి డౌన్‌లోడ్ అవుతుంది!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>పరిపూర్ణ ప్రాక్టికల్ లైవ్ ఉదాహరణ (Complete Runnable Code)</div>
+    <div class="section-body">
+      <p>ఈ అధ్యాయంలో మనం నేర్చుకున్న అబ్సల్యూట్, రిలేటివ్, బుక్‌మార్క్, ఈమెయిల్ మరియు ఫోన్ లింకులన్నింటినీ ఒకే చోట కలిపిన ఒక రియలిస్టిక్ నావిగేషన్ పోర్ట్‌ఫోలియో కోడ్‌ను పరిశీలిద్దాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">HTML5 Links &amp; Navigation Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-html-editor.html" target="_blank">▶ Run in Online HTML Editor</a>
+          </div>
+        </div>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="te" style="scroll-behavior: smooth;"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;నావిగేషన్ &amp; లింక్స్ మాస్టర్ డెమో&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body id="top"&gt;
+    &lt;!-- ప్రధాన హెడర్ నావిగేషన్ --&gt;
+    &lt;header style="padding:16px; background:#f8fafc; border-bottom:1px solid #e2e8f0;"&gt;
+      &lt;h1 style="font-size:22px; margin:0 0 10px 0;"&gt;రవి కుమార్ - వెబ్ డెవలపర్&lt;/h1&gt;
+      &lt;nav style="display:flex; gap:14px; flex-wrap:wrap;"&gt;
+        &lt;a href="#about"&gt;గురించి (About)&lt;/a&gt;
+        &lt;a href="#skills"&gt;నైపుణ్యాలు (Skills)&lt;/a&gt;
+        &lt;a href="#contact"&gt;సంప్రదించండి (Contact)&lt;/a&gt;
+        &lt;a href="https://github.com" target="_blank" rel="noopener noreferrer" style="color:#059669; font-weight:700;"&gt;
+          GitHub ప్రొఫైల్ &amp;nearr;
+        &lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+
+    &lt;main style="padding:20px;"&gt;
+      &lt;!-- సెక్షన్ 1: About --&gt;
+      &lt;section id="about" style="margin-bottom:60px;"&gt;
+        &lt;h2&gt;నా గురించి (About Me)&lt;/h2&gt;
+        &lt;p&gt;నేను HTML5, CSS3 మరియు JavaScript లో ఆధునిక వెబ్‌సైట్లను నిర్మిస్తాను.&lt;/p&gt;
+        &lt;p&gt;
+          పూర్తి కోర్సు గైడ్ కోసం &lt;a href="/blog-html.html"&gt;HTML5 మాస్టర్‌క్లాస్ తెలుగు రోడ్‌మ్యాప్&lt;/a&gt; చూడండి.
+        &lt;/p&gt;
+      &lt;/section&gt;
+
+      &lt;!-- సెక్షన్ 2: Skills --&gt;
+      &lt;section id="skills" style="margin-bottom:60px;"&gt;
+        &lt;h2&gt;సాంకేతిక నైపుణ్యాలు (Technical Skills)&lt;/h2&gt;
+        &lt;p&gt;ఫ్రంట్-ఎండ్ ఆర్కిటెక్చర్, రెస్పాన్సివ్ డిజైన్, వెబ్ యాక్సెసిబిలిటీ.&lt;/p&gt;
+        &lt;a href="#top" style="font-size:13px; color:#64748b;"&gt;&amp;uarr; పేజీ పైకి వెళ్ళండి (Back to Top)&lt;/a&gt;
+      &lt;/section&gt;
+
+      &lt;!-- సెక్షన్ 3: Contact &amp; Protocols --&gt;
+      &lt;section id="contact" style="background:#f1f5f9; padding:20px; border-radius:10px;"&gt;
+        &lt;h2&gt;నన్ను సంప్రదించండి (Get In Touch)&lt;/h2&gt;
+        &lt;p&gt;
+          &amp;bull; ఈమెయిల్: &lt;a href="mailto:ravi@example.com"&gt;ravi@example.com&lt;/a&gt;&lt;br /&gt;
+          &amp;bull; ఫోన్ కాల్: &lt;a href="tel:+919876543210"&gt;+91 98765 43210&lt;/a&gt;
+        &lt;/p&gt;
+        &lt;a href="#top" style="font-size:13px; color:#64748b;"&gt;&amp;uarr; Back to Top&lt;/a&gt;
+      &lt;/section&gt;
+    &lt;/main&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p style="margin-top:16px;"><strong>బ్రౌజర్‌లో ఇది ఎలా కనిపిస్తుంది? (Visual Preview):</strong></p>
+      <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:24px; margin:16px 0; box-shadow:0 4px 12px rgba(0,0,0,0.05); color:#0f172a;">
+        <div style="display:flex; align-items:center; gap:8px; padding-bottom:12px; margin-bottom:16px; border-bottom:1px solid #e2e8f0; font-size:12px; color:#64748b;">
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ef4444;"></span>
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#f59e0b;"></span>
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10b981;"></span>
+          <span style="margin-left:8px; font-family:'JetBrains Mono', monospace; font-size:11px;">https://www.ourcompiler.com/navigation-demo.html</span>
+        </div>
+        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin-bottom:8px;">రవి కుమార్ - వెబ్ డెవలపర్</h1>
+        <div style="display:flex; gap:16px; font-size:14px; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid #f1f5f9;">
+          <a href="#about" style="color:#10b981; font-weight:600; text-decoration:none;">గురించి</a>
+          <a href="#skills" style="color:#10b981; font-weight:600; text-decoration:none;">నైపుణ్యాలు</a>
+          <a href="#contact" style="color:#10b981; font-weight:600; text-decoration:none;">సంప్రదించండి</a>
+          <span style="color:#059669; font-weight:700;">GitHub ప్రొఫైల్ &nearr;</span>
+        </div>
+        <h2 style="font-size:17px; font-weight:700; color:#059669; margin-bottom:6px;">నా గురించి (About Me)</h2>
+        <p style="font-size:14px; color:#334155; margin-bottom:14px;">నేను HTML5, CSS3 మరియు JavaScript లో ఆధునిక వెబ్‌సైట్లను నిర్మిస్తాను.</p>
+        <div style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0; font-size:13.5px; color:#334155;">
+          📞 <strong>డైరెక్ట్ ప్రోటోకాల్ లింకులు:</strong><br>
+          ఈమెయిల్: <span style="color:#2563eb; text-decoration:underline;">ravi@example.com</span> &middot; 
+          ఫోన్: <span style="color:#2563eb; text-decoration:underline;">+91 98765 43210</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>Beginners చేసే 5 ప్రధాన తప్పులు (Common Pitfalls)</div>
+    <div class="section-body">
+      <p>లింకులతో పనిచేసేటప్పుడు బిగినర్స్ తరచుగా చేసే 5 పెద్ద తప్పులు మరియు వాటి నివారణలు:</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:16px;">❌ తప్పు 1: Anchor Text గా కేవలం "Click Here" లేదా "ఇక్కడ నొక్కండి" అని రాయడం</p>
+      <div class="code-block">
+        <pre><code>&lt;!-- చెత్త పద్ధతి (SEO &amp; Accessibility Disaster) --&gt;
+మా కోర్సు వివరాల కోసం &lt;a href="course.html"&gt;ఇక్కడ క్లిక్ చేయండి&lt;/a&gt;.
+
+&lt;!-- సరైన పద్ధతి (Descriptive Anchor Text) --&gt;
+పూర్తి సమాచారం కోసం మా &lt;a href="course.html"&gt;HTML5 పూర్తి కోర్సు వివరాలు&lt;/a&gt; చూడండి.</code></pre>
+      </div>
+      <p style="color:var(--text2); font-size:14px;"><strong>కారణం:</strong> అంధులు స్క్రీన్ రీడర్స్ వాడేటప్పుడు కేవలం లింకుల లిస్ట్ మాత్రమే చూస్తారు. స్క్రీన్ మీద పదిసార్లు "Click Here" అని వస్తే ఏ లింక్ దేనికో అర్థం కాదు! గూగుల్ ర్యాంకింగ్స్‌కు కూడా డిస్క్రిప్టివ్ యాంకర్ టెక్స్ట్ అవసరం.</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 2: target="_blank" వాడి rel="noopener" మర్చిపోవడం</p>
+      <p style="color:var(--text2); font-size:14px;">ఇది హ్యాకర్లకు రివర్స్ ట్యాబ్‌నాబింగ్ దాడి చేసే అవకాశం ఇస్తుంది. ఎల్లప్పుడూ <code>rel="noopener noreferrer"</code> జత చేయాలి.</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 3: ఖాళీ లింక్ కోసం href="#" వాడటం</p>
+      <div class="code-block">
+        <pre><code>&lt;!-- తప్పు: ఇది క్లిక్ చేయగానే పేజీ పైభాగం (Top) కి జంప్ అయిపోతుంది --&gt;
+&lt;a href="#" onclick="doSomething()"&gt;యాక్షన్&lt;/a&gt;</code></pre>
+      </div>
+      <p style="color:var(--text2); font-size:14px;"><strong>నివారణ:</strong> కేవలం క్లిక్ ఈవెంట్ కోసం అయితే <code>&lt;button&gt;</code> ట్యాగ్ వాడాలి, లింక్ వాడకూడదు!</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 4: Relative పాత్‌లలో స్లాష్ (/) తప్పుగా వాడటం</p>
+      <p style="color:var(--text2); font-size:14px;">
+        <code>href="/about.html"</code> అంటే డొమైన్ రూట్‌కి వెళుతుంది. <code>href="about.html"</code> అంటే ప్రస్తుత ఫోల్డర్ లోని ఫైల్ కి వెళుతుంది. గిట్‌హబ్ పేజీలు లేదా సబ్‌ఫోల్డర్ ప్రాజెక్టులలో రూట్ స్లాష్ <code>/</code> ఇస్తే 404 ఎర్రర్ వస్తుంది!
+      </p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 5: ప్రోటోకాల్ ప్రిఫిక్స్ మర్చిపోవడం</p>
+      <p style="color:var(--text2); font-size:14px;">
+        ఫోన్ నంబర్ కోసం <code>href="9876543210"</code> అని ఇస్తే బ్రౌజర్ దానిని ఒక వెబ్ ఫైల్ అనుకుని వెతుకుతుంది. ఖచ్చితంగా <code>href="tel:+919876543210"</code> అని <code>tel:</code> ప్రిఫిక్స్ ఇవ్వాలి!
+      </p>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>ప్రాక్టీస్ టాస్క్స్ &amp; ఇంటర్వ్యూ క్విజ్ ప్రశ్నలు</div>
+    <div class="section-body">
+      <p>ఈ క్రింది ప్రశ్నలకు స్వయంగా సమాధానాలు ఆలోచించండి, ఆపై డ్రాప్‌డౌన్ తెరిచి పరిశీలించండి:</p>
+
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li>Absolute URL మరియు Relative URL ల మధ్య తేడా ఏమిటి? ఉదాహరణలతో వివరించండి.</li>
+        <li><code>target="_blank"</code> వాడినప్పుడు <code>rel="noopener noreferrer"</code> ఎందుకు తప్పనిసరిగా వాడాలి?</li>
+        <li>ఒక వెబ్‌పేజీలో నిర్దిష్ట విభాగానికి (Section) జంప్ చేయడానికి ఇంటర్నల్ బుక్‌మార్క్‌ను ఎలా నిర్మిస్తారు?</li>
+        <li>మొబైల్ ఫోన్లలో యూజర్ నేరుగా కాల్ చేయడానికి లేదా ఈమెయిల్ పంపడానికి ఏ ప్రోటోకాల్స్ వాడతారు?</li>
+        <li>"Click Here" అని యాంకర్ టెక్స్ట్ రాయడం ఎందుకు సరైన పద్ధతి కాదు?</li>
+      </ol>
+
+      <details>
+        <summary>🔍 సమాధానాలు &amp; లోతైన వివరణ చూడండి (Click to expand)</summary>
+        <div style="margin-top:12px; font-size:14.5px; line-height:1.7; color:var(--text2);">
+          <p><strong>1. సమాధానం:</strong> Absolute URL అనేది పూర్తి డొమైన్ పేరుతో కూడిన గ్లోబల్ చిరునామా (<code>https://google.com</code>). Relative URL అనేది ప్రస్తుత వెబ్‌సైట్ ఫైల్ లొకేషన్‌ను బట్టి ఉండే సాపేక్ష పాత్ (<code>./about.html</code> లేదా <code>../index.html</code>).</p>
+          <p style="margin-top:8px;"><strong>2. సమాధానం:</strong> Reverse Tabnabbing అనే భద్రతా దాడి నుండి రక్షించడానికి. కొత్తగా తెరిచిన పేజీ మీ అసలు పేజీ యొక్క <code>window.opener</code> ను యాక్సెస్ చేయకుండా <code>noopener</code> నిరోధిస్తుంది.</p>
+          <p style="margin-top:8px;"><strong>3. సమాధానం:</strong> గమ్యస్థాన ఎలిమెంట్‌కు <code>id="reviews"</code> ఇచ్చి, యాంకర్ ట్యాగ్‌లో <code>&lt;a href="#reviews"&gt;</code> అని హ్యాష్ గుర్తుతో లింక్ చేస్తారు.</p>
+          <p style="margin-top:8px;"><strong>4. సమాధానం:</strong> ఫోన్ కాల్స్ కోసం <code>tel:+919876543210</code>, ఈమెయిల్స్ కోసం <code>mailto:user@example.com</code> వాడతారు.</p>
+          <p style="margin-top:8px;"><strong>5. సమాధానం:</strong> స్క్రీన్ రీడర్స్ వాడే దృష్టిలోపం ఉన్నవారికి మరియు గూగుల్ సెర్చ్ ఇంజన్లకు ఆ లింక్ ఎక్కడికి తీసుకువెళుతుందో అర్థం కాదు. డిస్క్రిప్టివ్ టెక్స్ట్ (ఉదా: "మా కోర్సు వివరాలు") ఉండాలి.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 11 (TRY BOX) -->
+    <div class="section-title"><span class="num">11</span>మీరే స్వయంగా Try చేయండి (Live Coding Playground)</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🚀 నావిగేషన్ లింకులతో మీ స్వంత మెనూను రన్ చేయండి</div>
+        <p>పైన నేర్చుకున్న యాంకర్ ట్యాగ్స్, <code>_blank</code>, <code>mailto:</code>, మరియు ఇంటర్నల్ జంప్ లింక్స్ కోడ్‌ను మన ఆన్‌లైన్ ఎడిటర్‌లో ఓపెన్ చేసి, క్లిక్ చేస్తూ బ్రౌజర్ ఎలా రెస్పాండ్ అవుతుందో లైవ్‌గా పరీక్షించండి!</p>
+        <a class="run-btn" href="/online-html-editor.html" target="_blank">
+          👉 Our Compiler లో HTML Editor try చేయండి
+        </a>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div class="section-title"><span class="num">12</span>సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>యాంకర్ ట్యాగ్ (&lt;a&gt;):</strong> వెబ్‌పేజీలను ఒకదానితో ఒకటి అనుసంధానించే హైపర్‌లింక్ సృష్టికర్త.</li>
+        <li><strong>href ఆట్రిబ్యూట్:</strong> లింక్ నొక్కితే ఎక్కడికి వెళ్ళాలో నిర్దేశించే గమ్యస్థాన చిరునామా.</li>
+        <li><strong>Absolute vs Relative:</strong> బయటి సైట్లకు పూర్తి URL, సొంత సైట్ పేజీలకు సాపేక్ష పాత్స్ (<code>./</code>, <code>../</code>).</li>
+        <li><strong>Security:</strong> <code>target="_blank"</code> వాడినప్పుడు ఎల్లప్పుడూ <code>rel="noopener noreferrer"</code> జతచేయాలి.</li>
+        <li><strong>Internal Bookmarks:</strong> <code>href="#section-id"</code> తో ఒకే పేజీలో స్మూత్‌గా పైకి కిందకు జంప్ చేయడం.</li>
+        <li><strong>Special Protocols:</strong> <code>mailto:</code> ద్వారా మెయిల్స్, <code>tel:</code> ద్వారా ఫోన్ కాల్స్, <code>download</code> ద్వారా ఫైల్స్ డౌన్‌లోడ్.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 13 -->
+    <div class="section-title"><span class="num">13</span>తర్వాతి అధ్యాయంలో మీరు నేర్చుకోబోయేవి (What's Next in Chapter 6?)</div>
+    <div class="section-body">
+      <p>వెబ్‌సైట్లలో సమాచారాన్ని క్రమపద్ధతిలో అమర్చడానికి లిస్టులు ఎంతగానో ఉపయోగపడతాయి. తర్వాతి <strong>Chapter 6 (లిస్టులు: Unordered &lt;ul&gt;, Ordered &lt;ol&gt; &amp; Description Lists &lt;dl&gt;)</strong> లో మనం బుల్లెట్ పాయింట్లు, నంబర్డ్ లిస్టులు, నెస్టెడ్ లిస్టులు మరియు డిస్క్రిప్షన్ లిస్టుల ద్వారా ఆధునిక నావిగేషన్ మెనూ బార్లను ఎలా నిర్మించాలో పూర్తి తెలుగులో నేర్చుకుందాం!</p>
+    </div>
+`;
+
+// Build the full HTML document
+const fullPageHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${lesson.title} — Modern HTML5 Tutorial | Our Compiler</title>
+  <meta name="description" content="${lesson.title} సమగ్ర తెలుగు గైడ్: ${lesson.subtopics}." />
+  <meta name="keywords" content="html5 tutorial in telugu, learn html5, ${lesson.title.toLowerCase()}, web development, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-html/${lesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-html/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${lesson.title} (HTML5 in Telugu)",
+    "description": "${lesson.subtopics}",
+    "articleSection": "${lesson.phaseTag}: ${lesson.phaseTitle}",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-10-30"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Theme & Code Enhancements -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        // Code Block Actions: Copy & Online Editor Runner
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.open('/online-html-editor.html', '_blank');
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-html light-theme">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/online-html-editor.html" class="active">HTML/CSS/JS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-csharp.html">C#</a>
+</nav>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+${chapterContentHtml}
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-html/${lesson.prev.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: ${lesson.prev.title}
+      </a>
+      <a href="/blog-html/${lesson.next.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: ${lesson.next.title} →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested across modern Web Standards / W3C & WHATWG · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+const targetFile = path.join(__dirname, '..', 'public', 'blog-html', '05-html-links-anchor-tags-and-navigation.html');
+fs.writeFileSync(targetFile, fullPageHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value Chapter 5 (Phase 2 Starter)!');
+console.log('Target file size:', fullPageHtml.length, 'characters');

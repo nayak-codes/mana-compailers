@@ -24,3 +24,4 @@ if (checks.hasIntroBox && checks.hasSectionTitles === 13 && checks.hasTable && c
   console.error('❌ SOME CHECKS FAILED!');
   process.exit(1);
 }
+
