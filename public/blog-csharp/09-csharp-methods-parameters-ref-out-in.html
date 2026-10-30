@@ -316,14 +316,224 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>మెథడ్స్, పారామీటర్ మోడిఫైయర్స్ (ref, out, in, params)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. మెథడ్ సిగ్నేచర్ · Pass by Value vs ref · out మల్టిపుల్ రిటర్న్స్ · in రీడ్-ఓన్లీ రిఫరెన్స్ · params వేరియబుల్ ఆర్గ్యుమెంట్స్.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో మెథడ్స్, పారామీటర్ మోడిఫైయర్స్ (ref, out, in, params) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  C# అప్లికేషన్లలో కోడ్‌ను చిన్న చిన్న లాజికల్ భాగాలుగా విభజించి, రీయూజబుల్ (reusable) గా మార్చడానికి <strong>Methods (Functions)</strong> అత్యంత ప్రధానమైన స్తంభాలు. C# 12 మరియు .NET 8 లో మెథడ్స్ కేవలం సాధారణ పారామీటర్లనే కాకుండా, మెమరీ పర్ఫార్మెన్స్ కోసం <code>ref</code>, <code>out</code>, <code>in</code>, మరియు వేరియబుల్ ఆర్గ్యుమెంట్స్ కోసం <code>params</code> వంటి శక్తివంతమైన కీవర్డ్స్‌ను అందిస్తాయి. ఈ అధ్యాయంలో మెథడ్స్ నిర్మాణం, పారామీటర్ పాసింగ్ మెకానిజమ్స్ మరియు బెస్ట్ ప్రాక్టీసులను లోతుగా నేర్చుకుందాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> మెథడ్ బేసిక్స్ & మోడరన్ ఎక్స్‌ప్రెషన్ బాడీడ్ సింటాక్స్</div>
+<div class="section-body">
+  <p>C# లో ప్రతి మెథడ్ ఏదో ఒక <code>class</code> లేదా <code>struct</code> లోపల ఉండాలి (Top-Level Statements వాడినప్పుడు కంపైలర్ దాన్ని బ్యాక్‌గ్రౌండ్‌లో Program క్లాస్‌లోకి మారుస్తుంది). ఒక మెథడ్ సిగ్నేచర్‌లో <strong>Access Modifier</strong>, <strong>Return Type</strong>, <strong>Method Name</strong>, మరియు <strong>Parameter List</strong> ఉంటాయి.</p>
+
+  <p>సింగిల్ లైన్ లాజిక్ ఉన్న చిన్న మెథడ్స్ కోసం C# 6+ లో ప్రవేశపెట్టిన <strong>Expression-bodied syntax (<code>=&gt;</code>)</strong> కోడ్‌ను ఎంతో స్పష్టంగా మరియు క్లీన్‌గా ఉంచుతుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>MethodDefinition.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    // Standard Method Body
+    static double CalculateArea(double width, double height)
+    {
+        return width * height;
+    }
+
+    // Modern Expression-bodied Method (C# 6+)
+    static double CalculatePerimeter(double w, double h) => 2 * (w + h);
+
+    static void Main()
+    {
+        double w = 5.0, h = 3.0;
+        Console.WriteLine($"Area: {CalculateArea(w, h)}");
+        Console.WriteLine($"Perimeter: {CalculatePerimeter(w, h)}");
+    }
+}</code></pre>
+  </div>
+
+  <p><strong>లైన్-బై-లైన్ వివరణ:</strong></p>
+  <ul>
+    <li><code>static double CalculateArea(...)</code>: <code>static</code> మెథడ్ కాబట్టి క్లాస్ ఆబ్జెక్ట్ లేకుండానే నేరుగా కాల్ చేయవచ్చు. <code>double</code> డేటా టైప్‌ను రిటర్న్ చేస్తుంది.</li>
+    <li><code>CalculatePerimeter(double w, double h) =&gt; 2 * (w + h);</code>: ఫ్యాట్ ఆరో సింటాక్స్ వాడటం వల్ల <code>{ return ...; }</code> బాయిలర్‌ప్లేట్ తొలగిపోయి ఒకే లైన్‌లో లాజిక్ ముగిసింది.</li>
+  </ul>
+</div>
+
+<div class="section-title"><span class="num">2</span> Pass-by-Value vs Reference: ref కీవర్డ్</div>
+<div class="section-body">
+  <p>C# లో డీఫాల్ట్‌గా అన్ని పారామీటర్లు <strong>Pass-by-Value</strong> పద్ధతిలో పాస్ అవుతాయి. అంటే కాలర్ వేరియబుల్ యొక్క కాపీ (copy) మాత్రమే మెథడ్‌కు అందుతుంది. మెథడ్ లోపల ఆ వేరియబుల్‌ను మార్చినా మెయిన్ మెథడ్‌లోని ఒరిజినల్ వేరియబుల్ మారదు.</p>
+
+  <p>ఒరిజినల్ వేరియబుల్ యొక్క అసలైన మెమరీ లొకేషన్‌నే నేరుగా పంపించాలంటే <strong><code>ref</code></strong> కీవర్డ్ వాడాలి. <code>ref</code> ఉపయోగించేటప్పుడు వేరియబుల్‌కు ముందే ఏదో ఒక వ్యాల్యూ ఇనిషియలైజ్ (initialize) అయి ఉండటం తప్పనిసరి.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>RefSwapExample.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Swap(ref int a, ref int b)
+    {
+        int temp = a;
+        a = b;
+        b = temp;
+    }
+
+    static void Main()
+    {
+        int x = 10, y = 20;
+        Console.WriteLine($"Before Swap: x={x}, y={y}");
+        
+        // Calling with ref keyword
+        Swap(ref x, ref y);
+        Console.WriteLine($"After Swap:  x={x}, y={y}");
+    }
+}</code></pre>
+  </div>
+
+  <div class="output-block">Before Swap: x=10, y=20
+After Swap:  x=20, y=10</div>
+
+  <p><strong>ముఖ్యమైన సూచన:</strong> మెథడ్ డెఫినిషన్‌లోనూ మరియు మెథడ్‌ను కాల్ చేసేటప్పుడు కూడా <code>ref</code> అని స్పష్టంగా రాయాలి. దీనివల్ల ఆ వేరియబుల్ మారబోతోందని కోడ్ చదివే డెవలపర్‌కు ముందే తెలుస్తుంది.</p>
+</div>
+
+<div class="section-title"><span class="num">3</span> out కీవర్డ్ & Discards (_)</div>
+<div class="section-body">
+  <p>ఒక మెథడ్ నుండి ఒకేసారి రెండు లేదా అంతకంటే ఎక్కువ ఫలితాలు (results) రిటర్న్ చేయాల్సి వచ్చినప్పుడు <strong><code>out</code></strong> కీవర్డ్ వాడతారు. <code>ref</code> లాగే ఇది కూడా రిఫరెన్స్ ద్వారా పనిచేస్తుంది, కానీ <strong>రెండు కీలక వ్యత్యాసాలు</strong> ఉన్నాయి:</p>
+  <ol>
+    <li>కాలర్ వేరియబుల్‌కు ముందే వ్యాల్యూ ఇవ్వాల్సిన అవసరం లేదు.</li>
+    <li>మెథడ్ పూర్తయ్యేలోపు ఆ <code>out</code> పారామీటర్‌కు కచ్చితంగా ఏదో ఒక వ్యాల్యూ అసైన్ చేసి తీరాలి (లేకపోతే కంపైలర్ ఎర్రర్ ఇస్తుంది).</li>
+  </ol>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>OutParameters.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void CalculateStats(int[] numbers, out int sum, out double average)
+    {
+        sum = 0;
+        foreach (int n in numbers) sum += n;
+        average = numbers.Length > 0 ? (double)sum / numbers.Length : 0.0;
+    }
+
+    static void Main()
+    {
+        int[] scores = { 80, 90, 75, 95 };
+        
+        // Inline out variable declaration (C# 7+)
+        CalculateStats(scores, out int totalSum, out double avgScore);
+        
+        Console.WriteLine($"Total: {totalSum}, Average: {avgScore:F2}");
+        
+        // Discards (_) if you only need the sum
+        CalculateStats(scores, out int onlySum, out _);
+        Console.WriteLine($"Only Sum: {onlySum}");
+    }
+}</code></pre>
+  </div>
+
+  <p><strong>C# 7+ Inline Declaration:</strong> పాత C# లో వేరియబుల్‌ను ముందే డిక్లేర్ చేయాల్సి వచ్చేది. ఆధునిక C# లో <code>out int totalSum</code> అని మెథడ్ కాల్ లోపలే నేరుగా డిక్లేర్ చేసుకోవచ్చు. అనవసరమైన రిటర్న్ వ్యాల్యూస్ వద్దనుకుంటే అండర్‌స్కోర్ (<code>out _</code>) డిస్కార్డ్ వాడవచ్చు.</p>
+</div>
+
+<div class="section-title"><span class="num">4</span> in కీవర్డ్ (Readonly Reference) & params కీవర్డ్</div>
+<div class="section-body">
+  <p>హై-పెర్ఫార్మెన్స్ అప్లికేషన్లలో మెమరీ కాపీని నివారించడానికి మరియు వేరియబుల్స్ సంఖ్య మారే సందర్భాల కోసం C# లో ఈ రెండు ప్రత్యేక కీవర్డ్స్ ఉన్నాయి:</p>
+
+  <p><strong>1. <code>in</code> కీవర్డ్:</strong> పెద్ద పరిమాణంలో ఉండే Structs లేదా డేటా స్ట్రక్చర్స్‌ను పాస్ చేసేటప్పుడు మెమరీ కాపీ అవ్వకుండా రిఫరెన్స్ ద్వారా పంపుతుంది. కానీ ఆ మెథడ్ లోపల దాన్ని మార్చడం (modify) నిషిద్ధం (Read-only reference). ఒకవేళ మార్చడానికి ప్రయత్నిస్తే కంపైలర్ ఎర్రర్ వస్తుంది.</p>
+
+  <p><strong>2. <code>params</code> కీవర్డ్:</strong> ఒక మెథడ్‌కు ఎన్ని ఆర్గ్యుమెంట్స్ అయినా పాస్ చేసుకునే వీలు కల్పిస్తుంది. మెథడ్ లోపల అది ఒక అరే (array) గా ట్రీట్ చేయబడుతుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>InAndParamsDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    // params allows passing variable comma-separated numbers
+    static int SumAll(params int[] numbers)
+    {
+        int total = 0;
+        foreach (int n in numbers) total += n;
+        return total;
+    }
+
+    // in parameter: Read-only reference (avoids struct copying)
+    static void PrintCoordinate(in int x, in int y)
+    {
+        // x = 100; // Compile Error! Cannot modify 'in' variable
+        Console.WriteLine($"Point: ({x}, {y})");
+    }
+
+    static void Main()
+    {
+        Console.WriteLine($"Sum (3 args): {SumAll(10, 20, 30)}");
+        Console.WriteLine($"Sum (5 args): {SumAll(1, 2, 3, 4, 5)}");
+        
+        int px = 50, py = 75;
+        PrintCoordinate(in px, in py);
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> Optional & Named Parameters</div>
+<div class="section-body">
+  <p>మెథడ్ పారామీటర్లకు డీఫాల్ట్ వ్యాల్యూస్ కేటాయిస్తే, కాలర్ ఆ ఆర్గ్యుమెంట్‌ను పాస్ చేయకపోయినా డీఫాల్ట్ వ్యాల్యూ ఉపయోగపడుతుంది. అలాగే <strong>Named Arguments</strong> ద్వారా పారామీటర్లను ఏ క్రమంలోనైనా (order) పేరు పెట్టి పాస్ చేయవచ్చు.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>OptionalNamedArgs.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void SendEmail(string to, string subject = "No Subject", bool isUrgent = false)
+    {
+        string tag = isUrgent ? "[URGENT] " : "";
+        Console.WriteLine($"Sending to: {to} | Subject: {tag}{subject}");
+    }
+
+    static void Main()
+    {
+        // Using defaults
+        SendEmail("rajesh@example.com");
+
+        // Named arguments (changing order)
+        SendEmail(subject: "Meeting Tomorrow", to: "priya@example.com", isUrgent: true);
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: out పారామీటర్‌కు వ్యాల్యూ ఇవ్వడం మర్చిపోవడం</strong><br>
+    <span style="font-size:13.5px; color:#475569;">ఒక మెథడ్‌లో <code>out</code> పారామీటర్ ఉండి, మెథడ్ రిటర్న్ అయ్యే ప్రతి బ్రాంచ్ (if/else) లో దానికి వ్యాల్యూ అసైన్ చేయకపోతే, C# కంపైలర్ <code>CS0177: The out parameter must be assigned to before control leaves the current method</code> ఎర్రర్‌ను విసురుతుంది.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong><code>ref</code> మరియు <code>out</code> మధ్య ప్రాథమిక తేడా ఏమిటి?</strong><br>
+    <code>ref</code> పాస్ చేసే ముందు వేరియబుల్‌కు ముందే వ్యాల్యూ ఉండాలి. <code>out</code> పాస్ చేసేటప్పుడు ముందే వ్యాల్యూ ఉండాల్సిన పనిలేదు, కానీ మెథడ్ ముగిసేలోపు కచ్చితంగా వ్యాల్యూ సెట్ చేయాలి.</li>
+    <li><strong>Method Overloading అంటే ఏమిటి?</strong><br>
+    ఒకే క్లాస్‌లో ఒకే పేరుతో వేర్వేరు పారామీటర్ రకాలు (Types) లేదా సంఖ్య (Count) తో బహుళ మెథడ్స్ నిర్వచించడాన్ని మెథడ్ ఓవర్‌లోడింగ్ అంటారు. రిటర్న్ టైప్ మాత్రమే వేరుగా ఉంటే ఓవర్‌లోడింగ్ కుదరదు.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

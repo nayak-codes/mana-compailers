@@ -316,14 +316,220 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>జెనెరిక్ కలెక్షన్స్ (List<T>, Dictionary<TKey, TValue>, HashSet<T>)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. Non-generic (ArrayList Boxing/Unboxing) సమస్య · List<T> డైనమిక్ అరే · Dictionary<TKey, TValue> $O(1)$ లూకప్ · HashSet<T> యూనిక్ సెట్.
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో జెనెరిక్ కలెక్షన్స్ (List<T>, Dictionary<TKey, TValue>, HashSet<T>) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  ఫిక్స్‌డ్ సైజ్ గల సాధారణ అరేలకు భిన్నంగా, డేటాను డైనమిక్‌గా జోడించడానికి మరియు వేగంగా సెర్చ్ చేయడానికి .NET మనకు <strong>Generic Collections (<code>System.Collections.Generic</code>)</strong> ను అందిస్తుంది. పాత కాలపు నాన్-జెనెరిక్ కలెక్షన్స్ (ఉదా: <code>ArrayList</code>) వల్ల వచ్చే బాక్సింగ్/అన్‌బాక్సింగ్ పర్ఫార్మెన్స్ సమస్యలను తొలగించి, కంపైల్-టైమ్ టైప్ సేఫ్టీని కల్పించడమే జెనెరిక్స్ యొక్క ముఖ్య లక్ష్యం. ఈ అధ్యాయంలో <strong><code>List&lt;T&gt;</code></strong>, <strong><code>Dictionary&lt;TKey, TValue&gt;</code></strong>, మరియు <strong><code>HashSet&lt;T&gt;</code></strong> ల అంతర్గత పనితీరును క్షుణ్ణంగా నేర్చుకుందాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> జెనెరిక్స్ ప్రాముఖ్యత: బాక్సింగ్ & అన్‌బాక్సింగ్ నివారణ</div>
+<div class="section-body">
+  <p>C# 1.0 లో ఉన్న <code>ArrayList</code> అన్ని రకాల డేటాను <code>object</code> గా నిల్వ చేసేది. దీనివల్ల రెండు పెద్ద ప్రమాదాలు ఉండేవి:</p>
+  <ol>
+    <li><strong>Boxing & Unboxing:</strong> విలువైన Value Type (ఉదా: <code>int</code>) ను <code>object</code> గా మార్చినప్పుడు హీప్‌పై అలొకేషన్ జరిగి వేగం పడిపోతుంది.</li>
+    <li><strong>Type Safety లోపం:</strong> ఒకే లిస్టులో పూర్ణాంకాలు, స్ట్రింగ్స్ అన్నీ కలిసిపోయి రన్‌టైమ్‌లో <code>InvalidCastException</code> కు కారణమయ్యేవి.</li>
+  </ol>
+
+  <p>C# 2.0 లో వచ్చిన <strong>Generics</strong> ఈ సమస్యకు శాశ్వత పరిష్కారం చూపాయి. <code>List&lt;int&gt;</code> అని రాస్తే అది కేవలం ఇంటిజర్లను మాత్రమే అనుమతిస్తుంది. జీరో బాక్సింగ్, మరియు 100% కంపైల్-టైమ్ భద్రత లభిస్తుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>GenericsSafety.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Safe, High Performance Generic List
+        List<int> numbers = new List<int>();
+        numbers.Add(10);
+        numbers.Add(20);
+        // numbers.Add("Hello"); // Compile Error! Type safe!
+
+        int first = numbers[0]; // No casting or unboxing needed
+        Console.WriteLine($"First number: {first}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span> List&lt;T&gt; ఇంటర్నల్ వర్కింగ్ & కెపాసిటీ గ్రోత్</div>
+<div class="section-body">
+  <p><code>List&lt;T&gt;</code> వెనుక బ్యాక్‌గ్రౌండ్‌లో ఒక సాధారణ అరే పనిచేస్తుంది. దీనికి <strong>Count</strong> (ప్రస్తుతం ఉన్న ఎలిమెంట్స్ సంఖ్య) మరియు <strong>Capacity</strong> (ఇంటర్నల్ అరే గరిష్ట పరిమాణం) అనే రెండు ప్రాపర్టీలు ఉంటాయి.</p>
+
+  <p>కెపాసిటీ నిండిపోగానే, <code>List&lt;T&gt;</code> ఇంటర్నల్ అరే సైజును రెట్టింపు (4 → 8 → 16 → 32...) చేస్తుంది. మీకు ముందుగానే ఎలిమెంట్స్ సంఖ్య తెలిస్తే, కన్‌స్ట్రక్టర్‌లో కెపాసిటీని నిర్దేశించడం (ఉదా: <code>new List&lt;int&gt;(1000)</code>) ద్వారా రీ-అలొకేషన్లను నివారించవచ్చు.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ListOperations.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        List<string> skills = new List<string> { "C#", "SQL", ".NET" };
+        
+        // Adding and inserting
+        skills.Add("Docker");
+        skills.Insert(1, "Azure"); // Inserts at index 1
+        
+        // Searching
+        bool hasCSharp = skills.Contains("C#");
+        Console.WriteLine($"Contains C#? {hasCSharp}");
+        
+        // Removing
+        skills.Remove("SQL");
+        
+        Console.WriteLine($"Count: {skills.Count}, Capacity: {skills.Capacity}");
+        foreach (string skill in skills)
+        {
+            Console.WriteLine($"- {skill}");
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> Dictionary&lt;TKey, TValue&gt; & O(1) లుకప్ మెకానిజమ్స్</div>
+<div class="section-body">
+  <p>కీ-విలువ జంటలుగా (Key-Value Pairs) డేటాను నిల్వ చేయడానికి <strong><code>Dictionary&lt;TKey, TValue&gt;</code></strong> ఉత్తమమైనది. ఇది అంతర్గతంగా హాష్ టేబుల్ (Hash Table) ను ఉపయోగిస్తుంది. దీనివల్ల మిలియన్ల కొద్దీ రికార్డులు ఉన్నప్పటికీ సగటున <strong>O(1) కాన్‌స్టంట్ టైమ్</strong> లో రికార్డును వెతకవచ్చు.</p>
+
+  <p><strong>TryGetValue సేఫ్ పాటర్న్:</strong> కీ లేనప్పుడు ఇండెక్సర్ <code>dict[key]</code> వాడితే <code>KeyNotFoundException</code> వస్తుంది. దీని నివారణకు ఎల్లప్పుడూ <code>TryGetValue</code> వాడాలి.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>DictionaryDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Employee ID -> Name mapping
+        Dictionary<int, string> employees = new Dictionary<int, string>()
+        {
+            { 101, "Anil Kumar" },
+            { 102, "Sneha Reddy" }
+        };
+
+        employees[103] = "Vikas Rao"; // Add or Update
+
+        // Safe Lookup using TryGetValue
+        int targetId = 102;
+        if (employees.TryGetValue(targetId, out string empName))
+        {
+            Console.WriteLine($"Found Employee {targetId}: {empName}");
+        }
+        else
+        {
+            Console.WriteLine($"Employee {targetId} not found!");
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> HashSet&lt;T&gt; & హై-స్పీడ్ సెట్ ఆపరేషన్స్</div>
+<div class="section-body">
+  <p>డూప్లికేట్స్ (నకిలీ విలువలు) ఉండకూడదనుకున్నప్పుడు మరియు ఒక ఎలిమెంట్ కలెక్షన్‌లో ఉందో లేదో క్షణాల్లో కనుగొనడానికి <strong><code>HashSet&lt;T&gt;</code></strong> వాడతారు. ఇది ఇండెక్స్ ఆధారంగా కాకుండా హాష్ ఆధారంగా పనిచేస్తుంది.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>HashSetDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        HashSet<int> activeIds = new HashSet<int> { 1001, 1002, 1003 };
+        
+        bool addedAgain = activeIds.Add(1002); // Duplicate! Returns false
+        Console.WriteLine($"Was 1002 added again? {addedAgain}");
+        
+        // O(1) membership check
+        Console.WriteLine($"Contains 1003? {activeIds.Contains(1003)}");
+        
+        // Set Operations: Union, Intersect
+        HashSet<int> teamB = new HashSet<int> { 1003, 1004, 1005 };
+        activeIds.IntersectWith(teamB); // Keeps common elements only
+        
+        Console.WriteLine($"Common IDs count: {activeIds.Count}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> సరైన కలెక్షన్‌ను ఎంచుకోవడానికి గైడ్ (Cheat Sheet)</div>
+<div class="section-body">
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; margin-top:12px; font-size:13.5px;">
+      <thead>
+        <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+          <th style="padding:10px; text-align:left;">Collection Type</th>
+          <th style="padding:10px; text-align:left;">Lookup Speed</th>
+          <th style="padding:10px; text-align:left;">Duplicates Allowed?</th>
+          <th style="padding:10px; text-align:left;">ఉత్తమ వినియోగ సందర్భం</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;"><code>T[]</code> (Array)</td>
+          <td style="padding:10px;">O(1) index</td>
+          <td style="padding:10px;">Yes</td>
+          <td style="padding:10px;">సైజు స్థిరంగా ఉన్నప్పుడు, మెమరీ ఆప్టిమైజేషన్ కోసం</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;"><code>List&lt;T&gt;</code></td>
+          <td style="padding:10px;">O(1) index, O(N) value</td>
+          <td style="padding:10px;">Yes</td>
+          <td style="padding:10px;">డైనమిక్ సైజు, ఆర్డర్ ముఖ్యం అయినప్పుడు సాధారణ లిస్టుల కోసం</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px;"><code>Dictionary&lt;K,V&gt;</code></td>
+          <td style="padding:10px;">O(1) key</td>
+          <td style="padding:10px;">Keys: No, Values: Yes</td>
+          <td style="padding:10px;">ఐడీ లేదా పేరు ద్వారా వేగంగా డేటాను ఫెచ్ చేయడానికి</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;"><code>HashSet&lt;T&gt;</code></td>
+          <td style="padding:10px;">O(1) value</td>
+          <td style="padding:10px;">No</td>
+          <td style="padding:10px;">యూనిక్ ఎలిమెంట్స్ భద్రపరచడానికి, డూప్లికేట్స్ ఫిల్టర్ చేయడానికి</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: foreach లూప్ తిరుగుతున్నప్పుడు కలెక్షన్‌ను మార్చడం</strong><br>
+    <span style="font-size:13.5px; color:#475569;"><code>foreach (var item in list) { list.Remove(item); }</code> అని రాస్తే రన్‌టైమ్‌లో <code>InvalidOperationException: Collection was modified; enumeration operation may not execute</code> ఎర్రర్ వస్తుంది. లూప్ లోపల ఎలిమెంట్స్ తొలగించాలంటే రివర్స్ <code>for</code> లూప్ లేదా <code>list.RemoveAll(...)</code> వాడాలి.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong><code>IEnumerable&lt;T&gt;</code> మరియు <code>List&lt;T&gt;</code> మధ్య తేడా ఏమిటి?</strong><br>
+    <code>IEnumerable&lt;T&gt;</code> అనేది కేవలం ఫార్వర్డ్-ఓన్లీ రీడ్-ఓన్లీ ఇటరేషన్ కోసం ఇంటర్‌ఫేస్ (Lazy evaluation). <code>List&lt;T&gt;</code> అనేది మెమరీలో స్టోర్ అయి ఉండే పూర్తి కలెక్షన్, ఇందులో యాడ్, రిమూవ్, ఇండెక్సింగ్ చేయవచ్చు.</li>
+    <li><strong>Dictionary లో ఒకే కీని మళ్ళీ Add చేస్తే ఏమవుతుంది?</strong><br>
+    <code>dict.Add("k", v)</code> వాడితే <code>ArgumentException: An item with the same key has already been added</code> వస్తుంది. అదే <code>dict["k"] = v</code> వాడితే ఉన్న వ్యాల్యూ ఓవర్‌రైట్ అవుతుంది.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

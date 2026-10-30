@@ -316,14 +316,215 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>అర్రేలు (1D, 2D Rectangular & Jagged Arrays)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. 1D అర్రేస్ · 2D రెక్టాంగ్యులర్ [,] vs జాగ్‌డ్ అర్రేస్ [][] (Array of Arrays) · Array క్లాస్ మెథడ్స్ (Sort, Reverse, IndexOf).
-      </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో అర్రేలు (1D, 2D Rectangular & Jagged Arrays) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
-      </div>
-    
+<div class="intro-box">
+  ఒకే డేటా టైప్‌కు చెందిన బహుళ విలువలను మెమరీలో ఒకే వరుస క్రమంలో నిల్వ చేయడానికి <strong>Arrays (అరేలు)</strong> ప్రాథమిక సాధనాలు. C# లో అరేలు రన్‌టైమ్ ద్వారా నిర్వహించబడే రిఫరెన్స్ టైప్స్ (Reference Types on Heap). C# లో సింగిల్ డైమెన్షనల్ అరేలతో పాటు, టేబుల్స్ కోసం <strong>Multidimensional Arrays (<code>int[,]</code>)</strong> మరియు వేర్వేరు పొడవులు ఉండే <strong>Jagged Arrays (<code>int[][]</code>)</strong> ఉంటాయి. ఈ అధ్యాయంలో వాటి మెమరీ లేఅవుట్, ఇండెక్స్ ఆపరేటర్లు మరియు ఆప్టిమైజేషన్లను పరిశీలిద్దాం.
+</div>
+
+<div class="section-title"><span class="num">1</span> Single-Dimensional Arrays (1D) & Zero-based Indexing</div>
+<div class="section-body">
+  <p>1D అరే అనేది ఫిక్స్‌డ్ సైజ్ కలిగిన వరుస మెమరీ బ్లాక్. అరేలోని మొదటి ఎలిమెంట్ ఇండెక్స్ ఎల్లప్పుడూ <code>0</code> తో మొదలవుతుంది, చివరి ఎలిమెంట్ ఇండెక్స్ <code>Length - 1</code> అవుతుంది.</p>
+
+  <p>C# 8 లో ప్రవేశపెట్టిన <strong>Index from End (<code>^</code>)</strong> మరియు <strong>Range (<code>..</code>)</strong> ఆపరేటర్ల ద్వారా అరే ఎలిమెంట్స్‌ను మరింత సులువుగా యాక్సెస్ చేయవచ్చు. ఉదాహరణకు <code>^1</code> అంటే చివరి ఎలిమెంట్, <code>1..4</code> అంటే సబ్-అరే స్లైస్.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>OneDArrayDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Array initialization
+        int[] scores = { 88, 92, 79, 95, 84 };
+        
+        Console.WriteLine($"Total Elements: {scores.Length}");
+        Console.WriteLine($"First Score: {scores[0]}");
+        
+        // Modern C# Index from end operator (^)
+        Console.WriteLine($"Last Score: {scores[^1]}");
+        Console.WriteLine($"Second to Last: {scores[^2]}");
+        
+        // Range slicing (..)
+        int[] topThree = scores[0..3]; // indices 0, 1, 2
+        Console.WriteLine($"Top 3 count: {topThree.Length}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">2</span> Rectangular Multidimensional Arrays (int[,])</div>
+<div class="section-body">
+  <p>గ్రిడ్ లేదా మ్యాట్రిక్స్ రూపంలో ఉండే డేటా (ఉదాహరణకు గేమ్‌లలో చెస్ బోర్డు, లేదా ఇమేజ్ పిక్సెల్స్) నిల్వ చేయడానికి C# లో <strong>Rectangular Multidimensional Array (<code>[,]</code>)</strong> వాడతారు. ఇందులో ప్రతి అడ్డు వరుస (Row) లోనూ కచ్చితంగా సమాన సంఖ్యలో నిలువు వరుసలు (Columns) ఉంటాయి.</p>
+
+  <p>మెమరీలో ఇవి ఒకే నిరంతర (single contiguous) బ్లాక్‌గా స్టోర్ అవుతాయి. రోస్ సంఖ్య తెలుసుకోవడానికి <code>GetLength(0)</code> మరియు కాలమ్స్ సంఖ్య కోసం <code>GetLength(1)</code> వాడాలి.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>Matrix2DDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Main()
+    {
+        // 3 Rows, 3 Columns Matrix
+        int[,] matrix = {
+            { 1, 2, 3 },
+            { 4, 5, 6 },
+            { 7, 8, 9 }
+        };
+
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+
+        Console.WriteLine($"Matrix Dimension: {rows}x{cols}");
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                Console.Write($"{matrix[r, c],4} ");
+            }
+            Console.WriteLine();
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">3</span> Jagged Arrays (int[][]) — అరేల యొక్క అరే (Arrays of Arrays)</div>
+<div class="section-body">
+  <p>ఒక్కో వరుసలో వేర్వేరు సంఖ్యలో ఎలిమెంట్స్ ఉండాల్సి వచ్చినప్పుడు (ఉదాహరణకు ప్రతి క్లాస్‌లో వేర్వేరు సంఖ్యలో విద్యార్థులు ఉన్నప్పుడు) <strong>Jagged Array (<code>[][]</code>)</strong> వాడతారు. ఇది నిజానికి ఇతర అరేలకు పాయింట్ చేసే రిఫరెన్స్‌ల అరే.</p>
+
+  <div style="background:var(--bg3); border-left:4px solid #10b981; padding:12px 16px; margin:16px 0; border-radius:0 8px 8px 0;">
+    <strong>హై-పెర్ఫార్మెన్స్ ఇన్సైట్:</strong> ఆశ్చర్యకరంగా .NET JIT కంపైలర్ రెక్టాంగ్యులర్ అరేల (<code>[,]</code>) కంటే జాగెడ్ అరేల (<code>[][]</code>) పై లూపులను వేగంగా ఎగ్జిక్యూట్ చేస్తుంది. ఎందుకంటే 1D వెక్టార్ బౌండ్స్ చెకింగ్ కోసం CPU ఆర్కిటెక్చర్‌లో ప్రత్యేక ఆప్టిమైజేషన్లు ఉంటాయి.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>JaggedArrayDemo.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Array of 3 arrays
+        int[][] jagged = new int[3][];
+        
+        jagged[0] = new int[] { 10, 20 };
+        jagged[1] = new int[] { 30, 40, 50, 60 };
+        jagged[2] = new int[] { 70 };
+
+        for (int i = 0; i < jagged.Length; i++)
+        {
+            Console.Write($"Row {i} (Length {jagged[i].Length}): ");
+            for (int j = 0; j < jagged[i].Length; j++)
+            {
+                Console.Write($"{jagged[i][j]} ");
+            }
+            Console.WriteLine();
+        }
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">4</span> System.Array యుటిలిటీ మెథడ్స్ (Sort, Reverse, IndexOf)</div>
+<div class="section-body">
+  <p>అరేలపై వేగవంతమైన ఆపరేషన్స్ చేయడానికి .NET లోని స్టాటిక్ క్లాస్ <code>System.Array</code> అత్యుత్తమ మెథడ్స్‌ను కలిగి ఉంది:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>ArrayUtilityMethods.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Main()
+    {
+        string[] cities = { "Visakhapatnam", "Hyderabad", "Vijayawada", "Tirupati" };
+
+        // 1. Array.Sort (Ascending order)
+        Array.Sort(cities);
+        Console.WriteLine($"Sorted: {string.Join(", ", cities)}");
+
+        // 2. Array.Reverse
+        Array.Reverse(cities);
+        Console.WriteLine($"Reversed: {string.Join(", ", cities)}");
+
+        // 3. Array.IndexOf (Linear search)
+        int index = Array.IndexOf(cities, "Hyderabad");
+        Console.WriteLine($"Hyderabad found at index: {index}");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">5</span> రియల్-వరల్డ్ కేస్ స్టడీ: స్టూడెంట్ గ్రేడ్స్ కాలిక్యులేటర్</div>
+<div class="section-body">
+  <p>విద్యార్థుల మార్కులను ప్రాసెస్ చేసి సగటు (average) మరియు గరిష్ట స్కోర్ కనుగొనే సంపూర్ణ C# ప్రోగ్రామ్:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>StudentGradesApp.cs</span>
+      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    </div>
+    <pre><code>using System;
+
+class Program
+{
+    static void Main()
+    {
+        string[] students = { "Kiran", "Lavanya", "Mahesh" };
+        int[] marks = { 85, 94, 78 };
+
+        int highestMark = marks[0];
+        string topStudent = students[0];
+        int total = 0;
+
+        for (int i = 0; i < marks.Length; i++)
+        {
+            total += marks[i];
+            if (marks[i] > highestMark)
+            {
+                highestMark = marks[i];
+                topStudent = students[i];
+            }
+        }
+
+        double average = (double)total / marks.Length;
+        Console.WriteLine($"Class Average: {average:F2}");
+        Console.WriteLine($"Topper: {topStudent} with {highestMark} marks");
+    }
+}</code></pre>
+  </div>
+</div>
+
+<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
+<div class="section-body">
+  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
+    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: IndexOutOfRangeException</strong><br>
+    <span style="font-size:13.5px; color:#475569;">ఒక అరే సైజు 5 ఉన్నప్పుడు, చెల్లుబాటు అయ్యే ఇండెక్స్‌లు 0 నుండి 4 మాత్రమే. అనుకోకుండా <code>scores[5]</code> అని యాక్సెస్ చేయడానికి ప్రయత్నిస్తే రన్‌టైమ్‌లో అప్లికేషన్ క్రాష్ అవుతుంది. లూపుల్లో ఎల్లప్పుడూ <code>i &lt; array.Length</code> కండిషన్ మాత్రమే వాడాలి.</span>
+  </div>
+
+  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
+  <ul>
+    <li><strong>Rectangular Array (<code>[,]</code>) మరియు Jagged Array (<code>[][]</code>) ల మధ్య తేడా ఏమిటి?</strong><br>
+    రెక్టాంగ్యులర్ అరేలో అన్ని వరుసలు సమాన పొడవును కలిగి ఉంటాయి మరియు సింగిల్ బ్లాక్‌గా కేటాయించబడతాయి. జాగెడ్ అరేలో ఒక్కో వరుస వేర్వేరు పొడవును కలిగి ఉంటుంది మరియు హీప్‌పై స్వతంత్ర అరేలుగా ఉంటాయి.</li>
+    <li><strong>C# లో Array సైజును డైనమిక్‌గా పెంచవచ్చా?</strong><br>
+    లేదు, C# లో అరేలు ఫిక్స్‌డ్ సైజ్ కలిగి ఉంటాయి. డైనమిక్ సైజు కావాలంటే <code>List&lt;T&gt;</code> కలెక్షన్ వాడాలి.</li>
+  </ul>
+</div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
