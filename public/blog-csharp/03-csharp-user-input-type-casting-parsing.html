@@ -316,14 +316,134 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. Console.ReadLine() · Implicit vs Explicit Casting · int.Parse() vs int.TryParse() ఎర్రర్-ఫ్రీ పార్సింగ్ · Convert క్లాస్.
+    <div class="intro-box">
+      కన్సోల్ అప్లికేషన్లు యూజర్ నుండి సమాచారాన్ని స్వీకరించి ప్రాసెస్ చేసినప్పుడే ఉపయోగకరంగా మారతాయి. C# లో కీబోర్డ్ ఇన్‌పుట్ తీసుకోవడానికి <strong>Console.ReadLine()</strong> ప్రాథమిక సాధనం. అయితే యూజర్ ఇచ్చే డేటా ఎల్లప్పుడూ టెక్స్ట్ (String) రూపంలోనే ఉంటుంది. ఆ టెక్స్ట్‌ను సంఖ్యలుగా మార్చేటప్పుడు అప్లికేషన్ క్రాష్ కాకుండా రక్షించే ప్రసిద్ధ <strong>int.TryParse()</strong> ప్యాటర్న్, మరియు టైప్ కాస్టింగ్ నిబంధనలను ఈ అధ్యాయంలో సమగ్రంగా పరిశీలిద్దాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>Console.ReadLine() అంతర్గత పనితీరు</div>
+    <div class="section-body">
+      <p>
+        యూజర్ కీబోర్డ్ ద్వారా ఒక లైన్ సమాచారాన్ని టైప్ చేసి <strong>Enter</strong> కీ ప్రెస్ చేసేంత వరకు <code>Console.ReadLine()</code> వేచి చూస్తుంది. 
+      </p>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981; font-size:14.5px;">🔑 గోల్డెన్ రూల్: ఇన్‌పుట్ ఎల్లప్పుడూ string మాత్రమే!</strong>
+        <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          యూజర్ నంబర్ <code>25</code> అని టైప్ చేసినా, కంప్యూటర్ దృష్టిలో అది సంఖ్య కాదు; కేవలం రెండు అక్షరాల టెక్స్ట్ <code>"25"</code> మాత్రమే. దానిపై గణిత లెక్కలు చేయాలంటే మనం దానిని సంఖ్యగా (Integer / Double) మార్చాల్సిందే.
+        </p>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Basic User Input</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>Console.Write("మీ పేరు నమోదు చేయండి: ");
+string? name = Console.ReadLine();
+
+Console.WriteLine($"స్వాగతం, {name} గారు!");</code></pre>
       </div>
-    
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>టైప్ కన్వర్షన్ రకాలు — Implicit vs Explicit (Casting)</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">1. Implicit Casting (ఆటోమేటిక్):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0 0 8px 0; line-height:1.6;">
+            చిన్న డేటా టైప్ నుండి పెద్ద డేటా టైప్‌కు మార్చినప్పుడు ఎటువంటి డేటా నష్టం జరగదు కాబట్టి C# కంపైలర్ స్వయంగా చేస్తుంది.
+          </p>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px;">int a = 100;<br>double b = a; // ఆటోమేటిక్ గా 100.0 అవుతుంది</code>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px;">
+          <h4 style="color:#ef4444; margin:0 0 6px 0; font-size:14.5px;">2. Explicit Casting (మ్యాన్యువల్):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0 0 8px 0; line-height:1.6;">
+            పెద్ద టైప్ నుండి చిన్న టైప్‌కు మార్చినప్పుడు డేటా నష్టం లేదా దశాంశాలు తొలగిపోయే ప్రమాదం ఉంటుంది. డెవలపర్ బాధ్యత తీసుకోవాలి.
+          </p>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px;">double pi = 3.99;<br>int intPi = (int)pi; // 3 అవుతుంది (దశాంశం తుడిచిపెట్టుకుపోతుంది)</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>Parse() vs TryParse() — ఎర్రర్-ఫ్రీ పార్సింగ్ ప్యాటర్న్</div>
+    <div class="section-body">
+      <p>
+        ఒక స్ట్రింగ్‌ను సంఖ్యగా మార్చడానికి <code>int.Parse()</code> వాడవచ్చు. కానీ యూజర్ అనుకోకుండా సంఖ్య బదులు అక్షరాలు టైప్ చేస్తే <code>int.Parse()</code> వెంటనే భయంకరమైన <strong>FormatException</strong> తో యాప్‌ను క్రాష్ చేస్తుంది!
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">🛡️ ప్రొడక్షన్ స్టాండర్డ్: int.TryParse() ప్యాటర్న్</h4>
+        <p style="font-size:13.5px; color:var(--text); margin:0 0 8px 0; line-height:1.6;">
+          <code>int.TryParse()</code> క్రాష్ కాకుండా రక్షణ కల్పిస్తుంది. కన్వర్షన్ విజయవంతమైతే <code>true</code> రిటర్న్ చేసి ఆ విలువను <code>out</code> వేరియబుల్ లోకి వేస్తుంది; విఫలమైతే క్రాష్ అవ్వకుండా కేవలం <code>false</code> ఇస్తుంది.
+        </p>
+      </div>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Bulletproof TryParse Demo</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>Console.Write("మీ వయస్సు నమోదు చేయండి: ");
+string? input = Console.ReadLine();
+
+// C# 7+ ఇన్లైన్ out వేరియబుల్ డిక్లరేషన్
+if (int.TryParse(input, out int age) &amp;&amp; age &gt; 0) {
+    Console.WriteLine($"సరైన వయస్సు: {age} సంవత్సరాలు.");
+} else {
+    Console.WriteLine("❌ చెల్లని సంఖ్య! దయచేసి సరైన పూర్ణాంకాన్ని టైప్ చేయండి.");
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>Convert క్లాస్ (Convert.ToInt32, Convert.ToDouble)</div>
+    <div class="section-body">
+      <p>
+        <code>Convert.ToInt32()</code> పద్ధతి కూడా పార్సింగ్ చేస్తుంది. దీనికి <code>int.Parse()</code> కి ఉన్న ప్రధాన తేడా ఏమిటంటే: <strong>ఒకవేళ ఇన్‌పుట్ <code>null</code> అయితే, Convert క్లాస్ ఎర్రర్ ఇవ్వకుండా డిఫాల్ట్ 0 (సున్నా) రిటర్న్ చేస్తుంది</strong>.
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. కాస్టింగ్ తో స్ట్రింగ్ మార్చాలనుకోవడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">string s = "50"; int num = (int)s; // Compiler Error! Cannot convert type string to int</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">స్ట్రింగ్స్ మరియు న్యూమరిక్ టైప్స్ వేర్వేరు మెమరీ ఫార్మాట్లలో ఉంటాయి. కాస్టింగ్ <code>(int)</code> పనిచేయదు; తప్పనిసరిగా <code>int.Parse()</code> లేదా <code>int.TryParse()</code> వాడాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. ప్రొడక్షన్ కోడ్‌లో నేరుగా int.Parse() వాడటం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">యూజర్ ఖాళీగా ఎంటర్ నొక్కినా లేదా స్పేస్ ఇచ్చినా <code>int.Parse()</code> మొత్తం యాప్‌ను క్రాష్ చేస్తుంది. ఎల్లప్పుడూ <code>TryParse()</code> నే ప్రాధాన్యత ఇవ్వాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: checked మరియు unchecked బ్లాక్స్ ఎందుకు ఉపయోగిస్తారు?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            C# లో డిఫాల్ట్‌గా ఇంటిజర్ ఓవర్‌ఫ్లో అయినప్పుడు ఎర్రర్ రాకుండా నిశ్శబ్దంగా నెగటివ్ విలువగా మారుతుంది. <code>checked { int max = int.MaxValue + 1; }</code> అని రాస్తే, ఓవర్‌ఫ్లో జరగగానే <code>OverflowException</code> ను త్రో చేసి ప్రమాదాన్ని హెచ్చరిస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Console.ReadLine() పక్కన string? (Question Mark) ఎందుకు కనిపిస్తుంది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            C# 8 లో ప్రవేశపెట్టిన <strong>Nullable Reference Types</strong> ప్రకారం, యూజర్ ఏమీ టైప్ చేయకుండా Ctrl+Z (EOF) ప్రెస్ చేస్తే <code>null</code> వచ్చే అవకాశం ఉందని కంపైలర్ సూచిస్తుంది.
+          </p>
+        </div>
+      </div>
+    </div>
+  
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

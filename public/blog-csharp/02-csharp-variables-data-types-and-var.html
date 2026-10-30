@@ -316,14 +316,199 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>వేరియబుల్స్, CTS డేటా టైప్స్ (Value vs Reference) & var</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. Common Type System (CTS) · Stack (Value Types) vs Heap (Reference Types) · var టైప్ ఇన్ఫరెన్స్ · const & readonly తేడాలు.
+    <div class="intro-box">
+      కంప్యూటర్ ప్రోగ్రామింగ్ అంటే వాస్తవానికి డేటాను మెమరీలో భద్రపరచడం, ప్రాసెస్ చేయడం మరియు తిరిగి ప్రదర్శించడమే. C# లో బలమైన <strong>Common Type System (CTS)</strong> ఉంది. మెమరీ నిర్వహణలో కీలకమైన <strong>Stack (Value Types) vs Heap (Reference Types)</strong> వ్యత్యాసం, <code>var</code> టైప్ ఇన్ఫరెన్స్, మరియు <code>const</code> vs <code>readonly</code> ల గురించి ఈ అధ్యాయంలో సమగ్రంగా తెలుసుకుందాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>Common Type System (CTS) — Value Types vs Reference Types</div>
+    <div class="section-body">
+      <p>
+        C# లోని ప్రతి డేటా రకం అంతర్గతంగా <code>System.Object</code> మూల క్లాస్ నుండి ఉద్భవిస్తుంది. అయితే కంప్యూటర్ మెమరీలో డేటా నిల్వ అయ్యే విధానాన్ని బట్టి C# డేటా టైప్స్‌ను రెండు ప్రధాన వర్గాలుగా విభజించింది:
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">📦 Value Types (స్టాక్ మెమరీ):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0 0 8px 0; line-height:1.6;">
+            ఈ వేరియబుల్స్ తమ వాస్తవ డేటాను నేరుగా <strong>Stack Memory</strong> లోనే భద్రపరుస్తాయి. ఒక వేరియబుల్‌ను మరొకదానికి అసైన్ చేసినప్పుడు విలువ యొక్క పూర్తి నకలు (Copy of value) ఏర్పడుతుంది.
+          </p>
+          <div style="font-size:12.5px; color:var(--text); background:var(--bg3); padding:8px; border-radius:4px;">
+            ఉదాహరణలు: <code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code>, <code>bool</code>, <code>char</code>, <code>struct</code>, <code>enum</code>.
+          </div>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 8px 0; font-size:15px;">🌐 Reference Types (హీప్ మెమరీ):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0 0 8px 0; line-height:1.6;">
+            వాస్తవ డేటా <strong>Heap Memory</strong> లో ఉంటుంది. స్టాక్‌లో కేవలం ఆ హీప్ డేటా ఉన్న మెమరీ అడ్రస్ (Reference / Pointer) మాత్రమే నిల్వ ఉంటుంది. ఒకదానికి మరొకటి అసైన్ చేస్తే మెమరీ అడ్రస్ షేర్ అవుతుంది.
+          </p>
+          <div style="font-size:12.5px; color:var(--text); background:var(--bg3); padding:8px; border-radius:4px;">
+            ఉదాహరణలు: <code>string</code>, <code>object</code>, <code>class</code>, <code>array</code>, <code>interface</code>, <code>delegate</code>.
+          </div>
+        </div>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో వేరియబుల్స్, CTS డేటా టైప్స్ (Value vs Reference) & var యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>C# ఫండమెంటల్ డేటా టైప్స్ మ్యాట్రిక్స్</div>
+    <div class="section-body">
+      <p>
+        ఆధునిక .NET 8 లో అందుబాటులో ఉన్న ప్రైమరీ డేటా టైప్స్, వాటి మెమరీ పరిమాణాలు మరియు విలువల పరిధుల పట్టిక:
+      </p>
+
+      <div style="overflow-x:auto; margin:16px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+              <th style="padding:10px 14px; color:var(--text);">C# టైప్</th>
+              <th style="padding:10px 14px; color:var(--text);">.NET CTS టైప్</th>
+              <th style="padding:10px 14px; color:var(--text);">మెమరీ పరిమాణం</th>
+              <th style="padding:10px 14px; color:var(--text);">విలువల పరిధి (Range)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">byte</td>
+              <td style="padding:9px 14px;">System.Byte</td>
+              <td style="padding:9px 14px;">1 Byte (8 bits)</td>
+              <td style="padding:9px 14px;">0 నుండి 255</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">short</td>
+              <td style="padding:9px 14px;">System.Int16</td>
+              <td style="padding:9px 14px;">2 Bytes (16 bits)</td>
+              <td style="padding:9px 14px;">-32,768 నుండి 32,767</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">int</td>
+              <td style="padding:9px 14px;">System.Int32</td>
+              <td style="padding:9px 14px;">4 Bytes (32 bits)</td>
+              <td style="padding:9px 14px;">-2.14 బిలియన్లు నుండి +2.14 బిలియన్లు</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">long</td>
+              <td style="padding:9px 14px;">System.Int64</td>
+              <td style="padding:9px 14px;">8 Bytes (64 bits)</td>
+              <td style="padding:9px 14px;">-9.22 × 10<sup>18</sup> నుండి +9.22 × 10<sup>18</sup></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">float</td>
+              <td style="padding:9px 14px;">System.Single</td>
+              <td style="padding:9px 14px;">4 Bytes (32 bits)</td>
+              <td style="padding:9px 14px;">6 - 9 దశాంశ అంకెల ఖచ్చితత్వం (ఉదా: <code>3.14f</code>)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">double</td>
+              <td style="padding:9px 14px;">System.Double</td>
+              <td style="padding:9px 14px;">8 Bytes (64 bits)</td>
+              <td style="padding:9px 14px;">15 - 17 దశాంశ అంకెలు (డీఫాల్ట్ దశాంశం)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">decimal</td>
+              <td style="padding:9px 14px;">System.Decimal</td>
+              <td style="padding:9px 14px;">16 Bytes (128 bits)</td>
+              <td style="padding:9px 14px;">28 - 29 అంకెల గరిష్ట ఖచ్చితత్వం (కరెన్సీ/ఫైనాన్స్: <code>99.99m</code>)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">bool</td>
+              <td style="padding:9px 14px;">System.Boolean</td>
+              <td style="padding:9px 14px;">1 Byte</td>
+              <td style="padding:9px 14px;"><code>true</code> లేదా <code>false</code></td>
+            </tr>
+            <tr>
+              <td style="padding:9px 14px; font-weight:700; color:#10b981;">char</td>
+              <td style="padding:9px 14px;">System.Char</td>
+              <td style="padding:9px 14px;">2 Bytes (16 bits)</td>
+              <td style="padding:9px 14px;">ఒకే ఒక UTF-16 యూనికోడ్ క్యారెక్టర్ (<code>'A'</code>)</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>var టైప్ ఇన్ఫరెన్స్ (Type Inference)</div>
+    <div class="section-body">
+      <p>
+        C# లో <strong>var</strong> కీవర్డ్ ను చూసి చాలామంది బిగినర్స్ ఇది JavaScript లోని <code>var</code> లాంటి డైనమిక్ టైప్ అని పొరబడతారు. కానీ C# లో <code>var</code> అనేది <strong>ఖచ్చితమైన కంపైల్-టైమ్ స్టాటిక్ టైప్ ఇన్ఫరెన్స్</strong>.
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — var keyword demo</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>// కంపైలర్ కుడివైపు ఉన్న విలువను చూసి డేటా టైప్‌ను స్వయంగా నిర్ణయిస్తుంది
+var age = 25;           // కంపైలర్ దీనిని 'int' గా స్థిరీకరిస్తుంది
+var salary = 75000.50;  // కంపైలర్ దీనిని 'double' గా గుర్తిస్తుంది
+var company = "Google"; // కంపైలర్ దీనిని 'string' గా లాక్ చేస్తుంది
+
+// age = "ఇరవై ఐదు"; // ❌ Compiler Error! 'int' లోకి 'string' అసైన్ చేయలేం!
+Console.WriteLine($"వయస్సు: {age}, సంస్థ: {company}");</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>కాన్‌స్టాంట్స్: const vs readonly వ్యత్యాసాలు</div>
+    <div class="section-body">
+      <p>
+        మారకూడని స్థిర విలువలను నిర్వచించడానికి C# లో రెండు కీవర్డ్లు ఉన్నాయి:
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">1. const (Compile-Time Constant):</h4>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-bottom:8px;">public const double PI = 3.14159;</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">డిక్లరేషన్ సమయంలోనే విలువ ఇవ్వాలి. కంపైలర్ ఎక్కడైతే <code>PI</code> ఉందో అక్కడ నేరుగా <code>3.14159</code> విలువను హార్డ్‌కోడ్ చేస్తుంది.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 8px 0; font-size:14px;">2. readonly (Run-Time Constant):</h4>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-bottom:8px;">public readonly DateTime CreatedAt;</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">రన్‌టైమ్‌లో కన్‌స్ట్రక్టర్ లోపల డేటాబేస్ లేదా కాన్ఫిగరేషన్ నుండి విలువను అసైన్ చేసుకోవచ్చు. ఒక్కసారి అసైన్ అయ్యాక మారదు.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. ఫైనాన్స్ లేదా బ్యాంకింగ్ లెక్కలకు double వాడడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">double balance = 0.1 + 0.2; // ఫలితం 0.30000000000000004 వస్తుంది!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">ఫ్లోటింగ్ పాయింట్ సంఖ్యలు బైనరీ బేస్-2 లో నిల్వ ఉండటం వల్ల దశాంశాల ఖచ్చితత్వం లోపిస్తుంది. డబ్బు లెక్కలకు ఎల్లప్పుడూ <strong>decimal</strong> మాత్రమే వాడాలి: <code>decimal bal = 0.1m + 0.2m; // 0.3m</code>.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. var రాసి ఇనీషియలైజ్ చేయకపోవడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">var total; // Compiler Error! Implicitly-typed variables must be initialized</code>
+          <span style="font-size:13px; color:var(--text2); display:block;"><code>var</code> వాడినప్పుడు కంపైలర్ టైప్‌ను గ్రహించడానికి కుడివైపు కచ్చితంగా ఒక ప్రారంభ విలువ ఉండాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C# లో string అనేది Value Type ఆ లేక Reference Type ఆ?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <strong>string అనేది ఖచ్చితంగా Reference Type!</strong> ఇది హీప్ మెమరీలోనే నిల్వ ఉంటుంది. అయితే పోలికలలో (<code>str1 == str2</code>) సులభంగా ఉండటానికి C# దీనికి వాల్యూ-టైప్ లాంటి ఇమ్యుటబుల్ (Immutable) ప్రవర్తనను కల్పించింది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: int మరియు System.Int32 ల మధ్య తేడా ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            రెండింటికీ సాంకేతికంగా ఎటువంటి తేడా లేదు! <code>System.Int32</code> అనేది .NET ఫ్రేమ్‌వర్క్ యొక్క అధికారిక టైప్ పేరు, మరియు <code>int</code> అనేది C# లాంగ్వేజ్ మనకు అందించిన సులభమైన అలియాస్ (Keyword Alias).
+          </p>
+        </div>
+      </div>
+    </div>
+  
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

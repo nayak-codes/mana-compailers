@@ -316,14 +316,178 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. అర్థమెటిక్ & లాజికల్ ఆపరేటర్లు · Ternary (?:) · Null-Conditional (?.) & Null-Coalescing (??, ??=) · ఆపరేటర్ ప్రెసిడెన్స్.
+    <div class="intro-box">
+      వేరియబుల్స్‌పై గణిత లెక్కలు చేయడానికి, షరతులను సరిపోల్చడానికి మరియు ఆధునిక C# లో అత్యంత క్లిష్టమైన <strong>NullReferenceException</strong> క్రాష్‌ల నుండి రక్షణ కల్పించడానికి ఆపరేటర్లు ప్రాణాధారం. సంప్రదాయ ఆపరేటర్లతో పాటు ఆధునిక C# రక్షణ కవచాలైన <strong>Null-Conditional (?.)</strong> మరియు <strong>Null-Coalescing (??, ??=)</strong> ఆపరేటర్ల అంతర్గత పనితీరును ఈ అధ్యాయంలో లోతుగా శోధిద్దాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఫండమెంటల్ ఆపరేటర్లు & షార్ట్-సర్క్యూట్ మూలసూత్రం</div>
+    <div class="section-body">
+      <p>
+        C# లో ప్రాథమిక అంకగణిత (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>) మరియు రిలేషనల్ (<code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>) ఆపరేటర్లు సాధారణ ప్రోగ్రామింగ్ నిబంధనలనే అనుసరిస్తాయి.
+      </p>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981; font-size:14.5px;">⚡ లాజికల్ షార్ట్-సర్క్యూట్ ఎవాల్యుయేషన్ (Short-Circuit Evaluation):</strong>
+        <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          <code>&amp;&amp;</code> (AND) లో ఎడమవైపు కండిషన్ తప్పు (false) అయితే, కుడివైపు ఏముందో కంప్యూటర్ అసలు తనిఖీ చేయదు. అదేవిధంగా <code>||</code> (OR) లో ఎడమవైపు నిజం (true) అయితే వెంటనే ఫలితాన్ని ఖరారు చేస్తుంది. ఇది నల్ చెకింగ్‌లో ప్రోగ్రామ్ క్రాష్ కాకుండా కాపాడుతుంది.
+        </p>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Integer Division Trap & Casting</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>int a = 5, b = 2;
+// పూర్ణాంకాల భాగహారంలో దశాంశాలు తొలగిపోతాయి (Truncation)
+double wrong = a / b;          // 5 / 2 = 2 -&gt; 2.0 (తప్పు!)
+double correct = (double)a / b; // 2.5 (సరైనది!)
+
+Console.WriteLine($"తప్పు ఫలితం: {wrong} | సరైన ఫలితం: {correct}");</code></pre>
       </div>
-    
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>Prefix (++x) vs Postfix (x++) ఇంక్రిమెంట్ మెకానిక్స్</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">⚡ Prefix (++x): Increment Then Fetch</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ముందుగా మెమరీలోని విలువను 1 పెంచి, ఆ తర్వాత నవీకరించబడిన తాజా విలువను ఎక్స్‌ప్రెషన్‌కు అందిస్తుంది.
+          </p>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-top:8px;">int x = 5;<br>int y = ++x; // x = 6, y = 6</code>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:var(--text); margin:0 0 6px 0; font-size:14.5px;">⏳ Postfix (x++): Fetch Then Increment</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            పాత విలువను ఎక్స్‌ప్రెషన్‌కు ఇచ్చేసి, ఆ తర్వాత మాత్రమే మెమరీలోని అసలు వేరియబుల్‌ను 1 పెంచుతుంది.
+          </p>
+          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px; margin-top:8px;">int x = 5;<br>int y = x++; // y = 5 (old copy), x = 6</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>మోడ్రన్ C# నల్ సేఫ్టీ ఆపరేటర్లు (The Null-Defense Shield)</div>
+    <div class="section-body">
+      <p>
+        ప్రముఖ కంప్యూటర్ శాస్త్రవేత్త Tony Hoare నల్ పాయింటర్లను కనిపెట్టడాన్ని తన <em>"Billion Dollar Mistake"</em> అని పిలిచారు. ఎందుకంటే ప్రపంచంలో అత్యధిక సాఫ్ట్‌వేర్ క్రాష్‌లు <strong>NullReferenceException</strong> వల్లనే జరుగుతాయి. ఆధునిక C# దీనికి 3 అద్భుతమైన ఆపరేటర్లను అందించింది:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#10b981; font-size:14.5px;">1. Null-Conditional Operator (?.) — సేఫ్ నావిగేషన్</strong>
+          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            ఆబ్జెక్ట్ నల్ అయితే క్రాష్ కాకుండా నిశ్శబ్దంగా <code>null</code> నే రిటర్న్ చేస్తుంది: <code>string? upper = name?.ToUpper();</code>.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#3b82f6; font-size:14.5px;">2. Null-Coalescing Operator (??) — ఫాల్‌బ్యాక్ డిఫాల్ట్ వాల్యూ</strong>
+          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            ఎడమవైపు విలువ <code>null</code> అయితే ప్రత్యామ్నాయంగా కుడివైపు ఉన్న డీఫాల్ట్ విలువను ఎంచుకుంటుంది: <code>string displayName = name ?? "Guest";</code>.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f59e0b; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#f59e0b; font-size:14.5px;">3. Null-Coalescing Assignment (??=) — స్మార్ట్ క్యాషింగ్</strong>
+          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            వేరియబుల్ ప్రస్తుతం <code>null</code> అయితే మాత్రమే కొత్త విలువను అసైన్ చేస్తుంది: <code>cache ??= LoadFromDatabase();</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Modern Null-Defense in Action</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>string? userInput = null;
+
+// ?? ఆపరేటర్ తో సేఫ్ డీఫాల్ట్ ప్రొవైడర్
+string username = userInput ?? "Anonymous_User";
+Console.WriteLine($"వినియోగదారుని పేరు: {username}");
+
+// ??= తో లేజీ ఇనీషియలైజేషన్
+List&lt;string&gt;? logList = null;
+logList ??= new List&lt;string&gt;(); // నల్ కాబట్టి కొత్త లిస్ట్ అసైన్ అవుతుంది
+logList.Add("Server Started");
+Console.WriteLine($"లాగ్ కౌంట్: {logList.Count}");</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ఆపరేటర్ ప్రాధాన్యతా నిచ్చెన (Precedence Hierarchy)</div>
+    <div class="section-body">
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0; font-size:13.5px; line-height:1.8;">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">1. ప్రైమరీ ఆపరేటర్లు:</span>
+          <span><code>()</code>, మెంబర్ యాక్సెస్ <code>.</code>, <code>?.</code>, ఇండెక్సర్ <code>[]</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">2. యునరీ ఆపరేటర్లు:</span>
+          <span><code>++</code>, <code>--</code>, లాజికల్ నాట్ <code>!</code>, <code>typeof</code>, <code>await</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">3. గుణకార ఆపరేటర్లు:</span>
+          <span>గుణకారం <code>*</code>, భాగహారం <code>/</code>, మాడ్యులో <code>%</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">4. సంకలన ఆపరేటర్లు:</span>
+          <span>కూడిక <code>+</code>, తీసివేత <code>-</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">5. నల్-కోలెస్సింగ్:</span>
+          <span><code>??</code></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+          <span style="font-weight:700; color:#10b981;">6. అసైన్‌మెంట్:</span>
+          <span><code>=</code>, <code>+=</code>, <code>-=</code>, <code>??=</code></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. & మరియు && ల మధ్య కన్‌ఫ్యూజన్:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">if (user != null &amp; user.IsActive) // CRASH! user నల్ అయితే NullReferenceException వస్తుంది</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">సింగిల్ <code>&amp;</code> బిట్‌వైజ్ ఆపరేటర్; ఇది షార్ట్-సర్క్యూట్ చేయదు (రెండు వైపులా ఎవాల్యుయేట్ చేస్తుంది). కండిషన్లలో ఎల్లప్పుడూ డబుల్ <code>&amp;&amp;</code> మాత్రమే వాడాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. if కండిషన్‌లో అసైన్‌మెంట్ ప్రయత్నించడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">if (x = 5) // Compiler Error! Cannot implicitly convert type int to bool</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">C/C++ లాగా C# నంబర్లను బూలియన్‌గా తీసుకోదు. C# లో కండిషన్ తప్పనిసరిగా <code>bool</code> అయి ఉండాలి కాబట్టి పోల్చడానికి <code>==</code> వాడాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C# లో is మరియు as ఆపరేటర్లు ఎలా పనిచేస్తాయి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>is</code> ఆపరేటర్ ఒక ఆబ్జెక్ట్ నిర్దిష్ట క్లాస్‌కి చెందినదో కాదో తనిఖీ చేస్తుంది (ఉదా: <code>if (obj is string s)</code>). <code>as</code> ఆపరేటర్ సేఫ్ టైప్ కాస్టింగ్ చేస్తుంది — కాస్ట్ విజయవంతమైతే ఆబ్జెక్ట్ ఇస్తుంది, విఫలమైతే ఎర్రర్ రాకుండా <code>null</code> రిటర్న్ చేస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Nullable Value Types (int?) అంటే ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            సాధారణంగా <code>int</code> నల్ విలువను తీసుకోదు. కానీ డేటాబేస్‌లలో పూర్ణాంక కాలమ్స్ ఖాళీగా (null) ఉండవచ్చు. అలాంటి సందర్భాలలో <code>int? age = null;</code> అని రాస్తే అది <code>Nullable&lt;int&gt;</code> స్ట్రక్చర్‌గా మారి నల్ విలువను కూడా స్వీకరించగలదు.
+          </p>
+        </div>
+      </div>
+    </div>
+  
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
