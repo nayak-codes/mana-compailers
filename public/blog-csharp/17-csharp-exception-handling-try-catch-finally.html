@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions) — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions) సమగ్ర తెలుగు గైడ్: రన్‌టైమ్ ఎర్రర్ హ్యాండ్లింగ్ · Exception hierarchy · when ఫిల్టర్లు · using స్టేట్‌మెంట్ & IDisposable రీసోర్స్ క్లీనప్." />
+  <meta name="keywords" content="csharp tutorial in telugu, learn c# language, ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions), dotnet 8, c# 12, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions) (C# Programming in Telugu)",
+    "description": "రన్‌టైమ్ ఎర్రర్ హ్యాండ్లింగ్ · Exception hierarchy · when ఫిల్టర్లు · using స్టేట్‌మెంట్ & IDisposable రీసోర్స్ క్లీనప్",
+    "articleSection": "Phase 05: అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-10-30"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html" class="active">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-heading">C# Master Course (తెలుగు)</div>
+    <a href="/blog-csharp.html" class="sidebar-home-link ">
+      ⚡ C# Course HOME (ఇండెక్స్)
+    </a>
+    <div class="sidebar-accordion">
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">⚡</span>
+            <span>Phase 01<br><small style="font-size:11px; font-weight:600; opacity:0.85;">C# ఫండమెంటల్స్ & బేసిక్స్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/01-csharp-introduction-and-setup.html" class="lesson-link ">
+                <span class="lesson-num">1.</span>
+                <span class="lesson-name">C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" class="lesson-link ">
+                <span class="lesson-num">2.</span>
+                <span class="lesson-name">వేరియబుల్స్, CTS డేటా టైప్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="lesson-link ">
+                <span class="lesson-num">3.</span>
+                <span class="lesson-name">యూజర్ ఇన్‌పుట్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/04-csharp-operators-and-expressions.html" class="lesson-link ">
+                <span class="lesson-num">4.</span>
+                <span class="lesson-name">ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">🔀</span>
+            <span>Phase 02<br><small style="font-size:11px; font-weight:600; opacity:0.85;">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" class="lesson-link ">
+                <span class="lesson-num">5.</span>
+                <span class="lesson-name">కండిషనల్ స్టేట్‌మెంట్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" class="lesson-link ">
+                <span class="lesson-num">6.</span>
+                <span class="lesson-name">switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" class="lesson-link ">
+                <span class="lesson-num">7.</span>
+                <span class="lesson-name">లూప్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" class="lesson-link ">
+                <span class="lesson-num">8.</span>
+                <span class="lesson-name">break, continue & నెస్టెడ్ లూప్స్</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">📦</span>
+            <span>Phase 03<br><small style="font-size:11px; font-weight:600; opacity:0.85;">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" class="lesson-link ">
+                <span class="lesson-num">9.</span>
+                <span class="lesson-name">మెథడ్స్, పారామీటర్ మోడిఫైయర్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="lesson-link ">
+                <span class="lesson-num">10.</span>
+                <span class="lesson-name">స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="lesson-link ">
+                <span class="lesson-num">11.</span>
+                <span class="lesson-name">అర్రేలు</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" class="lesson-link ">
+                <span class="lesson-num">12.</span>
+                <span class="lesson-name">జెనెరిక్ కలెక్షన్స్</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">🏛️</span>
+            <span>Phase 04<br><small style="font-size:11px; font-weight:600; opacity:0.85;">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" class="lesson-link ">
+                <span class="lesson-num">13.</span>
+                <span class="lesson-name">క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" class="lesson-link ">
+                <span class="lesson-num">14.</span>
+                <span class="lesson-name">ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" class="lesson-link ">
+                <span class="lesson-num">15.</span>
+                <span class="lesson-name">ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" class="lesson-link ">
+                <span class="lesson-num">16.</span>
+                <span class="lesson-name">ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header active" onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">🚀</span>
+            <span>Phase 05<br><small style="font-size:11px; font-weight:600; opacity:0.85;">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content open">
+          <ul class="lesson-list">
+            <li class="lesson-item active">
+              <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" class="lesson-link active">
+                <span class="lesson-num">17.</span>
+                <span class="lesson-name">ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" class="lesson-link ">
+                <span class="lesson-num">18.</span>
+                <span class="lesson-name">డెలిగేట్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" class="lesson-link ">
+                <span class="lesson-num">19.</span>
+                <span class="lesson-name">LINQ</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" class="lesson-link ">
+                <span class="lesson-num">20.</span>
+                <span class="lesson-name">కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-csharp-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try C# Online Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
+    </div>
+  </aside>
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 17: ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)</span>
+    </div>
+
+    <h1 class="page-title">ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C# 12 & .NET 8</span>
+      <span class="badge">🟢 Chapter 17 of 20</span>
+      <span class="badge">📂 Phase 05: అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- Covered Topics Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>రన్‌టైమ్ ఎర్రర్ హ్యాండ్లింగ్ · Exception hierarchy · when ఫిల్టర్లు · using స్టేట్‌మెంట్ & IDisposable రీసోర్స్ క్లీనప్</span>
+    </div>
+
+    
+      <div class="intro-box">
+        ఈ అధ్యాయంలో <strong>ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. రన్‌టైమ్ ఎర్రర్ హ్యాండ్లింగ్ · Exception hierarchy · when ఫిల్టర్లు · using స్టేట్‌మెంట్ & IDisposable రీసోర్స్ క్లీనప్.
+      </div>
+      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
+      <div class="section-body">
+        <p>C# మరియు .NET 8 లో ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
+      </div>
+    
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      
+      <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 16. ఇంటర్‌ఫేసెస్ & Records
+      </a>
+      
+      <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 18. డెలిగేట్స్, ఈవెంట్స్ & లాంబ్డా →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on .NET 8.0 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>

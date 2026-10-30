@@ -1,1157 +1,715 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light-theme" lang="te">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C# Programming Master Tutorial (2026 Edition) — C# Master Tutorial | Our Compiler</title>
-  <meta name="description" content="Comprehensive C# 12 & .NET 8 course covering syntax, variables, data types, type conversion, OOP, LINQ, async/await, and modern software design." />
+  <title>C# Programming Tutorial తెలుగులో (20 Chapters Complete Master Roadmap) | Our Compiler</title>
+  <meta name="description" content="C# ప్రోగ్రామింగ్ తెలుగులో సులభంగా నేర్చుకోండి. 20 చాప్టర్లలో .NET 8 Basics, Variables, CTS Data Types, Control Flow, Loops, Methods, Strings, Generics, OOPs, LINQ, మరియు Real-world Projects తో పూర్తి గైడ్." />
+  <meta name="keywords" content="csharp tutorial in telugu, learn c# language telugu, c# programming telugu, c# oop in telugu, c# linq telugu, dotnet 8 telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
   <link rel="stylesheet" href="/blog-csharp/style.css" />
   <link rel="stylesheet" href="/site-nav.css" />
 
-  <!-- Accordion Toggle, Syntax Highlighter & Theme Script -->
+  <!-- Schema.org Course Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "C# Programming Master Course తెలుగులో (2026 Edition)",
+    "description": "20 సమగ్ర అధ్యాయాలలో C# బేసిక్స్, .NET 8, వేరియబుల్స్, కంట్రోల్ ఫ్లో, లూప్స్, మెథడ్స్, కలెక్షన్స్, ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP), LINQ, మరియు రియల్-వరల్డ్ ప్రాజెక్ట్.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "educationalLevel": "Beginner to Advanced",
+    "inLanguage": "te",
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <!-- Accordion Toggle & Initial Theme Script -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
-      const isOpen = content.classList.contains("open");
+      const isOpen = content.classList.contains('open');
       if (isOpen) {
-        content.classList.remove("open");
-        btn.classList.remove("active");
+        content.classList.remove('open');
+        btn.classList.remove('active');
       } else {
-        content.classList.add("open");
-        btn.classList.add("active");
+        content.classList.add('open');
+        btn.classList.add('active');
       }
-    }
-
-    // Client-side C# Syntax Highlighter (Monaco / VS Code styling)
-    function highlightCSharpCode(rawCode) {
-      const tokens = [];
-      const pushToken = (cls, text) => {
-        const id = tokens.length;
-        tokens.push(`<span class="${cls}">${text}</span>`);
-        return `___CSHARP_TOK_${id}___`;
-      };
-
-      // 1. Comments
-      let code = rawCode.replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, m => pushToken("cm", m));
-
-      // 2. Strings & Interpolations: @"...", $"...", "..."
-      code = code.replace(/(@"[^"]*"|\$?"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken("st", m));
-
-      // 3. Keywords
-      const kwList = ["using","namespace","class","struct","interface","enum","public","private","protected","internal","static","readonly","const","void","int","long","float","double","decimal","bool","char","string","object","var","dynamic","new","return","if","else","switch","case","break","default","for","foreach","while","do","try","catch","finally","throw","null","true","false","abstract","virtual","override","sealed","async","await","get","set","init","record","out","ref","in","sizeof","typeof","default","is","as"];
-      const kwRegex = new RegExp(`\\b(${kwList.join("|")})\\b`, "g");
-      code = code.replace(kwRegex, m => pushToken("kw", m));
-
-      // 4. Built-in Classes & Functions
-      const fnList = ["Console","WriteLine","Write","ReadLine","Parse","TryParse","Convert","Math","DateTime","Guid","System","String","Int32","Int64","Boolean","Double","Decimal","List","Dictionary","HashSet","Queue","Stack","SortedList","SortedSet","LinkedList","Enumerable","Task","Thread","File","Path","Directory","Array"];
-      const fnRegex = new RegExp(`\\b(${fnList.join("|")})\\b`, "g");
-      code = code.replace(fnRegex, m => pushToken("fn", m));
-
-      // 5. Numbers
-      code = code.replace(/\b(\d+(?:\.\d+)?(?:[fFdDmMlLuU])?)\b/g, m => pushToken("nu", m));
-
-      // 6. Restore Tokens
-      code = code.replace(/___CSHARP_TOK_(\d+)___/g, (_, id) => tokens[id]);
-      return code;
     }
 
     (function() {
-      const currentTheme = localStorage.getItem("theme") || "dark";
-      if (currentTheme === "light") {
-        document.documentElement.classList.add("light-theme");
-        document.addEventListener("DOMContentLoaded", () => {
-          document.body.classList.add("light-theme");
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme !== 'dark') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
         });
       }
-      window.addEventListener("DOMContentLoaded", () => {
-        const topnav = document.querySelector(".topnav");
-        if (topnav) {
-          const toggleBtn = document.createElement("button");
-          toggleBtn.className = "blog-theme-toggle";
-          toggleBtn.style.cssText = "margin-left: auto; flex-shrink: 0; background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; margin-right: 12px;";
-          const updateText = () => {
-            const isLight = document.body.classList.contains("light-theme");
-            toggleBtn.innerHTML = isLight ? "🌙 Dark" : "☀️ Light";
-          };
-          updateText();
-          toggleBtn.addEventListener("click", () => {
-            document.body.classList.toggle("light-theme");
-            document.documentElement.classList.toggle("light-theme");
-            const isLight = document.body.classList.contains("light-theme");
-            localStorage.setItem("theme", isLight ? "light" : "dark");
-            updateText();
-          });
-          topnav.appendChild(toggleBtn);
-        }
-
-        // Code blocks syntax highlighting & actions
-        document.querySelectorAll(".code-block").forEach(block => {
-          const header = block.querySelector(".code-block-header");
-          const codeEl = block.querySelector("pre code");
-          if (!header || !codeEl) return;
-          const rawCode = codeEl.textContent;
-          codeEl.innerHTML = highlightCSharpCode(rawCode);
-
-          let actionsContainer = header.querySelector(".code-actions");
-          if (!actionsContainer) {
-            actionsContainer = document.createElement("div");
-            actionsContainer.className = "code-actions";
-            actionsContainer.style.cssText = "display: flex; gap: 8px; align-items: center; margin-left: auto;";
-            const tryBtn = header.querySelector(".try-btn");
-            if (tryBtn) actionsContainer.appendChild(tryBtn);
-            header.appendChild(actionsContainer);
-          }
-
-          const copyBtn = document.createElement("button");
-          copyBtn.className = "copy-btn";
-          copyBtn.innerHTML = "📋 Copy";
-          copyBtn.style.cssText = "background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; white-space: nowrap;";
-          copyBtn.addEventListener("click", () => {
-            navigator.clipboard.writeText(rawCode).then(() => {
-              copyBtn.innerHTML = "✅ Copied!";
-              setTimeout(() => { copyBtn.innerHTML = "📋 Copy"; }, 2000);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          const tryBtn = actionsContainer.querySelector(".try-btn");
-          if (tryBtn) {
-            tryBtn.addEventListener("click", (e) => {
-              e.preventDefault();
-              localStorage.setItem("code_csharp", rawCode);
-              window.location.href = "/online-csharp-compiler.html";
-            });
-          }
-        });
-      });
     })();
   </script>
-  <link rel="stylesheet" href="/pages.css" />
 </head>
-<body class="lang-csharp">
-  <script src="/site-nav.js"></script>
+<body class="lang-csharp light-theme">
 
-  <div class="layout">
-    <!-- LEFT SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-heading">C# Master Course</div>
-      <a href="/blog-csharp.html" class="sidebar-home-link">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        <span>C# Course HOME</span>
-      </a>
-      <div style="padding: 6px 12px 2px 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3);">Curriculum</div>
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-csharp.html" class="active">C#</a>
+  <a href="/blog-go.html">Go</a>
+  <a href="/blog-ruby.html">Ruby</a>
+  <a href="/blog-rust.html">Rust</a>
+  <a href="/blog-php.html">PHP</a>
+  <a href="/online-html-editor.html">HTML/CSS/JS</a>
+</nav>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-heading">C# Master Course (తెలుగు)</div>
+    <a href="/blog-csharp.html" class="sidebar-home-link active">
+      ⚡ C# Course HOME (ఇండెక్స్)
+    </a>
     <div class="sidebar-accordion">
-      <button class="accordion-header active" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📂</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 01</span>
-            <span class="phase-title">C# Introduction & Setup</span>
-          </div>
+      <div class="accordion-item">
+        <button class="accordion-header active" onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">⚡</span>
+            <span>Phase 01<br><small style="font-size:11px; font-weight:600; opacity:0.85;">C# ఫండమెంటల్స్ & బేసిక్స్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content open">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/01-csharp-introduction-and-setup.html" class="lesson-link ">
+                <span class="lesson-num">1.</span>
+                <span class="lesson-name">C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" class="lesson-link ">
+                <span class="lesson-num">2.</span>
+                <span class="lesson-name">వేరియబుల్స్, CTS డేటా టైప్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="lesson-link ">
+                <span class="lesson-num">3.</span>
+                <span class="lesson-name">యూజర్ ఇన్‌పుట్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/04-csharp-operators-and-expressions.html" class="lesson-link ">
+                <span class="lesson-num">4.</span>
+                <span class="lesson-name">ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing</span>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content open">
-        <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html">1. Introduction, Features & .NET Architecture</a>
-        <a href="/blog-csharp/02-csharp-setup-vs-code-dotnet-sdk-cli.html">2. .NET SDK Setup, VS Code, CLI & Structure</a>
-        <a href="/blog-csharp/03-csharp-first-program-program-cs-main-console.html">3. First C# Program, Main() & Console I/O</a>
       </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📦</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 02</span>
-            <span class="phase-title">Variables & Data Types</span>
-          </div>
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">🔀</span>
+            <span>Phase 02<br><small style="font-size:11px; font-weight:600; opacity:0.85;">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" class="lesson-link ">
+                <span class="lesson-num">5.</span>
+                <span class="lesson-name">కండిషనల్ స్టేట్‌మెంట్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" class="lesson-link ">
+                <span class="lesson-num">6.</span>
+                <span class="lesson-name">switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" class="lesson-link ">
+                <span class="lesson-num">7.</span>
+                <span class="lesson-name">లూప్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" class="lesson-link ">
+                <span class="lesson-num">8.</span>
+                <span class="lesson-name">break, continue & నెస్టెడ్ లూప్స్</span>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/04-csharp-variables-constants-scope-and-var.html">4. Variables, Constants (const/readonly), var & Scope</a>
-        <a href="/blog-csharp/05-csharp-data-types-value-vs-reference.html">5. Value vs Reference Types, Nullables & Structs</a>
-        <a href="/blog-csharp/06-csharp-type-conversion-casting-parse-tryparse.html">6. Type Conversion, Parse(), TryParse() & Boxing</a>
       </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 03</span>
-            <span class="phase-title">Operators & User Input</span>
-          </div>
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">📦</span>
+            <span>Phase 03<br><small style="font-size:11px; font-weight:600; opacity:0.85;">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" class="lesson-link ">
+                <span class="lesson-num">9.</span>
+                <span class="lesson-name">మెథడ్స్, పారామీటర్ మోడిఫైయర్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="lesson-link ">
+                <span class="lesson-num">10.</span>
+                <span class="lesson-name">స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="lesson-link ">
+                <span class="lesson-num">11.</span>
+                <span class="lesson-name">అర్రేలు</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" class="lesson-link ">
+                <span class="lesson-num">12.</span>
+                <span class="lesson-name">జెనెరిక్ కలెక్షన్స్</span>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/07-csharp-operators-complete-guide.html">7. All Operators (Bitwise, Nullable, is/as, Precedence)</a>
-        <a href="/blog-csharp/08-csharp-user-input-readline-parsing-validation.html">8. User Input, Console.ReadLine() & Validation</a>
       </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔀</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 04</span>
-            <span class="phase-title">Conditions & Loops</span>
-          </div>
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">🏛️</span>
+            <span>Phase 04<br><small style="font-size:11px; font-weight:600; opacity:0.85;">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" class="lesson-link ">
+                <span class="lesson-num">13.</span>
+                <span class="lesson-name">క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" class="lesson-link ">
+                <span class="lesson-num">14.</span>
+                <span class="lesson-name">ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" class="lesson-link ">
+                <span class="lesson-num">15.</span>
+                <span class="lesson-name">ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" class="lesson-link ">
+                <span class="lesson-num">16.</span>
+                <span class="lesson-name">ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</span>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/09-csharp-conditional-statements-switch-patterns.html">9. Conditionals, Pattern Matching & Switch Expressions</a>
-        <a href="/blog-csharp/10-csharp-loops-for-while-foreach-practice.html">10. Loops, foreach, Controls & 9 Practice Programs</a>
       </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">📊</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 05</span>
-            <span class="phase-title">Strings, Arrays & Collections</span>
-          </div>
+      <div class="accordion-item">
+        <button class="accordion-header " onclick="toggleAccordion(this)">
+          <span class="phase-title">
+            <span class="phase-icon">🚀</span>
+            <span>Phase 05<br><small style="font-size:11px; font-weight:600; opacity:0.85;">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</small></span>
+          </span>
+          <span class="phase-badge">4 Ch</span>
+        </button>
+        <div class="accordion-content ">
+          <ul class="lesson-list">
+            <li class="lesson-item ">
+              <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" class="lesson-link ">
+                <span class="lesson-num">17.</span>
+                <span class="lesson-name">ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" class="lesson-link ">
+                <span class="lesson-num">18.</span>
+                <span class="lesson-name">డెలిగేట్స్</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" class="lesson-link ">
+                <span class="lesson-num">19.</span>
+                <span class="lesson-name">LINQ</span>
+              </a>
+            </li>
+            <li class="lesson-item ">
+              <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" class="lesson-link ">
+                <span class="lesson-num">20.</span>
+                <span class="lesson-name">కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/11-csharp-strings-verbatim-raw-literals-stringbuilder.html">11. Strings, Interpolation, Raw Literals & StringBuilder</a>
-        <a href="/blog-csharp/12-csharp-arrays-multidimensional-jagged-methods.html">12. Arrays (1D, 2D Multidimensional & Jagged)</a>
-        <a href="/blog-csharp/13-csharp-collections-generics-list-dictionary-hashset.html">13. Generic Collections (List, Dictionary, HashSet, Stack/Queue)</a>
       </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🏗️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 06</span>
-            <span class="phase-title">Methods & Object-Oriented OOP</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">5 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/14-csharp-methods-parameters-ref-out-in-local-functions.html">14. Methods, Parameters (ref/out/in) & Overloading</a>
-        <a href="/blog-csharp/15-csharp-classes-objects-constructors-properties.html">15. Classes, Objects, Properties & Constructors</a>
-        <a href="/blog-csharp/16-csharp-encapsulation-access-modifiers-records.html">16. Encapsulation, Access Modifiers & Records</a>
-        <a href="/blog-csharp/17-csharp-inheritance-polymorphism-virtual-override.html">17. Inheritance, Polymorphism, virtual & override</a>
-        <a href="/blog-csharp/18-csharp-interfaces-multiple-implementation-decoupling.html">18. Interfaces, Default Members & Dependency Inversion</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🧩</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 07</span>
-            <span class="phase-title">Advanced C# Language</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">4 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/19-csharp-structs-enums-and-records-masterclass.html">19. Structs, Enums &amp; Records</a>
-        <a href="/blog-csharp/20-csharp-generics-type-parameters-constraints-variance.html">20. Generics, Constraints &amp; Variance</a>
-        <a href="/blog-csharp/21-csharp-delegates-events-func-action-predicate.html">21. Delegates, Action, Func &amp; Events</a>
-        <a href="/blog-csharp/22-csharp-lambda-expressions-closures-anonymous-functions.html">22. Lambda Expressions &amp; Closures</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔍</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 08</span>
-            <span class="phase-title">LINQ &amp; Query Pipelines</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/23-csharp-linq-basics-query-vs-method-syntax-operators.html">23. LINQ Basics (Where, Select, OrderBy)</a>
-        <a href="/blog-csharp/24-csharp-advanced-linq-groupby-join-deferred-execution.html">24. Advanced LINQ (GroupBy, Join, Deferred)</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🛡️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 09</span>
-            <span class="phase-title">Exceptions, Files &amp; JSON</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/25-csharp-exception-handling-try-catch-custom-filters.html">25. Exception Handling &amp; Custom Errors</a>
-        <a href="/blog-csharp/26-csharp-file-handling-streamreader-streamwriter-async-io.html">26. File I/O, StreamReader &amp; Streams</a>
-        <a href="/blog-csharp/27-csharp-json-serialization-deserialization-system-text-json.html">27. JSON Serialization &amp; System.Text.Json</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">⚡</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 10</span>
-            <span class="phase-title">Asynchronous Programming</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/28-csharp-async-await-task-cancellation-tokens.html">28. async, await, Task &amp; CancellationToken</a>
-        <a href="/blog-csharp/29-csharp-parallel-programming-parallel-for-thread-safety-locks.html">29. Parallel.For, Thread Safety &amp; Locks</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🏛️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 11</span>
-            <span class="phase-title">.NET Platform &amp; Architecture</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/30-csharp-dotnet-platform-clr-assemblies-nuget-configuration.html">30. .NET Platform, CLR &amp; NuGet</a>
-        <a href="/blog-csharp/31-csharp-dependency-injection-lifetimes-singleton-scoped-transient.html">31. Dependency Injection (Singleton, Scoped)</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🌐</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 12</span>
-            <span class="phase-title">ASP.NET Core Web APIs</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">4 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/32-csharp-aspnet-core-introduction-architecture-middleware.html">32. ASP.NET Core, Middleware &amp; Pipeline</a>
-        <a href="/blog-csharp/33-csharp-minimal-apis-endpoints-routing-swagger.html">33. Minimal APIs &amp; Swagger</a>
-        <a href="/blog-csharp/34-csharp-controller-based-apis-routing-dtos-validation.html">34. Controller APIs, DTOs &amp; Validation</a>
-        <a href="/blog-csharp/35-csharp-rest-api-capstone-project-product-service-crud.html">35. 🏆 Capstone: Complete REST API Project</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🗄️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 13</span>
-            <span class="phase-title">Databases &amp; EF Core</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/36-csharp-sql-basics-tables-joins-transactions.html">36. SQL Basics, Tables, JOINs &amp; Transactions</a>
-        <a href="/blog-csharp/37-csharp-entity-framework-core-dbcontext-migrations-linq.html">37. Entity Framework Core (EF Core)</a>
-        <a href="/blog-csharp/38-csharp-database-crud-api-ef-core-pagination-search.html">38. Database CRUD API Project</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🔐</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 14</span>
-            <span class="phase-title">Authentication &amp; Security</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/39-csharp-authentication-jwt-tokens-password-hashing-claims.html">39. Authentication &amp; JWT Tokens</a>
-        <a href="/blog-csharp/40-csharp-aspnet-core-security-authorize-cors-xss-rate-limiting.html">40. ASP.NET Core Security</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">✅</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 15</span>
-            <span class="phase-title">Testing &amp; Clean Code</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/41-csharp-unit-testing-xunit-moq-integration-tests.html">41. Unit Testing, xUnit &amp; Moq</a>
-        <a href="/blog-csharp/42-csharp-clean-code-solid-principles-patterns-refactoring.html">42. Clean Code &amp; SOLID Principles</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">🚀</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 16</span>
-            <span class="phase-title">Advanced .NET</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">3 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/43-csharp-performance-span-memory-caching-gc-optimization.html">43. Performance, Span&lt;T&gt; &amp; Caching</a>
-        <a href="/blog-csharp/44-csharp-background-services-ihostedservice-worker-queues.html">44. Background Services &amp; Worker Queues</a>
-        <a href="/blog-csharp/45-csharp-signalr-real-time-hubs-chat-notifications.html">45. SignalR Real-Time &amp; Chat</a>
-      </div>
-
-      <button class="accordion-header" onclick="toggleAccordion(this)">
-        <div class="accordion-header-main">
-          <span class="phase-icon-box">☁️</span>
-          <div class="phase-info">
-            <span class="phase-tag">Phase 17</span>
-            <span class="phase-title">Deployment &amp; Cloud</span>
-          </div>
-        </div>
-        <div class="accordion-header-meta">
-          <span class="phase-count-badge">2 Ch</span>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      </button>
-      <div class="accordion-content">
-        <a href="/blog-csharp/46-csharp-docker-deployment-github-actions-ci-cd.html">46. Docker, GitHub Actions &amp; CI/CD</a>
-        <a href="/blog-csharp/47-csharp-azure-cloud-app-service-sql-key-vault-insights.html">47. Azure Cloud &amp; App Service</a>
-      </div>
-
     </div>
-    </aside>
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-csharp-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try C# Online Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
+    </div>
+  </aside>
+  <!-- MAIN INDEX ROADMAP CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <span class="current">C# Programming తెలుగులో</span>
+    </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="content">
-      <div class="breadcrumb">
-        <a href="/">Home</a><span class="sep">›</span>
-        <a href="/blog.html">Tutorials</a><span class="sep">›</span>
-        <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
-        <span class="current">Chapter Index: C# Programming Master Tutorial (2026 Edition)</span>
+    <!-- HERO HEADER -->
+    <div style="background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.02) 100%); border:1px solid rgba(16,185,129,0.25); border-radius:14px; padding:32px 28px; margin-bottom:32px;">
+      <div style="display:inline-block; background:#10b981; color:#ffffff; font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px; text-transform:uppercase; margin-bottom:12px; letter-spacing:0.5px;">
+        ✨ 2026 Academic Edition
+      </div>
+      <h1 style="font-size:32px; font-weight:900; color:var(--text); margin-bottom:14px; line-height:1.3;">
+        C# Programming Tutorial తెలుగులో (20 Chapters Masterclass)
+      </h1>
+      <p style="font-size:15.5px; color:var(--text2); line-height:1.7; margin-bottom:24px; max-width:850px;">
+        మైక్రోసాఫ్ట్ యొక్క అత్యంత శక్తివంతమైన మోడ్రన్ ప్రోగ్రామింగ్ లాంగ్వేజ్ <strong>C# 12 & .NET 8</strong> ను పునాది నుండి అడ్వాన్స్‌డ్ స్థాయి వరకు తెలుగులో సులభంగా నేర్చుకోండి. ఎంటర్‌ప్రైజ్ సాఫ్ట్‌వేర్, వెబ్ అప్లికేషన్లు (ASP.NET Core), గేమింగ్ (Unity), మరియు క్లౌడ్ సిస్టమ్స్ నిర్మించడానికి అవసరమైన అన్ని కాన్సెప్ట్‌లు ఇందులో ఉన్నాయి.
+      </p>
+
+      <!-- Key Stats Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center;">
+          <div style="font-size:24px; font-weight:900; color:#10b981;">20</div>
+          <div style="font-size:12.5px; color:var(--text2); font-weight:600; margin-top:2px;">అధ్యాయాలు (5 ఫేజ్‌లు)</div>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center;">
+          <div style="font-size:24px; font-weight:900; color:#10b981;">.NET 8</div>
+          <div style="font-size:12.5px; color:var(--text2); font-weight:600; margin-top:2px;">Modern C# 12 Standards</div>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center;">
+          <div style="font-size:24px; font-weight:900; color:#10b981;">100%</div>
+          <div style="font-size:12.5px; color:var(--text2); font-weight:600; margin-top:2px;">ఉచితం & తెలుగు వివరణ</div>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center;">
+          <div style="font-size:24px; font-weight:900; color:#10b981;">100+</div>
+          <div style="font-size:12.5px; color:var(--text2); font-weight:600; margin-top:2px;">లైవ్ కోడింగ్ ఎగ్జాంపుల్స్</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 PHASES ROADMAP -->
+    
+      <!-- Phase 01 Card -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; margin-bottom:28px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border-bottom:1px solid var(--border); padding:18px 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:12px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.8px; background:rgba(16,185,129,0.15); padding:3px 10px; border-radius:4px;">
+              Phase 01: C# ఫండమెంటల్స్ & బేసిక్స్
+            </span>
+            <span style="font-size:12px; color:var(--text2); font-weight:600;">4 Chapters (అధ్యాయాలు)</span>
+          </div>
+          <h2 style="margin:10px 0 6px 0; font-size:20px; font-weight:800; color:var(--text);">
+            ⚡ C# ఫండమెంటల్స్ & బేసిక్స్
+          </h2>
+          <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.5;">
+            C# & .NET ఆర్కిటెక్చర్, వేరియబుల్స్, CTS డేటా టైప్స్ (Value vs Reference), Console I/O, మరియు Null-Coalescing ఆపరేటర్లు.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              1. C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              Anders Hejlsberg చరిత్ర · .NET SDK vs CLR vs IL · VS Code & .NET CLI (dotnet new, run) · Hello World అనాటమీ & Top-Level Statements
+            </div>
+          </div>
+          <a href="/blog-csharp/01-csharp-introduction-and-setup.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              2. వేరియబుల్స్, CTS డేటా టైప్స్ (Value vs Reference) & var
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              Common Type System (CTS) · Stack (Value Types) vs Heap (Reference Types) · var టైప్ ఇన్ఫరెన్స్ · const & readonly తేడాలు
+            </div>
+          </div>
+          <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              3. యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              Console.ReadLine() · Implicit vs Explicit Casting · int.Parse() vs int.TryParse() ఎర్రర్-ఫ్రీ పార్సింగ్ · Convert క్లాస్
+            </div>
+          </div>
+          <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              4. ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              అర్థమెటిక్ & లాజికల్ ఆపరేటర్లు · Ternary (?:) · Null-Conditional (?.) & Null-Coalescing (??, ??=) · ఆపరేటర్ ప్రెసిడెన్స్
+            </div>
+          </div>
+          <a href="/blog-csharp/04-csharp-operators-and-expressions.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        </div>
+      </div>
+      <!-- Phase 02 Card -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; margin-bottom:28px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border-bottom:1px solid var(--border); padding:18px 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:12px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.8px; background:rgba(16,185,129,0.15); padding:3px 10px; border-radius:4px;">
+              Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్
+            </span>
+            <span style="font-size:12px; color:var(--text2); font-weight:600;">4 Chapters (అధ్యాయాలు)</span>
+          </div>
+          <h2 style="margin:10px 0 6px 0; font-size:20px; font-weight:800; color:var(--text);">
+            🔀 కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్
+          </h2>
+          <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.5;">
+            డెసిషన్ మేకింగ్, మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్ (=>), లూప్స్ (for, while, foreach), మరియు C# ప్యాటర్న్ మ్యాచింగ్.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              5. కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              if, else if, else · డాంగ్లింగ్ else నివారణ · Type Pattern & Relational Pattern Matching · switch Expressions (=>)
+            </div>
+          </div>
+          <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              6. switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              క్లాసిక్ switch-case vs C# 8+ switch expressions · when గార్డ్ కండిషన్స్ · Multiple Case Grouping · O(1) జంప్ టేబుల్
+            </div>
+          </div>
+          <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              7. లూప్స్ (for, while, do-while & foreach)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              for, while, do-while లైఫ్‌సైకిల్ · foreach & IEnumerable అంతర్గత పనితీరు · ఇన్ఫినిట్ లూప్స్ · Off-by-one బగ్స్
+            </div>
+          </div>
+          <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              8. break, continue & నెస్టెడ్ లూప్స్ (2D గ్రిడ్స్)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              break ఎర్లీ ఎగ్జిట్ · continue స్కిప్పింగ్ · నెస్టెడ్ లూప్స్ & 2D మ్యాట్రిక్స్ ప్రాసెసింగ్ · goto వివాదం
+            </div>
+          </div>
+          <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        </div>
+      </div>
+      <!-- Phase 03 Card -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; margin-bottom:28px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border-bottom:1px solid var(--border); padding:18px 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:12px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.8px; background:rgba(16,185,129,0.15); padding:3px 10px; border-radius:4px;">
+              Phase 03: మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్
+            </span>
+            <span style="font-size:12px; color:var(--text2); font-weight:600;">4 Chapters (అధ్యాయాలు)</span>
+          </div>
+          <h2 style="margin:10px 0 6px 0; font-size:20px; font-weight:800; color:var(--text);">
+            📦 మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్
+          </h2>
+          <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.5;">
+            మెథడ్స్ (ref, out, in, params), StringBuilder, 2D & Jagged అర్రేస్, మరియు Generic Collections (List, Dictionary).
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              9. మెథడ్స్, పారామీటర్ మోడిఫైయర్స్ (ref, out, in, params)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              మెథడ్ సిగ్నేచర్ · Pass by Value vs ref · out మల్టిపుల్ రిటర్న్స్ · in రీడ్-ఓన్లీ రిఫరెన్స్ · params వేరియబుల్ ఆర్గ్యుమెంట్స్
+            </div>
+          </div>
+          <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              10. స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              String Immutability & String Pool · String Interpolation ($) · StringBuilder హై-పెర్ఫార్మెన్స్ లూప్స్ · Raw String Literals (""")
+            </div>
+          </div>
+          <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              11. అర్రేలు (1D, 2D Rectangular & Jagged Arrays)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              1D అర్రేస్ · 2D రెక్టాంగ్యులర్ [,] vs జాగ్‌డ్ అర్రేస్ [][] (Array of Arrays) · Array క్లాస్ మెథడ్స్ (Sort, Reverse, IndexOf)
+            </div>
+          </div>
+          <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              12. జెనెరిక్ కలెక్షన్స్ (List<T>, Dictionary<TKey, TValue>, HashSet<T>)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              Non-generic (ArrayList Boxing/Unboxing) సమస్య · List<T> డైనమిక్ అరే · Dictionary<TKey, TValue> $O(1)$ లూకప్ · HashSet<T> యూనిక్ సెట్
+            </div>
+          </div>
+          <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        </div>
+      </div>
+      <!-- Phase 04 Card -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; margin-bottom:28px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border-bottom:1px solid var(--border); padding:18px 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:12px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.8px; background:rgba(16,185,129,0.15); padding:3px 10px; border-radius:4px;">
+              Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)
+            </span>
+            <span style="font-size:12px; color:var(--text2); font-weight:600;">4 Chapters (అధ్యాయాలు)</span>
+          </div>
+          <h2 style="margin:10px 0 6px 0; font-size:20px; font-weight:800; color:var(--text);">
+            🏛️ ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)
+          </h2>
+          <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.5;">
+            క్లాసెస్, ఆబ్జెక్ట్స్, కన్‌స్ట్రక్టర్స్, ఎన్‌క్యాప్సులేషన్, ఇన్‌హెరిటెన్స్, ఇంటర్‌ఫేసెస్ మరియు C# 10+ Records.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              13. క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్ (Primary Constructors)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              క్లాస్ బ్లూప్రింట్ · new ఆపరేటర్ & Heap అలోకేషన్ · డీఫాల్ట్ & పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్స్ · C# 12 Primary Constructors
+            </div>
+          </div>
+          <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              14. ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              public, private, protected, internal · Getters & Setters · Auto-Implemented Properties { get; set; } · init-only యాక్సెసర్స్
+            </div>
+          </div>
+          <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              15. ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              base కీవర్డ్ · Method Overriding vs Hiding (new) · virtual & override మెకానిక్స్ · sealed క్లాసులు & మెథడ్స్
+            </div>
+          </div>
+          <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              16. ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              abstract classes vs interfaces · Multiple Interface Implementation · Decoupling & DI పునాది · record ఇమ్యుటబుల్ డేటా ఆబ్జెక్ట్స్
+            </div>
+          </div>
+          <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        </div>
+      </div>
+      <!-- Phase 05 Card -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; margin-bottom:28px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border-bottom:1px solid var(--border); padding:18px 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:12px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.8px; background:rgba(16,185,129,0.15); padding:3px 10px; border-radius:4px;">
+              Phase 05: అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్
+            </span>
+            <span style="font-size:12px; color:var(--text2); font-weight:600;">4 Chapters (అధ్యాయాలు)</span>
+          </div>
+          <h2 style="margin:10px 0 6px 0; font-size:20px; font-weight:800; color:var(--text);">
+            🚀 అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్
+          </h2>
+          <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.5;">
+            ఎక్సెప్షన్ హ్యాండ్లింగ్, డెలిగేట్స్, ఈవెంట్స్, LINQ క్వెరీలు మరియు కంప్లీట్ ఎంప్లాయ్ మేనేజ్‌మెంట్ రియల్ ప్రాజెక్ట్.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              17. ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              రన్‌టైమ్ ఎర్రర్ హ్యాండ్లింగ్ · Exception hierarchy · when ఫిల్టర్లు · using స్టేట్‌మెంట్ & IDisposable రీసోర్స్ క్లీనప్
+            </div>
+          </div>
+          <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              18. డెలిగేట్స్ (Delegates), ఈవెంట్స్ & లాంబ్డా ఎక్స్‌ప్రెషన్స్ (=>)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              Function Pointers C# సమానం · Func<T>, Action<T>, Predicate<T> · Publisher-Subscriber Events · Lambda Expressions (x => x * 2)
+            </div>
+          </div>
+          <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              19. LINQ (Language Integrated Query) — డేటా ప్రాసెసింగ్ పవర్‌హౌస్
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              Query Syntax vs Method Syntax · Where, Select, OrderBy, GroupBy · Deferred Execution vs Immediate Execution (ToList)
+            </div>
+          </div>
+          <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); transition:background 0.2s; gap:16px;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:15px; color:var(--text); margin-bottom:4px;">
+              20. కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ (LINQ & JSON)
+            </div>
+            <div style="font-size:12.5px; color:var(--text2); line-height:1.5;">
+              OOPs · Generics · LINQ క్వెరీలు · System.Text.Json ఫైల్ సేవింగ్ తో పూర్తి స్థాయి రియల్-వరల్డ్ C# ప్రాజెక్ట్!
+            </div>
+          </div>
+          <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:700; font-size:13px; box-shadow:0 2px 8px rgba(16,185,129,0.25); transition:transform 0.15s, background 0.15s;" onmouseover="this.style.background='#059669'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981'; this.style.transform='none'">
+            చదవండి →
+          </a>
+        </div>
+        </div>
       </div>
 
-      <h1 class="page-title">C# Programming Master Tutorial (2026 Edition)</h1>
+    <!-- COMPILER CALLOUT -->
+    <div style="background:linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.03)); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:28px; text-align:center; margin-top:40px;">
+      <h3 style="margin:0 0 8px 0; color:var(--text); font-size:20px; font-weight:800;">
+        కోడింగ్ ప్రాక్టీస్ చేయడానికి రెడీగా ఉన్నారా?
+      </h3>
+      <p style="margin:0 0 18px 0; font-size:14px; color:var(--text2);">
+        ఎలాంటి సాఫ్ట్‌వేర్ ఇన్‌స్టాల్ చేయకుండా బ్రౌజర్‌లోనే క్లౌడ్‌లో C# కోడ్ రన్ చేసి ఫలితం చూడండి!
+      </p>
+      <a href="/online-csharp-compiler.html" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:8px; background:#10b981; color:#ffffff; text-decoration:none; font-weight:800; font-size:14px; box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+        ⚡ Open C# Online Compiler
+      </a>
+    </div>
 
-      <div class="page-meta">
-        <span class="badge">⚡ C# 12 &amp; .NET 8</span>
-        <span class="badge">🟢 47 In-Depth Chapters</span>
-        <span class="badge">📂 Master Index: C# 12 &amp; .NET 8 Masterclass</span>
-        <span class="badge">📅 2026 Edition</span>
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:40px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested on .NET 8.0 SDK runtime · 2026 Academic Edition</span>
       </div>
+    </div>
 
-      <!-- Subtopics Pill Bar -->
-      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
-        <span style="color:#a78bfa; font-weight:700;">📌 Covered in this chapter:</span>
-        <span>C# Overview · .NET SDK & CLI · First Program · Variables & Constants · Value vs Reference Types · Type Conversion & TryParse()</span>
-      </div>
-
-      
-<!-- Quick Start Card -->
-<div style="background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(20,24,32,0.6)); border: 1px solid rgba(139,92,246,0.3); border-radius: 12px; padding: 24px; margin-bottom: 32px;">
-  <h3 style="color:#a78bfa; margin-bottom: 10px; font-size:18px;">🎯 Ready to Start Learning C# &amp; .NET 8?</h3>
-  <p style="color:var(--text2); margin-bottom: 16px; font-size:14.5px;">Choose where to start: explore C# basics &amp; architecture, CLI tooling &amp; setup, variables &amp; constants, or data types &amp; type conversions:</p>
-  <div style="display:flex; gap:12px; flex-wrap:wrap;">
-    <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 1: Basics &amp; Setup →</a>
-    <a href="/blog-csharp/04-csharp-variables-constants-scope-and-var.html" style="background:var(--bg3); border:1px solid var(--border); color:var(--text); font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">Phase 2: Variables &amp; Types →</a>
-    <a href="/online-csharp-compiler.html" style="background:var(--bg3); border:1px solid var(--border); color:#a78bfa; font-weight:700; padding:10px 16px; border-radius:8px; text-decoration:none;">▶ Try C# Online Compiler →</a>
-  </div>
+  </main>
 </div>
 
-<!-- Full Curriculum Roadmap Cards -->
-<div class="section-title"><span class="num">📚</span> Master Course Curriculum</div>
-<div class="curriculum-roadmap-container">
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">📂</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 01</div>
-          <h3 class="phase-roadmap-title">C# Introduction & Setup</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
-    <div class="phase-lessons-list">
-  
-        <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">01</span>
-            <div class="lesson-info">
-              <span class="lesson-title">1. Introduction, Features & .NET Architecture</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/02-csharp-setup-vs-code-dotnet-sdk-cli.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">02</span>
-            <div class="lesson-info">
-              <span class="lesson-title">2. .NET SDK Setup, VS Code, CLI & Structure</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/03-csharp-first-program-program-cs-main-console.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">03</span>
-            <div class="lesson-info">
-              <span class="lesson-title">3. First C# Program, Main() & Console I/O</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-    </div>
-  </div>
-  
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">📦</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 02</div>
-          <h3 class="phase-roadmap-title">Variables & Data Types</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
-    <div class="phase-lessons-list">
-  
-        <a href="/blog-csharp/04-csharp-variables-constants-scope-and-var.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">04</span>
-            <div class="lesson-info">
-              <span class="lesson-title">4. Variables, Constants (const/readonly), var & Scope</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/05-csharp-data-types-value-vs-reference.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">05</span>
-            <div class="lesson-info">
-              <span class="lesson-title">5. Value vs Reference Types, Nullables & Structs</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/06-csharp-type-conversion-casting-parse-tryparse.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">06</span>
-            <div class="lesson-info">
-              <span class="lesson-title">6. Type Conversion, Parse(), TryParse() & Boxing</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-    </div>
-  </div>
-  
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">⚡</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 03</div>
-          <h3 class="phase-roadmap-title">Operators & User Input</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
-    <div class="phase-lessons-list">
-  
-        <a href="/blog-csharp/07-csharp-operators-complete-guide.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">07</span>
-            <div class="lesson-info">
-              <span class="lesson-title">7. All Operators (Bitwise, Nullable, is/as, Precedence)</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/08-csharp-user-input-readline-parsing-validation.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">08</span>
-            <div class="lesson-info">
-              <span class="lesson-title">8. User Input, Console.ReadLine() & Validation</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-    </div>
-  </div>
-  
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🔀</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 04</div>
-          <h3 class="phase-roadmap-title">Conditions & Loops</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
-    <div class="phase-lessons-list">
-  
-        <a href="/blog-csharp/09-csharp-conditional-statements-switch-patterns.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">09</span>
-            <div class="lesson-info">
-              <span class="lesson-title">9. Conditionals, Pattern Matching & Switch Expressions</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/10-csharp-loops-for-while-foreach-practice.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">10</span>
-            <div class="lesson-info">
-              <span class="lesson-title">10. Loops, foreach, Controls & 9 Practice Programs</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-    </div>
-  </div>
-  
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">📊</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 05</div>
-          <h3 class="phase-roadmap-title">Strings, Arrays & Collections</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
-    <div class="phase-lessons-list">
-  
-        <a href="/blog-csharp/11-csharp-strings-verbatim-raw-literals-stringbuilder.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">11</span>
-            <div class="lesson-info">
-              <span class="lesson-title">11. Strings, Interpolation, Raw Literals & StringBuilder</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/12-csharp-arrays-multidimensional-jagged-methods.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">12</span>
-            <div class="lesson-info">
-              <span class="lesson-title">12. Arrays (1D, 2D Multidimensional & Jagged)</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/13-csharp-collections-generics-list-dictionary-hashset.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">13</span>
-            <div class="lesson-info">
-              <span class="lesson-title">13. Generic Collections (List, Dictionary, HashSet, Stack/Queue)</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-    </div>
-  </div>
-  
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🏗️</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 06</div>
-          <h3 class="phase-roadmap-title">Methods & Object-Oriented OOP</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">5 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Foundations of C# syntax, .NET CLR architecture, type safety, memory mechanics, and hands-on code examples.</p>
-    <div class="phase-lessons-list">
-  
-        <a href="/blog-csharp/14-csharp-methods-parameters-ref-out-in-local-functions.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">14</span>
-            <div class="lesson-info">
-              <span class="lesson-title">14. Methods, Parameters (ref/out/in) & Overloading</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/15-csharp-classes-objects-constructors-properties.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">15</span>
-            <div class="lesson-info">
-              <span class="lesson-title">15. Classes, Objects, Properties & Constructors</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/16-csharp-encapsulation-access-modifiers-records.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">16</span>
-            <div class="lesson-info">
-              <span class="lesson-title">16. Encapsulation, Access Modifiers & Records</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/17-csharp-inheritance-polymorphism-virtual-override.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">17</span>
-            <div class="lesson-info">
-              <span class="lesson-title">17. Inheritance, Polymorphism, virtual & override</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-        <a href="/blog-csharp/18-csharp-interfaces-multiple-implementation-decoupling.html" class="curriculum-lesson-row">
-          <div class="lesson-row-left">
-            <span class="lesson-idx">18</span>
-            <div class="lesson-info">
-              <span class="lesson-title">18. Interfaces, Default Members & Dependency Inversion</span>
-              <span class="lesson-subtopics">In-depth explanations · Code examples · Memory models · Technical FAQs</span>
-            </div>
-          </div>
-          <div class="lesson-row-right">
-            <span class="lesson-btn">Read Chapter <span class="arrow">→</span></span>
-          </div>
-        </a>
-    
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🧩</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 07</div>
-          <h3 class="phase-roadmap-title">Advanced C# Language</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">4 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Structs &amp; value types, enums, record classes, generics with constraints, Func/Action/Predicate delegates, event publisher-subscriber, and lambda expressions with closures.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/19-csharp-structs-enums-and-records-masterclass.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">19</span><div class="lesson-info"><span class="lesson-title">19. Structs, Enums &amp; Records</span><span class="lesson-subtopics">struct · value-type copying · enum switch · record class · record struct · value equality</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/20-csharp-generics-type-parameters-constraints-variance.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">20</span><div class="lesson-info"><span class="lesson-title">20. Generics, Constraints, Covariance &amp; Contravariance</span><span class="lesson-subtopics">Generic classes · Generic methods · where constraints · covariance · contravariance</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/21-csharp-delegates-events-func-action-predicate.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">21</span><div class="lesson-info"><span class="lesson-title">21. Delegates, Action, Func, Predicate &amp; Events</span><span class="lesson-subtopics">Delegates · Func · Action · Predicate · Events · Publisher-Subscriber pattern</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/22-csharp-lambda-expressions-closures-anonymous-functions.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">22</span><div class="lesson-info"><span class="lesson-title">22. Lambda Syntax, Closures &amp; Anonymous Functions</span><span class="lesson-subtopics">Lambda => · Expression lambdas · Statement lambdas · Closures · Captured variables</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🔍</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 08</div>
-          <h3 class="phase-roadmap-title">LINQ &amp; Query Pipelines</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Language Integrated Query — filtering, projection, sorting, aggregation, deferred execution, GroupBy, Join, and LINQ performance patterns.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/23-csharp-linq-basics-query-vs-method-syntax-operators.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">23</span><div class="lesson-info"><span class="lesson-title">23. LINQ Basics (Where, Select, OrderBy, FirstOrDefault)</span><span class="lesson-subtopics">Query vs Method syntax · Where · Select · OrderBy · Aggregates (Sum, Avg, Min, Max)</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/24-csharp-advanced-linq-groupby-join-deferred-execution.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">24</span><div class="lesson-info"><span class="lesson-title">24. Advanced LINQ (GroupBy, Join, Deferred Execution)</span><span class="lesson-subtopics">GroupBy · Join · SelectMany · Set operations · Deferred vs Immediate execution · ToList</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🛡️</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 09</div>
-          <h3 class="phase-roadmap-title">Exceptions, Files &amp; JSON</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Robust error handling with try/catch/finally, custom exceptions, exception filters, file I/O with System.IO, StreamReader/Writer, and JSON serialization with System.Text.Json.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/25-csharp-exception-handling-try-catch-custom-filters.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">25</span><div class="lesson-info"><span class="lesson-title">25. Exception Handling, Custom Errors &amp; Filters</span><span class="lesson-subtopics">try/catch/finally · throw · Custom exceptions · Exception filters (when) · Best practices</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/26-csharp-file-handling-streamreader-streamwriter-async-io.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">26</span><div class="lesson-info"><span class="lesson-title">26. File I/O, File, Directory, Path &amp; Streams</span><span class="lesson-subtopics">File.ReadAllText · File.WriteAllText · StreamReader · StreamWriter · Path · Async I/O</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/27-csharp-json-serialization-deserialization-system-text-json.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">27</span><div class="lesson-info"><span class="lesson-title">27. JSON Serialization &amp; System.Text.Json</span><span class="lesson-subtopics">JsonSerializer · Serialize · Deserialize · JsonSerializerOptions · CamelCase · JSON arrays</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">⚡</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 10</div>
-          <h3 class="phase-roadmap-title">Asynchronous Programming</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Non-blocking programming with async/await, Task&lt;T&gt;, CancellationToken, Task.WhenAll, parallel computing with Parallel.For, thread safety and concurrent collections.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/28-csharp-async-await-task-cancellation-tokens.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">28</span><div class="lesson-info"><span class="lesson-title">28. async, await, Task&lt;T&gt; &amp; CancellationToken</span><span class="lesson-subtopics">Synchronous vs Asynchronous · Task · async methods · CancellationToken · Task.WhenAll/WhenAny</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/29-csharp-parallel-programming-parallel-for-thread-safety-locks.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">29</span><div class="lesson-info"><span class="lesson-title">29. Parallel.For, Thread Safety, Locks &amp; Concurrent Collections</span><span class="lesson-subtopics">Parallel.For · Parallel.ForEach · Race conditions · lock · Interlocked · ConcurrentDictionary</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🏛️</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 11</div>
-          <h3 class="phase-roadmap-title">.NET Platform &amp; Architecture</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">.NET SDK, CLR, JIT compilation, assemblies, NuGet package management, appsettings.json configuration, and Dependency Injection with Singleton/Scoped/Transient lifetimes.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/30-csharp-dotnet-platform-clr-assemblies-nuget-configuration.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">30</span><div class="lesson-info"><span class="lesson-title">30. .NET Platform, CLR, Assemblies &amp; NuGet</span><span class="lesson-subtopics">.NET SDK · CLR · JIT Compiler · Assemblies · NuGet · dotnet add package · appsettings.json</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/31-csharp-dependency-injection-lifetimes-singleton-scoped-transient.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">31</span><div class="lesson-info"><span class="lesson-title">31. Dependency Injection (Singleton, Scoped, Transient)</span><span class="lesson-subtopics">DI concept · Tight vs Loose coupling · IServiceCollection · Service Lifetimes · Constructor injection</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card" style="border-color: rgba(139,92,246,0.4); background: linear-gradient(135deg, rgba(139,92,246,0.06), var(--bg2));">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🌐</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 12</div>
-          <h3 class="phase-roadmap-title">ASP.NET Core Web APIs</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge" style="background: linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">4 In-Depth Lessons 🏆</span>
-    </div>
-    <p class="phase-roadmap-desc">Build production-ready REST APIs with ASP.NET Core 8 — Minimal APIs, Controller-based APIs with DTOs, model validation, Swagger documentation, and a complete CRUD Capstone project.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/32-csharp-aspnet-core-introduction-architecture-middleware.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">32</span><div class="lesson-info"><span class="lesson-title">32. ASP.NET Core Intro, Middleware &amp; Pipeline</span><span class="lesson-subtopics">Program.cs · WebApplication Builder · Middleware pipeline · Kestrel · Swagger/OpenAPI</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/33-csharp-minimal-apis-endpoints-routing-swagger.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">33</span><div class="lesson-info"><span class="lesson-title">33. Minimal APIs, Endpoints &amp; Swagger</span><span class="lesson-subtopics">MapGet/Post/Put/Delete · Route parameters · Results helper · Status codes · Swagger UI</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/34-csharp-controller-based-apis-routing-dtos-validation.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">34</span><div class="lesson-info"><span class="lesson-title">34. Controller APIs, DTOs &amp; Validation</span><span class="lesson-subtopics">[ApiController] · Routing · IActionResult · DTOs · Data Annotations · CRUD operations</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/35-csharp-rest-api-capstone-project-product-service-crud.html" class="curriculum-lesson-row" style="border-left: 3px solid #8b5cf6;">
-        <div class="lesson-row-left"><span class="lesson-idx" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">35</span><div class="lesson-info"><span class="lesson-title">🏆 35. Complete REST API Capstone — Product CRUD Project</span><span class="lesson-subtopics">Product model · IProductService · Dependency Injection · Full CRUD · Swagger testing · API docs</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🗄️</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 13</div>
-          <h3 class="phase-roadmap-title">Databases &amp; Entity Framework Core</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Relational databases with SQL, Entity Framework Core ORM, DbContext, Migrations, LINQ data access, Eager Loading, Repository pattern, and a complete Database-connected CRUD API with pagination and search.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/36-csharp-sql-basics-tables-joins-transactions.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">36</span><div class="lesson-info"><span class="lesson-title">36. SQL Basics, Tables, JOINs &amp; Transactions</span><span class="lesson-subtopics">Tables · PRIMARY KEY · FOREIGN KEY · SELECT · INSERT · UPDATE · DELETE · INNER JOIN · ACID Transactions</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/37-csharp-entity-framework-core-dbcontext-migrations-linq.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">37</span><div class="lesson-info"><span class="lesson-title">37. Entity Framework Core (EF Core)</span><span class="lesson-subtopics">ORM · DbContext · DbSet · Migrations · CRUD with LINQ · Eager Loading Include() · Repository Pattern</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/38-csharp-database-crud-api-ef-core-pagination-search.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">38</span><div class="lesson-info"><span class="lesson-title">38. Database CRUD API Project with EF Core</span><span class="lesson-subtopics">SQLite Setup · Auto Migrations · Repository · Service Layer · Pagination · Search · Sorting</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🔐</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 14</div>
-          <h3 class="phase-roadmap-title">Authentication &amp; Security</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">User registration, BCrypt password hashing, JWT token generation with Claims, Bearer authentication middleware, Role/Policy-based authorization, CORS, Rate Limiting, and SQL injection prevention.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/39-csharp-authentication-jwt-tokens-password-hashing-claims.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">39</span><div class="lesson-info"><span class="lesson-title">39. Authentication, JWT Tokens &amp; Password Hashing</span><span class="lesson-subtopics">BCrypt · JWT · Claims · JwtSecurityToken · Bearer Auth Middleware · Refresh Tokens</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/40-csharp-aspnet-core-security-authorize-cors-xss-rate-limiting.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">40</span><div class="lesson-info"><span class="lesson-title">40. ASP.NET Core Security ([Authorize], CORS &amp; Rate Limiting)</span><span class="lesson-subtopics">[Authorize] · Role Auth · Policy Auth · CORS · HTTPS · Secret Management · Rate Limiting</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">✅</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 15</div>
-          <h3 class="phase-roadmap-title">Testing &amp; Professional Development</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">2 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">Unit testing with xUnit and Moq, integration tests with WebApplicationFactory, SOLID principles, Clean Architecture, DRY, meaningful naming, Repository/Service/Factory patterns, and refactoring techniques.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/41-csharp-unit-testing-xunit-moq-integration-tests.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">41</span><div class="lesson-info"><span class="lesson-title">41. Unit Testing, xUnit, Moq &amp; Integration Tests</span><span class="lesson-subtopics">xUnit · [Fact] · [Theory] · Moq · FluentAssertions · WebApplicationFactory · Coverage</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/42-csharp-clean-code-solid-principles-patterns-refactoring.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">42</span><div class="lesson-info"><span class="lesson-title">42. Clean Code, SOLID Principles &amp; Architecture</span><span class="lesson-subtopics">SRP · OCP · LSP · ISP · DIP · DRY · Clean Architecture · Refactoring</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">🚀</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 16</div>
-          <h3 class="phase-roadmap-title">Advanced .NET</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge">3 In-Depth Lessons</span>
-    </div>
-    <p class="phase-roadmap-desc">High-performance .NET with Span&lt;T&gt;, Memory&lt;T&gt;, GC optimization, IMemoryCache, Background Services with Channel&lt;T&gt; queues, IHostedService, and SignalR real-time hubs for chat and live notifications.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/43-csharp-performance-span-memory-caching-gc-optimization.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">43</span><div class="lesson-info"><span class="lesson-title">43. Performance, Span&lt;T&gt;, Memory&lt;T&gt;, GC &amp; Caching</span><span class="lesson-subtopics">GC Generations · Span&lt;T&gt; · Memory&lt;T&gt; · IMemoryCache · BenchmarkDotNet · Profiling</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/44-csharp-background-services-ihostedservice-worker-queues.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">44</span><div class="lesson-info"><span class="lesson-title">44. Background Services, Hosted Services &amp; Worker Queues</span><span class="lesson-subtopics">IHostedService · BackgroundService · Channel&lt;T&gt; Queue · Scheduled Jobs · Graceful Shutdown</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/45-csharp-signalr-real-time-hubs-chat-notifications.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">45</span><div class="lesson-info"><span class="lesson-title">45. SignalR Real-Time Communication, Hubs &amp; Chat</span><span class="lesson-subtopics">SignalR Hub · Clients.All · Groups · Broadcasting · JavaScript Client · Chat App · Notifications</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-  <div class="phase-roadmap-card" style="border-color: rgba(139,92,246,0.4); background: linear-gradient(135deg, rgba(139,92,246,0.06), var(--bg2));">
-    <div class="phase-roadmap-header">
-      <div class="phase-roadmap-title-wrap">
-        <span class="phase-roadmap-icon">☁️</span>
-        <div>
-          <div class="phase-roadmap-tag">Phase 17</div>
-          <h3 class="phase-roadmap-title">Deployment &amp; Cloud</h3>
-        </div>
-      </div>
-      <span class="phase-roadmap-badge" style="background: linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">2 In-Depth Lessons 🏁</span>
-    </div>
-    <p class="phase-roadmap-desc">Containerize ASP.NET Core APIs with Docker multi-stage builds, orchestrate with docker-compose, automate CI/CD with GitHub Actions, and deploy to Azure App Service with Key Vault, Application Insights, and Managed Identity.</p>
-    <div class="phase-lessons-list">
-      <a href="/blog-csharp/46-csharp-docker-deployment-github-actions-ci-cd.html" class="curriculum-lesson-row">
-        <div class="lesson-row-left"><span class="lesson-idx">46</span><div class="lesson-info"><span class="lesson-title">46. Docker, Deployment, GitHub Actions &amp; CI/CD</span><span class="lesson-subtopics">Docker · Dockerfile · docker-compose · GitHub Actions · CI/CD Pipeline · Health Checks</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-      <a href="/blog-csharp/47-csharp-azure-cloud-app-service-sql-key-vault-insights.html" class="curriculum-lesson-row" style="border-left: 3px solid #8b5cf6;">
-        <div class="lesson-row-left"><span class="lesson-idx" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff;">47</span><div class="lesson-info"><span class="lesson-title">🏁 47. Azure Cloud, App Service &amp; Application Insights</span><span class="lesson-subtopics">Azure App Service · Azure SQL · Blob Storage · Key Vault · App Insights · Managed Identity</span></div></div>
-        <div class="lesson-row-right"><span class="lesson-btn">Read Chapter <span class="arrow">→</span></span></div>
-      </a>
-    </div>
-  </div>
-
-</div>
-
-
-      <div class="nav-footer">
-  <a href="/blog-csharp.html" class="nav-btn">
-    <span class="label">← C# Course Overview</span>
-    <span class="title">Course Home & Index</span>
-  </a>
-  <a href="/blog-csharp/01-csharp-introduction-features-and-dotnet.html" class="nav-btn" style="text-align:right;">
-    <span class="label">Next Lesson →</span>
-    <span class="title">1. Introduction, Features & .NET Architecture</span>
-  </a>
-</div>
-    </main>
-  </div>
-
-  <script src="/site-footer.js"></script>
-  <footer class="footer" id="site-footer"></footer>
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
 </body>
 </html>
