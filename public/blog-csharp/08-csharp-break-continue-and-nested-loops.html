@@ -316,14 +316,150 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>break, continue & నెస్టెడ్ లూప్స్ (2D గ్రిడ్స్)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. break ఎర్లీ ఎగ్జిట్ · continue స్కిప్పింగ్ · నెస్టెడ్ లూప్స్ & 2D మ్యాట్రిక్స్ ప్రాసెసింగ్ · goto వివాదం.
+    <div class="intro-box">
+      లూప్స్ ఎగ్జిక్యూట్ అవుతున్నప్పుడు సాధారణ ఫ్లోను నియంత్రించడానికి, అవసరమైన రికార్డు దొరకగానే లూప్ నుండి వెంటనే బయటకు రావడానికి లేదా కొన్ని అనవసరమైన ఇటరేషన్లను దాటవేయడానికి <strong>break</strong> మరియు <strong>continue</strong> కీవర్డ్లు తప్పనిసరి. 2D గ్రిడ్ ప్రాసెసింగ్ మరియు ఇంటర్వ్యూలలో ఎక్కువగా అడిగే <strong>నెస్టెడ్ లూప్స్ (Nested Loops)</strong> మరియు ప్యాటర్న్లను ఈ అధ్యాయంలో లోతుగా తెలుసుకుందాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>break కీవర్డ్ — అత్యవసర లూప్ ఎగ్జిట్ (Early Exit)</div>
+    <div class="section-body">
+      <p>
+        లూప్ ఎన్నిసార్లు తిరగాలని నిర్ణయించబడిందో ఆ లక్ష్యం ఇంకా పూర్తికాకముందే, ఒక నిర్దిష్ట పరిస్థితి రాగానే ఆ లూప్‌ను తక్షణమే శాశ్వతంగా ముగించి బయటకు రావడానికి <strong>break</strong> ఉపయోగపడుతుంది:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Linear Search with break</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>int[] employeeIds = { 101, 105, 109, 115, 120, 125 };
+int searchId = 115;
+bool found = false;
+
+for (int i = 0; i &lt; employeeIds.Length; i++) {
+    if (employeeIds[i] == searchId) {
+        Console.WriteLine($"లక్ష్యం {searchId} ఇండెక్స్ {i} వద్ద లభించింది!");
+        found = true;
+        break; // ఎలిమెంట్ దొరికింది! మిగిలిన ఇటరేషన్లు అవసరం లేదు
+    }
+}
+
+if (!found) Console.WriteLine("ఐడీ లభించలేదు.");</code></pre>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో break, continue & నెస్టెడ్ లూప్స్ (2D గ్రిడ్స్) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 <code>break</code> లేకపోతే టార్గెట్ మొదట్లోనే దొరికినా అరే చివరి వరకు అనవసరంగా లూప్ రన్ అవుతూ సర్వర్ సమయాన్ని వృధా చేస్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>continue కీవర్డ్ — ప్రస్తుత ఇటరేషన్ స్కిప్ చేయడం</div>
+    <div class="section-body">
+      <p>
+        లూప్‌ను పూర్తిగా ఆపేయకుండా, కేవలం ఆ <em>ప్రస్తుత ఒక్క ఇటరేషన్‌లోని తర్వాతి లైన్లను మాత్రమే స్కిప్ చేసి</em> వెంటనే తర్వాతి రౌండ్‌కు దూకడానికి <strong>continue</strong> వాడతాం:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — continue (Skip Multiples of 3)</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>Console.WriteLine("3 యొక్క గుణిజాలు మినహా మిగిలిన సంఖ్యలు:");
+for (int i = 1; i &lt;= 10; i++) {
+    if (i % 3 == 0) {
+        continue; // 3, 6, 9 వచ్చినప్పుడు ప్రింట్ చేయకుండా తర్వాతి రౌండ్‌కు వెళ్తుంది
+    }
+    Console.Write($"{i} ");
+}
+Console.WriteLine();</code></pre>
       </div>
-    
+
+      <div style="background:rgba(245, 158, 11, 0.08); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#d97706; font-size:14px;">⚠️ while లూప్‌లో continue వాడేటప్పుడు జాగ్రత్త!</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          <code>for</code> లూప్‌లో <code>continue</code> ఆటోమేటిక్‌గా <code>i++</code> ఇంక్రిమెంట్‌కు వెళ్తుంది. కానీ <code>while</code> లూప్‌లో ఇంక్రిమెంట్ బాడీ చివర ఉంటే, <code>continue</code> వల్ల ఆ ఇంక్రిమెంట్ లైన్ ఎప్పటికీ రన్ కాక <strong>ప్రోగ్రామ్ ఇన్ఫినిట్ లూప్‌లో ఇరుక్కుపోతుంది</strong>! కాబట్టి <code>continue</code> కి ముందే ఇంక్రిమెంట్ చేయాలి.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>నెస్టెడ్ లూప్స్ (Nested Loops) & 2D గ్రిడ్ ప్రాసెసింగ్</div>
+    <div class="section-body">
+      <p>
+        ఒక లూప్ లోపల మరొక లూప్ ఉండడాన్ని <strong>నెస్టెడ్ లూప్ (Nested Loop)</strong> అంటారు. బయటి లూప్ (Outer Loop) అడ్డు వరుసలను (Rows) నియంత్రిస్తే, లోపలి లూప్ (Inner Loop) నిలువు వరుసలను (Columns) నియంత్రిస్తుంది:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Right-Angled Star Pyramid</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>int totalRows = 5;
+
+for (int r = 1; r &lt;= totalRows; r++) {
+    // లోపలి లూప్: ప్రతి వరుసలో నక్షత్రాలను ముద్రించడం
+    for (int c = 1; c &lt;= r; c++) {
+        Console.Write("* ");
+    }
+    Console.WriteLine(); // వరుస పూర్తయిన తర్వాత కొత్త లైన్‌కు వెళ్లడం
+}</code></pre>
+      </div>
+      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
+        💡 నెస్టెడ్ లూప్స్ యొక్క టైమ్ కాంప్లెక్సిటీ సాధారణంగా $O(N 	imes M)$ లేదా $O(N^2)$ అవుతుంది. కాబట్టి 3 లేదా 4 స్థాయిల కంటే ఎక్కువ నెస్టెడ్ లూప్స్ రాయడం పర్ఫార్మెన్స్‌కు హానికరం.
+      </p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>నెస్టెడ్ లూప్స్ నుండి ఒకేసారి బయటకు రావడం (Multi-Loop Break)</div>
+    <div class="section-body">
+      <p>
+        చాలామంది బిగినర్స్ <code>break</code> రాస్తే అన్ని నెస్టెడ్ లూప్స్ నుండి బయటకు వచ్చేస్తుందని అనుకుంటారు. కానీ <strong>break కేవలం తాను ఉన్న అత్యంత సమీపంలోని ఇన్నర్ లూప్‌ను మాత్రమే ఆపుతుంది</strong>; బయటి లూప్ నడుస్తూనే ఉంటుంది.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">✅ ప్రొఫెషనల్ సొల్యూషన్: Method Return టెక్నిక్</h4>
+        <p style="font-size:13px; color:var(--text); margin:0; line-height:1.6;">
+          సంక్లిష్టమైన నెస్టెడ్ లూప్స్ లో టార్గెట్ దొరకగానే అన్ని లూప్స్ నుండి ఒకేసారి శాశ్వతంగా బయటకు రావడానికి ఆ లాజిక్‌ను ఒక ప్రత్యేక ప్రైవేట్ మెథడ్‌లో ఉంచి నేరుగా <strong>return;</strong> చేయడం అత్యంత క్లీన్, ఆధునిక సాఫ్ట్‌వేర్ పద్ధతి.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. ఇన్నర్ మరియు ఔటర్ లూప్‌లలో ఒకే వేరియబుల్ వాడటం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">for (int i = 0; ... ) { for (int i = 0; ... ) } // Compiler Error! A local variable named 'i' cannot be declared in this scope</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">C# వేరియబుల్ స్కోప్‌లను కఠినంగా రక్షిస్తుంది. ఔటర్ లూప్‌కు <code>i</code> వాడితే, ఇన్నర్ లూప్‌కు <code>j</code> లేదా <code>r, c</code> (Row, Column) అని వేర్వేరు పేర్లు ఇవ్వాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. లూప్‌లను దాటవేయడానికి విచ్చలవిడిగా goto వాడటం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;"><code>goto</code> స్టేట్‌మెంట్ వాడితే కోడ్ స్పఘెట్టి (Spaghetti code) లా మారి డీబగ్గింగ్ అసాధ్యం అవుతుంది. స్ట్రక్చర్డ్ లూప్స్ (break, return) మాత్రమే వాడాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Environment.Exit(0) మరియు break ల మధ్య తేడా ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>break</code> కేవలం ఆ నిర్దిష్ట లూప్ నుండి మాత్రమే బయటకు తెస్తుంది; ప్రోగ్రామ్‌లోని మిగిలిన కోడ్ కొనసాగుతుంది. కానీ <code>Environment.Exit(0)</code> మొత్తం అప్లికేషన్‌ను అక్కడికక్కడే మూసివేసి ఆపరేటింగ్ సిస్టమ్‌కు కంట్రోల్‌ను తిరిగి ఇస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: for (;;) మరియు while (true) లలో ఏది రాయడం మంచిది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            రెండు సమానమైన IL బైట్‌కోడ్‌ను ఉత్పత్తి చేస్తాయి. అయితే రీడబిలిటీ (చదవడానికి స్పష్టత) పరంగా C# లో <code>while (true)</code> రాయడమే మోడ్రన్ కోడింగ్ స్టాండర్డ్.
+          </p>
+        </div>
+      </div>
+    </div>
+  
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

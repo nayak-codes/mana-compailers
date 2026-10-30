@@ -316,14 +316,151 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>లూప్స్ (for, while, do-while & foreach)</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. for, while, do-while లైఫ్‌సైకిల్ · foreach & IEnumerable అంతర్గత పనితీరు · ఇన్ఫినిట్ లూప్స్ · Off-by-one బగ్స్.
+    <div class="intro-box">
+      కంప్యూటర్ల యొక్క అద్భుతమైన సామర్థ్యం వేలాది పునరావృత పనులను (Repetitive Tasks) క్షణాల్లో అలసట లేకుండా ఖచ్చితత్వంతో పూర్తి చేయగలగడమే. C# లో ఇటరేషన్ల కోసం నాలుగు ప్రధాన లూప్స్ ఉన్నాయి — <strong>for</strong>, <strong>while</strong>, <strong>do-while</strong>, మరియు ఆధునిక కలెక్షన్స్ కోసం రూపొందించిన <strong>foreach</strong>. ఈ అధ్యాయంలో వాటి 4-దశల లైఫ్‌సైకిల్, <code>IEnumerable</code> అంతర్గత పనితీరు, మరియు ఇన్ఫినిట్ లూప్స్ ప్రమాదాలను లోతుగా నేర్చుకుందాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>for లూప్ — 4-దశల ఎగ్జిక్యూషన్ లైఫ్‌సైకిల్</div>
+    <div class="section-body">
+      <p>
+        ఇటరేషన్ల సంఖ్య ముందే ఖచ్చితంగా తెలిసినప్పుడు (ఉదాహరణకు 1 నుండి 100 వరకు సంఖ్యలు లేదా అర్రే ఇండెక్సింగ్) <strong>for లూప్</strong> అత్యంత ప్రాచుర్యం పొందింది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">🔄 for లూప్ 4-దశల చక్రం:</h4>
+        <ol style="margin:0; padding-left:20px; font-size:13px; color:var(--text); line-height:1.7;">
+          <li><strong>ఇనీషియలైజేషన్ (Initialization):</strong> లూప్ ప్రారంభంలో ఒకే ఒక్కసారి రన్ అవుతుంది (<code>int i = 1</code>).</li>
+          <li><strong>కండిషన్ టెస్ట్ (Condition Check):</strong> ప్రతి ఇటరేషన్‌కు ముందు పరీక్షించబడుతుంది (<code>i &lt;= 10</code>). నిజమైతే లోపలికి వెళ్తుంది; అబద్ధమైతే లూప్ ఆగిపోతుంది.</li>
+          <li><strong>బాడీ ఎగ్జిక్యూషన్ (Body Execution):</strong> లూప్ లోపల ఉన్న కోడ్ స్టేట్‌మెంట్లు రన్ అవుతాయి.</li>
+          <li><strong>అప్‌డేట్ / ఇంక్రిమెంట్ (Update Step):</strong> బాడీ ముగియగానే వేరియబుల్ పెరుగుతుంది (<code>i++</code>). వెంటనే మళ్లీ స్టెప్ 2 కి వెళ్తుంది.</li>
+        </ol>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో లూప్స్ (for, while, do-while & foreach) యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — for loop calculation</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>int sum = 0;
+// 1 నుండి 10 వరకు సహజ సంఖ్యల మొత్తం
+for (int i = 1; i &lt;= 10; i++) {
+    sum += i;
+}
+Console.WriteLine($"1 నుండి 10 సంఖ్యల మొత్తం: {sum}");</code></pre>
       </div>
-    
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>while & do-while లూప్స్ — ఎంట్రీ vs ఎగ్జిట్ కంట్రోల్</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14px;">1. while లూప్ (ఎంట్రీ-కంట్రోల్డ్):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            లూప్ లోపలికి ప్రవేశించే ముందే కండిషన్ చెక్ అవుతుంది. మొదట్లోనే కండిషన్ అబద్ధమైతే కోడ్ <strong>జీరో సార్లు</strong> రన్ అవుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 6px 0; font-size:14px;">2. do-while లూప్ (ఎగ్జిట్-కంట్రోల్డ్):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            కండిషన్ మొదట్లోనే అబద్ధమైనా కోడ్ బ్లాక్ <strong>కనీసం ఒక్కసారైనా (At least once)</strong> ఖచ్చితంగా రన్ అవుతుంది. మెనూ రిపీటేషన్‌కు బెస్ట్.
+          </p>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — while loop number reversing</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>int number = 12345;
+int reversed = 0;
+
+while (number &gt; 0) {
+    int remainder = number % 10;
+    reversed = (reversed * 10) + remainder;
+    number /= 10; // వేరియబుల్ తగ్గించడం - ఇది లేకపోతే ఇన్ఫినిట్ లూప్ అవుతుంది!
+}
+Console.WriteLine($"తిరగేసిన సంఖ్య (Reversed): {reversed}");</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>foreach లూప్ & IEnumerable అంతర్గత ఆర్కిటెక్చర్</div>
+    <div class="section-body">
+      <p>
+        C# లో అర్రేలు, లిస్టులు, మరియు కలెక్షన్స్ పై తిరగడానికి అత్యంత శుభ్రమైన, సిఫార్సు చేయబడిన లూప్ <strong>foreach</strong>. దీనికి ఇండెక్స్ వేరియబుల్స్ (<code>i</code>) లేదా బౌండరీ కాలిక్యులేషన్స్ అవసరం లేదు:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — foreach loop on string array</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>string[] programmingLanguages = { "C#", "C++", "Python", "Java", "Go" };
+
+Console.WriteLine("ప్రోగ్రామింగ్ భాషల జాబితా:");
+foreach (string lang in programmingLanguages) {
+    Console.WriteLine($"• {lang}");
+}</code></pre>
+      </div>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981; font-size:14px;">⚙️ తెరవెనుక ఏం జరుగుతోంది? (IEnumerable &amp; IEnumerator):</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          కంపైలర్ <code>foreach</code> ను అంతర్గతంగా <code>IEnumerator enumerator = list.GetEnumerator()</code> గా మారుస్తుంది. అది <code>while (enumerator.MoveNext())</code> తో ఒక్కో అంశాన్ని చదువుతుంది. ముఖ్య గమనిక: <strong>foreach లోపల ఇటరేట్ అవుతున్న ఎలిమెంట్ రీడ్-ఓన్లీ (Read-Only)</strong>; దాన్ని నేరుగా మార్చడం లేదా కలెక్షన్ నుండి రిమూవ్ చేయడం సాధ్యం కాదు.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ఇన్ఫినిట్ లూప్స్ & CPU హ్యాంగ్ నివారణ</div>
+    <div class="section-body">
+      <p>
+        ఒక లూప్ కండిషన్ ఎప్పటికీ <code>false</code> కాకపోతే అది అనంతంగా రన్ అవుతూ CPU ని 100% స్ట్రెస్ చేసి అప్లికేషన్‌ను ఫ్రీజ్ చేస్తుంది. ప్రొడక్షన్ బ్యాక్‌గ్రౌండ్ వర్కర్లలో ఉద్దేశపూర్వకంగా అనంత లూప్స్ రాసేటప్పుడు <strong>CancellationToken</strong> లేదా <code>Thread.Sleep()</code> / <code>await Task.Delay()</code> వాడటం తప్పనిసరి.
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. foreach లోపల కలెక్షన్‌ను సవరించడం (Collection Modified Trap):</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">foreach (var item in list) { list.Remove(item); } // InvalidOperationException!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;"><code>foreach</code> రన్ అవుతున్నప్పుడు లిస్ట్‌లో ఎలిమెంట్లను తీసివేయడం లేదా చేర్చడం నిషిద్ధం. ఎలిమెంట్లను తీసివేయాలంటే రివర్స్ <code>for</code> లూప్ లేదా <code>list.RemoveAll()</code> వాడాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. Off-by-one ఇండెక్స్ ఎర్రర్:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">for (int i = 0; i &lt;= arr.Length; i++) // IndexOutOfRangeException!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">అర్రే ఇండెక్స్ ఎల్లప్పుడూ <code>0</code> నుండి <code>Length - 1</code> వరకే ఉంటుంది. <code>&lt;=</code> వాడితే ఆఖరి ఇటరేషన్‌లో అప్లికేషన్ క్రాష్ అవుతుంది. ఎల్లప్పుడూ <code>&lt; arr.Length</code> రాయాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: for లూప్ మరియు foreach లలో ఏది ఎక్కువ వేగవంతమైనది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            సాధారణ అర్రేల (Arrays) పై ఆధునిక .NET JIT కంపైలర్ రెండింటికీ ఒకే విధమైన ఆప్టిమైజ్డ్ అసెంబ్లీ కోడ్ ఉత్పత్తి చేస్తుంది కాబట్టి వేగంలో తేడా ఉండదు. అయితే లింక్డ్ లిస్టులు లేదా కాంప్లెక్స్ కలెక్షన్లలో <code>foreach</code> క్లీన్ కోడ్ పరంగా అత్యంత శ్రేయస్కరం.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: do-while లూప్ చివర సెమికోలన్ తప్పనిసరా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            అవును! <code>while (...)</code> లూప్‌కు సెమికోలన్ ఉండదు, కానీ <code>do { ... } while (...);</code> చివర సెమికోలన్ తప్పనిసరిగా ఉండాలి. లేకపోతే కంపైలర్ సింటాక్స్ ఎర్రర్ ఇస్తుంది.
+          </p>
+        </div>
+      </div>
+    </div>
+  
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">

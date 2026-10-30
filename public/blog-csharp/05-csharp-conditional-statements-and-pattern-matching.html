@@ -316,14 +316,169 @@
     </div>
 
     
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. if, else if, else · డాంగ్లింగ్ else నివారణ · Type Pattern & Relational Pattern Matching · switch Expressions (=>).
+    <div class="intro-box">
+      కంప్యూటర్ ప్రోగ్రామ్‌లు నిజమైన ప్రయోజనాన్ని ఇవ్వాలంటే అవి పరిస్థితులను బట్టి స్వతంత్రంగా సరైన నిర్ణయాలు (Decision Making) తీసుకోగలగాలి. ఆన్‌లైన్ షాపింగ్‌లో డిస్కౌంట్ కాలిక్యులేషన్, బ్యాంకింగ్ క్రెడిట్ స్కోర్ చెకింగ్ లేదా గేమ్ క్యారెక్టర్ మూవ్‌మెంట్లలో నిర్ణయాలు తీసుకోవడానికి C# లో <strong>కండిషనల్ స్టేట్‌మెంట్స్ (if-else)</strong> మూలస్తంభాలు. ఆధునిక C# (C# 9 నుండి C# 12 వరకు) లో ప్రవేశపెట్టిన అత్యాధునిక <strong>Pattern Matching</strong> ఫీచర్లు కోడ్‌ను ఎలా సంక్షిప్తంగా, సురక్షితంగా చేస్తాయో ఈ అధ్యాయంలో సమగ్రంగా పరిశీలిద్దాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>if, else if, else డెసిషన్ మేకింగ్ ఆర్కిటెక్చర్</div>
+    <div class="section-body">
+      <p>
+        C లేదా C++ లలో ఏదైనా నాన్-జీరో సంఖ్య నిజం (True) గా పరిగణించబడుతుంది. కానీ <strong>C# లో టైప్ సేఫ్టీ కఠినమైనది: if కండిషన్ లోపల తప్పనిసరిగా కేవలం 'bool' (true లేదా false) మాత్రమే ఉండాలి</strong>. పూర్ణాంకాలను నేరుగా కండిషన్‌గా వాడటం C# లో నిషిద్ధం.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">1. if స్టేట్‌మెంట్ (Single Branch):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఇచ్చిన బూలియన్ షరతు నిజమైతేనే ఆ కోడ్ బ్లాక్ రన్ అవుతుంది. అబద్ధమైతే ప్రోగ్రామ్ దాన్ని దాటవేసి ముందుకు వెళ్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 6px 0; font-size:14.5px;">2. if-else స్టేట్‌మెంట్ (Two-Way Branch):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            షరతు నిజమైతే మొదటి బ్లాక్, అబద్ధమైతే ప్రత్యామ్నాయంగా <code>else</code> బ్లాక్ ఖచ్చితంగా ఎగ్జిక్యూట్ అవుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:8px; padding:16px;">
+          <h4 style="color:#8b5cf6; margin:0 0 6px 0; font-size:14.5px;">3. else-if లాడర్ (Multi-Way Ladder):</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            బహుళ షరతులను పై నుండి క్రిందికి వరుసగా తనిఖీ చేస్తుంది. మొదటి ఏ షరతు నిజమైతే ఆ బ్లాక్ రన్ అయి మిగిలిన మొత్తం లాడర్ స్కిప్ అవుతుంది.
+          </p>
+        </div>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>C# మరియు .NET 8 లో కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching యొక్క ప్రాముఖ్యత మరియు వాస్తవ అప్లికేషన్లలో దీని వినియోగం.</p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — ATM Cash Withdrawal Decision Flow</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>decimal accountBalance = 15000.00m;
+decimal withdrawAmount = 5000.00m;
+
+if (withdrawAmount &lt;= 0) {
+    Console.WriteLine("❌ చెల్లని మొత్తం! ధన సంఖ్యను నమోదు చేయండి.");
+} else if (withdrawAmount &gt; accountBalance) {
+    Console.WriteLine($"❌ సరిపడా నిధులు లేవు! మీ బ్యాలెన్స్: ₹{accountBalance}");
+} else {
+    accountBalance -= withdrawAmount;
+    Console.WriteLine($"✅ విత్‌డ్రా విజయవంతమైంది: ₹{withdrawAmount}. మిగిలిన బ్యాలెన్స్: ₹{accountBalance}");
+}</code></pre>
       </div>
-    
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>డాంగ్లింగ్ else సమస్య & బ్రాకెట్ల నిబంధన (The Dangling else)</div>
+    <div class="section-body">
+      <p>
+        ఒక <code>if</code> లోపల మరొక <code>if</code> రాసినప్పుడు కర్లీ బ్రేసెస్ <code>{ }</code> ఉపయోగించకపోతే కంప్యూటర్‌కు ఏ <code>else</code> ఎవరికి చెందుతుందో గందరగోళం ఏర్పడుతుంది:
+      </p>
+
+      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#ef4444; font-size:14px;">⚠️ డాంగ్లింగ్ else ట్రాప్:</strong>
+        <code style="font-size:13px; color:var(--text); display:block; margin:8px 0; background:var(--bg3); padding:8px; border-radius:4px;">
+          if (score &gt;= 35)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;if (score &gt;= 90)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine("A Grade");<br>
+          else<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine("Failed!"); // ఈ else ఎవరికి చెందుతుంది?
+        </code>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          పై కోడ్‌లో <code>else</code> మొదటి <code>if(score &gt;= 35)</code> కి చెందినదిగా అనిపించవచ్చు. కానీ <strong>C# నియమం ప్రకారం ఏ బ్రాకెట్ లేని else ఎల్లప్పుడూ తనకు అత్యంత సమీపంలో ఉన్న మునుపటి if కే జతచేయబడుతుంది!</strong> కాబట్టి <code>score = 70</code> అయితే ఏమీ ప్రింట్ అవ్వదు. అందుకే ప్రొఫెషనల్ కోడింగ్‌లో సింగిల్ లైన్ అయినా <strong>ఎల్లప్పుడూ కర్లీ బ్రేసెస్ { ... } వాడాలి</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>C# మోడ్రన్ ప్యాటర్న్ మ్యాచింగ్ (Pattern Matching Revolution)</div>
+    <div class="section-body">
+      <p>
+        ఆధునిక C# (C# 9 నుండి C# 12 వరకు) లో ప్రవేశపెట్టిన అత్యంత శక్తివంతమైన ఫీచర్ <strong>Pattern Matching</strong>. సాంప్రదాయ <code>if-else</code> ల కంటే ఇది కోడ్‌ను విప్లవాత్మకంగా సంక్షిప్తం చేస్తుంది:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#10b981; font-size:14px;">1. Type Pattern (టైప్ చెకింగ్ + ఇన్లైన్ వేరియబుల్):</strong>
+          <code style="font-size:12.5px; color:var(--text); display:block; margin:6px 0; background:var(--bg3); padding:6px 10px; border-radius:4px;">if (data is string text) { Console.WriteLine(text.Length); }</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;">డేటా రకాన్ని తనిఖీ చేసి, సరిపోలితే ఆటోమేటిక్‌గా టైప్ కాస్టింగ్ చేసి కొత్త వేరియబుల్‌ను సృష్టిస్తుంది.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#3b82f6; font-size:14px;">2. Relational & Logical Patterns (పరిధుల పోలిక):</strong>
+          <code style="font-size:12.5px; color:var(--text); display:block; margin:6px 0; background:var(--bg3); padding:6px 10px; border-radius:4px;">if (age is &gt;= 18 and &lt; 60) { Console.WriteLine("Working Age"); }</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;"><code>age &gt;= 18 &amp;&amp; age &lt; 60</code> అని రెండుసార్లు వేరియబుల్ రాయకుండా <code>is &gt;= 18 and &lt; 60</code> అని సహజ ఇంగ్లీష్ లాగా రాయవచ్చు.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#8b5cf6; font-size:14px;">3. Negative Pattern (is not null):</strong>
+          <code style="font-size:12.5px; color:var(--text); display:block; margin:6px 0; background:var(--bg3); padding:6px 10px; border-radius:4px;">if (customer is not null) { ... }</code>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.5;"><code>customer != null</code> కంటే <code>is not null</code> మరింత స్పష్టంగా మరియు ఆపరేటర్ ఓవర్‌లోడింగ్ సమస్యలు లేకుండా పనిచేస్తుంది.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>టెర్నరీ ఆపరేటర్ (Ternary Operator ?: )</div>
+    <div class="section-body">
+      <p>
+        రెండు లైన్ల సాధారణ <code>if-else</code> బ్లాక్‌ను కేవలం ఒకే ఒక్క లైన్‌లో ఎక్స్‌ప్రెషన్‌గా రాయడానికి <strong>టెర్నరీ ఆపరేటర్ (?:)</strong> ఉపయోగపడుతుంది:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Ternary Conditional Operator</span>
+          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+        </div>
+        <pre><code>int score = 85;
+string result = (score &gt;= 40) ? "ఉత్తీర్ణత (Pass)" : "ఫెయిల్ (Fail)";
+Console.WriteLine($"పరీక్ష ఫలితం: {result}");
+
+int a = 120, b = 95;
+int maximum = (a &gt; b) ? a : b;
+Console.WriteLine($"గరిష్ట సంఖ్య: {maximum}");</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. if పక్కన సెమికోలన్ పెట్టడం (Empty Statement Trap):</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">if (userRole == "Admin"); { GrantAccess(); } // సెమికోలన్ పెట్టరాదు!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;"><code>if(...);</code> అని పెడితే కండిషన్ అక్కడితో ముగిసిపోతుంది. దాంతో యూజర్ ఎవరైనా సరే కర్లీ బ్రేసెస్ లోని కోడ్ ప్రతిసారీ రన్ అయిపోయి ఘోరమైన సెక్యూరిటీ బగ్ తలెత్తుతుంది!</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. if లో అసైన్‌మెంట్ ప్రయత్నించడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">if (status = 1) // Compiler Error! Cannot convert int to bool</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">C/C++ లో ఇది సైలెంట్ బగ్. కానీ C# లో టైప్ సేఫ్టీ వల్ల కంపైలర్ తక్షణమే ఎర్రర్ ఇస్తుంది. పోల్చడానికి ఎల్లప్పుడూ <code>==</code> వాడాలి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: is null మరియు == null ల మధ్య సాంకేతిక తేడా ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ఒక క్లాస్‌లో డెవలపర్ <code>==</code> ఆపరేటర్‌ను ఓవర్‌లోడ్ చేసి తప్పుడు లాజిక్ రాసి ఉండవచ్చు. కానీ <code>is null</code> అనేది ఆపరేటర్ ఓవర్‌లోడింగ్‌ను దాటవేసి, CLR మెమరీ స్థాయిలో ఆ రిఫరెన్స్ నిజంగా శూన్యమా కాదా అని ఖచ్చితంగా తనిఖీ చేస్తుంది. అందుకే మోడ్రన్ C# లో <code>is null</code> వాడటమే సిఫార్సు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: if-else లాడర్ మరియు switch లలో పర్ఫార్మెన్స్ పరంగా ఏది ఉత్తమం?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            పరిధులు (Ranges, e.g. <code>age &gt;= 18</code>) ఉన్నప్పుడు <code>if-else</code> సహజమైనది. కానీ స్థిరమైన విలువలపై (Discrete values) పనిచేసేటప్పుడు కంపైలర్ <code>switch</code> ను $O(1)$ జంప్ టేబుల్‌గా ఆప్టిమైజ్ చేస్తుంది కాబట్టి <code>switch</code> వేగవంతమైనది.
+          </p>
+        </div>
+      </div>
+    </div>
+  
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
