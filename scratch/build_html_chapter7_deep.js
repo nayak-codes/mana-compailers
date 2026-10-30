@@ -1,0 +1,580 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./html_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 7);
+const sidebarHtml = buildSidebar(7);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-html.html">HTML5 Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 7: ఇమేజెస్ (img), రెస్పాన్సివ్ పిక్చర్స్ (picture, srcset) & WebP/SVG</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">ఇమేజెస్ (img), రెస్పాన్సివ్ పిక్చర్స్ (picture, srcset) & WebP/SVG</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern HTML5 (W3C/WHATWG)</span>
+      <span class="badge">🟢 Chapter 7 of 20</span>
+      <span class="badge">📂 Phase 02: లింకులు, లిస్టులు, టేబుల్స్ & మల్టీమీడియా</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>&lt;img&gt; ట్యాగ్ అనాటమీ & Void Element స్వభావం · src మరియు alt (SEO & a11y) · width, height మరియు CLS నివారణ · loading="lazy" ఆప్టిమైజేషన్ · రెస్పాన్సివ్ ఇమేజెస్ (srcset & sizes) · &lt;picture&gt; ట్యాగ్ & ఆర్ట్ డైరెక్షన్ · ఆధునిక ఫార్మాట్లు (WebP, SVG వెక్టార్) · బిగినర్స్ తప్పులు & క్విజ్</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>ఒక ప్రసిద్ధ అంతర్జాతీయ సామెత ఉంది: <em>"ఒక చిత్రం వెయ్యి పదాలకు సమానం"</em> (A picture is worth a thousand words). కేవలం నల్లటి అక్షరాలు మాత్రమే ఉన్న వెబ్‌సైట్‌ను ఎవరూ ఎక్కువసేపు చూడరు. అందమైన ఫోటోలు, ఇలస్ట్రేషన్లు మరియు ఇన్ఫోగ్రాఫిక్స్ ఉంటేనే యూజర్లు ఆకర్షితులవుతారు.</p>
+      <p>కానీ వెబ్ డెవలప్‌మెంట్‌లో ఒక చేదు నిజం ఉంది: ఇంటర్నెట్‌లో ఒక వెబ్‌సైట్ చాలా నెమ్మదిగా ఓపెన్ కావడానికి (Slow Page Loading Speed) 80% ప్రధాన కారణం — అధిక బరువున్న చిత్రాలే (Unoptimized Heavy Images)! మొబైల్ ఫోన్ వాడుతున్న యూజర్‌కు భారీ 4K డెస్క్‌టాప్ ఇమేజ్‌ను పంపితే వారి మొబైల్ డేటా ఖర్చయిపోతుంది, పేజీ లోడింగ్ కోసం నిరీక్షించలేక యూజర్ వెబ్‌సైట్ వదిలి వెళ్ళిపోతారు!</p>
+      <p>ఈ సమస్యను పరిష్కరించడానికి ఆధునిక HTML5 లో <strong><code>srcset</code></strong>, <strong><code>&lt;picture&gt;</code> ఎలిమెంట్</strong>, <strong><code>loading="lazy"</code></strong>, మరియు గూగుల్ కనిపెట్టిన <strong>WebP / వెక్టార్ SVG</strong> లాంటి విప్లవాత్మక టెక్నాలజీలు వచ్చాయి. ఈ ఏడవ అధ్యాయంలో మనం ఇమేజెస్‌ను అందంగా, మెరుపులాంటి వేగంతో, మొబైల్ స్క్రీన్‌కు తగ్గట్లుగా రెస్పాన్సివ్‌గా ఎలా పొందుపరచాలో పూర్తి తెలుగులో, ప్రాక్టికల్ లైవ్ కోడింగ్‌తో నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే అంశాలు</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>&lt;img&gt; ట్యాగ్ అనాటమీ:</strong> Void Element స్వభావం మరియు <code>src</code>, <code>alt</code> ఆట్రిబ్యూట్ల ప్రాథమిక నిర్మాణం.</li>
+        <li><strong>alt ఆట్రిబ్యూట్ ప్రాముఖ్యత:</strong> Accessibility (స్క్రీన్ రీడర్స్), బ్రోకెన్ ఇమేజ్ ఫాల్‌బ్యాక్ మరియు Google Image SEO.</li>
+        <li><strong>width, height మరియు CLS:</strong> లేఅవుట్ జంపింగ్ (Cumulative Layout Shift) బగ్‌ను నివారించే శాస్త్రీయ సూత్రాలు.</li>
+        <li><strong>loading="lazy" మ్యాజిక్:</strong> జీరో జావాస్క్రిప్ట్ తో వెబ్‌సైట్ లోడింగ్ స్పీడ్‌ను 3 రెట్లు పెంచే నేటివ్ లేజీ లోడింగ్.</li>
+        <li><strong>ఆధునిక ఇమేజ్ ఫార్మాట్ల పోలిక:</strong> JPEG vs PNG vs WebP vs SVG వెక్టార్ గ్రాఫిక్స్.</li>
+        <li><strong>రెస్పాన్సివ్ ఇమేజెస్ (srcset & sizes):</strong> మొబైల్, టాబ్లెట్, డెస్క్‌టాప్ స్క్రీన్లకు వేర్వేరు సైజుల ఇమేజెస్ అందించే పద్ధతి.</li>
+        <li><strong>&lt;picture&gt; ట్యాగ్ & ఆర్ట్ డైరెక్షన్:</strong> స్క్రీన్ ఓరియంటేషన్ మార్చినప్పుడు వేర్వేరు ఫోటోలను చూపించడం మరియు ఫార్మాట్ ఫాల్‌బ్యాక్స్.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>&lt;img&gt; ట్యాగ్ అనాటమీ &amp; Void Element స్వభావం</div>
+    <div class="section-body">
+      <p>HTML లో చిత్రాన్ని పేజీలో చేర్చడానికి <code>&lt;img&gt;</code> ట్యాగ్‌ను ఉపయోగిస్తాం. ఇది కంటెంట్ లేని <strong>Void Element (స్వీయ-ముగింపు ట్యాగ్)</strong>. కాబట్టి దీనికి <code>&lt;/img&gt;</code> అనే ముగింపు ట్యాగ్ రాయకూడదు:</p>
+
+      <div class="diagram-box">
+  ┌─────────────────────────────────── &lt;img&gt; TAG ───────────────────────────────────┐
+  │                                                                                  │
+  │   &lt;img   src="images/laptop.webp"   alt="ఆధునిక ల్యాప్‌టాప్"   width="600" /&gt;    │
+  │   └──┬┘  └──────────┬───────────┘   └──────────┬───────────┘   └────┬────┘       │
+  │      │              │                          │                    │            │
+  │    Image       Source File                Alternative           Display          │
+  │     Tag        Path or URL             Text (SEO &amp; a11y)       Dimensions        │
+  └──────────────────────────────────────────────────────────────────────────────────┘
+      </div>
+
+      <p><strong>బ్రౌజర్ ఇమేజ్‌ను ఎలా లోడ్ చేస్తుంది? (How Browsers Fetch Images):</strong></p>
+      <p>ఇమేజ్ అనేది HTML ఫైల్ లోపల నేరుగా ఉండదు! <code>src</code> (Source) ఆట్రిబ్యూట్ లో ఆ ఇమేజ్ ఎక్కడ భద్రపరచబడి ఉందో పాత్ (చిరునామా) ఇస్తాం. బ్రౌజర్ HTML కోడ్‌ను చదువుతున్నప్పుడు <code>&lt;img&gt;</code> ట్యాగ్ కనిపించగానే, ఆ సర్వర్‌కు ప్రత్యేకంగా ఒక నెట్‌వర్క్ రిక్వెస్ట్ పంపి, చిత్రాన్ని డౌన్‌లోడ్ చేసుకుని పేజీలో అమర్చుతుంది.</p>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>alt ఆట్రిబ్యూట్ — కేవలం టెక్స్ట్ కాదు, ప్రాణవాయువు!</div>
+    <div class="section-body">
+      <p>చాలామంది బిగినర్స్ <code>alt</code> ఆట్రిబ్యూట్‌ను ఖాళీగా వదిలేస్తారు లేదా అస్సలు రాయరు. కానీ ప్రొఫెషనల్ వెబ్ డెవలప్‌మెంట్‌లో <code>alt</code> లేకుండా ఇమేజ్ రాయడం తీవ్రమైన తప్పు!</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ప్రధాన విధి</th>
+            <th>ఎలా ఉపయోగపడుతుంది?</th>
+            <th>ప్రాముఖ్యత స్థాయి</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Accessibility (a11y)</strong></td>
+            <td>దృష్టి లోపం ఉన్నవారు వాడే స్క్రీన్ రీడర్స్ చిత్రాన్ని చూడలేవు. అవి <code>alt</code> టెక్స్ట్‌ను చదివి వారికి దృశ్యాన్ని వివరిస్తాయి.</td>
+            <td>అత్యవసరం (WCAG Standard)</td>
+          </tr>
+          <tr>
+            <td><strong>2. Broken Image Fallback</strong></td>
+            <td>ఇంటర్నెట్ చాలా నెమ్మదిగా ఉన్నప్పుడు లేదా సర్వర్‌లో ఇమేజ్ డిలీట్ అయినప్పుడు బ్రౌజర్ ఆ ఇమేజ్ బాక్స్ లోపల ఈ టెక్స్ట్‌ను చూపిస్తుంది.</td>
+            <td>యూజర్ అనుభవం (UX)</td>
+          </tr>
+          <tr>
+            <td><strong>3. Google Image SEO</strong></td>
+            <td>గూగుల్ సెర్చ్ బాట్స్ చిత్రంలోని విషయాన్ని గుర్తించడానికి <code>alt</code> టెక్స్ట్‌నే ప్రామాణికంగా తీసుకుంటాయి.</td>
+            <td>సెర్చ్ ర్యాంకింగ్స్</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout-title">💡 మంచి alt టెక్స్ట్ ఎలా రాయాలి?</div>
+        <p>❌ <strong>చెడ్డ పద్ధతి:</strong> <code>alt="ఫోటో"</code> లేదా <code>alt="image1.jpg"</code> (ఎలాంటి ఉపయోగం లేదు).<br>
+        ✅ <strong>సరైన పద్ధతి:</strong> <code>alt="హైదరాబాద్ చార్మినార్ వద్ద రాత్రి వేళ వెలుగుతున్న లైట్లు"</code> (స్పష్టమైన వివరణ ఉండాలి!).</p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>width, height మరియు CLS (Cumulative Layout Shift) నివారణ</div>
+    <div class="section-body">
+      <p>మీరు ఎప్పుడైనా మొబైల్‌లో ఒక వార్తా కథనం చదువుతున్నప్పుడు, అకస్మాత్తుగా పైన ఒక యాడ్ లేదా ఫోటో లోడ్ అయి, మీరు చదువుతున్న టెక్స్ట్ అమాంతం కిందకు జారిపోయిందా? మీరు పొరపాటున వేరే లింక్‌పై క్లిక్ చేసి విసుక్కున్నారా?</p>
+      
+      <p>దీనినే గూగుల్ <strong>CLS (Cumulative Layout Shift - లేఅవుట్ జంపింగ్ బగ్)</strong> అంటారు. దీనివల్ల వెబ్‌సైట్ Core Web Vitals స్కోరు దెబ్బతింటుంది.</p>
+
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:18px; margin:20px 0;">
+        <div style="font-weight:700; color:#059669; font-size:16px; margin-bottom:8px;">✅ CLS ని శాశ్వతంగా పరిష్కరించే మార్గం:</div>
+        <p style="color:var(--text); font-size:14.5px; line-height:1.7; margin-bottom:10px;">
+          HTML లో ఎల్లప్పుడూ ఇమేజ్‌కు <strong><code>width</code></strong> మరియు <strong><code>height</code></strong> ఆట్రిబ్యూట్లను తప్పనిసరిగా సంఖ్యలలో పేర్కొనాలి:
+        </p>
+        <div class="code-block" style="margin:10px 0;">
+          <pre><code>&lt;!-- ఇమేజ్ డౌన్‌లోడ్ కాకముందే బ్రౌజర్ ఖాళీ స్థలాన్ని రిజర్వ్ చేస్తుంది --&gt;
+&lt;img src="hero-banner.webp" alt="హీరో బ్యానర్" width="1200" height="600" /&gt;</code></pre>
+        </div>
+        <p style="color:var(--text2); font-size:14px; line-height:1.6; margin:0;">
+          దీనివల్ల బ్రౌజర్ ఇమేజ్ డౌన్‌లోడ్ కాకముందే దాని అసలు Aspect Ratio (నిష్పత్తి 2:1) ని లెక్కించి, స్క్రీన్ మీద అంత ఖాళీ స్థలాన్ని ముందే రిజర్వ్ చేసి ఉంచుతుంది. ఇమేజ్ లోడ్ అయినప్పుడు కింద ఉన్న కంటెంట్ అస్సలు కదలదు!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>loading="lazy" — వెబ్‌సైట్ స్పీడ్ పెంచే మ్యాజికల్ ట్రిక్</div>
+    <div class="section-body">
+      <p>ఒక సుదీర్ఘమైన బ్లాగ్ పోస్ట్‌లో 25 ఇమేజెస్ ఉన్నాయనుకోండి. యూజర్ పేజీ ఓపెన్ చేయగానే స్క్రీన్ పైభాగంలో మొదటి 2 ఫోటోలు మాత్రమే కనిపిస్తాయి. మిగిలిన 23 చిత్రాలు పేజీ అట్టడుగున ఉంటాయి. అయినా సరే బ్రౌజర్ ఆ 25 చిత్రాలను ఒకేసారి డౌన్‌లోడ్ చేయడం ప్రారంభిస్తే వెబ్‌సైట్ విపరీతమైన లాగ్ అవుతుంది!</p>
+
+      <p>దీనికి పరిష్కారంగా ఆధునిక HTML5 లో <strong>Native Lazy Loading</strong> ప్రవేశపెట్టబడింది:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Native Lazy Loading</span>
+        </div>
+        <pre><code>&lt;!-- స్క్రీన్ కింద ఉండే ఇమేజెస్‌కు loading="lazy" వాడాలి --&gt;
+&lt;img src="footer-photo.webp" alt="క్యాంపస్ ఫోటో" width="800" height="400" loading="lazy" /&gt;</code></pre>
+      </div>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>loading="lazy"</code>: వినియోగదారుడు స్క్రోల్ చేస్తూ ఆ ఇమేజ్ దగ్గరకు వచ్చే వరకు బ్రౌజర్ దానిని డౌన్‌లోడ్ చేయదు! దీనివల్ల మొబైల్ డేటా ఆదా అవుతుంది, పేజీ తక్షణమే లోడ్ అవుతుంది.</li>
+        <li><code>loading="eager"</code>: పేజీ ఓపెన్ కాగానే వెంటనే డౌన్‌లోడ్ చేస్తుంది (పేజీ పైభాగంలో ఉండే Hero Banner కి ఇది వాడతారు).</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>ఆధునిక ఇమేజ్ ఫార్మాట్ల యుద్ధం (JPEG vs PNG vs WebP vs SVG)</div>
+    <div class="section-body">
+      <p>వెబ్ డెవలప్‌మెంట్‌లో సరైన ఇమేజ్ ఫార్మాట్‌ను ఎంచుకోవడం సైట్ వేగాన్ని నిర్ణయిస్తుంది:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫార్మాట్</th>
+            <th>రకం</th>
+            <th>బలహీనత / బలం</th>
+            <th>వాడాల్సిన సందర్భం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>JPEG / JPG</strong></td>
+            <td>రాస్టర్ (Raster)</td>
+            <td>ఫోటోలకు బాగుంటుంది, కానీ ట్రాన్స్‌పరెంట్ బ్యాక్‌గ్రౌండ్ ఉండదు.</td>
+            <td>సాధారణ రంగుల ఫోటోగ్రాఫ్‌లు.</td>
+          </tr>
+          <tr>
+            <td><strong>PNG</strong></td>
+            <td>రాస్టర్ (Lossless)</td>
+            <td>పారదర్శక (Transparent) బ్యాక్‌గ్రౌండ్ ఉంటుంది, కానీ ఫైల్ సైజు చాలా ఎక్కువ.</td>
+            <td>లోగోలు, గ్రాఫిక్స్ మరియు స్క్రీన్‌షాట్లు.</td>
+          </tr>
+          <tr>
+            <td><strong>WebP</strong></td>
+            <td>ఆధునిక గూగుల్ ఫార్మాట్</td>
+            <td>JPEG కంటే 30% తక్కువ సైజు + PNG లాగా పారదర్శకత + యానిమేషన్స్!</td>
+            <td>ప్రస్తుత ఆధునిక వెబ్ అంతటా నంబర్ 1 ఎంపిక.</td>
+          </tr>
+          <tr>
+            <td><strong>SVG</strong></td>
+            <td>వెక్టార్ (XML Code)</td>
+            <td>గణిత సూత్రాల కోడ్ తో తయారవుతుంది. ఎంత జూమ్ చేసినా పిక్సెల్స్ అస్సలు పగలవు!</td>
+            <td>ఐకాన్లు, వెబ్‌సైట్ లోగోలు, ఇలస్ట్రేషన్లు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>రెస్పాన్సివ్ ఇమేజెస్ (srcset &amp; sizes attributes)</div>
+    <div class="section-body">
+      <p>డెస్క్‌టాప్ కంప్యూటర్‌లో 27 అంగుళాల మానిటర్ ఉంటుంది, కానీ మొబైల్ ఫోన్‌లో కేవలం 6 అంగుళాల స్క్రీన్ ఉంటుంది. డెస్క్‌టాప్ కోసం తయారుచేసిన 2MB భారీ ఫోటోను చిన్న మొబైల్‌కు పంపడం అన్యాయం కదా!</p>
+      
+      <p>దీనిని పరిష్కరించడానికి <strong><code>srcset</code></strong> ఆట్రిబ్యూట్ ద్వారా మనం బ్రౌజర్‌కు వేర్వేరు పరిమాణాల చిత్రాల మెనూను అందిస్తాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Responsive Image with srcset &amp; sizes</span>
+        </div>
+        <pre><code>&lt;img src="hero-medium.jpg"
+     srcset="hero-small.jpg 480w,
+             hero-medium.jpg 800w,
+             hero-large.jpg 1200w"
+     sizes="(max-width: 600px) 480px,
+            (max-width: 1000px) 800px,
+            1200px"
+     alt="రెస్పాన్సివ్ ల్యాండ్‌స్కేప్ ఫోటో"
+     loading="lazy" /&gt;</code></pre>
+      </div>
+
+      <p><strong>ఇది ఎలా పని చేస్తుంది?</strong> బ్రౌజర్ యూజర్ యొక్క మొబైల్ స్క్రీన్ వెడల్పును మరియు ఇంటర్నెట్ స్పీడ్‌ను స్వయంగా లెక్కించి, మొబైల్ అయితే <code>hero-small.jpg</code> ని, పెద్ద కంప్యూటర్ అయితే <code>hero-large.jpg</code> ని ఆటోమేటిక్‌గా డౌన్‌లోడ్ చేసుకుంటుంది!</p>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>&lt;picture&gt; ఎలిమెంట్ &amp; ఆర్ట్ డైరెక్షన్ (Art Direction)</div>
+    <div class="section-body">
+      <p><code>srcset</code> కేవలం ఒకే ఫోటో యొక్క వేర్వేరు సైజులను మాత్రమే ఎంచుకుంటుంది. కానీ మొబైల్ ఫోన్ నిలువుగా (Portrait) ఉంటుంది, ల్యాప్‌టాప్ అడ్డంగా (Landscape) ఉంటుంది. ల్యాప్‌టాప్‌లో అందంగా కనిపించే వైడ్ యాంగిల్ ఫోటోను మొబైల్‌లో చూపిస్తే అందులోని మనుషులు చీమలంత చిన్నగా కనిపిస్తారు!</p>
+      <p>మొబైల్ కోసం క్లోజప్ క్రాప్ చేసిన ఫోటో, డెస్క్‌టాప్ కోసం వైడ్ ఫోటో చూపించడాన్ని <strong>Art Direction</strong> అంటారు. దీనిని <code>&lt;picture&gt;</code> ట్యాగ్ ద్వారా సాధిస్తాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Art Direction with &lt;picture&gt; Tag</span>
+        </div>
+        <pre><code>&lt;picture&gt;
+  &lt;!-- మొబైల్ స్క్రీన్‌లలో నిలువు క్లోజప్ ఫోటో చూపించు --&gt;
+  &lt;source media="(max-width: 600px)" srcset="person-close-crop.webp" /&gt;
+
+  &lt;!-- డెస్క్‌టాప్ స్క్రీన్‌లలో వైడ్ ల్యాండ్‌స్కేప్ ఫోటో చూపించు --&gt;
+  &lt;source media="(min-width: 601px)" srcset="person-wide-landscape.webp" /&gt;
+
+  &lt;!-- పాత బ్రౌజర్ల కోసం ఫాల్‌బ్యాక్ ఇమేజ్ --&gt;
+  &lt;img src="person-fallback.jpg" alt="వ్యక్తి ప్రొఫైల్ ఫోటో" width="800" height="500" /&gt;
+&lt;/picture&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>&lt;figure&gt; మరియు &lt;figcaption&gt; — సెమాంటిక్ ఇమేజ్ క్యాప్షన్లు</div>
+    <div class="section-body">
+      <p>పుస్తకాల్లో లేదా వార్తా పత్రికల్లో బొమ్మల కింద <em>"చిత్రం 1.2: ఇస్రో రాకెట్ ప్రయోగం"</em> అని వివరణాత్మక క్యాప్షన్ రాస్తారు కదా. HTML5 లో దీనికోసం ప్రత్యేకమైన సెమాంటిక్ ట్యాగ్స్ ఉన్నాయి:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">Semantic Figure with Caption</span>
+        </div>
+        <pre><code>&lt;figure style="margin:20px 0; text-align:center;"&gt;
+  &lt;img src="rocket-launch.webp" alt="శ్రీహరికోట నుండి రాకెట్ నింగిలోకి దూసుకుపోతున్న దృశ్యం" width="600" height="350" style="border-radius:8px;" /&gt;
+  &lt;figcaption style="font-size:13.5px; color:#64748b; margin-top:8px;"&gt;
+    చిత్రం 1.1: శ్రీహరికోట సతీష్ ధావన్ స్పేస్ సెంటర్ నుండి విజయవంతంగా నింగిలోకి దూసుకెళ్లిన PSLV రాకెట్.
+  &lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+      </div>
+
+      <p><code>&lt;figure&gt;</code> మొత్తం ఇమేజ్ బ్లాక్‌ను సూచిస్తే, <code>&lt;figcaption&gt;</code> ఆ చిత్రానికి సంబంధించిన అధికారిక క్యాప్షన్‌ను సెమాంటిక్‌గా బ్రౌజర్‌కు తెలుపుతుంది.</p>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>పరిపూర్ణ ప్రాక్టికల్ లైవ్ ఉదాహరణ (Complete Runnable Code)</div>
+    <div class="section-body">
+      <p>ఈ అధ్యాయంలో మనం నేర్చుకున్న <code>img</code>, <code>loading="lazy"</code>, <code>figure</code>, మరియు ఇన్‌లైన్ <code>SVG</code> వెక్టార్ ఐకాన్‌లను కలిపి ఒక పరిపూర్ణ కోడ్‌ను పరిశీలిద్దాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">HTML5 Images &amp; SVG Master Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-html-editor.html" target="_blank">▶ Run in Online HTML Editor</a>
+          </div>
+        </div>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="te"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;HTML5 ఇమేజెస్ &amp; SVG మాస్టర్ డెమో&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body style="font-family:sans-serif; padding:20px; color:#0f172a;"&gt;
+    &lt;h1&gt;ఆధునిక ఇమేజెస్ &amp; వెక్టార్ గ్రాఫిక్స్&lt;/h1&gt;
+
+    &lt;!-- 1. ఇన్-లైన్ SVG వెక్టార్ ఐకాన్ (ఎంత జూమ్ చేసినా పగలదు) --&gt;
+    &lt;div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;"&gt;
+      &lt;svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;
+        &lt;polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"&gt;&lt;/polygon&gt;
+      &lt;/svg&gt;
+      &lt;strong style="font-size:18px; color:#059669;"&gt;ప్రీమియం వెబ్ డెవలప్‌మెంట్ ట్యుటోరియల్&lt;/strong&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 2. Semantic Figure with Captions &amp; Lazy Loading --&gt;
+    &lt;figure style="margin:0; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; max-width:640px;"&gt;
+      &lt;img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&amp;auto=format&amp;fit=crop&amp;q=80" 
+           alt="కోడింగ్ చేస్తున్న వెబ్ డెవలపర్ ల్యాప్‌టాప్ దృశ్యం" 
+           width="600" 
+           height="380" 
+           loading="lazy" 
+           style="width:100%; height:auto; border-radius:8px; display:block;" /&gt;
+      &lt;figcaption style="margin-top:12px; font-size:13.5px; color:#64748b; text-align:center;"&gt;
+        చిత్రం 1.1: ఆధునిక వెబ్ ప్రమాణాలతో HTML5, CSS3 కోడింగ్ ప్రాక్టీస్.
+      &lt;/figcaption&gt;
+    &lt;/figure&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p style="margin-top:16px;"><strong>బ్రౌజర్‌లో ఇది ఎలా కనిపిస్తుంది? (Visual Preview):</strong></p>
+      <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:24px; margin:16px 0; box-shadow:0 4px 12px rgba(0,0,0,0.05); color:#0f172a;">
+        <div style="display:flex; align-items:center; gap:8px; padding-bottom:12px; margin-bottom:16px; border-bottom:1px solid #e2e8f0; font-size:12px; color:#64748b;">
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ef4444;"></span>
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#f59e0b;"></span>
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10b981;"></span>
+          <span style="margin-left:8px; font-family:'JetBrains Mono', monospace; font-size:11px;">https://www.ourcompiler.com/images-demo.html</span>
+        </div>
+        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin-bottom:12px;">ఆధునిక ఇమేజెస్ &amp; వెక్టార్ గ్రాఫిక్స్</h1>
+        
+        <div style="display:flex; align-items:center; gap:8px; color:#059669; font-weight:700; margin-bottom:16px;">
+          <span>⭐</span>
+          <span>ప్రీమియం వెబ్ డెవలప్‌మెంట్ ట్యుటోరియల్ (Crisp Vector SVG)</span>
+        </div>
+
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; max-width:540px;">
+          <div style="background:#e2e8f0; height:220px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#64748b; font-weight:600;">
+            🖼️ [ఆప్టిమైజ్డ్ రెస్పాన్సివ్ ఇమేజ్ డిస్ప్లే]
+          </div>
+          <div style="font-size:13px; color:#64748b; text-align:center; margin-top:8px;">
+            చిత్రం 1.1: ఆధునిక వెబ్ ప్రమాణాలతో HTML5, CSS3 కోడింగ్ ప్రాక్టీస్.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>Beginners చేసే 5 ప్రధాన తప్పులు (Common Pitfalls)</div>
+    <div class="section-body">
+      <p>ఇమేజెస్‌తో పనిచేసేటప్పుడు బిగినర్స్ తరచుగా చేసే 5 పెద్ద తప్పులు మరియు వాటి నివారణలు:</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:16px;">❌ తప్పు 1: alt ఆట్రిబ్యూట్ రాయకపోవడం లేదా ఖాళీగా వదిలేయడం</p>
+      <p style="color:var(--text2); font-size:14px;">ఇది Accessibility లోపం. స్క్రీన్ రీడర్స్ వాడే అంధులకు చిత్రం గురించి ఏమీ తెలియదు, మరియు గూగుల్ ఇమేజ్ సెర్చ్ లో మీ సైట్ ర్యాంక్ కాదు.</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 2: width మరియు height ఇవ్వకపోవడం వల్ల వచ్చే CLS జంపింగ్ ఎర్రర్</p>
+      <p style="color:var(--text2); font-size:14px;">సైజులు ఇవ్వకపోతే ఇమేజ్ డౌన్‌లోడ్ అయ్యే వరకు బ్రౌజర్ ఖాళీ బాక్స్ ఉంచదు. ఇమేజ్ రాగానే మొత్తం టెక్స్ట్ అమాంతం కిందకు దూకి యూజర్ అనుభవాన్ని దెబ్బతీస్తుంది.</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 3: అధిక బరువున్న రా ఫోటోలను (5MB, 10MB) నేరుగా వెబ్‌సైట్‌లో వాడటం</p>
+      <p style="color:var(--text2); font-size:14px;">కెమెరా నుండి నేరుగా వచ్చిన భారీ ఫైల్స్ సైట్ స్పీడ్‌ను చంపేస్తాయి. ఫోటోలను ఎల్లప్పుడూ <strong>WebP</strong> లోకి కన్వర్ట్ చేసి, 100KB నుండి 200KB లోపలే ఉండేలా ఆప్టిమైజ్ చేయాలి.</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 4: ఫైల్ పాత్ మరియు ఎక్స్‌టెన్షన్ స్పెల్లింగ్ లోపాలు</p>
+      <p style="color:var(--text2); font-size:14px;">ఫైల్ పేరు <code>photo.JPG</code> (క్యాపిటల్స్) అని ఉంటే, కోడ్‌లో <code>photo.jpg</code> (స్మాల్ లెటర్స్) అని రాస్తే లైనక్స్ వెబ్ సర్వర్లలో ఇమేజ్ లోడ్ కాదు (404 Error)!</p>
+
+      <p style="font-weight:700; color:#ef4444; margin-top:20px;">❌ తప్పు 5: &lt;img&gt; కి ముగింపు ట్యాగ్ &lt;/img&gt; రాయడం</p>
+      <p style="color:var(--text2); font-size:14px;">ఇమేజ్ అనేది Void Element. దానికి ముగింపు ట్యాగ్ ఉండదు.</p>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div class="section-title"><span class="num">12</span>ప్రాక్టీస్ టాస్క్స్ &amp; ఇంటర్వ్యూ క్విజ్ ప్రశ్నలు</div>
+    <div class="section-body">
+      <p>ఈ క్రింది ప్రశ్నలకు స్వయంగా సమాధానాలు ఆలోచించండి, ఆపై డ్రాప్‌డౌన్ తెరిచి పరిశీలించండి:</p>
+
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>&lt;img&gt;</code> ట్యాగ్‌లో <code>alt</code> ఆట్రిబ్యూట్ యొక్క 3 ప్రధాన ఉపయోగాలు ఏమిటి?</li>
+        <li>వెబ్‌సైట్లలో CLS (Cumulative Layout Shift) బగ్‌ను నివారించడానికి ఇమేజ్ ట్యాగ్‌లో ఏ ఆట్రిబ్యూట్లు తప్పక రాయాలి?</li>
+        <li><code>loading="lazy"</code> వెబ్‌సైట్ పనితీరును (Performance) ఎలా మెరుగుపరుస్తుంది?</li>
+        <li>సాధారణ JPEG లేదా PNG ల కంటే WebP మరియు SVG ఫార్మాట్లకు డెవలపర్లు ఎందుకు అధిక ప్రాధాన్యత ఇస్తారు?</li>
+        <li><code>&lt;picture&gt;</code> ఎలిమెంట్ ద్వారా సాధించే "Art Direction" అంటే ఏమిటి?</li>
+      </ol>
+
+      <details>
+        <summary>🔍 సమాధానాలు &amp; లోతైన వివరణ చూడండి (Click to expand)</summary>
+        <div style="margin-top:12px; font-size:14.5px; line-height:1.7; color:var(--text2);">
+          <p><strong>1. సమాధానం:</strong> 1) స్క్రీన్ రీడర్స్ దృష్టి లోపం ఉన్నవారికి చదివి వినిపిస్తాయి (Accessibility), 2) ఇమేజ్ ఫెయిల్ అయినప్పుడు టెక్స్ట్ కనిపిస్తుంది (Fallback), 3) Google Image SEO కి ఉపయోగపడుతుంది.</p>
+          <p style="margin-top:8px;"><strong>2. సమాధానం:</strong> <code>width</code> మరియు <code>height</code> ఆట్రిబ్యూట్లను తప్పనిసరిగా సంఖ్యలలో పేర్కొనాలి. దీనివల్ల బ్రౌజర్ ముందే ఖాళీ స్థలాన్ని రిజర్వ్ చేస్తుంది.</p>
+          <p style="margin-top:8px;"><strong>3. సమాధానం:</strong> యూజర్ స్క్రోల్ చేస్తూ ఇమేజ్ సమీపానికి వచ్చే వరకు బ్రౌజర్ ఆ చిత్రాన్ని డౌన్‌లోడ్ చేయదు. దీనివల్ల మొబైల్ డేటా ఆదా అయి ప్రారంభ పేజీ లోడింగ్ అత్యంత వేగవంతం అవుతుంది.</p>
+          <p style="margin-top:8px;"><strong>4. సమాధానం:</strong> WebP నాణ్యత తగ్గకుండా 30% తక్కువ ఫైల్ సైజును అందిస్తుంది. SVG అనేది వెక్టార్ కోడ్ కాబట్టి ఎంత జూమ్ చేసినా అస్సలు పిక్సెల్స్ పగలదు (Infinite Crispness).</p>
+          <p style="margin-top:8px;"><strong>5. సమాధానం:</strong> స్క్రీన్ పరిమాణాన్ని బట్టి కేవలం సైజు మాత్రమే కాకుండా, పూర్తిగా వేర్వేరుగా క్రాప్ చేసిన చిత్రాలను (ఉదా: డెస్క్‌టాప్ కోసం ల్యాండ్‌స్కేప్, మొబైల్ కోసం పోర్ట్రెయిట్ క్లోజప్) ప్రదర్శించడాన్ని Art Direction అంటారు.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 13 (TRY BOX & SUMMARY) -->
+    <div class="section-title"><span class="num">13</span>మీరే స్వయంగా Try చేయండి &amp; సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🚀 ఇమేజెస్ &amp; వెక్టార్ గ్రాఫిక్స్‌తో మీ కోడ్ రన్ చేసి పరీక్షించండి</div>
+        <p>పైన నేర్చుకున్న <code>img</code>, <code>figure</code>, <code>figcaption</code>, మరియు ఇన్-లైన్ <code>SVG</code> కోడ్‌ను మన ఆన్‌లైన్ ఎడిటర్‌లో ఓపెన్ చేసి, విభిన్న స్క్రీన్ సైజులలో చిత్రాలు ఎలా అమరుతున్నాయో లైవ్‌గా చూడండి!</p>
+        <a class="run-btn" href="/online-html-editor.html" target="_blank">
+          👉 Our Compiler లో HTML Editor try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 క్విక్ సారాంశం (Key Takeaways):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>&lt;img&gt;:</strong> Void element; <code>src</code> మరియు <code>alt</code> తప్పనిసరి.</li>
+          <li><strong>CLS నివారణ:</strong> ఎల్లప్పుడూ <code>width</code> మరియు <code>height</code> సంఖ్యలతో ఇవ్వాలి.</li>
+          <li><strong>Lazy Loading:</strong> స్క్రీన్ దిగువన ఉండే చిత్రాలకు <code>loading="lazy"</code> వాడి స్పీడ్ పెంచడం.</li>
+          <li><strong>ఫార్మాట్లు:</strong> ఫోటోలకు <strong>WebP</strong>, ఐకాన్లు &amp; లోగోలకు <strong>SVG</strong> నంబర్ 1 ఎంపికలు.</li>
+          <li><strong>srcset &amp; picture:</strong> మొబైల్ vs డెస్క్‌టాప్ కోసం రెస్పాన్సివ్ ఇమేజ్ డెలివరీ మరియు ఆర్ట్ డైరెక్షన్.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 8):</strong> మనం Phase 2 ఫైనల్ అధ్యాయమైన <strong>టేబుల్స్ (&lt;table&gt;), రోస్, కాలమ్స్, colspan, rowspan &amp; రెస్పాన్సివ్ టేబుల్స్</strong> గురించి లోతుగా నేర్చుకుందాం!
+      </div>
+    </div>
+`;
+
+// Build the full HTML document
+const fullPageHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${lesson.title} — Modern HTML5 Tutorial | Our Compiler</title>
+  <meta name="description" content="${lesson.title} సమగ్ర తెలుగు గైడ్: ${lesson.subtopics}." />
+  <meta name="keywords" content="html5 tutorial in telugu, learn html5, ${lesson.title.toLowerCase()}, web development, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-html/${lesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-html/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${lesson.title} (HTML5 in Telugu)",
+    "description": "${lesson.subtopics}",
+    "articleSection": "${lesson.phaseTag}: ${lesson.phaseTitle}",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-10-30"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Theme & Code Enhancements -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        // Code Block Actions: Copy & Online Editor Runner
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.open('/online-html-editor.html', '_blank');
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-html light-theme">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/online-html-editor.html" class="active">HTML/CSS/JS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-csharp.html">C#</a>
+</nav>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+${chapterContentHtml}
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-html/${lesson.prev.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: ${lesson.prev.title}
+      </a>
+      <a href="/blog-html/${lesson.next.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: ${lesson.next.title} →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy & tested across modern Web Standards / W3C & WHATWG · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+const targetFile = path.join(__dirname, '..', 'public', 'blog-html', '07-html-images-responsive-picture-and-svg.html');
+fs.writeFileSync(targetFile, fullPageHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value Chapter 7!');
+console.log('Target file size:', fullPageHtml.length, 'characters');
