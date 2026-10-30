@@ -232,32 +232,170 @@
 
     
     <div class="intro-box">
-      ప్రోగ్రామ్ ముగిసిన తర్వాత కూడా డేటా కంప్యూటర్ హార్డ్ డిస్క్‌లో శాశ్వతంగా ఉండటానికి <strong>ఫైల్ హ్యాండ్లింగ్ (File Handling)</strong> అవసరం. <code>fopen()</code>, <code>fclose()</code>, మరియు టెక్స్ట్ vs బైనరీ ఫైల్ ఆపరేషన్లను నేర్చుకుందాం.
+      కంప్యూటర్ RAM లోని సమాచారం అస్థిరమైనది (Volatile). విద్యుత్ ఆగిపోయినా లేదా ప్రోగ్రామ్ క్లోజ్ అయినా వేరియబుల్స్ లోని డేటా శాశ్వతంగా తుడిచిపెట్టుకుపోతుంది. నిజ జీవిత సాఫ్ట్‌వేర్‌లలో యూజర్ సమాచారం, లాగ్ ఫైల్స్ మరియు డేటాబేస్‌లను హార్డ్ డిస్క్ లేదా SSD పై శాశ్వతంగా భద్రపరచడానికి <strong>ఫైల్ హ్యాండ్లింగ్ (File Handling)</strong> అత్యంత కీలకమైన భాగం. ఈ అధ్యాయంలో టెక్స్ట్ vs బైనరీ మోడ్స్, <code>FILE*</code> పాయింటర్, మరియు స్ట్రక్చర్‌లను బైనరీ రూపంలో రాయడం నేర్చుకుందాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>ఫైల్ లోకి డేటాను రాయడం (File Writing with fprintf)</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>FILE* పాయింటర్ & ఫైల్ మోడ్స్ (File Access Modes)</div>
     <div class="section-body">
+      <p>
+        C స్టాండర్డ్ లైబ్రరీ <code>&lt;stdio.h&gt;</code> లో ఒక ఫైల్ స్ట్రీమ్‌ను నిర్వహించడానికి <strong>FILE</strong> అనే ప్రత్యేక స్ట్రక్చర్ మరియు దాన్ని సూచించే <strong>FILE* పాయింటర్</strong> ఉంటుంది.
+      </p>
+
+      <div style="overflow-x:auto; margin:16px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+              <th style="padding:10px 14px; color:var(--text);">మోడ్</th>
+              <th style="padding:10px 14px; color:var(--text);">పనితీరు</th>
+              <th style="padding:10px 14px; color:var(--text);">ఫైల్ లేకపోతే?</th>
+              <th style="padding:10px 14px; color:var(--text);">ఫైల్ ఇప్పటికే ఉంటే?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">"r" (Read)</td>
+              <td style="padding:10px 14px;">ఫైల్ చదవడానికి మాత్రమే ఓపెన్ చేస్తుంది</td>
+              <td style="padding:10px 14px;"><code>NULL</code> రిటర్న్ చేస్తుంది</td>
+              <td style="padding:10px 14px;">డేటా చెక్కుచెదరకుండా ఉంటుంది</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">"w" (Write)</td>
+              <td style="padding:10px 14px;">ఫైల్‌లో రాయడానికి ఓపెన్ చేస్తుంది</td>
+              <td style="padding:10px 14px;">కొత్త ఫైల్ క్రియేట్ అవుతుంది</td>
+              <td style="padding:10px 14px; color:#ef4444;">పాత డేటా మొత్తం తుడిచిపెట్టుకుపోతుంది!</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">"a" (Append)</td>
+              <td style="padding:10px 14px;">ఫైల్ చివర కొత్త డేటా కలపడానికి</td>
+              <td style="padding:10px 14px;">కొత్త ఫైల్ క్రియేట్ అవుతుంది</td>
+              <td style="padding:10px 14px;">చివర డేటా జోడించబడుతుంది</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">"rb", "wb"</td>
+              <td style="padding:10px 14px;">బైనరీ ఫైల్స్ (ఇమేజ్, వీడియో, స్ట్రక్చర్)</td>
+              <td style="padding:10px 14px;">బైనరీ మోడ్‌లో వర్తిస్తుంది</td>
+              <td style="padding:10px 14px;">ఎటువంటి న్యూలైన్ కన్వర్షన్ జరగదు</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>టెక్స్ట్ ఫైల్స్: fprintf() & fscanf() లైవ్ డెమో</div>
+    <div class="section-body">
+      <p>
+        మానవులు చదవగలిగే సాధారణ టెక్స్ట్ ఫైల్స్‌లో డేటాను రాయడానికి <code>fprintf()</code> మరియు తిరిగి చదవడానికి <code>fscanf()</code> వాడతాం:
+      </p>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — File Writing</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Text File Write and Read</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
-    FILE* fp = fopen("records.txt", "w");
+int main(void) {
+    // 1. ఫైల్‌లో రాయడం
+    FILE *fp = fopen("server_log.txt", "w");
     if (fp == NULL) {
-        printf("Error opening file!\n");
+        printf("ఫైల్ ఓపెన్ చేయడం సాధ్యం కాలేదు!\n");
         return 1;
     }
 
-    fprintf(fp, "Student ID: 101 | Grade: A+\n");
-    fprintf(fp, "Student ID: 102 | Grade: O\n");
+    fprintf(fp, "ID:%d Name:%s Score:%.1f\n", 101, "క్రిష్", 95.5);
+    fclose(fp); // ఫైల్ క్లోజ్ చేయడం వల్ల బఫర్ డిస్క్‌పై సేవ్ అవుతుంది
 
-    fclose(fp); // ఫైల్ క్లోజ్ చేయడం తప్పనిసరి
-    printf("Records saved successfully to records.txt! 💾\n");
+    // 2. ఫైల్ నుండి చదవడం
+    fp = fopen("server_log.txt", "r");
+    if (fp != NULL) {
+        int id; char name[20]; float score;
+        fscanf(fp, "ID:%d Name:%s Score:%f", &id, name, &score);
+        printf("ఫైల్ నుండి చదివిన సమాచారం: %d | %s | %.1f\n", id, name, score);
+        fclose(fp);
+    }
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>బైనరీ ఫైల్స్: fwrite() & fread() తో Struct పర్సిస్టెన్స్</div>
+    <div class="section-body">
+      <p>
+        టెక్స్ట్ ఫైల్స్‌లో సంఖ్యలను స్ట్రింగ్స్‌గా మార్చి రాయాలి. కానీ బైనరీ మోడ్‌లో మొత్తం స్ట్రక్చర్‌ను (RAM లో ఉన్న యథాతథ బైట్లను) ఒకే ఒక్క ఇన్‌స్ట్రక్షన్‌తో నేరుగా హార్డ్ డిస్క్‌పై రాయవచ్చు. ఇది అత్యంత వేగవంతమైన ప్రొడక్షన్ పద్ధతి:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Binary Struct I/O (fwrite & fread)</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+typedef struct {
+    int id;
+    char grade;
+} Record;
+
+int main(void) {
+    Record out = {501, 'A'};
+    Record in;
+
+    // బైనరీ ఫైల్‌లో రాయడం
+    FILE *fp = fopen("records.dat", "wb");
+    if (fp != NULL) {
+        fwrite(&out, sizeof(Record), 1, fp);
+        fclose(fp);
+    }
+
+    // బైనరీ ఫైల్ నుండి చదవడం
+    fp = fopen("records.dat", "rb");
+    if (fp != NULL) {
+        fread(&in, sizeof(Record), 1, fp);
+        printf("బైనరీ రికార్డు: ID = %d, Grade = %c\n", in.id, in.grade);
+        fclose(fp);
+    }
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. NULL చెక్ చేయకుండా ఫైల్ చదవడానికి ప్రయత్నించడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">FILE *fp = fopen("abc.txt", "r"); fscanf(fp, ...); // ఫైల్ లేకపోతే క్రాష్!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">ఫైల్ హార్డ్ డిస్క్‌లో లేకపోతే <code>fopen</code> NULL రిటర్న్ చేస్తుంది. NULL పాయింటర్‌ను పాస్ చేస్తే ప్రోగ్రామ్ తక్షణమే క్రాష్ అవుతుంది. ఎల్లప్పుడూ <code>if (fp == NULL)</code> తనిఖీ చేయాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. fclose() చేయడం మర్చిపోవడం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">C లో ఫైల్ ఆపరేషన్లు బఫర్ చేయబడతాయి. <code>fclose(fp)</code> పిలిచినప్పుడు మాత్రమే డేటా పూర్తిగా డిస్క్‌పై వ్రాయబడుతుంది (Flush). ఫైల్ క్లోజ్ చేయకపోతే డేటా సేవ్ కాకుండా నష్టపోయే ప్రమాదం ఉంది.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: fseek() మరియు ftell() ఫంక్షన్లను ఎందుకు ఉపయోగిస్తారు?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            <code>fseek(fp, offset, SEEK_SET)</code> ఫైల్ కర్సర్‌ను మనకు కావలసిన నిర్దిష్ట బైట్ స్థానానికి జంప్ చేయిస్తుంది (Random Access). <code>ftell(fp)</code> కర్సర్ ప్రస్తుతం ఏ బైట్ వద్ద ఉందో చెబుతుంది. ఉదాహరణకు ఫైల్ చివరకు వెళ్లి <code>ftell</code> పిలిస్తే ఆ ఫైల్ యొక్క మొత్తం సైజ్ క్షణాల్లో తెలుస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: టెక్స్ట్ మోడ్ మరియు బైనరీ మోడ్ మధ్య విండోస్‌లో న్యూలైన్ తేడా ఏమిటి?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            విండోస్‌లో టెక్స్ట్ మోడ్ <code>\n</code> ను ఆటోమేటిక్‌గా <code>\r\n</code> (Carriage Return + Line Feed) గా మారుస్తుంది. కానీ బైనరీ మోడ్ (<code>"rb"</code>/<code>"wb"</code>) ఎటువంటి అనువాదం చేయకుండా అసలైన రా బైట్లను మాత్రమే భద్రపరుస్తుంది.
+          </p>
+        </div>
       </div>
     </div>
   

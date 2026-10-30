@@ -232,34 +232,196 @@
 
     
     <div class="intro-box">
-      వేర్వేరు రకాల డేటాను (ఉదా: రోల్ నంబర్, పేరు, జీతం) ఒకే గొడుగు కింద చేర్చడానికి <strong>స్ట్రక్చర్స్ (struct)</strong>, మెమరీని షేర్ చేసుకునే <strong>యూనియన్స్ (union)</strong>, మరియు <code>typedef</code> ల గురించి నేర్చుకుందాం.
+      వాస్తవ ప్రపంచంలో సమాచారం కేవలం ఒకే రకమైన పూర్ణాంకాలు లేదా అక్షరాల రూపంలో ఉండదు. ఒక విద్యార్థి సమాచారంలో రోల్ నంబర్ (<code>int</code>), పేరు (<code>char[]</code>), మరియు మార్కులు (<code>float</code>) ఉంటాయి. అర్రేలు కేవలం ఒకే రకమైన హోమోజీనియస్ డేటాను మాత్రమే నిల్వ చేయగలవు. వేర్వేరు డేటా రకాలను ఒకే కస్టమ్ రికార్డుగా సమూహపరచడానికి C లో <strong>స్ట్రక్చర్స్ (struct)</strong>, మెమరీ ఆదా చేసే <strong>యూనియన్స్ (union)</strong>, మరియు టైప్ అలియాసింగ్ కోసం <strong>typedef</strong> ప్రాథమిక సాధనాలు.
     </div>
 
-    <div class="section-title"><span class="num">1</span>స్ట్రక్చర్స్ సింటాక్స్ & డాట్ (.) ఆపరేటర్</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>స్ట్రక్చర్స్ (struct) — హెటిరోజీనియస్ డేటా గ్రూపింగ్</div>
     <div class="section-body">
+      <p>
+        <strong>స్ట్రక్చర్ (struct)</strong> అనేది విభిన్న డేటా రకాలకు చెందిన వేరియబుల్స్‌ను ఒకే పేరు కింద కలిపి ఒక కొత్త యూజర్-డిఫైన్డ్ డేటా టైప్‌ను సృష్టించే విధానం.
+      </p>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — struct and typedef</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — struct definition & dot operator</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 #include &lt;string.h&gt;
 
-typedef struct {
-    int id;
+// స్ట్రక్చర్ డిక్లరేషన్ (బ్లూప్రింట్)
+struct Student {
+    int rollNo;
     char name[30];
-    float gpa;
-} Student;
+    float marks;
+}; // గమనిక: డిక్లరేషన్ చివర సెమికోలన్ తప్పనిసరి!
 
-int main() {
-    Student s1;
-    s1.id = 101;
-    strcpy(s1.name, "Kavya");
-    s1.gpa = 9.4f;
+int main(void) {
+    // స్ట్రక్చర్ వేరియబుల్ సృష్టి & ఇనీషియలైజేషన్
+    struct Student s1;
+    s1.rollNo = 101;
+    strcpy(s1.name, "రమేష్");
+    s1.marks = 94.5f;
 
-    printf("ID: %d | Name: %s | GPA: %.1f\n", s1.id, s1.name, s1.gpa);
+    // డాట్ (.) ఆపరేటర్ ద్వారా మెంబర్స్ యాక్సెస్
+    printf("రోల్ నంబర్ : %d\n", s1.rollNo);
+    printf("విద్యార్థి పేరు : %s\n", s1.name);
+    printf("మార్కులు      : %.2f\n", s1.marks);
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>పాయింటర్లు & స్ట్రక్చర్స్ — యారో ఆపరేటర్ (-&gt;)</div>
+    <div class="section-body">
+      <p>
+        ఒక స్ట్రక్చర్ యొక్క మెమరీ అడ్రస్‌ను పాయింటర్‌లో నిల్వ చేసినప్పుడు, దానిలోని మెంబర్లను యాక్సెస్ చేయడానికి <code>(*ptr).member</code> అని రాయడం అసౌకర్యంగా ఉంటుంది. అందుకే C మనకు సూటిగా చదవగల <strong>యారో ఆపరేటర్ (-&gt;)</strong> ను అందించింది:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Arrow operator (-&gt;) demo</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+struct Point {
+    int x;
+    int y;
+};
+
+void updateCoordinates(struct Point *p, int newX, int newY) {
+    // యారో ఆపరేటర్ ద్వారా పాయింటర్ మెంబర్లను మార్చడం
+    p-&gt;x = newX;
+    p-&gt;y = newY;
+}
+
+int main(void) {
+    struct Point pt = {10, 20};
+    printf("ప్రారంభంలో: x = %d, y = %d\n", pt.x, pt.y);
+
+    updateCoordinates(&pt, 50, 80);
+    printf("మార్చిన తర్వాత: x = %d, y = %d\n", pt.x, pt.y);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>మెమరీ ప్యాడింగ్ & స్ట్రక్చర్ అలైన్‌మెంట్ (Memory Padding)</div>
+    <div class="section-body">
+      <p>
+        ఇంటర్వ్యూలలో విద్యార్థులను ఆశ్చర్యపరిచే ఒక క్లాసికల్ ప్రశ్న:
+      </p>
+      <code style="font-size:13px; color:var(--text); display:block; background:var(--bg3); padding:8px 12px; border-radius:4px; margin:8px 0;">
+        struct Sample { char a; int b; }; // sizeof(struct Sample) ఎంత?
+      </code>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.6;">
+        చాలామంది <code>char</code> 1 బైట్ + <code>int</code> 4 బైట్లు = <strong>5 బైట్లు</strong> అని సమాధానం చెబుతారు. కానీ ఆధునిక 64-బిట్ కంపైలర్లపై ప్రింట్ చేసి చూస్తే ఫలితం <strong>8 బైట్లు</strong> వస్తుంది!
+      </p>
+
+      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
+        <strong style="color:#10b981; font-size:14.5px;">⚙️ CPU వర్డ్ అలైన్‌మెంట్ రహస్యం:</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          ఆధునిక 32-బిట్ లేదా 64-బిట్ ప్రాసెసర్లు RAM నుండి డేటాను ఒక్కో బైట్ చొప్పున చదవవు. అవి 4 లేదా 8 బైట్ల గుణిజాలలో (Word Boundaries) చదివితేనే అత్యంత వేగంగా పనిచేస్తాయి. 4-బైట్ <code>int</code> ని బౌండరీలో పెట్టడానికి కంపైలర్ <code>char</code> పక్కన నిశ్శబ్దంగా <strong>3 ఖాళీ బైట్లను (Padding Bytes)</strong> జోడిస్తుంది. మెమరీ అత్యంత కీలకమైన ఎంబెడెడ్ డివైస్‌లలో ఈ ప్యాడింగ్‌ను నిరోధించడానికి <code>#pragma pack(1)</code> వాడతారు.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>యూనియన్స్ (union) vs స్ట్రక్చర్స్ — షేర్డ్ మెమరీ మెకానిక్స్</div>
+    <div class="section-body">
+      <p>
+        <code>struct</code> తనలోని ప్రతి మెంబర్‌కు ప్రత్యేకమైన మెమరీ స్పేస్‌ను కేటాయిస్తుంది. కానీ <strong>యూనియన్ (union)</strong> తనలోని అన్ని మెంబర్లకు కలిపి కేవలం <strong>అతిపెద్ద మెంబర్ పరిమాణం గల ఒకే ఒక్క షేర్డ్ మెమరీ లొకేషన్‌ను</strong> ఇస్తుంది.
+      </p>
+
+      <div style="overflow-x:auto; margin:16px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
+              <th style="padding:10px 14px; color:var(--text);">లక్షణం</th>
+              <th style="padding:10px 14px; color:var(--text);">స్ట్రక్చర్ (struct)</th>
+              <th style="padding:10px 14px; color:var(--text);">యూనియన్ (union)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">మెమరీ సైజ్</td>
+              <td style="padding:10px 14px;">అన్ని మెంబర్ల మొత్తం సైజ్ (+ ప్యాడింగ్)</td>
+              <td style="padding:10px 14px;">అతిపెద్ద మెంబర్ సైజ్ మాత్రమే</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">మెంబర్ల యాక్సెస్</td>
+              <td style="padding:10px 14px;">ఒకేసారి అన్ని మెంబర్లను స్వతంత్రంగా వాడవచ్చు</td>
+              <td style="padding:10px 14px;">ఒకే సమయంలో ఒకే ఒక్క మెంబర్‌ను మాత్రమే వాడాలి</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:700; color:#10b981;">ప్రయోజనం</td>
+              <td style="padding:10px 14px;">సంపూర్ణ రికార్డులను నిల్వ చేయడానికి</td>
+              <td style="padding:10px 14px;">హార్డ్‌వేర్ రిజిస్టర్లు, తీవ్రమైన మెమరీ ఆదాకు</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — typedef for clean abstractions</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// typedef ఉపయోగించి టైప్ అలియాస్ సృష్టించడం
+typedef struct {
+    unsigned int id;
+    char code[8];
+} Product;
+
+int main(void) {
+    // ప్రతిసారీ struct అని రాయకుండా నేరుగా Product అని వాడవచ్చు
+    Product laptop = {1001, "LAP-X1"};
+    printf("ప్రోడక్ట్ ID: %u | కోడ్: %s\n", laptop.id, laptop.code);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. struct క్లోజింగ్ బ్రేస్ తర్వాత సెమికోలన్ మర్చిపోవడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">struct Node { int data; } // తప్పు! చివర సెమికోలన్ తప్పనిసరి</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">C లో స్ట్రక్చర్ డిక్లరేషన్ ఒక స్టేట్‌మెంట్ లాంటిది. <code>};</code> సెమికోలన్ పెట్టకపోతే కంపైలర్ విచిత్రమైన సింటాక్స్ ఎర్రర్లను ఇస్తుంది.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. యూనియన్‌లో ఒక విలువ రాసి మరొకటి చదవడం:</div>
+          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">యూనియన్‌లో <code>u.x = 10;</code> రాసిన తర్వాత <code>u.y = 3.14;</code> రాస్తే పాత <code>x</code> విలువ శాశ్వతంగా నాశనమైపోతుంది. యూనియన్ కేవలం షేర్డ్ మెమరీని మాత్రమే అందిస్తుంది.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C లాంగ్వేజ్‌లో struct లోపల ఫంక్షన్లను రాయవచ్చా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            C++ లో లాగా నేరుగా ఫంక్షన్ బాడీలను రాయలేం. కానీ ఒక ఫంక్షన్ యొక్క మెమరీ అడ్రస్‌ను సూచించే <strong>ఫంక్షన్ పాయింటర్‌ను (Function Pointer)</strong> స్ట్రక్చర్ మెంబర్‌గా ఉంచి C లో కూడా ఆబ్జెక్ట్ ఓరియెంటెడ్ పద్ధతిని అనుకరించవచ్చు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: ఒక స్ట్రక్చర్ వేరియబుల్‌ను మరొకదానికి నేరుగా s2 = s1 అని అసైన్ చేయవచ్చా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            చేయవచ్చు! అర్రేలకు భిన్నంగా, రెండు స్ట్రక్చర్లు ఒకే రకానికి చెందినవైతే <code>s2 = s1;</code> అని రాసినప్పుడు కంపైలర్ అన్ని మెంబర్ల విలువలను బైట్-బై-బైట్ (Shallow Copy) గా నకలు చేస్తుంది.
+          </p>
+        </div>
       </div>
     </div>
   

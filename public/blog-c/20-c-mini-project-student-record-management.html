@@ -232,54 +232,178 @@
 
     
     <div class="intro-box">
-      ఇప్పటివరకు నేర్చుకున్న <strong>Structs</strong>, <strong>Pointers</strong>, <strong>Dynamic Memory</strong>, మరియు <strong>File I/O</strong> కాన్సెప్ట్‌లన్నింటినీ ఏకం చేసి, పరిశ్రమ స్థాయి <strong>స్టూడెంట్ రికార్డ్ మేనేజ్‌మెంట్ సిస్టమ్ (Student Record Management Project)</strong> ను నిర్మిద్దాం.
+      అభినందనలు! మనం C ప్రోగ్రామింగ్ ప్రాథమిక వేరియబుల్స్ నుండి మొదలుకొని కంట్రోల్ ఫ్లో, లూప్స్, ఫంక్షన్స్, పాయింటర్లు, డైనమిక్ మెమరీ, మరియు ఫైల్ హ్యాండ్లింగ్ వరకు అన్ని కాన్సెప్ట్‌లను పూర్తి చేశాం. ఈ ముగింపు అధ్యాయంలో వాటన్నింటినీ ఒకచోట చేర్చి ఒక పూర్తి స్థాయి ప్రొడక్షన్-గ్రేడ్ <strong>స్టూడెంట్ రికార్డ్ మేనేజ్‌మెంట్ సిస్టమ్ (Student Record Management System)</strong> ను నిర్మిద్దాం.
     </div>
 
-    <div class="section-title"><span class="num">1</span>ప్రాజెక్ట్ ఆర్కిటెక్చర్ & సోర్స్ కోడ్</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ప్రాజెక్ట్ ఆర్కిటెక్చర్ & కోర్ ఫీచర్లు</div>
+    <div class="section-body">
+      <p>
+        ఈ ప్రాజెక్ట్ ఒక పాఠశాల లేదా కళాశాల అడ్మినిస్ట్రేషన్ వ్యవస్థ లాగా పనిచేస్తుంది. దీనిలో ఉపయోగించిన ఆధునిక ఇంజనీరింగ్ పద్ధతులు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <strong style="color:#10b981; display:block; margin-bottom:6px;">1. Struct & Typedef</strong>
+          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">రోల్ నంబర్, పేరు, మార్కులు కలిగిన శుభ్రమైన స్టూడెంట్ రికార్డ్ మోడల్.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <strong style="color:#10b981; display:block; margin-bottom:6px;">2. Dynamic Realloc</strong>
+          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">విద్యార్థులు పెరిగే కొద్దీ హీప్ మెమరీని ఆటోమేటిక్‌గా విస్తరించే డైనమిక్ అరే.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <strong style="color:#10b981; display:block; margin-bottom:6px;">3. Binary File Persistence</strong>
+          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">డేటాను <code>students.dat</code> ఫైల్‌లో భద్రపరచడం & రీలోడ్ చేయడం.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <strong style="color:#10b981; display:block; margin-bottom:6px;">4. Interactive CLI Menu</strong>
+          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">యూజర్ ఫ్రెండ్లీ కన్సోల్ మెనూ మరియు ఇన్‌పుట్ వాలిడేషన్.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>పూర్తి C సోర్స్ కోడ్ (Complete Production Code)</div>
     <div class="section-body">
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Student Records Project</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Student Record Management System</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;string.h&gt;
 
+#define DATA_FILE "students.dat"
+
 typedef struct {
-    int roll;
+    int rollNo;
     char name[40];
     float marks;
 } Student;
 
-void displayStudent(const Student* s) {
-    printf("Roll: %-4d | Name: %-15s | Marks: %.2f\n", s-&gt;roll, s-&gt;name, s-&gt;marks);
+// గ్లోబల్ లేదా మెయిన్ మేనేజ్డ్ పాయింటర్స్
+Student *students = NULL;
+int studentCount = 0;
+
+void addStudent(void) {
+    // మెమరీని 1 ఎలిమెంట్ పరిమాణం పెంచడం
+    Student *temp = (Student*) realloc(students, (studentCount + 1) * sizeof(Student));
+    if (temp == NULL) {
+        printf("ఎర్రర్: మెమరీ సరిపోలేదు!\n");
+        return;
+    }
+    students = temp;
+
+    printf("\nవిద్యార్థి రోల్ నంబర్: ");
+    scanf("%d", &students[studentCount].rollNo);
+    printf("విద్యార్థి పేరు: ");
+    scanf(" %39s", students[studentCount].name);
+    printf("మార్కులు: ");
+    scanf("%f", &students[studentCount].marks);
+
+    studentCount++;
+    printf("✅ విద్యార్థి రికార్డు విజయవంతంగా జోడించబడింది!\n");
 }
 
-int main() {
-    int count = 2;
-    Student* list = (Student*)malloc(count * sizeof(Student));
-    if (!list) return 1;
-
-    // Student 1
-    list[0].roll = 101;
-    strcpy(list[0].name, "Rajesh Kumar");
-    list[0].marks = 92.5f;
-
-    // Student 2
-    list[1].roll = 102;
-    strcpy(list[1].name, "Priya Sharma");
-    list[1].marks = 95.0f;
-
-    printf("--- STUDENT DIRECTORY (C CAPSTONE PROJECT) ---\n");
-    for (int i = 0; i &lt; count; ++i) {
-        displayStudent(&list[i]);
+void displayStudents(void) {
+    if (studentCount == 0) {
+        printf("\nరికార్డులు ఏవీ లేవు!\n");
+        return;
     }
+    printf("\n-------------------------------------------------\n");
+    printf("%-10s %-25s %-10s\n", "రోల్ నెం", "పేరు", "మార్కులు");
+    printf("-------------------------------------------------\n");
+    for (int i = 0; i &lt; studentCount; i++) {
+        printf("%-10d %-25s %-10.2f\n", students[i].rollNo, students[i].name, students[i].marks);
+    }
+    printf("-------------------------------------------------\n");
+}
 
-    free(list);
-    list = NULL;
+void saveToFile(void) {
+    FILE *fp = fopen(DATA_FILE, "wb");
+    if (fp == NULL) {
+        printf("ఫైల్ సేవ్ చేయడం సాధ్యం కాలేదు!\n");
+        return;
+    }
+    fwrite(&studentCount, sizeof(int), 1, fp);
+    fwrite(students, sizeof(Student), studentCount, fp);
+    fclose(fp);
+    printf("💾 సమాచారం డిస్క్‌పై సేవ్ చేయబడింది.\n");
+}
+
+void loadFromFile(void) {
+    FILE *fp = fopen(DATA_FILE, "rb");
+    if (fp == NULL) return; // ఫైల్ ఇంకా లేకపోతే ఏమీ చేయనవసరం లేదు
+
+    fread(&studentCount, sizeof(int), 1, fp);
+    students = (Student*) malloc(studentCount * sizeof(Student));
+    if (students != NULL) {
+        fread(students, sizeof(Student), studentCount, fp);
+    }
+    fclose(fp);
+}
+
+int main(void) {
+    loadFromFile(); // గతంలో సేవ్ చేసిన రికార్డులను లోడ్ చేయడం
+    int choice;
+
+    do {
+        printf("\n====== విద్యార్థి రికార్డ్ మేనేజ్‌మెంట్ ======\n");
+        printf("1. కొత్త విద్యార్థిని జోడించు (Add)\n");
+        printf("2. అన్ని రికార్డులను ప్రదర్శించు (Display All)\n");
+        printf("3. సేవ్ చేసి నిష్క్రమించు (Save &amp; Exit)\n");
+        printf("మీ ఎంపిక (1-3): ");
+        if (scanf("%d", &choice) != 1) break;
+
+        switch (choice) {
+            case 1: addStudent(); break;
+            case 2: displayStudents(); break;
+            case 3: saveToFile(); break;
+            default: printf("చెల్లని ఎంపిక! దయచేసి మళ్లీ ప్రయత్నించండి.\n");
+        }
+    } while (choice != 3);
+
+    // మెమరీ క్లీనప్
+    if (students != NULL) {
+        free(students);
+        students = NULL;
+    }
+    printf("ధన్యవాదాలు! ప్రాజెక్ట్ విజయవంతంగా ముగిసింది.\n");
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>లైన్-బై-లైన్ ఆర్కిటెక్చర్ విశ్లేషణ</div>
+    <div class="section-body">
+      <ul style="margin:0; padding-left:20px; font-size:13.5px; color:var(--text); line-height:1.8;">
+        <li><strong>realloc() డైనమిక్ గ్రోత్:</strong> యూజర్ కొత్త విద్యార్థిని యాడ్ చేసిన ప్రతిసారీ <code>studentCount + 1</code> తో హీప్ మెమరీని సరిగ్గా అవసరమైనంత మాత్రమే విస్తరిస్తుంది.</li>
+        <li><strong>బైనరీ పర్సిస్టెన్స్:</strong> <code>fwrite</code> మరియు <code>fread</code> తో మొత్తం స్ట్రక్చర్ అరేను క్షణాల్లో ఫైల్‌లోకి రాయడం/చదవడం జరుగుతుంది.</li>
+        <li><strong>జీరో మెమరీ లీక్స్:</strong> ప్రోగ్రామ్ ముగిసే ముందు <code>free(students)</code> తో కేటాయించిన హీప్ మెమరీని పూర్తిగా ఆపరేటింగ్ సిస్టమ్‌కు విడుదల చేశాం.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ముగింపు & భవిష్యత్ ప్రయాణం (The Road Ahead)</div>
+    <div class="section-body">
+      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:20px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:16px;">🎓 కంగ్రాట్స్! మీరు C మాస్టర్ క్లాస్‌ను విజయవంతంగా పూర్తి చేశారు</h4>
+        <p style="font-size:13.5px; color:var(--text); margin:0 0 12px 0; line-height:1.7;">
+          C లాంగ్వేజ్‌ను అర్థం చేసుకోవడం అంటే కేవలం సింటాక్స్ నేర్చుకోవడం కాదు; కంప్యూటర్ మెమరీ, ప్రాసెసర్ రిజిస్టర్లు, కాల్ స్టాక్, మరియు ఆపరేటింగ్ సిస్టమ్ పనిచేసే విధానాన్ని మూలాల్లోకి వెళ్లి శోధించడం. C లో మీరు సాధించిన ఈ బలమైన పునాది భవిష్యత్తులో ఈ క్రింది రంగాలలో మీకు అపారమైన ప్రయోజనాన్ని ఇస్తుంది:
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+          <div style="background:var(--bg3); padding:10px 14px; border-radius:6px; font-size:13px; color:var(--text);">
+            <strong>1. C++ &amp; OOPs:</strong> ఆబ్జెక్ట్ ఓరియెంటెడ్ క్లాసెస్, STL, Templates సులువుగా అర్థమవుతాయి.
+          </div>
+          <div style="background:var(--bg3); padding:10px 14px; border-radius:6px; font-size:13px; color:var(--text);">
+            <strong>2. Data Structures (DSA):</strong> Linked Lists, Trees, Graphs ను పాయింటర్లతో స్వయంగా నిర్మించగలరు.
+          </div>
+          <div style="background:var(--bg3); padding:10px 14px; border-radius:6px; font-size:13px; color:var(--text);">
+            <strong>3. Systems &amp; OS:</strong> లైనక్స్ సిస్టమ్ కాల్స్, డివైస్ డ్రైవర్లు, నెట్‌వర్క్ సాకెట్ ప్రోగ్రామింగ్.
+          </div>
+        </div>
       </div>
     </div>
   

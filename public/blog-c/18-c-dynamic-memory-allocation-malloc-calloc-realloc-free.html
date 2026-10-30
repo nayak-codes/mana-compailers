@@ -232,37 +232,171 @@
 
     
     <div class="intro-box">
-      ప్రోగ్రామ్ రన్ అవుతున్న సమయంలో మనకు అవసరమైనంత మెమరీని RAM లోని Heap నుండి తీసుకోవడానికి C లో <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> మరియు లీక్స్ నివారించడానికి <code>free()</code> వాడతాం.
+      ఇప్పటివరకు మనం సృష్టించిన అన్ని వేరియబుల్స్ మరియు అర్రేలు కంపైల్-టైమ్‌లోనే స్థిరమైన సైజును కలిగి ఉండేవి. కానీ ఒక గేమ్‌లో ఎంతమంది ఆటగాళ్ళు చేరతారో లేదా డేటాబేస్ నుండి ఎన్ని రికార్డులు వస్తాయో రన్‌టైమ్‌కు ముందు ఎవరికీ తెలియదు. రన్‌టైమ్‌లో యూజర్ అవసరాలకు తగినట్లుగా కంప్యూటర్ మెమరీని డైనమిక్‌గా పొందడానికి C లో <strong>Heap Memory</strong> మరియు <code>&lt;stdlib.h&gt;</code> లోని <strong>malloc, calloc, realloc, free</strong> ఫంక్షన్లు గుండెకాయ లాంటివి.
     </div>
 
-    <div class="section-title"><span class="num">1</span>డైనమిక్ అర్రే అలొకేషన్ (malloc & free)</div>
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>Stack vs Heap మెమరీ ఆర్కిటెక్చర్</div>
     <div class="section-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 8px 0; font-size:14.5px;">📦 స్టాక్ మెమరీ (Stack):</h4>
+          <ul style="margin:0; padding-left:18px; font-size:13px; color:var(--text2); line-height:1.7;">
+            <li>కంపైలర్ ద్వారా స్వయంచాలకంగా నిర్వహించబడుతుంది.</li>
+            <li>అత్యంత వేగవంతమైనది, కానీ పరిమిత పరిమాణం (సాధారణంగా 1MB - 8MB).</li>
+            <li>ఫంక్షన్ ముగియగానే లోకల్ వేరియబుల్స్ తుడిచిపెట్టుకుపోతాయి.</li>
+          </ul>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">🌐 హీప్ మెమరీ (Heap):</h4>
+          <ul style="margin:0; padding-left:18px; font-size:13px; color:var(--text2); line-height:1.7;">
+            <li>ప్రోగ్రామర్ తన చేతులతో కోరినప్పుడు కేటాయించబడుతుంది.</li>
+            <li>సిస్టమ్ RAM పరిమాణమంత భారీ స్థలం అందుబాటులో ఉంటుంది.</li>
+            <li>మనం <code>free()</code> చేసేంత వరకు డేటా మెమరీలోనే శాశ్వతంగా ఉంటుంది.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>malloc() vs calloc() — కేటాయింపు తేడాలు</div>
+    <div class="section-body">
+      <p>
+        హీప్ మెమరీని రిక్వెస్ట్ చేయడానికి C లో రెండు ప్రధాన ఫంక్షన్లు ఉన్నాయి:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#10b981; font-size:14px;">1. malloc() — Memory Allocation:</strong>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0; background:var(--bg3); padding:6px 10px; border-radius:4px;">int *arr = (int*) malloc(5 * sizeof(int));</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">కేవలం ఒకే పారామీటర్ (మొత్తం బైట్ల సంఖ్య) తీసుకుంటుంది. మెమరీలోని పాత గార్బేజ్ విలువలను తొలగించదు (చాలా వేగవంతమైనది).</span>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#3b82f6; font-size:14px;">2. calloc() — Contiguous Allocation:</strong>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0; background:var(--bg3); padding:6px 10px; border-radius:4px;">int *arr = (int*) calloc(5, sizeof(int));</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">రెండు పారామీటర్లు (ఎలిమెంట్ల సంఖ్య, ఒక్కో ఎలిమెంట్ సైజ్) తీసుకుంటుంది. కేటాయించిన ప్రతి బైట్‌ను <strong>సున్నా (0)</strong> తో ఇనీషియలైజ్ చేస్తుంది.</span>
+        </div>
+      </div>
+
       <div class="code-block" style="margin:16px 0;">
         <div class="code-block-header">
-          <span class="lang-tag">C — Dynamic Memory</span>
-          <a class="try-btn" href="/online-c-compiler.html">▶ Run in Compiler</a>
+          <span class="lang-tag">C — Dynamic Array with malloc & free</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
-int main() {
+int main(void) {
     int n = 5;
-    int* arr = (int*)malloc(n * sizeof(int));
+    // హీప్‌పై 5 పూర్ణాంకాల మెమరీ కేటాయింపు
+    int *arr = (int*) malloc(n * sizeof(int));
 
+    // మెమరీ లభించిందో లేదో తనిఖీ చేయడం తప్పనిసరి!
     if (arr == NULL) {
-        printf("Memory Allocation Failed!\n");
+        printf("ఎర్రర్: మెమరీ కేటాయింపు విఫలమైంది!\n");
         return 1;
     }
 
-    for (int i = 0; i &lt; n; ++i) arr[i] = (i + 1) * 10;
-    for (int i = 0; i &lt; n; ++i) printf("%d ", arr[i]);
+    for (int i = 0; i &lt; n; i++) {
+        arr[i] = (i + 1) * 10;
+        printf("%d ", arr[i]);
+    }
     printf("\n");
 
-    // తప్పనిసరిగా మెమరీని OS కి తిరిగి ఇవ్వాలి (Prevent Memory Leak)
+    // పని ముగిసిన తర్వాత మెమరీని విడుదల చేయడం
     free(arr);
-    arr = NULL;
+    arr = NULL; // Dangling pointer నివారణ
     return 0;
 }</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>realloc() — రన్‌టైమ్‌లో అర్రే సైజును రీసైజ్ చేయడం</div>
+    <div class="section-body">
+      <p>
+        మీరు మొదట 5 ఎలిమెంట్స్ కోసం మెమరీ కేటాయించారు, కానీ రన్‌టైమ్‌లో యూజర్ మరిన్ని విలువలను నమోదు చేయాలనుకుంటే పాత డేటా నష్టపోకుండా మెమరీని విస్తరించడానికి <strong>realloc()</strong> అద్భుతంగా పనిచేస్తుంది:
+      </p>
+
+      <div class="code-block" style="margin:16px 0;">
+        <div class="code-block-header">
+          <span class="lang-tag">C — realloc Dynamic Growth</span>
+          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void) {
+    int *ptr = (int*) malloc(2 * sizeof(int));
+    ptr[0] = 10; ptr[1] = 20;
+
+    // సైజును 2 నుండి 4 కి విస్తరించడం
+    int *temp = (int*) realloc(ptr, 4 * sizeof(int));
+    if (temp != NULL) {
+        ptr = temp;
+        ptr[2] = 30; ptr[3] = 40;
+        printf("విస్తరించిన అర్రే: %d %d %d %d\n", ptr[0], ptr[1], ptr[2], ptr[3]);
+    }
+
+    free(ptr);
+    ptr = NULL;
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>free() ప్రాముఖ్యత & మెమరీ లీక్స్ (Memory Leaks) ప్రమాదం</div>
+    <div class="section-body">
+      <p>
+        C లాంగ్వేజ్‌లో Java లేదా Python లాగా వెనుక తిరిగే <strong>Garbage Collector ఉండదు</strong>. మీరు <code>malloc</code> ద్వారా తీసుకున్న ప్రతి బైట్ మెమరీని ప్రోగ్రామ్ ముగిసేలోపు <code>free(ptr)</code> తో ఆపరేటింగ్ సిస్టమ్‌కు తిరిగి అప్పగించాలి.
+      </p>
+
+      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
+        <strong style="color:#ef4444; font-size:14px;">💥 మెమరీ లీక్ (Memory Leak) అంటే ఏమిటి?</strong>
+        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+          ఒక ఫంక్షన్ లోపల <code>malloc</code> చేసి, ఆ పాయింటర్‌ను <code>free()</code> చేయకుండా ఫంక్షన్ ముగిస్తే, ఆ మెమరీకి సంబంధించిన అడ్రస్ పోతుంది కానీ RAM లో ఆ స్థలం అలాగే బ్లాక్ అయి ఉంటుంది. నిరంతరం రన్ అయ్యే వెబ్ సర్వర్లలో లేదా గేమింగ్ ఇంజిన్లలో ఇలా మెమరీ లీక్స్ జరిగితే కొన్ని గంటల్లోనే సిస్టమ్ RAM అంతా నిండిపోయి సర్వర్ క్రాష్ అవుతుంది (Out of Memory Crash).
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. డబుల్ ఫ్రీ (Double Free Crash):</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">free(ptr); free(ptr); // CRASH! free(): double free detected</code>
+          <span style="font-size:13px; color:var(--text2); display:block;">ఇప్పటికే విడుదల చేసిన పాయింటర్‌ను మళ్లీ ఫ్రీ చేస్తే రన్‌టైమ్ ఎర్రర్ వస్తుంది. మొదటిసారి ఫ్రీ చేసిన వెంటనే <code>ptr = NULL;</code> చేస్తే C లో <code>free(NULL)</code> ఎటువంటి ప్రమాదం కలిగించదు.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. స్టాక్ వేరియబుల్స్‌ను free చేయడానికి ప్రయత్నించడం:</div>
+          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">int x = 10; free(&amp;x); // ఘోరమైన అక్రమ చర్య!</code>
+          <span style="font-size:13px; color:var(--text2); display:block;"><code>free()</code> ఫంక్షన్ కేవలం <code>malloc</code>, <code>calloc</code>, లేదా <code>realloc</code> ద్వారా హీప్‌పై తీసుకున్న అడ్రస్‌లపై మాత్రమే పనిచేస్తుంది.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C లో malloc రిటర్న్ వాల్యూను టైప్ కాస్ట్ (int*) చేయడం తప్పనిసరా?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            స్వచ్ఛమైన C లో <code>void*</code> ఏ ఇతర పాయింటర్ కైనా ఆటోమేటిక్‌గా ఇంప్లిసిట్‌గా కన్వర్ట్ అవుతుంది కాబట్టి <code>int *p = malloc(...)</code> అని నేరుగా రాయవచ్చు. అయితే C++ కంపైలర్లలో ఎక్స్‌ప్లిసిట్ కాస్టింగ్ తప్పనిసరి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: malloc(0) అని రాస్తే ఏం జరుగుతుంది?</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            C స్టాండర్డ్ ప్రకారం ఇది అమలుపై ఆధారపడి ఉంటుంది (Implementation Defined). కంపైలర్ NULL రిటర్న్ చేయవచ్చు లేదా <code>free()</code> చేయదగిన ఒక ప్రత్యేకమైన నాన్-నల్ పాయింటర్‌ను ఇవ్వవచ్చు. అయితే దాన్ని డీరిఫరెన్స్ చేయకూడదు.
+          </p>
+        </div>
       </div>
     </div>
   
