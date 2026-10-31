@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు & బఫర్ హ్యాండ్లింగ్ — Modern C Tutorial | Our Compiler</title>
   <meta name="description" content="యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు & బఫర్ హ్యాండ్లింగ్ సమగ్ర తెలుగు గైడ్: %d, %f, %c, %s స్పెసిఫైయర్లు · & (Address-of) రహస్యం · ది డేంజరస్ scanf న్యూలైన్ బఫర్ ట్రాప్ & getchar() పరిష్కారం." />
-  <meta name="keywords" content="c tutorial in telugu, learn c language, యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు & బఫర్ హ్యాండ్లింగ్, c programming, our compiler" />
+  <meta name="keywords" content="c tutorial in telugu, learn c language, scanf in c telugu, c format specifiers, c buffer handling, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-c/03-c-user-input-scanf-format-specifiers.html" />
@@ -35,11 +35,11 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-01",
-    "dateModified": "2026-10-29"
+    "dateModified": "2026-10-31"
   }
   </script>
 
-  <!-- Interactive Scripts: Accordion, C Syntax Highlighter & Default Light Theme -->
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -58,34 +58,55 @@
       if (currentTheme === 'dark') {
         document.documentElement.classList.remove('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
         });
       } else {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
         });
       }
     })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
   </script>
 </head>
 <body class="lang-c light-theme">
-
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html" class="active">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-</nav>
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
   <!-- LEFT SIDEBAR ACCORDION -->
@@ -206,246 +227,536 @@
     <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
   </aside>
 
-  <!-- MAIN LESSON CONTENT -->
+
+  <!-- MAIN ARTICLE -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 3: యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు & బఫర్ హ్యాండ్లింగ్</span>
+      <span class="current">Chapter 3: యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు &amp; బఫర్ హ్యాండ్లింగ్</span>
     </div>
 
-    <h1 class="page-title">యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు & బఫర్ హ్యాండ్లింగ్</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">యూజర్ ఇన్‌పుట్ (scanf), ఫార్మాట్ స్పెసిఫైయర్లు &amp; బఫర్ హ్యాండ్లింగ్</h1>
 
+    <!-- PAGE META BADGES -->
     <div class="page-meta">
-      <span class="badge">⚡ Modern C (C99 / C11)</span>
-      <span class="badge">🟢 Chapter 3 of 20</span>
-      <span class="badge">📂 Phase 01: బేసిక్స్ & మెమరీ ఆర్కిటెక్చర్</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
+      <span class="badge">🟢 Chapter 03 of 20</span>
+      <span class="badge">📂 Phase 01: బేసిక్స్ &amp; మెమరీ ఆర్కిటెక్చర్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
+    <!-- SUBTOPICS PILL BAR -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>%d, %f, %c, %s స్పెసిఫైయర్లు · & (Address-of) రహస్యం · ది డేంజరస్ scanf న్యూలైన్ బఫర్ ట్రాప్ & getchar() పరిష్కారం</span>
+      <span>stdin స్ట్రీమ్ ఆర్కిటెక్చర్ · scanf() అనాటమీ · &amp; (Address-of) రహస్యం &amp; Segfaults · ఫార్మాట్ స్పెసిఫైయర్ల పట్టిక · డేంజరస్ `\n` న్యూలైన్ బఫర్ ట్రాప్ · " %c" &amp; getchar() సొల్యూషన్స్ · మల్టిపుల్ ఇన్‌పుట్స్ · scanf రిటర్న్ వాల్యూ వాలిడేషన్ · క్విజ్ &amp; ట్రై-బాక్స్</span>
     </div>
 
-    
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
     <div class="intro-box">
-      కంప్యూటర్ ప్రోగ్రామ్‌లు నిజమైన ప్రయోజనాన్ని ఇవ్వాలంటే అవి యూజర్ ఇచ్చే డేటాను డైనమిక్‌గా స్వీకరించగలగాలి. C లో కీబోర్డ్ ఇన్‌పుట్ తీసుకోవడానికి ప్రాథమిక సాధనం <strong>scanf()</strong>. అయితే బిగినర్స్ చేసే అత్యంత తీవ్రమైన పొరపాట్లైన మెమరీ అడ్రస్ <code>&amp;</code> మర్చిపోవడం, <strong>న్యూలైన్ బఫర్ ట్రాప్ (Ghost Newline)</strong>, మరియు ప్రమాదకరమైన బఫర్ ఓవర్‌ఫ్లోలను నివారించే పద్ధతులను ఈ అధ్యాయంలో లోతుగా తెలుసుకుందాం.
+      <p>ఒక ప్రోగ్రామ్ ఎల్లప్పుడూ ఒకే విలువలను స్క్రీన్ మీద చూపిస్తూ ఉంటే (ఉదాహరణకు ఎప్పుడూ <code>a = 10, b = 20</code> అనుకుంటే) — అది ఒక డెడ్ ప్రోగ్రామ్ లాంటిది! నిజమైన ప్రపంచ సాఫ్ట్‌వేర్ ఎల్లప్పుడూ జీవంతో ఉండాలి; అంటే కీబోర్డ్ ద్వారా యూజర్ ఇచ్చే ప్రశ్నలు, నంబర్లు, పేర్లను స్వీకరించి క్షణాల్లో ప్రాసెస్ చేసి డైనమిక్ ఫలితాలను అందించాలి.</p>
+      <p>కానీ C లాంగ్వేజ్‌లో యూజర్ నుండి ఇన్‌పుట్ తీసుకోవడం ఇతర ఆధునిక భాషలంత సులభం కాదు! పైథాన్‌లో <code>input()</code> లేదా జావాలో <code>Scanner</code> కేవలం డేటాను చదివి ఇచ్చేస్తాయి. కానీ C లో ఉపయోగించే <strong>scanf() (Scan Formatted)</strong> నేరుగా కంప్యూటర్ మెమరీ RAM అడ్రస్‌లతో ముడిపడి ఉంటుంది. ఇక్కడ మీరు <strong>&amp; (Address-of) ఆపరేటర్</strong> ఎందుకు ఇవ్వాలో అర్థం చేసుకోకపోతే ప్రోగ్రామ్ భయంకరమైన <code>Segmentation fault (core dumped)</code> తో క్రాష్ అవుతుంది!</p>
+      <p>అంతేకాదు, కీబోర్డ్‌పై నొక్కే <code>Enter</code> కీ వల్ల బ్రౌజర్/టెర్మినల్ బఫర్‌లో మిగిలిపోయే అదృశ్య న్యూలైన్ క్యారెక్టర్ (<code>\n</code>) బిగినర్లకు రాత్రుళ్ళు నిద్రపట్టకుండా చేసే బఫర్ ట్రాప్‌లను సృష్టిస్తుంది. ఈ మూడవ అధ్యాయంలో, <strong>యూజర్ ఇన్‌పుట్ మెకానిక్స్, ఫార్మాట్ స్పెసిఫైయర్లు, అడ్రస్ ఆపరేటర్ మరియు బఫర్ హ్యాండ్లింగ్ టెక్నిక్స్</strong> ను లైవ్ డెమోలతో నేర్చుకుందాం!</p>
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>scanf() అంతర్గత పనితీరు (& ఆపరేటర్ ప్రాముఖ్యత)</div>
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే అంశాలు</div>
     <div class="section-body">
-      <p>
-        <code>printf()</code> ఫంక్షన్ విలువను స్క్రీన్‌పై ముద్రించడానికి కేవలం ఆ వేరియబుల్ విలువ యొక్క నకలును (Copy of value) తీసుకుంటే సరిపోతుంది. కానీ <code>scanf()</code> వినియోగదారుడు టైప్ చేసిన డేటాను నేరుగా RAM లోని ఆ వేరియబుల్ గదిలో భద్రపరచాలి.
-      </p>
-
-      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
-        <strong style="color:#10b981; font-size:14.5px;">🔑 & (Address-of Operator) ఎందుకు తప్పనిసరి?</strong>
-        <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
-          <code>&amp;age</code> అని రాసినప్పుడు అది <code>age</code> వేరియబుల్ యొక్క వాస్తవ మెమరీ చిరునామాను (RAM Hex Address, e.g. <code>0x7ffee4</code>) కంపైలర్‌కు అందిస్తుంది. ఒకవేళ <code>&amp;</code> పెట్టడం మర్చిపోతే, <code>scanf</code> ఆ వేరియబుల్ లోని గార్బేజ్ నంబర్‌నే మెమరీ అడ్రస్‌గా భావించి అక్కడ డేటా రాయడానికి ప్రయత్నిస్తుంది. ఫలితంగా ఆపరేటింగ్ సిస్టమ్ ప్రోగ్రామ్‌ను వెంటనే చంపేస్తుంది (<strong>Segmentation Fault / Crash</strong>).
-        </p>
-      </div>
-
-      <div class="code-block" style="margin:16px 0;">
-        <div class="code-block-header">
-          <span class="lang-tag">C — scanf user input</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
-        </div>
-        <pre><code>#include &lt;stdio.h&gt;
-
-int main(void) {
-    int rollNumber;
-    float marks;
-
-    printf("మీ రోల్ నంబర్ మరియు మార్కులు ఎంటర్ చేయండి: ");
-    // రెండు విలువలను ఒకేసారి చదవడం
-    scanf("%d %f", &rollNumber, &marks);
-
-    printf("రోల్ నంబర్: %d | మార్కులు: %.2f\n", rollNumber, marks);
-    return 0;
-}</code></pre>
-      </div>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>Standard I/O Streams:</strong> <code>stdin</code>, <code>stdout</code>, <code>stderr</code> ల అంతర్గత ఆర్కిటెక్చర్.</li>
+        <li><strong>scanf() అనాటమీ:</strong> Scan Formatted సింటాక్స్ మరియు కంపైలర్ పనితీరు.</li>
+        <li><strong>&amp; (Address-of) ఆపరేటర్ రహస్యం:</strong> విలువను పాస్ చేయడం వర్సెస్ మెమరీ అడ్రస్‌ను పాస్ చేయడం.</li>
+        <li><strong>ఫార్మాట్ స్పెసిఫైయర్లు సమగ్ర పట్టిక:</strong> <code>%d</code>, <code>%f</code>, <code>%lf</code>, <code>%c</code>, <code>%s</code> ల కచ్చితమైన వినియోగం.</li>
+        <li><strong>ది డేంజరస్ న్యూలైన్ బఫర్ ట్రాప్:</strong> ఒక సంఖ్య తర్వాత క్యారెక్టర్ రీడ్ చేసేటప్పుడు <code>scanf</code> ఎందుకు స్కిప్ అవుతుంది?</li>
+        <li><strong>బఫర్ క్లియరింగ్ టెక్నిక్స్:</strong> లీడింగ్ స్పేస్ <code>" %c"</code> మ్యాజిక్ మరియు <code>getchar()</code> లూప్.</li>
+        <li><strong>fflush(stdin) వివాదం:</strong> ఇది ఎందుకు C ప్రమాణాల ప్రకారం Undefined Behavior?</li>
+        <li><strong>మల్టిపుల్ ఇన్‌పుట్స్:</strong> ఒకే <code>scanf</code> లో స్పేస్, కామాలతో బహుళ వేరియబుల్స్ స్వీకరించడం.</li>
+        <li><strong>ఇన్‌పుట్ వాలిడేషన్ (scanf Return Value):</strong> యూజర్ అక్షరాలు టైప్ చేస్తే కనిపెట్టే ప్రొఫెషనల్ కోడ్.</li>
+        <li><strong>బిగినర్స్ చేసే ఘోరమైన తప్పులు:</strong> &amp; మర్చిపోవడం, డబుల్ కోసం <code>%f</code> వాడటం.</li>
+        <li><strong>ఇంటరాక్టివ్ క్విజ్:</strong> 5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు.</li>
+      </ul>
     </div>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>C ఫార్మాట్ స్పెసిఫైయర్స్ కాంప్రహెన్సివ్ టేబుల్</div>
+    <div class="section-title"><span class="num">2</span>Standard I/O Streams: stdin, stdout &amp; బఫరింగ్ ఆర్కిటెక్చర్</div>
     <div class="section-body">
-      <p>
-        <code>scanf()</code> మరియు <code>printf()</code> లలో డేటా టైప్‌ను సూచించడానికి ఉపయోగించే ఫార్మాట్ స్పెసిఫైయర్స్ పట్టిక:
-      </p>
+      <p>ఆపరేటింగ్ సిస్టమ్ ఒక C ప్రోగ్రామ్‌ను ప్రారంభించినప్పుడు, దానికి ఆటోమేటిక్‌గా 3 ప్రామాణిక డాక్యుమెంట్ స్ట్రీమ్‌లను (Standard Streams) కేటాయిస్తుంది:</p>
 
-      <div style="overflow-x:auto; margin:16px 0;">
-        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
           <thead>
-            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
-              <th style="padding:10px 14px; color:var(--text);">స్పెసిఫైయర్</th>
-              <th style="padding:10px 14px; color:var(--text);">డేటా రకం</th>
-              <th style="padding:10px 14px; color:var(--text);">ఉదాహరణ ఇన్‌పుట్</th>
-              <th style="padding:10px 14px; color:var(--text);">ప్రాముఖ్యత</th>
+            <tr>
+              <th>స్ట్రీమ్ (Stream)</th>
+              <th>సాధారణ డివైస్</th>
+              <th>ఫైల్ డిస్క్రిప్టర్</th>
+              <th>ప్రధాన బాధ్యత</th>
             </tr>
           </thead>
           <tbody>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 14px; font-weight:700; color:#10b981;">%d / %i</td>
-              <td style="padding:9px 14px;">Signed int</td>
-              <td style="padding:9px 14px;"><code>42</code>, <code>-10</code></td>
-              <td style="padding:9px 14px;">సాధారణ పూర్ణాంకాలు చదవడానికి</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 14px; font-weight:700; color:#10b981;">%u</td>
-              <td style="padding:9px 14px;">Unsigned int</td>
-              <td style="padding:9px 14px;"><code>50000</code></td>
-              <td style="padding:9px 14px;">ధన పూర్ణాంకాలు మాత్రమే</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 14px; font-weight:700; color:#10b981;">%f</td>
-              <td style="padding:9px 14px;">float</td>
-              <td style="padding:9px 14px;"><code>3.14</code></td>
-              <td style="padding:9px 14px;">దశాంశ సంఖ్యలు</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 14px; font-weight:700; color:#10b981;">%lf</td>
-              <td style="padding:9px 14px;">double</td>
-              <td style="padding:9px 14px;"><code>3.14159265</code></td>
-              <td style="padding:9px 14px;">డబుల్ ప్రెసిషన్ ఫ్లోటింగ్ పాయింట్</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 14px; font-weight:700; color:#10b981;">%c</td>
-              <td style="padding:9px 14px;">char</td>
-              <td style="padding:9px 14px;"><code>'A'</code>, <code>'#'</code></td>
-              <td style="padding:9px 14px;">ఏకైక క్యారెక్టర్ (స్పేస్, న్యూలైన్ సహా)</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 14px; font-weight:700; color:#10b981;">%s</td>
-              <td style="padding:9px 14px;">char array (string)</td>
-              <td style="padding:9px 14px;"><code>"Dennis"</code></td>
-              <td style="padding:9px 14px;">స్పేస్ వచ్చేంత వరకు ఒక పదాన్ని చదువుతుంది</td>
+            <tr>
+              <td><strong>stdin (Standard Input)</strong></td>
+              <td>కీబోర్డ్ (Keyboard)</td>
+              <td><code>0</code></td>
+              <td>యూజర్ టైప్ చేసిన డేటాను ప్రోగ్రామ్‌కు ప్రవహింపజేస్తుంది.</td>
             </tr>
             <tr>
-              <td style="padding:9px 14px; font-weight:700; color:#10b981;">%p</td>
-              <td style="padding:9px 14px;">Pointer (address)</td>
-              <td style="padding:9px 14px;"><code>0x7ffe42</code></td>
-              <td style="padding:9px 14px;">హెక్సాడెసిమల్ మెమరీ అడ్రస్ ప్రింట్ చేయడానికి</td>
+              <td><strong>stdout (Standard Output)</strong></td>
+              <td>మానిటర్ స్క్రీన్ (Terminal)</td>
+              <td><code>1</code></td>
+              <td><code>printf()</code> ద్వారా అవుట్‌పుట్‌ను స్క్రీన్‌పై ముద్రిస్తుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>stderr (Standard Error)</strong></td>
+              <td>మానిటర్ స్క్రీన్</td>
+              <td><code>2</code></td>
+              <td>ఎర్రర్ మెసేజ్‌లను బఫర్ లేకుండా తక్షణమే స్క్రీన్‌పై చూపిస్తుంది.</td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <p><strong>ఇన్‌పుట్ బఫర్ (Input Buffer) అంటే ఏమిటి?</strong> మీరు కీబోర్డుపై టైప్ చేసిన ప్రతి అక్షరం వెంటనే ప్రోగ్రామ్‌కు వెళ్ళదు! అది తాత్కాలికంగా ఆపరేటింగ్ సిస్టమ్ యొక్క మెమరీ క్యూలో (Buffer) నిల్వ ఉంటుంది. మీరు ఎప్పుడైతే <code>Enter</code> కీ ప్రెస్ చేస్తారో — అప్పుడు మాత్రమే ఆ బఫర్ నుండి డేటా మీ C ప్రోగ్రామ్‌లోని <code>scanf()</code> కి చేరుతుంది.</p>
     </div>
 
     <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>ది మోస్ట్ ఫేమస్ C బగ్: scanf న్యూలైన్ బఫర్ ట్రాప్!</div>
+    <div class="section-title"><span class="num">3</span>scanf() ప్రాథమిక అనాటమీ &amp; సింటాక్స్</div>
     <div class="section-body">
-      <p>
-        ప్రతి C విద్యార్థిని లేదా డెవలపర్‌ను తీవ్రంగా వేధించే ఒక మిస్టీరియస్ సమస్య: ఒక నంబర్‌ను ఇన్‌పుట్ తీసుకున్న వెంటనే క్యారెక్టర్ (<code>%c</code>) ను ఇన్‌పుట్ తీసుకోవడానికి ప్రయత్నిస్తే, ప్రోగ్రామ్ యూజర్ కోసం ఆగకుండా ఆటోమేటిక్‌గా స్కిప్ అయిపోతుంది!
-      </p>
+      <p><code>scanf</code> అనేది <strong>Scan Formatted</strong> కు సంక్షిప్త రూపం. ఇది <code>&lt;stdio.h&gt;</code> హెడర్ ఫైల్‌లో నిర్వచించబడిన ఒక ఇన్‌పుట్ ఫంక్షన్:</p>
 
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0;">
-        <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14.5px;">🕵️‍♂️ అసలేం జరుగుతోంది? (The Buffer Mechanics):</h4>
-        <ol style="margin:0; padding-left:20px; font-size:13.5px; color:var(--text); line-height:1.7;">
-          <li>మీరు నంబర్ <code>25</code> అని టైప్ చేసి కీబోర్డ్ పై <strong>Enter</strong> కీ ప్రెస్ చేస్తారు.</li>
-          <li>స్టాండర్డ్ ఇన్‌పుట్ బఫర్ (<code>stdin</code>) లోకి <code>'2'</code>, <code>'5'</code>, మరియు <code>'\n'</code> (Newline క్యారెక్టర్) వెళ్తాయి.</li>
-          <li><code>scanf("%d", &amp;age)</code> కేవలం <code>25</code> ను మాత్రమే చదివి, ఆ ఎంటర్‌ను (<code>'\n'</code>) బఫర్‌లోనే వదిలేస్తుంది!</li>
-          <li>వెంటనే తర్వాతి లైన్‌లోని <code>scanf("%c", &amp;grade)</code> రన్ అయినప్పుడు, అది బఫర్‌లో ఇప్పటికే పడి ఉన్న <code>'\n'</code> ను చదివేసి క్యారెక్టర్‌గా భావిస్తుంది. దాంతో యూజర్ కీబోర్డ్ టైప్ చేయడానికి ముందే ఖాళీగా ఎగ్జిట్ అయిపోతుంది!</li>
-        </ol>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Basic scanf Syntax</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int userAge;
+
+    printf("దయచేసి మీ వయస్సు నమోదు చేయండి: ");
+    
+    // scanf లో %d తో పాటు &userAge తప్పనిసరి!
+    scanf("%d", &amp;userAge);
+
+    printf("మీ వయస్సు: %d సంవత్సరాలు.\n", userAge);
+
+    return 0;
+}</code></pre>
       </div>
 
-      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
-        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">✅ ది అఫీషియల్ సొల్యూషన్ (The Leading Space Trick):</h4>
-        <p style="font-size:13px; color:var(--text); margin:0 0 8px 0; line-height:1.6;">
-          <code>%c</code> కి ముందు ఒక సింగిల్ స్పేస్ ఇవ్వండి: <strong><code>scanf(" %c", &amp;grade);</code></strong>
-        </p>
-        <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-          ఫార్మాట్ స్ట్రింగ్‌లో ముందు స్పేస్ ఇవ్వడం ద్వారా C కంపైలర్ బఫర్‌లో నిల్వ ఉన్న అన్ని వైట్‌స్పేస్‌లను, న్యూలైన్లను (<code>'\n'</code>) స్వయంచాలకంగా విస్మరించి, యూజర్ ఇచ్చే తాజా అక్షరం కోసం ఎదురుచూస్తుంది!
-        </p>
-      </div>
+      <p>పై కోడ్‌లో <code>scanf("%d", &amp;userAge);</code> ఎలా పనిచేస్తుంది?</p>
+      <ol style="margin-left:20px; color:var(--text2); line-height:1.7;">
+        <li><code>"%d"</code> : కీబోర్డ్ నుండి రాబోయే డేటా ఒక పూర్ణాంకం (Integer) అని కంపైలర్‌కు సూచిస్తుంది.</li>
+        <li><code>&amp;userAge</code> : ఆ పూర్ణాంకాన్ని రాసి పెట్టవలసిన <strong>RAM మెమరీ అడ్రస్</strong> ను <code>scanf</code> కి అందజేస్తుంది.</li>
+      </ol>
     </div>
 
     <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>స్పేస్‌లతో కూడిన స్ట్రింగ్స్ చదవడం: fgets() vs scanf()</div>
+    <div class="section-title"><span class="num">4</span>అడ్రస్-ఆఫ్ ఆపరేటర్ (&amp;) రహస్యం: Segfault ఎందుకు వస్తుంది?</div>
     <div class="section-body">
-      <p>
-        ఒక పూర్తి పేరును (ఉదాహరణకు <code>Dennis Ritchie</code>) <code>scanf("%s", name)</code> తో చదివితే అది కేవలం <code>Dennis</code> ను మాత్రమే తీసుకుంటుంది. ఎందుకంటే స్పేస్ రాగానే <code>scanf</code> ఆగిపోతుంది. దీనికి పరిష్కారం <strong>fgets()</strong>.
-      </p>
+      <p>చాలామంది బిగినర్స్ అడుగుతుంటారు: "<code>printf</code> లో <code>userAge</code> అని రాస్తే సరిపోయింది కదా, <code>scanf</code> లో ఈ <code>&amp;</code> గుర్తు ఎందుకు రాయాలి?"</p>
 
-      <div class="code-block" style="margin:16px 0;">
+      <p>దీనిని ఒక వాస్తవ ఉదాహరణతో అర్థం చేసుకుందాం: మీ స్నేహితుడు మీ ఇంటి గోడకు పెయింట్ వేయాలి అనుకోండి. మీరు అతనికి మీ ఇంటి ఫోటో ఇస్తే సరిపోతుందా? సరిపోదు! మీ ఇంటి అడ్రస్ (చిరునామా) ఇవ్వాలి, అప్పుడే అతను మీ ఇంటికి వచ్చి గోడపై రంగు వేయగలడు!</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <ul style="margin:0; padding-left:20px; color:var(--text2); font-size:14px; line-height:1.8;">
+          <li><strong>printf("..", userAge):</strong> కేవలం వేరియబుల్‌లో ఉన్న విలువను (Value Copy) చదవాలి కాబట్టి అడ్రస్ అక్కర్లేదు; కాపీ ఇస్తే చాలు.</li>
+          <li><strong>scanf("..", &amp;userAge):</strong> <code>scanf</code> ఫంక్షన్ మెమరీ లొకేషన్‌లోకి కొత్త విలువను రాయాలి (Modify చేయాలి). C లో ఫంక్షన్లు నేరుగా వేరియబుల్స్ మార్చలేవు (Call by Value); అందుకే ఆ వేరియబుల్ ఉన్న మెమరీ అడ్రస్ <code>&amp;userAge</code> ని పంపాలి!</li>
+        </ul>
+      </div>
+
+      <div class="tip-box">
+        🚨 <strong>&amp; మర్చిపోతే ఏమవుతుంది?</strong><br>
+        ఒకవేళ మీరు <code>scanf("%d", userAge);</code> అని రాస్తే — వేరియబుల్‌లోని గార్బేజ్ విలువనే (ఉదా: 0 లేదా 142345) <code>scanf</code> మెమరీ అడ్రస్‌గా భావించి, ఆ నిషేధిత ప్రాంతంలో డేటా రాయడానికి ప్రయత్నిస్తుంది. వెంటనే ఆపరేటింగ్ సిస్టమ్ సెక్యూరిటీని కాపాడటానికి మీ ప్రోగ్రామ్‌ను బలవంతంగా చంపేస్తుంది (Crash చేస్తుంది)! దీనినే <strong>Segmentation Fault (Core Dumped)</strong> అంటారు!
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>ఫార్మాట్ స్పెసిఫైయర్లు సమగ్ర పట్టిక</div>
+    <div class="section-body">
+      <p>వివిధ డేటా టైప్స్ ఇన్‌పుట్ తీసుకోవడానికి మరియు ప్రింట్ చేయడానికి ఉపయోగించే అధికారిక ఫార్మాట్ స్పెసిఫైయర్ల సూచిక:</p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>డేటా టైప్</th>
+              <th>ఇన్‌పుట్ (scanf)</th>
+              <th>అవుట్‌పుట్ (printf)</th>
+              <th>ఉదాహరణ ఉపయోగం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>int</code> (Signed Integer)</td>
+              <td><code>%d</code> లేదా <code>%i</code></td>
+              <td><code>%d</code></td>
+              <td><code>scanf("%d", &amp;n);</code></td>
+            </tr>
+            <tr>
+              <td><code>unsigned int</code></td>
+              <td><code>%u</code></td>
+              <td><code>%u</code></td>
+              <td><code>scanf("%u", &amp;pos);</code></td>
+            </tr>
+            <tr>
+              <td><code>short</code></td>
+              <td><code>%hd</code></td>
+              <td><code>%hd</code></td>
+              <td><code>scanf("%hd", &amp;s);</code></td>
+            </tr>
+            <tr>
+              <td><code>long</code></td>
+              <td><code>%ld</code></td>
+              <td><code>%ld</code></td>
+              <td><code>scanf("%ld", &amp;val);</code></td>
+            </tr>
+            <tr>
+              <td><code>long long</code></td>
+              <td><code>%lld</code></td>
+              <td><code>%lld</code></td>
+              <td><code>scanf("%lld", &amp;bigNum);</code></td>
+            </tr>
+            <tr>
+              <td><code>float</code></td>
+              <td><code>%f</code></td>
+              <td><code>%f</code></td>
+              <td><code>scanf("%f", &amp;rate);</code></td>
+            </tr>
+            <tr>
+              <td><code>double</code> (అత్యంత కీలకం!)</td>
+              <td><strong><code>%lf</code></strong> (తప్పనిసరిగా lf వాడాలి)</td>
+              <td><code>%f</code> లేదా <code>%lf</code></td>
+              <td><code>scanf("%lf", &amp;pi);</code></td>
+            </tr>
+            <tr>
+              <td><code>char</code> (Single character)</td>
+              <td><code>%c</code></td>
+              <td><code>%c</code></td>
+              <td><code>scanf("%c", &amp;ch);</code></td>
+            </tr>
+            <tr>
+              <td><code>char[]</code> (String / Word)</td>
+              <td><code>%s</code> (దీనికి &amp; అవసరం లేదు!)</td>
+              <td><code>%s</code></td>
+              <td><code>scanf("%s", name);</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        ⚠️ <strong>float vs double ట్రాప్:</strong> <code>printf</code> లో <code>float</code> మరియు <code>double</code> రెండింటికీ <code>%f</code> వాడవచ్చు. కానీ <strong><code>scanf</code> లో double చదవడానికి తప్పనిసరిగా <code>%lf</code> (Long Float) మాత్రమే వాడాలి!</strong> పొరపాటున <code>%f</code> వాడితే మెమరీలో సగం బైట్లు మాత్రమే నిండి తీవ్రమైన గార్బేజ్ వస్తుంది!
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>ది డేంజరస్ న్యూలైన్ బఫర్ ట్రాప్: %c ఎందుకు స్కిప్ అవుతుంది?</div>
+    <div class="section-body">
+      <p>C ప్రోగ్రామింగ్ నేర్చుకునే ప్రతి బిగినర్ ఎదుర్కొనే అత్యంత వింతైన, భయానకమైన బగ్ ఇది. క్రింది చిన్న కోడ్ చూడండి:</p>
+
+      <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">C — Safe string input with fgets</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+          <span class="lang-tag">C — The Infamous scanf Buffer Bug</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int id;
+    char section;
+
+    printf("రోల్ నంబర్ నమోదు చేయండి: ");
+    scanf("%d", &amp;id);
+
+    printf("సెక్షన్ లెటర్ నమోదు చేయండి (A, B, C): ");
+    scanf("%c", &amp;section); // ఇక్కడ ప్రోగ్రామ్ ఆగదు! ఆటోమేటిక్‌గా స్కిప్ అయిపోతుంది!
+
+    printf("ID: %d, సెక్షన్: [%c]\n", id, section);
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <h4 style="color:#ef4444; font-size:16px; margin-top:16px;">ఈ బగ్ ఎందుకు జరిగింది? (Under the Hood Postmortem):</h4>
+      <p>మీరు రోల్ నంబర్ <code>25</code> అని టైప్ చేసి కీబోర్డ్‌పై <strong>Enter</strong> నొక్కారు. అప్పుడు ఇన్‌పుట్ బఫర్‌లోకి రెండు క్యారెక్టర్లు వెళ్ళాయి: <code>'2'</code>, <code>'5'</code>, మరియు <code>'
+'</code> (న్యూలైన్ క్యారెక్టర్).</p>
+      <ul style="margin-left:20px; color:var(--text2); line-height:1.7;">
+        <li>మొదటి <code>scanf("%d", &amp;id)</code> నంబర్లను మాత్రమే చదువుతుంది; అది <code>25</code> ని తీసుకుని, <code>'
+'</code> ను బఫర్‌లోనే వదిలేసింది!</li>
+        <li>తర్వాతి <code>scanf("%c", &amp;section)</code> రాగానే — అది మీ కోసం ఆగదు! బఫర్‌లో అప్పటికే మిగిలి ఉన్న ఆ <code>'
+'</code> ను ఒక క్యారెక్టర్‌గా భావించి వెంటనే చదివేసుకుంది! దాంతో <code>section = '
+'</code> అయిపోయి ప్రోగ్రామ్ స్కిప్ అయిపోయింది!</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>బఫర్ సమస్యకు 2 ప్రామాణిక పరిష్కారాలు &amp; fflush వివాదం</div>
+    <div class="section-body">
+      <p>ఈ బఫర్ ట్రాప్‌ను పరిష్కరించడానికి ఆధునిక C లో రెండు సురక్షితమైన మార్గాలు ఉన్నాయి:</p>
+
+      <h4 style="color:#059669; font-size:15px; margin-top:16px;">పరిష్కారం 1: లీడింగ్ స్పేస్ ట్రిక్ (The Leading Space Magic) — బెస్ట్ &amp; సింప్లెస్ట్!</h4>
+      <p><code>scanf</code> ఫార్మాట్ స్ట్రింగ్‌లో <code>%c</code> కి ముందు ఒక చిన్న ఖాళీ స్పేస్ ఇవ్వండి: <strong><code>scanf(" %c", &amp;section);</code></strong></p>
+      <p>ఆ ఒక్క చిన్న స్పేస్ కంపైలర్‌కు చెబుతుంది: "బఫర్‌లో ఎన్ని ఖాళీ స్పేస్‌లు, ట్యాబ్‌లు లేదా <code>
+</code> న్యూలైన్లు ఉన్నా వాటన్నింటినీ ముందు విస్మరించి (Ignore చేసి), ఆ తర్వాత వచ్చే అసలైన అక్షరాన్ని మాత్రమే చదువు!"</p>
+
+      <h4 style="color:#059669; font-size:15px; margin-top:20px;">పరిష్కారం 2: getchar() తో బఫర్ క్లియర్ చేయడం:</h4>
+      <p>నంబర్ రీడ్ చేసిన వెంటనే <code>getchar()</code> పిలిస్తే అది బఫర్‌లోని <code>
+</code> ని మింగేస్తుంది:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Fixed scanf Buffer Clean Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int id;
+    char section;
+
+    printf("రోల్ నంబర్ ఇవ్వండి: ");
+    scanf("%d", &amp;id);
+
+    // పరిష్కారం: %c కి ముందు ఒక స్పేస్ ఉంచండి!
+    printf("సెక్షన్ ఇవ్వండి (A/B/C): ");
+    scanf(" %c", &amp;section);
+
+    printf("విజయవంతంగా స్వీకరించబడింది -> ID: %d, సెక్షన్: %c\n", id, section);
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="tip-box">
+        ⚠️ <strong>కాలేజీ తప్పు — fflush(stdin) ఎందుకు వాడకూడదు?</strong><br>
+        చాలా కాలేజీ ల్యాబ్స్‌లో పాత Turbo C++ లో <code>fflush(stdin);</code> రాయిస్తారు. కానీ ANSI/ISO C ప్రమాణాల ప్రకారం <strong>fflush అనేది కేవలం అవుట్‌పుట్ స్ట్రీమ్స్ (stdout) కోసం మాత్రమే నిర్దేశించబడింది!</strong> ఇన్‌పుట్ స్ట్రీమ్ (stdin) పై fflush వాడటం అధికారికంగా <strong>Undefined Behavior (చెల్లని కోడ్)</strong>. ఇది Linux లేదా GCC లో పనిచేయదు. ఎల్లప్పుడూ <code>" %c"</code> మాత్రమే వాడాలి!
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>బహుళ ఇన్‌పుట్లను ఒకేసారి స్వీకరించడం (Multiple Inputs)</div>
+    <div class="section-body">
+      <p>యూజర్ నుండి ఒకేసారి అనేక విలువలను స్వీకరించడానికి ఒకే <code>scanf</code> లో బహుళ ఫార్మాట్ స్పెసిఫైయర్లను అమర్చవచ్చు:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Multiple Inputs Example</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int day, month, year;
+
+    printf("మీ పుట్టిన తేదీని DD/MM/YYYY ఫార్మాట్‌లో నమోదు చేయండి: ");
+    
+    // స్లాష్ (/) లతో సహా ఫార్మాట్ మ్యాచ్ చేయడం
+    scanf("%d/%d/%d", &amp;day, &amp;month, &amp;year);
+
+    printf("మీరు నమోదు చేసిన తేదీ: %02d-%02d-%04d\n", day, month, year);
+
+    return 0;
+}</code></pre>
+      </div>
+      <p>యూజర్ <code>15/08/1947</code> అని టైప్ చేస్తే — <code>scanf</code> ఆ స్లాష్ గుర్తులను ఆటోమేటిక్‌గా స్కిప్ చేసి, మూడు సంఖ్యలను సరైన వేరియబుల్స్‌లో నింపుతుంది!</p>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>స్ట్రింగ్స్ ఇన్‌పుట్ &amp; స్పేసెస్ సమస్య: scanf("%s") vs fgets()</div>
+    <div class="section-body">
+      <p>యూజర్ పేరు లేదా చిరునామా వంటి పదాలను చదవడానికి <code>%s</code> ఉపయోగిస్తాం. కానీ <code>scanf("%s", name)</code> కి ఒక పెద్ద పరిమితి ఉంది: ఇది <strong>స్పేస్ (Space) రాగానే చదవడం ఆపేస్తుంది!</strong></p>
+
+      <p>ఉదాహరణకు యూజర్ <code>"రమేష్ నాయక్"</code> అని టైప్ చేస్తే — <code>scanf("%s")</code> కేవలం <code>"రమేష్"</code> మాత్రమే తీసుకుంటుంది; స్పేస్ తర్వాత ఉన్న <code>"నాయక్"</code> ని బఫర్‌లోనే వదిలేస్తుంది!</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Safe String Input with fgets</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
 int main(void) {
     char fullName[50];
 
-    printf("మీ పూర్తి పేరు నమోదు చేయండి: ");
-    // గరిష్టంగా 50 బైట్లు మాత్రమే చదువుతుంది — సురక్షితమైనది!
+    printf("మీ పూర్తి పేరు నమోదు చేయండి (స్పేస్‌లతో సహా): ");
+    
+    // fgets(వేరియబుల్, సైజు, stdin) వాడటం అత్యంత సురక్షితం!
     fgets(fullName, sizeof(fullName), stdin);
 
     printf("స్వాగతం, %s", fullName);
+
     return 0;
 }</code></pre>
       </div>
 
-      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
-        <strong style="color:#ef4444; font-size:14px;">🚫 gets() ఫంక్షన్‌ను ఎందుకు నిషేధించారు?</strong>
-        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
-          పాత C పుస్తకాలలో <code>gets(str)</code> కనిపిస్తుంది. కానీ <code>gets()</code> యూజర్ ఎన్ని అక్షరాలు టైప్ చేసినా పరిమితి లేకుండా మెమరీలోకి రాసేస్తుంది (Buffer Overflow Vulnerability). ఇది హ్యాకర్లకు కంప్యూటర్‌ను హైజాక్ చేసే వెసులుబాటు కల్పించింది. అందుకే <strong>C11 Standard నుండి gets() ఫంక్షన్‌ను శాశ్వతంగా తొలగించారు</strong>. ఎల్లప్పుడూ కేవలం <strong>fgets()</strong> మాత్రమే వాడాలి.
-        </p>
+      <div class="tip-box">
+        💡 <strong>స్ట్రీంగ్స్‌కి &amp; ఎందుకు అక్కర్లేదు?</strong><br>
+        <code>scanf("%s", name);</code> లో <code>name</code> ముందర <code>&amp;</code> గుర్తు పెట్టాల్సిన అవసరం లేదు. ఎందుకంటే C లాంగ్వేజ్‌లో ఒక అర్రే లేదా స్ట్రింగ్ పేరు స్వతహాగా దాని మొదటి ఎలిమెంట్ యొక్క మెమరీ అడ్రస్‌నే సూచిస్తుంది (Array Decay). దీని గురించి చాప్టర్ 14 &amp; 16 లో విపులంగా నేర్చుకుందాం.
       </div>
     </div>
 
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>scanf() రిటర్న్ వాల్యూ: ప్రొఫెషనల్ ఇన్‌పుట్ వాలిడేషన్</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. scanf లో 
- పెట్టడం:</div>
-          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">scanf("%d\n", &amp;num); // ఘోరమైన తప్పు!</code>
-          <span style="font-size:13px; color:var(--text2); display:block;"><code>scanf</code> ఫార్మాట్ స్ట్రింగ్ లోపల <code>\n</code> పెడితే, మీరు ఏదైనా వైట్‌స్పేస్ కాని అక్షరాన్ని టైప్ చేసేంత వరకు ప్రోగ్రామ్ ఆగకుండా హ్యాంగ్ అయినట్లు ఉండిపోతుంది!</span>
-        </div>
+      <p>చాలామందికి తెలియని విషయం: <strong>scanf() ఒక రిటర్న్ విలువను ఇస్తుంది!</strong></p>
+      <p><code>scanf</code> ఎన్ని ఇన్‌పుట్ విలువలను విజయవంతంగా చదివిందో ఆ సంఖ్యను రిటర్న్ చేస్తుంది. ఉదాహరణకు <code>scanf("%d", &amp;age)</code> ఒక సంఖ్యను విజయవంతంగా చదివితే అది <strong>1</strong> ని రిటర్న్ చేస్తుంది. ఒకవేళ యూజర్ సంఖ్యకు బదులుగా <code>"abc"</code> అని అక్షరాలు టైప్ చేస్తే అది <strong>0</strong> ని రిటర్న్ చేస్తుంది!</p>
 
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. స్ట్రింగ్స్ (char arrays) కి & వాడడం:</div>
-          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">char name[20]; scanf("%s", &amp;name); // & అనవసరం</code>
-          <span style="font-size:13px; color:var(--text2); display:block;">C లో అర్రే పేరు (Array decay) ఇప్పటికే దాని మొదటి ఎలిమెంట్ యొక్క మెమరీ అడ్రస్ పాయింటర్ అవుతుంది. కాబట్టి <code>scanf("%s", name)</code> అని రాయడమే సరైనది.</span>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Robust Input Validation with scanf</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int balance;
+
+    printf("డిపాజిట్ మొత్తం నమోదు చేయండి: ");
+
+    // scanf రిటర్న్ విలువ 1 కాకపోతే యూజర్ తప్పు డేటా ఇచ్చాడని అర్థం!
+    if (scanf("%d", &amp;balance) != 1) {
+        printf("❌ ఎర్రర్: దయచేసి సరైన సంఖ్యను మాత్రమే నమోదు చేయండి!\n");
+        return 1;
+    }
+
+    printf("✅ విజయవంతంగా ₹%d డిపాజిట్ చేయబడింది!\n", balance);
+    return 0;
+}</code></pre>
       </div>
     </div>
 
-    <!-- SECTION 6 -->
-    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>బిగినర్స్ చేసే టాప్ 5 scanf ఘోరమైన తప్పులు</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: scanf ఎన్ని ఇన్‌పుట్‌లను సరిగ్గా చదివిందో ప్రోగ్రామ్‌లో ఎలా తెలుసుకోవచ్చు?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            <code>scanf()</code> ఫంక్షన్ తాను విజయవంతంగా రీడ్ చేసిన వేరియబుల్స్ సంఖ్యను రిటర్న్ చేస్తుంది! ఉదాహరణకు <code>if (scanf("%d", &amp;num) != 1)</code> అని రాస్తే యూజర్ నంబర్ బదులు అక్షరం టైప్ చేశాడని గుర్తించి ఇన్‌పుట్ వాలిడేషన్ చేయవచ్చు.
-          </p>
+      <div style="display:flex; flex-direction:column; gap:16px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14.5px;">❌ 1. &amp; ఆపరేటర్ మర్చిపోవడం (The Missing &amp; Crash):</strong>
+          <pre style="margin:6px 0; background:#fff; border:1px solid #fecaca; padding:8px 12px; border-radius:6px; color:#b91c1c; font-size:13px;"><code>scanf("%d", num); // తప్పు! Segmentation Fault వస్తుంది!</code></pre>
+          <span style="font-size:13px; color:var(--text2);">స్ట్రింగ్స్ తప్ప మిగతా అన్ని ప్రాథమిక డేటా టైప్స్‌కు (<code>int</code>, <code>float</code>, <code>char</code>) తప్పనిసరిగా <code>&amp;num</code> అని అడ్రస్ ఇవ్వాలి.</span>
         </div>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: fflush(stdin) వాడి బఫర్ క్లియర్ చేయవచ్చా?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            చేయకూడదు! C ISO స్టాండర్డ్ ప్రకారం <code>fflush()</code> కేవలం అవుట్‌పుట్ స్ట్రీమ్‌ల (<code>stdout</code>) కోసమే. ఇన్‌పుట్ స్ట్రీమ్ (<code>stdin</code>) పై <code>fflush</code> వాడటం <strong>Undefined Behavior</strong> — ఇది విండోస్‌లో పనిచేసినా లైనక్స్ లేదా మాక్‌లో పనిచేయదు. <code>scanf(" %c")</code> వాడటమే సరైన ప్రమాణం.
-          </p>
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14.5px;">❌ 2. scanf ఫార్మాట్ స్ట్రింగ్‌లో 
+ పెట్టడం:</strong>
+          <pre style="margin:6px 0; background:#fff; border:1px solid #fecaca; padding:8px 12px; border-radius:6px; color:#b91c1c; font-size:13px;"><code>scanf("%d\n", &amp;num); // ఘోరమైన తప్పు! ప్రోగ్రామ్ ఫ్రీజ్ అయిపోతుంది!</code></pre>
+          <span style="font-size:13px; color:var(--text2);"><code>scanf</code> లోపల ఎప్పుడూ <code>
+</code> రాయకూడదు! అలా రాస్తే యూజర్ ఎన్నిసార్లు ఎంటర్ నొక్కినా ప్రోగ్రామ్ ఆగకుండా తదుపరి నాన్-వైట్‌స్పేస్ క్యారెక్టర్ కోసం నిరంతరం ఎదురుచూస్తూనే ఉంటుంది.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14.5px;">❌ 3. double కోసం %f వాడటం:</strong>
+          <pre style="margin:6px 0; background:#fff; border:1px solid #fecaca; padding:8px 12px; border-radius:6px; color:#b91c1c; font-size:13px;"><code>double salary;
+scanf("%f", &amp;salary); // తప్పు! double కోసం తప్పనిసరిగా %lf వాడాలి!</code></pre>
+          <span style="font-size:13px; color:var(--text2);"><code>float</code> 4 బైట్లు, <code>double</code> 8 బైట్లు. <code>%f</code> ఇస్తే కంపైలర్ 4 బైట్లు మాత్రమే రాస్తుంది, మిగిలిన 4 బైట్లు కరప్ట్ అయిపోతాయి.</span>
         </div>
       </div>
     </div>
-  
+
+    <!-- SECTION 12 (INTERACTIVE QUIZ) -->
+    <div class="section-title"><span class="num">12</span>ఇంటరాక్టివ్ నాలెడ్జ్ చెక్ (Self-Assessment Quiz)</div>
+    <div class="section-body">
+      <p>ఈ మూడవ అధ్యాయంలో మీరు నేర్చుకున్న ఇన్‌పుట్ మరియు బఫర్ భావనలను పరీక్షించుకోవడానికి క్రింది ప్రశ్నలపై క్లిక్ చేయండి:</p>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: scanf లో వేరియబుల్ పేరుకు ముందు &amp; (Address-of) ఎందుకు తప్పనిసరిగా ఇవ్వాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>scanf</code> ఫంక్షన్ వేరియబుల్ యొక్క మెమరీ లొకేషన్‌లో నేరుగా డేటాను రాయాలి (Modify చేయాలి). C లో కాల్-బై-వాల్యూ విధానం ఉంటుంది కాబట్టి, అసలైన వేరియబుల్ ఉన్న RAM అడ్రస్‌ను పంపడానికి <code>&amp;</code> అవసరం.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: ఒక నంబర్ రీడ్ చేసిన తర్వాత క్యారెక్టర్ రీడ్ చేసేటప్పుడు " %c" లో స్పేస్ ఎందుకు పెడతాం?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> నంబర్ టైప్ చేసినప్పుడు నొక్కిన <code>Enter</code> కీ వల్ల బఫర్‌లో మిగిలిపోయిన న్యూలైన్ క్యారెక్టర్ (<code>
+</code>) ను విస్మరించడానికి (Ignore చేయడానికి).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: double డేటా టైప్ ఉన్న వేరియబుల్‌ను scanf ద్వారా రీడ్ చేయడానికి ఏ ఫార్మాట్ స్పెసిఫైయర్ వాడాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>%lf (Long Float)</strong>. సాధారణ <code>%f</code> వాడితే మెమరీ కరప్షన్ జరుగుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: scanf("%d %d", &amp;a, &amp;b); రన్ చేసినప్పుడు యూజర్ రెండు సరైన సంఖ్యలు ఇస్తే scanf రిటర్న్ చేసే సంఖ్య ఎంత?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>2</strong>. ఎందుకంటే <code>scanf</code> విజయవంతంగా చదివిన ఇన్‌పుట్ ఐటమ్‌ల సంఖ్యను రిటర్న్ చేస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: fflush(stdin); వాడటం ఎందుకు చెడ్డ ప్రాక్టీస్?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> ANSI/ISO C అంతర్జాతీయ ప్రమాణాల ప్రకారం <code>fflush</code> కేవలం అవుట్‌పుట్ కోసం మాత్రమే; ఇన్‌పుట్ పై వాడటం అధికారికంగా <strong>Undefined Behavior</strong>.
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 13 (TRY BOX & SUMMARY) -->
+    <div class="section-title"><span class="num">13</span>మీరే స్వయంగా Try చేయండి &amp; సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🚀 యూజర్ ఇన్‌పుట్ ప్రోగ్రామ్‌లను మన ఆన్‌లైన్ C కంపైలర్‌లో రన్ చేయండి!</div>
+        <p>పైన వివరించిన <code>scanf</code> కోడ్ మరియు బఫర్-సేఫ్ <code>" %c"</code> కోడ్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో ఓపెన్ చేసి స్వయంగా ఇన్‌పుట్స్ ఇచ్చి టెస్ట్ చేయండి. ఇంటరాక్టివ్ టెర్మినల్ ద్వారా లైవ్ C ప్రోగ్రామింగ్ అనుభవాన్ని పొందండి!</p>
+        <a class="run-btn" href="/online-c-compiler.html" target="_blank">
+          👉 Our Compiler లో C Compiler try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 క్విక్ సారాంశం (Key Takeaways):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>stdin:</strong> కీబోర్డ్ ఇన్‌పుట్ బఫర్ ద్వారా ప్రవహించే ప్రామాణిక స్ట్రీమ్.</li>
+          <li><strong>&amp; ఆపరేటర్:</strong> మెమరీ అడ్రస్ లొకేషన్‌ను సూచిస్తుంది; scanf కి ఇది ప్రాణాధారం.</li>
+          <li><strong>బఫర్ ట్రాప్:</strong> Enter కీ మిగిల్చే <code>
+</code> ను క్లియర్ చేయడానికి <code>" %c"</code> లో స్పేస్ ఉంచాలి.</li>
+          <li><strong>double:</strong> దీనికి తప్పనిసరిగా <code>%lf</code> వాడాలి.</li>
+          <li><strong>వాలిడేషన్:</strong> <code>scanf</code> రిటర్న్ విలువను చెక్ చేయడం ద్వారా తప్పుడు ఇన్‌పుట్‌లను అడ్డుకోవచ్చు.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 04):</strong> C లోని వివిధ రకాల <strong>ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్, Prefix (++i) vs Postfix (i++) మెమరీ తేడాలు, షార్ట్-సర్క్యూట్ ఎవాల్యుయేషన్ మరియు టైప్ కాస్టింగ్</strong> గురించి అత్యంత లోతుగా నేర్చుకుందాం!
+      </div>
+    </div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
       <a href="/blog-c/02-c-variables-data-types-constants.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
-        ← Prev: 2. వేరియబుల్స్ & డేటా టైప్స్
+        ← Prev: 2. వేరియబుల్స్ &amp; డేటా టైప్స్
       </a>
-      
       <a href="/blog-c/04-c-operators-and-expressions.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
-        Next: 4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ →
+        Next: 4. ఆపరేటర్లు &amp; ఎక్స్‌ప్రెషన్స్ →
       </a>
     </div>
 
@@ -454,7 +765,7 @@ int main(void) {
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -465,3 +776,4 @@ int main(void) {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
+
