@@ -876,3 +876,4 @@ fs.writeFileSync(outputPath, fullHtml, 'utf8');
 
 console.log('✅ Successfully generated deep high-value Chapter 20!');
 console.log('Target file size:', fullHtml.length, 'characters');
+

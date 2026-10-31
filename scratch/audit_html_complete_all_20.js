@@ -44,3 +44,4 @@ console.log(`Grand Total Characters Across 20 Chapters: ${grandTotal.toLocaleStr
 console.log(`Status: ${failedCount === 0 ? '🎉 ALL 20 CHAPTERS 100% COMPLETE & PASSING ALL RIGID CRITERIA!' : `❌ FAILED: ${failedCount} chapters`}`);
 
 if (failedCount > 0) process.exit(1);
+
