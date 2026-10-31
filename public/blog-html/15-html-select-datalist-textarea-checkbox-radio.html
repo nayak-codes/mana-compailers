@@ -35,11 +35,11 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-01",
-    "dateModified": "2026-10-30"
+    "dateModified": "2026-10-31"
   }
   </script>
 
-  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <!-- Interactive Scripts: Accordion, Theme & Code Enhancements -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -66,6 +66,48 @@
           if (document.body) document.body.classList.add('light-theme');
         });
       }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        // Code Block Actions: Copy & Online Editor Runner
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.open('/online-html-editor.html', '_blank');
+            });
+          }
+        });
+      });
     })();
   </script>
 </head>
@@ -319,47 +361,525 @@
     </div>
   </aside>
   
+
   <!-- MAIN LESSON CONTENT -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-html.html">HTML5 Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 15: డ్రాప్‌డౌన్స్ (select), ఆటోకంప్లీట్ (datalist), textarea, Checkbox & Radio</span>
+      <span class="current">Chapter 15: డ్రాప్‌డౌన్స్ (select), ఆటోకంప్లీట్ (datalist), textarea, Checkbox &amp; Radio</span>
     </div>
 
-    <h1 class="page-title">డ్రాప్‌డౌన్స్ (select), ఆటోకంప్లీట్ (datalist), textarea, Checkbox & Radio</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">HTML5 అడ్వాన్స్‌డ్ ఫారమ్ కంట్రోల్స్: select, datalist, textarea, Checkbox &amp; Radio</h1>
 
+    <!-- PAGE META BADGES -->
     <div class="page-meta">
-      <span class="badge">🌐 Modern HTML5</span>
+      <span class="badge">🌐 Modern HTML5 (W3C/WHATWG)</span>
       <span class="badge">🟢 Chapter 15 of 20</span>
-      <span class="badge">📂 Phase 04: ఫారమ్స్, ఇన్‌పుట్స్ & క్లయింట్-సైడ్ వాలిడేషన్</span>
+      <span class="badge">📂 Phase 04: ఫారమ్స్, ఇన్‌పుట్స్ &amp; క్లయింట్-సైడ్ వాలిడేషన్</span>
       <span class="badge">📅 2026 Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
+    <!-- SUBTOPICS PILL BAR -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>డ్రాప్‌డౌన్ మెనూలు select & optgroup · సెర్చ్ ఆటోకంప్లీట్ datalist · మల్టీ-లైన్ textarea · Radio & Checkbox ఛాయిస్</span>
+      <span>రేడియో బటన్స్ &amp; గ్రూపింగ్ · మల్టీ-సెలెక్ట్ చెక్‌బాక్సెస్ · &lt;select&gt; డ్రాప్‌డౌన్లు &amp; &lt;optgroup&gt; · గూగుల్ తరహా సెర్చ్ &lt;datalist&gt; · మల్టీ-లైన్ &lt;textarea&gt; &amp; resize నియంత్రణ · UX ఎంపిక గైడ్ · బిగినర్స్ తప్పులు &amp; క్విజ్</span>
     </div>
 
-    
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>డ్రాప్‌డౌన్స్ (select), ఆటోకంప్లీట్ (datalist), textarea, Checkbox & Radio</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. డ్రాప్‌డౌన్ మెనూలు select & optgroup · సెర్చ్ ఆటోకంప్లీట్ datalist · మల్టీ-లైన్ textarea · Radio & Checkbox ఛాయిస్.
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>నిత్యజీవితంలో మీరు స్విగ్గీ లేదా జొమాటోలో పిజ్జా ఆర్డర్ చేసే దృశ్యాన్ని ఊహించుకోండి: 
+      1) మీరు వెజ్ లేదా నాన్-వెజ్ రెండింటిలో ఏదో ఒకటి మాత్రమే ఎంచుకోవాలి (Exclusive Single Choice) — దీని కోసం <strong>రేడియో బటన్స్ (Radio buttons)</strong> ఉంటాయి.
+      2) పిజ్జా పైన ఎక్స్‌ట్రా చీజ్, మష్రూమ్స్, లేదా ఆలివ్స్ లాంటి ఎన్ని టాపింగ్స్ అయినా ఒకేసారి ఎంచుకోవచ్చు (Multiple Choices) — దీని కోసం <strong>చెక్‌బాక్స్‌లు (Checkboxes)</strong> ఉంటాయి.
+      3) భారతదేశంలోని 28 రాష్ట్రాల లిస్ట్ నుండి మీ రాష్ట్రాన్ని ఎంచుకోవడానికి స్క్రీన్ స్థలాన్ని ఆదా చేసే కాంపాక్ట్ <strong>డ్రాప్‌డౌన్ లిస్ట్ (&lt;select&gt;)</strong> ఉంటుంది.
+      4) గూగుల్ సెర్చ్ లాగా మీరు రెండు అక్షరాలు టైప్ చేయగానే కింద సలహాలు (Auto-suggestions) ఇస్తూనే, కావాలంటే కొత్త పదం టైప్ చేసుకునే వెసులుబాటు ఉండే హైబ్రిడ్ కంట్రోల్ <strong>&lt;datalist&gt;</strong>.
+      5) మీ ఇంటి అడ్రస్ లేదా స్పెషల్ డెలివరీ సూచనలు రాయడానికి <strong>పెద్ద టెక్స్ట్ ఏరియా (&lt;textarea&gt;)</strong> ఉంటుంది.</p>
+      <p>ఈ ఐదు ఆధునిక ఫారమ్ కంట్రోల్స్ ఒక వెబ్‌సైట్‌ను సాధారణ పేజీ నుండి అత్యంత శక్తివంతమైన, యూజర్-ఫ్రెండ్లీ ఇంటరాక్టివ్ అప్లికేషన్‌గా మారుస్తాయి. ఈ పదిహేనవ అధ్యాయంలో వీటి సమగ్ర అనాటమీ, UX నియమాలు మరియు కోడింగ్ టెక్నిక్స్ నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే అంశాలు</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>రేడియో బటన్స్ (Radio Buttons):</strong> ఇచ్చిన ఆప్షన్లలో కేవలం ఒక్కదానిని మాత్రమే ఎంచుకునే సూత్రం మరియు name ఆట్రిబ్యూట్ మ్యాజిక్.</li>
+        <li><strong>చెక్‌బాక్స్‌లు (Checkboxes):</strong> స్వతంత్ర ఎంపికలు మరియు బహుళ విలువలను సర్వర్‌కు పంపే విధానం.</li>
+        <li><strong>&lt;select&gt; &amp; &lt;option&gt;:</strong> స్థలాన్ని ఆదా చేసే డ్రాప్‌డౌన్ మెనూలు, selected, మరియు multiple ఎంపికలు.</li>
+        <li><strong>&lt;optgroup&gt; ఎలిమెంట్:</strong> వందలాది ఆప్షన్లను స్పష్టమైన కేటగిరీలుగా గ్రూప్ చేసే పద్ధతి.</li>
+        <li><strong>ఆధునిక &lt;datalist&gt; ఎలిమెంట్:</strong> టెక్స్ట్‌బాక్స్ మరియు డ్రాప్‌డౌన్ కలిసిన హైబ్రిడ్ ఆటో-కంప్లీట్ సెర్చ్.</li>
+        <li><strong>&lt;textarea&gt; ఎలిమెంట్:</strong> మల్టీ-లైన్ టెక్స్ట్, rows, cols, మరియు CSS resize నియంత్రణ.</li>
+        <li><strong>UX ఎంపిక పోలిక పట్టిక:</strong> రేడియో, చెక్‌బాక్స్, సెలెక్ట్ లలో ఏ సందర్భంలో ఏది వాడాలో నిర్ణయించే సూత్రాలు.</li>
+        <li><strong>Accessibility &amp; కీబోర్డ్ నావిగేషన్:</strong> మౌస్ లేకుండా స్పేస్‌బార్ మరియు యారో కీలతో ఫారమ్‌ను నియంత్రించడం.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>రేడియో బటన్స్ (type="radio"): ఒకే ఒక్క ఎంపిక</div>
+    <div class="section-body">
+      <p>యూజర్‌కు ఇచ్చిన బహుళ ఆప్షన్లలో నుండి <strong>ఖచ్చితంగా ఏదో ఒకే ఒక్క ఆప్షన్‌ను మాత్రమే (Mutually Exclusive Single Choice)</strong> ఎంచుకునే సందర్భాలలో రేడియో బటన్లను ఉపయోగిస్తాం. ఉదాహరణకు: లింగం (Gender), పేమెంట్ విధానం (UPI, Card, COD), లేదా క్విజ్ ప్రశ్న సమాధానం.</p>
+
+      <div class="callout callout-warning" style="margin-top:12px;">
+        <span class="callout-icon">⚠️</span>
+        <div>
+          <strong>గోల్డెన్ రూల్ — అన్ని రేడియో బటన్లకూ ఒకే 'name' ఉండాలి!</strong><br>
+          ఒక సమూహానికి చెందిన అన్ని రేడియో బటన్లకూ ఒకే <code>name</code> ఆట్రిబ్యూట్ ఇస్తేనే బ్రౌజర్ వాటిని ఒక టీమ్‌గా గుర్తిస్తుంది. అప్పుడే ఒక బటన్ నొక్కినప్పుడు పాత బటన్ ఆటోమేటిక్‌గా అన్-సెలెక్ట్ అవుతుంది! మీరు వేర్వేరు పేర్లు ఇస్తే యూజర్ అన్ని బటన్లనూ సెలెక్ట్ చేయగలుగుతాడు (ఇది తీవ్రమైన బగ్).
+        </div>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>HTML5 లో డ్రాప్‌డౌన్స్ (select), ఆటోకంప్లీట్ (datalist), textarea, Checkbox & Radio యొక్క ప్రాముఖ్యత మరియు వాస్తవ వెబ్ అప్లికేషన్లలో దీని వినియోగం.</p>
+
+      <div class="code-block" style="margin-top:16px;">
+        <div class="code-block-header">
+          <span>HTML — రేడియో బటన్స్ సమూహం</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;fieldset style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; max-width: 400px;"&gt;
+  &lt;legend style="color: #059669; font-weight: bold;"&gt;పేమెంట్ విధానాన్ని ఎంచుకోండి&lt;/legend&gt;
+
+  &lt;!-- అన్నింటికీ name="payment_method" సమానంగా ఉంది --&gt;
+  &lt;p&gt;
+    &lt;input type="radio" id="pay-upi" name="payment_method" value="upi" checked&gt;
+    &lt;label for="pay-upi"&gt;Google Pay / PhonePe (UPI)&lt;/label&gt;
+  &lt;/p&gt;
+
+  &lt;p&gt;
+    &lt;input type="radio" id="pay-card" name="payment_method" value="credit_card"&gt;
+    &lt;label for="pay-card"&gt;డెబిట్ / క్రెడిట్ కార్డు&lt;/label&gt;
+  &lt;/p&gt;
+
+  &lt;p&gt;
+    &lt;input type="radio" id="pay-cod" name="payment_method" value="cash_on_delivery"&gt;
+    &lt;label for="pay-cod"&gt;క్యాష్ ఆన్ డెలివరీ (COD)&lt;/label&gt;
+  &lt;/p&gt;
+&lt;/fieldset&gt;</code></pre>
       </div>
-    
+
+      <p style="margin-top:12px; font-size:14px; color:var(--text2);">
+        💡 <code>checked</code> ఆట్రిబ్యూట్ ఇవ్వడం వల్ల పేజీ లోడ్ అయినప్పుడే ఆ ఆప్షన్ ముందే టిక్ అయి ఉంటుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>చెక్‌బాక్స్‌లు (type="checkbox"): బహుళ ఎంపికలు</div>
+    <div class="section-body">
+      <p>యూజర్ ఒకేసారి <strong>సున్నా, ఒకటి, లేదా అంతకంటే ఎక్కువ ఆప్షన్లను (Zero or Multiple Choices)</strong> స్వేచ్ఛగా ఎంచుకోవడానికి చెక్‌బాక్స్‌లను ఉపయోగిస్తాం. ఉదాహరణకు: మీకు తెలిసిన ప్రోగ్రామింగ్ భాషలు, అలవాట్లు, లేదా నిబంధనలు అంగీకరించడం.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>HTML — బహుళ చెక్‌బాక్స్‌లు మరియు ఏకైక అగ్రిమెంట్</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;fieldset style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; max-width: 450px;"&gt;
+  &lt;legend style="color: #059669; font-weight: bold;"&gt;మీకు తెలిసిన భాషలను ఎంచుకోండి&lt;/legend&gt;
+
+  &lt;p&gt;
+    &lt;input type="checkbox" id="lang-html" name="skills" value="html5" checked&gt;
+    &lt;label for="lang-html"&gt;HTML5 &amp; CSS3&lt;/label&gt;
+  &lt;/p&gt;
+
+  &lt;p&gt;
+    &lt;input type="checkbox" id="lang-js" name="skills" value="javascript" checked&gt;
+    &lt;label for="lang-js"&gt;JavaScript ES6+&lt;/label&gt;
+  &lt;/p&gt;
+
+  &lt;p&gt;
+    &lt;input type="checkbox" id="lang-py" name="skills" value="python"&gt;
+    &lt;label for="lang-py"&gt;Python 3&lt;/label&gt;
+  &lt;/p&gt;
+
+  &lt;hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;"&gt;
+
+  &lt;!-- ఒంటరి నిబంధనల చెక్‌బాక్స్ --&gt;
+  &lt;p&gt;
+    &lt;input type="checkbox" id="terms" name="agree_terms" required&gt;
+    &lt;label for="terms"&gt;&lt;strong&gt;నేను సైట్ నిబంధనలను అంగీకరిస్తున్నాను&lt;/strong&gt;&lt;/label&gt;
+  &lt;/p&gt;
+&lt;/fieldset&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-tip" style="margin-top:16px;">
+        <span class="callout-icon">💡</span>
+        <div>
+          <strong>సర్వర్‌కు డేటా ఎలా వెళ్తుంది?</strong><br>
+          యూజర్ ఏ చెక్‌బాక్స్‌లను టిక్ చేస్తాడో — కేవలం ఆ చెక్‌బాక్స్‌ల యొక్క <code>name=value</code> మాత్రమే సర్వర్‌కు చేరుతుంది. టిక్ చేయని చెక్‌బాక్స్‌లను బ్రౌజర్ పూర్తిగా విస్మరిస్తుంది.
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>డ్రాప్‌డౌన్ మెనూలు: &lt;select&gt; మరియు &lt;option&gt;</div>
+    <div class="section-body">
+      <p>మీ వద్ద 10 కంటే ఎక్కువ ఆప్షన్లు ఉన్నప్పుడు (ఉదాహరణకు: దేశాల లిస్ట్, రాష్ట్రాలు, నగరాలు), రేడియో బటన్లు పెడితే పేజీ మొత్తం నిండిపోయి యూజర్‌కు స్క్రోలింగ్ చికాకు వస్తుంది. అలాంటి సమయంలో స్క్రీన్ స్థలాన్ని అద్భుతంగా ఆదా చేయడానికి <strong><code>&lt;select&gt;</code></strong> డ్రాప్‌డౌన్ మెనూను ఉపయోగిస్తాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>HTML — ప్రామాణిక &lt;select&gt; డ్రాప్‌డౌన్</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;label for="state-select"&gt;మీ నివాస రాష్ట్రాన్ని ఎంచుకోండి:&lt;/label&gt;&lt;br&gt;
+&lt;select id="state-select" name="state" required style="width: 100%; max-width: 350px; padding: 8px; margin-top: 6px; border-radius: 6px; border: 1px solid #cbd5e1;"&gt;
+  &lt;!-- ఖాళీ డిఫాల్ట్ ప్రాంప్ట్ ఆప్షన్ --&gt;
+  &lt;option value="" disabled selected&gt;-- రాష్ట్రాన్ని ఎంచుకోండి --&lt;/option&gt;
+  &lt;option value="TG"&gt;తెలంగాణ (Telangana)&lt;/option&gt;
+  &lt;option value="AP"&gt;ఆంధ్రప్రదేశ్ (Andhra Pradesh)&lt;/option&gt;
+  &lt;option value="KA"&gt;కర్ణాటక (Karnataka)&lt;/option&gt;
+  &lt;option value="TN"&gt;తమిళనాడు (Tamil Nadu)&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+      </div>
+
+      <p style="margin-top:14px;"><strong>కీలకమైన ఆట్రిబ్యూట్లు:</strong></p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><code>selected</code>: పేజీ ఓపెన్ కాగానే డిఫాల్ట్‌గా ఏ ఆప్షన్ సెలెక్ట్ అయి ఉండాలో నిర్దేశిస్తుంది.</li>
+        <li><code>multiple</code>: <code>&lt;select multiple&gt;</code> అని ఇస్తే డ్రాప్‌డౌన్ ఒక లిస్ట్ బాక్స్‌గా మారి, యూజర్ Ctrl/Cmd పట్టుకుని బహుళ ఆప్షన్లను సెలెక్ట్ చేసుకోగలడు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>కేటగిరీల గ్రూపింగ్: &lt;optgroup&gt; ఎలిమెంట్</div>
+    <div class="section-body">
+      <p>ఒక పెద్ద డ్రాప్‌డౌన్‌లో 50 కి పైగా ఆప్షన్లు ఉన్నప్పుడు యూజర్ తనకు కావాల్సిన దాన్ని వెతుక్కోవడం కష్టమవుతుంది. సంబంధిత ఆప్షన్లను స్పష్టమైన కేటగిరీలుగా వర్గీకరించడానికి <strong><code>&lt;optgroup label="..."&gt;</code></strong> ట్యాగ్‌ను ఉపయోగిస్తాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>HTML — &lt;optgroup&gt; తో గ్రూప్ చేయబడిన కోర్సులు</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;label for="course-select"&gt;మీరు నేర్చుకోవాలనుకుంటున్న కోర్సు:&lt;/label&gt;&lt;br&gt;
+&lt;select id="course-select" name="selected_course" style="width: 100%; max-width: 350px; padding: 8px; margin-top: 6px;"&gt;
+  &lt;!-- గ్రూప్ 1: ఫ్రంటెండ్ --&gt;
+  &lt;optgroup label="🌐 ఫ్రంటెండ్ టెక్నాలజీస్"&gt;
+    &lt;option value="html5"&gt;HTML5 &amp; CSS3 మాస్టర్‌క్లాస్&lt;/option&gt;
+    &lt;option value="javascript"&gt;ఆధునిక జావాస్క్రిప్ట్ (ES2026)&lt;/option&gt;
+    &lt;option value="react"&gt;React.js ఫ్రేమ్‌వర్క్&lt;/option&gt;
+  &lt;/optgroup&gt;
+
+  &lt;!-- గ్రూప్ 2: బ్యాకెండ్ --&gt;
+  &lt;optgroup label="⚙️ బ్యాకెండ్ &amp; సిస్టమ్స్"&gt;
+    &lt;option value="python"&gt;పైథాన్ 3 ప్రోగ్రామింగ్&lt;/option&gt;
+    &lt;option value="java"&gt;జావా ఎంటర్‌ప్రైజ్&lt;/option&gt;
+    &lt;option value="cpp"&gt;సి++ సిస్టమ్స్ కోడింగ్&lt;/option&gt;
+  &lt;/optgroup&gt;
+&lt;/select&gt;</code></pre>
+      </div>
+
+      <p style="margin-top:12px; font-size:14px; color:var(--text2);">
+        💡 <code>&lt;optgroup&gt;</code> లేబుల్ బోల్డ్ అక్షరాలలో కనిపిస్తుంది కానీ దానిని యూజర్ క్లిక్ చేయలేరు; కేవలం లోపల ఉన్న <code>&lt;option&gt;</code> లను మాత్రమే ఎంచుకోగలరు.
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>ఆధునిక ఆటో-కంప్లీట్ మ్యాజిక్: &lt;datalist&gt; ఎలిమెంట్</div>
+    <div class="section-body">
+      <p>ఇది HTML5 లో వచ్చిన అత్యంత ఆధునిక మరియు శక్తివంతమైన ఫీచర్! గూగుల్ సెర్చ్ బార్‌లో మీరు రెండు అక్షరాలు టైప్ చేయగానే క్రింద సలహాలు (Search Suggestions) వస్తాయి కదా? సరిగ్గా అదే అనుభవాన్ని జీరో జావాస్క్రిప్ట్ తో <strong><code>&lt;datalist&gt;</code></strong> అందిస్తుంది.</p>
+
+      <p><strong>&lt;select&gt; మరియు &lt;datalist&gt; మధ్య విప్లవాత్మక తేడా:</strong></p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>&lt;select&gt;</code>: యూజర్ కేవలం లిస్ట్‌లో ఉన్న ఆప్షన్లను మాత్రమే ఎంచుకోవాలి; కొత్త పదం టైప్ చేయలేరు.</li>
+        <li><code>&lt;datalist&gt;</code>: యూజర్‌కు లిస్ట్ సలహాలు కనిపిస్తాయి, ఒకవేళ లిస్ట్‌లో లేకపోతే <strong>యూజర్ తన స్వంత కొత్త పదాన్ని కూడా స్వేచ్ఛగా టైప్ చేసుకోవచ్చు!</strong></li>
+      </ul>
+
+      <div class="code-block" style="margin-top:16px;">
+        <div class="code-block-header">
+          <span>HTML — &lt;datalist&gt; ఆటో-కంప్లీట్ సెర్చ్</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;!-- 1. సాధారణ ఇన్‌పుట్‌కు list="id" జతచేయాలి --&gt;
+&lt;label for="browser-choice"&gt;మీకు ఇష్టమైన బ్రౌజర్ ఎంచుకోండి (లేదా టైప్ చేయండి):&lt;/label&gt;&lt;br&gt;
+&lt;input type="text" id="browser-choice" name="browser" list="browser-list" placeholder="టైప్ చేయండి..." style="width:100%; max-width:350px; padding:8px; margin-top:6px;"&gt;
+
+&lt;!-- 2. ప్రివ్యూ సలహాల డాటాలిస్ట్ --&gt;
+&lt;datalist id="browser-list"&gt;
+  &lt;option value="Google Chrome"&gt;
+  &lt;option value="Mozilla Firefox"&gt;
+  &lt;option value="Apple Safari"&gt;
+  &lt;option value="Microsoft Edge"&gt;
+  &lt;option value="Brave Browser"&gt;
+&lt;/datalist&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>మల్టీ-లైన్ టెక్స్ట్ ఎడిటర్: &lt;textarea&gt; ఎలిమెంట్</div>
+    <div class="section-body">
+      <p>ఒక సాధారణ <code>&lt;input type="text"&gt;</code> కేవలం ఒకే ఒక్క లైన్ టెక్స్ట్‌ను మాత్రమే తీసుకోగలదు. యూజర్ నుండి పెద్ద పేరాగ్రాఫ్‌లు, ఇంటి అడ్రస్, లేదా కస్టమర్ ఫీడ్‌బ్యాక్ సేకరించడానికి <strong><code>&lt;textarea&gt;</code></strong> ఎలిమెంట్‌ను ఉపయోగిస్తాం.</p>
+
+      <div class="callout callout-warning" style="margin-top:12px;">
+        <span class="callout-icon">⚠️</span>
+        <div>
+          <strong>బిగినర్స్ జాగ్రత్త — ఇది Void Element కాదు!</strong><br>
+          <code>&lt;textarea&gt;</code> కు తప్పనిసరిగా ముగింపు ట్యాగ్ <code>&lt;/textarea&gt;</code> ఉండాలి. అంతేకాకుండా ఓపెనింగ్ మరియు క్లోజింగ్ ట్యాగ్‌ల మధ్య ఎటువంటి స్పేస్‌లు లేదా లైన్ బ్రేకులు ఇవ్వకూడదు; అలా ఇస్తే ఆ స్పేస్‌లు బాక్స్ లోపల ముందే టైప్ చేసినట్లుగా ప్రత్యక్షమవుతాయి!
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top:16px;">
+        <div class="code-block-header">
+          <span>HTML — &lt;textarea&gt; మరియు CSS రీసైజ్ కంట్రోల్</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;label for="feedback"&gt;మీ వివరణాత్మక అభిప్రాయం (Feedback):&lt;/label&gt;&lt;br&gt;
+&lt;textarea id="feedback" name="user_feedback" 
+          rows="5" cols="40" 
+          maxlength="500" 
+          placeholder="గరిష్టంగా 500 అక్షరాలలో మీ సూచనలు తెలపండి..." 
+          style="width: 100%; max-width: 500px; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; resize: vertical;"&gt;&lt;/textarea&gt;</code></pre>
+      </div>
+
+      <p style="margin-top:12px; font-size:14px; color:var(--text2);">
+        💡 CSS లో <code>resize: vertical;</code> అని రాయడం వల్ల యూజర్ బాక్స్‌ను కేవలం పైకి క్రిందికి మాత్రమే సాగదీయగలడు; పక్కలకు సాగదీసి పేజీ లేఅవుట్‌ను పాడుచేయకుండా ఆపవచ్చు!
+      </p>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>UX ఎంపిక గైడ్: రేడియో vs చెక్‌బాక్స్ vs సెలెక్ట్</div>
+    <div class="section-body">
+      <p>ఏ సందర్భంలో ఏ ఫారమ్ కంట్రోల్‌ను ఎంచుకోవాలో ప్రొఫెషనల్ UI/UX డిజైన్ సూత్రాల పట్టిక:</p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఎంపికల సంఖ్య &amp; స్వభావం</th>
+              <th>సిఫార్సు చేయబడిన కంట్రోల్</th>
+              <th>కారణం &amp; యూజర్ ప్రయోజనం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>2 నుండి 5 ఆప్షన్లు (ఒకే ఎంపిక)</strong></td>
+              <td><strong>రేడియో బటన్స్ (Radio)</strong></td>
+              <td>అన్ని ఆప్షన్లు కళ్ళముందే స్పష్టంగా కనిపిస్తాయి. ఒక్క క్లిక్‌తో ఎంచుకోవచ్చు.</td>
+            </tr>
+            <tr>
+              <td><strong>బహుళ ఎంపికలు (0 నుండి ఎన్ని అయినా)</strong></td>
+              <td><strong>చెక్‌బాక్స్‌లు (Checkbox)</strong></td>
+              <td>యూజర్ తనకిష్టమైన కాంబినేషన్‌ను స్వేచ్ఛగా టిక్ చేసుకోగలడు.</td>
+            </tr>
+            <tr>
+              <td><strong>6 కంటే ఎక్కువ ఆప్షన్లు (ఒకే ఎంపిక)</strong></td>
+              <td><strong>డ్రాప్‌డౌన్ (&lt;select&gt;)</strong></td>
+              <td>స్క్రీన్ నిండిపోకుండా కాంపాక్ట్‌గా స్థలాన్ని ఆదా చేస్తుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>సలహాలతో కూడిన స్వేచ్ఛాయుత ఎంపిక</strong></td>
+              <td><strong>ఆటోకంప్లీట్ (&lt;datalist&gt;)</strong></td>
+              <td>యూజర్ వేగంగా టైప్ చేయగలడు, అవసరమైతే కొత్తది రాయగలడు.</td>
+            </tr>
+            <tr>
+              <td><strong>పెద్ద పేరాగ్రాఫ్‌లు / అడ్రస్</strong></td>
+              <td><strong>మల్టీ-లైన్ (&lt;textarea&gt;)</strong></td>
+              <td>ఎంటర్‌లు, లైన్ బ్రేకులు రాయడానికి పుష్కలంగా స్థలం ఉంటుంది.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>Accessibility &amp; కీబోర్డ్ నావిగేషన్ (a11y)</div>
+    <div class="section-body">
+      <p>మౌస్ వాడలేని దివ్యాంగులు లేదా వేగంగా డేటా ఎంట్రీ చేసే ప్రొఫెషనల్స్ కీబోర్డ్ ద్వారా ఈ కంట్రోల్స్‌ను ఎలా ఆపరేట్ చేస్తారో మీరు తప్పక తెలుసుకోవాలి:</p>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><strong>Tab కీ:</strong> ఒక ఫారమ్ ఫీల్డ్ నుండి తర్వాతి ఫీల్డ్‌కు వెళ్ళడానికి.</li>
+        <li><strong>Spacebar (స్పేస్‌బార్):</strong> చెక్‌బాక్స్‌ను టిక్ / అన్-టిక్ చేయడానికి.</li>
+        <li><strong>Arrow Keys (పైకి/క్రిందికి బాణాలు):</strong> రేడియో బటన్లు మరియు <code>&lt;select&gt;</code> డ్రాప్‌డౌన్‌లలో ఆప్షన్లను మార్చడానికి.</li>
+        <li><strong>Enter కీ:</strong> ఫారమ్‌ను సబ్మిట్ చేయడానికి లేదా డ్రాప్‌డౌన్ మెనూను ఓపెన్ చేయడానికి.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>రియల్-వరల్డ్ ఈ-కామర్స్ ఆర్డర్ ఫారమ్ ఆర్కిటెక్చర్</div>
+    <div class="section-body">
+      <p>మనం ఇప్పటివరకు నేర్చుకున్న <code>radio</code>, <code>checkbox</code>, <code>select</code>, <code>datalist</code>, మరియు <code>textarea</code> లు అన్నీ కలిసి ఒక పూర్తి స్థాయి ఈ-కామర్స్ ఫారమ్‌లో ఎలా పనిచేస్తాయో చూడండి:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>HTML — ఆల్-ఇన్-వన్ ఆధునిక ఆర్డర్ ఫారమ్</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;form action="/order" method="POST" style="max-width: 500px; padding: 24px; border: 1px solid #cbd5e1; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.05);"&gt;
+  &lt;h2 style="margin-top:0; color:#0f172a;"&gt;🛒 సూపర్ పిజ్జా ఆర్డర్ ఫారమ్&lt;/h2&gt;
+
+  &lt;!-- 1. డ్రాప్‌డౌన్: సైజు --&gt;
+  &lt;p&gt;
+    &lt;label for="p-size"&gt;&lt;strong&gt;పిజ్జా సైజు:&lt;/strong&gt;&lt;/label&gt;&lt;br&gt;
+    &lt;select id="p-size" name="pizza_size" style="width:100%; padding:8px; margin-top:4px;"&gt;
+      &lt;option value="reg"&gt;రెగ్యులర్ (7 అంగుళాలు)&lt;/option&gt;
+      &lt;option value="med" selected&gt;మీడియం (10 అంగుళాలు)&lt;/option&gt;
+      &lt;option value="lar"&gt;లార్జ్ (12 అంగుళాలు)&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/p&gt;
+
+  &lt;!-- 2. రేడియో: క్రస్ట్ టైప్ --&gt;
+  &lt;p&gt;
+    &lt;strong&gt;క్రస్ట్ రకం:&lt;/strong&gt;&lt;br&gt;
+    &lt;label&gt;&lt;input type="radio" name="crust" value="pan" checked&gt; పాన్ పిజ్జా&lt;/label&gt; &amp;nbsp;
+    &lt;label&gt;&lt;input type="radio" name="crust" value="thin"&gt; థిన్ క్రస్ట్&lt;/label&gt; &amp;nbsp;
+    &lt;label&gt;&lt;input type="radio" name="crust" value="cheese"&gt; చీజ్ బర్స్ట్&lt;/label&gt;
+  &lt;/p&gt;
+
+  &lt;!-- 3. చెక్‌బాక్స్: ఎక్స్‌ట్రా టాపింగ్స్ --&gt;
+  &lt;p&gt;
+    &lt;strong&gt;ఎక్స్‌ట్రా టాపింగ్స్:&lt;/strong&gt;&lt;br&gt;
+    &lt;label&gt;&lt;input type="checkbox" name="toppings" value="cheese"&gt; ఎక్స్‌ట్రా చీజ్ (+₹50)&lt;/label&gt;&lt;br&gt;
+    &lt;label&gt;&lt;input type="checkbox" name="toppings" value="olives"&gt; బ్లాక్ ఆలివ్స్ (+₹30)&lt;/label&gt;
+  &lt;/p&gt;
+
+  &lt;!-- 4. డాటాలిస్ట్: డెలివరీ ఏరియా --&gt;
+  &lt;p&gt;
+    &lt;label for="area"&gt;&lt;strong&gt;డెలివరీ లొకేషన్ (టైప్ చేయండి):&lt;/strong&gt;&lt;/label&gt;&lt;br&gt;
+    &lt;input type="text" id="area" name="delivery_area" list="area-options" placeholder="హైటెక్ సిటీ, మాదాపూర్..." style="width:100%; padding:8px; margin-top:4px;"&gt;
+    &lt;datalist id="area-options"&gt;
+      &lt;option value="హైటెక్ సిటీ, హైదరాబాద్"&gt;
+      &lt;option value="మాదాపూర్, హైదరాబాద్"&gt;
+      &lt;option value="గచ్చిబౌలి, హైదరాబాద్"&gt;
+      &lt;option value="కూకట్‌పల్లి, హైదరాబాద్"&gt;
+    &lt;/datalist&gt;
+  &lt;/p&gt;
+
+  &lt;!-- 5. టెక్స్ట్ ఏరియా: అడ్రస్ --&gt;
+  &lt;p&gt;
+    &lt;label for="addr"&gt;&lt;strong&gt;పూర్తి ఇంటి చిరునామా:&lt;/strong&gt;&lt;/label&gt;&lt;br&gt;
+    &lt;textarea id="addr" name="delivery_address" rows="3" style="width:100%; padding:8px; margin-top:4px;" placeholder="ఫ్లాట్ నం, అపార్ట్‌మెంట్, ల్యాండ్‌మార్క్..."&gt;&lt;/textarea&gt;
+  &lt;/p&gt;
+
+  &lt;button type="submit" style="background:#10b981; color:white; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; width:100%;"&gt;
+    🍕 ఆర్డర్ కన్ఫర్మ్ చేయండి
+  &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>బిగినర్స్ చేసే టాప్ 5 పొరపాట్లు &amp; పరిష్కారాలు</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">1. తప్పు: ఒకే గ్రూప్ రేడియో బటన్లకు వేర్వేరు name లు ఇవ్వడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;">రేడియో బటన్లకు వేర్వేరు పేర్లు ఇస్తే అవి గ్రూప్ అవ్వవు; యూజర్ అన్ని బటన్లనూ సెలెక్ట్ చేయగలుగుతాడు. ఒక సమూహానికి చెందిన అన్ని రేడియో బటన్లకూ ఖచ్చితంగా <strong>ఒకే పేరు</strong> ఉండాలి.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">2. తప్పు: &lt;option&gt; ట్యాగ్‌కు value ఆట్రిబ్యూట్ ఇవ్వకపోవడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;"><code>&lt;option value="TG"&gt;తెలంగాణ&lt;/option&gt;</code> అని ఇవ్వాలి. <code>value</code> లేకపోతే లోపల ఉన్న పెద్ద టెక్స్ట్ మొత్తం సర్వర్‌కు వెళ్ళిపోతుంది.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">3. తప్పు: &lt;textarea&gt; ట్యాగ్‌ల మధ్య అనవసరమైన స్పేస్‌లు వదిలేయడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;"><code>&lt;textarea&gt;   &lt;/textarea&gt;</code> అని రాస్తే ఆ ఖాళీ స్పేస్‌లు బాక్స్ లోపల ముందే టైప్ చేసినట్లుగా యూజర్‌కు కనిపిస్తాయి. ఎల్లప్పుడూ <code>&lt;textarea&gt;&lt;/textarea&gt;</code> మధ్యలో ఏమీ లేకుండా రాయాలి.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">4. తప్పు: &lt;input&gt; మరియు &lt;datalist&gt; లింకింగ్ సరిపోకపోవడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;">ఇన్‌పుట్ లోని <code>list="my-list"</code> మరియు డాటాలిస్ట్ లోని <code>id="my-list"</code> ఖచ్చితంగా సమానంగా ఉండాలి. స్పెల్లింగ్ తేడా ఉంటే ఆటోకంప్లీట్ పనిచేయదు.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">5. తప్పు: చెక్‌బాక్స్ కి value ఇవ్వకపోవడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;">చెక్‌బాక్స్‌కు <code>value</code> ఇవ్వకపోతే సర్వర్‌కు డిఫాల్ట్‌గా <code>name="on"</code> అని మాత్రమే వెళ్తుంది. ఏ ఆప్షన్ టిక్ అయిందో తెలియాలంటే <code>value="agree"</code> లేదా <code>value="hindi"</code> లాంటి నిర్దిష్ట విలువలు ఇవ్వాలి.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 12 (INTERACTIVE COLLAPSIBLE QUIZ) -->
+    <div class="section-title"><span class="num">12</span>ఇంటరాక్టివ్ సెల్ఫ్-టెస్ట్ క్విజ్ (Interactive Quiz)</div>
+    <div class="section-body">
+      <p>ఈ అధ్యాయంలో మీరు నేర్చుకున్న విషయాలను స్వయంగా పరీక్షించుకోండి. ప్రతి ప్రశ్నను చదివి సమాధానం ఆలోచించిన తర్వాత "సమాధానం చూడండి" పై క్లిక్ చేయండి:</p>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: రేడియో బటన్లు పరస్పరం మ్యూచువల్లీ ఎక్స్‌క్లూజివ్ (ఒకటి నొక్కితే ఇంకోటి అన్-సెలెక్ట్) కావాలంటే ఏ నియమం పాటించాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> ఆ గ్రూప్‌లోని అన్ని రేడియో బటన్లకూ ఒకే <code>name</code> ఆట్రిబ్యూట్ విలువను ఇవ్వాలి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: &lt;select&gt; మరియు &lt;datalist&gt; మధ్య ప్రధాన తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>&lt;select&gt;</code> లో కేవలం ముందుగా నిర్ణయించిన ఆప్షన్లను మాత్రమే ఎంచుకోవాలి. <code>&lt;datalist&gt;</code> లో సలహాలు కనిపిస్తాయి, అవసరమైతే యూజర్ తన స్వంత కొత్త విలువను కూడా స్వేచ్ఛగా టైప్ చేసుకోవచ్చు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: డ్రాప్‌డౌన్‌లోని ఆప్షన్లను వర్గాలుగా (Categories) విభజించడానికి ఏ ట్యాగ్ వాడతారు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>&lt;optgroup label="కేటగిరీ పేరు"&gt;</code>.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: &lt;textarea&gt; ని యూజర్ కేవలం నిలువుగా మాత్రమే సాగదీసేలా (Vertical resize) ఎలా నియంత్రించాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> CSS లో <code>resize: vertical;</code> అని రాయడం ద్వారా.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: చెక్‌బాక్స్ మరియు రేడియో బటన్ డిఫాల్ట్‌గా టిక్ అయి ఉండటానికి ఏ ఆట్రిబ్యూట్ వాడతారు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>checked</code> ఆట్రిబ్యూట్ (డ్రాప్‌డౌన్ లో అయితే <code>selected</code>).
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 13 (TRY BOX & SUMMARY) -->
+    <div class="section-title"><span class="num">13</span>మీరే స్వయంగా Try చేయండి &amp; సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🚀 ఆధునిక ఫారమ్ కంట్రోల్స్‌ను మన HTML Editor లో లైవ్‌గా రన్ చేయండి</div>
+        <p>పైన వివరించిన పిజ్జా ఆర్డర్ ఫారమ్ కోడ్‌ను మన ఆన్‌లైన్ ఎడిటర్‌లో ఓపెన్ చేసి, డ్రాప్‌డౌన్లు, రేడియో బటన్లు, చెక్‌బాక్స్‌లు మరియు డాటాలిస్ట్‌లను మీరే స్వయంగా క్లిక్ చేసి అనుభవించండి!</p>
+        <a class="run-btn" href="/online-html-editor.html" target="_blank">
+          👉 Our Compiler లో HTML Editor try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 క్విక్ సారాంశం (Key Takeaways):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>రేడియో:</strong> ఒకే ఎంపికకు వాడాలి; గ్రూప్ కావడానికి సమానమైన <code>name</code> తప్పనిసరి.</li>
+          <li><strong>చెక్‌బాక్స్:</strong> బహుళ స్వతంత్ర ఎంపికల కోసం.</li>
+          <li><strong>&lt;select&gt;:</strong> స్థలాన్ని ఆదా చేసే డ్రాప్‌డౌన్; కేటగిరీల కోసం <code>&lt;optgroup&gt;</code>.</li>
+          <li><strong>&lt;datalist&gt;:</strong> టెక్స్ట్‌బాక్స్‌కు ఇన్-లైన్ సెర్చ్ సజెషన్స్ ఇచ్చే ఆధునిక హైబ్రిడ్ కంట్రోల్.</li>
+          <li><strong>&lt;textarea&gt;:</strong> పెద్ద పేరాగ్రాఫ్‌ల కోసం; తప్పనిసరిగా క్లోజింగ్ ట్యాగ్ ఉండాలి.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 16 - Phase 04 ఫినాలే):</strong> మనం ఫారమ్స్‌లో అత్యంత కీలకమైన <strong>క్లయింట్-సైడ్ HTML5 ఆటో-వాలిడేషన్ (required, pattern Regex, min, max, step) &amp; కస్టమ్ ఎర్రర్ మెసేజ్‌లు</strong> గురించి లోతుగా నేర్చుకుందాం!
+      </div>
+    </div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
       <a href="/blog-html/14-html-input-types-text-password-email-number-date.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
         ← Prev: 14. మోడరన్ ఇన్‌పుట్ టైప్స్
       </a>
-      
       <a href="/blog-html/16-html-form-validation-required-pattern-min-max.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
         Next: 16. క్లయింట్-సైడ్ ఫారమ్ వాలిడేషన్ →
       </a>
@@ -370,7 +890,7 @@
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested across modern Web Standards / W3C · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested across modern Web Standards / W3C &amp; WHATWG · 2026 Academic Edition</span>
       </div>
     </div>
 
