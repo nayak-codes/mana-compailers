@@ -1,0 +1,605 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./html_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 13);
+const sidebarHtml = buildSidebar(13);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-html.html">HTML5 Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 13: ఫారమ్స్ ఆర్కిటెక్చర్: form, action, method (GET vs POST), label</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">HTML5 ఫారమ్స్ ఆర్కిటెక్చర్: form, action, method (GET vs POST), label &amp; fieldset</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern HTML5 (W3C/WHATWG)</span>
+      <span class="badge">🟢 Chapter 13 of 20</span>
+      <span class="badge">📂 Phase 04: ఫారమ్స్, ఇన్‌పుట్స్ &amp; క్లయింట్-సైడ్ వాలిడేషన్</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>ఫారమ్ లైఫ్‌సైకిల్ · &lt;form&gt; action &amp; method · GET vs POST లోతైన పోలిక · &lt;label&gt; for యాక్సెసిబిలిటీ · &lt;fieldset&gt; &amp; &lt;legend&gt; గ్రూపింగ్ · name vs id ప్రాముఖ్యత · &lt;button&gt; vs submit · బిగినర్స్ తప్పులు &amp; క్విజ్</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>నిజ జీవితంలో ఒక బ్యాంక్ అకౌంట్ ఓపెన్ చేయాలన్నా, కాలేజీ అడ్మిషన్ తీసుకోవాలన్నా, లేదా పాస్‌పోర్ట్ దరఖాస్తు చేసుకోవాలన్నా మనం ముందుగా ఒక దరఖాస్తు ఫారమ్‌ను (Application Form) పూర్తి చేస్తాం. వెబ్ ప్రపంచంలో కూడా యూజర్ నుండి సమాచారాన్ని (User Input) సేకరించడానికి అత్యంత కీలకమైన వారధి <strong>HTML Forms (వెబ్ ఫారమ్‌లు)</strong>!</p>
+      <p>గూగుల్‌లో శోధించే సెర్చ్ బాక్స్ నుండి, ఫేస్‌బుక్/ఇన్‌స్టాగ్రామ్ లాగిన్ స్క్రీన్, అమెజాన్ చెక్‌అవుట్ అడ్రస్ పేజీ, మరియు స్విగ్గీ/జొమాటో ఫుడ్ ఆర్డర్ల వరకు — ఇంటర్నెట్‌లోని ప్రతి ఇంటరాక్టివ్ లావాదేవీ ఒక HTML ఫారమ్ ద్వారానే ప్రారంభమవుతుంది. ఫారమ్స్ లేకపోతే వెబ్ కేవలం చదవడానికి మాత్రమే పరిమితమైన ఒక నిర్జీవమైన పుస్తకంలా ఉండేది!</p>
+      <p>అయితే ఫారమ్స్ నిర్మించేటప్పుడు కేవలం ఇన్‌పుట్ బాక్సులు పెట్టడం మాత్రమే సరిపోదు. యూజర్ టైప్ చేసిన డేటా సర్వర్‌కు సురక్షితంగా ఎలా చేరుతుంది? <strong>GET మరియు POST</strong> మెథడ్స్ మధ్య తేడా ఏమిటి? పాస్‌వర్డ్‌లు URL లో కనిపించకుండా ఎలా దాచాలి? స్క్రీన్ రీడర్స్ మరియు మొబైల్ యూజర్ల కోసం <strong>&lt;label&gt;</strong> ఎందుకు ప్రాణాధారమో ఈ పదమూడవ అధ్యాయంలో లోతుగా నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే అంశాలు</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>వెబ్ ఫారమ్ అనాటమీ &amp; లైఫ్‌సైకిల్:</strong> బ్రౌజర్ నుండి సర్వర్‌కు డేటా ఎలా ప్రయాణిస్తుంది?</li>
+        <li><strong>&lt;form&gt; ఎలిమెంట్:</strong> action URL మరియు HTTP method యొక్క ప్రాథమిక భావన.</li>
+        <li><strong>ఇంటర్వ్యూ హాట్ టాపిక్ — GET vs POST:</strong> ఏది ఎప్పుడు వాడాలి? సెక్యూరిటీ మరియు డేటా లిమిట్స్.</li>
+        <li><strong>URL Encoding &amp; Query String:</strong> <code>?username=rahul&amp;email=...</code> ఎలా ఏర్పడుతుంది?</li>
+        <li><strong>&lt;label&gt; ఎలిమెంట్:</strong> for ఆట్రిబ్యూట్, మొబైల్ ట్యాప్ ఏరియా పెంపుదల, మరియు Accessibility (a11y).</li>
+        <li><strong>&lt;fieldset&gt; మరియు &lt;legend&gt;:</strong> పెద్ద ఫారమ్‌లను ప్రొఫెషనల్ గ్రూప్స్‌గా విభజించే విధానం.</li>
+        <li><strong>name vs id ఆట్రిబ్యూట్ల వ్యత్యాసం:</strong> సర్వర్‌కు ఏది వెళ్తుంది? CSS/JS కు ఏది కావాలి?</li>
+        <li><strong>బటన్ల వర్గీకరణ:</strong> submit vs reset vs సాధారణ button తేడాలు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>వెబ్ ఫారమ్ అనాటమీ &amp; క్లయింట్-సర్వర్ లైఫ్‌సైకిల్</div>
+    <div class="section-body">
+      <p>ఒక యూజర్ వెబ్‌సైట్‌లో ఫారమ్ నింపి "Submit" బటన్ నొక్కినప్పుడు బ్యాక్‌గ్రౌండ్‌లో ఏం జరుగుతుందో క్రింది లైఫ్‌సైకిల్ డయాగ్రమ్ ద్వారా అర్థం చేసుకుందాం:</p>
+
+      <div class="diagram-box">
+  ఫారమ్ సబ్మిషన్ లైఫ్‌సైకిల్ (Form Lifecycle):
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │  1. యూజర్ డేటా ఎంటర్ చేస్తాడు (Username, Password, etc.)                     │
+  │     ▼                                                                       │
+  │  2. "Submit" బటన్ క్లిక్ చేయబడుతుంది                                         │
+  │     ▼                                                                       │
+  │  3. బ్రౌజర్ ప్రతి ఇన్‌పుట్‌లోని "name" మరియు "value" లను జతచేస్తుంది (name=val)  │
+  │     ▼                                                                       │
+  │  4. HTTP Request (GET లేదా POST) ద్వారా &lt;form action="/login"&gt; సర్వర్‌కు వెళ్తుంది │
+  │     ▼                                                                       │
+  │  5. బ్యాకెండ్ సర్వర్ (Node.js/Python/Java/PHP) డేటాను ప్రాసెస్ చేసి రెస్పాన్స్ ఇస్తుంది │
+  └─────────────────────────────────────────────────────────────────────────────┘
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>&lt;form&gt; ఎలిమెంట్: action మరియు method ప్రాముఖ్యత</div>
+    <div class="section-body">
+      <p><code>&lt;form&gt;</code> ఎలిమెంట్ అనేది అన్ని ఇన్‌పుట్ కంట్రోల్స్‌ను (టెక్స్ట్‌బాక్స్, చెక్‌బాక్స్, రేడియో బటన్, సబ్మిట్ బటన్) తన లోపల భద్రపరిచే ప్రధాన కంటైనర్. దీనికి రెండు అత్యంత కీలకమైన ఆట్రిబ్యూట్‌లు ఉంటాయి:</p>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><strong><code>action="URL"</code>:</strong> ఫారమ్ సబ్మిట్ అయిన తర్వాత డేటాను ఏ సర్వర్ ఎండ్‌పాయింట్‌కు (Backend API / URL) పంపాలో నిర్దేశిస్తుంది (ఉదా: <code>action="/api/register"</code>). ఒకవేళ ఇది ఇవ్వకపోతే, ఫారమ్ అదే పేజీకి మళ్ళీ సబ్మిట్ అవుతుంది.</li>
+        <li><strong><code>method="GET | POST"</code>:</strong> డేటాను సర్వర్‌కు ఏ HTTP ప్రోటోకాల్ పద్ధతి ద్వారా పంపాలో నిర్ణయిస్తుంది.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>HTML — బేసిక్ &lt;form&gt; నిర్మాణం</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;form action="/login" method="POST" style="max-width: 400px; padding: 20px; border: 1px solid #cbd5e1; border-radius: 8px;"&gt;
+  &lt;h3 style="margin-top:0;"&gt;యూజర్ లాగిన్&lt;/h3&gt;
+  
+  &lt;p&gt;
+    &lt;label for="user"&gt;యూజర్‌నేమ్:&lt;/label&gt;&lt;br&gt;
+    &lt;input type="text" id="user" name="username" placeholder="మీ పేరు నమోదు చేయండి" style="width: 100%; padding: 8px; margin-top: 4px;"&gt;
+  &lt;/p&gt;
+
+  &lt;p&gt;
+    &lt;label for="pass"&gt;పాస్‌వర్డ్:&lt;/label&gt;&lt;br&gt;
+    &lt;input type="password" id="pass" name="password" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px;"&gt;
+  &lt;/p&gt;
+
+  &lt;button type="submit" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;"&gt;
+    లాగిన్ అవ్వండి
+  &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ఇంటర్వ్యూ హాట్ టాపిక్: GET vs POST సమగ్ర పోలిక</div>
+    <div class="section-body">
+      <p>సాఫ్ట్‌వేర్ ఇండస్ట్రీలో ప్రతి వెబ్ డెవలపర్ ఇంటర్వ్యూలో తప్పకుండా అడిగే ప్రశ్న: <em>"GET మరియు POST మధ్య తేడాలు ఏమిటి? పాస్‌వర్డ్ కోసం GET ఎందుకు వాడకూడదు?"</em></p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్ / అంశం</th>
+              <th>GET మెథడ్</th>
+              <th>POST మెథడ్</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>డేటా ఎలా వెళ్తుంది?</strong></td>
+              <td>URL చివర క్వెరీ స్ట్రింగ్‌గా కనిపిస్తూ వెళ్తుంది (Visible in Address Bar).</td>
+              <td>HTTP Request Body లోపల దాగి వెళ్తుంది (Hidden from URL).</td>
+            </tr>
+            <tr>
+              <td><strong>భద్రత (Security)</strong></td>
+              <td>❌ తక్కువ భద్రత. పాస్‌వర్డ్స్, క్రెడిట్ కార్డుల కోసం ఎప్పుడూ వాడకూడదు!</td>
+              <td>✅ సురక్షితమైనది. సున్నితమైన సమాచారం కోసం తప్పనిసరి.</td>
+            </tr>
+            <tr>
+              <td><strong>డేటా పరిమాణ పరిమితి</strong></td>
+              <td>పరిమితం (సాధారణంగా గరిష్టంగా ~2,048 అక్షరాలు).</td>
+              <td>అపరిమితం (ఫైల్స్, ఇమేజెస్, పెద్ద టెక్స్ట్ పంపవచ్చు).</td>
+            </tr>
+            <tr>
+              <td><strong>బుక్‌మార్కింగ్ &amp; హిస్టరీ</strong></td>
+              <td>బ్రౌజర్ హిస్టరీలో సేవ్ అవుతుంది, బుక్‌మార్క్ చేసుకోవచ్చు.</td>
+              <td>హిస్టరీలో సేవ్ కాదు, బుక్‌మార్క్ చేయలేము.</td>
+            </tr>
+            <tr>
+              <td><strong>ఐడెంపోటెంట్ (Idempotent)</strong></td>
+              <td>సర్వర్ డేటాను మార్చదు (కేవలం శోధించడానికి/ఫెచ్ చేయడానికి).</td>
+              <td>సర్వర్‌లో కొత్త రికార్డులను సృష్టిస్తుంది లేదా మారుస్తుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>వాడే సందర్భాలు</strong></td>
+              <td>గూగుల్ సెర్చ్, ఫిల్టర్లు, పేజినేషన్ (Search, Filter).</td>
+              <td>లాగిన్, సైన్అప్, పేమెంట్స్, ప్రొఫైల్ అప్‌డేట్ (Forms with sensitive data).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-danger" style="margin-top:16px; background:#fef2f2; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+        <strong style="color:#b91c1c;">🚨 భద్రతా ప్రమాదం — ఎప్పటికీ లాగిన్ ఫారమ్‌కు GET వాడకండి!</strong><br>
+        ఒకవేళ మీరు లాగిన్ ఫారమ్‌కు <code>method="GET"</code> అని రాస్తే, యూజర్ టైప్ చేసిన పాస్‌వర్డ్ బ్రౌజర్ అడ్రస్ బార్‌లో <code>https://example.com/login?username=rahul&amp;password=secret123</code> అని బహిరంగంగా కనిపిస్తుంది! పక్కన కూర్చున్న ఎవరైనా పాస్‌వర్డ్ చూసేయడమే కాకుండా, బ్రౌజర్ హిస్టరీలో మరియు సర్వర్ లాగ్స్‌లో శాశ్వతంగా రికార్డయిపోతుంది. కాబట్టి ఫారమ్‌లలో ఎల్లప్పుడూ <strong>POST</strong> మాత్రమే వాడాలి.
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>URL Encoding &amp; Query String (?key=value)</div>
+    <div class="section-body">
+      <p>ఒక ఫారమ్‌ను GET మెథడ్‌తో సబ్మిట్ చేసినప్పుడు బ్రౌజర్ డేటాను <strong>"క్వెరీ స్ట్రింగ్" (Query String)</strong> రూపంలోకి మారుస్తుంది:</p>
+
+      <div class="diagram-box">
+  URL Encoding మెకానిజం:
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │   https://www.google.com/search?q=telugu+html+tutorial&amp;hl=te                │
+  │   └──────────────┬─────────────┘└───┬──────────────────┘                    │
+  │                  │                  │                                       │
+  │              Base URL          Query String                                 │
+  │                         (? ప్రారంభ గుర్తు, &amp; జాయినింగ్ సింబల్)              │
+  └─────────────────────────────────────────────────────────────────────────────┘
+      </div>
+
+      <p style="margin-top:14px;"><strong>స్పేస్‌లు మరియు ప్రత్యేక అక్షరాలు:</strong></p>
+      <p>URL లో ఖాళీ స్థలాలు (Spaces) ఉండకూడదు. కాబట్టి బ్రౌజర్ స్పేస్‌ను <code>+</code> లేదా <code>%20</code> గా మారుస్తుంది. దీన్నే <strong>URL Encoding (Percent-encoding)</strong> అంటారు.</p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>&lt;label&gt; ఎలిమెంట్ &amp; for ఆట్రిబ్యూట్ ప్రాముఖ్యత</div>
+    <div class="section-body">
+      <p>ఒక ఇన్‌పుట్ ఫీల్డ్ పక్కన సాధారణంగా టెక్స్ట్ రాయడానికి <code>&lt;p&gt;పేరు:&lt;/p&gt;</code> లేదా <code>&lt;span&gt;పేరు:&lt;/span&gt;</code> వాడకూడదు! ఎల్లప్పుడూ అధికారిక <strong><code>&lt;label&gt;</code></strong> ట్యాగ్‌ను మాత్రమే ఉపయోగించాలి.</p>
+
+      <p><strong>&lt;label for="..."&gt; వాడటం వల్ల లభించే 2 విప్లవాత్మక ప్రయోజనాలు:</strong></p>
+
+      <div class="callout callout-tip" style="margin-top:12px;">
+        <span class="callout-icon">💡</span>
+        <div>
+          <strong>1. మొబైల్ ట్యాప్ ఏరియా భారీగా పెరుగుతుంది:</strong><br>
+          స్మార్ట్‌ఫోన్లలో చెక్‌బాక్స్ లేదా చిన్న రేడియో బటన్‌ను వేలితో నొక్కడం చాలా కష్టం. కానీ మీరు <code>&lt;label for="terms"&gt;</code> అని ఇస్తే — యూజర్ ఆ చిన్న బాక్స్ మీద నొక్కాల్సిన పని లేదు; పక్కన ఉన్న <strong>అక్షరాల మీద నొక్కినా కూడా చెక్‌బాక్స్ ఆటోమేటిక్‌గా టిక్ అవుతుంది!</strong>
+        </div>
+      </div>
+
+      <div class="callout callout-tip" style="margin-top:12px;">
+        <span class="callout-icon">💡</span>
+        <div>
+          <strong>2. Accessibility (స్క్రీన్ రీడర్స్):</strong><br>
+          దృష్టి లోపం ఉన్న యూజర్ కీబోర్డ్ ద్వారా ఇన్‌పుట్ బాక్స్‌లోకి వెళ్ళినప్పుడు, స్క్రీన్ రీడర్ ఆ ఇన్‌పుట్‌కు లింక్ అయిన లేబుల్ పేరును ("మీ ఈమెయిల్ నమోదు చేయండి") స్పష్టంగా చదివి వినిపిస్తుంది.
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top:16px;">
+        <div class="code-block-header">
+          <span>HTML — లేబుల్ మరియు ఇన్‌పుట్‌ను కనెక్ట్ చేసే సరైన పద్ధతి</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;!-- పద్ధతి 1: 'for' మరియు 'id' తో అనుసంధానం (సిఫార్సు చేయబడినది) --&gt;
+&lt;label for="user-email"&gt;ఈమెయిల్ చిరునామా:&lt;/label&gt;
+&lt;input type="email" id="user-email" name="email"&gt;
+
+&lt;!-- పద్ధతి 2: లేబుల్ లోపల ఇన్‌పుట్‌ను చుట్టడం (Implicit Association) --&gt;
+&lt;label&gt;
+  &lt;input type="checkbox" name="agree"&gt;
+  నేను నిబంధనలు మరియు షరతులను అంగీకరిస్తున్నాను (ఈ అక్షరాలపై క్లిక్ చేసినా టిక్ అవుతుంది!)
+&lt;/label&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>&lt;fieldset&gt; మరియు &lt;legend&gt;: ఫారమ్ గ్రూపింగ్</div>
+    <div class="section-body">
+      <p>పెద్ద పెద్ద రిజిస్ట్రేషన్ లేదా జాబ్ అప్లికేషన్ ఫారమ్‌లలో 20 నుండి 30 ఇన్‌పుట్ ఫీల్డ్‌లు ఉంటాయి. వాటన్నింటినీ ఒకేచోట గజిబిజిగా ఉంచితే యూజర్ కంగారుపడతాడు. సంబంధిత ఇన్‌పుట్‌లను అందమైన గ్రూపులుగా విభజించడానికి <strong><code>&lt;fieldset&gt;</code></strong> మరియు దానికి టైటిల్ ఇవ్వడానికి <strong><code>&lt;legend&gt;</code></strong> ఉపయోగిస్తాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>HTML — fieldset మరియు legend తో ప్రొఫెషనల్ ఫారమ్</span>
+          <div class="code-actions">
+            <button class="try-btn">▶ Run in Online HTML Editor</button>
+          </div>
+        </div>
+        <pre><code class="language-html">&lt;form action="/profile" method="POST" style="max-width: 500px;"&gt;
+  &lt;!-- గ్రూప్ 1: వ్యక్తిగత వివరాలు --&gt;
+  &lt;fieldset style="border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;"&gt;
+    &lt;legend style="color: #059669; font-weight: bold; padding: 0 8px;"&gt;వ్యక్తిగత సమాచారం&lt;/legend&gt;
+    
+    &lt;label for="fullname"&gt;పూర్తి పేరు:&lt;/label&gt;&lt;br&gt;
+    &lt;input type="text" id="fullname" name="name" style="width:100%; margin-bottom:12px;"&gt;&lt;br&gt;
+
+    &lt;label for="dob"&gt;పుట్టిన తేదీ:&lt;/label&gt;&lt;br&gt;
+    &lt;input type="date" id="dob" name="birthdate"&gt;
+  &lt;/fieldset&gt;
+
+  &lt;!-- గ్రూప్ 2: చిరునామా వివరాలు --&gt;
+  &lt;fieldset style="border: 1px solid #3b82f6; border-radius: 8px; padding: 16px;"&gt;
+    &lt;legend style="color: #2563eb; font-weight: bold; padding: 0 8px;"&gt;నివాస చిరునామా&lt;/legend&gt;
+    
+    &lt;label for="city"&gt;నగరం:&lt;/label&gt;&lt;br&gt;
+    &lt;input type="text" id="city" name="city" style="width:100%; margin-bottom:12px;"&gt;&lt;br&gt;
+
+    &lt;label for="pincode"&gt;పిన్‌కోడ్:&lt;/label&gt;&lt;br&gt;
+    &lt;input type="text" id="pincode" name="zip"&gt;
+  &lt;/fieldset&gt;
+&lt;/form&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>name vs id: బిగినర్స్ తెలుసుకోవాల్సిన ప్రాథమిక వ్యత్యాసం</div>
+    <div class="section-body">
+      <p>ప్రతి ఇన్‌పుట్ ఎలిమెంట్‌కు <code>name</code> మరియు <code>id</code> రాస్తుంటాం. చాలా మంది బిగినర్స్ ఈ రెండూ ఒకటే అని భ్రమపడుతుంటారు. కానీ వీటి పని పూర్తిగా వేర్వేరు:</p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఆట్రిబ్యూట్</th>
+              <th>ఎవరికి అవసరం?</th>
+              <th>ప్రధాన ప్రయోజనం</th>
+              <th>ఉదాహరణ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><code>name</code></strong></td>
+              <td><strong>బ్యాకెండ్ సర్వర్ (Server-side)</strong></td>
+              <td>ఫారమ్ సబ్మిట్ చేసినప్పుడు సర్వర్‌కు డేటా కీ-వ్యాల్యూ జతగా (<code>name=value</code>) వెళ్ళడానికి ఇది తప్పనిసరి. <code>name</code> లేకపోతే సర్వర్‌కు డేటా చేరదు!</td>
+              <td><code>name="user_email"</code></td>
+            </tr>
+            <tr>
+              <td><strong><code>id</code></strong></td>
+              <td><strong>బ్రౌజర్ క్లయింట్ (CSS, JS, &lt;label&gt;)</strong></td>
+              <td>పేజీలో ఆ ఎలిమెంట్‌ను ప్రత్యేకంగా గుర్తించడానికి (Unique ID). CSS స్టైలింగ్, JavaScript డాక్యుమెంట్ సెలెక్టర్ మరియు <code>&lt;label for="..."&gt;</code> కనెక్ట్ చేయడానికి వాడతారు.</td>
+              <td><code>id="email-field"</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>బటన్ల వర్గీకరణ: &lt;button&gt; vs &lt;input type="submit"&gt;</div>
+    <div class="section-body">
+      <p>ఫారమ్‌ను సబ్మిట్ చేయడానికి HTML లో రెండు రకాల ట్యాగ్‌లు ఉన్నాయి:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><code>&lt;button type="submit"&gt;</code>: ఆధునిక ప్రామాణిక పద్ధతి! దీని లోపల టెక్స్ట్‌తో పాటు ఐకాన్లు (SVG, ఈమోజీలు), ఇమేజ్‌లు మరియు స్టైలింగ్‌ను సులభంగా పెట్టవచ్చు (ఉదా: <code>&lt;button&gt;🚀 రిజిస్టర్ చేసుకోండి&lt;/button&gt;</code>).</li>
+        <li><code>&lt;input type="submit" value="సబ్మిట్"&gt;</code>: 1995 నాటి పాత శైలి. ఇందులో కేవలం ప్లెయిన్ టెక్స్ట్ మాత్రమే ఇవ్వగలం; ఐకాన్లు పెట్టలేము.</li>
+      </ul>
+
+      <div class="callout callout-warning" style="margin-top:12px;">
+        <span class="callout-icon">⚠️</span>
+        <div>
+          <strong>జాగ్రత్త:</strong> ఒక ఫారమ్ లోపల రాసే ఏ <code>&lt;button&gt;</code> అయినా బై-డిఫాల్ట్‌గా <code>type="submit"</code> స్వభావాన్ని కలిగి ఉంటుంది! మీరు పొరపాటున <code>type="button"</code> అని పేర్కొనకపోతే — ఆ బటన్ నొక్కగానే ఫారమ్ ఆటోమేటిక్‌గా సబ్మిట్ అయి పేజీ రీఫ్రెష్ అయిపోతుంది.
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>ఫారమ్ భద్రత: autocomplete &amp; novalidate</div>
+    <div class="section-body">
+      <p>ఫారమ్స్‌ను మరింత యూజర్-ఫ్రెండ్లీగా మరియు సురక్షితంగా మార్చే రెండు ఆధునిక ఆట్రిబ్యూట్‌లు:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.8;">
+        <li><strong><code>autocomplete="on | off"</code>:</strong> యూజర్ గతంలో టైప్ చేసిన సమాచారాన్ని బ్రౌజర్ ఆటో-ఫిల్ చేయాలా వద్దా అని నిర్ణయిస్తుంది. క్రెడిట్ కార్డులు, సీక్రెట్ OTP ఫీల్డ్స్ కోసం <code>autocomplete="off"</code> పెట్టడం శ్రేయస్కరం.</li>
+        <li><strong><code>novalidate</code>:</strong> బ్రౌజర్ యొక్క డిఫాల్ట్ HTML5 వాలిడేషన్ పాపప్‌లను ఆపివేసి, డెవలపర్ తన స్వంత జావాస్క్రిప్ట్ కస్టమ్ వాలిడేషన్ రాసుకోవడానికి అనుమతిస్తుంది.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>బిగినర్స్ చేసే టాప్ 5 పొరపాట్లు &amp; పరిష్కారాలు</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">1. తప్పు: ఇన్‌పుట్‌కు name ఆట్రిబ్యూట్ రాయడం మర్చిపోవడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;">ఇన్‌పుట్‌కు <code>id</code> రాసి <code>name</code> రాయకపోవడం. దీనివల్ల సబ్మిట్ బటన్ నొక్కినప్పుడు సర్వర్‌కు ఆ ఫీల్డ్ డేటా అసలు వెళ్ళనే వెళ్ళదు! సర్వర్ దృష్టిలో ఆ ఇన్‌పుట్ లేనట్లే.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">2. తప్పు: పాస్‌వర్డ్స్ లేదా సున్నితమైన సమాచారానికి method="GET" వాడటం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;">GET వాడటం వల్ల యూజర్ పాస్‌వర్డ్ బ్రౌజర్ అడ్రస్ బార్‌లో అందరికీ కనిపించేలా పబ్లిక్ అయిపోతుంది. లాగిన్/పేమెంట్ ఫారమ్స్‌కు ఎల్లప్పుడూ <code>method="POST"</code> మాత్రమే వాడాలి.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">3. తప్పు: &lt;label for="..."&gt; లో 'name' విలువను ఇవ్వడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;"><code>for</code> ఆట్రిబ్యూట్ ఎల్లప్పుడూ ఇన్‌పుట్ యొక్క <strong><code>id</code></strong> తో మాత్రమే మ్యాచ్ అవ్వాలి, <code>name</code> తో కాదు! <code>&lt;label for="user"&gt; &lt;input id="user"&gt;</code> సరైన పద్ధతి.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">4. తప్పు: ఫారమ్ లోపల సాధారణ బటన్‌కు type="button" ఇవ్వకపోవడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;">ఒక ఫారమ్‌లో "OTP పంపండి" అని ఒక బటన్ పెట్టి దానికి <code>type="button"</code> ఇవ్వకపోతే — అది సబ్మిట్ బటన్‌లా ప్రవర్తించి పూర్తి ఫారమ్‌ను సబ్మిట్ చేసేస్తుంది.</p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px;">
+          <strong style="color:#b91c1c;">5. తప్పు: placeholder ని label కి ప్రత్యామ్నాయంగా భావించడం</strong>
+          <p style="margin-top:6px; color:var(--text2); font-size:14px;">లేబుల్ లేకుండా కేవలం ప్లేస్‌హోల్డర్ మాత్రమే ఇవ్వడం. యూజర్ టైప్ చేయడం ప్రారంభించగానే ప్లేస్‌హోల్డర్ అదృశ్యమవుతుంది; ఫలితంగా యూజర్ తాను ఏ బాక్స్‌లో ఏం టైప్ చేస్తున్నాడో మర్చిపోతాడు.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 12 (INTERACTIVE COLLAPSIBLE QUIZ) -->
+    <div class="section-title"><span class="num">12</span>ఇంటరాక్టివ్ సెల్ఫ్-టెస్ట్ క్విజ్ (Interactive Quiz)</div>
+    <div class="section-body">
+      <p>ఈ అధ్యాయంలో మీరు నేర్చుకున్న విషయాలను స్వయంగా పరీక్షించుకోండి. ప్రతి ప్రశ్నను చదివి సమాధానం ఆలోచించిన తర్వాత "సమాధానం చూడండి" పై క్లిక్ చేయండి:</p>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: సర్వర్‌కు డేటా చేరాలంటే ఇన్‌పుట్ ట్యాగ్‌కు ఏ ఆట్రిబ్యూట్ తప్పనిసరి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>name</code> ఆట్రిబ్యూట్. బ్రౌజర్ సర్వర్‌కు డేటాను <code>name=value</code> జంటలుగా పంపుతుంది. <code>name</code> లేని ఇన్‌పుట్ డేటాను సర్వర్ అందుకోలేదు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: GET మరియు POST మెథడ్స్ మధ్య ప్రధాన భద్రతా వ్యత్యాసం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> GET లో డేటా URL చివర అందరికీ కనిపించేలా బహిరంగంగా వెళ్తుంది. POST లో డేటా HTTP Request Body లోపల దాగి సురక్షితంగా వెళ్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: &lt;label&gt; లోని 'for' ఆట్రిబ్యూట్ ఇన్‌పుట్ యొక్క దేనితో సరిపోలాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> ఇన్‌పుట్ యొక్క <code>id</code> ఆట్రిబ్యూట్ విలువతో ఖచ్చితంగా సరిపోలాలి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: సంబంధిత ఫారమ్ ఫీల్డ్‌లను గ్రూప్ చేసి శీర్షిక ఇవ్వడానికి ఏ ట్యాగ్‌లను వాడతారు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>&lt;fieldset&gt;</code> (కంటైనర్ బాక్స్ కోసం) మరియు <code>&lt;legend&gt;</code> (ఆ బాక్స్ శీర్షిక కోసం).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: ఫారమ్ లోపల ఉన్న బటన్‌కు ఎటువంటి 'type' ఇవ్వకపోతే దాని డిఫాల్ట్ ప్రవర్తన ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> అది డిఫాల్ట్‌గా <code>type="submit"</code> లాగా పనిచేసి ఫారమ్‌ను సబ్మిట్ చేయడానికి ప్రయత్నిస్తుంది.
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 13 (TRY BOX & SUMMARY) -->
+    <div class="section-title"><span class="num">13</span>మీరే స్వయంగా Try చేయండి &amp; సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🚀 పూర్తి ఫారమ్ ఆర్కిటెక్చర్‌ను మన HTML Editor లో లైవ్‌గా రన్ చేయండి</div>
+        <p>పైన వివరించిన <code>form</code>, <code>label</code>, <code>fieldset</code>, <code>legend</code>, మరియు బటన్లతో కూడిన కోడ్‌ను మన ఆన్‌లైన్ ఎడిటర్‌లో ఓపెన్ చేసి, విభిన్న ఇన్‌పుట్‌లను టెస్ట్ చేసి లైవ్ ఫలితాన్ని చూడండి!</p>
+        <a class="run-btn" href="/online-html-editor.html" target="_blank">
+          👉 Our Compiler లో HTML Editor try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 క్విక్ సారాంశం (Key Takeaways):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>&lt;form&gt;:</strong> యూజర్ ఇన్‌పుట్‌ను సర్వర్‌కు పంపే ప్రధాన కంటైనర్.</li>
+          <li><strong>action &amp; method:</strong> ఎక్కడికి పంపాలో action చెబుతుంది, ఎలా పంపాలో (GET/POST) method చెబుతుంది.</li>
+          <li><strong>భద్రత:</strong> పాస్‌వర్డ్‌లకు మరియు మార్పులు చేసే లావాదేవీలకు ఎల్లప్పుడూ <strong>POST</strong> వాడాలి.</li>
+          <li><strong>&lt;label&gt;:</strong> <code>for</code> తో లింక్ చేయడం ద్వారా మొబైల్ ట్యాప్ ఏరియా మరియు యాక్సెసిబిలిటీ పెరుగుతాయి.</li>
+          <li><strong>name vs id:</strong> సర్వర్ కోసం <code>name</code>, బ్రౌజర్/CSS/JS కోసం <code>id</code>.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 14):</strong> మనం ఆధునిక HTML5 లో వచ్చిన అత్యద్భుతమైన <strong>ఇన్‌పుట్ టైప్స్ (text, password, email, number, date, range, color, tel, url) &amp; ఆటో-వాలిడేషన్</strong> గురించి సమగ్రంగా నేర్చుకుందాం!
+      </div>
+    </div>
+`;
+
+// Build the full HTML document
+const fullPageHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${lesson.title} — Modern HTML5 Tutorial | Our Compiler</title>
+  <meta name="description" content="${lesson.title} సమగ్ర తెలుగు గైడ్: ${lesson.subtopics}." />
+  <meta name="keywords" content="html5 tutorial in telugu, learn html5, ${lesson.title.toLowerCase()}, web development, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-html/${lesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-html/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${lesson.title} (HTML5 in Telugu)",
+    "description": "${lesson.subtopics}",
+    "articleSection": "${lesson.phaseTag}: ${lesson.phaseTitle}",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-10-31"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Theme & Code Enhancements -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.body) document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        // Code Block Actions: Copy & Online Editor Runner
+        document.querySelectorAll('.code-block').forEach(block => {
+          const header = block.querySelector('.code-block-header');
+          const codeEl = block.querySelector('pre code');
+          if (!header || !codeEl) return;
+
+          const rawCode = codeEl.textContent;
+
+          let actionsContainer = header.querySelector('.code-actions');
+          if (!actionsContainer) {
+            actionsContainer = document.createElement('div');
+            actionsContainer.className = 'code-actions';
+            actionsContainer.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-left: auto;';
+            const tryBtn = header.querySelector('.try-btn');
+            if (tryBtn) actionsContainer.appendChild(tryBtn);
+            header.appendChild(actionsContainer);
+          }
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
+
+          const tryBtn = actionsContainer.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_html', rawCode);
+              window.open('/online-html-editor.html', '_blank');
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-html light-theme">
+
+<!-- TOP NAVIGATION FALLBACK -->
+<nav class="topnav">
+  <a href="/" class="brand">🖥️ Our Compiler</a>
+  <a href="/blog-python.html">Python</a>
+  <a href="/blog-java.html">Java</a>
+  <a href="/online-html-editor.html" class="active">HTML/CSS/JS</a>
+  <a href="/blog-c.html">C</a>
+  <a href="/blog-cpp.html">C++</a>
+  <a href="/blog-javascript.html">JavaScript</a>
+  <a href="/blog-csharp.html">C#</a>
+</nav>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+${chapterContentHtml}
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-html/${lesson.prev.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: ${lesson.prev.title}
+      </a>
+      <a href="/blog-html/${lesson.next.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: ${lesson.next.title} →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested across modern Web Standards / W3C &amp; WHATWG · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+const targetFile = path.join(__dirname, '..', 'public', 'blog-html', '13-html-forms-action-method-and-form-controls.html');
+fs.writeFileSync(targetFile, fullPageHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value Chapter 13!');
+console.log('Target file size:', fullPageHtml.length, 'characters');
