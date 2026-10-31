@@ -1,0 +1,878 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./html_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 20);
+const sidebarHtml = buildSidebar(20);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-html.html">HTML5 Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 20: కంప్లీట్ క్యాప్‌స్టోన్ ప్రాజెక్ట్: రెస్పాన్సివ్ డెవలపర్ పోర్ట్‌ఫోలియో వెబ్‌సైట్</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">కంప్లీట్ క్యాప్‌స్టోన్ ప్రాజెక్ట్: రెస్పాన్సివ్ డెవలపర్ పోర్ట్‌ఫోలియో వెబ్‌సైట్</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern HTML5 (W3C/WHATWG)</span>
+      <span class="badge">🟢 Chapter 20 of 20 (Grand Finale)</span>
+      <span class="badge">📂 Phase 05: అడ్వాన్స్‌డ్ మెటాడేటా, SEO, Accessibility &amp; Projects</span>
+      <span class="badge">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>వైర్‌ఫ్రేమ్ ఆర్కిటెక్చర్ · సెమాంటిక్ HTML5 లేఅవుట్ · SEO &amp; Open Graph మెటాడేటా · రెస్పాన్సివ్ &lt;picture&gt; పిక్చర్ ఎలిమెంట్ · క్లయింట్-సైడ్ వాలిడేషన్ కాంటాక్ట్ ఫారమ్ · నేటివ్ &lt;dialog&gt; మోడల్ పాపప్ · &lt;details&gt; FAQ అకార్డియన్ · WCAG a11y కంప్లైయన్స్ · లైవ్ ఎడిటర్ డెమో</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>అభినందనలు! మీరు HTML5 యొక్క 19 అద్భుతమైన అధ్యాయాలను విజయవంతంగా పూర్తి చేసుకుని గ్రాండ్ ఫినాలేకి చేరుకున్నారు. వెబ్ ట్యాగ్‌ల ప్రాథమిక అక్షరమాల (Phase 01) నుండి ప్రారంభించి, లింకులు, ఇమేజెస్ మరియు టేబుల్స్ (Phase 02), సెమాంటిక్ ఎలిమెంట్స్ మరియు మల్టీమీడియా (Phase 03), శక్తివంతమైన ఫారమ్‌లు మరియు వాలిడేషన్ (Phase 04), మరియు అంతర్జాతీయ SEO, a11y యాక్సెసిబిలిటీ మరియు ఆధునిక HTML5 APIల వరకు (Phase 05) ఒక ప్రొఫెషనల్ ఫ్రంటెండ్ ఇంజనీర్‌కు అవసరమైన ప్రతి కాన్సెప్ట్‌ను లోతుగా నేర్చుకున్నారు.</p>
+      <p>కానీ కేవలం థియరీ నేర్చుకుంటే ఎవరూ సాఫ్ట్‌వేర్ ఇంజనీర్ అవ్వలేరు; నిజమైన డెవలపర్‌గా మారాలంటే వాటన్నింటినీ కలిపి ఒక <strong>లైవ్ ఇండస్ట్రీ-గ్రేడ్ ప్రాజెక్ట్‌గా</strong> నిర్మించాలి! జాబ్ ఇంటర్వ్యూలలో లేదా ఫ్రీలాన్స్ క్లయింట్లకు చూపించడానికి ప్రతి డెవలపర్‌కు ఒక సొంత <strong>పర్సనల్ డెవలపర్ పోర్ట్‌ఫోలియో (Developer Portfolio Website)</strong> తప్పనిసరి.</p>
+      <p>ఈ ఇరవయ్యవ అధ్యాయంలో, మనం నేర్చుకున్న అన్ని HTML5 సూపర్-ఫీచర్లను సమ్మిళితం చేస్తూ — ఒక పూర్తి స్థాయి, 100% సెమాంటిక్, SEO ఆప్టిమైజ్డ్, మొబైల్ రెస్పాన్సివ్ మరియు యాక్సెసిబుల్ డెవలపర్ పోర్ట్‌ఫోలియో వెబ్‌సైట్‌ను లైన్-బై-లైన్ నిర్మిద్దాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Capstone ప్రాజెక్ట్ అవలోకనం &amp; ఆర్కిటెక్చర్</div>
+    <div class="section-body">
+      <p>మన పోర్ట్‌ఫోలియో వెబ్‌సైట్‌లో ఈ క్రింది సెమాంటిక్ భాగాలు ఉంటాయి:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>హెడ్ ఆర్కిటెక్చర్ (SEO &amp; Open Graph):</strong> Google ర్యాంకింగ్ కోసం కనోనికల్, మెటా డిస్క్రిప్షన్ మరియు వాట్సాప్/ట్విట్టర్ ప్రివ్యూ కార్డ్స్.</li>
+        <li><strong>యాక్సెసిబిలిటీ స్కిప్ లింక్:</strong> కీబోర్డ్ యూజర్లు నేరుగా మెయిన్ కంటెంట్‌కు జంప్ చేయడానికి <code>.skip-link</code>.</li>
+        <li><strong>హెడర్ &amp; నావిగేషన్ (&lt;header&gt; &amp; &lt;nav&gt;):</strong> లోగో మరియు ఇంటరాక్టివ్ స్మూత్-స్క్రోల్ లింకులు.</li>
+        <li><strong>హీరో సెక్షన్ (&lt;section id="hero"&gt;):</strong> రెస్పాన్సివ్ <code>&lt;picture&gt;</code> ట్యాగ్‌తో ప్రొఫైల్ ఫోటో మరియు కాల్-టు-యాక్షన్ (CTA) బటన్లు.</li>
+        <li><strong>స్కిల్స్ &amp; టెక్నాలజీస్ (&lt;section id="skills"&gt;):</strong> <code>&lt;progress&gt;</code> మరియు <code>&lt;meter&gt;</code> ట్యాగ్‌లతో విజువల్ స్కిల్ బార్స్.</li>
+        <li><strong>ప్రాజెక్ట్స్ పోర్ట్‌ఫోలియో (&lt;section id="projects"&gt;):</strong> <code>&lt;article&gt;</code>, <code>&lt;figure&gt;</code>, మరియు <code>&lt;figcaption&gt;</code> తో కూడిన లైవ్ ప్రాజెక్ట్ కార్డ్స్.</li>
+        <li><strong>అనుభవం &amp; సర్టిఫికేషన్ల టేబుల్ (&lt;section id="experience"&gt;):</strong> పర్ఫెక్ట్ <code>&lt;table&gt;</code> తో కూడిన ఎడ్యుకేషన్ టైమ్‌లైన్.</li>
+        <li><strong>క్లయింట్ FAQ అకార్డియన్:</strong> జీరో-జావాస్క్రిప్ట్ <code>&lt;details name="faq"&gt;</code> మరియు <code>&lt;summary&gt;</code>.</li>
+        <li><strong>నేటివ్ మోడల్ రెజ్యూమ్ వ్యూయర్:</strong> ఆధునిక <code>&lt;dialog&gt;</code> ట్యాగ్‌తో పాపప్ రెజ్యూమ్ ప్రివ్యూ.</li>
+        <li><strong>ఫుల్ వాలిడేషన్ కాంటాక్ట్ ఫారమ్:</strong> Regex pattern, minlength, required, email తో కూడిన పక్కా ఫారమ్.</li>
+        <li><strong>ఫుటర్ (&lt;footer&gt;):</strong> కాపీరైట్, సోషల్ ఐకాన్లు మరియు బ్యాక్-టు-టాప్ లింక్.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>పోర్ట్‌ఫోలియో వైర్‌ఫ్రేమ్ &amp; సెమాంటిక్ మ్యాపింగ్</div>
+    <div class="section-body">
+      <p>కోడింగ్ ప్రారంభించడానికి ముందు పేజీ నిర్మాణాన్ని ప్లాన్ చేసుకోవడం ఒక సీనియర్ డెవలపర్ యొక్క ప్రాథమిక లక్షణం. క్రింది పోలిక టేబుల్‌లో మన పోర్ట్‌ఫోలియో యొక్క ప్రతి విజువల్ పార్ట్‌కు ఏ HTML5 ట్యాగ్ కేటాయించామో చూడండి:</p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>విజువల్ సెక్షన్ (Page Block)</th>
+              <th>కేటాయించిన సెమాంటిక్ HTML5 ట్యాగ్</th>
+              <th>యాక్సెసిబిలిటీ (ARIA Role) &amp; ప్రయోజనం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>టాప్ బార్ / లోగో</td>
+              <td><code>&lt;header&gt;</code></td>
+              <td><code>role="banner"</code> — సైట్ ఐడెంటిటీ</td>
+            </tr>
+            <tr>
+              <td>మెనూ లింకులు</td>
+              <td><code>&lt;nav&gt;</code></td>
+              <td><code>aria-label="Main Navigation"</code></td>
+            </tr>
+            <tr>
+              <td>ప్రధాన కంటెంట్ ఏరియా</td>
+              <td><code>&lt;main&gt;</code></td>
+              <td>పేజీకి ఒకే ఒక్కటి ఉండాలి</td>
+            </tr>
+            <tr>
+              <td>హీరో ఇంట్రడక్షన్</td>
+              <td><code>&lt;section id="hero"&gt;</code></td>
+              <td>యూజర్ మొదటి ఇంప్రెషన్ &amp; ప్రొఫైల్</td>
+            </tr>
+            <tr>
+              <td>స్కిల్ బార్స్</td>
+              <td><code>&lt;progress&gt; &amp; &lt;meter&gt;</code></td>
+              <td>నేటివ్ యాక్సెసిబుల్ డేటా గేజెస్</td>
+            </tr>
+            <tr>
+              <td>ప్రాజెక్ట్ ఐటమ్స్</td>
+              <td><code>&lt;article&gt;</code></td>
+              <td>స్వయం సమగ్రమైన (Self-contained) ప్రాజెక్ట్ కార్డ్</td>
+            </tr>
+            <tr>
+              <td>ప్రాజెక్ట్ స్క్రీన్‌షాట్స్</td>
+              <td><code>&lt;figure&gt; &amp; &lt;figcaption&gt;</code></td>
+              <td>చిత్రం మరియు దాని క్యాప్షన్ అనుసంధానం</td>
+            </tr>
+            <tr>
+              <td>తరచుగా అడిగే ప్రశ్నలు</td>
+              <td><code>&lt;details&gt; &amp; &lt;summary&gt;</code></td>
+              <td>జీరో-JS కొలాప్సిబుల్ కంటెంట్</td>
+            </tr>
+            <tr>
+              <td>రెజ్యూమ్ ప్రివ్యూ పాపప్</td>
+              <td><code>&lt;dialog&gt;</code></td>
+              <td>ఆధునిక టాప్-లేయర్ మోడల్ విండో</td>
+            </tr>
+            <tr>
+              <td>కాంటాక్ట్ ఫారమ్</td>
+              <td><code>&lt;form&gt;</code> + నేటివ్ ఇన్‌పుట్స్</td>
+              <td>క్లయింట్-సైడ్ ఆటోమేటిక్ వాలిడేషన్</td>
+            </tr>
+            <tr>
+              <td>బాటమ్ ఫుటర్</td>
+              <td><code>&lt;footer&gt;</code></td>
+              <td><code>role="contentinfo"</code> — కాపీరైట్ &amp; సోషల్</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>హెడ్ మెటాడేటా: SEO, Viewport &amp; Social Cards</div>
+    <div class="section-body">
+      <p>ఒక వెబ్‌సైట్ గూగుల్‌లో టాప్ ర్యాంక్ రావాలన్నా, లేదా వాట్సాప్/లింక్డ్‌ఇన్‌లో షేర్ చేసినప్పుడు అందమైన ప్రివ్యూ ఇమేజ్ రావాలన్నా — పర్ఫెక్ట్ <code>&lt;head&gt;</code> ట్యాగ్ రాయడం చాలా ముఖ్యం:</p>
+
+      <div class="code-header">
+        <span>Step 1: Production-Ready &lt;head&gt; Setup</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="te"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+  &lt;title&gt;రమేష్ నాయక్ — Full Stack Web Developer Portfolio | Hyderabad&lt;/title&gt;
+  
+  &lt;!-- SEO Meta Tags --&gt;
+  &lt;meta name="description" content="హైదరాబాద్‌కు చెందిన రమేష్ నాయక్ యొక్క అధికారిక పోర్ట్‌ఫోలియో. ఆధునిక HTML5, CSS3, JavaScript, React మరియు Node.js వెబ్ అప్లికేషన్ల అభివృద్ధిలో నైపుణ్యం." /&gt;
+  &lt;meta name="keywords" content="web developer telugu, portfolio, full stack developer hyderabad, ramesh nayak, html5 expert" /&gt;
+  &lt;meta name="author" content="Ramesh Nayak" /&gt;
+  &lt;link rel="canonical" href="https://www.rameshcodes.dev/" /&gt;
+
+  &lt;!-- Open Graph (WhatsApp, LinkedIn, Facebook) --&gt;
+  &lt;meta property="og:title" content="రమేష్ నాయక్ — Full Stack Web Developer Portfolio" /&gt;
+  &lt;meta property="og:description" content="ఆధునిక, వేగవంతమైన మరియు రెస్పాన్సివ్ వెబ్ అప్లికేషన్లను నిర్మించే ఫుల్ స్టాక్ ఇంజనీర్." /&gt;
+  &lt;meta property="og:image" content="https://www.rameshcodes.dev/images/og-preview.jpg" /&gt;
+  &lt;meta property="og:url" content="https://www.rameshcodes.dev/" /&gt;
+  &lt;meta property="og:type" content="website" /&gt;
+
+  &lt;!-- Twitter Card --&gt;
+  &lt;meta name="twitter:card" content="summary_large_image" /&gt;
+  &lt;meta name="twitter:title" content="రమేష్ నాయక్ — Full Stack Web Developer" /&gt;
+  &lt;meta name="twitter:description" content="Modern HTML5 &amp; Full Stack Solutions." /&gt;
+  &lt;meta name="twitter:image" content="https://www.rameshcodes.dev/images/og-preview.jpg" /&gt;
+
+  &lt;!-- Favicons --&gt;
+  &lt;link rel="icon" type="image/svg+xml" href="/favicon.svg" /&gt;
+&lt;/head&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>యాక్సెసిబుల్ స్కిప్ లింక్ &amp; హెడర్ నావిగేషన్</div>
+    <div class="section-body">
+      <p>కీబోర్డ్ లేదా స్క్రీన్ రీడర్ ఉపయోగించే దివ్యాంగుల కోసం చాప్టర్ 18లో మనం నేర్చుకున్న <strong>Skip to Content</strong> లింక్ మరియు సెమాంటిక్ <code>&lt;header&gt;</code> నిర్మాణం:</p>
+
+      <div class="code-header">
+        <span>Step 2: Skip Link &amp; Header Navigation</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- a11y Skip Link: సాధారణంగా కనబడదు, Tab నొక్కినప్పుడు స్క్రీన్ పైకి వస్తుంది --&gt;
+&lt;a href="#main-content" class="skip-link"&gt;ముఖ్యమైన కంటెంట్‌కు వెళ్ళండి (Skip to Content)&lt;/a&gt;
+
+&lt;!-- గ్లోబల్ హెడర్ --&gt;
+&lt;header style="display:flex; justify-content:space-between; align-items:center; padding:16px 24px; background:#ffffff; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:100;"&gt;
+  &lt;div style="font-size:20px; font-weight:800; color:#059669;"&gt;
+    👨‍💻 రమేష్&lt;span style="color:#0f172a;"&gt;.dev&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;nav aria-label="ముఖ్యమైన సైట్ మెనూ"&gt;
+    &lt;ul style="display:flex; gap:20px; list-style:none; margin:0; padding:0;"&gt;
+      &lt;li&gt;&lt;a href="#about" style="text-decoration:none; color:#334155; font-weight:600;"&gt;నా గురించి&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#skills" style="text-decoration:none; color:#334155; font-weight:600;"&gt;స్కిల్స్&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#projects" style="text-decoration:none; color:#334155; font-weight:600;"&gt;ప్రాజెక్ట్స్&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#faq" style="text-decoration:none; color:#334155; font-weight:600;"&gt;FAQ&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#contact" style="text-decoration:none; background:#059669; color:#fff; padding:6px 14px; border-radius:6px; font-weight:700;"&gt;సంప్రదించండి&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>హీరో సెక్షన్: రెస్పాన్సివ్ &lt;picture&gt; &amp; కాల్-టు-యాక్షన్</div>
+    <div class="section-body">
+      <p>చాప్టర్ 6లో మనం నేర్చుకున్న <code>&lt;picture&gt;</code> ఎలిమెంట్‌ను ఉపయోగించి ఆధునిక WebP ఫార్మాట్ మరియు మొబైల్ రెస్పాన్సివ్ ఫోటోను ఎలా అమర్చవచ్చో చూడండి:</p>
+
+      <div class="code-header">
+        <span>Step 3: Responsive Hero Section with &lt;picture&gt;</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;main id="main-content" style="max-width:1000px; margin:0 auto; padding:24px 16px;"&gt;
+
+  &lt;!-- HERO BANNER SECTION --&gt;
+  &lt;section id="about" style="display:flex; align-items:center; justify-content:space-between; gap:40px; padding:60px 0; border-bottom:1px solid #e2e8f0; flex-wrap:wrap-reverse;"&gt;
+    &lt;div style="flex:1; min-width:300px;"&gt;
+      &lt;span style="background:#ecfdf5; color:#059669; padding:4px 10px; border-radius:20px; font-size:13px; font-weight:700;"&gt;
+        👋 నమస్కారం! నేను వెబ్ డెవలపర్‌ని
+      &lt;/span&gt;
+      &lt;h1 style="font-size:36px; color:#0f172a; margin:14px 0 10px;"&gt;
+        నేను &lt;span style="color:#059669;"&gt;రమేష్ నాయక్&lt;/span&gt;, ఫుల్-స్టాక్ ఇంజనీర్.
+      &lt;/h1&gt;
+      &lt;p style="color:#475569; font-size:16px; line-height:1.7;"&gt;
+        నేను ప్రపంచ స్థాయి నాణ్యతతో కూడిన వేగవంతమైన, సెమాంటిక్ మరియు యాక్సెసిబుల్ వెబ్ అప్లికేషన్లను రూపొందిస్తాను. ఆధునిక HTML5 ప్రమాణాలు, CSS3 గ్రిడ్/ఫ్లెక్స్‌బాక్స్ మరియు మోడరన్ జావాస్క్రిప్ట్‌లో 5+ సంవత్సరాల అనుభవం ఉంది.
+      &lt;/p&gt;
+
+      &lt;div style="display:flex; gap:14px; margin-top:24px; flex-wrap:wrap;"&gt;
+        &lt;a href="#projects" style="padding:10px 22px; background:#059669; color:#fff; text-decoration:none; font-weight:700; border-radius:8px;"&gt;
+          🚀 ప్రాజెక్ట్స్ చూడండి
+        &lt;/a&gt;
+        &lt;button onclick="document.getElementById('resumeModal').showModal()" style="padding:10px 22px; background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; font-weight:700; border-radius:8px; cursor:pointer;"&gt;
+          📄 రెజ్యూమ్ చూడండి (Modal)
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- RESPONSIVE PROFILE PICTURE --&gt;
+    &lt;div style="flex:0 0 220px; text-align:center;"&gt;
+      &lt;picture&gt;
+        &lt;!-- ఆధునిక బ్రౌజర్ల కోసం సూపర్ ఫాస్ట్ WebP ఫార్మాట్ --&gt;
+        &lt;source srcset="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&amp;auto=format&amp;fit=crop&amp;q=80" type="image/webp" /&gt;
+        &lt;!-- పాత బ్రౌజర్ల కోసం సాధారణ JPEG ఫాల్‌బ్యాక్ --&gt;
+        &lt;img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&amp;fit=crop" 
+             alt="రమేష్ నాయక్ ప్రొఫెషనల్ హెడ్‌షాట్ ఫోటో" 
+             width="200" height="200" 
+             loading="eager" 
+             style="border-radius:50%; border:4px solid #10b981; object-fit:cover; box-shadow:0 8px 24px rgba(16,185,129,0.25);" /&gt;
+      &lt;/picture&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>స్కిల్స్ సెక్షన్: &lt;progress&gt; &amp; &lt;meter&gt; ట్యాగ్‌లు</div>
+    <div class="section-body">
+      <p>సాధారణ <code>&lt;div&gt;</code> లతో స్కిల్ బార్స్ చేస్తే స్క్రీన్ రీడర్లు వాటిని చదవలేవు. HTML5 నేటివ్ <code>&lt;progress&gt;</code> మరియు <code>&lt;meter&gt;</code> ట్యాగ్‌లతో నైపుణ్యాలను అత్యంత సెమాంటిక్‌గా చూపించవచ్చు:</p>
+
+      <div class="code-header">
+        <span>Step 4: Skills Section with &lt;progress&gt;</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- SKILLS SECTION --&gt;
+&lt;section id="skills" style="padding:48px 0; border-bottom:1px solid #e2e8f0;"&gt;
+  &lt;h2 style="color:#0f172a; font-size:26px; margin-bottom:8px;"&gt;🛠️ సాంకేతిక నైపుణ్యాలు (Technical Skills)&lt;/h2&gt;
+  &lt;p style="color:#64748b; font-size:14px; margin-bottom:24px;"&gt;నేను రోజువారీ జీవితంలో ఉపయోగించే టూల్స్ మరియు వాటిలో ప్రావీణ్యత శాతం:&lt;/p&gt;
+
+  &lt;div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;"&gt;
+    &lt;div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px;"&gt;
+      &lt;div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;"&gt;
+        &lt;span&gt;HTML5 &amp; Accessibility (a11y)&lt;/span&gt;
+        &lt;span style="color:#059669;"&gt;95%&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;progress value="95" max="100" style="width:100%; height:10px; accent-color:#059669;"&gt;95%&lt;/progress&gt;
+    &lt;/div&gt;
+
+    &lt;div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px;"&gt;
+      &lt;div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;"&gt;
+        &lt;span&gt;CSS3 (Flexbox &amp; Grid)&lt;/span&gt;
+        &lt;span style="color:#059669;"&gt;90%&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;progress value="90" max="100" style="width:100%; height:10px; accent-color:#059669;"&gt;90%&lt;/progress&gt;
+    &lt;/div&gt;
+
+    &lt;div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px;"&gt;
+      &lt;div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;"&gt;
+        &lt;span&gt;Modern JavaScript (ES6+)&lt;/span&gt;
+        &lt;span style="color:#059669;"&gt;88%&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;progress value="88" max="100" style="width:100%; height:10px; accent-color:#059669;"&gt;88%&lt;/progress&gt;
+    &lt;/div&gt;
+
+    &lt;div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px;"&gt;
+      &lt;div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;"&gt;
+        &lt;span&gt;React.js &amp; Next.js&lt;/span&gt;
+        &lt;span style="color:#059669;"&gt;85%&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;progress value="85" max="100" style="width:100%; height:10px; accent-color:#059669;"&gt;85%&lt;/progress&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>ప్రాజెక్ట్స్ గ్యాలరీ: &lt;article&gt;, &lt;figure&gt; &amp; &lt;figcaption&gt;</div>
+    <div class="section-body">
+      <p>పోర్ట్‌ఫోలియోలో అత్యంత విలువైన భాగం ప్రాజెక్ట్స్ సెక్షన్. ప్రతి ప్రాజెక్ట్ కార్డును స్వతంత్ర <code>&lt;article&gt;</code> ట్యాగ్‌లో, స్క్రీన్‌షాట్‌ను <code>&lt;figure&gt;</code> మరియు <code>&lt;figcaption&gt;</code> తో ఎలా నిర్మించాలో చూడండి:</p>
+
+      <div class="code-header">
+        <span>Step 5: Semantic Projects Portfolio Grid</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- PROJECTS GALLERY SECTION --&gt;
+&lt;section id="projects" style="padding:48px 0; border-bottom:1px solid #e2e8f0;"&gt;
+  &lt;h2 style="color:#0f172a; font-size:26px; margin-bottom:8px;"&gt;💼 ప్రత్యక్ష ప్రాజెక్టులు (Live Projects)&lt;/h2&gt;
+  &lt;p style="color:#64748b; font-size:14px; margin-bottom:24px;"&gt;ఇటీవల నేను పూర్తి చేసిన కొన్ని ప్రముఖ వెబ్ అప్లికేషన్లు:&lt;/p&gt;
+
+  &lt;div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px;"&gt;
+    
+    &lt;!-- ప్రాజెక్ట్ 1 --&gt;
+    &lt;article style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-shadow:0 4px 6px rgba(0,0,0,0.03);"&gt;
+      &lt;figure style="margin:0;"&gt;
+        &lt;img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500&amp;fit=crop" 
+             alt="Mana Compiler ఆన్‌లైన్ కోడ్ ఎడిటర్ స్క్రీన్‌షాట్" 
+             loading="lazy" 
+             style="width:100%; height:180px; object-fit:cover;" /&gt;
+        &lt;figcaption style="font-size:12px; color:#64748b; padding:6px 16px; background:#f8fafc;"&gt;
+          చిత్రం 1: Mana Compiler మల్టీ-లాంగ్వేజ్ వెబ్ ఎడిటర్ ఇంటర్‌ఫేస్
+        &lt;/figcaption&gt;
+      &lt;/figure&gt;
+
+      &lt;div style="padding:16px;"&gt;
+        &lt;h3 style="color:#0f172a; font-size:18px; margin:0 0 8px;"&gt;మన కంపైలర్ (Our Compiler)&lt;/h3&gt;
+        &lt;p style="color:#475569; font-size:14px; line-height:1.6;"&gt;
+          బ్రౌజర్‌లోనే పైథాన్, జావా, సి++, హెచ్‌టిఎమ్‌ఎల్ కోడ్‌ను రన్ చేసి ఫలితాలను లైవ్‌గా చూపించే రియల్-టైమ్ ఆన్‌లైన్ కంపైలర్.
+        &lt;/p&gt;
+        &lt;div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;"&gt;
+          &lt;span style="font-size:12px; background:#ecfdf5; color:#059669; padding:2px 8px; border-radius:4px; font-weight:600;"&gt;HTML5&lt;/span&gt;
+          &lt;span style="font-size:12px; background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px; font-weight:600;"&gt;Web Workers&lt;/span&gt;
+          &lt;span style="font-size:12px; background:#fef3c7; color:#d97706; padding:2px 8px; border-radius:4px; font-weight:600;"&gt;Monaco Editor&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div style="margin-top:16px;"&gt;
+          &lt;a href="/online-html-editor.html" target="_blank" rel="noopener noreferrer" style="color:#059669; font-weight:700; text-decoration:none; font-size:14px;"&gt;
+            లైవ్ డెమో చూడండి →
+          &lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;!-- ప్రాజెక్ట్ 2 --&gt;
+    &lt;article style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-shadow:0 4px 6px rgba(0,0,0,0.03);"&gt;
+      &lt;figure style="margin:0;"&gt;
+        &lt;img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=500&amp;fit=crop" 
+             alt="ఈ-కామర్స్ స్టోర్ డ్యాష్‌బోర్డ్ స్క్రీన్‌షాట్" 
+             loading="lazy" 
+             style="width:100%; height:180px; object-fit:cover;" /&gt;
+        &lt;figcaption style="font-size:12px; color:#64748b; padding:6px 16px; background:#f8fafc;"&gt;
+          చిత్రం 2: రెస్పాన్సివ్ ఈ-కామర్స్ పోర్టల్
+        &lt;/figcaption&gt;
+      &lt;/figure&gt;
+
+      &lt;div style="padding:16px;"&gt;
+        &lt;h3 style="color:#0f172a; font-size:18px; margin:0 0 8px;"&gt;ఆధునిక ఈ-కామర్స్ స్టోర్&lt;/h3&gt;
+        &lt;p style="color:#475569; font-size:14px; line-height:1.6;"&gt;
+          HTML5 Web Storage API (LocalStorage) మరియు Payment Gateway అనుసంధానంతో రూపొందించబడిన ఆధునిక గ్రాసరీ స్టోర్.
+        &lt;/p&gt;
+        &lt;div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;"&gt;
+          &lt;span style="font-size:12px; background:#ecfdf5; color:#059669; padding:2px 8px; border-radius:4px; font-weight:600;"&gt;LocalStorage&lt;/span&gt;
+          &lt;span style="font-size:12px; background:#fdf2f8; color:#db2777; padding:2px 8px; border-radius:4px; font-weight:600;"&gt;Form Validation&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div style="margin-top:16px;"&gt;
+          &lt;a href="#" style="color:#059669; font-weight:700; text-decoration:none; font-size:14px;"&gt;
+            సోర్స్ కోడ్ (GitHub) →
+          &lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>అనుభవం &amp; విద్యా అర్హతల టేబుల్: &lt;table&gt;</div>
+    <div class="section-body">
+      <p>చాప్టర్ 7 &amp; 8 లో నేర్చుకున్న <code>&lt;table&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, మరియు <code>&lt;tfoot&gt;</code> లను అనుసరిస్తూ పూర్తి టైమ్‌లైన్ టేబుల్ నిర్మాణం:</p>
+
+      <div class="code-header">
+        <span>Step 6: Career &amp; Education Timeline Table</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- EXPERIENCE &amp; EDUCATION TABLE SECTION --&gt;
+&lt;section id="experience" style="padding:48px 0; border-bottom:1px solid #e2e8f0;"&gt;
+  &lt;h2 style="color:#0f172a; font-size:26px; margin-bottom:8px;"&gt;🎓 అనుభవం &amp; విద్యార్హతలు (Education &amp; Experience)&lt;/h2&gt;
+  &lt;p style="color:#64748b; font-size:14px; margin-bottom:20px;"&gt;నా కెరీర్ టైమ్‌లైన్ మరియు సర్టిఫికేషన్లు:&lt;/p&gt;
+
+  &lt;div style="overflow-x:auto;"&gt;
+    &lt;table class="tbl" style="width:100%; border-collapse:collapse;"&gt;
+      &lt;caption style="text-align:left; font-weight:700; color:#059669; margin-bottom:8px;"&gt;పట్టిక 1: రమేష్ నాయక్ కెరీర్ &amp; విద్యా ప్రయాణం&lt;/caption&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th scope="col"&gt;సంవత్సరం (Year)&lt;/th&gt;
+          &lt;th scope="col"&gt;పదవి / డిగ్రీ&lt;/th&gt;
+          &lt;th scope="col"&gt;సంస్థ / కంపెనీ&lt;/th&gt;
+          &lt;th scope="col"&gt;కీలక విజయాలు&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;<strong>2024 — ప్రస్తుతం</strong>&lt;/td&gt;
+          &lt;td&gt;సీనియర్ ఫ్రంటెండ్ ఇంజనీర్&lt;/td&gt;
+          &lt;td&gt;టెక్ సొల్యూషన్స్, హైదరాబాద్&lt;/td&gt;
+          &lt;td&gt;HTML5 &amp; React తో హై-ట్రాఫిక్ పోర్టల్స్ అభివృద్ధి&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;<strong>2022 — 2024</strong>&lt;/td&gt;
+          &lt;td&gt;వెబ్ డెవలపర్&lt;/td&gt;
+          &lt;td&gt;ఇన్నోవేట్ ల్యాబ్స్&lt;/td&gt;
+          &lt;td&gt;రెస్పాన్సివ్ UI &amp; వెబ్ యాక్సెసిబిలిటీ (a11y) ఇంప్లిమెంటేషన్&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;<strong>2018 — 2022</strong>&lt;/td&gt;
+          &lt;td&gt;B.Tech (కంప్యూటర్ సైన్స్)&lt;/td&gt;
+          &lt;td&gt;జేఎన్‌టీయూ (JNTU), హైదరాబాద్&lt;/td&gt;
+          &lt;td&gt;డిస్టింక్షన్‌తో ఉత్తీర్ణత (8.6 CGPA)&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+      &lt;tfoot&gt;
+        &lt;tr&gt;
+          &lt;td colspan="4" style="background:#f8fafc; font-weight:600; color:#059669; text-align:center;"&gt;
+            మొత్తం అనుభవం: 4+ సంవత్సరాల ఇండస్ట్రీ ఎక్స్‌పీరియన్స్
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tfoot&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>క్లయింట్ FAQ అకార్డియన్: &lt;details&gt; &amp; &lt;summary&gt;</div>
+    <div class="section-body">
+      <p>క్లయింట్లు ప్రాజెక్ట్ ఇచ్చేటప్పుడు తరచుగా అడిగే ప్రశ్నల కోసం ఆధునిక HTML5.3 <code>name="portfolio-faq"</code> తో కూడిన ఎక్స్‌క్లూజివ్ అకార్డియన్:</p>
+
+      <div class="code-header">
+        <span>Step 7: Client FAQ Accordion</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- CLIENT FAQ SECTION --&gt;
+&lt;section id="faq" style="padding:48px 0; border-bottom:1px solid #e2e8f0;"&gt;
+  &lt;h2 style="color:#0f172a; font-size:26px; margin-bottom:8px;"&gt;❓ తరచుగా అడిగే ప్రశ్నలు (Client FAQs)&lt;/h2&gt;
+  &lt;p style="color:#64748b; font-size:14px; margin-bottom:20px;"&gt;నాతో కలిసి పనిచేయడానికి ముందు క్లయింట్లు తెలుసుకోవలసిన విషయాలు:&lt;/p&gt;
+
+  &lt;details name="portfolio-faq" open style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 16px; margin-bottom:12px;"&gt;
+    &lt;summary style="font-weight:700; cursor:pointer; color:#059669;"&gt;
+      మీరు ఫ్రీలాన్స్ ప్రాజెక్ట్‌లను స్వీకరిస్తారా?
+    &lt;/summary&gt;
+    &lt;p style="margin-top:8px; color:#475569; font-size:14px; line-height:1.6;"&gt;
+      అవును! నేను కొత్త స్టార్టప్‌లు, చిన్న వ్యాపారాలు మరియు ప్రైవేట్ క్లయింట్ల కోసం వెబ్‌సైట్లు, వెబ్ అప్లికేషన్లను కాంట్రాక్ట్ ప్రాతిపదికన నిర్మిస్తాను.
+    &lt;/p&gt;
+  &lt;/details&gt;
+
+  &lt;details name="portfolio-faq" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 16px; margin-bottom:12px;"&gt;
+    &lt;summary style="font-weight:700; cursor:pointer; color:#059669;"&gt;
+      మీరు నిర్మించే వెబ్‌సైట్లు మొబైల్ ఫోన్లలో మరియు ట్యాబ్‌లలో సరిగ్గా పనిచేస్తాయా?
+    &lt;/summary&gt;
+    &lt;p style="margin-top:8px; color:#475569; font-size:14px; line-height:1.6;"&gt;
+      ఖచ్చితంగా! ప్రతి ప్రాజెక్ట్ "మొబైల్-ఫస్ట్" విధానంతో ప్రారంభమవుతుంది. iPhone, Android, iPad మరియు డెస్క్‌టాప్ మానిటర్లలో 100% పర్ఫెక్ట్‌గా రెస్పాన్సివ్‌గా ఉండేలా టెస్ట్ చేయబడుతుంది.
+    &lt;/p&gt;
+  &lt;/details&gt;
+
+  &lt;details name="portfolio-faq" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 16px; margin-bottom:12px;"&gt;
+    &lt;summary style="font-weight:700; cursor:pointer; color:#059669;"&gt;
+      ఒక వెబ్‌సైట్ పూర్తి కావడానికి ఎంత సమయం పడుతుంది?
+    &lt;/summary&gt;
+    &lt;p style="margin-top:8px; color:#475569; font-size:14px; line-height:1.6;"&gt;
+      సాధారణ 5-పేజీల ల్యాండింగ్ పోర్ట్‌ఫోలియోకు 3 నుండి 5 రోజులు, సంక్లిష్టమైన ఈ-కామర్స్ పోర్టల్‌కు 2 నుండి 3 వారాలు సమయం పడుతుంది.
+    &lt;/p&gt;
+  &lt;/details&gt;
+&lt;/section&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>నేటివ్ మోడల్ రెజ్యూమ్ డైలాగ్: &lt;dialog&gt;</div>
+    <div class="section-body">
+      <p>చాప్టర్ 19లో నేర్చుకున్న నేటివ్ <code>&lt;dialog&gt;</code> ఎలిమెంట్‌తో జావాస్క్రిప్ట్ ప్లగిన్లు లేకుండానే అందమైన రెజ్యూమ్ మోడల్ పాపప్:</p>
+
+      <div class="code-header">
+        <span>Step 8: Native Resume Modal with &lt;dialog&gt;</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- NATIVE RESUME MODAL POPUP --&gt;
+&lt;dialog id="resumeModal" style="border:none; border-radius:14px; padding:24px; max-width:550px; width:92%; box-shadow:0 20px 40px rgba(0,0,0,0.3);"&gt;
+  &lt;div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:16px;"&gt;
+    &lt;h3 style="margin:0; color:#059669; font-size:20px;"&gt;📄 రమేష్ నాయక్ — రెజ్యూమ్ ప్రివ్యూ&lt;/h3&gt;
+    &lt;form method="dialog"&gt;
+      &lt;button style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;" aria-label="మోడల్ మూసివేయి"&gt;✕&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+
+  &lt;div style="color:#334155; font-size:14.5px; line-height:1.6;"&gt;
+    &lt;p&gt;&lt;strong&gt;ప్రొఫైల్ సారాంశం:&lt;/strong&gt; ఆధునిక HTML5/CSS3/JS ప్రమాణాలతో హై-స్పీడ్ వెబ్ అప్లికేషన్లను రూపొందించే ఫుల్-స్టాక్ డెవలపర్.&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;కోర్ స్కిల్స్:&lt;/strong&gt; Semantic HTML5, WCAG a11y, CSS Grid/Flexbox, JavaScript ES2024, React, Node.js.&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;భాషలు:&lt;/strong&gt; తెలుగు (మాతృభాష), ఇంగ్లీష్ (ప్రొఫెషనల్).&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px; border-top:1px solid #e2e8f0; padding-top:16px;"&gt;
+    &lt;form method="dialog"&gt;
+      &lt;button value="close" style="padding:8px 16px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:6px; cursor:pointer;"&gt;మూసివేయి&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;a href="#" download="Ramesh_Resume_2026.pdf" style="padding:8px 18px; background:#059669; color:#fff; text-decoration:none; font-weight:700; border-radius:6px; display:inline-flex; align-items:center; gap:6px;"&gt;
+      ⬇️ PDF డౌన్‌లోడ్ చేసుకోండి
+    &lt;/a&gt;
+  &lt;/div&gt;
+&lt;/dialog&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>పూర్తి వాలిడేషన్ కాంటాక్ట్ ఫారమ్: Regex, Required &amp; a11y</div>
+    <div class="section-body">
+      <p>క్లయింట్లు సందేశం పంపడానికి చాప్టర్ 13 నుండి 16 వరకు నేర్చుకున్న అన్ని రకాల వాలిడేషన్ ఆట్రిబ్యూట్లతో కూడిన కాంటాక్ట్ ఫారమ్ మరియు ఫుటర్:</p>
+
+      <div class="code-header">
+        <span>Step 9: High-Validation Contact Form &amp; Footer</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- CONTACT FORM SECTION --&gt;
+&lt;section id="contact" style="padding:48px 0;"&gt;
+  &lt;h2 style="color:#0f172a; font-size:26px; margin-bottom:8px;"&gt;📬 నన్ను సంప్రదించండి (Get In Touch)&lt;/h2&gt;
+  &lt;p style="color:#64748b; font-size:14px; margin-bottom:24px;"&gt;మీ ప్రాజెక్ట్ ఆలోచనను నాతో పంచుకోండి; 24 గంటల్లోగా స్పందిస్తాను:&lt;/p&gt;
+
+  &lt;form action="/submit-contact" method="POST" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:24px; max-width:600px;"&gt;
+    
+    &lt;!-- పేరు ఫీల్డ్ --&gt;
+    &lt;div style="margin-bottom:16px;"&gt;
+      &lt;label for="clientName" style="display:block; font-weight:700; font-size:14px; margin-bottom:6px; color:#334155;"&gt;
+        మీ పూర్తి పేరు &lt;span style="color:#ef4444;"&gt;*&lt;/span&gt;
+      &lt;/label&gt;
+      &lt;input type="text" id="clientName" name="name" required minlength="3" placeholder="ఉదా: శ్రీనివాస్ రావు" 
+             style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px;" /&gt;
+    &lt;/div&gt;
+
+    &lt;!-- ఈమెయిల్ ఫీల్డ్ --&gt;
+    &lt;div style="margin-bottom:16px;"&gt;
+      &lt;label for="clientEmail" style="display:block; font-weight:700; font-size:14px; margin-bottom:6px; color:#334155;"&gt;
+        ఈమెయిల్ చిరునామా &lt;span style="color:#ef4444;"&gt;*&lt;/span&gt;
+      &lt;/label&gt;
+      &lt;input type="email" id="clientEmail" name="email" required placeholder="srinivas@example.com" 
+             style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px;" /&gt;
+    &lt;/div&gt;
+
+    &lt;!-- ఫోన్ నంబర్ ఫీల్డ్ (10 అంకెల భారతీయ మొబైల్ Regex) --&gt;
+    &lt;div style="margin-bottom:16px;"&gt;
+      &lt;label for="clientPhone" style="display:block; font-weight:700; font-size:14px; margin-bottom:6px; color:#334155;"&gt;
+        మొబైల్ నంబర్ (10 అంకెలు):
+      &lt;/label&gt;
+      &lt;input type="tel" id="clientPhone" name="phone" pattern="[6-9][0-9]{9}" placeholder="9876543210" 
+             title="దయచేసి 6-9 తో ప్రారంభమయ్యే సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి"
+             style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px;" /&gt;
+    &lt;/div&gt;
+
+    &lt;!-- ప్రాజెక్ట్ బడ్జెట్ Datalist --&gt;
+    &lt;div style="margin-bottom:16px;"&gt;
+      &lt;label for="budgetRange" style="display:block; font-weight:700; font-size:14px; margin-bottom:6px; color:#334155;"&gt;
+        ప్రాజెక్ట్ బడ్జెట్ అంచనా:
+      &lt;/label&gt;
+      &lt;input list="budgetOptions" id="budgetRange" name="budget" placeholder="బడ్జెట్ సెలెక్ట్ చేయండి లేదా టైప్ చేయండి" 
+             style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px;" /&gt;
+      &lt;datalist id="budgetOptions"&gt;
+        &lt;option value="₹10,000 — ₹25,000 (చిన్న పోర్ట్‌ఫోలియో)"&gt;&lt;/option&gt;
+        &lt;option value="₹25,000 — ₹50,000 (కంపెనీ వెబ్‌సైట్)"&gt;&lt;/option&gt;
+        &lt;option value="₹50,000+ (ఫుల్-స్టాక్ వెబ్ యాప్)"&gt;&lt;/option&gt;
+      &lt;/datalist&gt;
+    &lt;/div&gt;
+
+    &lt;!-- సందేశం Textarea --&gt;
+    &lt;div style="margin-bottom:20px;"&gt;
+      &lt;label for="clientMsg" style="display:block; font-weight:700; font-size:14px; margin-bottom:6px; color:#334155;"&gt;
+        ప్రాజెక్ట్ వివరాలు &lt;span style="color:#ef4444;"&gt;*&lt;/span&gt;
+      &lt;/label&gt;
+      &lt;textarea id="clientMsg" name="message" rows="4" required minlength="10" placeholder="మీ ప్రాజెక్ట్ లక్ష్యాలు, అవసరాలు వివరించండి..." 
+                style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px;"&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+
+    &lt;button type="submit" style="width:100%; padding:12px; background:#059669; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; cursor:pointer;"&gt;
+      ✉️ సందేశం పంపండి (Submit Message)
+    &lt;/button&gt;
+  &lt;/form&gt;
+&lt;/section&gt;
+
+&lt;/main&gt;
+
+&lt;!-- GLOBAL FOOTER --&gt;
+&lt;footer style="background:#0f172a; color:#94a3b8; padding:32px 24px; text-align:center; font-size:14px;"&gt;
+  &lt;div style="margin-bottom:12px;"&gt;
+    &lt;a href="#about" style="color:#38bdf8; text-decoration:none; margin:0 10px;"&gt;నా గురించి&lt;/a&gt; •
+    &lt;a href="#projects" style="color:#38bdf8; text-decoration:none; margin:0 10px;"&gt;ప్రాజెక్ట్స్&lt;/a&gt; •
+    &lt;a href="#contact" style="color:#38bdf8; text-decoration:none; margin:0 10px;"&gt;సంప్రదించండి&lt;/a&gt; •
+    &lt;a href="#" style="color:#10b981; text-decoration:none; margin:0 10px;"&gt;↑ పైకి వెళ్ళండి (Back to Top)&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;p style="margin:0;"&gt;
+    © 2026 రమేష్ నాయక్. 100% ప్యూర్ సెమాంటిక్ HTML5 &amp; Modern Standards తో రూపొందించబడింది.
+  &lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 12 (INTERACTIVE QUIZ) -->
+    <div class="section-title"><span class="num">12</span>ఇంటరాక్టివ్ నాలెడ్జ్ చెక్: Capstone ప్రాజెక్ట్ క్విజ్</div>
+    <div class="section-body">
+      <p>ఈ క్యాప్‌స్టోన్ ప్రాజెక్ట్ ద్వారా మీరు సాధించిన సమగ్ర HTML5 పరిజ్ఞానాన్ని పరీక్షించుకోవడానికి క్రింది ప్రశ్నలపై క్లిక్ చేయండి:</p>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: పోర్ట్‌ఫోలియోలో &lt;header&gt;, &lt;main&gt;, మరియు &lt;footer&gt; సెమాంటిక్ ట్యాగ్‌లు వాడటం వల్ల కలిగే అతిపెద్ద ప్రయోజనం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> సెర్చ్ ఇంజిన్లు (Google SEO) పేజీ యొక్క కంటెంట్ ఆర్కిటెక్చర్‌ను ఖచ్చితంగా అర్థం చేసుకోగలవు మరియు స్క్రీన్ రీడర్లు (a11y) చూపులేని యూజర్లకు సరైన ల్యాండ్‌మార్క్స్ ద్వారా నావిగేషన్ సులభతరం చేస్తాయి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: సాధారణ &lt;img&gt; కంటే &lt;picture&gt; ట్యాగ్ ప్రొఫైల్ ఫోటోకు వాడటం ఎందుకు ఉత్తమం?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>&lt;picture&gt;</code> ఆధునిక WebP ఫార్మాట్లను సపోర్ట్ చేసే బ్రౌజర్లకు వేగవంతమైన తేలికైన ఇమేజ్‌లను అందిస్తూ, పాత బ్రౌజర్లకు JPEG ఫాల్‌బ్యాక్ ఇస్తుంది. దీనివల్ల పేజీ లోడింగ్ స్పీడ్ విపరీతంగా పెరుగుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: కాంటాక్ట్ ఫారమ్‌లో pattern="[6-9][0-9]{9}" ఎందుకు రాశాము?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> ఇది 6, 7, 8, 9 అంకెలతో మొదలయ్యే 10 అంకెల భారతీయ మొబైల్ నంబర్లను మాత్రమే అనుమతించే నేటివ్ Regex వాలిడేషన్. జావాస్క్రిప్ట్ లేకుండానే తప్పుడు ఫోన్ నంబర్లను అడ్డుకుంటుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: మోడల్ రెజ్యూమ్ పాపప్ కోసం బూట్‌స్ట్రాప్ బదులు &lt;dialog&gt; వాడటం వల్ల ఏ బెనిఫిట్స్ లభించాయి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> జీరో ఎక్స్‌టర్నల్ లైబ్రరీ బండిల్ సైజ్, బ్రౌజర్ ఆటోమేటిక్ టాప్-లేయర్ z-index మేనేజ్‌మెంట్, మరియు కీబోర్డ్ Escape కీ ఆటోమేటిక్ సపోర్ట్ లభించాయి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: HTML5 మాస్టర్‌క్లాస్ పూర్తి చేసిన తర్వాత తదుపరి దశ ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>CSS3 Masterclass</strong> నేర్చుకోవడం! HTML ద్వారా పేజీకి అస్థిపంజరం (Skeleton) నిర్మించాం; CSS ద్వారా దానికి అందమైన దుస్తులు, రంగులు, యానిమేషన్లు మరియు లేఅవుట్ డిజైన్‌ను జోడిస్తాం.
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 13 (TRY BOX & GRADUATION SUMMARY) -->
+    <div class="section-title"><span class="num">13</span>మీరే స్వయంగా Try చేయండి, సోర్స్ కోడ్ &amp; కోర్సు గ్రాడ్యుయేషన్ సారాంశం</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🏆 పూర్తి పోర్ట్‌ఫోలియో ప్రాజెక్ట్‌ను మన ఆన్‌లైన్ ఎడిటర్‌లో లైవ్‌గా రన్ చేయండి!</div>
+        <p>ఈ అధ్యాయంలో వివరించిన పూర్తి పోర్ట్‌ఫోలియో కోడ్‌ను మన ఆన్‌లైన్ HTML ఎడిటర్‌లో రన్ చేసి మీ పేరు, మీ విద్యార్హతలు, మీ ప్రాజెక్టులు మరియు మీ ఫోటోతో కస్టమైజ్ చేసుకోండి. మీ సొంత వెబ్‌సైట్ మీ కళ్ళముందే లైవ్‌గా ప్రాణం పోసుకోవడాన్ని చూడండి!</p>
+        <a class="run-btn" href="/online-html-editor.html" target="_blank">
+          👉 Our Compiler లో పూర్తి పోర్ట్‌ఫోలియో కోడ్ ఎడిట్ చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:18px; margin-bottom:12px;">🎓 HTML5 మాస్టర్‌క్లాస్ గ్రాడ్యుయేషన్ సారాంశం (Full Journey Completed):</h4>
+        
+        <div style="background:linear-gradient(135deg, #ecfdf5, #f0fdf4); border:1px solid #a7f3d0; border-radius:12px; padding:20px; margin-bottom:20px;">
+          <h4 style="color:#065f46; margin-top:0; font-size:16px;">🌟 మీరు సాధించిన 5 దశల ప్రయాణం:</h4>
+          <ol style="margin-left: 20px; color: #047857; font-size: 14.5px; line-height: 1.8;">
+            <li><strong>Phase 01 (చాప్టర్లు 1 — 4):</strong> ఇంటర్నెట్ ఆర్కిటెక్చర్, HTML ఎలిమెంట్స్, టెక్స్ట్ ఫార్మాటింగ్, కోట్స్ &amp; కంప్యూటర్ కోడ్ ట్యాగ్‌లు.</li>
+            <li><strong>Phase 02 (చాప్టర్లు 5 — 8):</strong> హైపర్‌లింక్స్, ఇమేజెస్ (WebP/Lazy loading), మరియు డేటా టేబుల్స్ (col, colgroup).</li>
+            <li><strong>Phase 03 (చాప్టర్లు 9 — 12):</strong> ఆధునిక సెమాంటిక్ లేఅవుట్, మల్టీమీడియా (ఆడియో/వీడియో), రెస్పాన్సివ్ వ్యూపోర్ట్ &amp; Favicons.</li>
+            <li><strong>Phase 04 (చాప్టర్లు 13 — 16):</strong> పూర్తి ఫారమ్స్, ఆధునిక ఇన్‌పుట్స్ (date, email, number) &amp; క్లయింట్-సైడ్ Regex వాలిడేషన్.</li>
+            <li><strong>Phase 05 (చాప్టర్లు 17 — 20):</strong> SEO మెటాడేటా, Open Graph కార్డ్స్, a11y యాక్సెసిబిలిటీ, ARIA రోల్స్, ఆధునిక మోడల్ APIలు &amp; లైవ్ క్యాప్‌స్టోన్ పోర్ట్‌ఫోలియో!</li>
+          </ol>
+        </div>
+
+        <p style="color:var(--text2); font-size:15px; line-height:1.7;">
+          ఇప్పుడు మీరు కేవలం ఒక బిగినర్ కాదు — ప్రపంచ వెబ్ ప్రమాణాలు తెలిసిన ఒక <strong>ప్రొఫెషనల్ HTML5 ఆర్కిటెక్ట్!</strong> మీ కోడ్ క్లీన్‌గా ఉంటుంది, సెమాంటిక్‌గా ఉంటుంది, సెర్చ్ ఇంజిన్లలో దూసుకుపోతుంది మరియు సమాజంలోని ప్రతి ఒక్కరికీ సమానంగా అందుబాటులో ఉంటుంది.
+        </p>
+      </div>
+
+      <div style="margin-top:24px; padding:20px; background:linear-gradient(135deg, #059669, #047857); color:#ffffff; border-radius:10px; text-align:center;">
+        <h3 style="margin-top:0; color:#ffffff; font-size:22px;">🎉 అభినందనలు! మీరు HTML5 మాస్టర్‌క్లాస్‌ను విజయవంతంగా పూర్తి చేశారు!</h3>
+        <p style="font-size:15px; opacity:0.95; max-width:600px; margin:8px auto 16px;">
+          మీ తర్వాతి ప్రయాణానికి స్వాగతం: మన తదుపరి సమగ్ర తెలుగు కోర్సు <strong>"CSS3 Masterclass: Flexbox, Grid, Animations &amp; Responsive Web Design"</strong> లో అడుగుపెట్టండి!
+        </p>
+        <a href="/blog-html.html" style="display:inline-block; padding:10px 24px; background:#ffffff; color:#065f46; font-weight:800; border-radius:8px; text-decoration:none; box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+          📚 HTML5 కోర్సు హోమ్‌పేజీకి వెళ్ళండి
+        </a>
+      </div>
+    </div>
+
+
+    <!-- PREV / FINALE NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-html/19-html5-apis-storage-dialog-details-drag-drop.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 19. ఆధునిక HTML5 APIలు
+      </a>
+      <a href="/blog-html.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        🏆 Course Complete: All 20 Chapters Finished! →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested across modern Web Standards / W3C &amp; WHATWG · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+// Assemble the complete HTML document
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>కంప్లీట్ క్యాప్‌స్టోన్ ప్రాజెక్ట్: రెస్పాన్సివ్ డెవలపర్ పోర్ట్‌ఫోలియో వెబ్‌సైట్ — Modern HTML5 Tutorial | Our Compiler</title>
+  <meta name="description" content="కంప్లీట్ క్యాప్‌స్టోన్ ప్రాజెక్ట్: రెస్పాన్సివ్ డెవలపర్ పోర్ట్‌ఫోలియో వెబ్‌సైట్ సమగ్ర తెలుగు గైడ్: సెమాంటిక్ లేఅవుట్ · రెస్పాన్సివ్ పిక్చర్స్ · వాలిడేషన్ కాంటాక్ట్ ఫారమ్ · మోడల్ డైలాగ్ · SEO & Open Graph · ఆన్‌లైన్ ఎడిటర్‌లో లైవ్ టెస్టింగ్." />
+  <meta name="keywords" content="html5 capstone project telugu, responsive developer portfolio html, semantic html5 project, learn web development telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-html/20-html-capstone-project-complete-responsive-portfolio.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-html/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "కంప్లీట్ క్యాప్‌స్టోన్ ప్రాజెక్ట్: రెస్పాన్సివ్ డెవలపర్ పోర్ట్‌ఫోలియో వెబ్‌సైట్ (HTML5 in Telugu)",
+    "description": "సెమాంటిక్ లేఅవుట్ · రెస్పాన్సివ్ పిక్చర్స్ · వాలిడేషన్ కాంటాక్ట్ ఫారమ్ · మోడల్ డైలాగ్ · SEO & Open Graph · ఆన్‌లైన్ ఎడిటర్‌లో లైవ్ టెస్టింగ్",
+    "articleSection": "Phase 05: అడ్వాన్స్‌డ్ HTML5 APIలు, SEO, Accessibility & Capstone ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-10-31"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const body = document.body;
+      const isLight = html.classList.contains('light-theme');
+      if (isLight) {
+        html.classList.remove('light-theme');
+        body.classList.remove('light-theme');
+        localStorage.setItem('tutorial_theme_v2', 'dark');
+      } else {
+        html.classList.add('light-theme');
+        body.classList.add('light-theme');
+        localStorage.setItem('tutorial_theme_v2', 'light');
+      }
+    }
+
+    function copySnippet(btn) {
+      const pre = btn.closest('.code-header').nextElementSibling;
+      const code = pre.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.background = '#10b981';
+        btn.style.color = '#fff';
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    function runSnippet(btn) {
+      const pre = btn.previousElementSibling;
+      const rawCode = pre.querySelector('code').innerText;
+      localStorage.setItem('code_html', rawCode);
+      window.open('/online-html-editor.html', '_blank');
+    }
+  </script>
+</head>
+<body class="lang-html light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">HTML5 Masterclass</span>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="విషయాన్ని వెతకండి..." oninput="filterLessons(this.value)" id="lessonSearch" />
+    </div>
+    <nav class="sidebar-nav">
+${sidebarHtml}
+    </nav>
+  </aside>
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-html', '20-html-capstone-project-complete-responsive-portfolio.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value Chapter 20!');
+console.log('Target file size:', fullHtml.length, 'characters');

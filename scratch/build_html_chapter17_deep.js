@@ -644,3 +644,4 @@ const targetFile = path.join(__dirname, '..', 'public', 'blog-html', '17-html-he
 fs.writeFileSync(targetFile, fullPageHtml, 'utf8');
 console.log('✅ Successfully generated deep high-value Chapter 17!');
 console.log('Target file size:', fullPageHtml.length, 'characters');
+
