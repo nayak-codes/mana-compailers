@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage & Drag-Drop — Modern HTML5 Tutorial | Our Compiler</title>
   <meta name="description" content="ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage & Drag-Drop సమగ్ర తెలుగు గైడ్: నేటివ్ మోడల్ పాపప్స్ dialog · అకార్డియన్లు details & summary · Web Storage (LocalStorage vs SessionStorage) · Drag & Drop API." />
-  <meta name="keywords" content="html5 tutorial in telugu, learn html5, ఆధునిక html5 apiలు: dialog, details/summary, localstorage & drag-drop, web development, our compiler" />
+  <meta name="keywords" content="html5 modern apis in telugu, html5 dialog tag, details summary accordion, localstorage telugu tutorial, html5 drag and drop, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-html/19-html5-apis-storage-dialog-details-drag-drop.html" />
@@ -35,7 +35,7 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-01",
-    "dateModified": "2026-10-30"
+    "dateModified": "2026-10-31"
   }
   </script>
 
@@ -58,32 +58,72 @@
       if (currentTheme === 'dark') {
         document.documentElement.classList.remove('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
         });
       } else {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
         });
       }
     })();
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const body = document.body;
+      const isLight = html.classList.contains('light-theme');
+      if (isLight) {
+        html.classList.remove('light-theme');
+        body.classList.remove('light-theme');
+        localStorage.setItem('tutorial_theme_v2', 'dark');
+      } else {
+        html.classList.add('light-theme');
+        body.classList.add('light-theme');
+        localStorage.setItem('tutorial_theme_v2', 'light');
+      }
+    }
+
+    function copySnippet(btn) {
+      const pre = btn.closest('.code-header').nextElementSibling;
+      const code = pre.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.background = '#10b981';
+        btn.style.color = '#fff';
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    function runSnippet(btn) {
+      const pre = btn.previousElementSibling;
+      const rawCode = pre.querySelector('code').innerText;
+      localStorage.setItem('code_html', rawCode);
+      window.open('/online-html-editor.html', '_blank');
+    }
   </script>
 </head>
 <body class="lang-html light-theme">
-
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/online-html-editor.html" class="active">HTML/CSS/JS</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-csharp.html">C#</a>
-</nav>
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">HTML5 Masterclass</span>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="విషయాన్ని వెతకండి..." oninput="filterLessons(this.value)" id="lessonSearch" />
+    </div>
+    <nav class="sidebar-nav">
 
   <aside class="sidebar">
     <div class="sidebar-heading">HTML5 Master Course (తెలుగు)</div>
@@ -319,47 +359,633 @@
     </div>
   </aside>
   
-  <!-- MAIN LESSON CONTENT -->
+    </nav>
+  </aside>
+
+  <!-- MAIN ARTICLE -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-html.html">HTML5 Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 19: ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage & Drag-Drop</span>
+      <span class="current">Chapter 19: ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage &amp; Drag-Drop</span>
     </div>
 
-    <h1 class="page-title">ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage & Drag-Drop</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage &amp; Drag-Drop</h1>
 
+    <!-- PAGE META BADGES -->
     <div class="page-meta">
-      <span class="badge">🌐 Modern HTML5</span>
+      <span class="badge">🌐 Modern HTML5 (W3C/WHATWG)</span>
       <span class="badge">🟢 Chapter 19 of 20</span>
-      <span class="badge">📂 Phase 05: అడ్వాన్స్‌డ్ HTML5 APIలు, SEO, Accessibility & Capstone ప్రాజెక్ట్</span>
+      <span class="badge">📂 Phase 05: అడ్వాన్స్‌డ్ మెటాడేటా, SEO, Accessibility &amp; Projects</span>
       <span class="badge">📅 2026 Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
+    <!-- SUBTOPICS PILL BAR -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>నేటివ్ మోడల్ పాపప్స్ dialog · అకార్డియన్లు details & summary · Web Storage (LocalStorage vs SessionStorage) · Drag & Drop API</span>
+      <span>నేటివ్ મોడల్ డైలాగ్ &lt;dialog&gt; · showModal() vs show() · ::backdrop స్టైలింగ్ · &lt;details&gt; &amp; &lt;summary&gt; జీరో-JS అకార్డియన్లు · Web Storage (LocalStorage vs SessionStorage) · JSON డేటా హ్యాండ్లింగ్ · HTML5 Drag and Drop API · Geolocation &amp; Web Share · క్విజ్ &amp; ట్రై-బాక్స్</span>
     </div>
 
-    
-      <div class="intro-box">
-        ఈ అధ్యాయంలో <strong>ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage & Drag-Drop</strong> గురించి క్షుణ్ణంగా పరిశీలిద్దాం. నేటివ్ మోడల్ పాపప్స్ dialog · అకార్డియన్లు details & summary · Web Storage (LocalStorage vs SessionStorage) · Drag & Drop API.
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>1990ల కాలంలో HTML కేవలం టెక్స్ట్ డాక్యుమెంట్లు, చిన్న లింకులు మరియు స్టాటిక్ ఫోటోలను చూపించే ఒక సాధారణ డాక్యుమెంట్ ఫార్మాట్ మాత్రమే. ఒక యూజర్ పాపప్ బాక్స్ చూడాలన్నా, సైడ్‌బార్‌లో ప్రశ్నలు ఓపెన్ చేయాలన్నా, లేదా కార్ట్ డేటాను బ్రౌజర్‌లో సేవ్ చేయాలన్నా — డెవలపర్లు వేలాది లైన్ల భారీ జావాస్క్రిప్ట్ కోడ్ మరియు బాహ్య లైబ్రరీలపై (jQuery, Bootstrap మోడల్స్, భారీ ప్లగిన్లు) ఆధారపడాల్సి వచ్చేది.</p>
+      <p>కానీ HTML5 ఆగమనంతో బ్రౌజర్ ప్రపంచంలో ఒక అద్భుతమైన నిశ్శబ్ద విప్లవం జరిగింది! HTML కేవలం స్టాటిక్ మార్కప్ లాంగ్వేజ్ స్థాయి నుండి — శక్తివంతమైన డెస్క్‌టాప్ ఆపరేటింగ్ సిస్టమ్ లాంటి <strong>వెబ్ అప్లికేషన్ ప్లాట్‌ఫామ్‌గా</strong> పరిణామం చెందింది. నేడు మనకు పాపప్స్ కోసం థర్డ్ పార్టీ మోడల్ ప్లగిన్లు అక్కర్లేదు (నేటివ్ <code>&lt;dialog&gt;</code> ట్యాగ్ ఉంది), అకార్డియన్ల కోసం జావాస్క్రిప్ట్ అవసరం లేదు (నేటివ్ <code>&lt;details&gt;</code> ఉంది), మరియు క్లయింట్-సైడ్ డేటా నిల్వ కోసం నెమ్మదైన కుకీలు వాడాల్సిన పనిలేదు (అద్భుతమైన <code>localStorage</code> మరియు <code>sessionStorage</code> ఉన్నాయి)!</p>
+      <p>ఈ పందొమ్మిదవ అధ్యాయంలో, ఆధునిక ఫ్రంటెండ్ డెవలపర్‌గా మీ పనిభారాన్ని సగానికి తగ్గించి, వెబ్‌సైట్ స్పీడ్‌ను రెట్టింపు చేసే <strong>ఆధునిక HTML5 APIలను</strong> సమగ్రంగా, లైవ్ ఉదాహరణలతో నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే అంశాలు</div>
+    <div class="section-body">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>ఆధునిక HTML5 వెబ్ APIల విప్లవం:</strong> బ్రౌజర్ నేటివ్ ఫీచర్లను ఎందుకు ప్రాధాన్యత ఇవ్వాలి?</li>
+        <li><strong>నేటివ్ మోడల్ డైలాగ్ ట్యాగ్ (&lt;dialog&gt;):</strong> బ్రౌజర్ ఇన్-బిల్ట్ పాపప్ కాంపోనెంట్ నిర్మాణం.</li>
+        <li><strong>showModal() vs show():</strong> మోడల్ బ్యాక్‌డ్రాప్, స్క్రీన్ రీడర్ ఫోకస్ ట్రాప్ మరియు Escape కీ ఆటోమేటిక్ హ్యాండ్లింగ్.</li>
+        <li><strong>::backdrop సూడో-ఎలిమెంట్:</strong> ఆధునిక బ్లర్ ఎఫెక్ట్స్ (backdrop-filter) మరియు డార్క్ ఓవర్‌లే స్టైలింగ్.</li>
+        <li><strong>డైలాగ్ లోపల ఫారమ్స్:</strong> <code>method="dialog"</code> తో పేజీ రీలోడ్ లేకుండా డైలాగ్ మూసివేయడం.</li>
+        <li><strong>కొలాప్సిబుల్ కంటెంట్ (&lt;details&gt; &amp; &lt;summary&gt;):</strong> జీరో-జావాస్క్రిప్ట్ అకార్డియన్లు మరియు <code>name</code> ఆట్రిబ్యూట్ తో ఎక్స్‌క్లూజివ్ అకార్డియన్.</li>
+        <li><strong>వెబ్ స్టోరేజ్ API (Web Storage):</strong> కుకీస్ యొక్క 4KB పరిమితి వర్సెస్ 5MB లోకల్ స్టోరేజ్.</li>
+        <li><strong>LocalStorage సమగ్ర గైడ్:</strong> setItem, getItem, removeItem, clear మరియు JSON స్ట్రింగిఫికేషన్.</li>
+        <li><strong>SessionStorage:</strong> బ్రౌజర్ ట్యాబ్ క్లోజ్ చేయగానే డిలీట్ అయ్యే సురక్షిత సెషన్ డేటా.</li>
+        <li><strong>HTML5 డ్రాగ్ అండ్ డ్రాప్ (Drag &amp; Drop):</strong> draggable, dragstart, dragover, drop ఈవెంట్లు.</li>
+        <li><strong>ఆధునిక డివైస్ APIలు:</strong> Geolocation, Web Share (navigator.share), Clipboard API ముఖ్యాంశాలు.</li>
+        <li><strong>ఇంటరాక్టివ్ క్విజ్:</strong> మీ అవగాహనను పరీక్షించే 5 ఆచరణాత్మక ప్రశ్నలు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>ఆధునిక HTML5 వెబ్ APIల విప్లవం: నేటివ్ పవర్ ఎందుకు ముఖ్యం?</div>
+    <div class="section-body">
+      <p>పూర్వపు వెబ్ డెవలప్‌మెంట్‌లో ఒక చిన్న మోడల్ పాపప్ చూపించాలన్నా — డెవలపర్లు jQuery లైబ్రరీని (90 KB), బూట్‌స్ట్రాప్ CSS మరియు JS (150 KB) ని డౌన్‌లోడ్ చేసుకునేవారు. దీనివల్ల వెబ్‌సైట్ లోడ్ అవ్వడానికి 3-4 సెకన్ల అదనపు సమయం పట్టేది, మొబైల్ ఫోన్లలో బ్యాటరీ మరియు డేటా వృధా అయ్యేది.</p>
+      
+      <p>W3C మరియు WHATWG కమిటీలు ఆధునిక బ్రౌజర్లలోకి ఈ క్రింది సూపర్-ఫీచర్లను నేటివ్‌గా (అంటే బ్రౌజర్ ఇంజిన్ సి++ కోర్ లోనే) నిర్మించాయి:</p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్ / అవసరం</th>
+              <th>పాత పద్ధతి (Legacy Approach)</th>
+              <th>ఆధునిక HTML5 నేటివ్ సొల్యూషన్</th>
+              <th>లాభం (Advantage)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>మోడల్ పాపప్స్ (Modals)</strong></td>
+              <td>భారీ &lt;div&gt; లూప్స్, jQuery, SweetAlert</td>
+              <td><code>&lt;dialog&gt;</code> ట్యాగ్</td>
+              <td>జీరో బండిల్ సైజ్, ఆటో ఫోకస్ ట్రాప్, Esc సపోర్ట్</td>
+            </tr>
+            <tr>
+              <td><strong>FAQ అకార్డియన్లు</strong></td>
+              <td>JS ఈవెంట్ లిజనర్లు, toggling classes</td>
+              <td><code>&lt;details&gt;</code> &amp; <code>&lt;summary&gt;</code></td>
+              <td>1 లైన్ JS కూడా అక్కర్లేదు, కీబోర్డ్ a11y ఉచితం</td>
+            </tr>
+            <tr>
+              <td><strong>క్లయింట్ డేటా స్టోరేజ్</strong></td>
+              <td>సర్వర్‌కు వెళ్లే 4KB పరిమితి Cookies</td>
+              <td><code>localStorage</code> / <code>sessionStorage</code></td>
+              <td>5MB+ నిల్వ, సర్వర్ నెట్‌వర్క్ హెడర్స్ భారం ఉండదు</td>
+            </tr>
+            <tr>
+              <td><strong>ఫైల్ డ్రాగ్ అండ్ డ్రాప్</strong></td>
+              <td>భారీ ఫైల్ డ్రాప్ లైబ్రరీలు</td>
+              <td>HTML5 DnD API (<code>draggable="true"</code>)</td>
+              <td>ఓఎస్ స్థాయి ఫైల్/ఎలిమెంట్ డ్రాగింగ్ సపోర్ట్</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="section-title"><span class="num">1</span>పరిచయం & మౌలిక అంశాలు</div>
-      <div class="section-body">
-        <p>HTML5 లో ఆధునిక HTML5 APIలు: dialog, details/summary, LocalStorage & Drag-Drop యొక్క ప్రాముఖ్యత మరియు వాస్తవ వెబ్ అప్లికేషన్లలో దీని వినియోగం.</p>
+
+      <div class="tip-box">
+        💡 <strong>సీనియర్ ఆర్కిటెక్ట్ సలహా:</strong> "The best JavaScript is no JavaScript at all!" — బ్రౌజర్ స్వతహాగా ఒక ఫీచర్‌ను ఉచితంగా అందిస్తున్నప్పుడు, దానికోసం బయటి లైబ్రరీలు వేలాది కిలోబైట్లు డౌన్‌లోడ్ చేయకూడదు.
       </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>నేటివ్ మోడల్ డైలాగ్ ట్యాగ్: &lt;dialog&gt; అనాటమీ</div>
+    <div class="section-body">
+      <p>HTML5 లో ప్రవేశపెట్టబడిన అత్యంత శక్తివంతమైన ట్యాగ్‌లలో <strong>&lt;dialog&gt;</strong> అగ్రస్థానంలో ఉంది. ఇది వినియోగదారుడికి నోటిఫికేషన్లు, లాగిన్ ఫారమ్‌లు, నిర్ధారణ (confirmation) సందేశాలు లేదా విండోలను చూపించడానికి అధికారిక HTML5 ఎలిమెంట్.</p>
+
+      <p>సాధారణ స్థితిలో <code>&lt;dialog&gt;</code> స్క్రీన్ మీద కనిపించదు (బ్రౌజర్ డీఫాల్ట్‌గా <code>display: none;</code> వర్తింపజేస్తుంది). దీనిని తెరవడానికి రెండు మార్గాలు ఉన్నాయి:</p>
+      <ol style="margin-left:20px; color:var(--text2); line-height:1.7;">
+        <li><strong>dialog.showModal():</strong> ఇది పూర్తి స్థాయి <em>మోడల్</em> విండోను తెరుస్తుంది. వెనుక ఉన్న పేజీ మొత్తం డిసేబుల్ అవుతుంది, డార్క్ బ్యాక్‌డ్రాప్ వస్తుంది, మరియు ఫోకస్ డైలాగ్ లోపలే లాక్ అవుతుంది.</li>
+        <li><strong>dialog.show():</strong> ఇది సాధారణ <em>నాన్-మోడల్</em> ఫ్లోటింగ్ బాక్స్ లాగా తెరుస్తుంది. వెనుక ఉన్న పేజీని కూడా యూజర్ క్లిక్ చేయవచ్చు.</li>
+      </ol>
+
+      <div class="code-header">
+        <span>HTML5 &lt;dialog&gt; బేసిక్ ఉదాహరణ</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;!-- బటన్ క్లిక్ చేసి డైలాగ్ ఓపెన్ చేయండి --&gt;
+&lt;button id="openDialogBtn" class="primary-btn"&gt;🔔 ప్రొఫైల్ ఎడిట్ చేయండి&lt;/button&gt;
+
+&lt;!-- HTML5 నేటివ్ డైలాగ్ --&gt;
+&lt;dialog id="myProfileModal" style="border:none; border-radius:12px; padding:24px; box-shadow:0 10px 30px rgba(0,0,0,0.3); max-width:400px; width:90%;"&gt;
+  &lt;h3 style="margin-top:0; color:#059669;"&gt;యూజర్ ప్రొఫైల్ అప్‌డేట్&lt;/h3&gt;
+  &lt;p style="color:#555; font-size:14px;"&gt;దయచేసి మీ పూర్తి పేరు మరియు యూజర్‌నేమ్ సరిచూసుకోండి.&lt;/p&gt;
+
+  &lt;form method="dialog" style="display:flex; flex-direction:column; gap:12px;"&gt;
+    &lt;label style="font-size:13px; font-weight:600;"&gt;పేరు:
+      &lt;input type="text" value="రమేష్ కుమార్" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; margin-top:4px;" /&gt;
+    &lt;/label&gt;
+
+    &lt;div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;"&gt;
+      &lt;button value="cancel" style="padding:8px 16px; border-radius:6px; border:1px solid #ddd; background:#f3f4f6; cursor:pointer;"&gt;రద్దు చేయి (Cancel)&lt;/button&gt;
+      &lt;button value="save" style="padding:8px 16px; border-radius:6px; border:none; background:#059669; color:white; font-weight:700; cursor:pointer;"&gt;భద్రపరచు (Save)&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;
+
+&lt;script&gt;
+  const modal = document.getElementById('myProfileModal');
+  const openBtn = document.getElementById('openDialogBtn');
+
+  // showModal() పిలిస్తే నేటివ్ మోడల్ తెరుచుకుంటుంది
+  openBtn.addEventListener('click', () =&gt; {
+    modal.showModal();
+  });
+
+  // డైలాగ్ మూతపడినప్పుడు యూజర్ ఏ బటన్ నొక్కాడో చూస్తుంది
+  modal.addEventListener('close', () =&gt; {
+    console.log('డైలాగ్ రిటర్న్ విలువ:', modal.returnValue);
+    if (modal.returnValue === 'save') {
+      alert('వివరాలు విజయవంతంగా సేవ్ చేయబడ్డాయి!');
+    }
+  });
+&lt;/script&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>Modal vs Non-Modal: showModal() మ్యాజిక్ &amp; ::backdrop స్టైలింగ్</div>
+    <div class="section-body">
+      <p><code>modal.showModal()</code> పద్ధతికి, పాత జావాస్క్రిప్ట్ మోడల్స్‌కు ఉన్న ప్రధాన వ్యత్యాసాలను ప్రతి వెబ్ ఇంజనీర్ తప్పక అర్థం చేసుకోవాలి:</p>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>Top Layer ప్రమోషన్:</strong> <code>showModal()</code> ద్వారా తెరిచిన డైలాగ్ బ్రౌజర్ యొక్క ప్రత్యేక "టాప్ లేయర్ (Top Layer)" లోకి వెళ్తుంది. అంటే పేజీలోని ఇతర ఎలిమెంట్లకు <code>z-index: 999999;</code> ఉన్నా సరే — డైలాగ్ వాటన్నింటి కంటే పైనే కనిపిస్తుంది! Z-index వార్స్‌కు శాశ్వత ముగింపు.</li>
+        <li><strong>ఆటోమేటిక్ Escape Key సపోర్ట్:</strong> యూజర్ కీబోర్డ్‌లో <code>Esc</code> కీ నొక్కగానే బ్రౌజర్ ఎటువంటి JS ఈవెంట్ రాయకుండానే డైలాగ్‌ను స్వయంచాలకంగా క్లోజ్ చేస్తుంది.</li>
+        <li><strong>Focus Trapping:</strong> యూజర్ <code>Tab</code> కీ నొక్కితే ఫోకస్ డైలాగ్ లోపల ఉన్న బటన్లు మరియు ఇన్‌పుట్లలోనే తిరుగుతుంది తప్ప బయటకు వెళ్ళదు. ఇది అంధులకు అద్భుతమైన a11y సౌలభ్యం.</li>
+        <li><strong>Inert Background:</strong> మోడల్ వెనుక ఉన్న పేజీ ఆటోమేటిక్‌గా <code>inert</code> అవుతుంది (మౌస్‌తో క్లిక్ చేయడానికి లేదా సెలెక్ట్ చేయడానికి వీలుండదు).</li>
+      </ul>
+
+      <h4 style="color:#059669; font-size:16px; margin-top:20px;">🎨 ::backdrop సూడో-ఎలిమెంట్‌తో గ్లాస్‌మార్ఫిజం (Glassmorphism):</h4>
+      <p><code>showModal()</code> తో ఓపెన్ అయినప్పుడు బ్రౌజర్ డైలాగ్ వెనుక <code>::backdrop</code> అనే సూడో-ఎలిమెంట్‌ను ఉంచుతుంది. దీనికి CSS రాసి పేజీని డార్క్ చేయడం లేదా బ్లర్ చేయడం అత్యంత సులభం:</p>
+
+      <div class="code-header">
+        <span>CSS ::backdrop ఆధునిక స్టైలింగ్</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>/* డైలాగ్ వెనుక ఉన్న పేజీని బ్లర్ &amp; డార్క్ చేయడం */
+dialog::backdrop {
+  background: rgba(15, 23, 42, 0.65); /* డార్క్ ట్రాన్స్‌పరెంట్ బ్యాక్‌గ్రౌండ్ */
+  backdrop-filter: blur(8px);          /* ఆధునిక ఐఓఎస్ లాంటి గ్లాస్ బ్లర్ */
+  animation: fadeInBackdrop 0.3s ease;
+}
+
+/* డైలాగ్ బాక్స్ స్మూత్ ఎంట్రీ యానిమేషన్ */
+dialog[open] {
+  animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>&lt;dialog&gt; లోపల ఫారమ్స్ &amp; method="dialog"</div>
+    <div class="section-body">
+      <p>డైలాగ్ లోపల ఒక ఫారమ్ ఉన్నప్పుడు సాధారణంగా మనం జావాస్క్రిప్ట్‌లో <code>event.preventDefault()</code> రాసి బటన్ క్లిక్‌ను హ్యాండిల్ చేస్తాం. కానీ HTML5 లో <strong>&lt;form method="dialog"&gt;</strong> వాడితే ఒక్క లైన్ జావాస్క్రిప్ట్ లేకుండానే ఫారమ్ సబ్మిట్ అయ్యి డైలాగ్ ఆటోమేటిక్‌గా క్లోజ్ అవుతుంది!</p>
+
+      <p>ఫారమ్‌లోని బటన్‌కు ఇచ్చే <code>value="..."</code> ఆట్రిబ్యూట్ నేరుగా డైలాగ్ యొక్క <code>modal.returnValue</code> ప్రాపర్టీగా మారుతుంది. దీనివల్ల "యూజర్ సేవ్ చేశాడా? లేక రద్దు చేశాడా?" అనేది తెలుసుకోవడం అత్యంత సులభం:</p>
+
+      <div class="code-header">
+        <span>Zero-JS Dialog Form Submissions</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;dialog id="confirmDeleteDialog" style="border:1px solid #fecaca; border-radius:10px; padding:20px;"&gt;
+  &lt;h4 style="color:#dc2626; margin-top:0;"&gt;⚠️ ఫైల్‌ను శాశ్వతంగా తొలగించాలా?&lt;/h4&gt;
+  &lt;p style="font-size:14px; color:#475569;"&gt;ఈ చర్యను తిరిగి రద్దు చేయలేరు. మీరు ఖచ్చితంగా కొనసాగించాలనుకుంటున్నారా?&lt;/p&gt;
+
+  &lt;form method="dialog" style="display:flex; justify-content:flex-end; gap:8px;"&gt;
+    &lt;!-- ఈ బటన్ నొక్కితే returnValue 'no' అవుతుంది --&gt;
+    &lt;button type="submit" value="no" style="padding:6px 14px; border-radius:6px; border:1px solid #ccc; cursor:pointer;"&gt;కాదు (No)&lt;/button&gt;
     
+    &lt;!-- ఈ బటన్ నొక్కితే returnValue 'yes' అవుతుంది --&gt;
+    &lt;button type="submit" value="yes" style="padding:6px 14px; border-radius:6px; border:none; background:#dc2626; color:white; font-weight:700; cursor:pointer;"&gt;అవును, తొలగించు (Yes)&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>కొలాప్సిబుల్ కంటెంట్: &lt;details&gt; &amp; &lt;summary&gt; అకార్డియన్లు</div>
+    <div class="section-body">
+      <p>వెబ్‌సైట్లలో FAQ సెక్షన్లు, ప్రొడక్ట్ స్పెసిఫికేషన్లు, కోడ్ స్నిప్పెట్లను దాచి ఉంచడానికి పూర్వం డెవలపర్లు వందల లైన్ల CSS మరియు జావాస్క్రిప్ట్ క్లాస్ టోగుల్స్ రాసేవారు. HTML5 మనకు <strong>&lt;details&gt;</strong> మరియు <strong>&lt;summary&gt;</strong> జంట ట్యాగ్‌ల ద్వారా ఈ సామర్థ్యాన్ని స్థానికంగా అందించింది.</p>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><code>&lt;details&gt;</code>: కొలాప్సిబుల్ కంటెంట్ కంటైనర్. దీనికి <code>open</code> ఆట్రిబ్యూట్ జోడిస్తే పేజీ లోడ్ అయినప్పుడే తెరిచి ఉంటుంది.</li>
+        <li><code>&lt;summary&gt;</code>: ఎల్లప్పుడూ కనిపించే హెడ్డింగ్. దీని పక్కన బ్రౌజర్ చిన్న బాణం గుర్తు (disclosure triangle) ను చూపిస్తుంది.</li>
+        <li><strong>ఆధునిక HTML5.3 ఫీచర్ — name attribute:</strong> ఒకేసారి ఒక ప్రశ్న మాత్రమే ఓపెన్ అయ్యేలా (Exclusive Accordion) చేయడానికి అన్ని <code>&lt;details&gt;</code> ట్యాగ్‌లకు ఒకే <code>name="faq"</code> ఇస్తే చాలు! ఒక్క లైన్ JS కూడా అక్కర్లేదు!</li>
+      </ul>
+
+      <div class="code-header">
+        <span>Exclusive Accordion with details and summary</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;h3 style="color:#059669;"&gt;తరచుగా అడిగే ప్రశ్నలు (FAQ)&lt;/h3&gt;
+
+&lt;!-- name="faq-group" ఇవ్వడం వల్ల ఒకదాన్ని తెరిస్తే మిగతావి ఆటోమేటిక్‌గా మూసుకుంటాయి --&gt;
+&lt;details name="faq-group" open style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px;"&gt;
+  &lt;summary style="font-weight:700; cursor:pointer; color:#0f172a;"&gt;
+    HTML5 పూర్తిగా ఉచితమా?
+  &lt;/summary&gt;
+  &lt;p style="margin-top:8px; color:#475569; font-size:14px; line-height:1.6;"&gt;
+    అవును! HTML5 అనేది W3C మరియు WHATWG చే రూపొందించబడిన ఓపెన్ ఇంటర్నెట్ స్టాండర్డ్. దీనిని ఎవరైనా ఉచితంగా నేర్చుకుని వాడవచ్చు.
+  &lt;/p&gt;
+&lt;/details&gt;
+
+&lt;details name="faq-group" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px;"&gt;
+  &lt;summary style="font-weight:700; cursor:pointer; color:#0f172a;"&gt;
+    నాకు కోడింగ్ రాకపోయినా వెబ్ డిజైనింగ్ చేయవచ్చా?
+  &lt;/summary&gt;
+  &lt;p style="margin-top:8px; color:#475569; font-size:14px; line-height:1.6;"&gt;
+    ఖచ్చితంగా! HTML అనేది ప్రోగ్రామింగ్ లాంగ్వేజ్ కాదు, కేవలం మార్కప్ లాంగ్వేజ్ మాత్రమే. ఇది ఎవరైనా సులభంగా నేర్చుకోగలరు.
+  &lt;/p&gt;
+&lt;/details&gt;
+
+&lt;details name="faq-group" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px;"&gt;
+  &lt;summary style="font-weight:700; cursor:pointer; color:#0f172a;"&gt;
+    మాస్టర్‌క్లాస్ సర్టిఫికేషన్ ఎలా పొందాలి?
+  &lt;/summary&gt;
+  &lt;p style="margin-top:8px; color:#475569; font-size:14px; line-height:1.6;"&gt;
+    అన్ని 20 అధ్యాయాలు పూర్తి చేసి, చివరి Capstone పోర్ట్‌ఫోలియో ప్రాజెక్ట్‌ను విజయవంతంగా సబ్మిట్ చేస్తే సర్టిఫికేట్ పొందవచ్చు.
+  &lt;/p&gt;
+&lt;/details&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>వెబ్ స్టోరేజ్ API (Web Storage): Cookies vs LocalStorage vs SessionStorage</div>
+    <div class="section-body">
+      <p>బ్రౌజర్‌లో యూజర్ డేటాను (ఉదాహరణకు: డార్క్ మోడ్ థీమ్, లాగిన్ యూజర్‌నేమ్, షాపింగ్ కార్ట్ ఐటమ్స్) నిల్వ చేయడానికి పాత రోజుల్లో <strong>కుకీస్ (Cookies)</strong> మాత్రమే ఉండేవి. కుకీల వల్ల రెండు పెద్ద సమస్యలు ఉండేవి:</p>
+      <ol style="margin-left:20px; color:var(--text2); line-height:1.7;">
+        <li>కుకీ కేవలం గరిష్టంగా <strong>4 KB</strong> డేటాను మాత్రమే నిల్వ చేయగలదు.</li>
+        <li>పేజీలో ప్రతి హెచ్‌టిటిపి రిక్వెస్ట్ (ఇమేజ్, సిఎస్ఎస్, ఫాంట్స్) వెళ్ళేటప్పుడు ఆ కుకీ డేటా కూడా అనవసరంగా సర్వర్‌కు నెట్‌వర్క్ హెడర్లలో ప్రయాణిస్తుంది, దీనివల్ల బ్యాండ్‌విడ్త్ వృధా అవుతుంది.</li>
+      </ol>
+
+      <p>HTML5 ప్రవేశపెట్టిన <strong>Web Storage API</strong> ఈ సమస్యలను పూర్తిగా పరిష్కరించింది. బ్రౌజర్‌లో డేటా పూర్తిగా లోకల్‌గా నిల్వ ఉంటుంది, సర్వర్‌కు అనవసరంగా వెళ్ళదు, మరియు దాదాపు <strong>5 MB నుండి 10 MB</strong> వరకు డేటాను నిల్వ చేసుకోవచ్చు!</p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్ / అంశం</th>
+              <th>Cookies (పాత పద్ధతి)</th>
+              <th>LocalStorage (ఆధునిక పద్ధతి)</th>
+              <th>SessionStorage (తాత్కాలిక పద్ధతి)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>నిల్వ సామర్థ్యం (Capacity)</strong></td>
+              <td>సుమారు 4 KB మాత్రమే</td>
+              <td>దాదాపు 5 MB నుండి 10 MB</td>
+              <td>దాదాపు 5 MB</td>
+            </tr>
+            <tr>
+              <td><strong>కాలపరిమితి (Lifespan)</strong></td>
+              <td>మనం సెట్ చేసిన ఎక్స్‌పైరీ వరకు</td>
+              <td>శాశ్వతం (యూజర్ క్లియర్ చేసేవరకు)</td>
+              <td>ట్యాబ్ క్లోజ్ చేయగానే డిలీట్ అవుతుంది</td>
+            </tr>
+            <tr>
+              <td><strong>సర్వర్ నెట్‌వర్క్ ప్రయాణం</strong></td>
+              <td>ప్రతి HTTP రిక్వెస్ట్‌తో ప్రయాణిస్తుంది</td>
+              <td>ఎప్పుడూ ప్రయాణించదు (Pure Client-side)</td>
+              <td>ఎప్పుడూ ప్రయాణించదు (Pure Client-side)</td>
+            </tr>
+            <tr>
+              <td><strong>యాక్సెస్ స్కోప్ (Scope)</strong></td>
+              <td>డొమైన్ అంతటా</td>
+              <td>సేమ్ ఆరిజిన్ (Origin: Protocol+Domain+Port)</td>
+              <td>కేవలం ఆ నిర్దిష్ట బ్రౌజర్ ట్యాబ్‌లో మాత్రమే</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>LocalStorage ప్రాక్టికల్ గైడ్: సెట్, గెట్, డిలీట్ &amp; JSON డేటా</div>
+    <div class="section-body">
+      <p><code>localStorage</code> అనేది కీ-వాల్యూ (Key-Value) జంటల రూపంలో పనిచేస్తుంది. దీనిలో 4 ప్రధాన మెథడ్స్ ఉంటాయి:</p>
+      
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><code>localStorage.setItem(key, value)</code>: డేటాను భద్రపరుస్తుంది.</li>
+        <li><code>localStorage.getItem(key)</code>: డేటాను తీసుకుంటుంది (కీ లేకపోతే <code>null</code> వస్తుంది).</li>
+        <li><code>localStorage.removeItem(key)</code>: ఒక నిర్దిష్ట కీని మాత్రమే తొలగిస్తుంది.</li>
+        <li><code>localStorage.clear()</code>: డొమైన్‌లోని అన్ని లోకల్ స్టోరేజ్ ఐటమ్‌లను ఒకేసారి డిలీట్ చేస్తుంది.</li>
+      </ul>
+
+      <div class="tip-box">
+        ⚠️ <strong>గుర్తుంచుకోవాల్సిన కీలక నియమం:</strong> LocalStorage లో ఎల్లప్పుడూ డేటా <strong>Strings (టెక్స్ట్)</strong> రూపంలో మాత్రమే నిల్వ ఉంటుంది! నంబర్లు, ఆరేలు (Arrays), లేదా ఆబ్జెక్టులు (Objects) సేవ్ చేయాలనుకుంటే తప్పనిసరిగా <code>JSON.stringify()</code> వాడాలి, మరియు తిరిగి రీడ్ చేసేటప్పుడు <code>JSON.parse()</code> చేయాలి.
+      </div>
+
+      <div class="code-header">
+        <span>ఆధునిక LocalStorage &amp; JSON హ్యాండ్లింగ్</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>// 1. సాధారణ స్ట్రింగ్ సేవ్ చేయడం (ఉదా: థీమ్ ప్రాధాన్యత)
+localStorage.setItem('theme', 'dark');
+
+// రీడ్ చేయడం
+const currentTheme = localStorage.getItem('theme');
+console.log('ప్రస్తుత థీమ్:', currentTheme); // Output: "dark"
+
+
+// 2. సంక్లిష్టమైన ఆబ్జెక్ట్‌ను సేవ్ చేయడం (JSON.stringify)
+const userProfile = {
+  id: 101,
+  name: "సునీత",
+  courses: ["HTML5", "CSS3", "JavaScript"],
+  isPro: true
+};
+
+// ఆబ్జెక్ట్‌ను స్ట్రింగ్‌గా మార్చి స్టోర్ చేయడం
+localStorage.setItem('user_session', JSON.stringify(userProfile));
+
+// తిరిగి పొంది అసలైన ఆబ్జెక్ట్‌గా మార్చడం (JSON.parse)
+const savedData = localStorage.getItem('user_session');
+if (savedData) {
+  const parsedUser = JSON.parse(savedData);
+  console.log('యూజర్ పేరు:', parsedUser.name); // "సునీత"
+  console.log('నేర్చుకుంటున్న కోర్సులు:', parsedUser.courses.join(', '));
+}
+
+// 3. ఐటమ్ డిలీట్ చేయడం
+// localStorage.removeItem('user_session');</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>SessionStorage ఎప్పుడు వాడాలి? మల్టీ-టాబ్ ఐసోలేషన్</div>
+    <div class="section-body">
+      <p>చాలామంది బిగినర్లు అడుగుతుంటారు: "LocalStorage ఉన్నప్పుడు SessionStorage ఎందుకు వాడాలి?"</p>
+      
+      <p>ఒక నిజ జీవిత ఉదాహరణ చూద్దాం: ఒక యూజర్ ఆన్‌లైన్ బ్యాంకింగ్ లేదా ఐఆర్‌సిటీసీ (IRCTC) ట్రైన్ టికెట్ బుకింగ్ వెబ్‌సైట్ ఓపెన్ చేశాడు. యూజర్ ఒకే బ్రౌజర్‌లో రెండు వేర్వేరు ట్యాబ్‌లలో రెండు వేర్వేరు టికెట్లు బుక్ చేయడానికి ప్రయత్నిస్తున్నాడు అనుకోండి. ఒకవేళ ఆ టికెట్ వివరాలు <code>localStorage</code> లో సేవ్ చేస్తే — ఒక ట్యాబ్‌లోని డేటా మరొక ట్యాబ్‌లోకి ఓవర్‌రైట్ అయిపోయి తీవ్రమైన గందరగోళం ఏర్పడుతుంది!</p>
+
+      <p>అటువంటి సందర్భాలలో <strong>SessionStorage</strong> అమూల్యమైనది. దీని ప్రత్యేకతలు:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>ట్యాబ్ ఐసోలేషన్:</strong> ఒకే వెబ్‌సైట్ అయినప్పటికీ, ప్రతి బ్రౌజర్ ట్యాబ్‌కు దాని స్వంత ప్రత్యేక SessionStorage ఉంటుంది. ఒక ట్యాబ్‌లోని డేటాను మరొక ట్యాబ్ చూడలేదు.</li>
+        <li><strong>ఆటో ఎక్స్‌పైరీ:</strong> యూజర్ ఆ బ్రౌజర్ ట్యాబ్‌ను క్లోజ్ చేయగానే ఆ సెషన్ డేటా శాశ్వతంగా తుడిచిపెట్టుకుపోతుంది. పేజీని కేవలం Refresh చేస్తే డేటా పోదు!</li>
+        <li><strong>సింటాక్స్:</strong> LocalStorage లాగే దీనికి కూడా <code>sessionStorage.setItem()</code>, <code>getItem()</code>, <code>removeItem()</code> ఉంటాయి.</li>
+      </ul>
+
+      <div class="code-header">
+        <span>SessionStorage వాస్తవ ఉదాహరణ (OTP / Step Tracker)</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>// మల్టీ-స్టెప్ ఫారమ్‌లో ప్రస్తుత స్టెప్‌ను స్టోర్ చేయడం
+sessionStorage.setItem('checkout_step', '2');
+sessionStorage.setItem('temp_seat_number', 'B4-22');
+
+// పేజీ రీఫ్రెష్ అయినా కూడా అదే స్టెప్‌లో ఉండటానికి
+const currentStep = sessionStorage.getItem('checkout_step');
+console.log('యూజర్ ప్రస్తుత చెక్అవుట్ దశ:', currentStep);
+
+// ట్యాబ్ మూసివేయగానే ఈ డేటా స్వయంచాలకంగా నాశనమవుతుంది!</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>HTML5 డ్రాగ్ అండ్ డ్రాప్ API (Drag and Drop): Trello బోర్డుల రహస్యం</div>
+    <div class="section-body">
+      <p>Trello, Jira లేదా Kanban బోర్డులలో మనం ఒక టాస్క్ కార్డును మౌస్‌తో పట్టుకుని "To-Do" కాలమ్ నుండి "Done" కాలమ్‌లోకి లాగి వదులుతాం (Drag and Drop). HTML5 రాకముందు దీనికోసం సంక్లిష్టమైన మౌస్ కోఆర్డినేట్ మ్యాథమెటిక్స్ రాసేవారు. కానీ HTML5 లో ఇది కేవలం కొన్ని ఈవెంట్ల ద్వారా నేరుగా పనిచేస్తుంది!</p>
+
+      <h4 style="color:#059669; font-size:16px;">డ్రాగ్ అండ్ డ్రాప్ 3 ముఖ్యమైన దశలు:</h4>
+      <ol style="margin-left:20px; color:var(--text2); line-height:1.7;">
+        <li><strong>ఎలిమెంట్‌ను డ్రాగబుల్ చేయడం:</strong> ఏ ఎలిమెంట్‌నైతే లాగాలనుకుంటున్నామో దానికి <code>draggable="true"</code> ఆట్రిబ్యూట్ ఇవ్వాలి.</li>
+        <li><strong>dragstart ఈవెంట్‌లో డేటా భద్రపరచడం:</strong> లాగడం మొదలుపెట్టినప్పుడు <code>event.dataTransfer.setData('text/plain', element.id)</code> ద్వారా ఐడీని పంపుతాం.</li>
+        <li><strong>డ్రాప్ జోన్‌లో అంగీకరించడం:</strong> డ్రాప్ చేయాల్సిన ప్రదేశంలో బ్రౌజర్ యొక్క డీఫాల్ట్ బిహేవియర్‌ను నిరోధించడానికి <code>event.preventDefault()</code> చేయాలి (ఇది చేయకపోతే డ్రాప్ ఈవెంట్ ట్రిగ్గర్ అవ్వదు!), ఆపై <code>drop</code> ఈవెంట్‌లో ఎలిమెంట్‌ను అపెండ్ చేస్తాం.</li>
+      </ol>
+
+      <div class="code-header">
+        <span>మినీ కాన్బన్ బోర్డ్ — HTML5 Drag &amp; Drop</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>&lt;style&gt;
+  .box-container { display: flex; gap: 20px; }
+  .dropzone { width: 180px; min-height: 140px; border: 2px dashed #059669; border-radius: 8px; padding: 10px; background: #ecfdf5; }
+  .card { padding: 12px; background: white; border: 1px solid #10b981; border-radius: 6px; cursor: grab; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  .card:active { cursor: grabbing; }
+&lt;/style&gt;
+
+&lt;div class="box-container"&gt;
+  &lt;!-- జోన్ 1: చేయవలసిన పనులు (To-Do) --&gt;
+  &lt;div class="dropzone" id="zone1" ondragover="allowDrop(event)" ondrop="handleDrop(event)"&gt;
+    &lt;div style="font-size:12px; font-weight:700; color:#059669; margin-bottom:8px;"&gt;📋 చేయవలసినవి (To-Do)&lt;/div&gt;
+    &lt;div id="task1" class="card" draggable="true" ondragstart="handleDrag(event)"&gt;
+      📝 HTML5 చాప్టర్ 19 చదవాలి
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- జోన్ 2: పూర్తయినవి (Completed) --&gt;
+  &lt;div class="dropzone" id="zone2" ondragover="allowDrop(event)" ondrop="handleDrop(event)"&gt;
+    &lt;div style="font-size:12px; font-weight:700; color:#059669; margin-bottom:8px;"&gt;✅ పూర్తయినవి (Done)&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  // 1. డ్రాగింగ్ మొదలైనప్పుడు ఐడీని ప్యాక్ చేయడం
+  function handleDrag(e) {
+    e.dataTransfer.setData("text/plain", e.target.id);
+  }
+
+  // 2. డ్రాప్ జోన్ అనుమతించడం (preventDefault తప్పనిసరి!)
+  function allowDrop(e) {
+    e.preventDefault();
+  }
+
+  // 3. డ్రాప్ చేసినప్పుడు ఎలిమెంట్‌ను కొత్త బాక్స్‌లోకి చేర్చడం
+  function handleDrop(e) {
+    e.preventDefault();
+    const elementId = e.dataTransfer.getData("text/plain");
+    const draggedCard = document.getElementById(elementId);
+    // డ్రాప్ జోన్ లేదా దాని లోపలి కంటైనర్‌కు అపెండ్ చేయడం
+    if (e.target.classList.contains('dropzone')) {
+      e.target.appendChild(draggedCard);
+    }
+  }
+&lt;/script&gt;</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>ఆధునిక డివైస్ APIలు: Geolocation, Web Share &amp; Clipboard API</div>
+    <div class="section-body">
+      <p>HTML5 వెబ్ యాప్‌లు కేవలం స్టాటిక్ పేజీలు కావు; అవి మొబైల్ లేదా ల్యాప్‌టాప్ హార్డ్‌వేర్ ఫీచర్లతో నేరుగా సంభాషించగలవు:</p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఆధునిక API</th>
+              <th>కోడ్ సింటాక్స్</th>
+              <th>ఉద్దేశం / వాస్తవ ఉపయోగం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Geolocation API</strong></td>
+              <td><code>navigator.geolocation.getCurrentPosition()</code></td>
+              <td>యూజర్ యొక్క అక్షాంశం, రేఖాంశాలను (GPS లొకేషన్) తెలుసుకోవడం (ఉదా: Zomato, Uber).</td>
+            </tr>
+            <tr>
+              <td><strong>Web Share API</strong></td>
+              <td><code>navigator.share({ title, url })</code></td>
+              <td>మొబైల్‌లో నేటివ్ షేర్ షీట్ (WhatsApp, Telegram) ఓపెన్ చేసి లింక్ షేర్ చేయడం.</td>
+            </tr>
+            <tr>
+              <td><strong>Async Clipboard API</strong></td>
+              <td><code>navigator.clipboard.writeText(text)</code></td>
+              <td>"Copy to Clipboard" బటన్ కోసం ఒక్క లైన్‌లో క్లిప్‌బోర్డ్‌కు టెక్స్ట్ కాపీ చేయడం.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-header">
+        <span>ఆధునిక Clipboard &amp; Web Share కోడ్ స్నిప్పెట్</span>
+        <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+      </div>
+      <pre><code>// 1. ఆధునిక క్లిప్‌బోర్డ్ కాపీ బటన్
+async function copyReferralCode() {
+  try {
+    await navigator.clipboard.writeText("MANA-HTML5-2026");
+    alert("రెఫరల్ కోడ్ క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది! 📋");
+  } catch (err) {
+    console.error("కాపీ విఫలమైంది:", err);
+  }
+}
+
+// 2. నేటివ్ మొబైల్ షేర్ షీట్ ఓపెన్ చేయడం
+async function shareArticle() {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'ఆధునిక HTML5 Masterclass in Telugu',
+        text: 'తెలుగులో అద్భుతమైన HTML5 APIలను ఉచితంగా నేర్చుకోండి!',
+        url: window.location.href
+      });
+    } catch (err) {
+      console.log('షేరింగ్ రద్దు చేయబడింది');
+    }
+  } else {
+    alert('మీ బ్రౌజర్‌లో నేటివ్ షేర్ API సపోర్ట్ లేదు; దయచేసి లింక్ కాపీ చేసుకోండి.');
+  }
+}</code></pre>
+      <button class="run-code-btn" onclick="runSnippet(this)">▶ Run in Online HTML Editor</button>
+    </div>
+
+    <!-- SECTION 12 (INTERACTIVE QUIZ) -->
+    <div class="section-title"><span class="num">12</span>ఇంటరాక్టివ్ నాలెడ్జ్ చెక్ (Self-Assessment Quiz)</div>
+    <div class="section-body">
+      <p>ఈ అధ్యాయంలో మీరు నేర్చుకున్న ఆధునిక HTML5 APIల భావనలను పరీక్షించుకోవడానికి క్రింది ప్రశ్నలపై క్లిక్ చేసి సరైన సమాధానాలను పరిశీలించండి:</p>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: &lt;dialog&gt; బాక్స్‌ను టాప్ లేయర్ మరియు డార్క్ బ్యాక్‌డ్రాప్‌తో మోడల్‌గా ఓపెన్ చేయడానికి ఏ మెథడ్ పిలవాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>dialog.showModal()</code>. సాధారణ <code>dialog.show()</code> పిలిస్తే నాన్-మోడల్‌గా బ్యాక్‌డ్రాప్ లేకుండా తెరుచుకుంటుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: LocalStorage లో ఒక ఆబ్జెక్ట్ లేదా ఆరేను భద్రపరచడానికి ముందు ఏ జావాస్క్రిప్ట్ మెథడ్ ఉపయోగించాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>JSON.stringify(object)</code>. ఎందుకంటే LocalStorage కేవలం స్ట్రింగ్స్ మాత్రమే నిల్వ చేయగలదు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: బ్రౌజర్ ట్యాబ్ మూసివేయగానే స్వయంచాలకంగా డిలీట్ అయ్యే క్లయింట్-సైడ్ స్టోరేజ్ ఏది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>sessionStorage</code>. LocalStorage డేటా శాశ్వతంగా ఉంటుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: ఒకేసారి ఒక ప్రశ్న మాత్రమే ఓపెన్ అయ్యేలా (Exclusive Accordion) చేయడానికి &lt;details&gt; కు ఏ ఆట్రిబ్యూట్ జోడించాలి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>name="..."</code> ఆట్రిబ్యూట్ (ఉదా: <code>&lt;details name="faq"&gt;</code>). ఇది modern HTML5 లో నేటివ్ ఎక్స్‌క్లూజివ్ అకార్డియన్ సపోర్ట్.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: HTML5 డ్రాగ్ అండ్ డ్రాప్ లో ondragover ఈవెంట్‌లో ఏ కోడ్ తప్పనిసరిగా రాయకపోతే drop ఈవెంట్ ట్రిగ్గర్ అవ్వదు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>event.preventDefault()</code>. బ్రౌజర్ డీఫాల్ట్ డ్రాప్ బిహేవియర్ నిరోధించకపోతే ఎలిమెంట్ డ్రాప్ అవ్వదు.
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 13 (TRY BOX & SUMMARY) -->
+    <div class="section-title"><span class="num">13</span>మీరే స్వయంగా Try చేయండి &amp; సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🚀 ఆధునిక మోడల్ డైలాగ్ &amp; లోకల్ స్టోరేజ్‌ను మన ఎడిటర్‌లో లైవ్‌గా పరీక్షించండి</div>
+        <p>పైన వివరించిన <code>&lt;dialog&gt;</code> మోడల్ కోడ్ మరియు డార్క్ థీమ్ సేవ్ చేసే <code>localStorage</code> కోడ్‌ను మన ఆన్‌లైన్ ఎడిటర్‌లో ఓపెన్ చేసి స్వయంగా ఎగ్జిక్యూట్ చేయండి. పేజీని రీఫ్రెష్ చేసినా మీ విలువలు ఎలా చెక్కుచెదరకుండా ఉంటాయో గమనించండి!</p>
+        <a class="run-btn" href="/online-html-editor.html" target="_blank">
+          👉 Our Compiler లో HTML Editor try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 క్విక్ సారాంశం (Key Takeaways):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>&lt;dialog&gt;:</strong> బాహ్య పాపప్ లైబ్రరీలు లేకుండా నేటివ్ టాప్-లేయర్ మోడల్ విండోలు అందిస్తుంది.</li>
+          <li><strong>showModal() &amp; ::backdrop:</strong> ఇన్-బిల్ట్ ఎస్కేప్ కీ, ఫోకస్ ట్రాప్ మరియు అందమైన గ్లాస్ బ్లర్ బ్యాక్‌డ్రాప్.</li>
+          <li><strong>&lt;details&gt; &amp; &lt;summary&gt;:</strong> జీరో లైన్ల జావాస్క్రిప్ట్‌తో అందమైన FAQ అకార్డియన్లు.</li>
+          <li><strong>Web Storage API:</strong> పాత కుకీల 4KB పరిమితిని దాటి 5MB+ క్లయింట్-సైడ్ నిల్వను అందిస్తుంది.</li>
+          <li><strong>LocalStorage vs SessionStorage:</strong> శాశ్వత డేటాకు LocalStorage; ట్యాబ్-ఐసోలేటెడ్ తాత్కాలిక డేటాకు SessionStorage.</li>
+          <li><strong>Drag &amp; Drop:</strong> draggable="true", preventDefault on dragover, and dataTransfer.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>గ్రాండ్ ఫినాలే అధ్యాయంలో (Chapter 20 — Capstone Project):</strong> మనం ఈ కోర్సులో నేర్చుకున్న మొత్తం 20 అధ్యాయాల నాలెడ్జ్ (సెమాంటిక్స్, టేబుల్స్, ఫారమ్స్, ఆడియో/వీడియో, ఎస్ఈఓ, యాక్సెసిబిలిటీ, మరియు మోడరన్ డైలాగ్ API) ని అనుసంధానిస్తూ ఒక సంపూర్ణ <strong>"రెస్పాన్సివ్ డెవలపర్ పోర్ట్‌ఫోలియో వెబ్‌సైట్"</strong> ను మొదటి నుండి చివరి వరకు లైవ్‌గా నిర్మించబోతున్నాం!
+      </div>
+    </div>
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
       <a href="/blog-html/18-html-accessibility-aria-and-screen-readers.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
         ← Prev: 18. వెబ్ యాక్సెసిబిలిటీ & ARIA
       </a>
-      
       <a href="/blog-html/20-html-capstone-project-complete-responsive-portfolio.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
         Next: 20. కంప్లీట్ క్యాప్‌స్టోన్ ప్రాజెక్ట్ →
       </a>
@@ -370,7 +996,7 @@
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested across modern Web Standards / W3C · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested across modern Web Standards / W3C &amp; WHATWG · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -381,3 +1007,4 @@
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
+
