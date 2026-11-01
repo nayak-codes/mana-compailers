@@ -1,0 +1,920 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[7]; // Chapter 8
+const sidebarHtml = buildSidebar(8);
+
+const chapter08Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ break, continue & లూప్ కంట్రోల్ సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: Early Exits, Multi-level Loop Breaking, goto స్టేట్‌మెంట్ విశ్లేషణ, అసెంబ్లీ JMP ఇన్స్ట్రక్షన్స్, మరియు Enterprise Cybersecurity Firewall Packet Inspection ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ break continue telugu, c++ loop control, c++ break statement, c++ continue statement, goto harmful c++, multi-level loop break, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Mastering C++ break, continue & Loop Control in Telugu)",
+    "description": "C++ లూప్ కంట్రోల్ పూర్తి గైడ్: break, continue, goto విశ్లేషణ, Multi-level loop breaking, మరియు Cybersecurity Firewall Packet Filter ప్రాజెక్ట్.",
+    "articleSection": "Phase 2: Control Flow & Loops",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-08",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default','goto',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid','static_cast',
+        'likely','unlikely','fallthrough'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','vector','map','set','pair','main',
+        'printf','scanf','getline','numeric_limits','setw','setprecision','fixed','setfill',
+        'left','right','boolalpha','noboolalpha','size','find_if'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => {
+        el.innerHTML = highlightCppCode(el.textContent);
+      });
+    });
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        navigator.clipboard.writeText(codeEl.textContent).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        });
+      }
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        const rawCode = codeEl.textContent;
+        try {
+          localStorage.setItem('code_cpp17', rawCode);
+          localStorage.setItem('code_cpp', rawCode);
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        window.open('/online-cpp-compiler.html', '_blank');
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+    
+    <!-- BREADCRUMB NAVIGATION -->
+    <nav class="breadcrumb" aria-label="Breadcrumb" style="font-size:13.5px; margin-bottom:16px; color:var(--text2);">
+      <a href="/" style="color:#10b981; text-decoration:none;">Home</a> &gt; 
+      <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html" style="color:#10b981; text-decoration:none;">C++ Masterclass</a> &gt; 
+      <span>Phase 2: Control Flow</span> &gt;
+      <span style="color:var(--text); font-weight:600;">Chapter 08: break, continue & లూప్ కంట్రోల్</span>
+    </nav>
+
+    <!-- LESSON TITLE & META -->
+    <h1 style="font-size:32px; font-weight:800; line-height:1.25; margin-bottom:12px; color:var(--text);">
+      ${currentLesson.title}
+    </h1>
+    <div style="display:flex; gap:16px; align-items:center; font-size:13px; color:var(--text2); margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+      <span>📅 తాజా నవీకరణ: నవంబర్ 2026</span>
+      <span>⏱️ చదివే సమయం: 27 నిమిషాలు</span>
+      <span>🎯 స్థాయి: బిగినర్ నుండి అడ్వాన్స్‌డ్ (Modern C++17/C++20)</span>
+      <span>⭐ Phase 2 గ్రాండ్ ఫినాలే: Phase 2 పూర్తి కాబోతోంది!</span>
+    </div>
+
+    <!-- SOFT IVORY INTRO BOX -->
+    <div class="intro-box">
+      <h3>🌟 ఈ అధ్యాయంలో మీరు ఏమి నేర్చుకోబోతున్నారు?</h3>
+      <p>
+        మునుపటి అధ్యాయంలో మనం లూప్స్ ద్వారా ఒకే పనిని పదే పదే ఎలా ఆటోమేట్ చేయవచ్చో నేర్చుకున్నాం. కానీ నిజ జీవితంలో ఒక లూప్ నిర్ణయించబడిన అన్ని రౌండ్లు తిరగాల్సిన అవసరం ఉండకపోవచ్చు! ఉదాహరణకు: 10 లక్షల రికార్డులలో ఒక యూజర్ సమాచారం 5వ రికార్డు వద్దే దొరికినప్పుడు, మిగిలిన 9,99,995 రౌండ్లు తిరగడం సమయం మరియు CPU రిసోర్స్‌లను తీవ్రంగా వృధా చేయడమే అవుతుంది.
+      </p>
+      <p>
+        ఇలాంటి సందర్భాలలో లూప్ యొక్క సాధారణ ప్రవాహాన్ని నియంత్రించడానికి C++ మనకు అందించే అస్త్రాలే <strong>జంప్ స్టేట్‌మెంట్లు: <code>break</code> మరియు <code>continue</code></strong>. ఈ సమగ్ర మాస్టర్‌క్లాస్‌లో మనం:
+      </p>
+      <ul>
+        <li><code>break</code> తో తక్షణ లూప్ టెర్మినేషన్ & అసెంబ్లీ లెవల్ అన్-కండిషనల్ జంప్స్.</li>
+        <li><code>continue</code> తో కరెంట్ ఇటరేషన్‌ను స్కిప్ చేసి తర్వాతి రౌండ్‌కు దూకడం.</li>
+        <li><code>while</code> లూప్‌లో <code>continue</code> వాడేటప్పుడు వచ్చే ప్రమాదకరమైన <strong>Infinite Loop Trap</strong>!</li>
+        <li>సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో వివాదాస్పదమైన <strong><code>goto</code> స్టేట్‌మెంట్</strong> ఎందుకు వాడకూడదు? (Dijkstra's "Go To Considered Harmful").</li>
+        <li>మల్టీ-లెవల్ / నెస్టెడ్ లూప్స్ నుండి ఒకేసారి బయటపడే <strong>4 ప్రొఫెషనల్ ఆర్కిటెక్చరల్ పద్ధతులు</strong> (Flag, Guard Return, Lambdas).</li>
+        <li>ఇన్ఫైనైట్ లూప్‌లను సురక్షితంగా ఆపే <strong>Watchdog Timer Pattern</strong>.</li>
+        <li>చివరిగా సైబర్‌సెక్యూరిటీ నెట్‌వర్క్ ఫైర్‌వాల్ రంగానికి చెందిన పూర్తి స్థాయి <strong>"Enterprise Firewall Deep Packet Inspection (DPI) Engine"</strong> ప్రాజెక్ట్ రన్ చేస్తాం!</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> కంట్రోల్ జంప్స్ అంటే ఏమిటి? లూప్స్ నుండి ముందస్తు నిష్క్రమణ (Early Exit) ఎందుకు అవసరం?</h2>
+      <p>
+        సాధారణంగా ఏ లూప్ అయినా తన కండిషన్ <code>false</code> అయ్యే వరకు తిరుగుతూనే ఉంటుంది. కానీ సాఫ్ట్‌వేర్ అప్లికేషన్లలో ఊహించని పరిస్థితులు (Exceptions), ఎర్రర్లు, లేదా ముందుగానే టార్గెట్ దొరకడం వంటివి జరుగుతుంటాయి.
+      </p>
+      <p>
+        లూప్ యొక్క పూర్తి సైకిల్స్ ముగియకముందే, మధ్యలోనే ఆ ప్రవాహాన్ని అడ్డుకుని బయటకు రావడాన్ని లేదా మార్చడాన్ని <strong>Early Exit (ముందస్తు నిష్క్రమణ)</strong> అంటారు.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:20px 0;">
+        <h4 style="margin:0 0 12px 0; color:#10b981; font-size:15px;">🎯 C++ లోని 4 ప్రధాన జంప్ స్టేట్‌మెంట్లు (The 4 Jump Statements)</h4>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.8; color:var(--text);">
+          1. <strong>break:</strong> ప్రస్తుత లూప్ లేదా switch నుండి తక్షణమే శాశ్వతంగా బయటకు వచ్చేస్తుంది.<br>
+          2. <strong>continue:</strong> ప్రస్తుత రౌండ్‌లోని మిగిలిన కోడ్‌ను వదిలేసి, వెంటనే తర్వాతి ఇటరేషన్‌కు దూకుతుంది.<br>
+          3. <strong>return:</strong> లూప్‌తో పాటు యావత్ ఫంక్షన్ నుండే తక్షణమే ఫలితంతో బయటకు నిష్క్రమిస్తుంది.<br>
+          4. <strong>goto:</strong> ప్రోగ్రామ్‌లోని ఏదైనా నిర్దిష్ట లేబుల్‌కు నేరుగా బలైపోయిన జంప్ చేస్తుంది (ప్రమాదకరం).
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> break స్టేట్‌మెంట్: తక్షణ లూప్ టెర్మినేషన్ (Instant Loop Termination)</h2>
+      <p>
+        ఒక లూప్ లోపల కంపైలర్‌కు <strong><code>break;</code></strong> ఎదురైన మరుక్షణమే, ఆ లూప్ యొక్క మిగిలిన అన్ని ఇటరేషన్లు తక్షణమే రద్దు చేయబడతాయి. కంట్రోల్ నేరుగా లూప్ కర్లీ బ్రాకెట్ల <code>{ ... }</code> తర్వాత ఉన్న మొదటి స్టేట్‌మెంట్‌కు జంప్ చేస్తుంది.
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: break Statement in Linear Search (రహస్య నిధి అన్వేషణ)</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;int&gt; userIds = {1024, 2048, 4096, 8192, 16384, 32768, 65536};
+    int targetId = 8192;
+    int searchComparisons = 0;
+    bool isFound = false;
+
+    std::cout &lt;&lt; "వెతుకుతున్న యూజర్ ఐడీ: " &lt;&lt; targetId &lt;&lt; "\\n";
+
+    for (size_t i = 0; i &lt; userIds.size(); ++i) {
+        ++searchComparisons;
+        std::cout &lt;&lt; "ఇండెక్స్ [" &lt;&lt; i &lt;&lt; "] పరిశీలన: ఐడీ " &lt;&lt; userIds[i] &lt;&lt; "...\\n";
+
+        if (userIds[i] == targetId) {
+            std::cout &lt;&lt; "🎉 ఐడీ విజయవంతంగా లభించింది! ఇండెక్స్: " &lt;&lt; i &lt;&lt; '\\n';
+            isFound = true;
+            break; // 🛑 బ్రేక్! లక్ష్యం దొరికింది కాబట్టి మిగిలిన అర్రేను వెతకడం ఆపేయండి!
+        }
+    }
+
+    std::cout &lt;&lt; "----------------------------------------------------\\n";
+    std::cout &lt;&lt; "మొత్తం పోలికల సంఖ్య: " &lt;&lt; searchComparisons &lt;&lt; " (లక్ష్యం లభించిన వెంటనే ఆగిపోయింది)\\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> continue స్టేట్‌మెంట్: ప్రస్తుత ఇటరేషన్‌ను స్కిప్ చేయడం</h2>
+      <p>
+        <code>break</code> మొత్తం లూప్‌ను శాశ్వతంగా ఆపేస్తే, <strong><code>continue;</code></strong> స్టేట్‌మెంట్ కేవలం ఆ ప్రస్తుత రౌండ్‌ను మాత్రమే అర్ధాంతరంగా ముగించి, లూప్‌ను తర్వాతి రౌండ్‌కు (Next Iteration) ముందుకు నడిపిస్తుంది.
+      </p>
+
+      <div style="background:var(--bg3); padding:12px 18px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:14px 0; color:#10b981;">
+        for (int i = 1; i &lt;= 10; ++i) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;if (i % 2 == 0) continue; // సరి సంఖ్యలు వస్తే క్రింది కోడ్‌ను స్కిప్ చేయి<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;std::cout &lt;&lt; i &lt;&lt; " ";   // కేవలం బేసి సంఖ్యలు మాత్రమే ప్రింట్ అవుతాయి (1 3 5 7 9)<br>
+        }
+      </div>
+
+      <div class="card" style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px; margin:18px 0;">
+        <h4 style="margin:0 0 8px 0; color:#ef4444; font-size:15px;">⚠️ The Deadly while-loop continue Trap (భయంకరమైన ఇన్ఫైనైట్ లూప్ బగ్)</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          <code>for</code> లూప్‌లో <code>continue</code> కొట్టినప్పుడు అది ఆటోమేటిక్‌గా <code>update</code> (ఉదా: <code>++i</code>) ను రన్ చేస్తుంది. కానీ <strong><code>while</code> లూప్‌లో మీరు కౌంటర్‌ను లూప్ చివర పెట్టి, మధ్యలో <code>continue</code> కొడితే — కౌంటర్ అప్‌డేట్ అవ్వకుండా స్కిప్ అయిపోయి, లూప్ అనంతంగా తిరుగుతూ ప్రోగ్రామ్ ఫ్రీజ్ అయిపోతుంది!</strong>
+        </p>
+      </div>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 The Problem & The Clean Solution in while loop</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++ while-continue Best Practice</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int count = 0;
+
+    std::cout &lt;&lt; "1 నుండి 10 వరకు 3 యొక్క గుణిజాలను స్కిప్ చేయడం:\\n";
+
+    while (count &lt; 10) {
+        ++count; // ✅ ఎల్లప్పుడూ continue కి ముందే కౌంటర్‌ను పెంచాలి!
+
+        if (count % 3 == 0) {
+            std::cout &lt;&lt; "[స్కిప్: " &lt;&lt; count &lt;&lt; "] ";
+            continue; // 3, 6, 9 లు స్కిప్ అవుతాయి కానీ లూప్ సేఫ్ గా ముందుకు సాగుతుంది!
+        }
+
+        std::cout &lt;&lt; count &lt;&lt; " ";
+    }
+
+    std::cout &lt;&lt; "\\nలూప్ విజయవంతంగా ముగిసింది.\\n";
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> The Infamous goto స్టేట్‌మెంట్: చారిత్రక నేపథ్యం & "Spaghetti Code" ప్రమాదం</h2>
+      <p>
+        C మరియు C++ లలో ప్రారంభం నుండి ఉన్న ఒక పురాతన స్టేట్‌మెంట్ <strong><code>goto</code></strong>. ఇది కోడ్‌లో ఎక్కడైనా ఒక లేబుల్ (Label) పెట్టి, ప్రోగ్రామ్‌ను నేరుగా ఆ లేబుల్ వద్దకు దూకించడానికి అనుమతిస్తుంది: <code>goto error_handler;</code>.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:18px 0;">
+        <h4 style="margin:0 0 10px 0; color:#ef4444; font-size:15px;">📜 Dijkstra's 1968 Manifesto: "Go To Statement Considered Harmful"</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          కంప్యూటర్ సైన్స్ పితామహులలో ఒకరైన ప్రొఫెసర్ ఎడ్స్‌గర్ డైక్‌స్ట్రా (Edsger Dijkstra) 1968 లో రాసిన ప్రసిద్ధ పత్రం ఆధునిక సాఫ్ట్‌వేర్ ప్రపంచాన్ని మార్చేసింది. కోడ్‌లో విచ్చలవిడిగా <code>goto</code> లు రాస్తే, ప్రోగ్రామ్ ఫ్లో ఎటు నుండి ఎటు వెళ్తుందో ఎవరికీ అర్థం కాని నూడుల్స్ గిన్నెలా (<strong>Spaghetti Code</strong>) మారిపోతుంది! దీనివల్ల డీబగ్గింగ్ చేయడం అసాధ్యంగా మారుతుంది.
+        </p>
+      </div>
+
+      <p style="font-size:13.5px; color:var(--text);">
+        <strong>Modern C++ లో goto ఎందుకు దాదాపు నిషేధం?</strong><br>
+        C భాషలో ఎర్రర్ హ్యాండ్లింగ్ కోసం తప్పనిసరి పరిస్థితులలో <code>goto cleanup;</code> వాడేవారు. కానీ C++ లో మనకు <strong>RAII (Resource Acquisition Is Initialization)</strong>, స్మార్ట్ పాయింటర్లు (<code>std::unique_ptr</code>), మరియు <strong>Exceptions</strong> ఉన్నాయి. C++ ఆబ్జెక్టుల డిస్ట్రక్టర్లు ఆటోమేటిక్‌గా మెమరీని క్లీన్ చేస్తాయి కాబట్టి Modern C++ లో <code>goto</code> వాడవలసిన అవసరం 100% లేదు!
+      </p>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> మల్టీ-లెవల్ / నెస్టెడ్ లూప్స్ బ్రేకింగ్ (The Multi-Level Loop Break Challenge)</h2>
+      <p>
+        C++ లో బిగినర్స్ తరచుగా చేసే ఒక పెద్ద తప్పు: <em>రెండు నెస్టెడ్ లూప్‌లు ఉన్నప్పుడు లోపలి లూప్‌లో <code>break;</code> రాస్తే రెండూ ఆగిపోతాయని అనుకోవడం!</em>
+      </p>
+      <p>
+        <strong>C++ రూల్:</strong> <code>break</code> స్టేట్‌మెంట్ కేవలం తనకు అత్యంత సమీపంలో ఉన్న ఒకే ఒక్క లోపలి లూప్‌ను (Innermost Loop) మాత్రమే ఆపుతుంది. బయట ఉన్న ఔటర్ లూప్ ఇంకా నిరభ్యంతరంగా తిరుగుతూనే ఉంటుంది!
+      </p>
+
+      <div class="card" style="background:var(--bg2); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:16px 20px; margin:16px 0;">
+        <h4 style="margin:0 0 8px 0; color:#10b981; font-size:15px;">🏆 నెస్టెడ్ లూప్స్ నుండి బయటపడే 2 ఇండస్ట్రీ బెస్ట్ ప్రాక్టీసెస్</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          <strong>విధానం 1 (Boolean Flag):</strong> ఒక ఫ్లాగ్ వేరియబుల్ (<code>bool exitBoth = false;</code>) పెట్టి, ఇన్నర్ లూప్‌లో దాన్ని true చేసి బ్రేక్ చేయడం, ఔటర్ లూప్‌లో ఆ ఫ్లాగ్‌ను చెక్ చేసి మళ్లీ బ్రేక్ చేయడం.<br>
+          <strong>విధానం 2 (Function Guard Return - Recommended):</strong> నెస్టెడ్ లూప్‌ను ఒక ప్రత్యేక ఫంక్షన్‌గా రాసి, టార్గెట్ దొరకగానే నేరుగా <code>return</code> చేయడం. ఇది అత్యంత క్లీన్ మరియు వేగవంతమైన ఆర్కిటెక్చరల్ పద్ధతి!
+        </p>
+      </div>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Function Return Pattern for Nested Loop Escape (2D Grid Search)</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Modern C++ Guard Return Pattern</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// 2D మ్యాట్రిక్స్‌లో నంబర్‌ను వెతికే ఫంక్షన్: దొరకగానే నేరుగా return చేస్తుంది!
+bool findInMatrix(const std::vector&lt;std::vector&lt;int&gt;&gt;&amp; matrix, int target) {
+    for (size_t r = 0; r &lt; matrix.size(); ++r) {
+        for (size_t c = 0; c &lt; matrix[r].size(); ++c) {
+            if (matrix[r][c] == target) {
+                std::cout &lt;&lt; "🎯 టార్గెట్ " &lt;&lt; target &lt;&lt; " రో [" &lt;&lt; r &lt;&lt; "], కాలమ్ [" &lt;&lt; c &lt;&lt; "] వద్ద దొరికింది!\\n";
+                return true; // 🏆 మల్టీ-లెవల్ లూప్‌లన్నింటినీ ఒక్కేసారి బైపాస్ చేసి బయటకు వచ్చేస్తుంది!
+            }
+        }
+    }
+    return false; // ఎక్కడా దొరకలేదు
+}
+
+int main() {
+    std::vector&lt;std::vector&lt;int&gt;&gt; grid = {
+        {10, 20, 30},
+        {40, 50, 60},
+        {70, 80, 90}
+    };
+
+    findInMatrix(grid, 50);
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> ఇన్ఫైనైట్ లూప్స్ సేఫ్ బ్రేకింగ్ & వాచ్‌డాగ్ టైమర్స్ (Watchdog Pattern)</h2>
+      <p>
+        ఎంబెడెడ్ సిస్టమ్స్ (IoT డివైజెస్, రోవర్లు, డ్రోన్లు) మరియు హై-అవైలబిలిటీ సర్వర్లలో ప్రోగ్రామ్ అకస్మాత్తుగా హ్యాంగ్ అయిపోకుండా చూసేందుకు <strong>వాచ్‌డాగ్ బ్రేక్ ప్యాటర్న్ (Watchdog Pattern)</strong> ఉపయోగిస్తారు.
+      </p>
+      <p>
+        ఒక <code>while (true)</code> లూప్ నిరంతరం రన్ అవుతున్నప్పటికీ, నిర్దిష్ట సమయం లేదా గరిష్ట ప్రయత్నాలు (Max Retries) దాటితే స్వయంచాలకంగా <code>break</code> అయి సిస్టమ్‌ను రీబూట్ లేదా ఎమర్జెన్సీ సేఫ్ మోడ్‌లోకి పంపుతుంది:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Watchdog Retry Pattern in Server Connection</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 Enterprise Pattern</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int retryCount = 0;
+    const int maxRetries = 4;
+    bool isConnected = false;
+
+    std::cout &lt;&lt; "🌐 క్లౌడ్ గేట్‌వే సర్వర్‌తో కనెక్ట్ అవ్వడానికి ప్రయత్నిస్తున్నాం...\\n";
+
+    // ఇన్ఫైనైట్ లూప్ - కానీ వాచ్‌డాగ్ పరిమితితో సేఫ్ గా నియంత్రించబడింది!
+    while (true) {
+        ++retryCount;
+        std::cout &lt;&lt; "ప్రయత్నం #" &lt;&lt; retryCount &lt;&lt; "... ";
+
+        // 3వ ప్రయత్నంలో సర్వర్ రెస్పాండ్ అయిందని అనుకరిద్దాం
+        if (retryCount == 3) {
+            std::cout &lt;&lt; "✅ కనెక్షన్ విజయవంతమైంది!\\n";
+            isConnected = true;
+            break; // విజయవంతం కాగానే లూప్ టెర్మినేట్ అవుతుంది
+        }
+
+        std::cout &lt;&lt; "❌ కనెక్షన్ విఫలమైంది.\\n";
+
+        // వాచ్‌డాగ్ సేఫ్టీ చెక్: గరిష్ట పరిమితి దాటితే ఎమర్జెన్సీ బ్రేక్!
+        if (retryCount &gt;= maxRetries) {
+            std::cout &lt;&lt; "🛑 వాచ్‌డాగ్ అలర్ట్: గరిష్ట ప్రయత్నాలు పూర్తయ్యాయి. సర్వర్ డౌన్ అయింది!\\n";
+            break;
+        }
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> లూప్స్ లో return స్టేట్‌మెంట్: షార్ట్-సర్క్యూటింగ్ లూప్స్</h2>
+      <p>
+        ఒక ఫంక్షన్ లోపల మనం లూప్ నడిపిస్తున్నప్పుడు, <code>break</code> వాడితే లూప్ ముగిసిన తర్వాత ఆ ఫంక్షన్ లోని మిగిలిన లైన్లు కూడా రన్ అవుతాయి. కానీ కొన్ని సందర్భాలలో లూప్‌లో పని పూర్తి కాగానే మొత్తం ఫంక్షన్ అక్కడితో ముగిసిపోవాలి.
+      </p>
+      <p>
+        అటువంటి సందర్భాలలో <code>break</code> కు బదులుగా నేరుగా <strong><code>return</code></strong> వాడటం వల్ల ఫంక్షన్ ఎగ్జిక్యూషన్ తక్షణమే ముగిసి ఫలితాన్ని కాలర్‌కు అందిస్తుంది. దీనిని <strong>Short-Circuiting Loops via Return</strong> అంటారు.
+      </p>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> ఫిల్టరింగ్ & డేటా శానిటైజేషన్ లో continue పాత్ర</h2>
+      <p>
+        నిజ జీవితంలో డేటాబేస్ లేదా వెబ్ API నుండి వచ్చే డేటాలో నల్ వాల్యూస్ (<code>nullptr</code>), ఖాళీ రికార్డులు లేదా నెగెటివ్ నంబర్లు వంటి అనవసరమైన చెత్త డేటా ఉంటుంది.
+      </p>
+      <p>
+        మెయిన్ బిజినెస్ లాజిక్‌ను పెద్ద పెద్ద <code>if</code> కండిషన్ల లోపల నెస్ట్ చేయకుండా, ప్రారంభంలోనే చెత్త రికార్డులను గుర్తించి <strong><code>continue;</code></strong> చేయడం ద్వారా కోడ్‌ను అత్యంత క్లీన్ గా ఉంచవచ్చు (Early Continue Guard Pattern):
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: Data Sanitization Pipeline using continue</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+struct Order {
+    int orderId;
+    double amount;
+    bool isCancelled;
+};
+
+int main() {
+    std::vector&lt;Order&gt; orders = {
+        {101, 1500.0, false},
+        {102, -50.0,  false}, // తప్పుడు అమౌంట్
+        {103, 3200.0, true},  // క్యాన్సిల్ అయిన ఆర్డర్
+        {104, 4500.0, false},
+        {105, 0.0,    false}  // ఉచిత ఆర్డర్
+    };
+
+    double validRevenue = 0.0;
+    int processedCount = 0;
+
+    std::cout &lt;&lt; "--- ఈ-కామర్స్ ఆర్డర్ల రెవెన్యూ శానిటైజేషన్ పైప్‌లైన్ ---\\n";
+
+    for (const auto&amp; ord : orders) {
+        // 1. రద్దయిన ఆర్డర్లను స్కిప్ చేయండి
+        if (ord.isCancelled) {
+            std::cout &lt;&lt; "ఆర్డర్ #" &lt;&lt; ord.orderId &lt;&lt; " రద్దు చేయబడింది. [స్కిప్]\\n";
+            continue;
+        }
+
+        // 2. అమాన్యమైన రుణ లేదా సున్నా విలువలను స్కిప్ చేయండి
+        if (ord.amount &lt;= 0.0) {
+            std::cout &lt;&lt; "ఆర్డర్ #" &lt;&lt; ord.orderId &lt;&lt; " అమాన్యమైన మొత్తం: ₹" &lt;&lt; ord.amount &lt;&lt; " [స్కిప్]\\n";
+            continue;
+        }
+
+        // 3. కేవలం చెల్లుబాటు అయ్యే ఆర్డర్లు మాత్రమే ఇక్కడికి చేరుకుంటాయి!
+        validRevenue += ord.amount;
+        ++processedCount;
+        std::cout &lt;&lt; "ఆర్డర్ #" &lt;&lt; ord.orderId &lt;&lt; " ప్రాసెస్ అయింది: ₹" &lt;&lt; ord.amount &lt;&lt; '\\n';
+    }
+
+    std::cout &lt;&lt; "-----------------------------------------------------\\n";
+    std::cout &lt;&lt; "విజయవంతంగా లెక్కించిన మొత్తం రెవెన్యూ: ₹" &lt;&lt; validRevenue &lt;&lt; '\\n';
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> హార్డ్‌వేర్ & అసెంబ్లీ స్థాయిలో బ్రేక్ & కంటిన్యూ (Unconditional Jumps)</h2>
+      <p>
+        కంపైలర్ <code>break</code> మరియు <code>continue</code> స్టేట్‌మెంట్లను మెషిన్ కోడ్‌గా మార్చే విధానం చాలా సున్నితమైనది:
+      </p>
+      <ul>
+        <li><strong><code>break</code> అసెంబ్లీ కోడ్:</strong> కంపైలర్ దీనిని <code>JMP .L_LOOP_EXIT</code> అనే షరతులేని జంప్ (Unconditional Jump) గా మారుస్తుంది. CPU తక్షణమే లూప్ బౌండరీ దాటి తదుపరి ఇన్స్ట్రక్షన్‌కు వెళ్లిపోతుంది.</li>
+        <li><strong><code>continue</code> అసెంబ్లీ కోడ్:</strong> కంపైలర్ దీనిని <code>JMP .L_LOOP_UPDATE</code> గా మారుస్తుంది. అంటే లూప్ వేరియబుల్ ఇంక్రిమెంట్ అయ్యే లేబుల్ వద్దకు జంప్ చేస్తుంది.</li>
+      </ul>
+      <p>
+        ఆధునిక CPU లలోని బ్రాంచ్ ప్రిడిక్టర్ (Branch Predictor) షరతులేని <code>JMP</code> సూచనలను 100% కచ్చితత్వంతో ముందే గ్రహిస్తుంది, కాబట్టి బ్రేక్ మరియు కంటిన్యూ ల వల్ల రన్‌టైమ్ పైప్‌లైన్ స్టాల్స్ దాదాపు సున్నా!
+      </p>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> break vs continue vs return vs goto: సమగ్ర సాంకేతిక పోలిక</h2>
+      <p>
+        C++ లోని వివిధ జంప్ స్టేట్‌మెంట్ల స్వభావాన్ని సంపూర్ణంగా అర్థం చేసుకోవడానికి క్రింది పోలిక పట్టిక ఉపయోగపడుతుంది:
+      </p>
+
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్ / అంశం</th>
+              <th>break</th>
+              <th>continue</th>
+              <th>return</th>
+              <th>goto ⚠️</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ప్రభావ పరిధి (Scope)</strong></td>
+              <td>ప్రస్తుత లూప్ లేదా switch మాత్రమే</td>
+              <td>ప్రస్తుత లూప్ యొక్క ఒక రౌండ్ మాత్రమే</td>
+              <td>మొత్తం ఫంక్షన్ అంతా</td>
+              <td>ఫంక్షన్ లోపల ఎక్కడికైనా జంప్ చేయవచ్చు</td>
+            </tr>
+            <tr>
+              <td><strong>తర్వాతి గమ్యం</strong></td>
+              <td>లూప్ ముగింపు బ్రాకెట్ తర్వాత</td>
+              <td>లూప్ అప్‌డేట్ / కండిషన్ వద్దకు</td>
+              <td>ఫంక్షన్‌ను పిలిచిన కాలర్ వద్దకు</td>
+              <td>నిర్దేశిత లేబుల్ వద్దకు</td>
+            </tr>
+            <tr>
+              <td><strong>స్పాఘెట్టి కోడ్ రిస్క్</strong></td>
+              <td>చాలా తక్కువ (సురక్షితం)</td>
+              <td>చాలా తక్కువ (సురక్షితం)</td>
+              <td>చాలా తక్కువ (క్లీన్ కోడ్)</td>
+              <td><strong>తీవ్రమైన ప్రమాదం (High Risk)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>ఆధునిక వినియోగం</strong></td>
+              <td>ఎర్లీ ఎగ్జిట్ &amp; సెర్చ్ కోసం అత్యుత్తమం</td>
+              <td>ఫిల్టరింగ్ &amp; శానిటైజేషన్ కొరకు</td>
+              <td>గార్డ్ క్లాజెస్ &amp; షార్ట్-సర్క్యూట్ కొరకు</td>
+              <td><strong>ఖచ్చితంగా నివారించాలి</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> Modern C++ లో లూప్ జంప్స్ నివారణ: STL Algorithms & Ranges</h2>
+      <p>
+        Modern C++ లో అనుభవజ్ఞులైన డెవలపర్లు తరచుగా సాంప్రదాయ <code>for</code> లూప్‌లు మరియు <code>break</code> లను రాయడానికి బదులుగా <strong>Standard Library Algorithms</strong> ఉపయోగిస్తారు.
+      </p>
+      <p>
+        ఉదాహరణకు లీనియర్ సెర్చ్ మరియు బ్రేక్ స్థానంలో <strong><code>std::find_if</code></strong> వాడటం వల్ల కోడ్ ఎంతో స్పష్టంగా మారుతుంది:
+      </p>
+
+      <pre style="background:var(--bg3); padding:14px 18px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; color:#10b981; border-left:4px solid #10b981;"><code>#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+std::vector&lt;int&gt; scores = {45, 68, 82, 95, 74};
+// 90 కంటే ఎక్కువ మార్కులు సాధించిన మొదటి విద్యార్థిని వెతకడం (బ్రేక్ అవసరం లేదు!)
+auto it = std::find_if(scores.begin(), scores.end(), [](int s) { return s &gt;= 90; });
+
+if (it != scores.end()) {
+    std::cout &lt;&lt; "టాప్ స్కోరర్ మార్కులు: " &lt;&lt; *it &lt;&lt; '\\n';
+}</code></pre>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> సాధారణ బిగినర్ తప్పులు, బగ్స్ & బెస్ట్ ప్రాక్టీసెస్</h2>
+      <div style="display:flex; flex-direction:column; gap:16px; margin:18px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Myth 1: switch లోపల break పెడితే చుట్టూ ఉన్న లూప్ కూడా బ్రేక్ అవుతుంది</div>
+          <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0; line-height:1.6;">
+            ఒక లూప్ లోపల <code>switch</code> ఉన్నప్పుడు, <code>case</code> లో రాసే <code>break;</code> కేవలం ఆ <code>switch</code> ను మాత్రమే ముగిస్తుంది! అది బయట ఉన్న లూప్‌ను ఎట్టి పరిస్థితుల్లోనూ ఆపదు. బయటి లూప్‌ను కూడా ఆపాలంటే ఫ్లాగ్ వేరియబుల్ లేదా ఫంక్షన్ రిటర్న్ వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Myth 2: లూప్ లోపల ఎక్కడైనా break రాయవచ్చు</div>
+          <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0; line-height:1.6;">
+            ఒక లూప్ లోపల 5-6 చోట్ల <code>break</code> లు రాస్తే కోడ్ అర్థం చేసుకోవడం చాలా కష్టమవుతుంది. ఒక లూప్‌కు గరిష్టంగా 1 లేదా 2 స్పష్టమైన ఎగ్జిట్ పాయింట్లు మాత్రమే ఉండేలా డిజైన్ చేయాలి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాక్టీస్ ప్రాజెక్ట్: "Enterprise Cybersecurity Firewall & Deep Packet Inspection (DPI) Engine"</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న <code>break</code>, <code>continue</code>, Early Exit, మరియు మల్టీ-లెవల్ లూప్ కంట్రోల్ అన్నింటినీ ఉపయోగించి — సిస్కో లేదా ఫోర్టినెట్ తరహా పూర్తి స్థాయి <strong>"Enterprise Cybersecurity Network Firewall & Deep Packet Inspection Engine"</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Complete Masterclass Practice Project: Network Firewall Packet Filter</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 / C++20 Complete Project</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;iomanip&gt;
+
+// నెట్‌వర్క్ ప్యాకెట్ డేటా నిర్మాణం
+struct NetworkPacket {
+    int packetId;
+    std::string sourceIp;
+    int destPort;
+    std::string payload;
+    int threatScore; // 0 నుండి 100 వరకు రిస్క్ స్కోర్
+};
+
+int main() {
+    std::vector&lt;NetworkPacket&gt; packetStream = {
+        {1001, "192.168.1.15", 443,  "GET /secure/dashboard HTTPS", 5},
+        {1002, "10.0.0.45",    80,   "HEALTH_CHECK_PING",           0},
+        {1003, "172.16.0.88",  22,   "SSH_BRUTE_FORCE_PAYLOAD",     85},
+        {1004, "192.168.1.18", 8080, "NORMAL_API_JSON_REQUEST",    10},
+        {1005, "45.33.32.156", 445,  "MALWARE_RANSOMWARE_SIGNATURE",98}, // తీవ్రమైన సైబర్ దాడి!
+        {1006, "192.168.1.99", 443,  "USER_IMAGE_UPLOAD",           12}
+    };
+
+    std::cout &lt;&lt; "========================================================================================\\n";
+    std::cout &lt;&lt; "       🛡️ CLOUDSHIELD ENTERPRISE NEXT-GEN FIREWALL & PACKET INSPECTION ENGINE           \\n";
+    std::cout &lt;&lt; "========================================================================================\\n";
+    std::cout &lt;&lt; std::left &lt;&lt; std::setw(10) &lt;&lt; "ప్యాకెట్ ID" 
+              &lt;&lt; std::setw(18) &lt;&lt; "సోర్స్ IP" 
+              &lt;&lt; std::setw(8)  &lt;&lt; "పోర్ట్" 
+              &lt;&lt; std::setw(14) &lt;&lt; "రిస్క్ స్కోర్" 
+              &lt;&lt; "ఫైర్‌వాల్ చర్య (Firewall Action)\\n";
+    std::cout &lt;&lt; "----------------------------------------------------------------------------------------\\n";
+
+    int inspectedPackets = 0;
+    int passedPackets = 0;
+    int droppedPackets = 0;
+    bool emergencyLockdown = false;
+
+    // నెట్‌వర్క్ ప్యాకెట్ల స్ట్రీమ్‌ను పరిశీలించే లూప్
+    for (const auto&amp; pkt : packetStream) {
+        ++inspectedPackets;
+
+        // 1. continue ఉపయోగం: పోర్ట్ 80 హెల్త్‌చెక్ పింగ్ ప్యాకెట్లను తనిఖీ లేకుండా వైట్‌లిస్ట్ చేయండి
+        if (pkt.threatScore == 0 &amp;&amp; pkt.destPort == 80) {
+            std::cout &lt;&lt; std::left &lt;&lt; std::setw(10) &lt;&lt; pkt.packetId 
+                      &lt;&lt; std::setw(18) &lt;&lt; pkt.sourceIp 
+                      &lt;&lt; std::setw(8)  &lt;&lt; pkt.destPort 
+                      &lt;&lt; std::setw(14) &lt;&lt; pkt.threatScore 
+                      &lt;&lt; "⚪ [వైట్‌లిస్ట్ స్కిప్]: ఇంటర్నల్ హెల్త్‌చెక్ ప్యాకెట్.\\n";
+            ++passedPackets;
+            continue; // కరెంట్ ఇటరేషన్‌ను స్కిప్ చేసి తర్వాతి ప్యాకెట్‌కు వెళ్ళండి!
+        }
+
+        // 2. break ఉపయోగం: రిస్క్ స్కోర్ 90 దాటితే సిస్టమ్ పై క్రిటికల్ దాడి జరుగుతోందని గుర్తించి ఎమర్జెన్సీ లాక్‌డౌన్ చేయండి!
+        if (pkt.threatScore &gt;= 90) {
+            std::cout &lt;&lt; std::left &lt;&lt; std::setw(10) &lt;&lt; pkt.packetId 
+                      &lt;&lt; std::setw(18) &lt;&lt; pkt.sourceIp 
+                      &lt;&lt; std::setw(8)  &lt;&lt; pkt.destPort 
+                      &lt;&lt; std::setw(14) &lt;&lt; pkt.threatScore 
+                      &lt;&lt; "🚨 [క్రిటికల్ అటాక్]: మాల్వేర్ గుర్తించబడింది! పేలోడ్: " &lt;&lt; pkt.payload &lt;&lt; "\\n";
+            emergencyLockdown = true;
+            ++droppedPackets;
+            std::cout &lt;&lt; "\\n🛑 [EMERGENCY SYSTEM LOCKDOWN]: నెట్‌వర్క్ కనెక్షన్ తక్షణమే తెంచబడింది!\\n";
+            break; // తక్షణమే లూప్ నుండి బ్రేక్ అయి బయటకు వచ్చేయండి!
+        }
+
+        // 3. సాధారణ త్రెట్ డ్రాపింగ్ (continue తో మిగిలిన కోడ్ బైపాస్)
+        if (pkt.threatScore &gt;= 70) {
+            std::cout &lt;&lt; std::left &lt;&lt; std::setw(10) &lt;&lt; pkt.packetId 
+                      &lt;&lt; std::setw(18) &lt;&lt; pkt.sourceIp 
+                      &lt;&lt; std::setw(8)  &lt;&lt; pkt.destPort 
+                      &lt;&lt; std::setw(14) &lt;&lt; pkt.threatScore 
+                      &lt;&lt; "🔴 [ప్యాకెట్ డ్రాప్]: అధిక రిస్క్ ఉన్నందున బ్లాక్ చేయబడింది.\\n";
+            ++droppedPackets;
+            continue;
+        }
+
+        // 4. క్లీన్ ప్యాకెట్లు సురక్షితంగా రౌట్ అవుతాయి
+        std::cout &lt;&lt; std::left &lt;&lt; std::setw(10) &lt;&lt; pkt.packetId 
+                  &lt;&lt; std::setw(18) &lt;&lt; pkt.sourceIp 
+                  &lt;&lt; std::setw(8)  &lt;&lt; pkt.destPort 
+                  &lt;&lt; std::setw(14) &lt;&lt; pkt.threatScore 
+                  &lt;&lt; "🟢 [అనుమతించబడింది]: సురక్షితమైన ట్రాఫిక్.\\n";
+        ++passedPackets;
+    }
+
+    std::cout &lt;&lt; "========================================================================================\\n";
+    std::cout &lt;&lt; "పరిశీలించిన ప్యాకెట్లు  : " &lt;&lt; inspectedPackets &lt;&lt; " / " &lt;&lt; packetStream.size() &lt;&lt; "\\n";
+    std::cout &lt;&lt; "ఆమోదించబడిన ప్యాకెట్లు : " &lt;&lt; passedPackets &lt;&lt; "\\n";
+    std::cout &lt;&lt; "నిరోధించబడిన ప్యాకెట్లు : " &lt;&lt; droppedPackets &lt;&lt; "\\n";
+    std::cout &lt;&lt; "ఎమర్జెన్సీ లాక్‌డౌన్ స్టేటస్ : " &lt;&lt; (emergencyLockdown ? "🔒 ACTIVE" : "🟢 NORMAL") &lt;&lt; "\\n";
+    std::cout &lt;&lt; "========================================================================================\\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ SECTION (5 DETAILS QUESTIONS) -->
+    <section style="margin-top:40px;">
+      <h2 class="section-title"><span class="num">❓</span> ఇంటర్వ్యూ & పరీక్షల క్విజ్ (Knowledge Check)</h2>
+      
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 1: break మరియు continue స్టేట్‌మెంట్ల మధ్య గల ప్రధాన సాంకేతిక తేడా ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>break</code> స్టేట్‌మెంట్ లూప్‌ను శాశ్వతంగా మరియు తక్షణమే ముగించివేసి, లూప్ తర్వాత ఉన్న కోడ్‌కు జంప్ చేస్తుంది (మిగిలిన ఏ ఇటరేషన్లు రన్ అవ్వవు). కానీ <code>continue</code> స్టేట్‌మెంట్ కేవలం ఆ ప్రస్తుత ఇటరేషన్‌లోని మిగిలిన భాగాలను మాత్రమే స్కిప్ చేసి, వెంటనే తర్వాతి ఇటరేషన్‌ను ప్రారంభిస్తుంది (లూప్ రద్దు కాదు).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 2: while లూప్‌లో continue వాడేటప్పుడు తలెత్తే అత్యంత ప్రమాదకరమైన బగ్ ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>while</code> లూప్‌లో కౌంటర్ ఇంక్రిమెంట్ స్టేట్‌మెంట్ సాధారణంగా లూప్ చివరన ఉంటుంది. ఒకవేళ <code>continue</code> ఆ ఇంక్రిమెంట్ కంటే ముందే ట్రిగ్గర్ అయితే, కౌంటర్ పెరగకుండా స్కిప్ అయిపోతుంది. దీనివల్ల కండిషన్ ఎప్పటికీ <code>false</code> కాకుండా లూప్ అనంతంగా తిరుగుతూ (Infinite Loop) ప్రోగ్రామ్ ఫ్రీజ్ అయిపోతుంది. అందువల్ల <code>while</code> లో <code>continue</code> వాడే ముందు కౌంటర్‌ను తప్పనిసరిగా పెంచాలి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 3: నెస్టెడ్ లూప్స్ లోపల రాసిన ఒకే ఒక్క break స్టేట్‌మెంట్ ఎన్ని లూప్‌లను ఆపుతుంది?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> C++ నిబంధనల ప్రకారం <code>break</code> కేవలం తనకు అత్యంత సమీపంలో ఉన్న లోపలి లూప్‌ను (Innermost loop) మాత్రమే ఆపుతుంది. బయటి ఔటర్ లూప్‌లు యధావిధిగా తిరుగుతూనే ఉంటాయి. అన్ని నెస్టెడ్ లూప్‌లను ఒకేసారి ఆపాలంటే బూలియన్ ఫ్లాగ్ వాడటం లేదా మొత్తం లూప్‌ను ఒక ఫంక్షన్‌లో ఉంచి <code>return</code> చేయడం అత్యుత్తమ పరిష్కారం.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 4: Modern C++ సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌లో 'goto' స్టేట్‌మెంట్‌ను ఎందుకు నిషేధించాలి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>goto</code> ప్రోగ్రామ్ ఫ్లోను అస్తవ్యస్తంగా మార్చి రీడబిలిటీని నాశనం చేసి "స్పాఘెట్టి కోడ్" కు దారితీస్తుంది. అంతేకాకుండా C++ లో వేరియబుల్స్ ప్రారంభం దాటి జంప్ చేస్తే ఆబ్జెక్ట్ లైఫ్‌సైకిల్ దెబ్బతింటుంది. C++ లో మనకు RAII, స్మార్ట్ పాయింటర్లు మరియు ఎక్సెప్షన్ హ్యాండ్లింగ్ ఉన్నందున మెమరీ క్లీనప్ కోసం <code>goto</code> అవసరమే ఉండదు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 5: అసెంబ్లీ స్థాయిలో break మరియు continue ఎలా ఎగ్జిక్యూట్ అవుతాయి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> కంపైలర్ <code>break</code> ను షరతులేని జంప్ <code>JMP .L_EXIT</code> (లూప్ ముగింపు లేబుల్) గాను, <code>continue</code> ను <code>JMP .L_UPDATE</code> (లూప్ ఇంక్రిమెంట్ లేబుల్) గాను మారుస్తుంది. ఆధునిక CPU బ్రాంచ్ ప్రిడిక్టర్లు ఈ అన్‌కండిషనల్ జంప్స్‌ను 100% ముందుగానే అంచనా వేస్తాయి కాబట్టి ఎటువంటి పైప్‌లైన్ స్టాల్స్ కలగవు.
+        </div>
+      </details>
+    </section>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding:20px; background:var(--bg2); border:1px solid var(--border); border-radius:8px;">
+      <div>
+        <a href="/blog-cpp/07-cpp-loops-for-while-do-while.html" style="color:#10b981; text-decoration:none; font-weight:600;">
+          ← మునుపటి అధ్యాయం: Chapter 07: లూప్స్ (for, while, do-while)
+        </a>
+      </div>
+      <div>
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html" style="color:#10b981; text-decoration:none; font-weight:600;">
+          తదుపరి అధ్యాయం: Chapter 09: ఫంక్షన్స్ & ఓవర్‌లోడింగ్ (Phase 3) →
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+
+struct NetworkPacket {
+    int packetId;
+    std::string sourceIp;
+    int destPort;
+    std::string payload;
+    int threatScore;
+};
+
+int main() {
+    std::vector<NetworkPacket> packetStream = {
+        {1001, "192.168.1.15", 443,  "GET /secure/dashboard HTTPS", 5},
+        {1002, "10.0.0.45",    80,   "HEALTH_CHECK_PING",           0},
+        {1003, "172.16.0.88",  22,   "SSH_BRUTE_FORCE_PAYLOAD",     85},
+        {1004, "192.168.1.18", 8080, "NORMAL_API_JSON_REQUEST",    10},
+        {1005, "45.33.32.156", 445,  "MALWARE_RANSOMWARE_SIGNATURE",98},
+        {1006, "192.168.1.99", 443,  "USER_IMAGE_UPLOAD",           12}
+    };
+
+    std::cout << "========================================================================================\\\\n";
+    std::cout << "       🛡️ CLOUDSHIELD ENTERPRISE NEXT-GEN FIREWALL & PACKET INSPECTION ENGINE           \\\\n";
+    std::cout << "========================================================================================\\\\n";
+    std::cout << std::left << std::setw(10) << "ప్యాకెట్ ID" 
+              << std::setw(18) << "సోర్స్ IP" 
+              << std::setw(8)  << "పోర్ట్" 
+              << std::setw(14) << "రిస్క్ స్కోర్" 
+              << "ఫైర్‌వాల్ చర్య (Firewall Action)\\\\n";
+    std::cout << "----------------------------------------------------------------------------------------\\\\n";
+
+    int inspectedPackets = 0;
+    int passedPackets = 0;
+    int droppedPackets = 0;
+    bool emergencyLockdown = false;
+
+    for (const auto& pkt : packetStream) {
+        ++inspectedPackets;
+
+        if (pkt.threatScore == 0 && pkt.destPort == 80) {
+            std::cout << std::left << std::setw(10) << pkt.packetId 
+                      << std::setw(18) << pkt.sourceIp 
+                      << std::setw(8)  << pkt.destPort 
+                      << std::setw(14) << pkt.threatScore 
+                      << "⚪ [వైట్‌లిస్ట్ స్కిప్]: ఇంటర్నల్ హెల్త్‌చెక్ ప్యాకెట్.\\\\n";
+            ++passedPackets;
+            continue;
+        }
+
+        if (pkt.threatScore >= 90) {
+            std::cout << std::left << std::setw(10) << pkt.packetId 
+                      << std::setw(18) << pkt.sourceIp 
+                      << std::setw(8)  << pkt.destPort 
+                      << std::setw(14) << pkt.threatScore 
+                      << "🚨 [క్రిటికల్ అటాక్]: మాల్వేర్ గుర్తించబడింది! పేలోడ్: " << pkt.payload << "\\\\n";
+            emergencyLockdown = true;
+            ++droppedPackets;
+            std::cout << "\\\\n🛑 [EMERGENCY SYSTEM LOCKDOWN]: నెట్‌వర్క్ కనెక్షన్ తక్షణమే తెంచబడింది!\\\\n";
+            break;
+        }
+
+        if (pkt.threatScore >= 70) {
+            std::cout << std::left << std::setw(10) << pkt.packetId 
+                      << std::setw(18) << pkt.sourceIp 
+                      << std::setw(8)  << pkt.destPort 
+                      << std::setw(14) << pkt.threatScore 
+                      << "🔴 [ప్యాకెట్ డ్రాప్]: అధిక రిస్క్ ఉన్నందున బ్లాక్ చేయబడింది.\\\\n";
+            ++droppedPackets;
+            continue;
+        }
+
+        std::cout << std::left << std::setw(10) << pkt.packetId 
+                  << std::setw(18) << pkt.sourceIp 
+                  << std::setw(8)  << pkt.destPort 
+                  << std::setw(14) << pkt.threatScore 
+                  << "🟢 [అనుమతించబడింది]: సురక్షితమైన ట్రాఫిక్.\\\\n";
+        ++passedPackets;
+    }
+
+    std::cout << "========================================================================================\\\\n";
+    std::cout << "పరిశీలించిన ప్యాకెట్లు  : " << inspectedPackets << " / " << packetStream.size() << "\\\\n";
+    std::cout << "ఆమోదించబడిన ప్యాకెట్లు : " << passedPackets << "\\\\n";
+    std::cout << "నిరోధించబడిన ప్యాకెట్లు : " << droppedPackets << "\\\\n";
+    std::cout << "ఎమర్జెన్సీ లాక్‌డౌన్ స్టేటస్ : " << (emergencyLockdown ? "🔒 ACTIVE" : "🟢 NORMAL") << "\\\\n";
+    std::cout << "========================================================================================\\\\n";
+
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter08Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 08!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter08Content.length, 'characters');
