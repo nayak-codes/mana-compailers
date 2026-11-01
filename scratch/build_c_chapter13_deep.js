@@ -1,0 +1,677 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./c_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 13);
+const sidebarHtml = buildSidebar(13);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 13: అర్రేలు (1D Arrays &amp; 2D Matrices)</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">C అర్రేలు (1D Arrays &amp; 2D Matrices) &amp; మెమరీ మోడల్</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
+      <span class="badge">🟢 Chapter 13 of 20</span>
+      <span class="badge">📂 Phase 04: అర్రేస్, స్ట్రింగ్స్ &amp; పాయింటర్లు</span>
+      <span class="badge">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>అపార్ట్‌మెంట్ &amp; రైలు బోగీల ఎనాలజీ · కంటిగ్యువస్ మెమరీ · 0-ఇండెక్సింగ్ ఆఫ్‌సెట్ సీక్రెట్ · బౌండరీ చెకింగ్ లోపం &amp; బఫర్ ఓవర్‌ఫ్లో · sizeof ట్రిక్ · Array Decay into Pointer · 2D మ్యాట్రిక్స్ రిప్రజెంటేషన్ · Row-Major Order గణిత సూత్రం · మ్యాట్రిక్స్ మల్టిప్లికేషన్ · స్టూడెంట్ గ్రేడింగ్ ప్రాజెక్ట్ · ఇంటరాక్టివ్ క్విజ్</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>ఒక పెద్ద ఇంజనీరింగ్ కాలేజీలో 100 మంది విద్యార్థుల మార్కులను కంప్యూటర్‌లో భద్రపరచాలనుకుందాం. అర్రేలు లేకపోతే మీరు ఏం చేయాలి? <code>int mark1, mark2, mark3, ... mark100;</code> అని వంద వేర్వేరు వేరియబుల్స్ రాయాలి! ఆ వంద వేరియబుల్స్ సగటు (Average) లేదా గరిష్ట మార్కులు కనుక్కోవాలంటే వంద లైన్ల <code>+</code> మరియు <code>if</code> కండిషన్లు రాయాల్సి వస్తుంది. ఇది ప్రోగ్రామర్ పాలిట నరకం కదా?</p>
+      <p>ఇప్పుడు ఒక అపార్ట్‌మెంట్ భవనాన్ని (Apartment Complex) లేదా రైలులోని పక్కపక్కనే ఉన్న బోగీలను (Train Compartments) ఊహించుకోండి. రైలులోని బోగీలు ఒకదాని వెనుక ఒకటి వరుసగా కనెక్ట్ అయి ఉంటాయి. ప్రతి బోగీకి ఒక వరుస సంఖ్య (0, 1, 2, 3...) ఉంటుంది. మీరు 4వ బోగీకి వెళ్లాలంటే మొదటి నుండి నడుచుకుంటూ వెళ్లనవసరం లేదు; రైలు పొడవు ఆధారంగా నేరుగా ఆ బోగీ వద్దకే దూకవచ్చు ($O(1)$ Random Access)!</p>
+      <p>కంప్యూటర్ సైన్స్‌లో ఈ వరుస మెమరీ గదుల నిర్మాణాన్ని <strong>అర్రే (Array — Contiguous Memory Allocation)</strong> అంటారు. ఈ పదమూడవ అధ్యాయంతో మనం <strong>Phase 04 (అర్రేస్, స్ట్రింగ్స్ &amp; పాయింటర్లు)</strong> లోకి గ్రాండ్‌గా అడుగుపెడుతున్నాం. ఇందులో 1D అర్రేలు, 2D మ్యాట్రిసెస్, <strong>Row-Major Order మెమరీ గణిత సూత్రాలు</strong>, బఫర్ ఓవర్‌ఫ్లో ప్రమాదాలు, మరియు పూర్తి స్థాయి <strong>మ్యాట్రిక్స్ మల్టిప్లికేషన్ &amp; స్టూడెంట్ గ్రేడింగ్ ఇంజిన్‌ను</strong> నిర్మిద్దాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే సమగ్ర అంశాలు (Roadmap)</div>
+    <div class="section-body">
+      <p>డేటా స్ట్రక్చర్స్ మరియు అల్గారిథమ్స్‌లో అర్రే అనేది అత్యంత ప్రాథమికమైన మరియు వేగవంతమైన బిల్డింగ్ బ్లాక్. ఈ అధ్యాయంలో కవర్ చేయబడే ప్రధానాంశాలు:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>అర్రే ప్రాథమిక ఆవశ్యకత:</strong> హోమోజీనియస్ ఎలిమెంట్స్ (Homogeneous Data Types) మరియు వేల వేరియబుల్స్‌ను ఒకే పేరుతో పిలవడం.</li>
+        <li><strong>కంటిగ్యువస్ మెమరీ కేటాయింపు (Contiguous Allocation):</strong> RAM లో ఎలిమెంట్స్ మధ్య ఖాళీ లేకుండా పక్కపక్కనే భద్రపరచడం.</li>
+        <li><strong>0-బేస్డ్ ఇండెక్సింగ్ రహస్యం:</strong> C లో ఇండెక్స్ 1 నుండి కాకుండా 0 నుండే ఎందుకు మొదలవుతుంది? (ఆఫ్‌సెట్ కాలిక్యులేషన్).</li>
+        <li><strong>1D అర్రే డిక్లరేషన్ &amp; ఇనిషియలైజేషన్:</strong> కంప్లీట్, పార్షియల్, మరియు డైనమిక్ సైజ్ ఇనిషియలైజర్స్.</li>
+        <li><strong>బౌండ్స్ చెకింగ్ లోపం (No Bounds Checking in C):</strong> C కంపైలర్ ఇండెక్స్ లిమిట్లను ఎందుకు తనిఖీ చేయదు? సెగ్‌ఫాల్ట్ ప్రమాదాలు.</li>
+        <li><strong>అర్రే సైజు ఆటో-కాలిక్యులేషన్:</strong> <code>sizeof(arr) / sizeof(arr[0])</code> గోల్డెన్ ఇడియమ్.</li>
+        <li><strong>ఫంక్షన్లకు అర్రేలను పాస్ చేయడం:</strong> <em>Array Decay</em> అంటే ఏమిటి? సైజును ప్రత్యేక పారామీటర్‌గా ఎందుకు పాస్ చేయాలి?</li>
+        <li><strong>2D అర్రేలు (Two-Dimensional Matrices):</strong> టేబుల్ ఫార్మాట్, రోస్ మరియు కాలమ్స్ విజువలైజేషన్.</li>
+        <li><strong>Row-Major Order మెమరీ ఫార్ములా:</strong> హార్డ్‌వేర్ RAM లో 2D మ్యాట్రిక్స్ 1D గా ఎలా రూపాంతరం చెందుతుంది? అడ్రస్ గణన సమీకరణం.</li>
+        <li><strong>మ్యాట్రిక్స్ ఆపరేషన్లు:</strong> మ్యాట్రిక్స్ కూడిక (Addition) మరియు $O(N^3)$ మ్యాట్రిక్స్ గుణకారం (Multiplication).</li>
+        <li><strong>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్:</strong> మల్టీ-సబ్జెక్ట్ స్టూడెంట్ గ్రేడింగ్ &amp; క్లాస్ టాపర్ అనలిటిక్స్ సిస్టమ్.</li>
+        <li><strong>బిగినర్స్ చేసే టాప్ 5 అర్రే తప్పులు:</strong> ఆఫ్-బై-వన్, డైరెక్ట్ అసైన్‌మెంట్ (<code>arr1 = arr2</code>) మిథ్య, నెగెటివ్ ఇండెక్సింగ్.</li>
+        <li><strong>స్వీయ మూల్యాంకన క్విజ్:</strong> 5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; గేట్ ఎగ్జామ్ బిట్స్.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>అర్రే ప్రాథమిక భావన — కంటిగ్యువస్ మెమరీ &amp; O(1) రాండమ్ యాక్సెస్</div>
+    <div class="section-body">
+      <p>కంప్యూటర్ ప్రోగ్రామింగ్‌లో <strong>అర్రే (Array)</strong> అనగా: <em>ఒకే డేటా టైప్‌కు చెందిన బహుళ అంశాలను RAM లో ఒకదాని పక్కన ఒకటి వరుసగా (Contiguous Memory Locations) నిల్వ చేసే స్థిర పరిమాణ డేటా నిర్మాణం.</em></p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">కంటిగ్యువస్ మెమరీ యొక్క సూపర్ పవర్: O(1) Random Access</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          ఎలిమెంట్స్ అన్నీ పక్కపక్కనే ఉండటం వలన, కంప్యూటర్ CPU మొదటి ఎలిమెంట్ ఉన్న మెమరీ అడ్రస్ (Base Address) ఆధారంగా — 100వ ఎలిమెంట్ లేదా 10,000వ ఎలిమెంట్ ఏ అడ్రస్‌లో ఉందో ఒక్క సాధారణ గుణకారం ద్వారా మైక్రోసెకన్లలో లెక్కించగలదు! మధ్యలోని ఎలిమెంట్లను వెతకాల్సిన అవసరం లేకుండా నేరుగా ఏ ఎలిమెంట్‌నైనా ఒకే వేగంతో యాక్సెస్ చేయగలదు. దీనినే <strong>$O(1)$ Constant Time Access</strong> అంటారు.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>1D అర్రే డిక్లరేషన్, 0-ఇండెక్సింగ్ సీక్రెట్ &amp; అడ్రస్ గణన</div>
+    <div class="section-body">
+      <p>C లో 1D అర్రేను డిక్లేర్ చేసే ప్రామాణిక సింటాక్స్ ఇది:</p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; margin-bottom:14px;">
+        డేటా_టైప్ అర్రే_పేరు [ పరిమాణం ];<br>
+        ఉదాహరణ: int marks[5] = {85, 92, 78, 64, 99};
+      </div>
+
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">C లో ఇండెక్స్ 0 నుండి ఎందుకు ప్రారంభమవుతుంది? (The Offset Formula):</h4>
+      <p>చాలా మంది కొత్త ప్రోగ్రామర్లకు ఆశ్చర్యం కలుగుతుంది: మొదటి ఎలిమెంట్‌ను <code>marks[1]</code> అనకుండా <code>marks[0]</code> అని ఎందుకు పిలవాలి? ఎందుకంటే C లో <strong>ఇండెక్స్ అనేది ఒక సంఖ్య కాదు; అది బేస్ అడ్రస్ నుండి ఉండే దూరం (Memory Offset)!</strong></p>
+
+      $$\text{Address of } A[i] = \text{Base Address} + (i \times \text{sizeof(DataType)})$$
+
+      <p>మొదటి ఎలిమెంట్ బేస్ అడ్రస్ వద్దే ఉంటుంది కాబట్టి, దాని దూరం (Offset) సరిగ్గా <strong>0</strong>! అందుకే $i = 0$:</p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:12px 16px; border-radius:0 8px 8px 0; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text2); margin:12px 0;">
+        Base Address = 1000, int size = 4 bytes:<br>
+        marks[0] అడ్రస్ = 1000 + (0 * 4) = <strong>1000</strong> (0 దూరంలో మొదటి ఎలిమెంట్)<br>
+        marks[1] అడ్రస్ = 1000 + (1 * 4) = <strong>1004</strong> (4 బైట్ల దూరంలో 2వ ఎలిమెంట్)<br>
+        marks[2] అడ్రస్ = 1000 + (2 * 4) = <strong>1008</strong> (8 బైట్ల దూరంలో 3వ ఎలిమెంట్)
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Array Traversal &amp; Contiguous Memory Addresses</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int arr[5] = {10, 20, 30, 40, 50};
+
+    printf("=== అర్రే ఎలిమెంట్స్ &amp; వాటి మెమరీ చిరునామాలు (Contiguous Proof) ===\\n");
+    for (int i = 0; i &lt; 5; i++) {
+        printf("arr[%d] = %2d  |  మెమరీ అడ్రస్ = %p\\n", i, arr[i], (void*)&amp;arr[i]);
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <p style="color:var(--text2); font-size:13.5px; margin-top:10px;">
+        పైన కోడ్ రన్ చేస్తే ప్రతి అడ్రస్‌కు తర్వాతి అడ్రస్‌కు మధ్య ఖచ్చితంగా <strong>4 బైట్ల వ్యత్యాసం</strong> ఉండటాన్ని మీరు స్పష్టంగా చూడవచ్చు!
+      </p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>బౌండ్స్ చెకింగ్ లోపం &amp; బఫర్ ఓవర్‌ఫ్లో ప్రమాదాలు</div>
+    <div class="section-body">
+      <p>జావా లేదా పైథాన్ వంటి ఇతర ఆధునిక భాషలలో మీరు 5 సైజు ఉన్న అర్రేలో 10వ ఇండెక్స్‌ను యాక్సెస్ చేయబోతే, రన్‌టైమ్ వెంటనే <code>IndexOutOfBoundsException</code> అని అరిచి ఆపేస్తుంది. కానీ C లాంగ్వేజ్‌లో:</p>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:14px; margin:14px 0; color:#991b1b; font-size:13.5px;">
+        ⚠️ <strong>C లో బౌండరీ తనిఖీ బొత్తిగా ఉండదు (No Bounds Checking)!</strong><br>
+        C అనేది గరిష్ట వేగం కోసం రూపొందించబడిన భాష. ప్రతి లూప్‌లోనూ CPU ఇండెక్స్ పరిమితిని తనిఖీ చేస్తే వేగం తగ్గుతుందని డెన్నిస్ రిచీ బౌండ్స్ చెకింగ్‌ను పూర్తిగా తీసేశారు. మీరు <code>int a[5];</code> అని రాసి <code>a[10] = 999;</code> అని రాస్తే — కంపైలర్ మిమ్మల్ని ఆపదు! అది అర్రే దాటి ప్రక్కనే ఉన్న వేరే వేరియబుల్ మెమరీలోకి దూసుకుపోయి అక్కడి విలువను చెరిపేస్తుంది. దీనినే <strong>బఫర్ ఓవర్‌ఫ్లో (Buffer Overflow)</strong> అంటారు! ఇది సాఫ్ట్‌వేర్ క్రాష్‌లకు మరియు హ్యాకర్లు కంప్యూటర్‌ను హ్యాక్ చేయడానికి కారణమవుతుంది!
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>అర్రే సైజు ఆటో-కాలిక్యులేషన్ — sizeof గోల్డెన్ ట్రిక్</div>
+    <div class="section-body">
+      <p>ఒక అర్రేలో ఎన్ని ఎలిమెంట్స్ ఉన్నాయో హార్డ్-కోడ్ చేయకుండా, ప్రోగ్రామ్ స్వయంచాలకంగా లెక్కించడానికి C లో అత్యంత ప్రసిద్ధ ఇంజనీరింగ్ సూత్రం:</p>
+
+      $$\text{Element Count} = \frac{\text{sizeof(entire array)}}{\text{sizeof(single element)}} = \frac{\text{sizeof(arr)}}{\text{sizeof(arr[0])}}$$
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Dynamic Array Length using sizeof</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    double prices[] = {19.99, 45.50, 120.00, 8.75, 99.90, 250.00};
+
+    // మొత్తం అర్రే సైజు: 6 elements * 8 bytes = 48 bytes
+    // ఒక్క ఎలిమెంట్ సైజు: 8 bytes
+    // పొడవు = 48 / 8 = 6 elements!
+    int count = sizeof(prices) / sizeof(prices[0]);
+
+    printf("మొత్తం ప్రొడక్టుల సంఖ్య: %d\\n", count);
+    for (int i = 0; i &lt; count; i++) {
+        printf("ప్రొడక్ట్ #%d: రూ. %.2f\\n", i + 1, prices[i]);
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>ఫంక్షన్లకు అర్రేలను పాస్ చేయడం — Array Decay into Pointer</div>
+    <div class="section-body">
+      <p>ఒక అర్రేను ఫంక్షన్‌కు పారామీటర్‌గా పంపినప్పుడు C లో ఒక వింతైన మార్పు జరుగుతుంది: <strong>మొత్తం అర్రే ఎప్పటికీ కాపీ కాదు! కేవలం మొదటి ఎలిమెంట్ యొక్క పాయింటర్ (Pointer to first element) మాత్రమే వెళ్తుంది.</strong> దీనినే <strong>Array Decay</strong> అంటారు.</p>
+
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; font-size:14px; color:var(--text2);">
+        <strong>💡 గోల్డెన్ రూల్:</strong> ఫంక్షన్ లోపల <code>sizeof(arr)</code> లెక్కిస్తే అర్రే సైజు రాదు, కేవలం పాయింటర్ సైజు (8 బైట్లు) మాత్రమే వస్తుంది! అందుకే ఫంక్షన్‌కు అర్రేతో పాటు <strong>దాని సైజును కూడా ఎల్లప్పుడూ రెండవ పారామీటర్‌గా పంపాలి!</strong>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Passing Array to Function with Size</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// int arr[] అనేది సాంకేతికంగా int *arr తో సమానం!
+double calculateAverage(const int arr[], int size) {
+    long sum = 0;
+    for (int i = 0; i &lt; size; i++) {
+        sum += arr[i];
+    }
+    return (double)sum / size;
+}
+
+int main() {
+    int scores[] = {88, 92, 79, 95, 84};
+    int len = sizeof(scores) / sizeof(scores[0]);
+
+    double avg = calculateAverage(scores, len); // అర్రే పేరు మాత్రమే పాస్ చేస్తాం
+    printf("తరగతి సగటు మార్కులు: %.2f\\n", avg);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>2D అర్రేలు (Two-Dimensional Matrices) &amp; గ్రిడ్ రిప్రజెంటేషన్</div>
+    <div class="section-body">
+      <p>గణితంలో మ్యాట్రిక్స్ (Matrix), ఎక్సెల్ స్ప్రెడ్‌షీట్ (Spreadsheet), లేదా చదరంగం బోర్డు (Chessboard) లాంటి 2D గ్రిడ్‌లను కంప్యూటర్‌లో నిల్వ చేయడానికి <strong>2D అర్రేలు</strong> ఉపయోగపడతాయి. ఇందులో అడ్డు వరుసలు (Rows) మరియు నిలువు వరుసలు (Columns) ఉంటాయి:</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; margin-bottom:14px;">
+        డేటా_టైప్ మ్యాట్రిక్స్_పేరు [ రోస్ ] [ కాలమ్స్ ];<br>
+        int matrix[3][3] = {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;{1, 2, 3}, // Row 0<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;{4, 5, 6}, // Row 1<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;{7, 8, 9}  // Row 2<br>
+        };
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — 2D Matrix Declaration &amp; Formatted Grid Display</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int grid[2][4] = {
+        {10, 20, 30, 40},
+        {50, 60, 70, 80}
+    };
+
+    printf("=== 2x4 మ్యాట్రిక్స్ గ్రిడ్ ప్రింటింగ్ ===\\n");
+    for (int r = 0; r &lt; 2; r++) { // Rows లూప్
+        for (int c = 0; c &lt; 4; c++) { // Cols లూప్
+            printf("%4d ", grid[r][c]);
+        }
+        printf("\\n");
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>Row-Major Order మెమరీ ఫార్ములా (హార్డ్‌వేర్ ఆర్కిటెక్చర్)</div>
+    <div class="section-body">
+      <p>కంప్యూటర్ సైన్స్‌లో అత్యంత ముఖ్యమైన వాస్తవం: <strong>భౌతికంగా కంప్యూటర్ RAM లో 2D అర్రేలు అంటూ ఏమీ ఉండవు! RAM అనేది కేవలం ఒక సరళరేఖ లాంటి 1D వరుస మెమరీ మాత్రమే!</strong></p>
+
+      <p>మరి కంపైలర్ 2D మ్యాట్రిక్స్‌ను RAM లో ఎలా నిల్వ చేస్తుంది? C లాంగ్వేజ్ <strong>Row-Major Order</strong> అనే పద్ధతిని పాటిస్తుంది. అంటే మొదటి అడ్డు వరుస (Row 0) ను ముందుగా భద్రపరిచి, దాని వెంటే రెండవ అడ్డు వరుస (Row 1), ఆ వెంటే మూడవ వరుసను వరుసగా అమర్చుతుంది:</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">Row-Major Order 2D అడ్రస్ ఫార్ములా:</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          $M \times N$ సైజు ఉన్న మ్యాట్రిక్స్‌లో (ఇక్కడ $N$ అనేది కాలమ్స్ సంఖ్య), $M[i][j]$ ఉన్న భౌతిక మెమరీ అడ్రస్ సమీకరణం:
+        </p>
+        $$\text{Address}(M[i][j]) = \text{Base Address} + \Big( (i \times \text{Total Columns}) + j \Big) \times \text{sizeof(DataType)}$$
+        <p style="color:var(--text2); font-size:13.5px; margin-top:8px;">
+          ఈ ఫార్ములా కారణంగానే, ఫంక్షన్‌కు 2D అర్రేను పారామీటర్‌గా పాస్ చేసేటప్పుడు <strong>కాలమ్స్ సంఖ్యను కచ్చితంగా పేర్కొనాలి (ఉదా: <code>void process(int arr[][4])</code>)</strong>. కాలమ్స్ సంఖ్య తెలియకపోతే కంపైలర్ ఒక వరుసను దాటడానికి ఎన్ని బైట్లు దూకాలో లెక్కించలేదు!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>సమగ్ర తులనాత్మక పట్టిక (1D Arrays vs 2D Matrices)</div>
+    <div class="section-body">
+      <p>1D మరియు 2D అర్రేల మధ్య గల సమగ్ర సాంకేతిక పోలికలు:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>అంశం / ఫీచర్</th>
+            <th>1D అర్రే (One-Dimensional)</th>
+            <th>2D అర్రే (Two-Dimensional Matrix)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>మానసిక విజువలైజేషన్</strong></td>
+            <td>ఒక సరళ రేఖ లేదా రైలు బోగీల క్రమం.</td>
+            <td>టేబుల్, గ్రిడ్, అడ్డు &amp; నిలువు వరుసల చట్రం.</td>
+          </tr>
+          <tr>
+            <td><strong>ఇండెక్సింగ్ అవసరం</strong></td>
+            <td>ఒకే ఇండెక్స్: <code>arr[i]</code></td>
+            <td>రెండు ఇండెక్స్‌లు: <code>arr[row][col]</code></td>
+          </tr>
+          <tr>
+            <td><strong>ట్రావర్సల్ లూప్స్</strong></td>
+            <td>సింగిల్ లూప్ సరిపోతుంది ($O(N)$).</td>
+            <td>నెస్టెడ్ లూప్స్ తప్పనిసరి ($O(N \times M)$).</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ అమరిక</strong></td>
+            <td>కంటిగ్యువస్ 1D బ్లాక్.</td>
+            <td>RAM లో Row-Major Order ప్రకారం వరుసగా 1D లోనే నిల్వ అవుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>ఫంక్షన్ పారామీటర్ రూల్</strong></td>
+            <td><code>void f(int arr[])</code> బ్రాకెట్ ఖాళీగా ఉంచవచ్చు.</td>
+            <td><code>void f(int arr[][COLS])</code> కాలమ్స్ సైజు తప్పనిసరిగా ఇవ్వాలి!</td>
+          </tr>
+          <tr>
+            <td><strong>ఉత్తమ ఉదాహరణ</strong></td>
+            <td>విద్యార్థుల మార్కుల జాబితా, ఉష్ణోగ్రతల నమోదు.</td>
+            <td>చదరంగం బోర్డు, ఇమేజ్ పిక్సెల్స్ గ్రిడ్, గ్రాఫ్ ఎడ్జెసెంట్ మ్యాట్రిక్స్.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>మ్యాట్రిక్స్ కూడిక &amp; గుణకారం (Matrix Math)</div>
+    <div class="section-body">
+      <p>రెండు మ్యాట్రిక్స్‌లను గుణించాలంటే ఒక కఠినమైన గణిత నిబంధన ఉంది: <strong>మొదటి మ్యాట్రిక్స్ యొక్క కాలమ్స్ సంఖ్య రెండవ మ్యాట్రిక్స్ యొక్క రోస్ సంఖ్యకు సమానంగా ఉండాలి!</strong> దీనిని సాధించడానికి 3 స్థాయిల నెస్టెడ్ లూప్స్ ($O(N^3)$) వాడతాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — 2x2 Matrix Multiplication Engine</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int A[2][2] = { {1, 2}, {3, 4} };
+    int B[2][2] = { {5, 6}, {7, 8} };
+    int C[2][2] = { {0, 0}, {0, 0} };
+
+    // మ్యాట్రిక్స్ గుణకారం (Matrix Multiplication O(N^3))
+    for (int i = 0; i &lt; 2; i++) {
+        for (int j = 0; j &lt; 2; j++) {
+            for (int k = 0; k &lt; 2; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+
+    printf("=== మ్యాట్రిక్స్ గుణకార ఫలితం (A x B) ===\\n");
+    for (int i = 0; i &lt; 2; i++) {
+        for (int j = 0; j &lt; 2; j++) {
+            printf("%4d ", C[i][j]);
+        }
+        printf("\\n");
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్ — స్టూడెంట్ గ్రేడింగ్ &amp; టాపర్ అనలిటిక్స్</div>
+    <div class="section-body">
+      <p>ఇప్పటివరకు నేర్చుకున్న 1D మరియు 2D అర్రేలను ఉపయోగించి ఒక సమగ్ర <strong>విద్యార్థుల మార్కుల విశ్లేషణ ఇంజిన్ (Academic Analytics Engine)</strong> నిర్మిద్దాం. ఇందులో 3 మంది విద్యార్థులు, 4 సబ్జెక్టుల మార్కులను ప్రాసెస్ చేసి, ప్రతి విద్యార్థి మొత్తం మార్కులు, సగటు మరియు క్లాస్ టాపర్‌ను కనుగొంటాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Academic Performance &amp; Class Topper Analytics</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+#define STUDENTS 3
+#define SUBJECTS 4
+
+int main() {
+    // విద్యార్థుల పేర్లు
+    const char* names[STUDENTS] = {"అఖిల్ వర్మ", "భావన రెడ్డి", "చైతన్య కృష్ణ"};
+
+    // 2D అర్రే: 3 విద్యార్థులు x 4 సబ్జెక్టుల మార్కులు (Maths, Physics, Chem, CS)
+    int marks[STUDENTS][SUBJECTS] = {
+        {92, 85, 88, 95}, // అఖిల్
+        {96, 94, 91, 98}, // భావన
+        {78, 82, 80, 85}  // చైతన్య
+    };
+
+    printf("==============================================================\\n");
+    printf("     మనా అకడమిక్ గ్రేడింగ్ రిపోర్ట్ (Academic Analytics 2026)\\n");
+    printf("==============================================================\\n");
+    printf("%-16s | %-6s | %-6s | %-6s | %-6s | %-6s | %-6s\\n",
+           "విద్యార్థి పేరు", "M1", "M2", "M3", "M4", "మొత్తం", "సగటు%%");
+    printf("--------------------------------------------------------------\\n");
+
+    int highestTotal = -1;
+    int topperIndex = -1;
+
+    for (int i = 0; i &lt; STUDENTS; i++) {
+        int studentTotal = 0;
+        printf("%-16s | ", names[i]);
+
+        for (int j = 0; j &lt; SUBJECTS; j++) {
+            printf("%-6d | ", marks[i][j]);
+            studentTotal += marks[i][j];
+        }
+
+        double percentage = (double)studentTotal / SUBJECTS;
+        printf("%-6d | %-6.2f%%\\n", studentTotal, percentage);
+
+        // క్లాస్ టాపర్ ను కనుగొనడం
+        if (studentTotal &gt; highestTotal) {
+            highestTotal = studentTotal;
+            topperIndex = i;
+        }
+    }
+
+    printf("==============================================================\\n");
+    printf("🏆 క్లాస్ టాపర్: %s (మొత్తం స్కోర్: %d / %d)\\n",
+           names[topperIndex], highestTotal, SUBJECTS * 100);
+    printf("==============================================================\\n");
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div class="section-title"><span class="num">12</span>సాధారణంగా బిగినర్స్ చేసే టాప్ 5 అర్రే తప్పులు</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">1. ఆఫ్-బై-వన్ ఇండెక్సింగ్ బగ్ (Off-by-One):</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">10 సైజు ఉన్న అర్రేకు <code>for (int i = 0; i &lt;= 10; i++)</code> అని రాయడం వలన <code>arr[10]</code> మెమరీ క్రాష్‌కు దారితీస్తుంది. ఎల్లప్పుడూ <code>i &lt; 10</code> వాడాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">2. ఒక అర్రేను మరొక అర్రేకు డైరెక్ట్‌గా కాపీ చేయాలనుకోవడం (arr1 = arr2):</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">C లో <code>a = b</code> అని అర్రేలను కాపీ చేయలేము! అర్రే పేరు స్థిరమైన పాయింటర్ (Constant Pointer). ఎలిమెంట్ బై ఎలిమెంట్ లూప్ ద్వారా మాత్రమే కాపీ చేయాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">3. సైజు లేదా ఇనిషియలైజర్ లేకుండా అర్రే డిక్లేర్ చేయడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>int a[];</code> అని రాస్తే కంపైలర్ ఎంత మెమరీ కేటాయించాలో తెలియక ఎర్రర్ ఇస్తుంది. కచ్చితంగా సైజు లేదా బ్రాకెట్ విలువలు ఇవ్వాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">4. ఫంక్షన్ లోపల sizeof(arr) లెక్కించడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">ఫంక్షన్ లోపల అర్రే పాయింటర్‌గా డీకే అవుతుంది కాబట్టి <code>sizeof</code> కేవలం 8 బైట్లను ఇస్తుంది. సైజును మెయిన్ నుండి పంపాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">5. 2D అర్రే ఫంక్షన్ హెడర్‌లో కాలమ్స్ పరిమాణం వదిలేయడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>void f(int a[][])</code> రాయకూడదు! కనీసం కాలమ్స్ సంఖ్య <code>void f(int a[][4])</code> తప్పనిసరి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 13 -->
+    <div class="section-title"><span class="num">13</span>స్వీయ మూల్యాంకన క్విజ్ &amp; మీరే స్వయంగా Try చేయండి!</div>
+    <div class="section-body">
+      <p>ఈ పాఠంలోని లోతైన అంశాలను క్రింది 5 ప్రాక్టికల్ ప్రశ్నల ద్వారా పరీక్షించుకోండి:</p>
+
+      <!-- QUIZ QUESTIONS -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: C లో అర్రే ఎలిమెంట్స్ ఏ మెమరీ అమరిక ప్రకారం నిల్వ చేయబడతాయి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>కంటిగ్యువస్ మెమరీ (Contiguous Memory Allocation)</strong> పద్ధతిలో, ఎటువంటి ఖాళీ లేకుండా పక్కపక్కనే ఉన్న మెమరీ గదులలో నిల్వ చేయబడతాయి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: అర్రే పేరును స్వతంత్రంగా వాడితే అది దేనిని సూచిస్తుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> అర్రే పేరు ఆ అర్రేలోని మొదటి ఎలిమెంట్ యొక్క బేస్ మెమరీ అడ్రస్ (<code>&amp;arr[0]</code>) ను సూచిస్తుంది (Constant Pointer).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: C లో 2D అర్రేలను RAM లో నిల్వ చేయడానికి ఏ క్రమం ఉపయోగపడుతుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>Row-Major Order</strong>. మొదటి అడ్డు వరుస ఎలిమెంట్స్ పూర్తయిన తర్వాతే రెండవ అడ్డు వరుస ఎలిమెంట్స్ లీనియర్‌గా నిల్వ చేయబడతాయి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: C కంపైలర్ అర్రే బౌండరీలను ఎందుకు తనిఖీ చేయదు (No Bounds Checking)?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> గరిష్ట ఎగ్జిక్యూషన్ వేగం మరియు సిస్టమ్స్ ప్రోగ్రామింగ్ సమర్థత కోసం. అయితే బౌండరీ దాటితే బఫర్ ఓవర్‌ఫ్లో మరియు సెగ్మెంటేషన్ ఫాల్ట్ ముప్పు ఉంటుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: 'sizeof(arr) / sizeof(arr[0])' ఫార్ములా దేనిని లెక్కిస్తుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> మొత్తం అర్రేలో ఉన్న మొత్తం ఎలిమెంట్స్ సంఖ్యను (Length of Array) రన్‌టైమ్‌లో లెక్కిస్తుంది.
+        </div>
+      </details>
+
+      <!-- TRY BOX -->
+      <div class="try-box" style="margin-top:24px;">
+        <div class="try-title">🚀 స్టూడెంట్ అనలిటిక్స్ &amp; మ్యాట్రిక్స్ మల్టిప్లికేషన్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో రన్ చేయండి!</div>
+        <p>పైన వివరించిన <code>స్టూడెంట్ గ్రేడింగ్ ఇంజిన్</code> మరియు <code>మ్యాట్రిక్స్ మల్టిప్లికేషన్</code> కోడ్‌లను మన ఆన్‌లైన్ C కంపైలర్‌లో ఓపెన్ చేసి స్వయంగా రన్ చేయండి. విద్యార్థుల సంఖ్యను లేదా మ్యాట్రిక్స్ కొలతలను మార్చి ఫలితాలను పరీక్షించండి!</p>
+        <a class="run-btn" href="/online-c-compiler.html" target="_blank">
+          👉 Our Compiler లో C Compiler try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 అధ్యాయ సారాంశం (Quick Summary):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>అర్రేలు:</strong> ఒకే డేటా టైప్ కలిగిన అంశాలను పక్కపక్కనే నిల్వ చేసే కంటిగ్యువస్ మెమరీ బ్లాక్స్.</li>
+          <li><strong>O(1) రాండమ్ యాక్సెస్:</strong> డైరెక్ట్ ఇండెక్స్ గుణకారం ద్వారా ఏ ఎలిమెంట్‌నైనా క్షణాల్లో పొందవచ్చు.</li>
+          <li><strong>0-ఇండెక్సింగ్:</strong> ఇండెక్స్ అనేది బేస్ అడ్రస్ నుండి ఉండే ఆఫ్‌సెట్ దూరం.</li>
+          <li><strong>2D మ్యాట్రిక్స్:</strong> Row-Major Order ద్వారా 1D RAM లో లీనియర్‌గా మ్యాప్ అవుతుంది.</li>
+          <li><strong>బౌండ్స్ సేఫ్టీ:</strong> బఫర్ ఓవర్‌ఫ్లో నివారించడానికి లూప్స్ లో <code>&lt; SIZE</code> మాత్రమే వాడాలి.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 14):</strong> కంప్యూటర్‌తో అక్షరాలు మరియు టెక్స్ట్‌తో మాట్లాడే <strong>క్యారెక్టర్ అర్రేలు (Character Arrays), నల్ టెర్మినేటర్ (\\0) సీక్రెట్, మరియు &lt;string.h&gt; లైబ్రరీ ఫంక్షన్స్</strong> గురించి లోతుగా నేర్చుకుందాం!
+      </div>
+    </div>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-c/12-c-recursion-call-stack.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 12. రికార్షన్ &amp; కాల్ స్టాక్
+      </a>
+      <a href="/blog-c/14-c-strings-character-arrays-string-h.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 14. స్ట్రింగ్స్ &amp; &lt;string.h&gt; →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+// Assemble the complete HTML document
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C అర్రేలు (1D Arrays & 2D Matrices) — Modern C Tutorial | Our Compiler</title>
+  <meta name="description" content="C అర్రేలు (1D Arrays & 2D Matrices) సమగ్ర తెలుగు గైడ్: కంటిగ్యువస్ మెమరీ, 0-ఇండెక్సింగ్ సీక్రెట్, Row-Major Order ఫార్ములా, బఫర్ ఓవర్‌ఫ్లో, స్టూడెంట్ అనలిటిక్స్ ప్రాజెక్ట్." />
+  <meta name="keywords" content="c arrays in telugu, c 2d matrices, row major order c, c buffer overflow, c contiguous memory, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/13-c-arrays-1d-and-2d-matrices.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C అర్రేలు (1D Arrays & 2D Matrices) (C Programming in Telugu)",
+    "description": "కంటిగ్యువస్ మెమరీ, 0-ఇండెక్సింగ్ సీక్రెట్, Row-Major Order ఫార్ములా, బఫర్ ఓవర్‌ఫ్లో, స్టూడెంట్ అనలిటిక్స్ ప్రాజెక్ట్",
+    "articleSection": "Phase 04: అర్రేస్, స్ట్రింగ్స్ & పాయింటర్లు",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
+  </script>
+</head>
+<body class="lang-c light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-c', '13-c-arrays-1d-and-2d-matrices.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C Chapter 13!');
+console.log('Target file size:', fullHtml.length, 'characters');
