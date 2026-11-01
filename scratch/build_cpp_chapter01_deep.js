@@ -1,0 +1,799 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[0];
+const sidebarHtml = buildSidebar(1);
+
+const chapter01Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ ప్రోగ్రామింగ్ పరిచయం తెలుగులో: Bjarne Stroustrup హిస్టరీ, Zero-overhead abstraction, C++ కంపైలర్ పైప్‌లైన్ (Preprocessor, Compiler, Assembler, Linker), std::cout, endl vs \\n, and Hello World డీప్ గైడ్." />
+  <meta name="keywords" content="c++ introduction telugu, c++ tutorial in telugu, c++ hello world, c++ compiler pipeline, std cout telugu, endl vs n, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Introduction, History & Architecture)",
+    "description": "C++ ప్రోగ్రామింగ్ పరిచయం తెలుగులో: Bjarne Stroustrup హిస్టరీ, Zero-overhead abstraction, C++ కంపైలర్ పైప్‌లైన్, std::cout మరియు Hello World లైన్-బై-లైన్ బ్రేక్‌డౌన్.",
+    "articleSection": "Phase 1: C++ Basics & Fundamentals",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = ['std','cout','cin','endl','cerr','clog','string','vector','map','set','pair','main','printf','scanf','getline'];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (!codeEl) return;
+      const rawText = codeEl.textContent;
+      navigator.clipboard.writeText(rawText).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (!codeEl) return;
+      const rawText = codeEl.textContent;
+      try {
+        localStorage.setItem('code_cpp17', rawText);
+        localStorage.setItem('code_cpp', rawText);
+      } catch (e) {
+        console.warn('LocalStorage unavailable:', e);
+      }
+      window.open('/online-cpp-compiler.html', '_blank');
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme !== 'dark') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.code-block pre code').forEach(codeEl => {
+          codeEl.innerHTML = highlightCppCode(codeEl.textContent);
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp light-theme">
+
+<!-- SITE NAVIGATION BAR PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 01: C++ పరిచయం & Hello World</span>
+    </div>
+
+    <h1 class="page-title">C++ పరిచయం, ఆర్కిటెక్చర్ & మొదటి ప్రోగ్రామ్ (Hello World)</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++20 / C++17</span>
+      <span class="badge">🟢 Chapter 01 of 20</span>
+      <span class="badge">📂 Phase 01: బేసిక్స్ & ఫండమెంటల్స్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- Covered Topics Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>What is C++? · History & Bjarne Stroustrup · Zero-overhead Principle · C vs C++ Comparison · 4-Stage Compilation Pipeline (cpp, g++, as, ld) · First Hello World Program · Microscopic Line-by-Line Breakdown · std::cout, endl vs \\n · using namespace std Controversy · int main vs void main · Practice Tasks</span>
+    </div>
+
+    <!-- Intro Overview Box -->
+    <div class="intro-box">
+      <p>స్వాగతం C++ ప్రోగ్రామింగ్ వరల్డ్-క్లాస్ మాస్టర్‌క్లాస్‌కు! 🚀 ఆధునిక సాంకేతిక ప్రపంచంలో అత్యంత క్లిష్టమైన, వేగవంతమైన కంప్యూటింగ్ సిస్టమ్‌లను — AAA వీడియో గేమ్ ఇంజిన్లు (Unreal Engine), గూగుల్ V8 జావాస్క్రిప్ట్ ఇంజిన్, హై-ఫ్రీక్వెన్సీ స్టాక్ ట్రేడింగ్ అల్గారిథమ్స్, స్పేస్ ఎక్స్ రాకెట్ గైడెన్స్, మరియు ఆపరేటింగ్ సిస్టమ్ కెర్నల్స్ — నడిపించే ఏకైక రారాజు <strong>C++ ప్రోగ్రామింగ్ లాంగ్వేజ్</strong>.</p>
+      <p style="margin-bottom:0;">ఈ సమగ్ర ప్రారంభ అధ్యాయంలో, సిలికాన్ చిప్ స్థాయి నుండి కంప్యూటర్ మెమరీ మరియు ప్రాసెసర్ ఆర్కిటెక్చర్‌ను పరిశీలిస్తూ — C++ భాష పుట్టుక, "Zero-Overhead Principle", 4-దశల కంపైలేషన్ పైప్‌లైన్, మరియు మీ మొట్టమొదటి Modern C++ ప్రోగ్రామ్‌ను లైన్-బై-లైన్ మైక్రోస్కోపిక్ డీకన్‌స్ట్రక్షన్‌తో నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> C++ భాష పుట్టుక, చరిత్ర & Bjarne Stroustrup బెల్ లాబ్స్ విజన్</h2>
+      <p>
+        1979 వ సంవత్సరంలో, అమెరికాలోని ప్రతిష్టాత్మకమైన <strong>బెల్ లాబొరేటరీస్ (AT&T Bell Labs)</strong> లో డెన్మార్క్‌కు చెందిన లెజెండరీ కంప్యూటర్ సైంటిస్ట్ <strong>Bjarne Stroustrup (బ్యార్నే స్ట్రోస్ట్రప్)</strong> తన పరిశోధనా ప్రాజెక్ట్ కోసం ఒక పెద్ద సవాలును ఎదుర్కొన్నారు.
+      </p>
+      <p>
+        ఆ సమయంలో ఆయన కంప్యూటర్ నెట్‌వర్క్‌ల డిస్ట్రిబ్యూటెడ్ సిస్టమ్స్ పై రీసెర్చ్ చేస్తున్నారు. ఆ సిమ్యులేషన్ రాయడానికి ఆయనకు రెండు వేర్వేరు భాషలు అవసరమయ్యాయి:
+      </p>
+      <ul>
+        <li><strong>Simula-67:</strong> ఇది ప్రపంచంలోనే మొదటి Object-Oriented భాష. ఇందులో క్లాసులు, ఆబ్జెక్టులు ఉండటం వల్ల పెద్ద సాఫ్ట్‌వేర్ ప్రాజెక్టులను చాలా నీట్‌గా, మాడ్యులర్‌గా డిజైన్ చేయవచ్చు. కానీ ఇది రన్ అయ్యేటప్పుడు <em>చాలా చాలా నెమ్మదిగా</em> ఉండేది.</li>
+        <li><strong>C Language (Dennis Ritchie సృష్టించినది):</strong> ఇది మెషిన్ హార్డ్‌వేర్‌కు అత్యంత సన్నిహితంగా ఉండి, రాకెట్ వేగంతో రన్ అయ్యేది. కానీ ఇందులో క్లాసెస్, ఆబ్జెక్ట్ ఓరియెంటెడ్ ఫీచర్లు లేకపోవడం వల్ల పెద్ద సంక్లిష్టమైన సాఫ్ట్‌వేర్ సిస్టమ్స్ రాయడం తలనొప్పిగా ఉండేది.</li>
+      </ul>
+      <p>
+        అప్పుడు Bjarne Stroustrup ఆలోచించారు: <em>"C లాంగ్వేజ్ యొక్క తిరుగులేని రాకెట్ వేగం + Simula యొక్క అత్యున్నతమైన ఆబ్జెక్ట్ ఓరియెంటెడ్ అబ్‌స్ట్రాక్షన్ — ఈ రెండింటినీ కలిపి ఒకే భాషగా తయారుచేస్తే ఎలా ఉంటుంది?"</em> ఆ ఆలోచన నుండే C++ జన్మించింది!
+      </p>
+      <p>
+        1979 లో మొదట దీనికి <strong>"C with Classes"</strong> అని పేరు పెట్టారు. అనంతరం 1983 లో దీనికి కంప్యూటర్ సైన్స్ చరిత్రలో నిలిచిపోయేలా <strong>C++</strong> అని నామకరణం చేశారు. C లాంగ్వేజ్‌లో <code>++</code> అనేది ఒక విలువను ఒకటి పెంచే <em>Increment Operator</em>. అంటే <em>"C భాష యొక్క సామర్థ్యాన్ని మరింత ఉన్నత శిఖరాలకు తీసుకెళ్లిన అడ్వాన్స్‌డ్ లాంగ్వేజ్"</em> అని దీని అర్థం!
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> Zero-Overhead Principle & Multi-Paradigm ఫిలాసఫీ</h2>
+      <p>
+        Java, Python, C# లాంటి మోడరన్ భాషలు ఉన్నప్పటికీ, నేటికీ గేమ్ డెవలప్‌మెంట్ మరియు మిషన్-క్రిటికల్ సిస్టమ్స్‌లో C++ నే ఎందుకు రారాజుగా ఉంది? దీనికి ప్రధాన కారణం C++ యొక్క మూల స్తంభమైన <strong>Zero-Overhead Principle</strong>.
+      </p>
+
+      <div class="concept-box" style="background:var(--bg2); border-left:4px solid #10b981; padding:16px 20px; border-radius:8px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:16px;">💡 The Golden Rule of C++ (Bjarne Stroustrup)</h4>
+        <p style="font-style:italic; font-size:14.5px; margin-bottom:8px; color:var(--text);">
+          "What you don't use, you don't pay for. And what you do use, you couldn't hand-code any better."
+        </p>
+        <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.6;">
+          <strong>తెలుగు వివరణ:</strong> మీరు C++ లోని ఒక ఫీచర్‌ను (ఉదాహరణకు వర్చువల్ ఫంక్షన్లు, టెంప్లేట్లు లేదా ఎక్సెప్షన్లు) ఉపయోగించకపోతే, అది మీ ప్రోగ్రామ్ మెమరీని గానీ, CPU క్లాక్ సైకిల్స్‌ను గానీ ఒక్క శాతం కూడా వృధా చేయదు. మీరు ఒకవేళ ఆ ఫీచర్‌ను వాడితే, అసెంబ్లీ కోడ్ రాసే నిపుణుడు స్వయంగా చేత్తో రాసినా అంతకంటే వేగవంతమైన కోడ్ రాయలేనంత అద్భుతంగా కంపైలర్ ఆప్టిమైజ్ చేస్తుంది!
+        </p>
+      </div>
+
+      <h4 style="color:#10b981; margin:20px 0 10px; font-size:16px;">🌟 Multi-Paradigm అంటే ఏమిటి?</h4>
+      <p>
+        C++ కేవలం ఆబ్జెక్ట్ ఓరియెంటెడ్ భాష మాత్రమే కాదు. ఇది ఒక <strong>Multi-Paradigm Language</strong>. అంటే ఒకే ప్రాజెక్ట్‌లో మీరు వేర్వేరు ప్రోగ్రామింగ్ శైలులను కలగలిపి ఉపయోగించవచ్చు:
+      </p>
+      <ol style="line-height:1.8; font-size:14px; color:var(--text);">
+        <li><strong>Procedural Programming:</strong> C లాంగ్వేజ్ లాగా నేరుగా ఫంక్షన్లు, లూప్స్ మరియు పాయింటర్లతో నేరుగా మెమరీని కంట్రోల్ చేయడం.</li>
+        <li><strong>Object-Oriented Programming (OOP):</strong> క్లాసులు, ఆబ్జెక్టులు, ఎన్‌క్యాప్సులేషన్, ఇన్హెరిటెన్స్ మరియు రన్‌టైమ్ పాలిమార్ఫిజమ్ ద్వారా క్లీన్ ఆర్కిటెక్చర్ నిర్మించడం.</li>
+        <li><strong>Generic Programming (Templates):</strong> డేటా టైప్‌తో సంబంధం లేకుండా పనిచేసే అల్గారిథమ్స్ రాయడం (ఉదాహరణకు <code>std::vector&lt;T&gt;</code>, <code>std::sort</code>).</li>
+        <li><strong>Functional Programming:</strong> C++11 నుండి వచ్చిన Lambda Expressions, ఫంక్షన్ పాయింటర్లు మరియు <code>std::function</code> వాడకం.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> C vs C++: మైక్రోస్కోపిక్ ఆర్కిటెక్చర్ తేడాలు</h2>
+      <p>
+        చాలామంది ఇంజనీరింగ్ విద్యార్థులు C మరియు C++ రెండూ దాదాపు ఒకటే అనుకుంటారు. కానీ వాటి మధ్య సాఫ్ట్‌వేర్ ఇంజనీరింగ్ పరంగా అగాధమైన తేడాలు ఉన్నాయి. దిగువ టేబుల్ ద్వారా వాటి ఆర్కిటెక్చరల్ వ్యత్యాసాలను స్పష్టంగా పరిశీలించండి:
+      </p>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table class="tbl" style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
+              <th style="padding:12px 14px; color:#10b981;">లక్షణం (Feature)</th>
+              <th style="padding:12px 14px; color:var(--text);">C Language (1972)</th>
+              <th style="padding:12px 14px; color:#10b981;">Modern C++ (C++17/C++20)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">Programming Paradigm</td>
+              <td style="padding:10px 14px; color:var(--text2);">కేవలం Procedural (టాప్-డౌన్ ఫంక్షన్స్)</td>
+              <td style="padding:10px 14px; color:var(--text);">Multi-Paradigm (Procedural + OOP + Generic + Functional)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">Encapsulation & Data Hiding</td>
+              <td style="padding:10px 14px; color:var(--text2);">డేటా హైడింగ్ లేదు; <code>struct</code> లో అన్ని ఫీల్డ్స్ పబ్లిక్</td>
+              <td style="padding:10px 14px; color:var(--text);"><code>class</code> లో <code>private</code>, <code>protected</code>, <code>public</code> తో పూర్తి రక్షణ</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">మెమరీ మేనేజ్‌మెంట్</td>
+              <td style="padding:10px 14px; color:var(--text2);">మాన్యువల్ (<code>malloc()</code>, <code>free()</code>); లీక్స్ రిస్క్ ఎక్కువ</td>
+              <td style="padding:10px 14px; color:var(--text);"><strong>RAII</strong> ఆర్కిటెక్చర్, Smart Pointers (<code>unique_ptr</code>, <code>shared_ptr</code>) ఆటోమేటిక్ క్లీనప్</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">Function Overloading</td>
+              <td style="padding:10px 14px; color:var(--text2);">సపోర్ట్ చేయదు (ఒకే పేరుతో రెండు ఫంక్షన్లు రాయలేము)</td>
+              <td style="padding:10px 14px; color:var(--text);">పూర్తి సపోర్ట్ (పారామీటర్లను బట్టి కంపైలర్ సరైన ఫంక్షన్‌ను లింక్ చేస్తుంది)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">Standard Library</td>
+              <td style="padding:10px 14px; color:var(--text2);">పరిమితమైన లైబ్రరీ (C Standard Library)</td>
+              <td style="padding:10px 14px; color:var(--text);">విశాలమైన <strong>STL</strong> (Vectors, Maps, Hash tables, Algorithms, Threads)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:700;">I/O Operations</td>
+              <td style="padding:10px 14px; color:var(--text2);"><code>printf()</code>, <code>scanf()</code> (టైప్ సేఫ్టీ ఉండదు)</td>
+              <td style="padding:10px 14px; color:var(--text);"><code>std::cout</code>, <code>std::cin</code> (100% టైప్-సేఫ్ ఆబ్జెక్ట్ స్ట్రీమ్స్)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:700;">References (&)</td>
+              <td style="padding:10px 14px; color:var(--text2);">రిఫరెన్సెస్ లేవు (కేవలం raw pointers మాత్రమే)</td>
+              <td style="padding:10px 14px; color:var(--text);">సేఫ్ రిఫరెన్సెస్ (<code>int&amp; ref = x;</code>), Move Semantics (<code>&amp;&amp;</code>)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> పూర్తి 4-దశల C++ కంపైలేషన్ పైప్‌లైన్ (Behind the Scenes)</h2>
+      <p>
+        పైథాన్ లాంటి ఇంటర్‌ప్రెటెడ్ భాషల్లో కోడ్ నేరుగా లైన్ బై లైన్ రన్ అవుతుంది. కానీ C++ లో మనం రాసే ఇంగ్లీష్ లాంటి హై-లెవల్ కోడ్ CPU కి నేరుగా అర్థం కాదు. మనం రాసిన కోడ్ కంప్యూటర్ ప్రాసెసర్ ఎగ్జిక్యూట్ చేసే బైనరీ మెషిన్ కోడ్ (0s & 1s) గా మారడానికి <strong>4 దశల పైప్‌లైన్ (4 Stages)</strong> గుండా ప్రయాణించాలి:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:14px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; font-weight:800; color:#10b981; letter-spacing:0.5px; text-transform:uppercase;">Stage 01: Preprocessing</span>
+            <span style="background:rgba(16,185,129,0.15); color:#10b981; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700;">Tool: cpp</span>
+          </div>
+          <div style="font-weight:700; font-size:15px; color:var(--text); margin-top:4px;">హెడర్ల విస్తరణ & మాక్రోల రీప్లేస్‌మెంట్ (#include, #define)</div>
+          <p style="font-size:13.5px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            ప్రీ-ప్రాసెసర్ అనేది కంపైలర్ కంటే ముందు పనిచేసే ఒక టెక్స్ట్ ప్రాసెసర్. ఇది <code>#include &lt;iostream&gt;</code> కనిపించగానే ఆ హెడర్ ఫైల్‌లోని వేలాది లైన్ల డిక్లరేషన్లను తీసుకొచ్చి మీ ఫైల్‌లో అతికిస్తుంది. కామెంట్లు (// మరియు /* */) అన్నింటినీ తొలగిస్తుంది. దీని అవుట్‌పుట్‌గా <code>main.ii</code> (లేదా <code>main.i</code>) ఫైల్ తయారవుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; font-weight:800; color:#3b82f6; letter-spacing:0.5px; text-transform:uppercase;">Stage 02: Compilation</span>
+            <span style="background:rgba(59,130,246,0.15); color:#3b82f6; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700;">Tool: g++ / clang++ (cc1plus)</span>
+          </div>
+          <div style="font-weight:700; font-size:15px; color:var(--text); margin-top:4px;">సింటాక్స్ చెకింగ్ & అసెంబ్లీ కోడ్ ఉత్పత్తి (C++ to Assembly)</div>
+          <p style="font-size:13.5px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            కంపైలర్ మీ కోడ్‌లోని సింటాక్స్ నియమాలు, డేటా టైప్ సేఫ్టీ మరియు టెంప్లేట్ విస్తరణలను తనిఖీ చేస్తుంది. తీవ్రమైన కోడ్ ఆప్టిమైజేషన్లు చేసి, నిర్దిష్ట CPU ఆర్కిటెక్చర్ (x86_64 లేదా ARM64) కోసం అసెంబ్లీ ఇన్స్ట్రక్షన్లను (<code>mov, push, call, ret</code>) ఉత్పత్తి చేస్తుంది. దీని అవుట్‌పుట్ <code>main.s</code>.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f59e0b; border-radius:8px; padding:16px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; font-weight:800; color:#f59e0b; letter-spacing:0.5px; text-transform:uppercase;">Stage 03: Assembly</span>
+            <span style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700;">Tool: as (Assembler)</span>
+          </div>
+          <div style="font-weight:700; font-size:15px; color:var(--text); margin-top:4px;">అసెంబ్లీ ఇన్స్ట్రక్షన్ల నుండి బైనరీ మెషిన్ కోడ్ (Assembly to Object File)</div>
+          <p style="font-size:13.5px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            అసెంబ్లర్ CPU అసెంబ్లీ సూచనలను స్వచ్ఛమైన బైనరీ బైట్స్ (0s & 1s) గా మారుస్తుంది. దీని అవుట్‌పుట్‌గా రీ-లొకేటబుల్ ఆబ్జెక్ట్ ఫైల్ <code>main.o</code> (Windows లో <code>main.obj</code>) తయారవుతుంది. అయితే ఇది ఇంకా రన్ అయ్యే స్థితిలో ఉండదు, ఎందుకంటే <code>std::cout</code> లాంటి లైబ్రరీ ఫంక్షన్ల చిరునామాలు ఇందులో ఇంకా అనుసంధానం కాలేదు!
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ec4899; border-radius:8px; padding:16px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; font-weight:800; color:#ec4899; letter-spacing:0.5px; text-transform:uppercase;">Stage 04: Linking</span>
+            <span style="background:rgba(236,72,153,0.15); color:#ec4899; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700;">Tool: ld (Linker)</span>
+          </div>
+          <div style="font-weight:700; font-size:15px; color:var(--text); margin-top:4px;">లైబ్రరీల అనుసంధానం & ఫైనల్ ఎగ్జిక్యూటబుల్ (.exe / a.out)</div>
+          <p style="font-size:13.5px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
+            లింకర్ మీ <code>main.o</code> ఫైల్‌కు C++ రన్‌టైమ్ లైబ్రరీ (libstdc++ / libc++) కోడ్‌ను జతచేస్తుంది. ఫంక్షన్ల చిరునామాలను పరిష్కరించి (Address Resolution), నేరుగా ఆపరేటింగ్ సిస్టమ్ డబుల్-క్లిక్ చేస్తే రన్ అయ్యే <code>program.exe</code> (Linux లో <code>a.out</code>) ను సృష్టిస్తుంది!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> C++ డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ సెటప్ (GCC/g++, Clang & VS Code)</h2>
+      <p>
+        మీ కంప్యూటర్‌లో C++ కోడ్ రాయడానికి మరియు కంపైల్ చేయడానికి రెండు ముఖ్యమైన సాధనాలు కావాలి:
+      </p>
+      <ol style="line-height:1.8; font-size:14px; color:var(--text);">
+        <li><strong>C++ Compiler:</strong> ప్రపంచవ్యాప్తంగా ప్రసిద్ధి చెందిన ఓపెన్-సోర్స్ కంపైలర్ <code>g++</code> (GNU C++ Compiler) లేదా <code>clang++</code> (LLVM ఆధారితం).</li>
+        <li><strong>Code Editor:</strong> కోడ్ రాయడానికి Microsoft <strong>Visual Studio Code (VS Code)</strong> తో పాటు "C/C++" ఎక్స్‌టెన్షన్ ప్యాక్.</li>
+      </ol>
+
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin:18px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px;">💻 కమాండ్ లైన్ ద్వారా C++ కంపైల్ చేయడం ఎలా?</h4>
+        <p style="font-size:13.5px; color:var(--text2); margin-bottom:12px;">
+          మీరు టెర్మినల్ లేదా పవర్‌షెల్ లో ఒక C++ ఫైల్ (<code>main.cpp</code>) ను కంపైల్ చేయడానికి ఈ కింది కమాండ్ వాడండి:
+        </p>
+        <div class="code-block" style="margin-bottom:0;">
+          <div class="code-block-header">
+            <span class="lang-tag">Bash / Terminal</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+          </div>
+          <pre><code># 1. ఆధునిక C++20 ప్రమాణాలతో కంపైల్ చేసి program.exe తయారుచేయడం
+g++ -std=c++20 -O2 -Wall main.cpp -o program.exe
+
+# 2. ప్రోగ్రామ్‌ను రన్ చేయడం
+./program.exe</code></pre>
+        </div>
+        <p style="font-size:12.5px; color:var(--text3); margin:8px 0 0 0;">
+          ఫ్లాగ్స్ వివరణ: <code>-std=c++20</code> (మోడరన్ C++20 ఫీచర్లను ఎనేబుల్ చేస్తుంది), <code>-O2</code> (గరిష్ట వేగం కోసం ఆప్టిమైజ్ చేస్తుంది), <code>-Wall</code> (అన్ని హెచ్చరికలను ప్రదర్శిస్తుంది).
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> మొదటి Modern C++ ప్రోగ్రామ్: "Hello, World!" & లైన్-బై-లైన్ డీకన్‌స్ట్రక్షన్</h2>
+      <p>
+        ఇప్పుడు ప్రపంచంలో ప్రతి ప్రోగ్రామర్ తన మొదటి అడుగు వేసే సాంప్రదాయకమైన మరియు పవిత్రమైన <strong>"Hello, World!"</strong> ప్రోగ్రామ్‌ను ఆధునిక C++ ప్రమాణాలతో రన్ చేద్దాం:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: The Modern C++ Hello World Program</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 / C++20</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    // స్క్రీన్ పై టెక్స్ట్ ప్రింట్ చేయడం
+    std::cout &lt;&lt; "Hello, World! 🚀 Welcome to C++ Masterclass.\\n";
+    std::cout &lt;&lt; "C++ is extremely fast, powerful, and fun!\\n";
+    
+    return 0; // ఆపరేటింగ్ సిస్టమ్‌కు సక్సెస్ స్టేటస్ పంపడం
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Microscopic Breakdown Card -->
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-top:20px;">
+        <h4 style="color:#10b981; margin:0 0 14px 0; font-size:15px; display:flex; align-items:center; gap:8px;">
+          🔍 మైక్రోస్కోపిక్ లైన్-బై-లైన్ కోడ్ విశ్లేషణ:
+        </h4>
+        <ul style="margin:0 0 0 18px; line-height:1.9; font-size:14px; color:var(--text);">
+          <li>
+            <code>#include &lt;iostream&gt;</code>: 
+            ఇది <strong>Preprocessor Directive</strong>. <code>iostream</code> అంటే <em>Input Output Stream</em>. స్క్రీన్ పైన టెక్స్ట్ ప్రింట్ చేయడానికి (<code>cout</code>) లేదా కీబోర్డ్ నుండి ఇన్‌పుట్ చదవడానికి (<code>cin</code>) అవసరమైన అన్ని క్లాసెస్ మరియు ఆబ్జెక్ట్స్ ఈ హెడర్ ఫైల్‌లో ఉంటాయి.
+          </li>
+          <li>
+            <code>int main()</code>: 
+            ఇది <strong>Main Function (Entry Point)</strong>. ఆపరేటింగ్ సిస్టమ్ మీ ప్రోగ్రామ్‌ను ఎగ్జిక్యూట్ చేయడం ఎల్లప్పుడూ <code>main()</code> మొదటి లైన్ నుండే ప్రారంభిస్తుంది. <code>int</code> అంటే ఈ ఫంక్షన్ చివరికి OS కు ఒక పూర్ణాంక ఫలితాన్ని (Integer Status Code) అందిస్తుంది.
+          </li>
+          <li>
+            <code>{ ... }</code>: 
+            కర్లీ బ్రేసెస్ ఫంక్షన్ యొక్క పరిధిని (Scope) సూచిస్తాయి. మీ ప్రోగ్రామ్ లాజిక్ అంతా ఈ బ్రాకెట్ల మధ్యలోనే ఉండాలి.
+          </li>
+          <li>
+            <code>std::cout</code>: 
+            <code>cout</code> అంటే <em>Character Output</em>. ఇది టెర్మినల్ కన్సోల్‌కు కనెక్ట్ అయి ఉన్న ఒక స్ట్రీమ్ ఆబ్జెక్ట్. <code>std::</code> అనేది Standard Namespace ను సూచిస్తుంది.
+          </li>
+          <li>
+            <code>&lt;&lt;</code>: 
+            దీనిని <strong>Stream Insertion Operator</strong> అంటారు. దీని కుడివైపు ఉన్న డేటాను ఎడమవైపు ఉన్న కన్సోల్ స్ట్రీమ్ (<code>cout</code>) లోకి నెడుతుంది.
+          </li>
+          <li>
+            <code>"Hello, World! 🚀\\n"</code>: 
+            డబుల్ కోట్స్ మధ్య ఉన్న టెక్స్ట్‌ను <strong>String Literal</strong> అంటారు. ఇది ఉన్నది ఉన్నట్లుగా స్క్రీన్‌పై ప్రింట్ అవుతుంది.
+          </li>
+          <li>
+            <code>return 0;</code>: 
+            ఆపరేటింగ్ సిస్టమ్‌కు <em>"నా ప్రోగ్రామ్ ఎటువంటి లోపాలు లేకుండా 100% విజయవంతంగా ముగిసింది (EXIT_SUCCESS)"</em> అని తెలియజేసే ఎగ్జిట్ స్టేటస్ కోడ్.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> std::cout, Stream Insertion Operator (&lt;&lt;) & Typesafety</h2>
+      <p>
+        C లాంగ్వేజ్‌లో మనం వాడే <code>printf()</code> తో పోలిస్తే, C++ లోని <code>std::cout</code> ఎందుకు విప్లవాత్మకమైనది? దీని వెనుక ఉన్న అతిపెద్ద రహస్యం <strong>Compile-Time Type Safety</strong>.
+      </p>
+      <p>
+        C లాంగ్వేజ్‌లో <code>printf("%d", 3.14);</code> అని పొరపాటున రాస్తే కంపైలర్ సరైన ఎర్రర్ ఇవ్వదు; రన్‌టైమ్‌లో చెత్త గార్బేజ్ విలువ ప్రింట్ అవుతుంది. కానీ C++ లో <code>std::cout</code> అనేది ఒక తెలివైన C++ ఆబ్జెక్ట్. మీరు ఏ డేటా టైప్ పంపినా (ఇంటిజర్, ఫ్లోట్, స్ట్రింగ్, లేదా కస్టమ్ క్లాస్ ఆబ్జెక్ట్), కంపైలర్ ఆటోమేటిక్‌గా సరైన ఓవర్‌లోడెడ్ <code>&lt;&lt;</code> ఆపరేటర్‌ను ఎంపిక చేస్తుంది!
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Multiple Datatypes & Stream Chaining</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    int rollNo = 101;
+    double score = 98.75;
+    char grade = 'A';
+    std::string studentName = "Balaji";
+
+    // Stream Chaining: ఒకే లైన్‌లో విభిన్న డేటా టైపులను కలపడం
+    std::cout &lt;&lt; "విద్యార్థి పేరు: " &lt;&lt; studentName 
+              &lt;&lt; " | రోల్ నం: " &lt;&lt; rollNo 
+              &lt;&lt; " | స్కోర్: " &lt;&lt; score 
+              &lt;&lt; " | గ్రేడ్: " &lt;&lt; grade &lt;&lt; '\\n';
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> std::endl vs '\\n': అల్ట్రా-ఫాస్ట్ I/O పర్ఫార్మెన్స్ రహస్యం & Flush Mechanism</h2>
+      <p>
+        C++ లో కొత్త లైన్‌కి వెళ్లడానికి రెండు మార్గాలు ఉన్నాయి: <code>std::endl</code> మరియు <code>'\\n'</code>. బిగినర్స్ రెండూ ఒకటే అనుకుంటారు, కానీ వాటి మధ్య చాలా తీవ్రమైన పర్ఫార్మెన్స్ తేడా ఉంది!
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:18px;">
+          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:15px;">🐢 std::endl (Slow - బఫర్ ఫ్లష్ చేస్తుంది)</h4>
+          <p style="font-size:13.5px; color:var(--text2); margin:0; line-height:1.6;">
+            ఇది కొత్త లైన్‌కి కర్సర్‌ను తీసుకెళ్లడమే కాకుండా, సిస్టమ్ I/O మెమరీ బఫర్‌ను తక్షణమే ఖాళీ (Force Flush) చేయమని ఆపరేటింగ్ సిస్టమ్‌కు సిగ్నల్ పంపుతుంది. ఒక లూప్‌లో పది లక్షల సార్లు <code>std::endl</code> వాడితే, OS తో లక్షల సార్లు ఇంటరాక్ట్ అయ్యి మీ ప్రోగ్రామ్ 10 నుండి 20 రెట్లు స్లో అయిపోతుంది!
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid rgba(16,185,129,0.4); border-left:4px solid #10b981; border-radius:8px; padding:18px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">⚡ '\\n' (Ultra Fast - రికమండెడ్)</h4>
+          <p style="font-size:13.5px; color:var(--text2); margin:0; line-height:1.6;">
+            ఇది కేవలం ఒక న్యూలైన్ క్యారెక్టర్‌ను బఫర్‌లో ఉంచుతుంది. బఫర్ పూర్తిగా నిండినప్పుడు లేదా ప్రోగ్రామ్ ముగిసినప్పుడు సింగిల్ షాట్‌లో వేగంగా ఫ్లష్ అవుతుంది. కాంపిటీటివ్ ప్రోగ్రామింగ్, హై-ఫ్రీక్వెన్సీ ట్రేడింగ్ మరియు గేమింగ్ ఇంజిన్లలో ఎల్లప్పుడూ <code>'\\n'</code> మాత్రమే వాడాలి!
+          </p>
+        </div>
+      </div>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Performance Comparison Demo</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    // ఉత్తమ పద్ధతి: '\\n' వాడండి
+    std::cout &lt;&lt; "లైన్ 1" &lt;&lt; '\\n';
+    std::cout &lt;&lt; "లైన్ 2\\nలైన్ 3\\n";
+
+    // అవసరమైనప్పుడు మాత్రమే ఫ్లష్ వాడండి (ఉదా: క్రష్ అవ్వకముందే లాగ్ రాయడానికి)
+    std::cout &lt;&lt; "ముఖ్యమైన ఎర్రర్ లాగ్!" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> using namespace std; వాడకూడదన్న కాంట్రవర్సీ & Name Collision ప్రమాదం</h2>
+      <p>
+        మీరు కళాశాలల్లో లేదా యూట్యూబ్ ట్యుటోరియల్స్‌లో తరచుగా ఈ కింది కోడ్‌ను చూసి ఉంటారు:
+      </p>
+      <div style="background:var(--bg3); border-left:3px solid #ef4444; padding:8px 14px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#ef4444; margin:10px 0;">
+        #include &lt;iostream&gt;<br>
+        using namespace std; // ⚠️ ది డేంజరస్ ప్రాక్టీస్!
+      </div>
+      <p>
+        బిగినర్స్ ప్రతిసారీ <code>std::</code> అని రాయడం బద్ధకించి <code>using namespace std;</code> అని ఫైల్ ప్రారంభంలో రాస్తారు. కళాశాల చిన్న ల్యాబ్ పరీక్షలకు ఇది సరిపోయినప్పటికీ, <strong>రియల్-వరల్డ్ ఇండస్ట్రీ సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో దీనిని ఒక తీవ్రమైన నేరంగా పరిగణిస్తారు!</strong> ఎందుకు?
+      </p>
+
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:16px 0;">
+        <h4 style="color:#ef4444; margin:0 0 10px 0; font-size:15px;">💥 The Danger: Namespace Pollution & Name Collisions</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          C++ స్టాండర్డ్ లైబ్రరీ (<code>std</code>) లో లక్షలాది ఐడెంటిఫైయర్లు ఉన్నాయి (ఉదాహరణకు: <code>count, size, data, distance, min, max, move</code>). మీరు <code>using namespace std;</code> అని గ్లోబల్‌గా వాడితే, ఆ లక్షలాది పేర్లు మీ గ్లోబల్ పరిధిలోకి వచ్చేస్తాయి. రేపు మీ ప్రాజెక్ట్‌లో మీరు స్వయంగా <code>int count = 10;</code> అని రాసినప్పుడు, కంపైలర్ అయోమయానికి గురై <strong>"Ambiguous symbol count"</strong> అనే కంపైలేషన్ ఎర్రర్‌ను విసురుతుంది!
+        </p>
+      </div>
+
+      <p><strong>సరైన పద్ధతులు:</strong></p>
+      <ol style="line-height:1.8; font-size:14px; color:var(--text);">
+        <li>స్పష్టంగా <code>std::cout</code>, <code>std::cin</code>, <code>std::endl</code> అని రాయడం (100% సేఫ్ & ప్రొఫెషనల్).</li>
+        <li>ఒకవేళ షార్ట్‌కట్ కావాలంటే, కేవలం అవసరమైన నిర్దిష్ట ఐడెంటిఫైయర్లను మాత్రమే దిగుమతి చేసుకోవడం:
+          <pre style="background:var(--bg3); padding:8px 12px; border-radius:6px; margin:6px 0; font-size:12.5px;"><code>using std::cout;
+using std::endl;</code></pre>
+        </li>
+      </ol>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> int main() vs void main() కంప్లీట్ బ్రేక్‌డౌన్ & ఎగ్జిట్ స్టేటస్ కోడ్స్</h2>
+      <p>
+        భారతదేశంలోని చాలా పాఠ్యపుస్తకాల్లో పాత 1990ల Turbo C++ ఆధారంగా <code>void main()</code> అని రాసి ఉంటుంది. కానీ ఆధునిక ISO C++ స్టాండర్డ్ ప్రకారం <strong><code>void main()</code> అనేది పూర్తిగా చెల్లదు (Strictly Illegal)!</strong>
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin:18px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px;">🔍 ఆపరేటింగ్ సిస్టమ్ కు రిటర్న్ కోడ్ ఎందుకు ముఖ్యం?</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          ఆపరేటింగ్ సిస్టమ్ (Windows, Linux, macOS) మీ ప్రోగ్రామ్‌ను రన్ చేసినప్పుడు, అది విజయవంతంగా ముగిసిందో లేక మధ్యలోనే ఏదైనా లోపం వల్ల ఆగిపోయిందో తెలుసుకోవడానికి ఒక సంఖ్యను కోరుకుంటుంది:
+        </p>
+        <ul style="margin:10px 0 0 18px; line-height:1.8; font-size:13.5px; color:var(--text2);">
+          <li><code>return 0;</code> : <strong>EXIT_SUCCESS</strong> — ప్రోగ్రామ్ ఎటువంటి ఎర్రర్ లేకుండా నూటికి నూరు శాతం విజయవంతంగా పూర్తయింది.</li>
+          <li><code>return 1;</code> (లేదా నాన్-జీరో): <strong>EXIT_FAILURE</strong> — ప్రోగ్రామ్‌లో ఫైల్ దొరకకపోవడం లేదా మెమరీ లోపం వల్ల క్రాష్ అయింది.</li>
+        </ul>
+        <p style="font-size:13px; color:var(--text3); margin:10px 0 0 0;">
+          గమనిక: C++ లో ఒక ప్రత్యేకమైన నిబంధన ఉంది — <code>int main()</code> చివర మీరు ఒకవేళ <code>return 0;</code> రాయడం మర్చిపోయినా, కంపైలర్ ఆటోమేటిక్‌గా ఇంప్లిసిట్‌గా <code>return 0;</code> ను జోడిస్తుంది. కానీ స్పష్టంగా రాయడమే ఒక మంచి ప్రోగ్రామర్ లక్షణం!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> C++ లాంగ్వేజ్ ఎవల్యూషన్ టైమ్‌లైన్ (C++98 నుండి Modern C++20 / C++23)</h2>
+      <p>
+        C++ అనేది ఒకే చోట నిలిచిపోయిన పాత భాష కాదు. ప్రతి 3 సంవత్సరాలకు ISO కమిటీ సరికొత్త అడ్వాన్స్‌డ్ ఫీచర్లతో సరికొత్త ప్రమాణాలను విడుదల చేస్తుంది:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #64748b; border-radius:8px; padding:12px 18px;">
+          <strong style="color:var(--text);">C++98 / C++03 (Classic C++):</strong> మొదటి అంతర్జాతీయ ప్రామాణీకరణ. STL, టెంప్లేట్స్, ఎక్సెప్షన్లు వచ్చాయి.
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:12px 18px;">
+          <strong style="color:#3b82f6;">C++11 (The Modern Renaissance):</strong> C++ చరిత్రలోనే అతిపెద్ద విప్లవం! <code>auto</code> కీవర్డ్, Smart Pointers, Lambda Expressions, Move Semantics, Range-based for loops, multithreading సపోర్ట్ వచ్చాయి.
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:12px 18px;">
+          <strong style="color:#10b981;">C++14 & C++17 (Refinement & Speed):</strong> <code>std::string_view</code> (జీరో-కాపీ స్ట్రింగ్స్), <code>constexpr</code> విస్తరణ, Structured Binding, <code>std::filesystem</code> వచ్చి కోడింగ్‌ను మరింత సులభతరం చేశాయి.
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ec4899; border-radius:8px; padding:12px 18px;">
+          <strong style="color:#ec4899;">C++20 & C++23 (The Future):</strong> Concepts (టెంప్లేట్ కన్‌స్ట్రైంట్స్), Modules (ఫాస్ట్ కంపైలేషన్), Coroutines (అసింక్రోనస్ ప్రోగ్రామింగ్), మరియు Ranges లైబ్రరీ.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> సాధారణ బిగినర్ తప్పులు, ప్రమాదకరమైన ట్రాప్స్ & బెస్ట్ ప్రాక్టీసెస్</h2>
+      <div style="display:flex; flex-direction:column; gap:14px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Trap 1: కేస్-సెన్సిటివిటీని పట్టించుకోకపోవడం</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            C++ అనేది స్ట్రిక్ట్ కేస్-సెన్సిటివ్ లాంగ్వేజ్. <code>Main()</code> అని రాస్తే లింకర్ ఎర్రర్ వస్తుంది; ఎల్లప్పుడూ లోయర్‌కేస్ <code>main()</code> మాత్రమే రాయాలి. అలాగే <code>COUT</code> కాకుండా <code>cout</code> మాత్రమే రాయాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Trap 2: సెమికోలన్ (;) మర్చిపోవడం</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            C++ లో ప్రతి స్టేట్‌మెంట్ తప్పనిసరిగా సెమికోలన్ <code>;</code> తోనే ముగియాలి. సెమికోలన్ పెట్టకపోతే ఆ తర్వాతి లైన్ లో కంపైలర్ <em>"expected ';' before ..."</em> అనే ఎర్రర్ ఇస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid rgba(16,185,129,0.3); border-left:4px solid #10b981; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#10b981; font-size:14.5px;">✅ Pro-Tip: ఆధునిక కంపైలర్ వార్నింగ్స్ ఆన్ చేసుకోండి</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            కంపైల్ చేసేటప్పుడు ఎల్లప్పుడూ <code>g++ -Wall -Wextra -pedantic main.cpp</code> వాడండి. ఇది మీరు చేసే చిన్న చిన్న తప్పులను కూడా ముందే హెచ్చరించి మిమ్మల్ని మేటి సాఫ్ట్‌వేర్ ఇంజనీర్‌గా తీర్చిదిద్దుతుంది.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాక్టీస్ ప్రాజెక్ట్ & అడ్వాన్స్‌డ్ ఛాలెంజెస్</h2>
+      <p>
+        ఈ మొదటి అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను ఒకచోట చేర్చి, ఒక అందమైన కన్సోల్ ఆధారిత <strong>"Student Academic Profile & System Welcome Banner"</strong> ప్రాజెక్ట్‌ను రన్ చేద్దాం:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Complete Hands-On Practice Project: System Profile Banner</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 / C++20 Project</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    // విద్యార్థి వివరాల డిక్లరేషన్
+    std::string learnerName = "రవితేజ (Ravi Teja)";
+    std::string courseName = "Modern C++20 Masterclass";
+    int currentChapter = 1;
+    int totalChapters = 20;
+    double progressPercent = (static_cast&lt;double&gt;(currentChapter) / totalChapters) * 100.0;
+
+    // సిస్టమ్ వెల్‌కమ్ బ్యానర్ ప్రింటింగ్
+    std::cout &lt;&lt; "=================================================\\n";
+    std::cout &lt;&lt; "     🚀 OUR COMPILER MODERN C++ MASTERCLASS      \\n";
+    std::cout &lt;&lt; "=================================================\\n";
+    std::cout &lt;&lt; "లర్నర్ పేరు        : " &lt;&lt; learnerName &lt;&lt; '\\n';
+    std::cout &lt;&lt; "కోర్సు టైటిల్       : " &lt;&lt; courseName &lt;&lt; '\\n';
+    std::cout &lt;&lt; "ప్రస్తుత అధ్యాయం   : " &lt;&lt; currentChapter &lt;&lt; " of " &lt;&lt; totalChapters &lt;&lt; '\\n';
+    std::cout &lt;&lt; "కోర్సు ప్రోగ్రెస్    : " &lt;&lt; progressPercent &lt;&lt; "% పూర్తయింది\\n";
+    std::cout &lt;&lt; "లక్ష్యం             : High-Performance Systems Engineering\\n";
+    std::cout &lt;&lt; "-------------------------------------------------\\n";
+    std::cout &lt;&lt; "హలో C++ వరల్డ్! మీ విజయవంతమైన ప్రయాణానికి శుభాకాంక్షలు!\\n";
+    std::cout &lt;&lt; "=================================================\\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-top:20px;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px;">🎯 మీ కోసం స్వయం సాధన సవాలు (Self-Study Challenge):</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          పై ప్రోగ్రామ్‌ను ఆన్‌లైన్ కంపైలర్‌లో ఓపెన్ చేసి — మీ స్వంత పేరు, మీ కళాశాల పేరు, మరియు మీ భవిష్యత్ డ్రీమ్ కంపెనీ (ఉదాహరణకు Google, Microsoft, ISRO) వివరాలతో ఒక అందమైన <strong>Personal Developer Portfolio Card</strong> ను ప్రింట్ చేసేలా మార్పులు చేసి రన్ చేయండి!
+        </p>
+      </div>
+    </section>
+
+    <!-- QUIZ SECTION (5 DETAILS QUESTIONS) -->
+    <section style="margin-top:40px;">
+      <h2 class="section-title"><span class="num">❓</span> ఇంటర్వ్యూ & పరీక్షల క్విజ్ (Knowledge Check)</h2>
+      
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 1: C++ లోని "Zero-Overhead Principle" అంటే ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> Bjarne Stroustrup సూచించిన ప్రకారం — మీరు C++ లో ఉపయోగించని ఫీచర్‌కు మెమరీ గానీ, CPU ప్రాసెసింగ్ టైమ్ గానీ ఖర్చు చేయనవసరం లేదు ("What you don't use, you don't pay for"). అలాగే మీరు వాడిన ఫీచర్ కోసం స్వయంగా అసెంబ్లీలో రాసినా అంతకంటే వేగవంతమైన కోడ్ రాయలేనంత అద్భుతంగా కంపైలర్ ఆప్టిమైజ్ చేస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 2: std::endl మరియు '\\n' మధ్య ప్రధాన తేడా ఏమిటి? పర్ఫార్మెన్స్ ఎందుకు తగ్గుతుంది?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>'\\n'</code> కేవలం కర్సర్‌ను కొత్త లైన్‌కి పంపుతుంది. కానీ <code>std::endl</code> కొత్త లైన్‌కి వెళ్లడంతో పాటు మెమరీ అవుట్‌పుట్ బఫర్‌ను తక్షణమే ఖాళీ (Force Flush) చేయమని ఆపరేటింగ్ సిస్టమ్‌కు సిగ్నల్ ఇస్తుంది. లూప్‌లలో <code>std::endl</code> వాడటం వల్ల ప్రోగ్రామ్ వేగం భారీగా తగ్గిపోతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 3: പ്രొఫెషనల్ C++ సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో 'using namespace std;' ఎందుకు వాడకూడదు?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> Standard namespace (<code>std</code>) లో లక్షలాది ఫంక్షన్లు, క్లాసులు (ఉదా: <code>count, size, min, max, move</code>) ఉంటాయి. గ్లోబల్‌గా <code>using namespace std;</code> రాస్తే, రేపు మన స్వంత వేరియబుల్స్ వాటితో ఢీకొని ప్రమాదకరమైన <strong>Name Collision (Ambiguity Error)</strong> ఏర్పడుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 4: void main() ఎందుకు తప్పు? ISO C++ స్టాండర్డ్ int main() నే ఎందుకు నిర్దేశిస్తుంది?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> ఆపరేటింగ్ సిస్టమ్‌కు ప్రోగ్రామ్ విజయవంతంగా ముగిసిందో (Exit Code 0) లేదా మధ్యలోనే ఎర్రర్ వచ్చి ఆగిపోయిందో (Non-zero Exit Code) తెలియజేయడానికి <code>int main()</code> మాత్రమే వాడాలి. ISO C++ ప్రమాణాల ప్రకారం <code>void main()</code> పూర్తిగా చెల్లదు (Illegal).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 5: C++ కంపైలేషన్ పైప్‌లైన్‌లోని 4 దశలు ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> 1. <strong>Preprocessing (cpp):</strong> హెడర్స్ విస్తరణ & మాక్రోల రీప్లేస్‌మెంట్. 2. <strong>Compilation (cc1plus):</strong> C++ కోడ్ నుండి CPU అసెంబ్లీ కోడ్ (.s) మార్పు. 3. <strong>Assembly (as):</strong> అసెంబ్లీ నుండి బైనరీ ఆబ్జెక్ట్ ఫైల్ (.o). 4. <strong>Linking (ld):</strong> లైబ్రరీలతో అనుసంధానం చేసి ఫైనల్ ఎగ్జిక్యూటబుల్ (.exe) తయారీ.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-cpp.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← C++ Course Index (ఇండెక్స్)
+      </a>
+      <a href="/blog-cpp/${currentLesson.next.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: ${currentLesson.next.title} →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13 / Clang 17 (C++20 Standard) · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`// =================================================
+//      🚀 OUR COMPILER MODERN C++ MASTERCLASS
+// =================================================
+#include <iostream>
+#include <string>
+
+int main() {
+    std::string learnerName = "రవితేజ (Ravi Teja)";
+    std::string courseName = "Modern C++20 Masterclass";
+    int currentChapter = 1;
+    int totalChapters = 20;
+    double progressPercent = (static_cast<double>(currentChapter) / totalChapters) * 100.0;
+
+    std::cout << "=================================================\\\\n";
+    std::cout << "     🚀 OUR COMPILER MODERN C++ MASTERCLASS      \\\\n";
+    std::cout << "=================================================\\\\n";
+    std::cout << "లర్నర్ పేరు        : " << learnerName << '\\\\n';
+    std::cout << "కోర్సు టైటిల్       : " << courseName << '\\\\n';
+    std::cout << "ప్రస్తుత అధ్యాయం   : " << currentChapter << " of " << totalChapters << '\\\\n';
+    std::cout << "కోర్సు ప్రోగ్రెస్    : " << progressPercent << "% పూర్తయింది\\\\n";
+    std::cout << "లక్ష్యం             : High-Performance Systems Engineering\\\\n";
+    std::cout << "-------------------------------------------------\\\\n";
+    std::cout << "హలో C++ వరల్డ్! మీ విజయవంతమైన ప్రయాణానికి శుభాకాంక్షలు!\\\\n";
+    std::cout << "=================================================\\\\n";
+
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter01Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 01!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter01Content.length, 'characters');
