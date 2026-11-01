@@ -1,0 +1,854 @@
+const fs = require('fs');
+const path = require('path');
+const { buildSidebar } = require('./csharp_curriculum_data');
+
+const sidebarHtml = buildSidebar(11);
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Title & Meta Tags -->
+  <title>C# అర్రేలు (1D, 2D &amp; Jagged Arrays) — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో 1D, 2D Rectangular మరియు Jagged అర్రేలు, C# 12 కలెక్షన్ ఎక్స్‌ప్రెషన్స్ ([]), Array క్లాస్ మెథడ్స్ మరియు సినిమా సీటింగ్ బుకింగ్ ప్రాజెక్ట్‌పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# arrays telugu, c# jagged array telugu, c# 2d array telugu, c# collection expressions, c# array methods">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# అర్రేలు (1D, 2D &amp; Jagged Arrays) — C# Masterclass">
+  <meta property="og:description" content="C# లో అర్రేల మెమరీ లేఅవుట్, రెక్టాంగ్యులర్ vs జాగ్డ్ అర్రేలు మరియు మోడ్రన్ C# 12 కలెక్షన్ ఎక్స్‌ప్రెషన్స్ పై సమగ్ర తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+</head>
+<body class="lang-csharp light-theme">
+
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+${sidebarHtml}
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 11: అర్రేలు (1D, 2D &amp; Jagged Arrays)</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# అర్రేలు (1D, 2D Rectangular &amp; Jagged Arrays)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 11 of 20</span>
+      <span class="meta-pill">📁 Phase 03: మెథడ్స్, స్ట్రింగ్స్ &amp; కలెక్షన్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Contiguous Heap Memory &amp; Cache Locality · 1D Arrays &amp; Default Values · 2D Rectangular Arrays (int[,]) · Jagged Arrays (int[][]) &amp; Memory Fragmentation · Array Utility Methods (Sort, BinarySearch, Copy) · Modern C# 12 Collection Expressions ([1, 2, 3]) · Spread Operator (..) · Index (^) &amp; Range (..) Slicing · Array Immutability Myth · Comparison Matrix Table · Real-World Project: Multiplex Cinema Seat Booking &amp; Reservation Engine · 7 Common Beginner Mistakes · Self-Assessment Quiz
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం అధ్యాయం 11 కి! 🗃️ కంప్యూటర్ మెమరీలో డేటా వరుసలు &amp; గ్రిడ్స్</h3>
+      <p>
+        మీ దగ్గర 50 మంది విద్యార్థుల మార్కులు లేదా 1000 మంది ఉద్యోగుల శాలరీల వివరాలు ఉన్నాయనుకుందాం. వాటన్నింటి కోసం 1000 వేర్వేరు వేరియబుల్స్ (<code>emp1</code>, <code>emp2</code>, <code>emp3</code>...) సృష్టించడం అసాధ్యం. ఒకే పేరుతో, ఒకే రకమైన డేటా విలువలను కంప్యూటర్ మెమరీలో వరుసగా (Contiguous Memory) భద్రపరిచే అత్యంత ప్రాథమికమైన డేటా స్ట్రక్చరే <strong>అర్రే (Array)</strong>!
+      </p>
+      <p>
+        కానీ C# లో అర్రేల వ్యవస్థ సాధారణ భాషల కంటే ఎంతో వైవిధ్యమైనది. ఇది సాధారణ 1-డైమెన్షనల్ అర్రేలతో పాటు — పక్కా దీర్ఘచతురస్ర ఆకారంలో ఉండే <strong>2D రెక్టాంగ్యులర్ అర్రేస్ (<code>int[,]</code>)</strong>, మరియు ప్రతి అడ్డువరుసలో వేర్వేరు సంఖ్యలో అంశాలను అనుమతించే శక్తిమంతమైన <strong>జాగ్డ్ అర్రేస్ (<code>int[][]</code> - Array of Arrays)</strong> లను అందిస్తుంది.
+      </p>
+      <p>
+        అంతేకాకుండా, సరికొత్త <strong>C# 12 లో వచ్చిన Collection Expressions (<code>[1, 2, 3]</code>)</strong> మరియు స్ప్రెడ్ ఆపరేటర్ (<code>..</code>) అర్రేలను డిక్లేర్ చేసే పద్ధతినే సమూలంగా మార్చివేశాయి! ఈ అధ్యాయంలో మనం మెమరీ లేఅవుట్స్, క్యాష్ లొకాలిటీ, సార్టింగ్ అల్గారిథమ్స్ నేర్చుకొని — ఒక మల్టీప్లెక్స్ సినిమా థియేటర్ సీటింగ్ బుకింగ్ ఇంజిన్‌ను నిర్మిస్తాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🗃️ కంప్యూటర్ మెమరీలో డేటా వరుసలు &amp; Cache Locality</h2>
+      <p>
+        అర్రే యొక్క అతిపెద్ద బలం: <strong>కంటిగ్యుయస్ మెమరీ అలోకేషన్ (Contiguous Allocation)</strong>. అంటే ఒక అర్రే కోసం మెమరీ హీప్‌లో కేటాయించబడిన బ్లాక్‌లో అన్ని ఎలిమెంట్స్ ఒకదాని ప్రక్కన ఒకటి ఎటువంటి ఖాళీ లేకుండా వరుసగా అమర్చబడి ఉంటాయి.
+      </p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:var(--text); font-size:15px;">⚡ హార్డ్‌వేర్ రహస్యం: CPU Cache Locality అంటే ఏమిటి?</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14.5px;">
+          CPU ప్రాసెసర్ <code>arr[0]</code> ని చదివినప్పుడు, అది కేవలం ఆ ఒక్క ఎలిమెంట్‌ను మాత్రమే తీసుకురాదు! మెమరీ బస్ ద్వారా దాని ప్రక్కనే ఉన్న <code>arr[1]</code>, <code>arr[2]</code>, <code>arr[3]</code> లను కూడా ఒకేసారి అతివేగవంతమైన <strong>L1/L2 CPU Cache</strong> లోకి లోడ్ చేస్తుంది. దీనివల్ల లూప్ తిరుగుతున్నప్పుడు రామ్ (RAM) వరకు వెళ్లే పనిలేకుండా ప్రాసెసర్ మెరుపు వేగంతో లెక్కింపులు పూర్తి చేస్తుంది.
+        </p>
+      </div>
+      <p>
+        అర్రేలు ఎల్లప్పుడూ <strong>0-ఇండెక్స్డ్ (Zero-based indexing)</strong> ఆధారంగా పనిచేస్తాయి. మొదటి ఎలిమెంట్ <code>0</code> వద్ద, చివరి ఎలిమెంట్ <code>Length - 1</code> వద్ద ఉంటుంది.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 📐 1D అర్రేస్ (Single-Dimensional Arrays)</h2>
+      <p>
+        ఒకే వరుసలో ఉండే డేటాను భద్రపరచడానికి 1D అర్రేస్ ఉపయోగిస్తారు.
+      </p>
+      <p>
+        C# లో ఒక అర్రేను సృష్టించినప్పుడు అందులోని ప్రతి స్థానం సంబంధిత డేటా టైప్ యొక్క <strong>డీఫాల్ట్ విలువతో (Default Value)</strong> ఆటోమేటిక్‌గా నింపబడుతుంది:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>సంఖ్యలకు (<code>int</code>, <code>double</code>, <code>decimal</code>): <strong>0</strong></li>
+        <li>బూలియన్‌లకు (<code>bool</code>): <strong>false</strong></li>
+        <li>రిఫరెన్స్ టైప్స్‌కు (<code>string</code>, ఆబ్జెక్ట్స్): <strong>null</strong></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · 1D Array Declaration &amp; Initialization</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// Style 1: సైజు పేర్కొని ఆ తర్వాత విలువలు ఇవ్వడం
+int[] scores = new int[3]; // [0, 0, 0]
+scores[0] = 85;
+scores[1] = 92;
+scores[2] = 78;
+
+// Style 2: సృష్టించే సమయంలోనే విలువలు ఇవ్వడం
+string[] cities = { "హైదరాబాద్", "విజయవాడ", "విశాఖపట్నం", "తిరుపతి" };
+
+Console.WriteLine($"నగరాల సంఖ్య: {cities.Length}");
+Console.WriteLine($"రెండవ నగరం  : {cities[1]}"); // విజయవాడ</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ⏹️ 2D రెక్టాంగ్యులర్ అర్రేస్ (Multidimensional Arrays: int[,])</h2>
+      <p>
+        గణిత మ్యాట్రిక్స్, ఎక్సెల్ షీట్లు లేదా చెస్ బోర్డుల లాంటి గ్రిడ్ డేటాను భద్రపరచడానికి C# ప్రత్యేకంగా <strong>రెక్టాంగ్యులర్ అర్రేస్ (Rectangular Arrays)</strong> ను అందిస్తుంది.
+      </p>
+      <p>
+        ఇక్కడ బ్రాకెట్ల మధ్య కామా పెడతారు: <code>int[,] matrix = new int[rows, cols];</code>. దీనిలో ప్రతి అడ్డువరుసలోనూ సరిగ్గా ఒకే సంఖ్యలో నిలువు వరుసలు (Columns) ఉంటాయి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · 2D Rectangular Array Grid</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 3 అడ్డు వరుసలు, 3 నిలువు వరుసలతో కూడిన 3x3 మ్యాట్రిక్స్
+int[,] matrix = {
+    { 1, 2, 3 },
+    { 4, 5, 6 },
+    { 7, 8, 9 }
+};
+
+// డైమెన్షన్ పొడవును పొందడానికి GetLength() వాడాలి:
+int rows = matrix.GetLength(0); // 3 (Rows)
+int cols = matrix.GetLength(1); // 3 (Columns)
+
+Console.WriteLine("2D మ్యాట్రిక్స్ విజువలైజేషన్:");
+for (int r = 0; r &lt; rows; r++)
+{
+    for (int c = 0; c &lt; cols; c++)
+    {
+        Console.Write($"{matrix[r, c],3} ");
+    }
+    Console.WriteLine();
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🪜 జాగ్డ్ అర్రేస్ (Jagged Arrays: int[][])</h2>
+      <p>
+        రెక్టాంగ్యులర్ అర్రేలలో అన్ని వరుసలలోనూ ఒకే సంఖ్యలో కాలమ్స్ ఉండాలి. కానీ నిజ జీవితంలో ఒక కాలేజీలో సెక్షన్ A లో 30 మంది, సెక్షన్ B లో 45 మంది, సెక్షన్ C లో 20 మంది ఉండవచ్చు. రెక్టాంగ్యులర్ అర్రే వాడితే ఖాళీ మెమరీ వృధా అవుతుంది.
+      </p>
+      <p>
+        ఈ సమస్యకు పరిష్కారమే <strong>జాగ్డ్ అర్రే (Jagged Array - అర్రేలలోని అర్రే / Array of Arrays)</strong>! దీనిలో ప్రతి రో తన స్వంత సైజును కలిగి ఉంటుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Jagged Array with Variable Row Lengths</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 3 సెక్షన్లు కలిగిన జాగ్డ్ అర్రే
+int[][] studentSections = new int[3][];
+
+studentSections[0] = new int[] { 85, 90, 78 };          // 3 మంది
+studentSections[1] = new int[] { 95, 88, 72, 91, 84 };  // 5 మంది
+studentSections[2] = new int[] { 60, 75 };              // 2 మంది
+
+for (int s = 0; s &lt; studentSections.Length; s++)
+{
+    Console.Write($"సెక్షన్ {s + 1} మార్కులు ({studentSections[s].Length} మంది): ");
+    foreach (int mark in studentSections[s])
+    {
+        Console.Write($"{mark} ");
+    }
+    Console.WriteLine();
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🔍 Array క్లాస్ మెథడ్స్ పవర్‌హౌస్ (Sort, Search, Copy)</h2>
+      <p>
+        .NET లోని <code>System.Array</code> క్లాస్ అర్రేలతో పనిచేయడానికి అద్భుతమైన స్టాటిక్ మెథడ్స్‌ను అందిస్తుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Essential Array Utility Methods</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int[] numbers = { 45, 12, 85, 32, 89, 21 };
+
+// 1. సార్టింగ్ (ఆరోహణ క్రమం)
+Array.Sort(numbers);
+Console.WriteLine($"సార్ట్ చేసిన అర్రే: {string.Join(", ", numbers)}");
+
+// 2. రివర్సింగ్ (అవరోహణ క్రమం)
+Array.Reverse(numbers);
+Console.WriteLine($"రివర్స్ చేసిన అర్రే: {string.Join(", ", numbers)}");
+
+// 3. బైనరీ సెర్చ్ (సార్ట్ అయి ఉన్నప్పుడు మాత్రమే పనిచేస్తుంది - O(log N))
+Array.Sort(numbers);
+int foundIndex = Array.BinarySearch(numbers, 45);
+Console.WriteLine($"45 ఉన్న ఇండెక్స్: {foundIndex}");
+
+// 4. క్లియరింగ్ (విలువలను డీఫాల్ట్ 0 కి మార్చడం)
+Array.Clear(numbers, 0, 2); // మొదటి 2 ఎలిమెంట్స్ 0 అవుతాయి
+Console.WriteLine($"క్లియర్ చేసిన తర్వాత: {string.Join(", ", numbers)}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🎯 మోడ్రన్ C# 12 కలెక్షన్ ఎక్స్‌ప్రెషన్స్ ([]) &amp; Spread (..)</h2>
+      <p>
+        C# 12 లో వచ్చిన అత్యంత ఆధునిక ఫీచర్ <strong>Collection Expressions</strong>. ఇకపై <code>new int[] { 1, 2 }</code> అని పెద్దగా రాయవలసిన అవసరం లేకుండా — కేవలం బ్రాకెట్లు <code>[1, 2, 3]</code> తో అర్రేలు, లిస్ట్‌లు, స్పాన్‌లు అన్నింటినీ ఒకేలా సృష్టించవచ్చు!
+      </p>
+      <p>
+        అదనంగా <strong>స్ప్రెడ్ ఆపరేటర్ (Spread <code>..</code>)</strong> ద్వారా రెండు వేర్వేరు అర్రేలను ఒక్క లైన్‌లో విలీనం (Merge) చేయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Modern C# 12 Collection Expressions</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// C# 12 క్లీన్ సింటాక్స్:
+int[] batchA = [10, 20, 30];
+int[] batchB = [40, 50];
+
+// స్ప్రెడ్ ఆపరేటర్ (..) తో రెండు అర్రేలను కలపడం:
+int[] mergedBatches = [..batchA, 999, ..batchB];
+
+Console.WriteLine($"కలిపిన అర్రే: {string.Join(", ", mergedBatches)}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 📏 ఇండెక్స్ (^) మరియు రేంజ్ (..) తో అర్రే స్లైసింగ్</h2>
+      <p>
+        C# 8 లో వచ్చిన ఇండెక్స్ మరియు రేంజ్ ఆపరేటర్లు అర్రేల భాగాలను కత్తిరించడానికి (Slicing) ఎంతో సహకరిస్తాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>^1</code>: చివరి ఎలిమెంట్ (Last Element).</li>
+        <li><code>^2</code>: చివరి నుండి రెండవది.</li>
+        <li><code>arr[1..4]</code>: ఇండెక్స్ 1 నుండి ప్రారంభమై ఇండెక్స్ 4 కు ముందు (1, 2, 3) ఉన్న ఎలిమెంట్స్ ను ఒక కొత్త అర్రేగా స్లైస్ చేస్తుంది.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Index and Range Slicing</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string[] colors = { "ఎరుపు", "ఆకుపచ్చ", "నీలం", "పసుపు", "తెలుపు" };
+
+Console.WriteLine($"చివరి రంగు: {colors[^1]}"); // తెలుపు
+
+// మధ్యలోని 3 రంగులను స్లైస్ చేయడం (ఇండెక్స్ 1 నుండి 3 వరకు):
+string[] middleColors = colors[1..4];
+Console.WriteLine($"మధ్య రంగులు: {string.Join(", ", middleColors)}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> ⚡ అర్రేస్ వర్సెస్ Span&lt;T&gt; — జీరో-కాపీ పవర్‌హౌస్</h2>
+      <p>
+        సాధారణ అర్రేను <code>colors[1..4]</code> అని స్లైస్ చేసినప్పుడు — మెమరీ హీప్‌లో ఒక కొత్త అర్రే అలోకేట్ అయి డేటా కాపీ అవుతుంది.
+      </p>
+      <p>
+        కానీ హై-పెర్ఫార్మెన్స్ సాఫ్ట్‌వేర్‌లో మెమరీ కాపీయింగ్ లేకుండా నేరుగా అసలు అర్రే పైనే ఒక వ్యూ (View) ఏర్పాటు చేయడానికి <strong><code>Span&lt;T&gt;</code></strong> వాడతారు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Zero-Allocation Array Slicing with Span</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int[] massiveData = { 100, 200, 300, 400, 500, 600 };
+
+// Span తో జీరో-అలోకేషన్ స్లైసింగ్: హీప్‌లో కొత్త అర్రే పుట్టదు!
+Span&lt;int&gt; sliceView = massiveData.AsSpan(2, 3); // 300, 400, 500
+
+sliceView[0] = 999; // sliceView లో మార్చితే అసలు massiveData లోని 300 కూడా 999 గా మారుతుంది!
+
+Console.WriteLine($"అసలు అర్రేలో మారిన విలువ: {massiveData[2]}"); // 999</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: 1D vs 2D Rectangular vs Jagged Arrays</h2>
+      <p>
+        మూడు అర్రే రకాల సమగ్ర సాంకేతిక పోలిక:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీచర్ / కొలమానం</th>
+            <th>1D Array</th>
+            <th>2D Rectangular Array ([,])</th>
+            <th>Jagged Array ([][])</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>సింటాక్స్</strong></td>
+            <td><code>int[] a</code></td>
+            <td><code>int[,] a</code></td>
+            <td><code>int[][] a</code></td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ లేఅవుట్</strong></td>
+            <td>సింగిల్ కంటిగ్యుయస్ బ్లాక్</td>
+            <td><strong>సింగిల్ పర్ఫెక్ట్ బ్లాక్</strong> (No fragmentation)</td>
+            <td>హీప్‌లో బహుళ స్వతంత్ర అర్రేలు (Pointers to arrays)</td>
+          </tr>
+          <tr>
+            <td><strong>రో సైజులు</strong></td>
+            <td>వర్తించదు</td>
+            <td><strong>ఖచ్చితంగా సమానంగా ఉండాలి</strong></td>
+            <td><strong>ప్రతి రో వేర్వేరు సైజు ఉండవచ్చు</strong></td>
+          </tr>
+          <tr>
+            <td><strong>పెర్ఫార్మెన్స్</strong></td>
+            <td>అత్యుత్తమం (JIT BCE)</td>
+            <td>మంచిది</td>
+            <td>ఇండైరెక్షన్ పాయింటర్ వల్ల కొద్దిగా స్లో</td>
+          </tr>
+          <tr>
+            <td><strong>ఉత్తమ వినియోగం</strong></td>
+            <td>వరుస జాబితాలకు</td>
+            <td>మ్యాట్రిక్స్, గేమింగ్ టైల్స్, ఇమేజ్ పిక్సెల్స్</td>
+            <td>విభిన్న పొడవులు గల టేబుల్స్, మల్టీ-లెవల్ డేటా</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🔄 అర్రే ఇమ్మ్యుటబిలిటీ భ్రమ &amp; ReadOnlySpan రక్షణ</h2>
+      <p>
+        చాలామంది జూనియర్ డెవలపర్లు చేసే పొరపాటు: <code>readonly int[] grades = { 10, 20 };</code> అని రాస్తే అర్రే లోపలి అంశాలు మారవు అనుకుంటారు.
+      </p>
+      <p>
+        ఇక్కడ <code>readonly</code> అనేది కేవలం <strong>అర్రే వేరియబుల్ మరొక కొత్త అర్రేకు మారకుండా పాయింటర్‌ను మాత్రమే లాక్ చేస్తుంది</strong>! కానీ <code>grades[0] = 99;</code> అని లోపలి కంటెంట్‌ను సులభంగా మార్చేయవచ్చు.
+      </p>
+      <p>
+        <strong>పరిష్కారం:</strong> లోపలి కంటెంట్ కూడా 100% మారకూడదు అనుకుంటే <code>ReadOnlyCollection&lt;T&gt;</code> లేదా <code>ReadOnlySpan&lt;T&gt;</code> వాడాలి.
+      </p>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "Multiplex Cinema Seat Booking &amp; Reservation Engine"</h2>
+      <p>
+        2D రెక్టాంగ్యులర్ అర్రేస్, మెథడ్స్, లూప్స్, మరియు కండిషనల్ లాజిక్ ఉపయోగించి — ఒక మల్టీప్లెక్స్ సినిమా థియేటర్‌లో సీట్ల రిజర్వేషన్, ధరల లెక్కింపు, మరియు లైవ్ థియేటర్ గ్రిడ్ విజువలైజర్ ఇంజిన్‌ను తయారు చేద్దాం!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Multiplex Cinema Reservation Project</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🎬 మన మల్టీప్లెక్స్ - స్మార్ట్ స్క్రీన్-1 సీటింగ్ బుకింగ్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+// 4 అడ్డువరుసలు, 6 నిలువు వరుసలతో కూడిన 4x6 థియేటర్ సీటింగ్ అర్రే
+// 'O' = ఖాళీ సీటు (Open), 'X' = బుక్ అయిన సీటు (Booked)
+char[,] cinemaSeats = {
+    { 'O', 'O', 'X', 'O', 'O', 'O' }, // Row 0: ప్లాటినం (₹350)
+    { 'O', 'X', 'X', 'O', 'O', 'O' }, // Row 1: గోల్డ్ (₹250)
+    { 'O', 'O', 'O', 'O', 'X', 'O' }, // Row 2: సిల్వర్ (₹150)
+    { 'O', 'O', 'O', 'O', 'O', 'O' }  // Row 3: సిల్వర్ (₹150)
+};
+
+void DisplayTheatreLayout(char[,] seats)
+{
+    Console.WriteLine("        [======== స్క్రీన్ ఇటువైపు ఉంది ========]\\n");
+    Console.WriteLine("        Col 0  Col 1  Col 2  Col 3  Col 4  Col 5");
+    Console.WriteLine("        -----------------------------------------");
+    
+    string[] tierNames = { "ప్లాటినం", "గోల్డ్  ", "సిల్వర్1", "సిల్వర్2" };
+    
+    for (int r = 0; r &lt; seats.GetLength(0); r++)
+    {
+        Console.Write($"Row {r} ({tierNames[r]}): ");
+        for (int c = 0; c &lt; seats.GetLength(1); c++)
+        {
+            char status = seats[r, c];
+            if (status == 'X')
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write($"  [{status}] ");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"  [{status}] ");
+                Console.ResetColor();
+            }
+        }
+        Console.WriteLine();
+    }
+    Console.WriteLine();
+}
+
+bool BookSeat(char[,] seats, int row, int col, out decimal ticketPrice)
+{
+    ticketPrice = 0m;
+    if (row &lt; 0 || row &gt;= seats.GetLength(0) || col &lt; 0 || col &gt;= seats.GetLength(1))
+    {
+        Console.WriteLine("❌ చెల్లని సీటు నంబర్!");
+        return false;
+    }
+
+    if (seats[row, col] == 'X')
+    {
+        Console.WriteLine($"❌ క్షమించండి! Row {row}, Col {col} ఇప్పటికే బుక్ చేయబడింది.");
+        return false;
+    }
+
+    // సీటు బుకింగ్ కన్ఫర్మ్ చేయడం
+    seats[row, col] = 'X';
+    
+    ticketPrice = row switch
+    {
+        0 =&gt; 350.00m,
+        1 =&gt; 250.00m,
+        _ =&gt; 150.00m
+    };
+    return true;
+}
+
+// ప్రారంభ లేఅవుట్ చూపించడం
+DisplayTheatreLayout(cinemaSeats);
+
+// ఒక సీటును బుక్ చేయడానికి ప్రయత్నించడం (Row 0, Col 4 - ప్లాటినం)
+int targetRow = 0, targetCol = 4;
+Console.WriteLine($"కస్టమర్ కోరిన సీటు: Row {targetRow}, Col {targetCol}...");
+
+if (BookSeat(cinemaSeats, targetRow, targetCol, out decimal finalPrice))
+{
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine($"🎉 బుకింగ్ విజయవంతమైంది! టికెట్ ధర: ₹{finalPrice:N2}");
+    Console.ResetColor();
+}
+
+Console.WriteLine("\\nనవీకరించబడిన తాజా థియేటర్ సీటింగ్ స్థితి:");
+DisplayTheatreLayout(cinemaSeats);
+Console.WriteLine("=================================================\\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ సినిమా బుకింగ్ ఇంజిన్‌ను పరీక్షించండి!</div>
+        <p>
+          రో మరియు కాలమ్ నంబర్లను మార్చి సీటు రిజర్వేషన్ ఎలా మారుతుందో, ఇప్పటికే బుక్ అయిన సీటును ఎంచుకుంటే ఎర్రర్ ఎలా వస్తుందో ఆన్‌లైన్ ఎడిటర్‌లో లైవ్‌గా పరిశీలించండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన అర్రే తప్పులు</h2>
+      <p>
+        అర్రేలతో పనిచేసేటప్పుడు జూనియర్ డెవలపర్లు చేసే 7 ప్రధాన తప్పులు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. IndexOutOfRangeException ఎదుర్కోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            5 ఎలిమెంట్స్ ఉన్న అర్రేలో <code>arr[5]</code> అని పిలిస్తే ఎర్రర్ వస్తుంది. ఆఖరి ఎలిమెంట్ ఎల్లప్పుడూ <code>arr[4]</code> లేదా <code>arr[^1]</code> మాత్రమే.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. జాగ్డ్ అర్రేలోని అంతర్గత రోలను ఇనిషియలైజ్ చేయకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int[][] a = new int[3][]; a[0][0] = 5;</code> రాస్తే <code>NullReferenceException</code> వస్తుంది! ముందుగా <code>a[0] = new int[5];</code> అని కేటాయించాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. 2D అర్రే సైజు కోసం Length వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            3x4 మ్యాట్రిక్స్ లో <code>matrix.Length</code> మొత్తం 12 ఎలిమెంట్స్ ఇస్తుంది. రోస్ కోసం <code>GetLength(0)</code>, కాలమ్స్ కోసం <code>GetLength(1)</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. అర్రే సైజును రన్‌టైమ్‌లో మార్చవచ్చనుకోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            అర్రేలు స్థిరమైన సైజు గలవి (Fixed Size). సైజు పెంచడం లేదా తగ్గించడం అవసరమైతే <code>List&lt;T&gt;</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. సార్ట్ చేయకుండా BinarySearch పిలవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            బైనరీ సెర్చ్ పనిచేయాలంటే అర్రే ఖచ్చితంగా ఆరోహణ క్రమంలో సార్ట్ అయి ఉండాలి. లేకపోతే తప్పుడు ఇండెక్స్ లేదా నెగటివ్ నంబర్ ఇస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. అర్రేను కాపీ చేయడానికి = వాడటం (Reference Alias Trap):</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int[] b = a;</code> రాస్తే కొత్త కాపీ తయారు కాదు, రెండూ ఒకే అర్రేను పాయింట్ చేస్తాయి. నిజమైన కాపీ కోసం <code>(int[])a.Clone()</code> లేదా <code>Array.Copy()</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. కలెక్షన్ ఎక్స్‌ప్రెషన్స్‌లో టైప్ మిస్‌మ్యాచ్ చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int[] arr = [1, "రెండు"];</code> కుదరదు. అర్రేలోని అన్ని ఎలిమెంట్స్ ఒకే డేటా టైప్ కు చెందినవి అయి ఉండాలి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        అర్రేలపై మీ పరిజ్ఞానాన్ని ఈ 5 ప్రాక్టికల్ ప్రశ్నలతో పరీక్షించుకోండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>int[,]</code> (రెక్టాంగ్యులర్) మరియు <code>int[][]</code> (జాగ్డ్) అర్రేల మధ్య ప్రధాన మెమరీ వ్యత్యాసం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>int[,]</code> అనేది మెమరీ హీప్‌లో ఒకే ఒక్క పర్ఫెక్ట్ కంటిగ్యుయస్ బ్లాక్ (Single allocation) గా కేటాయించబడుతుంది మరియు అన్ని రోస్ సమాన సైజు కలిగి ఉంటాయి. <code>int[][]</code> అనేది అర్రేల యొక్క అర్రే; అంటే బయటి అర్రేలో పాయింటర్లు ఉంటాయి, ప్రతి రో హీప్‌లో స్వతంత్రంగా వేర్వేరు సైజులతో అలోకేట్ అవుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: <code>int[] a = new int[5];</code> డిక్లేర్ చేసినప్పుడు అందులోని ఎలిమెంట్స్ ప్రారంభంలో ఏ విలువను కలిగి ఉంటాయి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> అన్ని 5 ఎలిమెంట్స్ డీఫాల్ట్ విలువ అయిన <strong>0</strong> తో నింపబడి ఉంటాయి. C# లో గార్బేజ్ మెమరీ ఉండదు; అలోకేషన్ సమయంలోనే CLR మొత్తం మెమరీని సురక్షితంగా సున్నా చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: C# 12 Collection Expressions లో <code>..</code> (స్ప్రెడ్ ఆపరేటర్) ఏమి చేస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> స్ప్రెడ్ ఆపరేటర్ ఒక కలెక్షన్ లోని ఎలిమెంట్స్ అన్నింటినీ విడదీసి సరికొత్త కలెక్షన్ లోకి ఇన్‌లైన్‌గా విలీనం (Inline Flattening / Merging) చేస్తుంది. ఉదాహరణకు <code>[..a, ..b]</code> ద్వారా రెండు అర్రేలను లూప్ లేకుండా సులభంగా కలపవచ్చు.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: <code>int[] b = a;</code> అని రాసి <code>b[0] = 500;</code> అని మార్చితే <code>a[0]</code> మారుతుందా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఖచ్చితంగా మారుతుంది! అర్రేలు C# లో <em>Reference Types</em>. <code>b = a</code> అన్నప్పుడు కేవలం మెమరీ పాయింటర్ మాత్రమే కాపీ అవుతుంది, కొత్త అర్రే పుట్టదు. కాబట్టి రెండూ ఒకే మెమరీ లొకేషన్‌ను సూచిస్తాయి.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: అర్రేలలో CPU Cache Locality ఎందుకు అత్యంత వేగవంతమైన పనితీరును ఇస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> అర్రే ఎలిమెంట్స్ మెమరీలో ఒకదాని ప్రక్కన ఒకటి కంటిగ్యుయస్ గా ఉండటం వల్ల, CPU ఒక ఎలిమెంట్‌ను చదివినప్పుడే దాని ప్రక్కనున్న ఎలిమెంట్స్ ను కూడా నేరుగా హై-స్పీడ్ L1/L2 Cache లోకి ప్రీ-ఫెచ్ చేస్తుంది. దీనివల్ల రామ్ (RAM) లాటెన్సీ తప్పి ప్రాసెసింగ్ అత్యంత వేగంగా పూర్తవుతుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 10. స్ట్రింగ్స్, ఇమ్యుటబిలిటీ &amp; StringBuilder
+      </a>
+      <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 12. జెనెరిక్ కలెక్షన్స్ (List &amp; Dictionary) →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🎬 మన మల్టీప్లెక్స్ - స్మార్ట్ స్క్రీన్-1 సీటింగ్ బుకింగ్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+char[,] cinemaSeats = {
+    { 'O', 'O', 'X', 'O', 'O', 'O' },
+    { 'O', 'X', 'X', 'O', 'O', 'O' },
+    { 'O', 'O', 'O', 'O', 'X', 'O' },
+    { 'O', 'O', 'O', 'O', 'O', 'O' }
+};
+
+for (int r = 0; r < cinemaSeats.GetLength(0); r++)
+{
+    Console.Write($"Row {r}: ");
+    for (int c = 0; c < cinemaSeats.GetLength(1); c++)
+    {
+        Console.Write($"[{cinemaSeats[r, c]}] ");
+    }
+    Console.WriteLine();
+}
+
+Console.WriteLine("\\nRow 0, Col 4 సీటును బుక్ చేయడం...");
+cinemaSeats[0, 4] = 'X';
+Console.WriteLine("బుకింగ్ కన్ఫర్మ్ అయింది! ప్లాటినం టికెట్ ధర: ₹350.00\\n");
+Console.WriteLine("=================================================\\n");\`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '11-csharp-arrays-1d-multidimensional-jagged.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value C# Chapter 11!');
+console.log('Target file size:', fullHtml.length, 'characters');

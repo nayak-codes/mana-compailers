@@ -1,536 +1,862 @@
 <!DOCTYPE html>
 <html class="light-theme" lang="te">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>అర్రేలు (1D, 2D Rectangular & Jagged Arrays) — Modern C# Tutorial | Our Compiler</title>
-  <meta name="description" content="అర్రేలు (1D, 2D Rectangular & Jagged Arrays) సమగ్ర తెలుగు గైడ్: 1D అర్రేస్ · 2D రెక్టాంగ్యులర్ [,] vs జాగ్‌డ్ అర్రేస్ [][] (Array of Arrays) · Array క్లాస్ మెథడ్స్ (Sort, Reverse, IndexOf)." />
-  <meta name="keywords" content="csharp tutorial in telugu, learn c# language, అర్రేలు (1d, 2d rectangular & jagged arrays), dotnet 8, c# 12, our compiler" />
-  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
-  <link rel="icon" type="image/png" href="/logo.png" />
-  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/blog-style.css" />
-  <link rel="stylesheet" href="/blog-csharp/style.css" />
-  <link rel="stylesheet" href="/site-nav.css" />
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Schema.org TechArticle Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "అర్రేలు (1D, 2D Rectangular & Jagged Arrays) (C# Programming in Telugu)",
-    "description": "1D అర్రేస్ · 2D రెక్టాంగ్యులర్ [,] vs జాగ్‌డ్ అర్రేస్ [][] (Array of Arrays) · Array క్లాస్ మెథడ్స్ (Sort, Reverse, IndexOf)",
-    "articleSection": "Phase 03: మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్",
-    "inLanguage": "te",
-    "author": {
-      "@type": "Organization",
-      "name": "Our Compiler Technical Editorial Team",
-      "url": "https://www.ourcompiler.com"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Our Compiler",
-      "url": "https://www.ourcompiler.com"
-    },
-    "datePublished": "2026-02-01",
-    "dateModified": "2026-10-30"
-  }
-  </script>
+  <!-- SEO Title & Meta Tags -->
+  <title>C# అర్రేలు (1D, 2D &amp; Jagged Arrays) — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో 1D, 2D Rectangular మరియు Jagged అర్రేలు, C# 12 కలెక్షన్ ఎక్స్‌ప్రెషన్స్ ([]), Array క్లాస్ మెథడ్స్ మరియు సినిమా సీటింగ్ బుకింగ్ ప్రాజెక్ట్‌పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# arrays telugu, c# jagged array telugu, c# 2d array telugu, c# collection expressions, c# array methods">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
 
-  <!-- Interactive Scripts: Accordion & Default Light Theme -->
-  <script>
-    function toggleAccordion(btn) {
-      const content = btn.nextElementSibling;
-      const isOpen = content.classList.contains('open');
-      if (isOpen) {
-        content.classList.remove('open');
-        btn.classList.remove('active');
-      } else {
-        content.classList.add('open');
-        btn.classList.add('active');
-      }
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# అర్రేలు (1D, 2D &amp; Jagged Arrays) — C# Masterclass">
+  <meta property="og:description" content="C# లో అర్రేల మెమరీ లేఅవుట్, రెక్టాంగ్యులర్ vs జాగ్డ్ అర్రేలు మరియు మోడ్రన్ C# 12 కలెక్షన్ ఎక్స్‌ప్రెషన్స్ పై సమగ్ర తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
     }
-
-    (function() {
-      const currentTheme = localStorage.getItem('tutorial_theme_v2');
-      if (currentTheme === 'dark') {
-        document.documentElement.classList.remove('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
-        });
-      } else {
-        document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
-        });
-      }
-    })();
-  </script>
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
 </head>
 <body class="lang-csharp light-theme">
 
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-csharp.html" class="active">C#</a>
-</nav>
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
 
-<div class="layout">
+<div class="page-layout">
 
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+  <!-- LEFT SIDEBAR ACCORDION -->
   <aside class="sidebar">
     <div class="sidebar-heading">C# Master Course (తెలుగు)</div>
-    <a href="/blog-csharp.html" class="sidebar-home-link ">
-      ⚡ C# Course HOME (ఇండెక్స్)
-    </a>
+    <a href="/blog-csharp.html" class="sidebar-home-link">⚡ C# Course HOME (ఇండెక్స్)</a>
+
     <div class="sidebar-accordion">
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">⚡</span>
-            <span>Phase 01<br><small style="font-size:11px; font-weight:600; opacity:0.85;">C# ఫండమెంటల్స్ & బేసిక్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/01-csharp-introduction-and-setup.html" class="lesson-link ">
-                <span class="lesson-num">1.</span>
-                <span class="lesson-name">C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" class="lesson-link ">
-                <span class="lesson-num">2.</span>
-                <span class="lesson-name">వేరియబుల్స్, CTS డేటా టైప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="lesson-link ">
-                <span class="lesson-num">3.</span>
-                <span class="lesson-name">యూజర్ ఇన్‌పుట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/04-csharp-operators-and-expressions.html" class="lesson-link ">
-                <span class="lesson-num">4.</span>
-                <span class="lesson-name">ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C# ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🔀</span>
-            <span>Phase 02<br><small style="font-size:11px; font-weight:600; opacity:0.85;">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" class="lesson-link ">
-                <span class="lesson-num">5.</span>
-                <span class="lesson-name">కండిషనల్ స్టేట్‌మెంట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" class="lesson-link ">
-                <span class="lesson-num">6.</span>
-                <span class="lesson-name">switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" class="lesson-link ">
-                <span class="lesson-num">7.</span>
-                <span class="lesson-name">లూప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" class="lesson-link ">
-                <span class="lesson-num">8.</span>
-                <span class="lesson-name">break, continue & నెస్టెడ్ లూప్స్</span>
-              </a>
-            </li>
-          </ul>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/01-csharp-introduction-and-setup.html">1. C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</a>
+        <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html">2. వేరియబుల్స్, CTS డేటా టైప్స్ (Value vs Reference) & var</a>
+        <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html">3. యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse</a>
+        <a href="/blog-csharp/04-csharp-operators-and-expressions.html">4. ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.)</a>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header active" onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">📦</span>
-            <span>Phase 03<br><small style="font-size:11px; font-weight:600; opacity:0.85;">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content open">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" class="lesson-link ">
-                <span class="lesson-num">9.</span>
-                <span class="lesson-name">మెథడ్స్, పారామీటర్ మోడిఫైయర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="lesson-link ">
-                <span class="lesson-num">10.</span>
-                <span class="lesson-name">స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</span>
-              </a>
-            </li>
-            <li class="lesson-item active">
-              <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="lesson-link active">
-                <span class="lesson-num">11.</span>
-                <span class="lesson-name">అర్రేలు</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" class="lesson-link ">
-                <span class="lesson-num">12.</span>
-                <span class="lesson-name">జెనెరిక్ కలెక్షన్స్</span>
-              </a>
-            </li>
-          </ul>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</span>
+          </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🏛️</span>
-            <span>Phase 04<br><small style="font-size:11px; font-weight:600; opacity:0.85;">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" class="lesson-link ">
-                <span class="lesson-num">13.</span>
-                <span class="lesson-name">క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" class="lesson-link ">
-                <span class="lesson-num">14.</span>
-                <span class="lesson-name">ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" class="lesson-link ">
-                <span class="lesson-num">15.</span>
-                <span class="lesson-name">ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" class="lesson-link ">
-                <span class="lesson-num">16.</span>
-                <span class="lesson-name">ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</span>
-              </a>
-            </li>
-          </ul>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html">5. కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching</a>
+        <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html">6. switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</a>
+        <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html">7. లూప్స్ (for, while, do-while & foreach)</a>
+        <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html">8. break, continue & నెస్టెడ్ లూప్స్ (2D గ్రిడ్స్)</a>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🚀</span>
-            <span>Phase 05<br><small style="font-size:11px; font-weight:600; opacity:0.85;">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" class="lesson-link ">
-                <span class="lesson-num">17.</span>
-                <span class="lesson-name">ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" class="lesson-link ">
-                <span class="lesson-num">18.</span>
-                <span class="lesson-name">డెలిగేట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" class="lesson-link ">
-                <span class="lesson-num">19.</span>
-                <span class="lesson-name">LINQ</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" class="lesson-link ">
-                <span class="lesson-num">20.</span>
-                <span class="lesson-name">కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
-              </a>
-            </li>
-          </ul>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html">9. మెథడ్స్, పారామీటర్ మోడిఫైయర్స్ (ref, out, in, params)</a>
+        <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html">10. స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</a>
+        <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="active">11. అర్రేలు (1D, 2D Rectangular & Jagged Arrays)</a>
+        <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html">12. జెనెరిక్ కలెక్షన్స్ (List<T>, Dictionary<TKey, TValue>, HashSet<T>)</a>
       </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్ (Primary Constructors)</a>
+        <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html">14. ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</a>
+        <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html">15. ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed)</a>
+        <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html">16. ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html">17. ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)</a>
+        <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html">18. డెలిగేట్స్ (Delegates), ఈవెంట్స్ & లాంబ్డా ఎక్స్‌ప్రెషన్స్ (=>)</a>
+        <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html">19. LINQ (Language Integrated Query) — డేటా ప్రాసెసింగ్ పవర్‌హౌస్</a>
+        <a href="/blog-csharp/20-csharp-mini-project-employee-management.html">20. కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ (LINQ & JSON)</a>
+      </div>
+
     </div>
-    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
-      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
-      <a href="/online-csharp-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
-        ▶ Try C# Online Compiler
-      </a>
-      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
-        📁 All Tutorials Index
-      </a>
-    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
   </aside>
-  <!-- MAIN LESSON CONTENT -->
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
   <main class="content">
+
+    <!-- BREADCRUMBS -->
     <div class="breadcrumb">
-      <a href="/">Home</a><span class="sep">›</span>
-      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
-      <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 11: అర్రేలు (1D, 2D Rectangular & Jagged Arrays)</span>
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 11: అర్రేలు (1D, 2D &amp; Jagged Arrays)</span>
     </div>
 
-    <h1 class="page-title">అర్రేలు (1D, 2D Rectangular & Jagged Arrays)</h1>
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# అర్రేలు (1D, 2D Rectangular &amp; Jagged Arrays)</h1>
 
-    <div class="page-meta">
-      <span class="badge">⚡ Modern C# 12 & .NET 8</span>
-      <span class="badge">🟢 Chapter 11 of 20</span>
-      <span class="badge">📂 Phase 03: మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</span>
-      <span class="badge">📅 2026 Edition</span>
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 11 of 20</span>
+      <span class="meta-pill">📁 Phase 03: మెథడ్స్, స్ట్రింగ్స్ &amp; కలెక్షన్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
-    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>1D అర్రేస్ · 2D రెక్టాంగ్యులర్ [,] vs జాగ్‌డ్ అర్రేస్ [][] (Array of Arrays) · Array క్లాస్ మెథడ్స్ (Sort, Reverse, IndexOf)</span>
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Contiguous Heap Memory &amp; Cache Locality · 1D Arrays &amp; Default Values · 2D Rectangular Arrays (int[,]) · Jagged Arrays (int[][]) &amp; Memory Fragmentation · Array Utility Methods (Sort, BinarySearch, Copy) · Modern C# 12 Collection Expressions ([1, 2, 3]) · Spread Operator (..) · Index (^) &amp; Range (..) Slicing · Array Immutability Myth · Comparison Matrix Table · Real-World Project: Multiplex Cinema Seat Booking &amp; Reservation Engine · 7 Common Beginner Mistakes · Self-Assessment Quiz
     </div>
 
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం అధ్యాయం 11 కి! 🗃️ కంప్యూటర్ మెమరీలో డేటా వరుసలు &amp; గ్రిడ్స్</h3>
+      <p>
+        మీ దగ్గర 50 మంది విద్యార్థుల మార్కులు లేదా 1000 మంది ఉద్యోగుల శాలరీల వివరాలు ఉన్నాయనుకుందాం. వాటన్నింటి కోసం 1000 వేర్వేరు వేరియబుల్స్ (<code>emp1</code>, <code>emp2</code>, <code>emp3</code>...) సృష్టించడం అసాధ్యం. ఒకే పేరుతో, ఒకే రకమైన డేటా విలువలను కంప్యూటర్ మెమరీలో వరుసగా (Contiguous Memory) భద్రపరిచే అత్యంత ప్రాథమికమైన డేటా స్ట్రక్చరే <strong>అర్రే (Array)</strong>!
+      </p>
+      <p>
+        కానీ C# లో అర్రేల వ్యవస్థ సాధారణ భాషల కంటే ఎంతో వైవిధ్యమైనది. ఇది సాధారణ 1-డైమెన్షనల్ అర్రేలతో పాటు — పక్కా దీర్ఘచతురస్ర ఆకారంలో ఉండే <strong>2D రెక్టాంగ్యులర్ అర్రేస్ (<code>int[,]</code>)</strong>, మరియు ప్రతి అడ్డువరుసలో వేర్వేరు సంఖ్యలో అంశాలను అనుమతించే శక్తిమంతమైన <strong>జాగ్డ్ అర్రేస్ (<code>int[][]</code> - Array of Arrays)</strong> లను అందిస్తుంది.
+      </p>
+      <p>
+        అంతేకాకుండా, సరికొత్త <strong>C# 12 లో వచ్చిన Collection Expressions (<code>[1, 2, 3]</code>)</strong> మరియు స్ప్రెడ్ ఆపరేటర్ (<code>..</code>) అర్రేలను డిక్లేర్ చేసే పద్ధతినే సమూలంగా మార్చివేశాయి! ఈ అధ్యాయంలో మనం మెమరీ లేఅవుట్స్, క్యాష్ లొకాలిటీ, సార్టింగ్ అల్గారిథమ్స్ నేర్చుకొని — ఒక మల్టీప్లెక్స్ సినిమా థియేటర్ సీటింగ్ బుకింగ్ ఇంజిన్‌ను నిర్మిస్తాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🗃️ కంప్యూటర్ మెమరీలో డేటా వరుసలు &amp; Cache Locality</h2>
+      <p>
+        అర్రే యొక్క అతిపెద్ద బలం: <strong>కంటిగ్యుయస్ మెమరీ అలోకేషన్ (Contiguous Allocation)</strong>. అంటే ఒక అర్రే కోసం మెమరీ హీప్‌లో కేటాయించబడిన బ్లాక్‌లో అన్ని ఎలిమెంట్స్ ఒకదాని ప్రక్కన ఒకటి ఎటువంటి ఖాళీ లేకుండా వరుసగా అమర్చబడి ఉంటాయి.
+      </p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:var(--text); font-size:15px;">⚡ హార్డ్‌వేర్ రహస్యం: CPU Cache Locality అంటే ఏమిటి?</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14.5px;">
+          CPU ప్రాసెసర్ <code>arr[0]</code> ని చదివినప్పుడు, అది కేవలం ఆ ఒక్క ఎలిమెంట్‌ను మాత్రమే తీసుకురాదు! మెమరీ బస్ ద్వారా దాని ప్రక్కనే ఉన్న <code>arr[1]</code>, <code>arr[2]</code>, <code>arr[3]</code> లను కూడా ఒకేసారి అతివేగవంతమైన <strong>L1/L2 CPU Cache</strong> లోకి లోడ్ చేస్తుంది. దీనివల్ల లూప్ తిరుగుతున్నప్పుడు రామ్ (RAM) వరకు వెళ్లే పనిలేకుండా ప్రాసెసర్ మెరుపు వేగంతో లెక్కింపులు పూర్తి చేస్తుంది.
+        </p>
+      </div>
+      <p>
+        అర్రేలు ఎల్లప్పుడూ <strong>0-ఇండెక్స్డ్ (Zero-based indexing)</strong> ఆధారంగా పనిచేస్తాయి. మొదటి ఎలిమెంట్ <code>0</code> వద్ద, చివరి ఎలిమెంట్ <code>Length - 1</code> వద్ద ఉంటుంది.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 📐 1D అర్రేస్ (Single-Dimensional Arrays)</h2>
+      <p>
+        ఒకే వరుసలో ఉండే డేటాను భద్రపరచడానికి 1D అర్రేస్ ఉపయోగిస్తారు.
+      </p>
+      <p>
+        C# లో ఒక అర్రేను సృష్టించినప్పుడు అందులోని ప్రతి స్థానం సంబంధిత డేటా టైప్ యొక్క <strong>డీఫాల్ట్ విలువతో (Default Value)</strong> ఆటోమేటిక్‌గా నింపబడుతుంది:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>సంఖ్యలకు (<code>int</code>, <code>double</code>, <code>decimal</code>): <strong>0</strong></li>
+        <li>బూలియన్‌లకు (<code>bool</code>): <strong>false</strong></li>
+        <li>రిఫరెన్స్ టైప్స్‌కు (<code>string</code>, ఆబ్జెక్ట్స్): <strong>null</strong></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · 1D Array Declaration &amp; Initialization</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// Style 1: సైజు పేర్కొని ఆ తర్వాత విలువలు ఇవ్వడం
+int[] scores = new int[3]; // [0, 0, 0]
+scores[0] = 85;
+scores[1] = 92;
+scores[2] = 78;
+
+// Style 2: సృష్టించే సమయంలోనే విలువలు ఇవ్వడం
+string[] cities = { "హైదరాబాద్", "విజయవాడ", "విశాఖపట్నం", "తిరుపతి" };
+
+Console.WriteLine($"నగరాల సంఖ్య: {cities.Length}");
+Console.WriteLine($"రెండవ నగరం  : {cities[1]}"); // విజయవాడ</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ⏹️ 2D రెక్టాంగ్యులర్ అర్రేస్ (Multidimensional Arrays: int[,])</h2>
+      <p>
+        గణిత మ్యాట్రిక్స్, ఎక్సెల్ షీట్లు లేదా చెస్ బోర్డుల లాంటి గ్రిడ్ డేటాను భద్రపరచడానికి C# ప్రత్యేకంగా <strong>రెక్టాంగ్యులర్ అర్రేస్ (Rectangular Arrays)</strong> ను అందిస్తుంది.
+      </p>
+      <p>
+        ఇక్కడ బ్రాకెట్ల మధ్య కామా పెడతారు: <code>int[,] matrix = new int[rows, cols];</code>. దీనిలో ప్రతి అడ్డువరుసలోనూ సరిగ్గా ఒకే సంఖ్యలో నిలువు వరుసలు (Columns) ఉంటాయి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · 2D Rectangular Array Grid</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 3 అడ్డు వరుసలు, 3 నిలువు వరుసలతో కూడిన 3x3 మ్యాట్రిక్స్
+int[,] matrix = {
+    { 1, 2, 3 },
+    { 4, 5, 6 },
+    { 7, 8, 9 }
+};
+
+// డైమెన్షన్ పొడవును పొందడానికి GetLength() వాడాలి:
+int rows = matrix.GetLength(0); // 3 (Rows)
+int cols = matrix.GetLength(1); // 3 (Columns)
+
+Console.WriteLine("2D మ్యాట్రిక్స్ విజువలైజేషన్:");
+for (int r = 0; r &lt; rows; r++)
+{
+    for (int c = 0; c &lt; cols; c++)
+    {
+        Console.Write($"{matrix[r, c],3} ");
+    }
+    Console.WriteLine();
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🪜 జాగ్డ్ అర్రేస్ (Jagged Arrays: int[][])</h2>
+      <p>
+        రెక్టాంగ్యులర్ అర్రేలలో అన్ని వరుసలలోనూ ఒకే సంఖ్యలో కాలమ్స్ ఉండాలి. కానీ నిజ జీవితంలో ఒక కాలేజీలో సెక్షన్ A లో 30 మంది, సెక్షన్ B లో 45 మంది, సెక్షన్ C లో 20 మంది ఉండవచ్చు. రెక్టాంగ్యులర్ అర్రే వాడితే ఖాళీ మెమరీ వృధా అవుతుంది.
+      </p>
+      <p>
+        ఈ సమస్యకు పరిష్కారమే <strong>జాగ్డ్ అర్రే (Jagged Array - అర్రేలలోని అర్రే / Array of Arrays)</strong>! దీనిలో ప్రతి రో తన స్వంత సైజును కలిగి ఉంటుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Jagged Array with Variable Row Lengths</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 3 సెక్షన్లు కలిగిన జాగ్డ్ అర్రే
+int[][] studentSections = new int[3][];
+
+studentSections[0] = new int[] { 85, 90, 78 };          // 3 మంది
+studentSections[1] = new int[] { 95, 88, 72, 91, 84 };  // 5 మంది
+studentSections[2] = new int[] { 60, 75 };              // 2 మంది
+
+for (int s = 0; s &lt; studentSections.Length; s++)
+{
+    Console.Write($"సెక్షన్ {s + 1} మార్కులు ({studentSections[s].Length} మంది): ");
+    foreach (int mark in studentSections[s])
+    {
+        Console.Write($"{mark} ");
+    }
+    Console.WriteLine();
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🔍 Array క్లాస్ మెథడ్స్ పవర్‌హౌస్ (Sort, Search, Copy)</h2>
+      <p>
+        .NET లోని <code>System.Array</code> క్లాస్ అర్రేలతో పనిచేయడానికి అద్భుతమైన స్టాటిక్ మెథడ్స్‌ను అందిస్తుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Essential Array Utility Methods</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int[] numbers = { 45, 12, 85, 32, 89, 21 };
+
+// 1. సార్టింగ్ (ఆరోహణ క్రమం)
+Array.Sort(numbers);
+Console.WriteLine($"సార్ట్ చేసిన అర్రే: {string.Join(", ", numbers)}");
+
+// 2. రివర్సింగ్ (అవరోహణ క్రమం)
+Array.Reverse(numbers);
+Console.WriteLine($"రివర్స్ చేసిన అర్రే: {string.Join(", ", numbers)}");
+
+// 3. బైనరీ సెర్చ్ (సార్ట్ అయి ఉన్నప్పుడు మాత్రమే పనిచేస్తుంది - O(log N))
+Array.Sort(numbers);
+int foundIndex = Array.BinarySearch(numbers, 45);
+Console.WriteLine($"45 ఉన్న ఇండెక్స్: {foundIndex}");
+
+// 4. క్లియరింగ్ (విలువలను డీఫాల్ట్ 0 కి మార్చడం)
+Array.Clear(numbers, 0, 2); // మొదటి 2 ఎలిమెంట్స్ 0 అవుతాయి
+Console.WriteLine($"క్లియర్ చేసిన తర్వాత: {string.Join(", ", numbers)}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🎯 మోడ్రన్ C# 12 కలెక్షన్ ఎక్స్‌ప్రెషన్స్ ([]) &amp; Spread (..)</h2>
+      <p>
+        C# 12 లో వచ్చిన అత్యంత ఆధునిక ఫీచర్ <strong>Collection Expressions</strong>. ఇకపై <code>new int[] { 1, 2 }</code> అని పెద్దగా రాయవలసిన అవసరం లేకుండా — కేవలం బ్రాకెట్లు <code>[1, 2, 3]</code> తో అర్రేలు, లిస్ట్‌లు, స్పాన్‌లు అన్నింటినీ ఒకేలా సృష్టించవచ్చు!
+      </p>
+      <p>
+        అదనంగా <strong>స్ప్రెడ్ ఆపరేటర్ (Spread <code>..</code>)</strong> ద్వారా రెండు వేర్వేరు అర్రేలను ఒక్క లైన్‌లో విలీనం (Merge) చేయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Modern C# 12 Collection Expressions</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// C# 12 క్లీన్ సింటాక్స్:
+int[] batchA = [10, 20, 30];
+int[] batchB = [40, 50];
+
+// స్ప్రెడ్ ఆపరేటర్ (..) తో రెండు అర్రేలను కలపడం:
+int[] mergedBatches = [..batchA, 999, ..batchB];
+
+Console.WriteLine($"కలిపిన అర్రే: {string.Join(", ", mergedBatches)}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 📏 ఇండెక్స్ (^) మరియు రేంజ్ (..) తో అర్రే స్లైసింగ్</h2>
+      <p>
+        C# 8 లో వచ్చిన ఇండెక్స్ మరియు రేంజ్ ఆపరేటర్లు అర్రేల భాగాలను కత్తిరించడానికి (Slicing) ఎంతో సహకరిస్తాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>^1</code>: చివరి ఎలిమెంట్ (Last Element).</li>
+        <li><code>^2</code>: చివరి నుండి రెండవది.</li>
+        <li><code>arr[1..4]</code>: ఇండెక్స్ 1 నుండి ప్రారంభమై ఇండెక్స్ 4 కు ముందు (1, 2, 3) ఉన్న ఎలిమెంట్స్ ను ఒక కొత్త అర్రేగా స్లైస్ చేస్తుంది.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Index and Range Slicing</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string[] colors = { "ఎరుపు", "ఆకుపచ్చ", "నీలం", "పసుపు", "తెలుపు" };
+
+Console.WriteLine($"చివరి రంగు: {colors[^1]}"); // తెలుపు
+
+// మధ్యలోని 3 రంగులను స్లైస్ చేయడం (ఇండెక్స్ 1 నుండి 3 వరకు):
+string[] middleColors = colors[1..4];
+Console.WriteLine($"మధ్య రంగులు: {string.Join(", ", middleColors)}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> ⚡ అర్రేస్ వర్సెస్ Span&lt;T&gt; — జీరో-కాపీ పవర్‌హౌస్</h2>
+      <p>
+        సాధారణ అర్రేను <code>colors[1..4]</code> అని స్లైస్ చేసినప్పుడు — మెమరీ హీప్‌లో ఒక కొత్త అర్రే అలోకేట్ అయి డేటా కాపీ అవుతుంది.
+      </p>
+      <p>
+        కానీ హై-పెర్ఫార్మెన్స్ సాఫ్ట్‌వేర్‌లో మెమరీ కాపీయింగ్ లేకుండా నేరుగా అసలు అర్రే పైనే ఒక వ్యూ (View) ఏర్పాటు చేయడానికి <strong><code>Span&lt;T&gt;</code></strong> వాడతారు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Zero-Allocation Array Slicing with Span</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int[] massiveData = { 100, 200, 300, 400, 500, 600 };
+
+// Span తో జీరో-అలోకేషన్ స్లైసింగ్: హీప్‌లో కొత్త అర్రే పుట్టదు!
+Span&lt;int&gt; sliceView = massiveData.AsSpan(2, 3); // 300, 400, 500
+
+sliceView[0] = 999; // sliceView లో మార్చితే అసలు massiveData లోని 300 కూడా 999 గా మారుతుంది!
+
+Console.WriteLine($"అసలు అర్రేలో మారిన విలువ: {massiveData[2]}"); // 999</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: 1D vs 2D Rectangular vs Jagged Arrays</h2>
+      <p>
+        మూడు అర్రే రకాల సమగ్ర సాంకేతిక పోలిక:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీచర్ / కొలమానం</th>
+            <th>1D Array</th>
+            <th>2D Rectangular Array ([,])</th>
+            <th>Jagged Array ([][])</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>సింటాక్స్</strong></td>
+            <td><code>int[] a</code></td>
+            <td><code>int[,] a</code></td>
+            <td><code>int[][] a</code></td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ లేఅవుట్</strong></td>
+            <td>సింగిల్ కంటిగ్యుయస్ బ్లాక్</td>
+            <td><strong>సింగిల్ పర్ఫెక్ట్ బ్లాక్</strong> (No fragmentation)</td>
+            <td>హీప్‌లో బహుళ స్వతంత్ర అర్రేలు (Pointers to arrays)</td>
+          </tr>
+          <tr>
+            <td><strong>రో సైజులు</strong></td>
+            <td>వర్తించదు</td>
+            <td><strong>ఖచ్చితంగా సమానంగా ఉండాలి</strong></td>
+            <td><strong>ప్రతి రో వేర్వేరు సైజు ఉండవచ్చు</strong></td>
+          </tr>
+          <tr>
+            <td><strong>పెర్ఫార్మెన్స్</strong></td>
+            <td>అత్యుత్తమం (JIT BCE)</td>
+            <td>మంచిది</td>
+            <td>ఇండైరెక్షన్ పాయింటర్ వల్ల కొద్దిగా స్లో</td>
+          </tr>
+          <tr>
+            <td><strong>ఉత్తమ వినియోగం</strong></td>
+            <td>వరుస జాబితాలకు</td>
+            <td>మ్యాట్రిక్స్, గేమింగ్ టైల్స్, ఇమేజ్ పిక్సెల్స్</td>
+            <td>విభిన్న పొడవులు గల టేబుల్స్, మల్టీ-లెవల్ డేటా</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🔄 అర్రే ఇమ్మ్యుటబిలిటీ భ్రమ &amp; ReadOnlySpan రక్షణ</h2>
+      <p>
+        చాలామంది జూనియర్ డెవలపర్లు చేసే పొరపాటు: <code>readonly int[] grades = { 10, 20 };</code> అని రాస్తే అర్రే లోపలి అంశాలు మారవు అనుకుంటారు.
+      </p>
+      <p>
+        ఇక్కడ <code>readonly</code> అనేది కేవలం <strong>అర్రే వేరియబుల్ మరొక కొత్త అర్రేకు మారకుండా పాయింటర్‌ను మాత్రమే లాక్ చేస్తుంది</strong>! కానీ <code>grades[0] = 99;</code> అని లోపలి కంటెంట్‌ను సులభంగా మార్చేయవచ్చు.
+      </p>
+      <p>
+        <strong>పరిష్కారం:</strong> లోపలి కంటెంట్ కూడా 100% మారకూడదు అనుకుంటే <code>ReadOnlyCollection&lt;T&gt;</code> లేదా <code>ReadOnlySpan&lt;T&gt;</code> వాడాలి.
+      </p>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "Multiplex Cinema Seat Booking &amp; Reservation Engine"</h2>
+      <p>
+        2D రెక్టాంగ్యులర్ అర్రేస్, మెథడ్స్, లూప్స్, మరియు కండిషనల్ లాజిక్ ఉపయోగించి — ఒక మల్టీప్లెక్స్ సినిమా థియేటర్‌లో సీట్ల రిజర్వేషన్, ధరల లెక్కింపు, మరియు లైవ్ థియేటర్ గ్రిడ్ విజువలైజర్ ఇంజిన్‌ను తయారు చేద్దాం!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Multiplex Cinema Reservation Project</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🎬 మన మల్టీప్లెక్స్ - స్మార్ట్ స్క్రీన్-1 సీటింగ్ బుకింగ్ v1.0");
+Console.WriteLine("=================================================\n");
+
+// 4 అడ్డువరుసలు, 6 నిలువు వరుసలతో కూడిన 4x6 థియేటర్ సీటింగ్ అర్రే
+// 'O' = ఖాళీ సీటు (Open), 'X' = బుక్ అయిన సీటు (Booked)
+char[,] cinemaSeats = {
+    { 'O', 'O', 'X', 'O', 'O', 'O' }, // Row 0: ప్లాటినం (₹350)
+    { 'O', 'X', 'X', 'O', 'O', 'O' }, // Row 1: గోల్డ్ (₹250)
+    { 'O', 'O', 'O', 'O', 'X', 'O' }, // Row 2: సిల్వర్ (₹150)
+    { 'O', 'O', 'O', 'O', 'O', 'O' }  // Row 3: సిల్వర్ (₹150)
+};
+
+void DisplayTheatreLayout(char[,] seats)
+{
+    Console.WriteLine("        [======== స్క్రీన్ ఇటువైపు ఉంది ========]\n");
+    Console.WriteLine("        Col 0  Col 1  Col 2  Col 3  Col 4  Col 5");
+    Console.WriteLine("        -----------------------------------------");
     
-<div class="intro-box">
-  ఒకే డేటా టైప్‌కు చెందిన బహుళ విలువలను మెమరీలో ఒకే వరుస క్రమంలో నిల్వ చేయడానికి <strong>Arrays (అరేలు)</strong> ప్రాథమిక సాధనాలు. C# లో అరేలు రన్‌టైమ్ ద్వారా నిర్వహించబడే రిఫరెన్స్ టైప్స్ (Reference Types on Heap). C# లో సింగిల్ డైమెన్షనల్ అరేలతో పాటు, టేబుల్స్ కోసం <strong>Multidimensional Arrays (<code>int[,]</code>)</strong> మరియు వేర్వేరు పొడవులు ఉండే <strong>Jagged Arrays (<code>int[][]</code>)</strong> ఉంటాయి. ఈ అధ్యాయంలో వాటి మెమరీ లేఅవుట్, ఇండెక్స్ ఆపరేటర్లు మరియు ఆప్టిమైజేషన్లను పరిశీలిద్దాం.
-</div>
-
-<div class="section-title"><span class="num">1</span> Single-Dimensional Arrays (1D) & Zero-based Indexing</div>
-<div class="section-body">
-  <p>1D అరే అనేది ఫిక్స్‌డ్ సైజ్ కలిగిన వరుస మెమరీ బ్లాక్. అరేలోని మొదటి ఎలిమెంట్ ఇండెక్స్ ఎల్లప్పుడూ <code>0</code> తో మొదలవుతుంది, చివరి ఎలిమెంట్ ఇండెక్స్ <code>Length - 1</code> అవుతుంది.</p>
-
-  <p>C# 8 లో ప్రవేశపెట్టిన <strong>Index from End (<code>^</code>)</strong> మరియు <strong>Range (<code>..</code>)</strong> ఆపరేటర్ల ద్వారా అరే ఎలిమెంట్స్‌ను మరింత సులువుగా యాక్సెస్ చేయవచ్చు. ఉదాహరణకు <code>^1</code> అంటే చివరి ఎలిమెంట్, <code>1..4</code> అంటే సబ్-అరే స్లైస్.</p>
-
-  <div class="code-block">
-    <div class="code-header">
-      <span>OneDArrayDemo.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
-
-class Program
-{
-    static void Main()
+    string[] tierNames = { "ప్లాటినం", "గోల్డ్  ", "సిల్వర్1", "సిల్వర్2" };
+    
+    for (int r = 0; r &lt; seats.GetLength(0); r++)
     {
-        // Array initialization
-        int[] scores = { 88, 92, 79, 95, 84 };
-        
-        Console.WriteLine($"Total Elements: {scores.Length}");
-        Console.WriteLine($"First Score: {scores[0]}");
-        
-        // Modern C# Index from end operator (^)
-        Console.WriteLine($"Last Score: {scores[^1]}");
-        Console.WriteLine($"Second to Last: {scores[^2]}");
-        
-        // Range slicing (..)
-        int[] topThree = scores[0..3]; // indices 0, 1, 2
-        Console.WriteLine($"Top 3 count: {topThree.Length}");
-    }
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">2</span> Rectangular Multidimensional Arrays (int[,])</div>
-<div class="section-body">
-  <p>గ్రిడ్ లేదా మ్యాట్రిక్స్ రూపంలో ఉండే డేటా (ఉదాహరణకు గేమ్‌లలో చెస్ బోర్డు, లేదా ఇమేజ్ పిక్సెల్స్) నిల్వ చేయడానికి C# లో <strong>Rectangular Multidimensional Array (<code>[,]</code>)</strong> వాడతారు. ఇందులో ప్రతి అడ్డు వరుస (Row) లోనూ కచ్చితంగా సమాన సంఖ్యలో నిలువు వరుసలు (Columns) ఉంటాయి.</p>
-
-  <p>మెమరీలో ఇవి ఒకే నిరంతర (single contiguous) బ్లాక్‌గా స్టోర్ అవుతాయి. రోస్ సంఖ్య తెలుసుకోవడానికి <code>GetLength(0)</code> మరియు కాలమ్స్ సంఖ్య కోసం <code>GetLength(1)</code> వాడాలి.</p>
-
-  <div class="code-block">
-    <div class="code-header">
-      <span>Matrix2DDemo.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
-
-class Program
-{
-    static void Main()
-    {
-        // 3 Rows, 3 Columns Matrix
-        int[,] matrix = {
-            { 1, 2, 3 },
-            { 4, 5, 6 },
-            { 7, 8, 9 }
-        };
-
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
-
-        Console.WriteLine($"Matrix Dimension: {rows}x{cols}");
-        for (int r = 0; r < rows; r++)
+        Console.Write($"Row {r} ({tierNames[r]}): ");
+        for (int c = 0; c &lt; seats.GetLength(1); c++)
         {
-            for (int c = 0; c < cols; c++)
+            char status = seats[r, c];
+            if (status == 'X')
             {
-                Console.Write($"{matrix[r, c],4} ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write($"  [{status}] ");
+                Console.ResetColor();
             }
-            Console.WriteLine();
-        }
-    }
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">3</span> Jagged Arrays (int[][]) — అరేల యొక్క అరే (Arrays of Arrays)</div>
-<div class="section-body">
-  <p>ఒక్కో వరుసలో వేర్వేరు సంఖ్యలో ఎలిమెంట్స్ ఉండాల్సి వచ్చినప్పుడు (ఉదాహరణకు ప్రతి క్లాస్‌లో వేర్వేరు సంఖ్యలో విద్యార్థులు ఉన్నప్పుడు) <strong>Jagged Array (<code>[][]</code>)</strong> వాడతారు. ఇది నిజానికి ఇతర అరేలకు పాయింట్ చేసే రిఫరెన్స్‌ల అరే.</p>
-
-  <div style="background:var(--bg3); border-left:4px solid #10b981; padding:12px 16px; margin:16px 0; border-radius:0 8px 8px 0;">
-    <strong>హై-పెర్ఫార్మెన్స్ ఇన్సైట్:</strong> ఆశ్చర్యకరంగా .NET JIT కంపైలర్ రెక్టాంగ్యులర్ అరేల (<code>[,]</code>) కంటే జాగెడ్ అరేల (<code>[][]</code>) పై లూపులను వేగంగా ఎగ్జిక్యూట్ చేస్తుంది. ఎందుకంటే 1D వెక్టార్ బౌండ్స్ చెకింగ్ కోసం CPU ఆర్కిటెక్చర్‌లో ప్రత్యేక ఆప్టిమైజేషన్లు ఉంటాయి.
-  </div>
-
-  <div class="code-block">
-    <div class="code-header">
-      <span>JaggedArrayDemo.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
-
-class Program
-{
-    static void Main()
-    {
-        // Array of 3 arrays
-        int[][] jagged = new int[3][];
-        
-        jagged[0] = new int[] { 10, 20 };
-        jagged[1] = new int[] { 30, 40, 50, 60 };
-        jagged[2] = new int[] { 70 };
-
-        for (int i = 0; i < jagged.Length; i++)
-        {
-            Console.Write($"Row {i} (Length {jagged[i].Length}): ");
-            for (int j = 0; j < jagged[i].Length; j++)
+            else
             {
-                Console.Write($"{jagged[i][j]} ");
-            }
-            Console.WriteLine();
-        }
-    }
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">4</span> System.Array యుటిలిటీ మెథడ్స్ (Sort, Reverse, IndexOf)</div>
-<div class="section-body">
-  <p>అరేలపై వేగవంతమైన ఆపరేషన్స్ చేయడానికి .NET లోని స్టాటిక్ క్లాస్ <code>System.Array</code> అత్యుత్తమ మెథడ్స్‌ను కలిగి ఉంది:</p>
-
-  <div class="code-block">
-    <div class="code-header">
-      <span>ArrayUtilityMethods.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
-
-class Program
-{
-    static void Main()
-    {
-        string[] cities = { "Visakhapatnam", "Hyderabad", "Vijayawada", "Tirupati" };
-
-        // 1. Array.Sort (Ascending order)
-        Array.Sort(cities);
-        Console.WriteLine($"Sorted: {string.Join(", ", cities)}");
-
-        // 2. Array.Reverse
-        Array.Reverse(cities);
-        Console.WriteLine($"Reversed: {string.Join(", ", cities)}");
-
-        // 3. Array.IndexOf (Linear search)
-        int index = Array.IndexOf(cities, "Hyderabad");
-        Console.WriteLine($"Hyderabad found at index: {index}");
-    }
-}</code></pre>
-  </div>
-</div>
-
-<div class="section-title"><span class="num">5</span> రియల్-వరల్డ్ కేస్ స్టడీ: స్టూడెంట్ గ్రేడ్స్ కాలిక్యులేటర్</div>
-<div class="section-body">
-  <p>విద్యార్థుల మార్కులను ప్రాసెస్ చేసి సగటు (average) మరియు గరిష్ట స్కోర్ కనుగొనే సంపూర్ణ C# ప్రోగ్రామ్:</p>
-
-  <div class="code-block">
-    <div class="code-header">
-      <span>StudentGradesApp.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
-
-class Program
-{
-    static void Main()
-    {
-        string[] students = { "Kiran", "Lavanya", "Mahesh" };
-        int[] marks = { 85, 94, 78 };
-
-        int highestMark = marks[0];
-        string topStudent = students[0];
-        int total = 0;
-
-        for (int i = 0; i < marks.Length; i++)
-        {
-            total += marks[i];
-            if (marks[i] > highestMark)
-            {
-                highestMark = marks[i];
-                topStudent = students[i];
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"  [{status}] ");
+                Console.ResetColor();
             }
         }
-
-        double average = (double)total / marks.Length;
-        Console.WriteLine($"Class Average: {average:F2}");
-        Console.WriteLine($"Topper: {topStudent} with {highestMark} marks");
+        Console.WriteLine();
     }
-}</code></pre>
-  </div>
-</div>
+    Console.WriteLine();
+}
 
-<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
-<div class="section-body">
-  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
-    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: IndexOutOfRangeException</strong><br>
-    <span style="font-size:13.5px; color:#475569;">ఒక అరే సైజు 5 ఉన్నప్పుడు, చెల్లుబాటు అయ్యే ఇండెక్స్‌లు 0 నుండి 4 మాత్రమే. అనుకోకుండా <code>scores[5]</code> అని యాక్సెస్ చేయడానికి ప్రయత్నిస్తే రన్‌టైమ్‌లో అప్లికేషన్ క్రాష్ అవుతుంది. లూపుల్లో ఎల్లప్పుడూ <code>i &lt; array.Length</code> కండిషన్ మాత్రమే వాడాలి.</span>
-  </div>
+bool BookSeat(char[,] seats, int row, int col, out decimal ticketPrice)
+{
+    ticketPrice = 0m;
+    if (row &lt; 0 || row &gt;= seats.GetLength(0) || col &lt; 0 || col &gt;= seats.GetLength(1))
+    {
+        Console.WriteLine("❌ చెల్లని సీటు నంబర్!");
+        return false;
+    }
 
-  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
-  <ul>
-    <li><strong>Rectangular Array (<code>[,]</code>) మరియు Jagged Array (<code>[][]</code>) ల మధ్య తేడా ఏమిటి?</strong><br>
-    రెక్టాంగ్యులర్ అరేలో అన్ని వరుసలు సమాన పొడవును కలిగి ఉంటాయి మరియు సింగిల్ బ్లాక్‌గా కేటాయించబడతాయి. జాగెడ్ అరేలో ఒక్కో వరుస వేర్వేరు పొడవును కలిగి ఉంటుంది మరియు హీప్‌పై స్వతంత్ర అరేలుగా ఉంటాయి.</li>
-    <li><strong>C# లో Array సైజును డైనమిక్‌గా పెంచవచ్చా?</strong><br>
-    లేదు, C# లో అరేలు ఫిక్స్‌డ్ సైజ్ కలిగి ఉంటాయి. డైనమిక్ సైజు కావాలంటే <code>List&lt;T&gt;</code> కలెక్షన్ వాడాలి.</li>
-  </ul>
-</div>
+    if (seats[row, col] == 'X')
+    {
+        Console.WriteLine($"❌ క్షమించండి! Row {row}, Col {col} ఇప్పటికే బుక్ చేయబడింది.");
+        return false;
+    }
 
+    // సీటు బుకింగ్ కన్ఫర్మ్ చేయడం
+    seats[row, col] = 'X';
+    
+    ticketPrice = row switch
+    {
+        0 =&gt; 350.00m,
+        1 =&gt; 250.00m,
+        _ =&gt; 150.00m
+    };
+    return true;
+}
 
-    <!-- PREV / NEXT NAVIGATION -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
+// ప్రారంభ లేఅవుట్ చూపించడం
+DisplayTheatreLayout(cinemaSeats);
+
+// ఒక సీటును బుక్ చేయడానికి ప్రయత్నించడం (Row 0, Col 4 - ప్లాటినం)
+int targetRow = 0, targetCol = 4;
+Console.WriteLine($"కస్టమర్ కోరిన సీటు: Row {targetRow}, Col {targetCol}...");
+
+if (BookSeat(cinemaSeats, targetRow, targetCol, out decimal finalPrice))
+{
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine($"🎉 బుకింగ్ విజయవంతమైంది! టికెట్ ధర: ₹{finalPrice:N2}");
+    Console.ResetColor();
+}
+
+Console.WriteLine("\nనవీకరించబడిన తాజా థియేటర్ సీటింగ్ స్థితి:");
+DisplayTheatreLayout(cinemaSeats);
+Console.WriteLine("=================================================\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ సినిమా బుకింగ్ ఇంజిన్‌ను పరీక్షించండి!</div>
+        <p>
+          రో మరియు కాలమ్ నంబర్లను మార్చి సీటు రిజర్వేషన్ ఎలా మారుతుందో, ఇప్పటికే బుక్ అయిన సీటును ఎంచుకుంటే ఎర్రర్ ఎలా వస్తుందో ఆన్‌లైన్ ఎడిటర్‌లో లైవ్‌గా పరిశీలించండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన అర్రే తప్పులు</h2>
+      <p>
+        అర్రేలతో పనిచేసేటప్పుడు జూనియర్ డెవలపర్లు చేసే 7 ప్రధాన తప్పులు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. IndexOutOfRangeException ఎదుర్కోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            5 ఎలిమెంట్స్ ఉన్న అర్రేలో <code>arr[5]</code> అని పిలిస్తే ఎర్రర్ వస్తుంది. ఆఖరి ఎలిమెంట్ ఎల్లప్పుడూ <code>arr[4]</code> లేదా <code>arr[^1]</code> మాత్రమే.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. జాగ్డ్ అర్రేలోని అంతర్గత రోలను ఇనిషియలైజ్ చేయకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int[][] a = new int[3][]; a[0][0] = 5;</code> రాస్తే <code>NullReferenceException</code> వస్తుంది! ముందుగా <code>a[0] = new int[5];</code> అని కేటాయించాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. 2D అర్రే సైజు కోసం Length వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            3x4 మ్యాట్రిక్స్ లో <code>matrix.Length</code> మొత్తం 12 ఎలిమెంట్స్ ఇస్తుంది. రోస్ కోసం <code>GetLength(0)</code>, కాలమ్స్ కోసం <code>GetLength(1)</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. అర్రే సైజును రన్‌టైమ్‌లో మార్చవచ్చనుకోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            అర్రేలు స్థిరమైన సైజు గలవి (Fixed Size). సైజు పెంచడం లేదా తగ్గించడం అవసరమైతే <code>List&lt;T&gt;</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. సార్ట్ చేయకుండా BinarySearch పిలవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            బైనరీ సెర్చ్ పనిచేయాలంటే అర్రే ఖచ్చితంగా ఆరోహణ క్రమంలో సార్ట్ అయి ఉండాలి. లేకపోతే తప్పుడు ఇండెక్స్ లేదా నెగటివ్ నంబర్ ఇస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. అర్రేను కాపీ చేయడానికి = వాడటం (Reference Alias Trap):</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int[] b = a;</code> రాస్తే కొత్త కాపీ తయారు కాదు, రెండూ ఒకే అర్రేను పాయింట్ చేస్తాయి. నిజమైన కాపీ కోసం <code>(int[])a.Clone()</code> లేదా <code>Array.Copy()</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. కలెక్షన్ ఎక్స్‌ప్రెషన్స్‌లో టైప్ మిస్‌మ్యాచ్ చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int[] arr = [1, "రెండు"];</code> కుదరదు. అర్రేలోని అన్ని ఎలిమెంట్స్ ఒకే డేటా టైప్ కు చెందినవి అయి ఉండాలి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        అర్రేలపై మీ పరిజ్ఞానాన్ని ఈ 5 ప్రాక్టికల్ ప్రశ్నలతో పరీక్షించుకోండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>int[,]</code> (రెక్టాంగ్యులర్) మరియు <code>int[][]</code> (జాగ్డ్) అర్రేల మధ్య ప్రధాన మెమరీ వ్యత్యాసం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>int[,]</code> అనేది మెమరీ హీప్‌లో ఒకే ఒక్క పర్ఫెక్ట్ కంటిగ్యుయస్ బ్లాక్ (Single allocation) గా కేటాయించబడుతుంది మరియు అన్ని రోస్ సమాన సైజు కలిగి ఉంటాయి. <code>int[][]</code> అనేది అర్రేల యొక్క అర్రే; అంటే బయటి అర్రేలో పాయింటర్లు ఉంటాయి, ప్రతి రో హీప్‌లో స్వతంత్రంగా వేర్వేరు సైజులతో అలోకేట్ అవుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: <code>int[] a = new int[5];</code> డిక్లేర్ చేసినప్పుడు అందులోని ఎలిమెంట్స్ ప్రారంభంలో ఏ విలువను కలిగి ఉంటాయి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> అన్ని 5 ఎలిమెంట్స్ డీఫాల్ట్ విలువ అయిన <strong>0</strong> తో నింపబడి ఉంటాయి. C# లో గార్బేజ్ మెమరీ ఉండదు; అలోకేషన్ సమయంలోనే CLR మొత్తం మెమరీని సురక్షితంగా సున్నా చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: C# 12 Collection Expressions లో <code>..</code> (స్ప్రెడ్ ఆపరేటర్) ఏమి చేస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> స్ప్రెడ్ ఆపరేటర్ ఒక కలెక్షన్ లోని ఎలిమెంట్స్ అన్నింటినీ విడదీసి సరికొత్త కలెక్షన్ లోకి ఇన్‌లైన్‌గా విలీనం (Inline Flattening / Merging) చేస్తుంది. ఉదాహరణకు <code>[..a, ..b]</code> ద్వారా రెండు అర్రేలను లూప్ లేకుండా సులభంగా కలపవచ్చు.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: <code>int[] b = a;</code> అని రాసి <code>b[0] = 500;</code> అని మార్చితే <code>a[0]</code> మారుతుందా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఖచ్చితంగా మారుతుంది! అర్రేలు C# లో <em>Reference Types</em>. <code>b = a</code> అన్నప్పుడు కేవలం మెమరీ పాయింటర్ మాత్రమే కాపీ అవుతుంది, కొత్త అర్రే పుట్టదు. కాబట్టి రెండూ ఒకే మెమరీ లొకేషన్‌ను సూచిస్తాయి.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: అర్రేలలో CPU Cache Locality ఎందుకు అత్యంత వేగవంతమైన పనితీరును ఇస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> అర్రే ఎలిమెంట్స్ మెమరీలో ఒకదాని ప్రక్కన ఒకటి కంటిగ్యుయస్ గా ఉండటం వల్ల, CPU ఒక ఎలిమెంట్‌ను చదివినప్పుడే దాని ప్రక్కనున్న ఎలిమెంట్స్ ను కూడా నేరుగా హై-స్పీడ్ L1/L2 Cache లోకి ప్రీ-ఫెచ్ చేస్తుంది. దీనివల్ల రామ్ (RAM) లాటెన్సీ తప్పి ప్రాసెసింగ్ అత్యంత వేగంగా పూర్తవుతుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
       <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
-        ← Prev: 10. స్ట్రింగ్స్ & StringBuilder
+        ← Previous: 10. స్ట్రింగ్స్, ఇమ్యుటబిలిటీ &amp; StringBuilder
       </a>
-      
       <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
-        Next: 12. జెనెరిక్ కలెక్షన్స్ (List, Dictionary) →
+        Next: 12. జెనెరిక్ కలెక్షన్స్ (List &amp; Dictionary) →
       </a>
     </div>
 
@@ -539,7 +865,7 @@ class Program
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on .NET 8.0 SDK / C# 12 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -548,5 +874,85 @@ class Program
 
 <!-- SITE NAVIGATION LOADER -->
 <script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = `using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🎬 మన మల్టీప్లెక్స్ - స్మార్ట్ స్క్రీన్-1 సీటింగ్ బుకింగ్ v1.0");
+Console.WriteLine("=================================================\n");
+
+char[,] cinemaSeats = {
+    { 'O', 'O', 'X', 'O', 'O', 'O' },
+    { 'O', 'X', 'X', 'O', 'O', 'O' },
+    { 'O', 'O', 'O', 'O', 'X', 'O' },
+    { 'O', 'O', 'O', 'O', 'O', 'O' }
+};
+
+for (int r = 0; r < cinemaSeats.GetLength(0); r++)
+{
+    Console.Write($"Row {r}: ");
+    for (int c = 0; c < cinemaSeats.GetLength(1); c++)
+    {
+        Console.Write($"[{cinemaSeats[r, c]}] ");
+    }
+    Console.WriteLine();
+}
+
+Console.WriteLine("\nRow 0, Col 4 సీటును బుక్ చేయడం...");
+cinemaSeats[0, 4] = 'X';
+Console.WriteLine("బుకింగ్ కన్ఫర్మ్ అయింది! ప్లాటినం టికెట్ ధర: ₹350.00\n");
+Console.WriteLine("=================================================\n");`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
 </body>
 </html>

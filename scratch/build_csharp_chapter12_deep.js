@@ -1,0 +1,778 @@
+const fs = require('fs');
+const path = require('path');
+const { buildSidebar } = require('./csharp_curriculum_data');
+
+const sidebarHtml = buildSidebar(12);
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Title & Meta Tags -->
+  <title>C# జెనెరిక్ కలెక్షన్స్ (List, Dictionary, HashSet) — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో జెనెరిక్స్ (&lt;T&gt;), List&lt;T&gt;, Dictionary&lt;K,V&gt;, HashSet&lt;T&gt;, Queue, Stack, Boxing/Unboxing నివారణ మరియు ఈ-కామర్స్ వేర్‌హౌస్ ఇంజిన్‌పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# collections telugu, c# generics telugu, c# list dictionary telugu, c# hashset, c# boxing unboxing">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# జెనెరిక్ కలెక్షన్స్ (List, Dictionary, HashSet) — C# Masterclass">
+  <meta property="og:description" content="C# లో ఆధునిక జెనెరిక్ కలెక్షన్స్: List, Dictionary, HashSet ల మెమరీ ఆర్కిటెక్చర్ పై పూర్తి తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/12-csharp-collections-and-generics-list-dict.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+</head>
+<body class="lang-csharp light-theme">
+
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+${sidebarHtml}
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 12: జెనెరిక్ కలెక్షన్స్ (List &amp; Dictionary)</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# జెనెరిక్ కలెక్షన్స్ (List&lt;T&gt;, Dictionary&lt;K,V&gt;, HashSet&lt;T&gt;)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 12 of 20</span>
+      <span class="meta-pill">📁 Phase 03: మెథడ్స్, స్ట్రింగ్స్ &amp; కలెక్షన్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Array Limitations · Why Generics (&lt;T&gt;) Won · Boxing / Unboxing Performance Penalties · List&lt;T&gt; Internal Capacity Doubling · Dictionary&lt;TKey, TValue&gt; O(1) Hash Table Lookup · TryGetValue Safety · HashSet&lt;T&gt; Set Operations · Stack&lt;T&gt; (LIFO) &amp; Queue&lt;T&gt; (FIFO) · Capacity Optimization · IReadOnlyCollection · Comparison Matrix Table · Real-World Project: E-Commerce Warehouse Inventory Engine · 7 Beginner Mistakes · Self-Assessment Quiz
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం అధ్యాయం 12 కి! 🗃️ జెనెరిక్స్ విప్లవం &amp; ఎంటర్‌ప్రైజ్ డేటా కలెక్షన్స్</h3>
+      <p>
+        గత అధ్యాయంలో మనం నేర్చుకున్న అర్రేలు చాలా వేగవంతమైనవే అయినప్పటికీ, వాటికి ఒక పెద్ద బలహీనత ఉంది: <strong>ఫిక్స్‌డ్ సైజు (Fixed Size)</strong>! ఒకసారి 10 ఎలిమెంట్స్ తో అర్రే సృష్టించిన తర్వాత 11వ ఎలిమెంట్ చేర్చడం కుదరదు; కొత్త అర్రే సృష్టించి పాత డేటాను కాపీ చేయాల్సిందే. కానీ రియల్ వరల్డ్ ప్రాజెక్టులలో వినియోగదారులు ఎన్ని ఆర్డర్లు చేస్తారో, ఎన్ని మెసేజ్‌లు పంపుతారో ముందే తెలియదు. డేటా నిరంతరం పెరుగుతూ, తగ్గుతూ ఉంటుంది!
+      </p>
+      <p>
+        ఈ సమస్యకు పరిష్కారమే <strong>డైనమిక్ కలెక్షన్స్ (Dynamic Collections)</strong>. ప్రారంభ C# లో <code>ArrayList</code> ఉండేది, కానీ అది ప్రతి వస్తువును <code>object</code> గా మార్చడం వల్ల విపరీతమైన మెమరీ నష్టం (Boxing/Unboxing) మరియు రన్‌టైమ్ ఎర్రర్లు వచ్చేవి. C# 2.0 లో మైక్రోసాఫ్ట్ <strong>Generics (<code>&lt;T&gt;</code>)</strong> ను ప్రవేశపెట్టి ప్రోగ్రామింగ్ చరిత్రలోనే అతిపెద్ద విప్లవాన్ని సృష్టించింది!
+      </p>
+      <p>
+        ఈ సమగ్ర 12వ అధ్యాయంతో మనం <strong>Phase 03 (మెథడ్స్, స్ట్రింగ్స్ &amp; కలెక్షన్స్)</strong> ను ఘనంగా పూర్తి చేస్తూ — డైనమిక్ అర్రే కింగ్ <strong><code>List&lt;T&gt;</code></strong>, మెరుపు వేగంతో పనిచేసే <strong><code>Dictionary&lt;TKey, TValue&gt;</code></strong>, డూప్లికేట్స్ లేని <strong><code>HashSet&lt;T&gt;</code></strong>, మరియు <code>Queue&lt;T&gt;</code> / <code>Stack&lt;T&gt;</code> లను లోతుగా నేర్చుకొని — ఒక ఈ-కామర్స్ వేర్‌హౌస్ ఇన్వెంటరీ ప్రాసెసింగ్ ఇంజిన్‌ను నిర్మిస్తాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🗃️ అర్రేల పరిమితులు &amp; డైనమిక్ కలెక్షన్ల ఆవిర్భావం</h2>
+      <p>
+        అర్రేలు కంప్యూటర్ మెమరీలో కంటిగ్యుయస్‌గా ఉంటాయి కాబట్టి వాటి సైజును మార్చడం అసాధ్యం. ఉదాహరణకు 100 సైజు గల అర్రే నిండిపోయినప్పుడు, 101వ ఎలిమెంట్ కోసం మెమరీలో పక్కనే స్థలం ఉండకపోవచ్చు.
+      </p>
+      <p>
+        దీనివల్ల సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్ లో <strong>ఆటోమేటిక్ సైజ్ రీ-సైజింగ్</strong> గల డైనమిక్ కలెక్షన్ల ఆవశ్యకత ఏర్పడింది. ఎలిమెంట్స్ చేరుస్తున్న కొద్దీ వాటంతట అవే పెరుగుతూ, తొలగించినప్పుడు తగ్గే కలెక్షన్స్ ఎంటర్‌ప్రైజ్ సాఫ్ట్‌వేర్‌కు అత్యంత కీలకం.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> ⚠️ నాన్-జెనెరిక్ కలెక్షన్ల ప్రమాదాలు &amp; Boxing / Unboxing పెనాల్టీ</h2>
+      <p>
+        జెనరిక్స్ రాకముందు C# లో <code>System.Collections.ArrayList</code> ఉండేది. ఇది ఏదైనా డేటాను <code>object</code> గా నిల్వ చేస్తుంది:
+      </p>
+      <div style="background:var(--bg3); border-left:4px solid #ef4444; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#ef4444; font-size:15px;">🚨 బాక్సింగ్ మరియు టైప్-సేఫ్టీ విపత్తు:</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px; line-height:1.7;">
+          ఒక <code>int</code> ని <code>object</code> లోకి పెట్టినప్పుడు అది స్టాక్ నుండి హీప్‌లోకి మారుతుంది (Boxing - 10 రెట్లు స్లో). అంతేకాకుండా <code>ArrayList</code> లో నంబర్లు, పేర్లు, బూలియన్లు అన్నీ కలిసిపోతాయి. బయటకు తీసేటప్పుడు <code>(int)list[0]</code> అని కాస్ట్ చేయాలి. పొరపాటున స్ట్రింగ్ ఉంటే రన్‌టైమ్‌లో <strong><code>InvalidCastException</code></strong> వచ్చి క్రాష్ అవుతుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🧬 జెనరిక్స్ (Generics &lt;T&gt;) విప్లవం</h2>
+      <p>
+        <code>System.Collections.Generic</code> నేమ్‌స్పేస్ లోని జెనరిక్స్ సిస్టమ్ <strong>టైప్ సేఫ్టీ (Type Safety)</strong> ని కంపైల్-టైమ్ లోనే అందిస్తుంది.
+      </p>
+      <p>
+        ఇక్కడ <code>&lt;T&gt;</code> అనేది ఒక టైప్ ప్లేస్‌హోల్డర్ (Type Parameter). మీరు <code>List&lt;int&gt;</code> అని సృష్టించినప్పుడు, అది కేవలం పూర్ణాంకాలను మాత్రమే అనుమతిస్తుంది. అందులోకి పొరపాటున స్ట్రింగ్ పెట్టడానికి ప్రయత్నించినా కంపైలర్ అక్కడికక్కడే అడ్డుకుంటుంది! ఎటువంటి బాక్సింగ్ ఓవర్‌హెడ్ ఉండదు.
+      </p>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 📋 List&lt;T&gt; — ది డైనమిక్ అర్రే కింగ్ &amp; Capacity Doubling</h2>
+      <p>
+        C# లో అత్యధికంగా ఉపయోగించే కలెక్షన్ <strong><code>List&lt;T&gt;</code></strong>.
+      </p>
+      <p>
+        <strong>అంతర్గత పనితీరు (Capacity Doubling Algorithm):</strong><br>
+        <code>List&lt;T&gt;</code> అంతర్గతంగా ఒక సాధారణ అర్రేను నిర్వహిస్తుంది. డీఫాల్ట్‌గా దాని కెపాసిటీ 0 ఉంటుంది. మొదటి ఎలిమెంట్ చేర్చగానే కెపాసిటీ 4 అవుతుంది. 4 నిండిపోగానే ఆటోమేటిక్‌గా <strong>రెట్టింపు (8)</strong> అవుతుంది. 8 నిండగానే 16, 32, 64... ఇలా రెట్టింపు అవుతూ కొత్త అంతర్గత అర్రేను తయారుచేసుకుంటుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · List&lt;T&gt; Core API Demonstration</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System.Collections.Generic;
+
+// C# 12 కలెక్షన్ ఎక్స్‌ప్రెషన్ తో List సృష్టి
+List&lt;string&gt; employees = ["రాకేష్", "సునీత", "వినోద్"];
+
+employees.Add("అనిత");                    // చేర్చడం
+employees.AddRange(["ప్రవీణ్", "శైలజ"]); // బహుళ వ్యక్తులను కలపడం
+employees.Remove("వినోద్");                 // నిర్దిష్ట వ్యక్తిని తొలగించడం
+employees.Insert(0, "డైరెక్టర్ శర్మ");     // ఇండెక్స్ 0 వద్ద చేర్చడం
+
+Console.WriteLine($"మొత్తం ఉద్యోగులు: {employees.Count}");
+Console.WriteLine($"అంతర్గత కెపాసిటీ: {employees.Capacity}");
+
+// లూప్ ద్వారా ప్రింట్ చేయడం
+foreach (var emp in employees)
+{
+    Console.WriteLine($"  - {emp}");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🔑 Dictionary&lt;TKey, TValue&gt; — O(1) మెరుపు వేగ హాష్ టేబుల్</h2>
+      <p>
+        10 లక్షల మంది కస్టమర్లలో ఆధార్ నంబర్ లేదా ఈమెయిల్ ఆధారంగా ఒకరి వివరాలు వెతకాలంటే — లిస్ట్ వాడితే లీనియర్‌గా వెతకడానికి సెకన్లు పడుతుంది (\(O(N)\)).
+      </p>
+      <p>
+        కానీ <strong><code>Dictionary&lt;TKey, TValue&gt;</code></strong> ఒక అంతర్గత హాష్ టేబుల్ (Hash Table) ను ఉపయోగిస్తుంది. 10 లక్షల రికార్డులు ఉన్నా సరే — కీ (Key) తెలిస్తే విలువను కేవలం <strong>\(O(1)\) స్థిర సమయంలో (ఒక్క మైక్రోసెకనులో)</strong> నేరుగా లాగుతుంది!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Dictionary Safe Lookup with TryGetValue</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">var currencyRates = new Dictionary&lt;string, decimal&gt;
+{
+    ["USD"] = 83.50m,
+    ["EUR"] = 90.25m,
+    ["GBP"] = 106.10m
+};
+
+// ❌ ప్రమాదకర మార్గం: లేని కీ ని పిలిస్తే KeyNotFoundException వచ్చి క్రాష్ అవుతుంది
+// decimal jpy = currencyRates["JPY"]; 
+
+// ✅ ప్రొఫెషనల్ రక్షిత మార్గం: TryGetValue (ఎక్సెప్షన్ రహితం)
+if (currencyRates.TryGetValue("USD", out decimal inrRate))
+{
+    Console.WriteLine($"1 USD = ₹{inrRate:N2}");
+}
+else
+{
+    Console.WriteLine("కరెన్సీ లభించలేదు.");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🎯 HashSet&lt;T&gt; — డూప్లికేట్ రహిత హై-స్పీడ్ సెట్ ఆపరేషన్స్</h2>
+      <p>
+        ఒక కలెక్షన్‌లో కేవలం ప్రత్యేకమైన (Unique) అంశాలు మాత్రమే ఉండాలి, డూప్లికేట్స్ అస్సలు ఉండకూడదు అనుకున్నప్పుడు <strong><code>HashSet&lt;T&gt;</code></strong> ఉత్తమ ఎంపిక.
+      </p>
+      <p>
+        ఇది గణిత శాస్త్రంలోని యూనియన్ (Union), ఇంటర్‌సెక్షన్ (Intersection) ఆపరేషన్లను క్షణాల్లో చేస్తుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · HashSet Set Operations</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">HashSet&lt;string&gt; cricketFans = ["రాహుల్", "విరాట్", "రోహిత్", "అజయ్"];
+HashSet&lt;string&gt; cinemaFans  = ["అజయ్", "మహేష్", "ప్రభాస్", "రాహుల్"];
+
+// ఇద్దరికీ కామన్ గా ఉన్న అభిమానులను కనుగొనడం (Intersection)
+HashSet&lt;string&gt; commonFans = new HashSet&lt;string&gt;(cricketFans);
+commonFans.IntersectWith(cinemaFans);
+
+Console.WriteLine($"రెండు రంగాలనూ అభిమానించేవారు: {string.Join(", ", commonFans)}"); // రాహుల్, అజయ్</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🥞 Stack&lt;T&gt; (LIFO) &amp; Queue&lt;T&gt; (FIFO)</h2>
+      <p>
+        ప్రత్యేక ఆర్డరింగ్ అవసరమైనప్పుడు రెండు క్లాసిక్ డేటా స్ట్రక్చర్స్:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong><code>Stack&lt;T&gt;</code> (Last-In, First-Out - LIFO):</strong> చివరగా వచ్చినది మొదట బయటకు వస్తుంది. మెథడ్స్: <code>Push()</code> (చేర్చడం), <code>Pop()</code> (తీసివేయడం), <code>Peek()</code> (చూడటం). ఉపయోగాలు: Undo/Redo ఫీచర్లు, బ్రౌజర్ హిస్టరీ బ్యాక్ బటన్.</li>
+        <li><strong><code>Queue&lt;T&gt;</code> (First-In, First-Out - FIFO):</strong> మొదట వచ్చిన వారికి మొదటి ప్రాధాన్యత (క్యూ లైన్). మెథడ్స్: <code>Enqueue()</code> (క్యూలో చేరడం), <code>Dequeue()</code> (సర్వీస్ పొంది నిష్క్రమించడం), <code>Peek()</code>. ఉపయోగాలు: ప్రింటర్ జాబ్స్, వెబ్ సర్వర్ రిక్వెస్ట్ క్యూలు.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Stack and Queue in Action</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 1. Queue (FIFO)
+Queue&lt;string&gt; ticketCounter = new Queue&lt;string&gt;();
+ticketCounter.Enqueue("కస్టమర్ 1");
+ticketCounter.Enqueue("కస్టమర్ 2");
+Console.WriteLine($"మొదట సర్వ్ చేయబడినది: {ticketCounter.Dequeue()}"); // కస్టమర్ 1
+
+// 2. Stack (LIFO)
+Stack&lt;string&gt; browserHistory = new Stack&lt;string&gt;();
+browserHistory.Push("google.com");
+browserHistory.Push("github.com");
+browserHistory.Push("ourcompiler.com");
+Console.WriteLine($"బ్యాక్ బటన్ కొడితే వచ్చేది: {browserHistory.Pop()}"); // ourcompiler.com</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> ⚡ మెమరీ ఆప్టిమైజేషన్: Capacity ప్రాపర్టీ ప్రాముఖ్యత</h2>
+      <p>
+        ఒక <code>List&lt;T&gt;</code> లో మీకు ఖచ్చితంగా 10,000 ఐటెమ్స్ వస్తాయని తెలిసినప్పుడు — సాధారణ <code>new List&lt;int&gt;()</code> అని రాస్తే, అది 0 నుండి 10,000 వరకు చేరుకోవడానికి 12 సార్లు ఇంటర్నల్ అర్రేను రీ-సైజ్ చేసి మెమరీ కాపీలు చేస్తుంది!
+      </p>
+      <p>
+        <strong>పరిష్కారం:</strong> <code>new List&lt;int&gt;(10000)</code> అని ప్రారంభ కెపాసిటీని ముందే నిర్దేశిస్తే, ఒక్కసారి మాత్రమే మెమరీ అలోకేట్ అవుతుంది. వేగం 3 రెట్లు పెరుగుతుంది!
+      </p>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: Array vs List vs Dictionary vs HashSet</h2>
+      <p>
+        ప్రధాన డేటా కలెక్షన్ల పనితీరు మరియు సామర్థ్యాల మ్యాట్రిక్స్:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>కలెక్షన్ రకం</th>
+            <th>సైజు స్వభావం</th>
+            <th>లుకప్ వేగం (Search)</th>
+            <th>డూప్లికేట్స్ అనుమతి</th>
+            <th>కీలక ఉపయోగ సందర్భం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>T[] (Array)</strong></td>
+            <td>స్థిరమైనది (Fixed)</td>
+            <td>ఇండెక్స్ తో \(O(1)\), విలువతో \(O(N)\)</td>
+            <td>అవును</td>
+            <td>పరిమాణం ముందే తెలిసిన స్థిరమైన గ్రిడ్స్ &amp; బఫర్స్</td>
+          </tr>
+          <tr>
+            <td><strong>List&lt;T&gt;</strong></td>
+            <td><strong>డైనమిక్</strong></td>
+            <td>ఇండెక్స్ తో \(O(1)\), సెర్చ్ \(O(N)\)</td>
+            <td>అవును</td>
+            <td>క్రమబద్ధమైన సాధారణ ఆబ్జెక్ట్ జాబితాలకు</td>
+          </tr>
+          <tr>
+            <td><strong>Dictionary&lt;K,V&gt;</strong></td>
+            <td><strong>డైనమిక్</strong></td>
+            <td><strong>కీ ద్వారా \(O(1)\) (అత్యుత్తమం)</strong></td>
+            <td>కీలు డూప్లికేట్ ఉండకూడదు</td>
+            <td>ఐడీ, ఈమెయిల్ లేదా కోడ్ ద్వారా వేగవంతమైన సెర్చ్ లకు</td>
+          </tr>
+          <tr>
+            <td><strong>HashSet&lt;T&gt;</strong></td>
+            <td><strong>డైనమిక్</strong></td>
+            <td><strong>\(O(1)\) ఉనికి తనిఖీ</strong></td>
+            <td><strong>అస్సలు అనుమతించదు</strong></td>
+            <td>డూప్లికేట్లను నిరోధించడానికి, సెట్ మ్యాథమెటిక్స్ కు</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🔒 ReadOnly కలెక్షన్స్ &amp; డేటా రక్షణ</h2>
+      <p>
+        ఒక క్లాస్ తన అంతర్గత లిస్ట్‌ను బయటి ప్రపంచానికి అందించినప్పుడు — బయటి కోడ్ <code>list.Clear()</code> చేసి మొత్తం డేటాను తుడిచిపెట్టే ప్రమాదం ఉంది.
+      </p>
+      <p>
+        దీనికి పరిష్కారంగా <strong><code>IReadOnlyList&lt;T&gt;</code></strong> లేదా <code>list.AsReadOnly()</code> ను ఎక్స్‌పోజ్ చేయడం వల్ల బయటి వారు కేవలం చదవగలరు (Read-Only) తప్ప, డేటాను మార్చలేరు.
+      </p>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "E-Commerce Warehouse Inventory Engine"</h2>
+      <p>
+        <code>Dictionary</code> (స్టాక్ నిర్వహణ), <code>Queue</code> (ఆర్డర్ ప్రాసెసింగ్), <code>HashSet</code> (ప్రీమియం కస్టమర్లు), మరియు <code>List</code> (ఆడిట్ ఇన్వాయిస్) అన్నింటినీ సమన్వయం చేస్తూ — ఒక పూర్తి స్థాయి <strong>ఈ-కామర్స్ వేర్‌హౌస్ ఇన్వెంటరీ ఇంజిన్</strong> ను తయారు చేద్దాం!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Warehouse Inventory &amp; Order Queue Project</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("📦 మన వేర్‌హౌస్ - స్మార్ట్ ఇన్వెంటరీ &amp; ఆర్డర్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+// 1. ఇన్వెంటరీ స్టాక్ (Dictionary&lt;SKU, Quantity&gt;)
+var inventoryStock = new Dictionary&lt;string, int&gt;
+{
+    ["LAPTOP_PRO"] = 10,
+    ["PHONE_X"]    = 25,
+    ["HEADSET_Z"]  = 50
+};
+
+// 2. విక్రయ ధరలు (Dictionary&lt;SKU, Price&gt;)
+var productPrices = new Dictionary&lt;string, decimal&gt;
+{
+    ["LAPTOP_PRO"] = 75000.00m,
+    ["PHONE_X"]    = 45000.00m,
+    ["HEADSET_Z"]  = 2500.00m
+};
+
+// 3. ఆర్డర్ ప్రాసెసింగ్ క్యూ (Queue&lt;Order&gt; - FIFO)
+var orderQueue = new Queue&lt;(string Customer, string Sku, int Qty)&gt;();
+orderQueue.Enqueue(("ఆనంద్", "LAPTOP_PRO", 2));
+orderQueue.Enqueue(("భావన", "PHONE_X", 1));
+orderQueue.Enqueue(("చరణ్", "HEADSET_Z", 4));
+
+// 4. ప్రత్యేక కస్టమర్ల సెట్ (HashSet&lt;Customer&gt;)
+HashSet&lt;string&gt; processedCustomers = new HashSet&lt;string&gt;();
+
+// 5. కంప్లీట్ అయిన ఇన్వాయిస్ ల జాబితా (List&lt;string&gt;)
+List&lt;string&gt; completedInvoices = new List&lt;string&gt;();
+decimal totalRevenue = 0m;
+
+Console.WriteLine("ఆర్డర్ల ప్రాసెసింగ్ ప్రారంభమైంది (FIFO Queue):\\n");
+
+while (orderQueue.Count &gt; 0)
+{
+    var currentOrder = orderQueue.Dequeue();
+
+    // స్టాక్ చెక్ చేయడం
+    if (inventoryStock.TryGetValue(currentOrder.Sku, out int availableQty) &amp;&amp; availableQty &gt;= currentOrder.Qty)
+    {
+        // స్టాక్ తగ్గించడం
+        inventoryStock[currentOrder.Sku] -= currentOrder.Qty;
+
+        decimal itemPrice = productPrices[currentOrder.Sku];
+        decimal billAmount = itemPrice * currentOrder.Qty;
+        totalRevenue += billAmount;
+
+        processedCustomers.Add(currentOrder.Customer);
+
+        string invoiceRecord = $"కస్టమర్: {currentOrder.Customer,-8} | వస్తువు: {currentOrder.Sku,-10} | Qty: {currentOrder.Qty} | బిల్: ₹{billAmount:N2}";
+        completedInvoices.Add(invoiceRecord);
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"✅ ఆర్డర్ కన్ఫర్మ్: {invoiceRecord}");
+        Console.ResetColor();
+    }
+    else
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"❌ ఆర్డర్ విఫలం: {currentOrder.Sku} స్టాక్ సరిపోదు ({currentOrder.Customer} కు నిరాకరించాం)");
+        Console.ResetColor();
+    }
+}
+
+// నివేదిక ప్రింటింగ్
+Console.WriteLine("\\n=================================================");
+Console.WriteLine("               వేర్‌హౌస్ డిస్పాచ్ నివేదిక             ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"మొత్తం సేవలందుకున్న ప్రత్యేక కస్టమర్లు: {processedCustomers.Count} మంది");
+Console.WriteLine($"మొత్తం విక్రయాల రాబడి             : ₹{totalRevenue:N2}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine("మిగిలిన తాజా స్టాక్ స్థితి:");
+foreach (var item in inventoryStock)
+{
+    Console.WriteLine($"  - {item.Key,-12}: {item.Value} యూనిట్లు మిగిలాయి");
+}
+Console.WriteLine("=================================================\\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ వేర్‌హౌస్ ఇంజిన్‌ను పరీక్షించండి!</div>
+        <p>
+          ఈ పూర్తి కోడ్‌ను బ్రౌజర్ ఎడిటర్‌లో రన్ చేసి — కొత్త ఆర్డర్‌లను ఎన్‌క్యూ చేసి ఇన్వెంటరీ ఎలా అప్‌డేట్ అవుతుందో స్వయంగా చూడండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన కలెక్షన్ తప్పులు</h2>
+      <p>
+        కలెక్షన్లతో పనిచేసేటప్పుడు సాఫ్ట్‌వేర్ ఇంజనీర్లు తరచుగా చేసే 7 పొరపాట్లు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. డిక్షనరీలో TryGetValue కి బదులు డైరెక్ట్ ఇండెక్సర్ వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>dict["UNKNOWN_KEY"]</code> రాస్తే <code>KeyNotFoundException</code> వస్తుంది. ఎల్లప్పుడూ <code>TryGetValue</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. భారీ లిస్ట్‌లకు ప్రారంభ Capacity ఇవ్వకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            లూప్‌లో వేల ఐటెమ్స్ చేర్చేటప్పుడు పదే పదే అర్రే డబ్లింగ్ జరిగి మెమరీ వేస్ట్ అవుతుంది. ముందే సైజు ఇవ్వడం ఉత్తమం.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. డిక్షనరీలో డూప్లికేట్ కీ ని Add() చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>dict.Add("k", 1); dict.Add("k", 2);</code> రాస్తే ఎక్సెప్షన్ వస్తుంది. విలువను ఓవర్‌రైట్ చేయాలంటే <code>dict["k"] = 2;</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. నాన్-జెనెరిక్ ArrayList ను ఆధునిక కోడ్‌లో వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>ArrayList</code> లెగసీ కోడ్. ఆధునిక ప్రాజెక్టులలో కేవలం <code>List&lt;T&gt;</code> మాత్రమే వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. foreach లోపల లిస్ట్‌ను మార్చడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            లూప్ తిరుగుతున్నప్పుడు <code>list.Remove()</code> చేస్తే <code>InvalidOperationException</code> వస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. HashSet లో కస్టమ్ క్లాసెస్ వాడేటప్పుడు GetHashCode ఓవర్‌రైడ్ చేయకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            కస్టమ్ ఆబ్జెక్ట్స్‌కు <code>Equals</code> మరియు <code>GetHashCode</code> రాయకపోతే హాష్ సెట్ డూప్లికేట్స్‌ను పసిగట్టలేదు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. ఖాళీ క్యూ లేదా స్టాక్ పై Dequeue/Pop పిలవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            ఐటెమ్స్ లేనప్పుడు పాప్ చేస్తే క్రాష్ అవుతుంది. <code>TryDequeue</code> లేదా <code>TryPop</code> వాడాలి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        జెనెరిక్ కలెక్షన్లపై మీ పట్టును ఈ 5 ప్రశ్నలతో పరీక్షించుకోండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>List&lt;int&gt;</code> లో కెపాసిటీ గ్రోత్ అల్గారిథమ్ ఎలా పనిచేస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ప్రస్తుత అంతర్గత అర్రే నిండిపోయిన ప్రతిసారీ, <code>List&lt;T&gt;</code> తన కెపాసిటీని <strong>రెట్టింపు (Doubling)</strong> చేస్తుంది (0 ➔ 4 ➔ 8 ➔ 16 ➔ 32...). ఒక కొత్త పెద్ద అర్రేను కేటాయించి పాత అంశాలను అందులోకి కాపీ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: డిక్షనరీలో <code>dict["key"]</code> కి బదులుగా <code>dict.TryGetValue("key", out val)</code> ఎందుకు వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> పేర్కొన్న కీ డిక్షనరీలో లేకపోతే డైరెక్ట్ ఇండెక్సర్ <code>KeyNotFoundException</code> విసిరి అప్లికేషన్‌ను క్రాష్ చేస్తుంది. కానీ <code>TryGetValue</code> కీ ఉంటే విలువను ఇచ్చి <code>true</code>, లేకపోతే నిశ్శబ్దంగా <code>false</code> ఇస్తుంది (ఎటువంటి క్రాష్ ఉండదు).
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>Stack&lt;T&gt;</code> మరియు <code>Queue&lt;T&gt;</code> ల మధ్య ప్రధాన వ్యత్యాసం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>Stack&lt;T&gt;</code> అనేది <strong>LIFO (Last-In, First-Out)</strong> సూత్రంపై పనిచేస్తుంది (చివరగా పెట్టినది మొదట వస్తుంది). <code>Queue&lt;T&gt;</code> అనేది <strong>FIFO (First-In, First-Out)</strong> సూత్రంపై పనిచేస్తుంది (మొదట చేరినది మొదట ప్రాసెస్ అవుతుంది).
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: C# లో "Boxing" అంటే ఏమిటి మరియు జెనరిక్స్ దానిని ఎలా నిరోధిస్తాయి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఒక Value Type (ఉదా: <code>int</code>) ను Reference Type (<code>object</code>) గా మార్చినప్పుడు స్టాక్ నుండి హీప్‌లోకి డేటా కాపీ అవ్వడాన్ని బాక్సింగ్ అంటారు. జెనరిక్స్ నిర్దిష్ట టైప్ తో నేరుగా పనిచేయడం వల్ల ఎటువంటి బాక్సింగ్ అవసరం లేకుండా నేరుగా ఎగ్జిక్యూట్ అవుతాయి.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: <code>HashSet&lt;T&gt;</code> లో డూప్లికేట్ ఎలిమెంట్ చేర్చడానికి ప్రయత్నిస్తే ఏమి జరుగుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఎర్రర్ రాదు! కానీ ఆ డూప్లికేట్ ఎలిమెంట్ కలెక్షన్‌లోకి చేరదు. <code>set.Add(x)</code> మెథడ్ నిశ్శబ్దంగా <strong>false</strong> ని రిటర్న్ చేస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 11. అర్రేలు (1D, 2D &amp; Jagged Arrays)
+      </a>
+      <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 13. క్లాసెస్ &amp; ఆబ్జెక్ట్స్ (Phase 04 OOP) →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("📦 మన వేర్‌హౌస్ - స్మార్ట్ ఇన్వెంటరీ & ఆర్డర్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+var inventoryStock = new Dictionary<string, int>
+{
+    ["LAPTOP_PRO"] = 10,
+    ["PHONE_X"]    = 25
+};
+
+var orderQueue = new Queue<(string Customer, string Sku, int Qty)>();
+orderQueue.Enqueue(("ఆనంద్", "LAPTOP_PRO", 2));
+orderQueue.Enqueue(("భావన", "PHONE_X", 1));
+
+while (orderQueue.Count > 0)
+{
+    var order = orderQueue.Dequeue();
+    inventoryStock[order.Sku] -= order.Qty;
+    Console.WriteLine($"✅ ఆర్డర్ కన్ఫర్మ్: {order.Customer} - {order.Sku} ({order.Qty} యూనిట్లు)");
+}
+
+Console.WriteLine("\\nమిగిలిన స్టాక్:");
+foreach (var item in inventoryStock)
+{
+    Console.WriteLine($"  - {item.Key}: {item.Value} యూనిట్లు మిగిలాయి");
+}
+Console.WriteLine("=================================================\\n");\`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '12-csharp-collections-and-generics-list-dict.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value C# Chapter 12!');
+console.log('Target file size:', fullHtml.length, 'characters');
