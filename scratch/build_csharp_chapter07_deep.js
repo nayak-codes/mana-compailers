@@ -1,0 +1,871 @@
+const fs = require('fs');
+const path = require('path');
+const { buildSidebar } = require('./csharp_curriculum_data');
+
+const sidebarHtml = buildSidebar(7);
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Title & Meta Tags -->
+  <title>C# లూప్స్ (for, while, do-while, foreach) — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో for, while, do-while మరియు ఆధునిక foreach లూప్స్, IEnumerable అండర్ ది హుడ్ మెకానిజమ్స్, మరియు SIP ఇన్వెస్ట్‌మెంట్ సిమ్యులేటర్‌పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# loops telugu, c# for loop, c# foreach telugu, c# while do while telugu, c# ienumerable, c# loop performance">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# లూప్స్ (for, while, do-while, foreach) — C# Masterclass">
+  <meta property="og:description" content="C# లో సంపూర్ణ ఇటరేషన్ సిస్టమ్: సాంప్రదాయ for నుండి జీరో-కాపీ foreach వరకు సమగ్ర తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+</head>
+<body class="lang-csharp light-theme">
+
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+${sidebarHtml}
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 07: లూప్స్ (for, while, do-while, foreach)</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# లూప్స్ (for, while, do-while, foreach) — సమగ్ర పునరావృతాల గైడ్</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 07 of 20</span>
+      <span class="meta-pill">📁 Phase 02: కంట్రోల్ ఫ్లో &amp; లూప్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Repetition in Computing · for Loop Mechanics · Multi-Variable for Loops · while Loop (State-Driven) · do-while (Guaranteed Single Run &amp; ATM Pin) · foreach &amp; IEnumerable Under-the-Hood · Read-Only Mutation Restrictions · Performance: for vs foreach vs Span&lt;T&gt; · Array Bounds Check Elimination (BCE) · Infinite Loops (while true vs for ;;) · Range &amp; Index Slicing (^1, ..) · Real-World Project: SIP Wealth Compound Growth &amp; Retirement Simulator · 7 Beginner Pitfalls · Self-Assessment Quiz
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం అధ్యాయం 07 కి! 🔁 పునరావృతాల శక్తి &amp; ఆధునిక C# ఇటరేషన్ సిస్టమ్</h3>
+      <p>
+        ఒక మనిషి ఒకే పనిని 10 సార్లు చేస్తే విసుగు చెందుతాడు, 100 సార్లు చేస్తే అలసిపోతాడు, 10,000 సార్లు చేయాల్సి వస్తే తప్పులు చేయడం మొదలుపెడతాడు. కానీ ఒక కంప్యూటర్ చిప్ యొక్క గొప్పతనం ఏమిటంటే — అది ఒకే పనిని ఒక కోటి (10 మిలియన్) సార్లు కూడా ఒక్క మైక్రోసెకనులో, ఎటువంటి అలసట లేదా పొరపాటు లేకుండా ఖచ్చితత్వంతో చేయగలదు!
+      </p>
+      <p>
+        కంప్యూటర్ల ఈ సూపర్-పవర్‌కు మూలస్తంభం <strong>లూప్స్ (Loops)</strong>. లక్షల మంది కస్టమర్ల బ్యాంక్ స్టేట్‌మెంట్స్ ప్రాసెస్ చేయడం నుండి, వీడియో గేమ్ లో ప్రతి ఫ్రేమ్‌ను సెకనుకు 120 సార్లు రెండర్ చేయడం వరకు ప్రపంచంలోని ప్రతి సాఫ్ట్‌వేర్ లూప్‌లపైనే నడుస్తుంది.
+      </p>
+      <p>
+        C# భాషలో 4 ప్రధాన లూప్ రకాలు ఉన్నాయి: <code>for</code>, <code>while</code>, <code>do-while</code>, మరియు .NET యొక్క అత్యంత ప్రియమైన కలెక్షన్ ఇటరేటర్ <strong><code>foreach</code></strong>. ఈ అధ్యాయంలో మనం ప్రతి లూప్ యొక్క అంతర్గత ఆర్కిటెక్చర్, JIT Bounds Check Elimination, <code>IEnumerable</code> ఇంటర్నల్స్, మరియు జీరో-మెమరీ కాపీయింగ్ టెక్నిక్స్ నేర్చుకొని — ఒక రియల్-వరల్డ్ మ్యూచువల్ ఫండ్ SIP కాంపౌండ్ వెల్త్ సిమ్యులేటర్‌ను నిర్మిస్తాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🔁 కంప్యూటింగ్ ప్రపంచంలో పునరావృతాల శక్తి &amp; CPU సైకిల్స్</h2>
+      <p>
+        ఒక వేరియబుల్‌లోని నంబర్‌ను 1 నుండి 100 వరకు ప్రింట్ చేయడానికి మనం 100 సార్లు <code>Console.WriteLine(1); Console.WriteLine(2); ...</code> అని రాసుకుంటూ వెళ్తే అది కోడ్ కాదు, ఒక డిజాస్టర్! కోడ్ పరిమాణం విపరీతంగా పెరగడమే కాకుండా, దాన్ని భవిష్యత్తులో మార్చడం అసాధ్యం.
+      </p>
+      <p>
+        లూప్స్ (Loops) అనేవి <strong>DRY ప్రిన్సిపల్ (Don't Repeat Yourself)</strong> కు ప్రత్యక్ష నిరూపణ. ఒకే కోడ్ బ్లాక్‌ను నిర్దిష్ట షరతు నెరవేరే వరకు పదే పదే ఎగ్జిక్యూట్ చేయడానికి లూప్స్ ఉపయోగపడతాయి.
+      </p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:var(--text); font-size:15px;">⚡ CPU స్థాయిలో లూప్ ఎలా నడుస్తుంది?</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14.5px;">
+          హార్డ్‌వేర్ స్థాయిలో అసెంబ్లీ కోడ్‌లో ప్రత్యేకమైన లూప్ ఇన్స్ట్రక్షన్స్ ఉంటాయి (ఉదా: <code>JMP</code>, <code>JNE</code> - Jump if Not Equal). కండిషన్ ట్రూ అయిన ప్రతిసారీ CPU యొక్క Instruction Pointer (IP) తిరిగి లూప్ ప్రారంభ అడ్రస్‌కు వెనక్కి దూకుతుంది. ఈ సర్కిల్ నిరంతరం తిరుగుతూ ఉంటుంది.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 🔄 for లూప్ — కౌంటర్ బేస్డ్ ఇటరేషన్ (The Workhorse)</h2>
+      <p>
+        ఒక పని ఎన్నిసార్లు జరగాలో మనకు ముందే కచ్చితంగా తెలిసినప్పుడు (ఉదాహరణకు: 10 సార్లు లేదా అర్రే పొడవు <code>N</code> సార్లు), <strong><code>for</code> లూప్</strong> అత్యంత సరైన ఎంపిక.
+      </p>
+      <p>
+        <code>for</code> లూప్ ఒకే లైన్‌లో 3 కీలక భాగాలను కలిగి ఉంటుంది:
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin:16px 0; font-family:monospace; font-size:14px; color:var(--text);">
+        for (<strong>ఇనిషియలైజేషన్</strong>; <strong>కండిషన్</strong>; <strong>ఇంక్రిమెంట్/డిక్రిమెంట్</strong>) { ... }
+      </div>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>ఇనిషియలైజేషన్:</strong> లూప్ మొదలయ్యే ముందు కేవలం ఒక్కసారి మాత్రమే ఎగ్జిక్యూట్ అవుతుంది (ఉదా: <code>int i = 0;</code>).</li>
+        <li><strong>కండిషన్:</strong> ప్రతి రౌండ్ (ఇటరేషన్) ప్రారంభంలో తనిఖీ చేయబడుతుంది. ఇది <code>true</code> అయితేనే లోపలి బాడీ రన్ అవుతుంది, <code>false</code> అయితే లూప్ ఆగిపోతుంది.</li>
+        <li><strong>ఇంక్రిమెంట్/డిక్రిమెంట్:</strong> లూప్ బాడీ పూర్తయిన తర్వాత ప్రతిసారీ కౌంటర్ విలువను మారుస్తుంది (ఉదా: <code>i++</code> లేదా <code>i += 2</code>).</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Classic &amp; Multi-Variable for Loops</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 1. సాధారణ 1 నుండి 5 వరకు ప్రింట్ చేయడం
+for (int i = 1; i &lt;= 5; i++)
+{
+    Console.WriteLine($"రౌండ్ సంఖ్య: {i}");
+}
+
+// 2. మల్టిపుల్ వేరియబుల్స్ ఒకే లూప్ లో (రెండు వైపుల నుండి కౌంటర్ నడపడం)
+Console.WriteLine("\\nరెండు కౌంటర్లు సమాంతరంగా:");
+for (int left = 0, right = 10; left &lt; right; left++, right--)
+{
+    Console.WriteLine($"Left: {left} &lt;---&gt; Right: {right}");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ⏳ while లూప్ — ఎంట్రీ-కంట్రోల్డ్ కండిషనల్ ఇటరేషన్</h2>
+      <p>
+        లూప్ ఎన్నిసార్లు తిరగాలో ముందే తెలియక, <strong>ఒక నిర్దిష్ట పరిస్థితి లేదా స్థితి (State) మారేంతవరకు</strong> తిరగాల్సి వచ్చినప్పుడు <strong><code>while</code> లూప్</strong> వాడాలి.
+      </p>
+      <p>
+        ఇది <em>ఎంట్రీ-కంట్రోల్డ్ లూప్ (Entry-Controlled Loop)</em>. అంటే లోపలికి ప్రవేశించే ముందే షరతును పరీక్షిస్తుంది. మొదటిసారే షరతు అబద్ధమైతే (<code>false</code>), లూప్ బాడీ ఒక్కసారి కూడా రన్ కాదు!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · while Loop Battery Discharge Simulator</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int batteryPercent = 100;
+
+// బ్యాటరీ 20% కంటే ఎక్కువ ఉన్నంతవరకు ఫోన్ నడుస్తుంది
+while (batteryPercent &gt; 20)
+{
+    Console.WriteLine($"🔋 బ్యాటరీ లెవెల్: {batteryPercent}% - ఫోన్ సజావుగా పనిచేస్తోంది.");
+    batteryPercent -= 25; // 25% తగ్గుతూ వస్తుంది
+}
+
+Console.WriteLine($"⚠️ లో బ్యాటరీ హెచ్చరిక! మిగిలినది: {batteryPercent}%. దయచేసి ఛార్జర్ కనెక్ట్ చేయండి.");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🚪 do-while లూప్ — ఎగ్జిట్-కంట్రోల్డ్ (కనీసం ఒక్కసారి గ్యారెంటీ)</h2>
+      <p>
+        కండిషన్ నిజమైనా అబద్ధమైనా సరే — <strong>బాడీ కనీసం ఒక్కసారైనా ఖచ్చితంగా ఎగ్జిక్యూట్ అవ్వాలి</strong> అనుకున్నప్పుడు <strong><code>do-while</code> లూప్</strong> ఉపయోగిస్తారు.
+      </p>
+      <p>
+        ఇది <em>ఎగ్జిట్-కంట్రోల్డ్ లూప్ (Exit-Controlled Loop)</em>. అంటే కోడ్ బాడీ పూర్తయిన తర్వాత మాత్రమే ఆఖరున షరతును తనిఖీ చేస్తుంది.
+      </p>
+      <p>
+        <strong>నిజ జీవిత ఉదాహరణ:</strong> ATM మెషిన్ వద్ద పిన్ అడగడం. యూజర్ సరైన పిన్ కొట్టాడో లేదో తెలియాలంటే మొదట కనీసం ఒక్కసారైనా పిన్ ఎంటర్ చేయమని అడగాలి కదా!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · do-while ATM Pin Retry Simulator</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int attempts = 0;
+bool isPinCorrect = false;
+int dummyInputPin = 1234;
+
+do
+{
+    attempts++;
+    Console.WriteLine($"ప్రయత్నం #{attempts}: దయచేసి మీ 4-అంకెల పిన్ నమోదు చేయండి...");
+    
+    // అనుకరణ కోసం 3వ ప్రయత్నంలో కరెక్ట్ పిన్ వచ్చింది అనుకుందాం
+    if (attempts == 3)
+    {
+        isPinCorrect = true;
+    }
+    
+} while (!isPinCorrect &amp;&amp; attempts &lt; 3);
+
+if (isPinCorrect)
+{
+    Console.WriteLine("✅ లాగిన్ విజయవంతమైంది! మీ ఖాతా తెరవబడింది.");
+}
+else
+{
+    Console.WriteLine("🚨 3 సార్లు తప్పు పిన్ కొట్టారు. కార్డు 24 గంటలు బ్లాక్ చేయబడింది.");
+}</code></pre>
+      </div>
+      <p>
+        <strong>సింటాక్స్ గమనిక:</strong> <code>do { ... } while (condition);</code> లో చివర తప్పనిసరిగా <strong>సెమీకోలన్ (<code>;</code>)</strong> ఉండాలి.
+      </p>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> ⚡ foreach లూప్ &amp; IEnumerable అండర్ ది హుడ్ మెకానిజం</h2>
+      <p>
+        C# లో ఒక అర్రే (Array), లిస్ట్ (List), లేదా ఏదైనా డేటా కలెక్షన్ మీదుగా ప్రయాణించడానికి <strong><code>foreach</code> లూప్</strong> అత్యంత సురక్షితమైన మరియు ప్రజాదరణ పొందిన మార్గం.
+      </p>
+      <p>
+        ఇక్కడ ఇండెక్స్ <code>i = 0; i &lt; length</code> లాంటి కౌంటర్లతో తలనొప్పి ఉండదు. కలెక్షన్‌లో ఎన్ని వస్తువులు ఉన్నాయో వాటన్నింటినీ మొదటి నుండి చివరి వరకు ఆటోమేటిక్‌గా రీడ్ చేస్తుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · foreach Loop in Action</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string[] programmingLanguages = { "C#", "Python", "Go", "Rust", "TypeScript" };
+
+foreach (string lang in programmingLanguages)
+{
+    Console.WriteLine($"🚀 నేర్చుకుంటున్న ప్రోగ్రామింగ్ భాష: {lang}");
+}</code></pre>
+      </div>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">🧠 అండర్ ది హుడ్: C# కంపైలర్ foreach ని ఎలా మార్చుకుంటుంది?</h3>
+      <p>
+        నిజానికి CLR (Common Language Runtime) కి <code>foreach</code> అంటే ఏమిటో నేరుగా తెలియదు! C# కంపైలర్ <code>foreach</code> ను అంతర్గతంగా <strong><code>IEnumerable</code> / <code>IEnumerator</code></strong> మరియు ఒక <code>while</code> లూప్ గా మారుస్తుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · What Compiler Actually Generates for foreach</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// కంపైలర్ సృష్టించే అసలైన అంతర్గత కోడ్ (Decompiled Equivalent):
+var enumerator = programmingLanguages.GetEnumerator();
+try
+{
+    while (enumerator.MoveNext())
+    {
+        string lang = (string)enumerator.Current;
+        Console.WriteLine($"లాంగ్వేజ్: {lang}");
+    }
+}
+finally
+{
+    (enumerator as IDisposable)?.Dispose(); // రిసోర్సెస్ క్లీనప్
+}</code></pre>
+      </div>
+
+      <div style="background:var(--bg3); border-left:4px solid #ef4444; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#ef4444; font-size:15px;">🚨 foreach లోని ఐటెమ్‌ను లేదా కలెక్షన్‌ను మార్చకూడదు!</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px; line-height:1.7;">
+          <code>foreach (var item in list)</code> లోపల <code>item = 5;</code> అని మార్చడానికి వీల్లేదు (ఇటరేషన్ వేరియబుల్ Read-Only). అలాగే లూప్ తిరుగుతున్నప్పుడు <code>list.Add()</code> లేదా <code>list.Remove()</code> చేస్తే రన్‌టైమ్‌లో <strong><code>InvalidOperationException: Collection was modified</code></strong> వచ్చి క్రాష్ అవుతుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 📈 పెర్ఫార్మెన్స్ యుద్ధం: for vs foreach vs Bounds Check Elimination</h2>
+      <p>
+        హై-పెర్ఫార్మెన్స్ సాఫ్ట్‌వేర్ రాసేటప్పుడు "for ఫాస్టా? లేక foreach ఫాస్టా?" అనే చర్చ ఎప్పుడూ నడుస్తూ ఉంటుంది.
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>సాధారణ అర్రేస్ (Single-dimensional Arrays):</strong> ఆధునిక C# లో సాధారణ అర్రేలపై <code>foreach</code> రాసినా సరే, కంపైలర్ దాన్ని నేరుగా ఆప్టిమైజ్డ్ ఇండెక్స్డ్ <code>for</code> లూప్‌గా మార్చేస్తుంది. కాబట్టి రెండింటి వేగం 100% సమానం!</li>
+        <li><strong>JIT Bounds Check Elimination (BCE):</strong> ఒకవేళ మీరు <code>for (int i = 0; i &lt; arr.Length; i++)</code> అని రాస్తే, .NET JIT కంపైలర్ అర్రే సైజును గుర్తిస్తుంది. ప్రతి రౌండ్‌లోనూ <code>arr[i]</code> బౌండ్రీ దాటిపోయిందేమో అని చెక్ చేసే ఓవర్‌హెడ్‌ను పూర్తిగా తొలగించేస్తుంది (Bounds Check Elimination).</li>
+        <li><strong>List&lt;T&gt; మరియు ఇతరులు:</strong> లిస్ట్‌లపై <code>for</code> లూప్ కొద్దిగా వేగంగా పనిచేస్తుంది ఎందుకంటే ఎన్యుమరేటర్ ఆబ్జెక్ట్ క్రియేట్ కాదు.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> ♾️ ఇన్ఫినిట్ లూప్స్ (Infinite Loops: while true vs for ;;)</h2>
+      <p>
+        ఒక లూప్ ఎప్పటికీ ఆగకుండా నిరంతరం తిరుగుతూ ఉంటే దానిని <strong>ఇన్ఫినిట్ లూప్ (Infinite Loop)</strong> అంటారు.
+      </p>
+      <p>
+        ఇది పొరపాటున జరిగితే కంప్యూటర్ CPU ఫ్యాన్ జోరుగా తిరిగి 100% హాంగ్ అయిపోతుంది. కానీ ఉద్దేశపూర్వకంగా ఈ క్రింది సందర్భాలలో ఇన్ఫినిట్ లూప్స్ వాడతారు:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>ఆపరేటింగ్ సిస్టమ్ కెర్నల్:</strong> కంప్యూటర్ ఆఫ్ చేసే వరకు ఓఎస్ రన్ అవుతూనే ఉండాలి.</li>
+        <li><strong>వెబ్ సర్వర్లు (Kestrel / IIS):</strong> యూజర్ రిక్వెస్ట్‌ల కోసం 24/7 పోర్ట్ 80/443 పై నిరంతరం వేచి చూడాలి.</li>
+        <li><strong>గేమ్ ఇంజిన్స్ (Unity Update Loop):</strong> ప్రతి సెకనుకు ప్లేయర్ మూవ్‌మెంట్స్ విశ్లేషించాలి.</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Infinite Loop Syntaxes</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// Style 1: అత్యంత ప్రజాదరణ పొందిన while(true)
+int tickCount = 0;
+while (true)
+{
+    tickCount++;
+    if (tickCount == 3) break; // రక్షణ బ్రేక్
+}
+
+// Style 2: C-స్టైల్ శాశ్వత లూప్ for (;;)
+for (;;)
+{
+    Console.WriteLine("సర్వర్ రన్ అవుతోంది...");
+    break; // ఎగ్జిట్
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🧵 మోడ్రన్ C# లో ref foreach &amp; Zero-Copy Iteration</h2>
+      <p>
+        C# 7.3 మరియు 8+ లో మైక్రోసాఫ్ట్ మెమరీ అలోకేషన్స్ తగ్గించడానికి <strong><code>Span&lt;T&gt;</code></strong> మరియు <strong><code>ref readonly foreach</code></strong> లను ప్రవేశపెట్టింది.
+      </p>
+      <p>
+        భారీ స్ట్రక్ట్స్ (Large Structs) లేదా కోట్ల కొద్దీ డేటా పాయింట్లు ఉన్నప్పుడు, ప్రతి ఐటెమ్‌ను కాపీ చేయకుండా నేరుగా మెమరీ రిఫరెన్స్ ద్వారా లూప్ తిప్పవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Zero-Copy ref foreach</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">Span&lt;int&gt; memoryBlock = stackalloc int[] { 10, 20, 30, 40 };
+
+// జీరో కాపీ ఇటరేషన్: డేటా కాపీ అవ్వదు, కేవలం మెమరీ పాయింటర్ ద్వారా రీడ్ అవుతుంది
+foreach (ref readonly var value in memoryBlock)
+{
+    Console.WriteLine($"మెమరీ విలువ: {value}");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: for vs while vs do-while vs foreach</h2>
+      <p>
+        నాలుగు లూప్‌ల లక్షణాలు మరియు సరిపోయే వినియోగ సందర్భాలు:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>లూప్ రకం</th>
+            <th>కండిషన్ చెక్ సమయం</th>
+            <th>కనీస ఎగ్జిక్యూషన్లు</th>
+            <th>ఇండెక్స్ యాక్సెస్</th>
+            <th>ఉత్తమ వినియోగ సందర్భం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>for</strong></td>
+            <td>ప్రారంభంలో (Pre-test)</td>
+            <td>0 సార్లు</td>
+            <td><strong>అవును</strong> (i ద్వారా నేరుగా యాక్సెస్)</td>
+            <td>ఇటరేషన్ల సంఖ్య ముందే తెలిసినప్పుడు, అర్రే మోడిఫికేషన్స్ కు</td>
+          </tr>
+          <tr>
+            <td><strong>while</strong></td>
+            <td>ప్రారంభంలో (Pre-test)</td>
+            <td>0 సార్లు</td>
+            <td>మాన్యువల్‌గా మెయింటైన్ చేయాలి</td>
+            <td>పరిస్థితి ఎప్పుడు మారుతుందో తెలియనప్పుడు, నెట్‌వర్క్ పోలింగ్</td>
+          </tr>
+          <tr>
+            <td><strong>do-while</strong></td>
+            <td><strong>చివర్లో (Post-test)</strong></td>
+            <td><strong>కనీసం 1 సారి</strong></td>
+            <td>మాన్యువల్‌గా మెయింటైన్ చేయాలి</td>
+            <td>మెనూ డ్రైవెన్ ప్రోగ్రామ్‌లు, పాస్‌వర్డ్ / పిన్ రీ-ట్రై లాజిక్</td>
+          </tr>
+          <tr>
+            <td><strong>foreach</strong></td>
+            <td><code>MoveNext()</code> కాల్ వద్ద</td>
+            <td>0 సార్లు</td>
+            <td>సాధారణంగా లేదు (రీడ్-ఓన్లీ)</td>
+            <td>కలెక్షన్స్ (List, Dictionary, Array) ను సురక్షితంగా చదవడానికి</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🎯 ఆధునిక C# లో రేంజ్ (..) మరియు ఇండెక్స్ (^) తో లూపింగ్</h2>
+      <p>
+        C# 8+ లో వచ్చిన <strong>Index (<code>^</code>)</strong> మరియు <strong>Range (<code>..</code>)</strong> ఆపరేటర్లు లూప్స్ రాసేటప్పుడు కోడ్‌ను మరింత సంక్షిప్తం చేస్తాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>^1</code> అంటే ఆఖరి నుండి మొదటి ఎలిమెంట్ (Last Element).</li>
+        <li><code>1..^1</code> అంటే మొదటి మరియు ఆఖరి ఎలిమెంట్లను వదిలేసి మధ్యలో ఉన్నవి మాత్రమే స్లైస్ చేయడం.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Slicing Collections in Loops</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string[] auditLog = { "Header", "TXN_01", "TXN_02", "TXN_03", "Footer" };
+
+// Header మరియు Footer వదిలేసి కేవలం ట్రాన్సాక్షన్స్ మాత్రమే ప్రాసెస్ చేయడం:
+foreach (var record in auditLog[1..^1])
+{
+    Console.WriteLine($"ప్రాసెస్ చేస్తున్న రికార్డు: {record}");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "SIP Wealth Compound Growth &amp; Retirement Simulator"</h2>
+      <p>
+        లూప్స్ (for, while) మరియు కండిషన్స్ ఉపయోగించి — ఒక ఇన్వెస్టర్ ప్రతి నెలా చేసే సిస్టమాటిక్ ఇన్వెస్ట్‌మెంట్ ప్లాన్ (SIP) చక్రవడ్డీతో (Compound Interest) సంవత్సరాల తరబడి ఎలా వృద్ధి చెందుతుందో లెక్కించే ఒక పూర్తి స్థాయి <strong>ఫైనాన్షియల్ వెల్త్ సిమ్యులేటర్</strong> ను నిర్మిద్దాం!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · SIP Wealth Simulator Console Project</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("📈 మన ఇన్వెస్ట్‌మెంట్ - స్మార్ట్ SIP వెల్త్ కాలిక్యులేటర్");
+Console.WriteLine("=================================================\\n");
+
+// పెట్టుబడి పారామీటర్లు
+decimal monthlySip = 10000m;       // ప్రతి నెలా ₹10,000
+decimal annualReturnRate = 14.0m;  // ఆశించే సగటు వార్షిక రాబడి 14%
+int totalYears = 15;               // 15 సంవత్సరాల పెట్టుబడి
+
+decimal monthlyRate = (annualReturnRate / 100m) / 12m;
+int totalMonths = totalYears * 12;
+
+decimal totalInvested = 0m;
+decimal currentPortfolioValue = 0m;
+
+Console.WriteLine("సంవత్సరం | పెట్టిన పెట్టుబడి | పోర్ట్‌ఫోలియో సంపద (Compound Value)");
+Console.WriteLine("-----------------------------------------------------------------");
+
+// 1. నెలలవారీ చక్రవడ్డీ గణనకు 'for' లూప్
+for (int month = 1; month &lt;= totalMonths; month++)
+{
+    totalInvested += monthlySip;
+    
+    // ప్రస్తుత సంపదకు నెలవారీ SIP కలపడం + ఆ మొత్తంపై నెలవారీ చక్రవడ్డీ
+    currentPortfolioValue = (currentPortfolioValue + monthlySip) * (1m + monthlyRate);
+    
+    // ప్రతి 12 నెలలకు (ఒక సంవత్సరానికి ఒకసారి) పురోగతి ప్రింట్ చేయడం
+    if (month % 12 == 0)
+    {
+        int year = month / 12;
+        Console.WriteLine($"సంవత్సరం {year,2} | ₹{totalInvested,15:N2} | ₹{currentPortfolioValue,22:N2}");
+    }
+}
+
+decimal totalGains = currentPortfolioValue - totalInvested;
+decimal wealthMultiplier = currentPortfolioValue / totalInvested;
+
+// 2. సంపద సారాంశం (Wealth Summary)
+Console.WriteLine("-----------------------------------------------------------------");
+Console.WriteLine($"మొత్తం పెట్టుబడి కాలం  : {totalYears} సంవత్సరాలు ({totalMonths} నెలలు)");
+Console.WriteLine($"జేబు నుండి పెట్టిన మొత్తం: ₹{totalInvested:N2}");
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine($"చక్రవడ్డీ ద్వారా వచ్చిన లాభం: ₹{totalGains:N2}");
+Console.WriteLine($"చివరి పోర్ట్‌ఫోలియో విలువ   : ₹{currentPortfolioValue:N2}");
+Console.WriteLine($"సంపద పెరిగిన రెట్లు       : {wealthMultiplier:F2}x రెట్లు!");
+Console.ResetColor();
+Console.WriteLine("=================================================");
+Console.WriteLine("క్రమశిక్షణతో కూడిన దీర్ఘకాలిక పెట్టుబడి అపారమైన సంపదను ఇస్తుంది! 🚀\\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ SIP సిమ్యులేటర్‌ను పరీక్షించండి!</div>
+        <p>
+          నెలవారీ పెట్టుబడి మొత్తం (₹5,000, ₹25,000) మరియు సంవత్సరాలు మార్చి 15, 20 ఏళ్లలో చక్రవడ్డీ సంపద ఎలా రాకెట్‌లా ఎదుగుతుందో స్వయంగా లెక్కించండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన లూప్ తప్పులు</h2>
+      <p>
+        లూప్స్ రాసేటప్పుడు అత్యధికంగా సంభవించే 7 ప్రమాదాలు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. Off-by-One ఎర్రర్ (i &lt; N vs i &lt;= N):</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            అర్రేస్ 0 నుండి ప్రారంభమవుతాయి. <code>for (int i = 0; i &lt;= arr.Length; i++)</code> అని రాస్తే ఆఖరి ఎలిమెంట్ వద్ద <code>IndexOutOfRangeException</code> ఖాయం. <code>&lt;</code> మాత్రమే వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. while లూప్ లో కౌంటర్‌ను అప్‌డేట్ చేయడం మర్చిపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>while (i &lt; 10)</code> లోపల <code>i++</code> రాయడం మర్చిపోతే అది జీవితాంతం తిరిగే ఇన్ఫినిట్ లూప్ అయిపోయి మెమరీని నాశనం చేస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. foreach లో కలెక్షన్‌ను సవరించడం (Collection Modified Exception):</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>foreach (var x in list) { list.Remove(x); }</code> రాస్తే తక్షణమే ఎక్సెప్షన్ వస్తుంది. కలెక్షన్ మార్చాలంటే రివర్స్ <code>for</code> లూప్ వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. for లూప్ హెడర్ చివర సెమీకోలన్ (;) పెట్టడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>for (int i=0; i&lt;5; i++); { ... }</code> రాస్తే లూప్ ఖాళీగా 5 సార్లు తిరిగి ముగిసిపోతుంది, బ్రాకెట్లలోని కోడ్ కేవలం ఒక్కసారి మాత్రమే రన్ అవుతుంది!
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. స్ట్రింగ్ కంకాటెనేషన్‌ను లూప్ లోపల + తో చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>str += item;</code> లూప్‌లో వేల సార్లు రాస్తే ప్రతి రౌండ్‌కు కొత్త స్ట్రింగ్ మెమరీలో క్రియేట్ అవుతుంది. లూప్స్‌లో ఎల్లప్పుడూ <strong><code>StringBuilder</code></strong> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. ఫ్లోటింగ్ పాయింట్ సంఖ్యలతో లూప్ కౌంటర్ నడపడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>for (double d = 0.0; d != 1.0; d += 0.1)</code> రాస్తే ఖచ్చితంగా 1.0 అవ్వక ఇన్ఫినిట్ లూప్ అవుతుంది! కౌంటర్లకు ఎల్లప్పుడూ పూర్ణాంకాలే (int) వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. do-while చివర సెమీకోలన్ వదిలేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>do { ... } while (condition)</code> చివర సెమీకోలన్ పెట్టకపోతే కంపైలర్ సింటాక్స్ ఎర్రర్ ఇస్తుంది.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        లూప్స్ పై మీ అవగాహనను ఈ 5 ప్రాక్టికల్ ప్రశ్నలతో పరీక్షించుకోండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>while</code> మరియు <code>do-while</code> మధ్య ఉన్న ప్రధాన సాంకేతిక వ్యత్యాసం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>while</code> అనేది Entry-controlled loop (ముందే కండిషన్ చెక్ చేస్తుంది, షరతు ఫాల్స్ అయితే 0 సార్లు రన్ అవుతుంది). <code>do-while</code> అనేది Exit-controlled loop (చివర్లో కండిషన్ చెక్ చేస్తుంది, కాబట్టి షరతు ఏమైనప్పటికీ కనీసం 1 సారి ఖచ్చితంగా రన్ అవుతుంది).
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: <code>foreach</code> లూప్ తిరుగుతున్నప్పుడు <code>list.Remove(item)</code> చేస్తే ఏ ఎక్సెప్షన్ వస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>System.InvalidOperationException: Collection was modified; enumeration operation may not execute.</strong><br>
+          <strong>వివరణ:</strong> ఎన్యుమరేటర్ కలెక్షన్ వెర్షన్ నంబర్‌ను ట్రాక్ చేస్తుంది. లూప్ మధ్యలో ఎలిమెంట్స్ మారితే డేటా అస్థిరత ఏర్పడకుండా ఉండేందుకు రన్‌టైమ్ ఈ ఎక్సెప్షన్‌ను త్రో చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: .NET JIT కంపైలర్ యొక్క "Bounds Check Elimination (BCE)" అంటే ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>for (int i = 0; i &lt; arr.Length; i++)</code> లో <code>i</code> ఎప్పటికీ అర్రే పరిమితి దాటదని కంపైలర్ నిరూపించగలదు. కాబట్టి ప్రతి రౌండ్‌లోనూ అర్రే బౌండరీస్ చెక్ చేసే అదనపు CPU ఇన్స్ట్రక్షన్లను రద్దు చేసి ఎగ్జిక్యూషన్‌ను వేగవంతం చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: <code>for (;;)</code> సింటాక్స్ యొక్క అర్థం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఇది ఒక ఇన్ఫినిట్ లూప్ (Infinite Loop). దీనిలో ఇనిషియలైజేషన్, కండిషన్, ఇంక్రిమెంట్ ఏవీ ఉండవు. కండిషన్ లేకపోతే కంపైలర్ దాన్ని ఎల్లప్పుడూ <code>true</code> గా పరిగణిస్తుంది. <code>while(true)</code> కు ఇది సమానం.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: లూప్ లోపల వేల సంఖ్యలో స్ట్రింగ్స్ కలుపుతున్నప్పుడు <code>string +=</code> బదులు <code>StringBuilder</code> ఎందుకు వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> C# లో <code>string</code> అనేది Immutable (మార్చలేనిది). <code>+=</code> చేసిన ప్రతిసారీ మెమరీ హీప్‌లో సరికొత్త స్ట్రింగ్ ఆబ్జెక్ట్ ఏర్పడి గార్బేజ్ కలెక్టర్‌పై భారం పడుతుంది. <code>StringBuilder</code> అంతర్గత బఫర్‌ను మాత్రమే మార్చడం వల్ల మెమరీ ఆదా అవుతుంది మరియు వేగం వందల రెట్లు పెరుగుతుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 06. switch స్టేట్‌మెంట్ &amp; expressions
+      </a>
+      <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 08. break, continue &amp; నెస్టెడ్ లూప్స్ →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("📈 మన ఇన్వెస్ట్‌మెంట్ - స్మార్ట్ SIP వెల్త్ కాలిక్యులేటర్");
+Console.WriteLine("=================================================\\n");
+
+decimal monthlySip = 10000m;
+decimal annualReturnRate = 14.0m;
+int totalYears = 15;
+
+decimal monthlyRate = (annualReturnRate / 100m) / 12m;
+int totalMonths = totalYears * 12;
+
+decimal totalInvested = 0m;
+decimal currentPortfolioValue = 0m;
+
+Console.WriteLine("సంవత్సరం | పెట్టిన పెట్టుబడి | పోర్ట్‌ఫోలియో సంపద (Compound Value)");
+Console.WriteLine("-----------------------------------------------------------------");
+
+for (int month = 1; month <= totalMonths; month++)
+{
+    totalInvested += monthlySip;
+    currentPortfolioValue = (currentPortfolioValue + monthlySip) * (1m + monthlyRate);
+    
+    if (month % 12 == 0)
+    {
+        int year = month / 12;
+        Console.WriteLine($"సంవత్సరం {year,2} | ₹{totalInvested,15:N2} | ₹{currentPortfolioValue,22:N2}");
+    }
+}
+
+decimal totalGains = currentPortfolioValue - totalInvested;
+decimal wealthMultiplier = currentPortfolioValue / totalInvested;
+
+Console.WriteLine("-----------------------------------------------------------------");
+Console.WriteLine($"మొత్తం పెట్టుబడి కాలం  : {totalYears} సంవత్సరాలు ({totalMonths} నెలలు)");
+Console.WriteLine($"జేబు నుండి పెట్టిన మొత్తం: ₹{totalInvested:N2}");
+Console.WriteLine($"చక్రవడ్డీ ద్వారా వచ్చిన లాభం: ₹{totalGains:N2}");
+Console.WriteLine($"చివరి పోర్ట్‌ఫోలియో విలువ   : ₹{currentPortfolioValue:N2}");
+Console.WriteLine($"సంపద పెరిగిన రెట్లు       : {wealthMultiplier:F2}x రెట్లు!");
+Console.WriteLine("=================================================\\n");\`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '07-csharp-loops-for-while-do-while-foreach.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value C# Chapter 07!');
+console.log('Target file size:', fullHtml.length, 'characters');

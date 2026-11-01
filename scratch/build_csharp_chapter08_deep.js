@@ -1,0 +1,852 @@
+const fs = require('fs');
+const path = require('path');
+const { buildSidebar } = require('./csharp_curriculum_data');
+
+const sidebarHtml = buildSidebar(8);
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Title & Meta Tags -->
+  <title>C# break, continue &amp; నెస్టెడ్ లూప్స్ — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో break, continue, nested loops, O(N^2) complexity, multi-level loop breaking strategies మరియు ఫ్రాడ్ డిటెక్షన్ ఇంజిన్‌పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# break continue telugu, c# nested loops telugu, c# loop performance, time complexity c#, fraud detection console project">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# break, continue &amp; నెస్టెడ్ లూప్స్ — C# Masterclass">
+  <meta property="og:description" content="C# లూప్ కంట్రోల్, O(N^2) ఆప్టిమైజేషన్స్ మరియు మల్టీ-లెవల్ లూప్ బ్రేకింగ్ పై పూర్తి తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/08-csharp-break-continue-and-nested-loops.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+</head>
+<body class="lang-csharp light-theme">
+
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+${sidebarHtml}
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 08: break, continue &amp; నెస్టెడ్ లూప్స్</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# break, continue &amp; నెస్టెడ్ లూప్స్ (Loop Performance)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 08 of 20</span>
+      <span class="meta-pill">📁 Phase 02: కంట్రోల్ ఫ్లో &amp; లూప్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Loop Control Statements · break (Early Search Termination) · continue (Skip Current Iteration) · Nested Loops (2D Grids &amp; Matrices) · Time Complexity O(N) vs O(N²) · Multi-Level Loop Breaking in C# (Flags, Return, goto Labels) · Loop Invariant Code Motion · Parallel.For Intro · Comparison Matrix Table · Real-World Project: Fintech Fraud &amp; Duplicate Transaction Detection Engine · 7 Common Beginner Mistakes · Self-Assessment Quiz
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం అధ్యాయం 08 కి! 🛑 లూప్ నియంత్రణ &amp; హై-పెర్ఫార్మెన్స్ అల్గారిథమ్స్</h3>
+      <p>
+        గత అధ్యాయంలో లూప్స్ ఎలా మొదలవుతాయి మరియు ఎలా తిరుగుతాయో నేర్చుకున్నాం. కానీ ఒక సాఫ్ట్‌వేర్ ఇంజనీర్‌గా మీకు లూప్‌ను కేవలం తిప్పడం మాత్రమే కాదు — <strong>దాన్ని ఎప్పుడు ఆపాలి (break), ఎప్పుడు నిర్దిష్ట రౌండ్‌ను దాటవేయాలి (continue), మరియు నెస్టెడ్ లూప్స్‌లో సిస్టమ్ స్లో కాకుండా ఎలా నిరోధించాలి</strong> అనే కమాండ్ ఉండాలి!
+      </p>
+      <p>
+        ఉదాహరణకు: 10 లక్షల మంది యూజర్ల డేటాబేస్‌లో ఒక నిర్దిష్ట యూజర్ కోసం వెతుకుతున్నారు. 5వ రికార్డు వద్దే ఆ యూజర్ దొరికితే — మిగిలిన 9,99,995 రికార్డులను కూడా అనవసరంగా లూప్ తిప్పడం తీవ్రమైన రిసోర్స్ వేస్ట్! అలాగే చెల్లని లేదా కరప్ట్ అయిన డేటా ఎదురైనప్పుడు ఆ ఒక్క ఐటెమ్‌ను స్కిప్ చేసి తదుపరి ఐటెమ్‌కు వెళ్లడం అత్యవసరం.
+      </p>
+      <p>
+        ఈ సమగ్ర 8వ అధ్యాయంతో మనం <strong>Phase 02 (కంట్రోల్ ఫ్లో &amp; లూప్స్)</strong> ను ఘనంగా ముగిస్తూ — <code>break</code>, <code>continue</code>, నెస్టెడ్ లూప్స్, \(O(N^2)\) టైమ్ కాంప్లెక్సిటీ ప్రమాదాలు, మరియు మల్టీ-లెవల్ లూప్ బ్రేకింగ్ స్ట్రాటజీలను లోతుగా నేర్చుకొని — ఒక రియల్-వరల్డ్ ఫిన్‌టెక్ ఫ్రాడ్ &amp; డూప్లికేట్ ట్రాన్సాక్షన్ డిటెక్షన్ ఇంజిన్‌ను నిర్మిస్తాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🛑 లూప్ నియంత్రణ స్టేట్‌మెంట్స్: break మరియు continue</h2>
+      <p>
+        లూప్ సాధారణంగా తన కండిషన్ <code>false</code> అయ్యే వరకు సహజంగా తిరుగుతుంది. కానీ రన్‌టైమ్‌లో పరిస్థితులు మారినప్పుడు మనం లూప్ యొక్క సహజ ప్రవాహాన్ని మార్చడానికి రెండు కీవర్డ్స్ ఉపయోగిస్తాం:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong><code>break</code> (తక్షణ నిష్క్రమణ):</strong> లూప్‌ను అక్కడికక్కడే శాశ్వతంగా రద్దు చేసి, లూప్ వెలుపల ఉన్న తర్వాతి లైన్‌కు కంట్రోల్‌ను బదిలీ చేస్తుంది.</li>
+        <li><strong><code>continue</code> (ప్రస్తుత రౌండ్ దాటవేత):</strong> ప్రస్తుత ఇటరేషన్‌లోని మిగిలిన కోడ్‌ను వదిలేసి, నేరుగా తదుపరి రౌండ్ (Next Iteration) కు దూకుతుంది.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> ⚡ break స్టేట్‌మెంట్ — ఎర్లీ సెర్చ్ టెర్మినేషన్ &amp; ఆప్టిమైజేషన్</h2>
+      <p>
+        ఒక వస్తువు దొరికిన వెంటనే లూప్‌ను ఆపివేయడం (Short-Circuit Search) వల్ల CPU వృధా కాకుండా బిలియన్ల సైకిల్స్ ఆదా అవుతాయి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · break in Search Operations</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string[] customers = { "రమేష్", "సురేష్", "కళ్యాణ్", "దివ్య", "మహేష్", "స్నేహ" };
+string target = "కళ్యాణ్";
+int searchSteps = 0;
+
+for (int i = 0; i &lt; customers.Length; i++)
+{
+    searchSteps++;
+    if (customers[i] == target)
+    {
+        Console.WriteLine($"🎉 {target} ఇండెక్స్ {i} వద్ద లభించారు!");
+        break; // కస్టమర్ దొరికారు, మిగిలిన అర్రేను వెతకడం ఆపివేయి!
+    }
+}
+
+Console.WriteLine($"మొత్తం వెతికిన దశలు: {searchSteps} (అర్రే సైజు {customers.Length} అయినప్పటికీ)");</code></pre>
+      </div>
+      <p>
+        <code>break</code> లేకపోతే లూప్ అనవసరంగా చివరి వరకు తిరుగుతుంది. లక్షల సంఖ్యలో డేటా ఉన్నప్పుడు ఇది సాఫ్ట్‌వేర్‌ను విపరీతంగా మందగింపజేస్తుంది.
+      </p>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ⏭️ continue స్టేట్‌మెంట్ — చెల్లని డేటాను స్కిప్ చేయడం</h2>
+      <p>
+        డేటా ప్రాసెస్ చేస్తున్నప్పుడు కొన్ని అవాంఛనీయ విలువలు (ఉదాహరణకు సున్నా, నెగటివ్ నంబర్లు, కరప్ట్ రికార్డులు) వచ్చినప్పుడు — లూప్‌ను ఆపకుండా, కేవలం ఆ ఒక్క బ్యాడ్ రికార్డును స్కిప్ చేయడానికి <strong><code>continue</code></strong> ఉపయోగిస్తారు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · continue Skipping Invalid Records</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int[] rawSensorReadings = { 25, -999, 28, 0, 31, -999, 29 };
+int processedCount = 0;
+int sum = 0;
+
+foreach (int reading in rawSensorReadings)
+{
+    // సెన్సార్ ఎర్రర్ కోడ్ -999 లేదా 0 అయితే స్కిప్ చేయి
+    if (reading == -999 || reading == 0)
+    {
+        Console.WriteLine($"⚠️ చెల్లని రీడింగ్ ({reading}) దాటవేయబడింది.");
+        continue; // క్రింది భాగం రన్ కాదు, నెక్స్ట్ రీడింగ్ కు వెళ్తుంది
+    }
+
+    sum += reading;
+    processedCount++;
+    Console.WriteLine($"సరైన రీడింగ్ నమోదు: {reading}°C");
+}
+
+Console.WriteLine($"\\nవిజయవంతంగా ప్రాసెస్ చేసిన రీడింగ్స్: {processedCount}, సగటు: {(double)sum / processedCount:F1}°C");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🪺 నెస్టెడ్ లూప్స్ (Nested Loops: Grids &amp; Matrices)</h2>
+      <p>
+        ఒక లూప్ లోపల మరొక లూప్ ఉండటాన్ని <strong>నెస్టెడ్ లూప్ (Nested Loop)</strong> అంటారు. బయటి లూప్ (Outer Loop) ఒక్కసారి తిరిగితే, లోపలి లూప్ (Inner Loop) తన పూర్తి సైకిల్‌ను పూర్తి చేస్తుంది.
+      </p>
+      <p>
+        2D గ్రిడ్స్, చెస్ బోర్డులు, పిక్సెల్ మ్యాట్రిక్స్, మరియు రో-కాలమ్ టేబుల్స్ ప్రాసెస్ చేయడానికి నెస్టెడ్ లూప్స్ ఉపయోగిస్తారు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Multiplication Table Matrix with Nested Loops</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">Console.WriteLine("--- 1 నుండి 5 వరకు గుణకార పట్టిక గ్రిడ్ ---\\n");
+
+// బయటి లూప్: అడ్డు వరుసలు (Rows)
+for (int row = 1; row &lt;= 5; row++)
+{
+    // లోపలి లూప్: నిలువు వరుసలు (Columns)
+    for (int col = 1; col &lt;= 5; col++)
+    {
+        Console.Write($"{row * col,4}"); // 4 స్పేసెస్ తో ఫార్మాటింగ్
+    }
+    Console.WriteLine(); // ప్రతి రో పూర్తయిన తర్వాత కొత్త లైన్
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> ⏳ టైమ్ కాంప్లెక్సిటీ అనలిసిస్: O(N) vs O(N²) ప్రమాదాలు</h2>
+      <p>
+        సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో నెస్టెడ్ లూప్స్ అత్యంత జాగ్రత్తగా వాడాల్సిన సాధనం.
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>ఒకే లూప్ (Single Loop):</strong> \(O(N)\) లీనియర్ టైమ్. 10,000 ఐటెమ్స్ ఉంటే 10,000 ఆపరేషన్స్ (మైక్రోసెకన్లు).</li>
+        <li><strong>రెండు నెస్టెడ్ లూప్స్ (Double Nested):</strong> \(O(N^2)\) క్వాడ్రాటిక్ టైమ్. 10,000 ఐటెమ్స్ ఉంటే \(10,000 \times 10,000 = \mathbf{100,000,000}\) (10 కోట్ల ఆపరేషన్స్ - కొన్ని సెకన్లు).</li>
+        <li><strong>మూడు నెస్టెడ్ లూప్స్ (Triple Nested):</strong> \(O(N^3)\) క్యూబిక్ టైమ్. సర్వర్ పూర్తిగా ఫ్రీజ్ అయిపోతుంది!</li>
+      </ul>
+
+      <div style="background:var(--bg3); border-left:4px solid #ef4444; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#ef4444; font-size:15px;">🚨 ప్రొడక్షన్ పెర్ఫార్మెన్స్ రూల్:</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px; line-height:1.7;">
+          రెండు కలెక్షన్లలో డూప్లికేట్స్ వెతకడానికి రెండు నెస్టెడ్ లూప్స్ (\(O(N^2)\)) రాయడానికి బదులు — <code>HashSet&lt;T&gt;</code> లేదా <code>Dictionary&lt;K,V&gt;</code> వాడితే అదే పని \(O(N)\) లో పూర్తవుతుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🎯 మల్టీ-లెవల్ లూప్ బ్రేకింగ్ (Breaking Outer Loops in C#)</h2>
+      <p>
+        C# లో ఒక నెస్టెడ్ లూప్ లోపల <code>break;</code> రాస్తే — అది <strong>కేవలం లోపలి లూప్‌ను మాత్రమే రద్దు చేస్తుంది</strong>, బయటి లూప్ అలాగే నడుస్తూనే ఉంటుంది!
+      </p>
+      <p>
+        జావాలో లేబుల్డ్ బ్రేక్స్ (<code>break outerLoop;</code>) ఉంటాయి, కానీ C# లో అవి లేవు. C# లో మొత్తం అన్ని నెస్టెడ్ లూప్స్ నుండి ఒకేసారి బయటపడటానికి 3 ప్రొఫెషనల్ విధానాలు ఉన్నాయి:
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">విధానం 1: బూలియన్ ఫ్లాగ్ (Clean Standard)</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Boolean Flag for Multi-Level Break</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">bool itemFound = false;
+
+for (int r = 0; r &lt; 10 &amp;&amp; !itemFound; r++)
+{
+    for (int c = 0; c &lt; 10; c++)
+    {
+        if (r == 3 &amp;&amp; c == 7)
+        {
+            Console.WriteLine($"లక్ష్యం దొరికింది ({r}, {c}) వద్ద!");
+            itemFound = true;
+            break; // లోపలి లూప్ బ్రేక్
+        }
+    }
+}</code></pre>
+      </div>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">విధానం 2: మెథడ్ ఎక్స్‌ట్రాక్షన్ &amp; return (Architect-Preferred)</h3>
+      <p>
+        నెస్టెడ్ లూప్‌ను ఒక ప్రత్యేక ఫంక్షన్‌గా రాసి, లక్ష్యం నెరవేరగానే నేరుగా <code>return</code> చేయడం అత్యంత పరిశుభ్రమైన పద్ధతి.
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">విధానం 3: goto లేబుల్ (The Valid Exception)</h3>
+      <p>
+        సాధారణంగా <code>goto</code> వాడటం మంచిది కాదు, కానీ బహుళ నెస్టెడ్ లూప్స్ నుండి తక్షణమే బయటకు రావడానికి C# లో <code>goto ExitPoint;</code> వాడటం అధికారికంగా ఆమోదించబడిన ఏకైక సందర్భం!
+      </p>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🚀 లూప్ ఆప్టిమైజేషన్: Loop Invariant Code Motion</h2>
+      <p>
+        లూప్ ప్రతి రౌండ్‌లోనూ మారకుండా స్థిరంగా ఉండే కాలిక్యులేషన్స్‌ను లూప్ లోపల రాయడం పెద్ద తప్పు.
+      </p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Loop Invariant Code Motion</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// ❌ చెడ్డ కోడ్: Math.Sqrt() లూప్ లో ప్రతిసారీ మళ్లీ మళ్లీ లెక్కించబడుతుంది
+for (int i = 0; i &lt; 10000; i++)
+{
+    double limit = Math.Sqrt(250000.0); // లూప్ లోపల అనవసరం!
+    // ...
+}
+
+// ✅ ఆప్టిమైజ్డ్ కోడ్: స్థిర విలువను లూప్ వెలుపల ఒక్కసారే లెక్కించండి
+double precomputedLimit = Math.Sqrt(250000.0);
+for (int i = 0; i &lt; 10000; i++)
+{
+    // precomputedLimit వాడండి! CPU క్లాక్ సైకిల్స్ ఆదా అవుతాయి.
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🧵 మల్టీ-కోర్ పార్లలిజం: Parallel.For పరిచయం</h2>
+      <p>
+        ఆధునిక కంప్యూటర్లలో 8 లేదా 16 CPU కోర్లు ఉంటాయి. ఒక సాధారణ <code>for</code> లూప్ కేవలం ఒక్క CPU కోర్‌పై మాత్రమే రన్ అవుతుంది.
+      </p>
+      <p>
+        ఒకదానితో ఒకటి సంబంధం లేని లక్షలాది స్వతంత్ర కాలిక్యులేషన్స్ ఉన్నప్పుడు — .NET లోని <strong><code>Parallel.For</code></strong> ద్వారా అన్ని CPU కోర్లను ఏకకాలంలో ఉపయోగించి లూప్‌ను 10 రెట్లు వేగంగా పూర్తి చేయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Multi-Core Parallel.For</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System.Threading.Tasks;
+
+// అన్ని CPU కోర్లపై సమాంతరంగా లూప్ నడుస్తుంది
+Parallel.For(1, 6, i =&gt;
+{
+    Console.WriteLine($"థ్రెడ్ {Environment.CurrentManagedThreadId} రౌండ్ {i} ని ప్రాసెస్ చేస్తోంది.");
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: break vs continue vs return vs goto</h2>
+      <p>
+        కంట్రోల్ ఫ్లో జంప్ స్టేట్‌మెంట్ల పూర్తి తులనాత్మక మ్యాట్రిక్స్:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>కీవర్డ్</th>
+            <th>ప్రవర్తన (Action)</th>
+            <th>పరిధి (Scope)</th>
+            <th>కాల్ స్టాక్ ప్రభావం</th>
+            <th>ప్రొఫెషనల్ రికమండేషన్</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>break</strong></td>
+            <td>ప్రస్తుత లూప్‌ను వెంటనే ముగిస్తుంది</td>
+            <td>తక్షణ లోపలి లూప్ మాత్రమే</td>
+            <td>లేదు (ఫంక్షన్ లోనే ఉంటుంది)</td>
+            <td>సెర్చ్ మరియు ఎర్లీ ఎగ్జిట్‌లకు తప్పనిసరిగా వాడాలి</td>
+          </tr>
+          <tr>
+            <td><strong>continue</strong></td>
+            <td>ప్రస్తుత రౌండ్‌ను వదిలేసి తదుపరి రౌండ్‌కు వెళ్తుంది</td>
+            <td>తక్షణ లోపలి లూప్ మాత్రమే</td>
+            <td>లేదు</td>
+            <td>చెల్లని డేటాను ఫిల్టర్ చేయడానికి అద్భుతం</td>
+          </tr>
+          <tr>
+            <td><strong>return</strong></td>
+            <td>మొత్తం మెథడ్ నుంచే బయటకు వచ్చేస్తుంది</td>
+            <td>మొత్తం మెథడ్ పరిధి</td>
+            <td>ఫంక్షన్ స్టాక్ ఫ్రేమ్ పాప్ అవుతుంది</td>
+            <td>గార్డ్ క్లాజెస్‌కు, డీప్ నెస్టింగ్ రద్దుకు ఉత్తమం</td>
+          </tr>
+          <tr>
+            <td><strong>goto</strong></td>
+            <td>పేర్కొన్న లేబుల్ వద్దకు జంప్ చేస్తుంది</td>
+            <td>మెథడ్ లోని ఏ లేబుల్ వద్దకైనా</td>
+            <td>లేదు</td>
+            <td>బహుళ నెస్టెడ్ లూప్స్ బ్రేకింగ్‌కు మాత్రమే పరిమితం</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🎨 ప్యాటర్న్ ప్రింటింగ్ &amp; మ్యాట్రిక్స్ లాజిక్</h2>
+      <p>
+        ఇంటర్వ్యూలలో నెస్టెడ్ లూప్స్ పై పట్టును పరీక్షించడానికి తరచుగా ప్యాటర్న్ ప్రింటింగ్ అడుగుతారు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Half-Pyramid Pattern with Nested Loops</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int totalRows = 5;
+
+for (int i = 1; i &lt;= totalRows; i++)
+{
+    // కాలమ్స్ సంఖ్య ప్రస్తుత రో నంబర్ i వరకు మాత్రమే నడుస్తుంది
+    for (int j = 1; j &lt;= i; j++)
+    {
+        Console.Write("* ");
+    }
+    Console.WriteLine();
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "Fintech Fraud &amp; Duplicate Transaction Detection Engine"</h2>
+      <p>
+        <code>break</code>, <code>continue</code>, మరియు నెస్టెడ్ లూప్స్ నియంత్రణలతో — ఒక బ్యాంకింగ్ లేదా పేమెంట్ సిస్టమ్‌లో అనుమానాస్పద డూప్లికేట్ లావాదేవీలను (10 సెకన్ల వ్యవధిలో ఒకే యూజర్ ఒకే మొత్తాన్ని మళ్లీ పంపడం) గుర్తించే ఒక హై-పెర్ఫార్మెన్స్ <strong>ఫ్రాడ్ డిటెక్షన్ ఇంజిన్</strong> ను తయారు చేద్దాం!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Fintech Fraud Detection Audit Project</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🛡️ మన బ్యాంక్ - సెక్యూరిటీ &amp; ఫ్రాడ్ డిటెక్షన్ ఇంజిన్");
+Console.WriteLine("=================================================\\n");
+
+// నమూనా ట్రాన్సాక్షన్ డేటా రికార్డ్స్
+var transactions = new[]
+{
+    new { Id = "TXN101", User = "రాజేష్", Amount = 5000m, Status = "SUCCESS", SecondsAgo = 120 },
+    new { Id = "TXN102", User = "రాజేష్", Amount = 5000m, Status = "SUCCESS", SecondsAgo = 124 }, // డూప్లికేట్ ఫ్రాడ్! (కేవలం 4 సెకన్ల తేడా)
+    new { Id = "TXN103", User = "సునీత",  Amount = 1200m, Status = "FAILED",  SecondsAgo = 90  }, // FAILED (స్కిప్ చేయాలి)
+    new { Id = "TXN104", User = "విక్రమ్", Amount = 45000m, Status = "SUCCESS", SecondsAgo = 60 },
+    new { Id = "TXN105", User = "విక్రమ్", Amount = 45000m, Status = "SUCCESS", SecondsAgo = 65 }, // డూప్లికేట్ ఫ్రాడ్!
+    new { Id = "TXN106", User = "అజయ్",   Amount = 250m,   Status = "SUCCESS", SecondsAgo = 10 }
+};
+
+int totalAudited = 0;
+int fraudAlerts = 0;
+
+Console.WriteLine("ఆడిట్ ప్రారంభమైంది... అనుమానాస్పద డూప్లికేట్స్ విశ్లేషణ:\\n");
+
+// బయటి లూప్: ప్రతి ట్రాన్సాక్షన్‌ను తీసుకోవడం
+for (int i = 0; i &lt; transactions.Length; i++)
+{
+    var current = transactions[i];
+
+    // 'continue' వాడకం: విఫలమైన ట్రాన్సాక్షన్స్ ను నేరుగా స్కిప్ చేయి
+    if (current.Status == "FAILED")
+    {
+        Console.WriteLine($"[INFO] {current.Id} విఫలమైన లావాదేవీ కాబట్టి విశ్లేషణ నుండి దాటవేయబడింది.");
+        continue;
+    }
+
+    totalAudited++;
+
+    // లోపలి లూప్: తర్వాతి లావాదేవీలతో పోల్చడం (Nested Comparison)
+    for (int j = i + 1; j &lt; transactions.Length; j++)
+    {
+        var next = transactions[j];
+
+        if (next.Status == "FAILED") continue;
+
+        // ఫ్రాడ్ షరతులు: ఒకే యూజర్ + ఒకే మొత్తం + 10 సెకన్ల లోపు జరగడం
+        bool isSameUser = current.User == next.User;
+        bool isSameAmount = current.Amount == next.Amount;
+        int timeDifference = Math.Abs(current.SecondsAgo - next.SecondsAgo);
+
+        if (isSameUser &amp;&amp; isSameAmount &amp;&amp; timeDifference &lt;= 10)
+        {
+            fraudAlerts++;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"🚨 [హెచ్చరిక] ఫ్రాడ్ అనుమానం: {next.Id} అనేది {current.Id} కి డూప్లికేట్!");
+            Console.WriteLine($"   యూజర్: {current.User} | మొత్తం: ₹{current.Amount:N2} | సమయ తేడా: {timeDifference} సెకన్లు!");
+            Console.ResetColor();
+
+            // 'break' వాడకం: ఒకసారి ఫ్రాడ్ దొరికిన తర్వాత మళ్లీ అదే రికార్డును ఇతరులతో పోల్చక్కర్లేదు
+            break;
+        }
+    }
+}
+
+// ఆడిట్ సారాంశం
+Console.WriteLine("\\n=================================================");
+Console.WriteLine("                 ఆడిట్ నివేదిక సారాంశం              ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"తనిఖీ చేసిన సరైన లావాదేవీలు : {totalAudited}");
+Console.WriteLine($"గుర్తించిన అనుమానాస్పద కేసులు : {fraudAlerts}");
+Console.WriteLine("భద్రతా చర్యలు: సదరు ఖాతాలపై తక్షణ విచారణకు ఆదేశించాం.");
+Console.WriteLine("=================================================\\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ ఫ్రాడ్ డిటెక్షన్ ఇంజిన్‌ను పరీక్షించండి!</div>
+        <p>
+          ఈ పూర్తి కోడ్‌ను బ్రౌజర్ ఎడిటర్‌లో పేస్ట్ చేసి రన్ చేయండి. వేర్వేరు సమయాలు మరియు యూజర్లను ఇచ్చి డూప్లికేట్ అల్గారిథమ్ ఎలా రియాక్ట్ అవుతుందో స్వయంగా చూడండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన లూప్ తప్పులు</h2>
+      <p>
+        లూప్ కంట్రోల్ రాసేటప్పుడు అత్యధికంగా జరిగే 7 తప్పులు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. break రాస్తే అన్ని నెస్టెడ్ లూప్స్ ఆగిపోతాయని అనుకోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>break;</code> కేవలం అది ఉన్న తక్షణ లోపలి లూప్‌ను మాత్రమే రద్దు చేస్తుంది. బయటి లూప్ నడుస్తూనే ఉంటుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. while లూప్ లో continue కు ముందు కౌంటర్ ఇంక్రిమెంట్ మర్చిపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>while (i &lt; 10) { if (x) continue; i++; }</code> రాస్తే <code>i++</code> దాటిపోవడం వల్ల <code>i</code> పెరగక శాశ్వత ఇన్ఫినిట్ లూప్ అవుతుంది!
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. అనాలోచితంగా O(N^2) నెస్టెడ్ లూప్స్ వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            పెద్ద కలెక్షన్లలో రెండు లూప్స్ రాస్తే సర్వర్ రెస్పాన్స్ సమయం సెకన్ల నుండి నిమిషాలకు పడిపోతుంది. హాష్ సెట్స్ లేదా డిక్షనరీలు వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. లూప్ లోపల రిసోర్స్ కనెక్షన్స్ ఓపెన్ చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            లూప్ లోపల ప్రతిసారీ డేటాబేస్ కనెక్షన్ లేదా ఫైల్ ఓపెన్ చేస్తే కనెక్షన్ పూల్ ఖాళీ అయిపోతుంది. కనెక్షన్‌ను లూప్ వెలుపల ఉంచండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. goto ని విచక్షణారహితంగా వాడటం (Spaghetti Code):</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            మల్టీ-లెవల్ లూప్ బ్రేక్ మినహా సాధారణ సందర్భాలలో <code>goto</code> వాడితే కోడ్ ఫ్లో అగమ్యగోచరంగా మారుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. ఫ్లాగ్ వేరియబుల్ ను తర్వాతి రౌండ్ కి రీసెట్ చేయడం మర్చిపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            బయటి లూప్‌లో ఫ్లాగ్ రీసెట్ చేయకపోతే ఒకసారి ఫ్లాగ్ ట్రూ అయిన తర్వాత తర్వాతి రౌండ్లలో లూప్స్ తిరగవు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. Parallel.For లో Shared Variables ను లాక్ లేకుండా మార్చడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            సమాంతర లూప్‌లో <code>counter++</code> చేస్తే రేస్ కండిషన్స్ (Race Conditions) వస్తాయి. <code>Interlocked.Increment</code> వాడాలి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        లూప్ కంట్రోల్ మరియు పెర్ఫార్మెన్స్‌పై మీ పట్టును పరీక్షించుకోండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>break</code> మరియు <code>continue</code> మధ్య ప్రధాన క్రియాత్మక తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>break</code> మొత్తం లూప్‌ను అక్కడితో పూర్తిగా రద్దు చేసి బయటకు వచ్చేస్తుంది. <code>continue</code> కేవలం ఆ ఒక్క ప్రస్తుత రౌండ్‌ను మాత్రమే స్కిప్ చేసి వెంటనే తదుపరి రౌండ్‌ను ప్రారంభిస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: నెస్టెడ్ లూప్ లోపల <code>break</code> రాస్తే బయటి లూప్ కూడా ఆగిపోతుందా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఆగదు! <code>break</code> కేవలం అది ఉన్న లోపలి లూప్‌ను మాత్రమే రద్దు చేస్తుంది. బయటి లూప్ నుండి కూడా ఒకేసారి బయటపడాలంటే బూలియన్ ఫ్లాగ్, <code>return</code>, లేదా <code>goto</code> లేబుల్ వాడాలి.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: 10,000 ఐటెమ్స్ ఉన్న అర్రేపై రెండు నెస్టెడ్ లూప్స్ రాస్తే మొత్తం ఎన్ని ఆపరేషన్స్ జరుగుతాయి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> \(10,000 \times 10,000 = \mathbf{100,000,000}\) (10 కోట్ల ఆపరేషన్స్ - \(O(N^2)\) క్వాడ్రాటిక్ టైమ్ కాంప్లెక్సిటీ).
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: Loop Invariant Code Motion అంటే ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> లూప్ ప్రతి ఇటరేషన్‌లోనూ మారకుండా స్థిరంగా ఉండే గణనలను (ఉదా: <code>Math.Sqrt()</code> లేదా స్ట్రింగ్ లెంగ్త్) లూప్ లోపల పదే పదే లెక్కించకుండా, లూప్ ప్రారంభానికి ముందే లెక్కించి వేరియబుల్‌లో నిల్వ ఉంచే ఆప్టిమైజేషన్ టెక్నిక్.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: సాధారణ <code>for</code> లూప్ తో పోల్చితే <code>Parallel.For</code> ఎప్పుడు వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కంప్యూటర్‌లోని బహుళ CPU కోర్లను ఏకకాలంలో ఉపయోగించుకోవడానికి <code>Parallel.For</code> వాడాలి. ఒకదానిపై ఒకటి ఆధారపడని (Independent) భారీ గణితం లేదా ఇమేజ్ ప్రాసెసింగ్ ఉన్నప్పుడు ఇది అత్యుత్తమ ఫలితాలను ఇస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 07. లూప్స్ (for, while, do-while, foreach)
+      </a>
+      <a href="/blog-csharp/09-csharp-methods-and-parameters.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 09. మెథడ్స్ &amp; పారామీటర్స్ (Phase 03) →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🛡️ మన బ్యాంక్ - సెక్యూరిటీ & ఫ్రాడ్ డిటెక్షన్ ఇంజిన్");
+Console.WriteLine("=================================================\\n");
+
+var transactions = new[]
+{
+    new { Id = "TXN101", User = "రాజేష్", Amount = 5000m, Status = "SUCCESS", SecondsAgo = 120 },
+    new { Id = "TXN102", User = "రాజేష్", Amount = 5000m, Status = "SUCCESS", SecondsAgo = 124 },
+    new { Id = "TXN103", User = "సునీత",  Amount = 1200m, Status = "FAILED",  SecondsAgo = 90  },
+    new { Id = "TXN104", User = "విక్రమ్", Amount = 45000m, Status = "SUCCESS", SecondsAgo = 60 },
+    new { Id = "TXN105", User = "విక్రమ్", Amount = 45000m, Status = "SUCCESS", SecondsAgo = 65 },
+    new { Id = "TXN106", User = "అజయ్",   Amount = 250m,   Status = "SUCCESS", SecondsAgo = 10 }
+};
+
+int totalAudited = 0;
+int fraudAlerts = 0;
+
+for (int i = 0; i < transactions.Length; i++)
+{
+    var current = transactions[i];
+    if (current.Status == "FAILED") continue;
+
+    totalAudited++;
+
+    for (int j = i + 1; j < transactions.Length; j++)
+    {
+        var next = transactions[j];
+        if (next.Status == "FAILED") continue;
+
+        bool isSameUser = current.User == next.User;
+        bool isSameAmount = current.Amount == next.Amount;
+        int timeDiff = Math.Abs(current.SecondsAgo - next.SecondsAgo);
+
+        if (isSameUser && isSameAmount && timeDiff <= 10)
+        {
+            fraudAlerts++;
+            Console.WriteLine($"🚨 [హెచ్చరిక] ఫ్రాడ్ అనుమానం: {next.Id} ({next.User}, ₹{next.Amount:N2})");
+            break;
+        }
+    }
+}
+
+Console.WriteLine($"\\nతనిఖీ చేసినవి: {totalAudited}, ఫ్రాడ్ కేసులు: {fraudAlerts}");
+Console.WriteLine("=================================================\\n");\`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '08-csharp-break-continue-and-nested-loops.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value C# Chapter 08!');
+console.log('Target file size:', fullHtml.length, 'characters');
