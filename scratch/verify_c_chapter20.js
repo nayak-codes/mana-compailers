@@ -68,3 +68,4 @@ if (errors.length === 0) {
   console.error('❌ Verification errors found:', errors);
   process.exit(1);
 }
+
