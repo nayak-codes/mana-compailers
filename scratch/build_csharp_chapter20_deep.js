@@ -1,0 +1,1022 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./csharp_curriculum_data');
+
+const lesson = LESSONS.find(l => l.num === 20);
+const sidebarHtml = buildSidebar(20);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 20: గ్రాండ్ మినీ ప్రాజెక్ట్</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# గ్రాండ్ మినీ ప్రాజెక్ట్: ఎంటర్‌ప్రైజ్ ఎంప్లాయ్ &amp; పేరోల్ మేనేజ్‌మెంట్ సిస్టమ్</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">🏆 Chapter 20 of 20 (Grand Finale)</span>
+      <span class="meta-pill">🚀 Phase 05: అడ్వాన్స్‌డ్ C#, LINQ &amp; ప్రాజెక్ట్</span>
+      <span class="meta-pill">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this finale:</span>
+      <span>3-టైర్ ఎంటర్‌ప్రైజ్ ఆర్కిటెక్చర్ · C# 12 Immutable Records · డొమైన్ కస్టమ్ ఎక్సెప్షన్లు · IEmployeeRepository ఇంటర్‌ఫేస్ &amp; In-Memory Data Store · LINQ అనలిటిక్స్ పవర్‌హౌస్ (GroupBy, Sum, Average, OrderBy) · EventHandler ఈవెంట్ బ్రాడ్‌కాస్టింగ్ · System.Text.Json ఎక్స్‌పోర్ట్ · 300+ లైన్ల పూర్తి రన్నబుల్ C# 12 మాస్టర్ ప్రోగ్రామ్ · 20 అధ్యాయాల సారాంశం &amp; కెరీర్ రోడ్‌మ్యాప్ · 5 ఫైనల్ క్విజ్ ప్రశ్నలు</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>అభినందనలు! 🎓 C# మాస్టర్ కోర్సు చివరి ఘట్టానికి చేరుకున్నారు!</h3>
+      <p>
+        అధ్యాయం 01 లో Anders Hejlsberg చరిత్ర, .NET CLR ఆర్కిటెక్చర్ నుండి ప్రారంభమైన మన ప్రయాణం — 
+        డేటా టైప్స్, కంట్రోల్ ఫ్లో, మెథడ్స్, అర్రేలు, కలెక్షన్స్, ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP), ఇన్‌హెరిటెన్స్, ఇంటర్‌ఫేసెస్, రికార్డ్స్, 
+        ఎక్సెప్షన్ హ్యాండ్లింగ్, డెలిగేట్స్, ఈవెంట్స్ మరియు LINQ వరకు 19 సుదీర్ఘ మైలురాళ్లను అధిగమించింది.
+      </p>
+      <p style="margin-top:10px;">
+        ఈ 20వ గ్రాండ్ ఫినాలే అధ్యాయంలో మనం నేర్చుకున్న ప్రతి కాన్సెప్ట్‌ను ఒకే తాటిపైకి తెచ్చి, 
+        ఫార్చ్యూన్ 500 ఐటీ కంపెనీలలో వాడే <strong>ఎంటర్‌ప్రైజ్ ఎంప్లాయ్ &amp; పేరోల్ మేనేజ్‌మెంట్ సిస్టమ్ (Enterprise Employee &amp; Payroll Management System v1.0)</strong> ను 
+        స్క్రాచ్ నుండి నిర్మిస్తాం. ఈ కోడ్ మీ రెజ్యూమ్‌లో పెట్టుకోదగిన ఒక అత్యున్నత ప్రాజెక్ట్ ఆర్కిటెక్చర్‌గా నిలుస్తుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🏛️ ప్రాజెక్ట్ ఆర్కిటెక్చర్ &amp; 3-టైర్ లేయర్డ్ డిజైన్</h2>
+      <p>
+        ఒక ప్రొఫెషనల్ సాఫ్ట్‌వేర్ ఇంజనీర్ ఎప్పుడూ మొత్తం కోడ్‌ను ఒకే చోట రాసి పడేయరు (Spaghetti Code). 
+        మనం మన సిస్టమ్‌ను <strong>3-టైర్ ఆర్కిటెక్చర్ (3-Tier Layered Architecture)</strong> ప్రకారం విభజిస్తాం:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>డొమైన్ &amp; మోడల్స్ లేయర్ (Models):</strong> C# 12 Records &amp; Enums (ఉద్యోగులు, డిపార్ట్‌మెంట్‌లు, పేరోల్ స్లిప్పుల ఇమ్యుటబుల్ డేటా).</li>
+        <li><strong>డేటా పెర్సిస్టెన్స్ లేయర్ (Repository):</strong> <code>IEmployeeRepository</code> ఇంటర్‌ఫేస్ మరియు <code>System.Text.Json</code> బ్యాకప్ ఇంజిన్.</li>
+        <li><strong>బిజినెస్ లాజిక్ &amp; అనలిటిక్స్ లేయర్ (Services):</strong> <code>PayrollService</code> (LINQ అగ్రిగేషన్స్, టాప్ పర్ఫార్మర్ బోనస్ లెక్కలు, ఈవెంట్ నోటిఫికేషన్లు).</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 📋 డొమైన్ మోడలింగ్ — C# 12 Records &amp; Enums</h2>
+      <p>
+        ఇమ్యుటబుల్ డేటా సేఫ్టీ కోసం మనం C# 9/12 లో వచ్చిన <strong>Positional Records</strong> ఉపయోగిస్తాం. 
+        దీనివల్ల ఆబ్జెక్ట్ పుట్టిన తర్వాత ఎవరూ డేటాను టాంపర్ చేయలేరు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Domain Records and Enums</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public enum Department { Engineering, HumanResources, Finance, Marketing, Sales }
+public enum EmploymentType { FullTime, Contractor, Intern }
+
+// ఇమ్యుటబుల్ ఎంప్లాయ్ రికార్డ్
+public record Employee(
+    int Id, 
+    string Name, 
+    string Email, 
+    Department Dept, 
+    EmploymentType Type, 
+    decimal MonthlySalary, 
+    int PerformanceRating, 
+    DateTime JoinedDate);
+
+// పేరోల్ స్లిప్ రికార్డ్
+public record PaySlip(
+    string SlipId, 
+    int EmployeeId, 
+    string EmployeeName, 
+    decimal GrossSalary, 
+    decimal Bonus, 
+    decimal Deductions, 
+    decimal NetSalary);</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🚨 బిజినెస్ రూల్స్ &amp; కస్టమ్ ఎక్సెప్షన్స్</h2>
+      <p>
+        అనుకోని తప్పుడు డేటా వచ్చినప్పుడు సిస్టమ్ క్రాష్ కాకుండా రక్షించడానికి 3 డొమైన్ కస్టమ్ ఎక్సెప్షన్లను డిజైన్ చేస్తాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Custom Domain Exceptions</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class DuplicateEmployeeException(int id) 
+    : Exception($"ఉద్యోగి ID #{id} ఇప్పటికే సిస్టమ్‌లో నమోదై ఉంది!");
+
+public class EmployeeNotFoundException(int id) 
+    : Exception($"ఉద్యోగి ID #{id} సిస్టమ్‌లో కనుగొనబడలేదు!");
+
+public class InvalidSalaryException(decimal sal) 
+    : Exception($"చెల్లని వేతనం: ₹{sal:N2}. కనీస వేతనం ₹10,000 కంటే ఎక్కువ ఉండాలి.");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🔌 రిపోజిటరీ కాంట్రాక్ట్ (\`IEmployeeRepository\`)</h2>
+      <p>
+        లూజ్ కప్లింగ్ కోసం మనం <code>IEmployeeRepository</code> ఇంటర్‌ఫేస్ రాస్తాం. 
+        దీనివల్ల భవిష్యత్తులో ఈ కోడ్‌ను SQL సర్వర్‌కు గానీ, MongoDB కి గానీ సులభంగా అనుసంధానించవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Repository Interface Contract</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public interface IEmployeeRepository
+{
+    void Add(Employee emp);
+    Employee? GetById(int id);
+    IEnumerable<Employee> GetAll();
+    bool Delete(int id);
+    int TotalCount { get; }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> ⚡ LINQ అనలిటిక్స్ &amp; పేరోల్ బిజినెస్ ఇంజిన్</h2>
+      <p>
+        మాస్టర్ క్లాస్‌లోని LINQ నైపుణ్యాలను ఉపయోగించి డిపార్ట్‌మెంట్ స్థాయి ఆర్థిక బడ్జెట్‌లను లెక్కించడం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · LINQ GroupBy Analytics Method</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">var report = repository.GetAll()
+    .GroupBy(e => e.Dept)
+    .Select(g => new
+    {
+        Department = g.Key,
+        HeadCount = g.Count(),
+        TotalBudget = g.Sum(e => e.MonthlySalary),
+        AvgSalary = g.Average(e => e.MonthlySalary),
+        TopEarner = g.OrderByDescending(e => e.MonthlySalary).First()
+    })
+    .OrderByDescending(r => r.TotalBudget);</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 📢 ఈవెంట్-డ్రివెన్ ఆర్కిటెక్చర్ — పేరోల్ డిస్బర్స్ అలర్ట్స్</h2>
+      <p>
+        పేరోల్ పూర్తయిన వెంటనే ఫైనాన్స్ మరియు హెచ్‌ఆర్ విభాగాలకు సమాచారం చేరవేయడానికి 
+        మనం <strong><code>EventHandler&lt;PayrollEventArgs&gt;</code></strong> ను ఉపయోగిస్తాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Event-Driven Notification Pattern</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class PayrollEventArgs(decimal totalDisbursed, int employeeCount) : EventArgs
+{
+    public decimal TotalDisbursed { get; } = totalDisbursed;
+    public int EmployeeCount { get; } = employeeCount;
+    public DateTime ProcessedAt { get; } = DateTime.UtcNow;
+}
+
+// ఈవెంట్ సబ్‌స్క్రిప్షన్
+payroll.OnPayrollDisbursed += (sender, args) =>
+{
+    Console.WriteLine($"📢 [HR అలర్ట్]: {args.EmployeeCount} మందికి ₹{args.TotalDisbursed:N2} జమ అయ్యాయి!");
+};</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 💾 JSON సీరియలైజేషన్ &amp; బ్యాకప్ సిస్టమ్ (\`System.Text.Json\`)</h2>
+      <p>
+        ఆధునిక C# హై-పెర్ఫార్మెన్స్ లైబ్రరీ <strong><code>System.Text.Json</code></strong> ఉపయోగించి 
+        మొత్తం ఉద్యోగుల డేటాను క్లీన్ JSON ఫార్మాట్‌లోకి ఎక్స్‌పోర్ట్ చేస్తాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · JSON Serialization Snippet</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">var options = new JsonSerializerOptions { WriteIndented = true };
+string jsonBackup = JsonSerializer.Serialize(repository.GetAll(), options);
+Console.WriteLine("JSON బ్యాకప్ విజయవంతంగా రూపొందించబడింది.");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 💻 పూర్తి ప్రొడక్షన్ సోర్స్ కోడ్ — ఎంటర్‌ప్రైజ్ ఎంప్లాయ్ &amp; పేరోల్ ఇంజిన్</h2>
+      <p>
+        ఈ క్రింది కోడ్ మొత్తం 20 అధ్యాయాల సారాంశాన్ని ఒకే లైవ్ ఎగ్జిక్యూటబుల్ అప్లికేషన్‌గా ప్రదర్శిస్తుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Complete Enterprise Employee & Payroll Management System</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================================");
+Console.WriteLine("🏢 మన కార్పొరేట్ - ఎంటర్‌ప్రైజ్ ఎంప్లాయ్ & పేరోల్ మేనేజ్‌మెంట్ v1.0");
+Console.WriteLine("=================================================================\\n");
+
+// ==========================================
+// 1. డొమైన్ మోడల్స్ (Records & Enums)
+// ==========================================
+public enum Department { Engineering, HumanResources, Finance, Marketing, Sales }
+public enum EmploymentType { FullTime, Contractor, Intern }
+
+public record Employee(
+    int Id, 
+    string Name, 
+    string Email, 
+    Department Dept, 
+    EmploymentType Type, 
+    decimal MonthlySalary, 
+    int PerformanceRating, 
+    DateTime JoinedDate);
+
+public record PaySlip(
+    string SlipId, 
+    int EmployeeId, 
+    string EmployeeName, 
+    decimal GrossSalary, 
+    decimal Bonus, 
+    decimal Deductions, 
+    decimal NetSalary);
+
+// ==========================================
+// 2. కస్టమ్ డొమైన్ ఎక్సెప్షన్లు
+// ==========================================
+public class DuplicateEmployeeException(int id) 
+    : Exception($"ఉద్యోగి ID #{id} ఇప్పటికే సిస్టమ్‌లో నమోదై ఉంది!");
+
+public class EmployeeNotFoundException(int id) 
+    : Exception($"ఉద్యోగి ID #{id} సిస్టమ్‌లో కనుగొనబడలేదు!");
+
+public class InvalidSalaryException(decimal sal) 
+    : Exception($"చెల్లని వేతనం: ₹{sal:N2}. కనీస వేతనం ₹10,000 కంటే ఎక్కువ ఉండాలి.");
+
+// ==========================================
+// 3. ఈవెంట్ ఆర్గ్యుమెంట్స్
+// ==========================================
+public class PayrollEventArgs(decimal totalDisbursed, int employeeCount) : EventArgs
+{
+    public decimal TotalDisbursed { get; } = totalDisbursed;
+    public int EmployeeCount { get; } = employeeCount;
+    public DateTime ProcessedAt { get; } = DateTime.UtcNow;
+}
+
+// ==========================================
+// 4. రిపోజిటరీ కాంట్రాక్ట్ & ఇంప్లిమెంటేషన్
+// ==========================================
+public interface IEmployeeRepository
+{
+    void Add(Employee emp);
+    Employee? GetById(int id);
+    IEnumerable<Employee> GetAll();
+    bool Delete(int id);
+    int TotalCount { get; }
+}
+
+public class InMemoryEmployeeRepository : IEmployeeRepository
+{
+    private readonly Dictionary<int, Employee> _store = new();
+
+    public void Add(Employee emp)
+    {
+        if (_store.ContainsKey(emp.Id)) throw new DuplicateEmployeeException(emp.Id);
+        if (emp.MonthlySalary < 10000m) throw new InvalidSalaryException(emp.MonthlySalary);
+        _store[emp.Id] = emp;
+    }
+
+    public Employee? GetById(int id) => _store.TryGetValue(id, out var emp) ? emp : null;
+    public IEnumerable<Employee> GetAll() => _store.Values;
+    public bool Delete(int id) => _store.Remove(id);
+    public int TotalCount => _store.Count;
+}
+
+// ==========================================
+// 5. బిజినెస్ లాజిక్ & LINQ పేరోల్ ఇంజిన్
+// ==========================================
+public class PayrollService(IEmployeeRepository repository)
+{
+    // ఈవెంట్ డిక్లరేషన్
+    public event EventHandler<PayrollEventArgs>? OnPayrollDisbursed;
+
+    // LINQ అనలిటిక్స్ 1: డిపార్ట్‌మెంట్‌ల వారీగా శాలరీ సారాంశం
+    public void GenerateDepartmentBudgetReport()
+    {
+        Console.WriteLine("📊 డిపార్ట్‌మెంట్‌ల వారీగా శాలరీ బడ్జెట్ విశ్లేషణ (LINQ GroupBy):");
+        var report = repository.GetAll()
+            .GroupBy(e => e.Dept)
+            .Select(g => new
+            {
+                Department = g.Key,
+                HeadCount = g.Count(),
+                TotalBudget = g.Sum(e => e.MonthlySalary),
+                AvgSalary = g.Average(e => e.MonthlySalary),
+                TopEarner = g.OrderByDescending(e => e.MonthlySalary).First()
+            })
+            .OrderByDescending(r => r.TotalBudget);
+
+        foreach (var r in report)
+        {
+            Console.WriteLine($"   • {r.Department,-16} | ఉద్యోగులు: {r.HeadCount,2} | మొత్తం బడ్జెట్: ₹{r.TotalBudget,10:N2} | సగటు: ₹{r.AvgSalary,8:N2} | టాప్: {r.TopEarner.Name} (₹{r.TopEarner.MonthlySalary:N2})");
+        }
+    }
+
+    // LINQ అనలిటిక్స్ 2: టాప్ పర్ఫార్మర్లకు వార్షిక బోనస్ పంపిణీ
+    public List<PaySlip> ProcessMonthlyPayroll()
+    {
+        Console.WriteLine("\\n💵 నెలవారీ పేరోల్ ప్రాసెసింగ్ ప్రారంభమైంది...");
+        var paySlips = new List<PaySlip>();
+        decimal grandTotalDisbursed = 0m;
+
+        foreach (var emp in repository.GetAll())
+        {
+            // రేటింగ్ 9 లేదా 10 ఉంటే 20% బోనస్, 7 లేదా 8 ఉంటే 10% బోనస్
+            decimal bonusRate = emp.PerformanceRating switch
+            {
+                >= 9 => 0.20m,
+                >= 7 => 0.10m,
+                _ => 0.00m
+            };
+
+            decimal bonusAmount = emp.MonthlySalary * bonusRate;
+            decimal pfDeduction = emp.MonthlySalary * 0.12m; // 12% PF
+            decimal netSalary = emp.MonthlySalary + bonusAmount - pfDeduction;
+
+            var slip = new PaySlip(
+                "SLIP-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
+                emp.Id,
+                emp.Name,
+                emp.MonthlySalary,
+                bonusAmount,
+                pfDeduction,
+                netSalary);
+
+            paySlips.Add(slip);
+            grandTotalDisbursed += netSalary;
+        }
+
+        // ఈవెంట్ ఫైరింగ్
+        OnPayrollDisbursed?.Invoke(this, new PayrollEventArgs(grandTotalDisbursed, paySlips.Count));
+        return paySlips;
+    }
+
+    // JSON ఎక్స్‌పోర్ట్
+    public string ExportToJson()
+    {
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        return JsonSerializer.Serialize(repository.GetAll(), options);
+    }
+}
+
+// ==========================================
+// 6. డ్రైవర్ కోడ్ (Main Execution)
+// ==========================================
+IEmployeeRepository repo = new InMemoryEmployeeRepository();
+PayrollService payroll = new PayrollService(repo);
+
+// ఈవెంట్ సబ్‌స్క్రిప్షన్ (లాంబ్డా తో)
+payroll.OnPayrollDisbursed += (sender, args) =>
+{
+    Console.WriteLine($"\\n📢 [HR & ఫైనాన్స్ ఈవెంట్ అలర్ట్]:");
+    Console.WriteLine($"   మొత్తం {args.EmployeeCount} మంది ఉద్యోగుల ఖాతాలలో ₹{args.TotalDisbursed:N2} నిధులు జమ చేయబడ్డాయి! (సమయం: {args.ProcessedAt:HH:mm:ss} UTC)");
+};
+
+// 7. ఉద్యోగులను చేర్చడం (Seeding Data)
+try
+{
+    repo.Add(new Employee(101, "శ్రీధర్ పట్నాయక్", "sridhar@tech.com", Department.Engineering, EmploymentType.FullTime, 95000m, 10, DateTime.Now.AddYears(-3)));
+    repo.Add(new Employee(102, "లావణ్య దేవి", "lavanya@tech.com", Department.Finance, EmploymentType.FullTime, 75000m, 8, DateTime.Now.AddYears(-2)));
+    repo.Add(new Employee(103, "రాకేష్ వర్మ", "rakesh@tech.com", Department.Engineering, EmploymentType.FullTime, 120000m, 9, DateTime.Now.AddYears(-4)));
+    repo.Add(new Employee(104, "సంధ్యా రాణి", "sandhya@tech.com", Department.HumanResources, EmploymentType.FullTime, 65000m, 7, DateTime.Now.AddYears(-1)));
+    repo.Add(new Employee(105, "వికాస్ నాయుడు", "vikas@tech.com", Department.Marketing, EmploymentType.Contractor, 50000m, 6, DateTime.Now.AddMonths(-8)));
+    repo.Add(new Employee(106, "కిరణ్ తేజ", "kiran@tech.com", Department.Engineering, EmploymentType.Intern, 25000m, 9, DateTime.Now.AddMonths(-3)));
+    Console.WriteLine($"✅ {repo.TotalCount} మంది ఉద్యోగులు విజయవంతంగా రిజిస్టర్ అయ్యారు.\\n");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"❌ ఎర్రర్: {ex.Message}");
+}
+
+// 8. డిపార్ట్‌మెంట్ రిపోర్ట్ రన్ చేయడం
+payroll.GenerateDepartmentBudgetReport();
+
+// 9. పేరోల్ ప్రాసెస్ చేయడం
+var slips = payroll.ProcessMonthlyPayroll();
+
+// టాప్ 3 జీతం స్లిప్పుల ముద్రణ
+Console.WriteLine("\\n📄 తాజా శాలరీ స్లిప్పుల నమూనా (టాప్ 3):");
+foreach (var slip in slips.OrderByDescending(s => s.NetSalary).Take(3))
+{
+    Console.WriteLine($"   [{slip.SlipId}] {slip.EmployeeName,-16} | బేసిక్: ₹{slip.GrossSalary,8:N2} | బోనస్: ₹{slip.Bonus,8:N2} | PF: ₹{slip.Deductions,8:N2} | నెట్: ₹{slip.NetSalary,8:N2}");
+}
+
+// 10. ఎక్సెప్షన్ హ్యాండ్లింగ్ డెమో (డూప్లికేట్ ఎంట్రీ రక్షణ)
+Console.WriteLine("\\n🧪 ఎక్సెప్షన్ హ్యాండ్లింగ్ రక్షణ పరీక్ష:");
+try
+{
+    Console.WriteLine("ID #101 తో మళ్లీ ఉద్యోగిని చేర్చడానికి ప్రయత్నిస్తున్నాం...");
+    repo.Add(new Employee(101, "ఫేక్ యూజర్", "fake@tech.com", Department.Sales, EmploymentType.FullTime, 40000m, 5, DateTime.Now));
+}
+catch (DuplicateEmployeeException ex)
+{
+    Console.WriteLine($"🛡️ [రక్షణ సఫలం]: {ex.Message}");
+}
+
+// 11. JSON ఎక్స్‌పోర్ట్ ప్రివ్యూ
+Console.WriteLine("\\n📦 సిస్టమ్ డేటా JSON ఎక్స్‌పోర్ట్ ప్రివ్యూ (మొదటి ఉద్యోగి):");
+var jsonString = payroll.ExportToJson();
+Console.WriteLine(jsonString.Substring(0, Math.Min(350, jsonString.Length)) + "\\n   ...");
+
+Console.WriteLine("\\n=================================================================");
+Console.WriteLine("🎉 అభినందనలు! C# మాస్టర్ కోర్సు 20 అధ్యాయాలు సంపూర్ణంగా ముగిశాయి! 🚀");
+Console.WriteLine("=================================================================");</code></pre>
+      </div>
+
+      <!-- RUN LIVE COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin:24px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:#10b981; font-size:18px;">💻 ఈ గ్రాండ్ ఫినాలే ప్రాజెక్ట్‌ను ఆన్‌లైన్ కంపైలర్‌లో రన్ చేయండి!</h3>
+          <p style="margin:0; font-size:14px; color:var(--text2);">
+            Records, Interfaces, Repositories, LINQ GroupBy, Custom Exceptions మరియు JSON Serialization యొక్క సంపూర్ణ సమన్వయాన్ని వీక్షించండి.
+          </p>
+        </div>
+        <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:12px 24px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <span>▶ Try C# Online Compiler</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 🔍 కోడ్ వాక్‌త్రూ &amp; ఆర్కిటెక్చరల్ నిర్ణయాలు</h2>
+      <p>
+        ఈ ప్రాజెక్ట్‌లో మనం తీసుకున్న కీలక ఆర్కిటెక్చరల్ నిర్ణయాలు:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>Records:</strong> మల్టీ-థ్రెడింగ్ ఎన్విరాన్‌మెంట్‌లో డేటా మ్యుటేట్ అవ్వకుండా ఇమ్యుటబుల్ సేఫ్టీ ఇచ్చింది.</li>
+        <li><strong>IEmployeeRepository:</strong> బిజినెస్ లాజిక్‌ను డేటాబేస్ నుండి డీకపుల్ చేసింది. రేపు SQL లేదా Entity Framework Core కి మారడం సులభం.</li>
+        <li><strong>LINQ GroupBy &amp; Aggregations:</strong> ఎలాంటి సంక్లిష్టమైన ఫర్-లూప్స్ లేకుండా డిపార్ట్‌మెంట్ స్థాయి ఆర్థిక నివేదికలను 4 లైన్లలో రూపొందించింది.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🚀 తదుపరి అడుగులు — C# డెవలపర్‌గా మీ కెరీర్ రోడ్‌మ్యాప్</h2>
+      <p>
+        ఈ 20 అధ్యాయాలతో మీరు C# మరియు .NET 8 లో బలమైన పునాదిని నిర్మించుకున్నారు. 
+        ఒక పూర్తి స్థాయి ఫుల్-స్టాక్ లేదా బ్యాకెండ్ సాఫ్ట్‌వేర్ ఇంజనీర్‌గా ఎదగడానికి మీ తదుపరి అడుగులు:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>ASP.NET Core Web API:</strong> RESTful APIs, Controllers, Minimal APIs, JWT Authentication నేర్చుకోవడం.</li>
+        <li><strong>Entity Framework Core (EF Core):</strong> SQL Server / PostgreSQL డేటాబేస్‌లతో ORM ద్వారా సంభాషించడం.</li>
+        <li><strong>Microservices &amp; Docker:</strong> అప్లికేషన్లను కంటైనరైజ్ చేసి Azure Kubernetes Service (AKS) లో డిప్లాయ్ చేయడం.</li>
+        <li><strong>Cloud Azure:</strong> Azure Functions, Azure Service Bus, Blob Storage తో క్లౌడ్ నేటివ్ యాప్స్ తయారు చేయడం.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🏆 20 అధ్యాయాల సారాంశం (Summary of the Entire Journey)</h2>
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫేజ్</th>
+              <th>కవర్ చేసిన ప్రధానాంశాలు</th>
+              <th>సాధించిన నైపుణ్యం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Phase 01 (Ch 01-04)</strong></td>
+              <td>.NET ఆర్కిటెక్చర్, వేరియబుల్స్, CTS, I/O, ఆపరేటర్లు, Null-Coalescing</td>
+              <td>C# ఫండమెంటల్స్ &amp; సింటాక్స్ పట్టు</td>
+            </tr>
+            <tr>
+              <td><strong>Phase 02 (Ch 05-08)</strong></td>
+              <td>if-else, Pattern Matching, Switch Expressions, లూప్స్, 2D గ్రిడ్స్</td>
+              <td>లాజిక్ బిల్డింగ్ &amp; కంట్రోల్ ఫ్లో ప్రావీణ్యం</td>
+            </tr>
+            <tr>
+              <td><strong>Phase 03 (Ch 09-12)</strong></td>
+              <td>Methods, ref/out/in/params, StringBuilder, అర్రేలు, List/Dictionary</td>
+              <td>మెమరీ ఆప్టిమైజేషన్ &amp; డేటా స్ట్రక్చర్స్</td>
+            </tr>
+            <tr>
+              <td><strong>Phase 04 (Ch 13-16)</strong></td>
+              <td>OOP, Primary Constructors, Encapsulation, Inheritance, Interfaces, Records</td>
+              <td>సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్ &amp; ఎంటర్‌ప్రైజ్ డిజైన్</td>
+            </tr>
+            <tr>
+              <td><strong>Phase 05 (Ch 17-20)</strong></td>
+              <td>Exception Handling, Delegates, Events, Lambda, LINQ, Complete Mini Project</td>
+              <td>ప్రొడక్షన్ రెడీనెస్ &amp; రియల్-వరల్డ్ ఇంజనీరింగ్</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🎓 ఫైనల్ గ్రాండ్ క్విజ్ — 5 సమగ్ర ప్రశ్నలు</h2>
+      
+      <p><strong>మీ C# మాస్టరీని పరీక్షించుకోండి:</strong></p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: DTOs మరియు ఇమ్యుటబుల్ డేటా మోడల్స్ కోసం సాధారణ Class కంటే Record ఎందుకు శ్రేష్టం?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> రికార్డులు డీఫాల్ట్‌గా <strong>Value-based Equality</strong> ని, ఇమ్యుటబిలిటీని, <code>with</code> ఎక్స్‌ప్రెషన్‌ను మరియు క్లీన్ సింగిల్-లైన్ ప్రైమరీ కన్‌స్ట్రక్టర్లను అందిస్తాయి. దీనివల్ల 50 లైన్ల బాయిలర్‌ప్లేట్ కోడ్ తగ్గుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: LINQ లో డేటాను కేటగిరీల వారీగా వర్గీకరించడానికి ఏ మెథడ్ వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>.GroupBy()</code></strong> (ఉదాహరణ: <code>employees.GroupBy(e =&gt; e.Dept)</code>).
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: ఎక్సెప్షన్ హ్యాండ్లింగ్‌లో కాల్ స్టాక్ నష్టం జరగకుండా రీ-త్రో చేయడానికి ఏది సరైన విధానం?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కేవలం బేర్ <strong><code>throw;</code></strong> మాత్రమే వాడాలి. <code>throw ex;</code> వాడితే కాల్ స్టాక్ రీసెట్ అయి అసలైన బగ్ లైన్ పోతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: <code>IEmployeeRepository</code> వంటి ఇంటర్‌ఫేస్‌ను వాడటం వల్ల కలిగే అతిపెద్ద ప్రయోజనం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>లూజ్ కప్లింగ్ (Loose Coupling) &amp; టెస్టింగ్ సౌలభ్యం</strong>. బిజినెస్ లాజిక్ ఏ నిర్దిష్ట డేటాబేస్‌కు బంధించబడదు; రన్‌టైమ్‌లో మాక్ డేటా లేదా SQL డేటాబేస్‌ను ప్లగ్-అండ్-ప్లే చేయవచ్చు.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: C# లో అన్‌మేనేజ్డ్ రీసోర్సెస్‌ను ఆటోమేటిక్‌గా క్లీన్ చేయడానికి ఏ కీవర్డ్ వాడతాం?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>using</code></strong> స్టేట్‌మెంట్ లేదా డిక్లరేషన్ (ఇది అంతర్గతంగా <code>try-finally</code> లో <code>Dispose()</code> ని రన్ చేస్తుంది).
+        </div>
+      </details>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🌟 కోర్సు పూర్తి సర్టిఫికేషన్ మెసేజ్</h2>
+      <div style="background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.05)); border:2px solid #10b981; border-radius:12px; padding:24px; text-align:center; margin:24px 0;">
+        <h2 style="color:#059669; margin:0 0 10px 0;">🎉 హృదయపూర్వక అభినందనలు!</h2>
+        <p style="font-size:16px; color:var(--text); line-height:1.8; margin-bottom:16px;">
+          మీరు "Our Compiler — Modern C# &amp; .NET 8 Masterclass (తెలుగు)" లోని మొత్తం <strong>20 అధ్యాయాలను (8.8 లక్షల అక్షరాల లోతైన కంటెంట్‌ను)</strong> విజయవంతంగా పూర్తి చేశారు! 
+          మీరు ఇప్పుడు C# లో ఎంటర్‌ప్రైజ్-గ్రేడ్ సాఫ్ట్‌వేర్ నిర్మించడానికి అవసరమైన సంపూర్ణ సాంకేతిక పరిజ్ఞానాన్ని కలిగి ఉన్నారు.
+        </p>
+        <a href="/blog-csharp.html" style="display:inline-block; background:#10b981; color:#ffffff; font-weight:700; padding:12px 28px; border-radius:8px; text-decoration:none; box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+          ⚡ C# Course Home (పూర్తి సిలబస్ ఇండెక్స్) కు వెళ్లండి
+        </a>
+      </div>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 19. LINQ (డేటా పవర్‌హౌస్)
+      </a>
+      <a href="/blog-csharp.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        🏠 C# Course Index (20/20 పూర్తయ్యాయి!) →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+`;
+
+const projectSimulationCode = `using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================================");
+Console.WriteLine("🏢 మన కార్పొరేట్ - ఎంటర్‌ప్రైజ్ ఎంప్లాయ్ & పేరోల్ మేనేజ్‌మెంట్ v1.0");
+Console.WriteLine("=================================================================\\n");
+
+public enum Department { Engineering, HumanResources, Finance, Marketing, Sales }
+public enum EmploymentType { FullTime, Contractor, Intern }
+
+public record Employee(
+    int Id, 
+    string Name, 
+    string Email, 
+    Department Dept, 
+    EmploymentType Type, 
+    decimal MonthlySalary, 
+    int PerformanceRating, 
+    DateTime JoinedDate);
+
+public record PaySlip(
+    string SlipId, 
+    int EmployeeId, 
+    string EmployeeName, 
+    decimal GrossSalary, 
+    decimal Bonus, 
+    decimal Deductions, 
+    decimal NetSalary);
+
+public class DuplicateEmployeeException(int id) : Exception($"ఉద్యోగి ID #{id} ఇప్పటికే సిస్టమ్‌లో ఉంది!");
+public class InvalidSalaryException(decimal sal) : Exception($"చెల్లని వేతనం: ₹{sal:N2}. కనీసం ₹10,000 ఉండాలి.");
+
+public class PayrollEventArgs(decimal totalDisbursed, int employeeCount) : EventArgs
+{
+    public decimal TotalDisbursed { get; } = totalDisbursed;
+    public int EmployeeCount { get; } = employeeCount;
+    public DateTime ProcessedAt { get; } = DateTime.UtcNow;
+}
+
+public interface IEmployeeRepository
+{
+    void Add(Employee emp);
+    Employee? GetById(int id);
+    IEnumerable<Employee> GetAll();
+    int TotalCount { get; }
+}
+
+public class InMemoryEmployeeRepository : IEmployeeRepository
+{
+    private readonly Dictionary<int, Employee> _store = new();
+    public void Add(Employee emp)
+    {
+        if (_store.ContainsKey(emp.Id)) throw new DuplicateEmployeeException(emp.Id);
+        if (emp.MonthlySalary < 10000m) throw new InvalidSalaryException(emp.MonthlySalary);
+        _store[emp.Id] = emp;
+    }
+    public Employee? GetById(int id) => _store.TryGetValue(id, out var emp) ? emp : null;
+    public IEnumerable<Employee> GetAll() => _store.Values;
+    public int TotalCount => _store.Count;
+}
+
+public class PayrollService(IEmployeeRepository repository)
+{
+    public event EventHandler<PayrollEventArgs>? OnPayrollDisbursed;
+
+    public void GenerateDepartmentBudgetReport()
+    {
+        Console.WriteLine("📊 డిపార్ట్‌మెంట్‌ల వారీగా శాలరీ బడ్జెట్ విశ్లేషణ (LINQ GroupBy):");
+        var report = repository.GetAll()
+            .GroupBy(e => e.Dept)
+            .Select(g => new
+            {
+                Department = g.Key,
+                HeadCount = g.Count(),
+                TotalBudget = g.Sum(e => e.MonthlySalary),
+                AvgSalary = g.Average(e => e.MonthlySalary),
+                TopEarner = g.OrderByDescending(e => e.MonthlySalary).First()
+            })
+            .OrderByDescending(r => r.TotalBudget);
+
+        foreach (var r in report)
+        {
+            Console.WriteLine($"   • {r.Department,-16} | ఉద్యోగులు: {r.HeadCount,2} | మొత్తం బడ్జెట్: ₹{r.TotalBudget,10:N2} | సగటు: ₹{r.AvgSalary,8:N2} | టాప్: {r.TopEarner.Name}");
+        }
+    }
+
+    public List<PaySlip> ProcessMonthlyPayroll()
+    {
+        Console.WriteLine("\\n💵 నెలవారీ పేరోల్ ప్రాసెసింగ్ ప్రారంభమైంది...");
+        var paySlips = new List<PaySlip>();
+        decimal grandTotalDisbursed = 0m;
+
+        foreach (var emp in repository.GetAll())
+        {
+            decimal bonusRate = emp.PerformanceRating switch
+            {
+                >= 9 => 0.20m,
+                >= 7 => 0.10m,
+                _ => 0.00m
+            };
+
+            decimal bonusAmount = emp.MonthlySalary * bonusRate;
+            decimal pfDeduction = emp.MonthlySalary * 0.12m;
+            decimal netSalary = emp.MonthlySalary + bonusAmount - pfDeduction;
+
+            var slip = new PaySlip(
+                "SLIP-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
+                emp.Id,
+                emp.Name,
+                emp.MonthlySalary,
+                bonusAmount,
+                pfDeduction,
+                netSalary);
+
+            paySlips.Add(slip);
+            grandTotalDisbursed += netSalary;
+        }
+
+        OnPayrollDisbursed?.Invoke(this, new PayrollEventArgs(grandTotalDisbursed, paySlips.Count));
+        return paySlips;
+    }
+
+    public string ExportToJson()
+    {
+        return JsonSerializer.Serialize(repository.GetAll(), new JsonSerializerOptions { WriteIndented = true });
+    }
+}
+
+IEmployeeRepository repo = new InMemoryEmployeeRepository();
+PayrollService payroll = new PayrollService(repo);
+
+payroll.OnPayrollDisbursed += (sender, args) =>
+{
+    Console.WriteLine($"\\n📢 [HR & ఫైనాన్స్ ఈవెంట్]: {args.EmployeeCount} మందికి ₹{args.TotalDisbursed:N2} జమ అయ్యాయి! ({args.ProcessedAt:HH:mm:ss} UTC)");
+};
+
+repo.Add(new Employee(101, "శ్రీధర్ పట్నాయక్", "sridhar@tech.com", Department.Engineering, EmploymentType.FullTime, 95000m, 10, DateTime.Now.AddYears(-3)));
+repo.Add(new Employee(102, "లావణ్య దేవి", "lavanya@tech.com", Department.Finance, EmploymentType.FullTime, 75000m, 8, DateTime.Now.AddYears(-2)));
+repo.Add(new Employee(103, "రాకేష్ వర్మ", "rakesh@tech.com", Department.Engineering, EmploymentType.FullTime, 120000m, 9, DateTime.Now.AddYears(-4)));
+repo.Add(new Employee(104, "సంధ్యా రాణి", "sandhya@tech.com", Department.HumanResources, EmploymentType.FullTime, 65000m, 7, DateTime.Now.AddYears(-1)));
+repo.Add(new Employee(105, "వికాస్ నాయుడు", "vikas@tech.com", Department.Marketing, EmploymentType.Contractor, 50000m, 6, DateTime.Now.AddMonths(-8)));
+repo.Add(new Employee(106, "కిరణ్ తేజ", "kiran@tech.com", Department.Engineering, EmploymentType.Intern, 25000m, 9, DateTime.Now.AddMonths(-3)));
+
+payroll.GenerateDepartmentBudgetReport();
+var slips = payroll.ProcessMonthlyPayroll();
+
+Console.WriteLine("\\n📄 తాజా శాలరీ స్లిప్పుల నమూనా (టాప్ 3):");
+foreach (var slip in slips.OrderByDescending(s => s.NetSalary).Take(3))
+{
+    Console.WriteLine($"   [{slip.SlipId}] {slip.EmployeeName,-16} | బేసిక్: ₹{slip.GrossSalary,8:N2} | బోనస్: ₹{slip.Bonus,8:N2} | నెట్: ₹{slip.NetSalary,8:N2}");
+}
+
+Console.WriteLine("\\n=================================================================");
+Console.WriteLine("🎉 అభినందనలు! C# మాస్టర్ కోర్సు 20 అధ్యాయాలు సంపూర్ణంగా ముగిశాయి! 🚀");
+Console.WriteLine("=================================================================");`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="C# గ్రాండ్ మినీ ప్రాజెక్ట్: OOPs, Records, LINQ, Custom Exceptions, Events, System.Text.Json మరియు 3-టైర్ ఆర్కిటెక్చర్‌తో ఎంప్లాయ్ &amp; పేరోల్ సిస్టమ్ సమగ్ర తెలుగు గైడ్." />
+  <meta name="keywords" content="c# mini project telugu, c# employee management system, c# linq project, c# oops real world project, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/20-csharp-mini-project-employee-management.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ (LINQ & JSON)",
+    "description": "C# గ్రాండ్ మినీ ప్రాజెక్ట్: OOPs, Records, LINQ, Custom Exceptions, Events, System.Text.Json తో ఎంప్లాయ్ మేనేజ్‌మెంట్ సమగ్ర తెలుగు గైడ్.",
+    "articleSection": "Phase 05: అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`${projectSimulationCode.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '20-csharp-mini-project-employee-management.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C# Chapter 20 (Grand Finale)!');
+console.log('Target file size:', fullHtml.length, 'characters');

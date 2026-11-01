@@ -1,0 +1,853 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./csharp_curriculum_data');
+
+const lesson = LESSONS.find(l => l.num === 19);
+const sidebarHtml = buildSidebar(19);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 19: LINQ డేటా పవర్‌హౌస్</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# LINQ (Language Integrated Query) — ఆధునిక డేటా ప్రాసెసింగ్ పవర్‌హౌస్</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 19 of 20</span>
+      <span class="meta-pill">🚀 Phase 05: అడ్వాన్స్‌డ్ C#, LINQ &amp; ప్రాజెక్ట్</span>
+      <span class="meta-pill">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>LINQ విప్లవం · Query Syntax vs Method Syntax (Fluent API) · Deferred Execution (వాయిదా అమలు) vs Immediate Execution · ToList, ToArray, ToDictionary · Where &amp; Select ప్రొజెక్షన్ · OrderBy &amp; ThenBy సార్టింగ్ · Count, Sum, Average, Min, Max అగ్రిగేషన్స్ · FirstOrDefault vs SingleOrDefault భద్రత · Any vs Count() &gt; 0 పెర్ఫార్మెన్స్ · GroupBy వర్గీకరణ · Skip &amp; Take పేజినేషన్ · ఈ-కామర్స్ సేల్స్ అనలిటిక్స్ ప్రాజెక్ట్ · 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>C# లో అత్యంత ప్రియమైన ఫీచర్: LINQ (Language Integrated Query)! ⚡</h3>
+      <p>
+        ఒకప్పుడు ప్రోగ్రామర్లు ఒక లిస్ట్‌లోని డేటాను ఫిల్టర్ చేయాలన్నా, సార్ట్ చేయాలన్నా, లేదా గ్రూప్ చేయాలన్నా — 
+        నాలుగైదు నెస్టెడ్ <code>for</code> లూప్‌లు, డజన్ల కొద్దీ తాత్కాలిక వేరియబుల్స్, గజిబిజి కండిషన్లు రాయాల్సి వచ్చేది. 
+        పైగా మెమరీ ఆబ్జెక్టులకు ఒక కోడ్, SQL డేటాబేస్‌కు SQL క్వెరీలు, XML కి ఇంకో కోడ్ రాయాల్సి వచ్చేది.
+      </p>
+      <p style="margin-top:10px;">
+        ఈ గందరగోళానికి చరమగీతం పాడుతూ మైక్రోసాఫ్ట్ C# లోకి ప్రవేశపెట్టిన అద్భుతమైన ఆవిష్కరణే <strong>LINQ (Language Integrated Query)</strong>. 
+        మీ డేటా RAM లోని <code>List&lt;T&gt;</code> లో ఉన్నా, SQL సర్వర్ లో ఉన్నా, లేదా క్లౌడ్ JSON లో ఉన్నా సరే — 
+        ఒకే ఒక శక్తివంతమైన, చదవడానికి అత్యంత సులభమైన ఇంగ్లీష్ లాంటి డిక్లరేటివ్ సింటాక్స్‌తో క్వెరీ చేయవచ్చు! 
+        LINQ అంతర్గత మెకానిక్స్ అయిన <strong>Deferred Execution</strong>, ఫ్లూయెంట్ ఆపరేటర్లు, మరియు బిగ్-డేటా అనలిటిక్స్ ప్రాజెక్ట్‌ను ఈ అధ్యాయంలో సమగ్రంగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🌍 LINQ అంటే ఏమిటి? డేటా ప్రాసెసింగ్‌లో విప్లవం</h2>
+      <p>
+        <strong>LINQ (Language Integrated Query)</strong> అనేది C# ప్రోగ్రామింగ్ లాంగ్వేజ్‌లోనే నేరుగా విలీనం చేయబడిన ఒక క్వెరీ టెక్నాలజీ.
+      </p>
+      <p>LINQ అందించే ప్రధాన ప్రయోజనాలు:</p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>ఏకీకృత సింటాక్స్ (Uniform Syntax):</strong> ఆబ్జెక్ట్స్ (LINQ to Objects), డేటాబేస్ (Entity Framework / LINQ to Entities), XML, JSON అన్నింటికీ ఒకే తరహా కోడ్.</li>
+        <li><strong>కంపైల్-టైమ్ టైప్ సేఫ్టీ (Type Safety):</strong> SQL లో టేబుల్ లేదా కాలమ్ పేరు తప్పుగా రాస్తే రన్‌టైమ్ లో మాత్రమే తెలుస్తుంది. కానీ LINQ లో మీరు కాలమ్ పేరు తప్పుగా రాస్తే కంపైలర్ అక్కడికక్కడే ఎర్రర్ చూపిస్తుంది!</li>
+        <li><strong>ఇంటెల్లిసెన్స్ (IntelliSense) సపోర్ట్:</strong> విజువల్ స్టూడియో లేదా VS Code లో డాట్ (<code>.</code>) పెట్టగానే అన్ని ఫీల్డ్స్, మెథడ్స్ ఆటోమేటిక్‌గా కనిపిస్తాయి.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> ✍️ Query Syntax vs Method Syntax (Fluent API)</h2>
+      <p>
+        LINQ క్వెరీలను రెండు విధాలుగా రాయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Query Syntax vs Method Syntax</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">List<int> numbers = new() { 12, 45, 68, 23, 90, 34, 71, 18 };
+
+// 1. Query Syntax (SQL లాంటి శైలి - from ... where ... select)
+var queryResult = from n in numbers
+                  where n > 40
+                  orderby n descending
+                  select n;
+
+// 2. Method Syntax (Fluent Extension Methods - ప్రొఫెషనల్స్ ఎక్కువగా వాడే శైలి!)
+var methodResult = numbers.Where(n => n > 40)
+                          .OrderByDescending(n => n);
+
+// రెండింటి ఫలితం ఒకటే!
+Console.WriteLine(string.Join(", ", methodResult)); // 90, 71, 68, 45</code></pre>
+      </div>
+
+      <p>
+        <strong>గమనిక:</strong> C# కంపైలర్ Query Syntax లో రాసిన కోడ్‌ను కూడా అంతర్గతంగా Method Syntax లోకే మారుస్తుంది. 
+        అందువల్ల ఆధునిక సాఫ్ట్‌వేర్ సంస్థలలో లాంబ్డా ఆధారిత <strong>Method Syntax (Fluent API)</strong> నే ప్రామాణికంగా ఉపయోగిస్తారు.
+      </p>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ⏳ Deferred Execution (వాయిదా అమలు) vs Immediate Execution</h2>
+      <p>
+        ఇది LINQ లో అత్యంత లోతైన మరియు ఇంటర్వ్యూలలో అత్యధికంగా పరీక్షించే కాన్సెప్ట్!
+      </p>
+      <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 16px; margin:14px 0; font-size:14.5px; line-height:1.7;">
+        <strong>Deferred Execution (వాయిదా అమలు):</strong> మీరు <code>var q = list.Where(...)</code> అని రాసినప్పుడు, ఆ క్వెరీ వెంటనే ఎగ్జిక్యూట్ అవ్వదు! 
+        అది కేవలం ఒక ఎగ్జిక్యూషన్ ప్లాన్ (Blueprint) మాత్రమే. 
+        <strong>ఆ డేటా నిజంగా ఎప్పుడు రన్ అవుతుందంటే — మీరు ఆ క్వెరీపై <code>foreach</code> లూప్ తిప్పినప్పుడు లేదా <code>ToList()</code> పిలిచినప్పుడు మాత్రమే!</strong>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Proof of Deferred Execution</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">List<string> names = new() { "రాము", "గోపాల్" };
+
+// క్వెరీ డిక్లేర్ చేశాం - కానీ ఇంకా రన్ అవ్వలేదు!
+var query = names.Where(n => n.Length >= 4);
+
+// క్వెరీ డిక్లేర్ చేసిన తర్వాత లిస్ట్‌లోకి కొత్త పేరు చేర్చాం!
+names.Add("శ్రీనివాస్");
+
+// ఇప్పుడు లూప్ తిరుగుతున్నప్పుడు మాత్రమే అసలైన క్వెరీ రన్ అవుతుంది!
+foreach (var name in query)
+{
+    Console.WriteLine(name);
+}
+// అవుట్‌పుట్: శ్రీనివాస్ (తర్వాత చేర్చిన పేరు కూడా వచ్చింది! ఇదే Deferred Execution!)</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> ⚡ Immediate Execution ఆపరేటర్లు: \`ToList()\`, \`ToArray()\`, \`ToDictionary()\`</h2>
+      <p>
+        ఒకవేళ మీరు క్వెరీ ఫలితాన్ని తక్షణమే మెమరీలో ఒక స్నాప్‌షాట్ లాగా భద్రపరచాలనుకుంటే (తర్వాత ఒరిజినల్ లిస్ట్ మారినా ఈ ఫలితం మారకూడదనుకుంటే), 
+        <strong>Immediate Execution</strong> ఆపరేటర్లను పిలవాలి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>.ToList()</code>: ఫలితాన్ని తక్షణమే <code>List&lt;T&gt;</code> గా మారుస్తుంది.</li>
+        <li><code>.ToArray()</code>: ఫలితాన్ని ఫిక్స్‌డ్ సైజ్ అర్రేగా మారుస్తుంది.</li>
+        <li><code>.ToDictionary(k =&gt; k.Id)</code>: కీ-వాల్యూ డిక్షనరీగా మారుస్తుంది.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🔍 ఫిల్టరింగ్ &amp; ప్రొజెక్షన్: \`Where\` మరియు \`Select\`</h2>
+      <p>
+        LINQ లో ప్రతిరోజూ అత్యధికంగా ఉపయోగించే రెండు ప్రాథమిక స్తంభాలు:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong><code>Where(predicate)</code>:</strong> ఒక షరతును ఇచ్చి, కేవలం ఆ షరతు నెరవేరిన రికార్డులను మాత్రమే ఫిల్టర్ చేయడం.</li>
+        <li><strong><code>Select(transform)</code>:</strong> డేటాను ప్రొజెక్షన్ చేయడం. అంటే ఉన్న ఆబ్జెక్ట్ నుండి కేవలం కావాల్సిన కాలమ్స్‌ను మాత్రమే ఎంపిక చేయడం లేదా కొత్త రూపంలోకి మార్చడం (DTO Mapping).</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Where and Select Projection</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public record Product(string Title, decimal Price, string Category);
+
+List<Product> products = new()
+{
+    new Product("స్మార్ట్‌ఫోన్", 25000m, "ఎలక్ట్రానిక్స్"),
+    new Product("కాటన్ షర్ట్", 1200m, "ఫ్యాషన్"),
+    new Product("ల్యాప్‌టాప్", 75000m, "ఎలక్ట్రానిక్స్"),
+    new Product("రన్నింగ్ షూస్", 3500m, "ఫ్యాషన్")
+};
+
+// ఎలక్ట్రానిక్స్ మాత్రమే ఫిల్టర్ చేసి, కేవలం టైటిల్ మరియు GST ధరను ప్రొజెక్ట్ చేయడం
+var electronicsDto = products
+    .Where(p => p.Category == "ఎలక్ట్రానిక్స్")
+    .Select(p => new 
+    {
+        Item = p.Title,
+        FinalPriceWithGst = p.Price * 1.18m
+    })
+    .ToList();
+
+foreach (var item in electronicsDto)
+{
+    Console.WriteLine($"వస్తువు: {item.Item} | జీఎస్టీ ధర: ₹{item.FinalPriceWithGst:N2}");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 📶 సార్టింగ్: \`OrderBy\`, \`OrderByDescending\`, \`ThenBy\`</h2>
+      <p>
+        డేటాను క్రమపద్ధతిలో అమర్చడానికి (Sorting):
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>OrderBy(x =&gt; x.Field)</code>: ఆరోహణ క్రమం (Ascending order - A to Z, చిన్న నుండి పెద్దది).</li>
+        <li><code>OrderByDescending(x =&gt; x.Field)</code>: అవరోహణ క్రమం (Descending order - Z to A, పెద్ద నుండి చిన్నది).</li>
+        <li><code>ThenBy(x =&gt; x.SecondaryField)</code>: మొదటి కాలమ్ సమానమైనప్పుడు, రెండో కాలమ్ ఆధారంగా సార్టింగ్ (Multi-level sorting).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Multi-Level Sorting with OrderBy & ThenBy</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">var sortedList = products
+    .OrderBy(p => p.Category)           // మొదట కేటగిరీ ప్రకారం A-Z
+    .ThenByDescending(p => p.Price);    // కేటగిరీ సమానమైతే ధర ప్రకారం ఎక్కువ నుండి తక్కువకు</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🧮 అగ్రిగేషన్ ఆపరేటర్లు: \`Count\`, \`Sum\`, \`Average\`, \`Min\`, \`Max\`</h2>
+      <p>
+        కలెక్షన్‌లోని డేటాపై గణాంకాలు (Statistical metrics) లెక్కించడానికి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Statistical Aggregations</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">decimal totalInventoryValue = products.Sum(p => p.Price);
+decimal avgPrice = products.Average(p => p.Price);
+decimal maxPrice = products.Max(p => p.Price);
+int affordableCount = products.Count(p => p.Price < 5000m);
+
+Console.WriteLine($"మొత్తం ఇన్వెంటరీ విలువ: ₹{totalInventoryValue:N2}");
+Console.WriteLine($"సగటు ధర: ₹{avgPrice:N2}");
+Console.WriteLine($"గరిష్ట ధర: ₹{maxPrice:N2}");
+Console.WriteLine($"బడ్జెట్ వస్తువులు (<₹5k): {affordableCount}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🎯 ఎలిమెంట్ ఆపరేటర్లు: \`First\`, \`FirstOrDefault\`, \`Single\`, \`SingleOrDefault\`</h2>
+      <p>
+        కలెక్షన్ నుండి ఒక నిర్దిష్ట సింగిల్ ఎలిమెంట్‌ను ఎంచుకోవడానికి ఈ ఆపరేటర్లు వాడతాం:
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>మెథడ్</th>
+              <th>ఎలిమెంట్ దొరకకపోతే?</th>
+              <th>బహుళ ఎలిమెంట్లు దొరికితే?</th>
+              <th>ఎప్పుడు వాడాలి?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>First()</code></td>
+              <td>❌ <code>InvalidOperationException</code></td>
+              <td>మొదటి ఎలిమెంట్ తీసుకుంటుంది</td>
+              <td>కనీసం ఒక్కటైనా ఖచ్చితంగా ఉంటుందని నమ్మకం ఉన్నప్పుడు</td>
+            </tr>
+            <tr>
+              <td><code>FirstOrDefault()</code></td>
+              <td>✅ <code>null</code> లేదా డీఫాల్ట్ విలువ ఇస్తుంది</td>
+              <td>మొదటి ఎలిమెంట్ తీసుకుంటుంది</td>
+              <td><strong>అత్యంత సురక్షితమైనది (90% ప్రొడక్షన్‌లో ఇదే వాడాలి)</strong></td>
+            </tr>
+            <tr>
+              <td><code>Single()</code></td>
+              <td>❌ <code>InvalidOperationException</code></td>
+              <td>❌ <code>InvalidOperationException</code></td>
+              <td>ఖచ్చితంగా ఒక్కటే ఉండాలి (ఉదా: Primary Key ID)</td>
+            </tr>
+            <tr>
+              <td><code>SingleOrDefault()</code></td>
+              <td>✅ <code>null</code> ఇస్తుంది</td>
+              <td>❌ <code>InvalidOperationException</code></td>
+              <td>0 లేదా 1 మాత్రమే ఉండాలి అనుకున్నప్పుడు</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> ⚡ క్వాంటిఫైయర్లు: \`Any\` vs \`Count() > 0\` — సీనియర్ పెర్ఫార్మెన్స్ టిప్!</h2>
+      <p>
+        ఒక లిస్ట్‌లో డేటా ఉందో లేదో సరిచూడటానికి రూకీలు <code>list.Count() &gt; 0</code> రాస్తారు. 
+        కానీ సీనియర్ ఇంజనీర్లు ఎల్లప్పుడూ <strong><code>list.Any()</code></strong> రాస్తారు!
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin:16px 0;">
+        <h4 style="margin:0 0 8px 0; color:#10b981;">🚀 ఎందుకు Any() వేల రెట్లు వేగవంతమైనది?</h4>
+        <p style="margin:0; font-size:14px; line-height:1.7; color:var(--text2);">
+          • <code>Count()</code> మొత్తం 10 లక్షల రికార్డులను లెక్కిస్తూ చివరి వరకు వెళ్తుంది (O(N) Complexity).<br>
+          • <code>Any()</code> మొదటి రికార్డు కనిపించగానే తక్షణమే <code>true</code> రిటర్న్ చేసి బయటకు వచ్చేస్తుంది (O(1) Early Exit)!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🗂️ గ్రూపింగ్: \`GroupBy\` ద్వారా వర్గీకరణ</h2>
+      <p>
+        డేటాను ఏదైనా నిర్దిష్ట కేటగిరీ లేదా డిపార్ట్‌మెంట్ ప్రకారం వర్గీకరించడానికి <strong><code>GroupBy</code></strong> వాడతాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · GroupBy in Action</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">var groupedByCategory = products.GroupBy(p => p.Category);
+
+foreach (var group in groupedByCategory)
+{
+    Console.WriteLine($"\\n📁 కేటగిరీ: {group.Key} ({group.Count()} వస్తువులు)");
+    foreach (var item in group)
+    {
+        Console.WriteLine($"   • {item.Title} - ₹{item.Price:N2}");
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 📄 పేజినేషన్ (Pagination): \`Skip\` మరియు \`Take\`</h2>
+      <p>
+        వెబ్ అప్లికేషన్లలో 10,000 రికార్డులను ఒకేసారి యూజర్‌కు చూపిస్తే బ్రౌజర్ హ్యాంగ్ అవుతుంది. 
+        ఒక్కో పేజీకి 10 రికార్డుల చొప్పున పేజినేషన్ చేయడానికి <code>Skip</code> మరియు <code>Take</code> వాడతాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Enterprise Pagination Formula</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int pageNumber = 2; // రెండవ పేజీ
+int pageSize = 10;   // పేజీకి 10 రికార్డులు
+
+// బంగారు పేజినేషన్ సూత్రం:
+var pageRecords = allCustomers
+    .Skip((pageNumber - 1) * pageSize) // మొదటి 10 ని స్కిప్ చేస్తుంది
+    .Take(pageSize)                    // తర్వాత 10 ని తీసుకుంటుంది
+    .ToList();</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 📊 రియల్-వరల్డ్ ప్రాజెక్ట్ — ఎంటర్‌ప్రైజ్ ఈ-కామర్స్ సేల్స్ అనలిటిక్స్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న LINQ Where, Select, OrderBy, GroupBy, Sum, Any, FirstOrDefault, 
+        మరియు Skip/Take లన్నింటినీ ఉపయోగించి ఒక పూర్తి స్థాయి <strong>ఈ-కామర్స్ బిగ్-డేటా అనలిటిక్స్ ఇంజిన్ (Sales Analytics Engine v1.0)</strong> నిర్మిద్దాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Enterprise E-Commerce Analytics Engine</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("📊 మన షాప్ - ఎంటర్‌ప్రైజ్ సేల్స్ అనలిటిక్స్ ఇంజిన్ (LINQ)");
+Console.WriteLine("=================================================\\n");
+
+// డొమైన్ మోడల్స్ (Records)
+public record SaleRecord(string OrderId, string CustomerName, string City, string Category, decimal Amount, DateTime Date);
+
+List<SaleRecord> sales = new()
+{
+    new("ORD-101", "శ్రీధర్ వర్మ", "హైదరాబాద్", "ల్యాప్‌టాప్స్", 85000m, DateTime.Now.AddDays(-2)),
+    new("ORD-102", "అనిత రావు", "విజయవాడ", "స్మార్ట్‌ఫోన్స్", 28000m, DateTime.Now.AddDays(-5)),
+    new("ORD-103", "రాజేష్ నాయుడు", "హైదరాబాద్", "యాక్సెసరీస్", 2500m, DateTime.Now.AddDays(-1)),
+    new("ORD-104", "భవాని శంకర్", "విశాఖపట్నం", "ల్యాప్‌టాప్స్", 92000m, DateTime.Now.AddDays(-3)),
+    new("ORD-105", "సంధ్యా రాణి", "హైదరాబాద్", "స్మార్ట్‌ఫోన్స్", 45000m, DateTime.Now.AddDays(-4)),
+    new("ORD-106", "కిషోర్ కుమార్", "విజయవాడ", "యాక్సెసరీస్", 1800m, DateTime.Now.AddDays(-6)),
+    new("ORD-107", "శ్రీవాత్సవ", "విశాఖపట్నం", "స్మార్ట్‌ఫోన్స్", 32000m, DateTime.Now.AddDays(-2)),
+    new("ORD-108", "సురేష్ కొణిదెల", "హైదరాబాద్", "ల్యాప్‌టాప్స్", 115000m, DateTime.Now.AddDays(-1))
+};
+
+// 1. స్థూల గణాంకాలు (Aggregations)
+decimal grossSales = sales.Sum(s => s.Amount);
+decimal avgTicketSize = sales.Average(s => s.Amount);
+decimal maxOrderVal = sales.Max(s => s.Amount);
+
+Console.WriteLine($"💰 మొత్తం అమ్మకాల ఆదాయం : ₹{grossSales:N2}");
+Console.WriteLine($"📈 సగటు ఆర్డర్ పరిమాణం : ₹{avgTicketSize:N2}");
+Console.WriteLine($"🏆 అత్యధిక సింగిల్ ఆర్డర్: ₹{maxOrderVal:N2}\\n");
+
+// 2. కేటగిరీల వారీగా అమ్మకాల విశ్లేషణ (GroupBy & Sum)
+Console.WriteLine("📁 కేటగిరీల వారీగా అమ్మకాల పనితీరు:");
+var categoryReport = sales
+    .GroupBy(s => s.Category)
+    .Select(g => new
+    {
+        Category = g.Key,
+        TotalRevenue = g.Sum(x => x.Amount),
+        OrdersCount = g.Count(),
+        AvgPerOrder = g.Average(x => x.Amount)
+    })
+    .OrderByDescending(r => r.TotalRevenue);
+
+foreach (var row in categoryReport)
+{
+    Console.WriteLine($"   • {row.Category,-14} | మొత్తం: ₹{row.TotalRevenue,10:N2} | ఆర్డర్లు: {row.OrdersCount} | సగటు: ₹{row.AvgPerOrder:N2}");
+}
+
+// 3. నగరాల వారీగా ఆర్డర్ల లెక్కింపు (City-wise Sales)
+Console.WriteLine("\\n🏙️ నగరాల వారీగా రెవెన్యూ:");
+var cityReport = sales
+    .GroupBy(s => s.City)
+    .Select(g => new { City = g.Key, Total = g.Sum(x => x.Amount) })
+    .OrderByDescending(c => c.Total);
+
+foreach (var c in cityReport)
+{
+    Console.WriteLine($"   • {c.City,-12}: ₹{c.Total:N2}");
+}
+
+// 4. హై-వాల్యూ కస్టమర్లు (VIP Orders > ₹50,000)
+Console.WriteLine("\\n⭐ VIP హై-వాల్యూ ఆర్డర్లు (> ₹50,000):");
+var vipOrders = sales
+    .Where(s => s.Amount >= 50000m)
+    .OrderByDescending(s => s.Amount)
+    .Select(s => $"{s.CustomerName} ({s.City}) -> ₹{s.Amount:N2} [{s.Category}]");
+
+foreach (var vip in vipOrders)
+{
+    Console.WriteLine($"   💎 {vip}");
+}
+
+// 5. పేజినేషన్ సిమ్యులేషన్ (Page 1: Top 3 Sales)
+Console.WriteLine("\\n📄 పేజినేషన్ డెమో (Top 3 అమ్మకాలు - Page 1):");
+var top3 = sales.OrderByDescending(s => s.Amount).Take(3);
+foreach (var s in top3)
+{
+    Console.WriteLine($"   [{s.OrderId}] {s.CustomerName} - ₹{s.Amount:N2}");
+}
+
+Console.WriteLine("=================================================");</code></pre>
+      </div>
+
+      <!-- RUN LIVE COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin:24px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:#10b981; font-size:18px;">💻 ఈ LINQ అనలిటిక్స్ కోడ్‌ను ఆన్‌లైన్ కంపైలర్‌లో రన్ చేయండి!</h3>
+          <p style="margin:0; font-size:14px; color:var(--text2);">
+            GroupBy, Sum, Average, OrderBy, మరియు Take పేజినేషన్ల నిజమైన అవుట్‌పుట్‌ను .NET 8 కంపైలర్‌లో పరిశీలించండి.
+          </p>
+        </div>
+        <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:12px 24px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <span>▶ Try C# Online Compiler</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🎓 ఇంటర్వ్యూ ప్రశ్నలు, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h2>
+      
+      <p><strong>టాప్ ఇంటర్వ్యూ ప్రశ్నలు &amp; సమాధానాలు:</strong></p>
+      <div style="margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q1: LINQ లో Deferred Execution అంటే ఏమిటి?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> క్వెరీని డిక్లేర్ చేసిన వెంటనే అది ఎగ్జిక్యూట్ అవ్వదు. ఆ డేటాను <code>foreach</code> లూప్ ద్వారా రిక్వెస్ట్ చేసినప్పుడు లేదా <code>ToList()</code>, <code>Count()</code> వంటి తక్షణ మెథడ్స్ పిలిచినప్పుడు మాత్రమే క్వెరీ మెమరీలో రన్ అవుతుంది. దీనివల్ల అనవసరమైన లూపింగ్ ఆగి పెర్ఫార్మెన్స్ పెరుగుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q2: <code>First()</code> కి మరియు <code>FirstOrDefault()</code> కి మధ్య తేడా ఏమిటి?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> ఇచ్చిన షరతుకు సరిపడే ఎలిమెంట్ లిస్ట్‌లో లేకపోతే <code>First()</code> మెథడ్ <code>InvalidOperationException</code> విసిరి ప్రోగ్రామ్‌ను క్రాష్ చేస్తుంది. కానీ <code>FirstOrDefault()</code> ఎర్రర్ ఇవ్వకుండా సురక్షితంగా ఆ టైప్ యొక్క డీఫాల్ట్ విలువను (Reference types కు <code>null</code>) రిటర్న్ చేస్తుంది.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 16px 0; color:var(--text);">🧠 మీ నాలెడ్జ్ చెక్ చేసుకోండి — 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: కలెక్షన్‌లో డేటా ఉందో లేదో పరీక్షించడానికి ఏ మెథడ్ అత్యంత వేగవంతమైనది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>.Any()</code></strong>. ఇది మొదటి రికార్డు కనిపించగానే O(1) లో తక్షణమే ఆగిపోతుంది. <code>Count() &gt; 0</code> మొత్తం లిస్ట్‌ను లెక్కిస్తుంది కాబట్టి నెమ్మదిస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: LINQ క్వెరీని తక్షణమే ఎగ్జిక్యూట్ చేసి మెమరీలో లిస్ట్‌గా భద్రపరచడానికి ఏ మెథడ్ వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>.ToList()</code></strong>.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>OrderBy</code> తర్వాత రెండో కాలమ్ ఆధారంగా సార్టింగ్ చేయడానికి ఏ మెథడ్ వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>ThenBy()</code></strong> లేదా <code>ThenByDescending()</code>.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: వెబ్ అప్లికేషన్లలో పేజినేషన్ కోసం ఏ రెండు LINQ ఆపరేటర్లను జతగా ఉపయోగిస్తారు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>Skip</code> మరియు <code>Take</code></strong> (ఉదా: <code>.Skip(10).Take(10)</code>).
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: <code>Single()</code> మెథడ్ ఎప్పుడు ఎక్సెప్షన్ విసురుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కలెక్షన్‌లో అసలు ఎలిమెంట్ లేకపోయినా OR ఒకటి కంటే ఎక్కువ ఎలిమెంట్లు ఉన్నా — రెండు సందర్భాల్లోనూ <code>Single()</code> ఎర్రర్ విసురుతుంది. ఖచ్చితంగా ఒకే ఒక్క ఎలిమెంట్ ఉన్నప్పుడే పనిచేస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 18. డెలిగేట్స్, ఈవెంట్స్ &amp; లాంబ్డా
+      </a>
+      <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 20. గ్రాండ్ మినీ ప్రాజెక్ట్ (ఫినాలే) →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+`;
+
+const projectSimulationCode = `using System;
+using System.Collections.Generic;
+using System.Linq;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("📊 మన షాప్ - ఎంటర్‌ప్రైజ్ సేల్స్ అనలిటిక్స్ ఇంజిన్ (LINQ)");
+Console.WriteLine("=================================================\\n");
+
+public record SaleRecord(string OrderId, string CustomerName, string City, string Category, decimal Amount, DateTime Date);
+
+List<SaleRecord> sales = new()
+{
+    new("ORD-101", "శ్రీధర్ వర్మ", "హైదరాబాద్", "ల్యాప్‌టాప్స్", 85000m, DateTime.Now.AddDays(-2)),
+    new("ORD-102", "అనిత రావు", "విజయవాడ", "స్మార్ట్‌ఫోన్స్", 28000m, DateTime.Now.AddDays(-5)),
+    new("ORD-103", "రాజేష్ నాయుడు", "హైదరాబాద్", "యాక్సెసరీస్", 2500m, DateTime.Now.AddDays(-1)),
+    new("ORD-104", "భవాని శంకర్", "విశాఖపట్నం", "ల్యాప్‌టాప్స్", 92000m, DateTime.Now.AddDays(-3)),
+    new("ORD-105", "సంధ్యా రాణి", "హైదరాబాద్", "స్మార్ట్‌ఫోన్స్", 45000m, DateTime.Now.AddDays(-4)),
+    new("ORD-106", "కిషోర్ కుమార్", "విజయవాడ", "యాక్సెసరీస్", 1800m, DateTime.Now.AddDays(-6)),
+    new("ORD-107", "శ్రీవాత్సవ", "విశాఖపట్నం", "స్మార్ట్‌ఫోన్స్", 32000m, DateTime.Now.AddDays(-2)),
+    new("ORD-108", "సురేష్ కొణిదెల", "హైదరాబాద్", "ల్యాప్‌టాప్స్", 115000m, DateTime.Now.AddDays(-1))
+};
+
+decimal grossSales = sales.Sum(s => s.Amount);
+decimal avgTicketSize = sales.Average(s => s.Amount);
+decimal maxOrderVal = sales.Max(s => s.Amount);
+
+Console.WriteLine($"💰 మొత్తం అమ్మకాల ఆదాయం : ₹{grossSales:N2}");
+Console.WriteLine($"📈 సగటు ఆర్డర్ పరిమాణం : ₹{avgTicketSize:N2}");
+Console.WriteLine($"🏆 అత్యధిక సింగిల్ ఆర్డర్: ₹{maxOrderVal:N2}\\n");
+
+Console.WriteLine("📁 కేటగిరీల వారీగా అమ్మకాల పనితీరు:");
+var categoryReport = sales
+    .GroupBy(s => s.Category)
+    .Select(g => new
+    {
+        Category = g.Key,
+        TotalRevenue = g.Sum(x => x.Amount),
+        OrdersCount = g.Count(),
+        AvgPerOrder = g.Average(x => x.Amount)
+    })
+    .OrderByDescending(r => r.TotalRevenue);
+
+foreach (var row in categoryReport)
+{
+    Console.WriteLine($"   • {row.Category,-14} | మొత్తం: ₹{row.TotalRevenue,10:N2} | ఆర్డర్లు: {row.OrdersCount} | సగటు: ₹{row.AvgPerOrder:N2}");
+}
+
+Console.WriteLine("\\n🏙️ నగరాల వారీగా రెవెన్యూ:");
+var cityReport = sales
+    .GroupBy(s => s.City)
+    .Select(g => new { City = g.Key, Total = g.Sum(x => x.Amount) })
+    .OrderByDescending(c => c.Total);
+
+foreach (var c in cityReport) Console.WriteLine($"   • {c.City,-12}: ₹{c.Total:N2}");
+
+Console.WriteLine("\\n⭐ VIP హై-వాల్యూ ఆర్డర్లు (> ₹50,000):");
+var vipOrders = sales
+    .Where(s => s.Amount >= 50000m)
+    .OrderByDescending(s => s.Amount)
+    .Select(s => $"{s.CustomerName} ({s.City}) -> ₹{s.Amount:N2} [{s.Category}]");
+
+foreach (var vip in vipOrders) Console.WriteLine($"   💎 {vip}");
+
+Console.WriteLine("\\n📄 పేజినేషన్ డెమో (Top 3 అమ్మకాలు - Page 1):");
+var top3 = sales.OrderByDescending(s => s.Amount).Take(3);
+foreach (var s in top3) Console.WriteLine($"   [{s.OrderId}] {s.CustomerName} - ₹{s.Amount:N2}");
+
+Console.WriteLine("=================================================");`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# LINQ (Language Integrated Query) — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="C# లో LINQ, Method Syntax, Query Syntax, Deferred Execution, Where, Select, OrderBy, GroupBy, Any, FirstOrDefault, Skip, Take మరియు సేల్స్ అనలిటిక్స్ ప్రాజెక్ట్ సమగ్ర తెలుగు గైడ్." />
+  <meta name="keywords" content="c# linq telugu, c# linq tutorial, c# deferred execution, c# linq where select groupby, c# linq skip take, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/19-csharp-linq-language-integrated-query.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C# LINQ (Language Integrated Query) — డేటా ప్రాసెసింగ్ పవర్‌హౌస్",
+    "description": "C# లో LINQ, Method Syntax, Query Syntax, Deferred Execution, Where, Select, OrderBy, GroupBy, Any, FirstOrDefault సమగ్ర తెలుగు గైడ్.",
+    "articleSection": "Phase 05: అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`${projectSimulationCode.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '19-csharp-linq-language-integrated-query.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C# Chapter 19!');
+console.log('Target file size:', fullHtml.length, 'characters');

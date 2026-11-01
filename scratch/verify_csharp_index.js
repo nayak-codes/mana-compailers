@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { LESSONS, PHASES } = require('./csharp_curriculum_data.js');
+const { LESSONS } = require('./csharp_curriculum_data.js');
 
 const html = fs.readFileSync('public/blog-csharp.html', 'utf8');
 
@@ -25,4 +25,5 @@ console.log('Purple occurrences:', purpleMatches.length);
 const greenMatches = html.match(/#10b981/gi) || [];
 console.log('Emerald green #10b981 occurrences:', greenMatches.length);
 
-console.log('Phases count in HTML:', PHASES.filter(p => html.includes(p.tag)).length);
+console.log('All 20 lessons linked in Index:', missingInRoadmap === 0 ? '✅ YES' : '❌ NO');
+

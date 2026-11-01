@@ -1011,3 +1011,4 @@ fs.writeFileSync(outputPath, fullHtml, 'utf8');
 
 console.log('✅ Successfully generated deep high-value C# Chapter 16!');
 console.log('Target file size:', fullHtml.length, 'characters');
+

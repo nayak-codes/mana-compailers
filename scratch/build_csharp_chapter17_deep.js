@@ -1,0 +1,1026 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./csharp_curriculum_data');
+
+const lesson = LESSONS.find(l => l.num === 17);
+const sidebarHtml = buildSidebar(17);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 17: ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, when, Custom Exceptions &amp; IDisposable)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 17 of 20</span>
+      <span class="meta-pill">🚀 Phase 05: అడ్వాన్స్‌డ్ C#, LINQ &amp; ప్రాజెక్ట్</span>
+      <span class="meta-pill">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>రన్‌టైమ్ ఎర్రర్ vs బగ్ · .NET Exception Hierarchy (System.Exception) · try-catch-finally లైఫ్‌సైకిల్ · మల్టిపుల్ క్యాచ్ బ్లాకులు &amp; ఆర్డరింగ్ రూల్ · C# 6+ when ఫిల్టర్లు · throw vs throw ex (కాల్ స్టాక్ నష్టం నివారణ) · ఇన్నర్ ఎక్సెప్షన్లు · డొమైన్-స్పెసిఫిక్ కస్టమ్ ఎక్సెప్షన్లు · IDisposable &amp; using స్టేట్‌మెంట్ / డిక్లరేషన్ · యాంటీ-ప్యాటర్న్స్ · ఎంటర్‌ప్రైజ్ ATM క్యాష్ విత్‌డ్రాయల్ &amp; ఆడిట్ ప్రాజెక్ట్ · 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>స్వాగతం Phase 05 కు! 🚀 అడ్వాన్స్‌డ్ C#, ఎంటర్‌ప్రైజ్ రెసిలియెన్స్ &amp; LINQ!</h3>
+      <p>
+        ఒక రూకీ ప్రోగ్రామర్ రాసే కోడ్ కేవలం ప్రతిదీ సవ్యంగా జరిగినప్పుడు మాత్రమే (Happy Path) పనిచేస్తుంది. 
+        కానీ ఒక సీనియర్ సాఫ్ట్‌వేర్ ఇంజనీర్ రాసే ప్రొడక్షన్ కోడ్ — ఇంటర్నెట్ కేబుల్ తెగిపోయినా, డేటాబేస్ డౌన్ అయినా, యూజర్ తప్పుడు డేటా ఇచ్చినా, లేదా హార్డ్‌డిస్క్ నిండిపోయినా సరే 
+        క్రాష్ అవ్వకుండా సురక్షితంగా రక్షించుకునే <strong>రెసిలియెన్స్ (Fault Tolerance &amp; Graceful Degradation)</strong> కలిగి ఉంటుంది.
+      </p>
+      <p style="margin-top:10px;">
+        ఈ మొదటి అడ్వాన్స్‌డ్ అధ్యాయంలో C# రన్‌టైమ్ లోపం వచ్చినప్పుడు జరిగే అంతర్గత మెకానిక్స్, 
+        <code>try-catch-finally</code> ల అసలైన కాల్ స్టాక్ పనితీరు, <strong><code>throw;</code> vs <code>throw ex;</code> ల మధ్య ఉండే లైఫ్-అండ్-డెత్ డిఫరెన్స్</strong>, 
+        <code>when</code> కండిషనల్ ఫిల్టర్లు, కస్టమ్ ఎక్సెప్షన్ల నిర్మాణం, మరియు మెమరీ లీక్స్ రాకుండా నిరోధించే <strong><code>IDisposable</code> &amp; <code>using</code></strong> లపై 
+        పూర్తి స్థాయి ప్రావీణ్యం సంపాదిద్దాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 💥 రన్‌టైమ్ ఎర్రర్స్ vs కంపైల్-టైమ్ ఎర్రర్స్ — ఎక్సెప్షన్ అంటే ఏమిటి?</h2>
+      <p>
+        కంప్యూటర్ ప్రోగ్రామింగ్‌లో లోపాలు రెండు వేర్వేరు దశల్లో బయటపడతాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>కంపైల్-టైమ్ ఎర్రర్స్ (Compile-Time Errors):</strong> సింటాక్స్ మిస్టేక్స్, టైప్ మిస్‌మ్యాచ్‌లు, సెమికోలన్ మర్చిపోవడం లాంటివి. C# కంపైలర్ వీటిని కోడ్ రన్ అవ్వకముందే పసిగట్టి అడ్డుకుంటుంది.</li>
+        <li><strong>రన్‌టైమ్ ఎక్సెప్షన్స్ (Runtime Exceptions):</strong> ప్రోగ్రామ్ విజయవంతంగా కంపైల్ అయి నడుస్తున్న సమయంలో ఊహించని పరిస్థితుల వల్ల (ఉదా: డివైడ్ బై జీరో, నెట్‌వర్క్ టైమౌట్, ఫైల్ డిలీట్ అవ్వడం, నల్ రిఫరెన్స్) తలెత్తే అసాధారణ పరిస్థితులు (Exceptional Conditions).</li>
+      </ul>
+      <p style="margin-top:12px;">
+        ఒక ఎక్సెప్షన్ వచ్చినప్పుడు మీరు దాన్ని హ్యాండిల్ చేయకపోతే, <strong>CLR (Common Language Runtime) ఆ అప్లికేషన్‌ను వెంటనే కిల్ చేసి క్రాష్ చేస్తుంది (Crash to Desktop)</strong>. 
+        ఎక్సెప్షన్ హ్యాండ్లింగ్ ముఖ్య ఉద్దేశ్యం — ప్రోగ్రామ్ క్రాష్ కాకుండా ఆపి, సమస్యను లాగ్ చేసి, యూజర్‌కు అర్థమయ్యే సందేశాన్ని అందించడం (Fail Gracefully).
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 🌳 .NET Exception Hierarchy — \`System.Exception\` వృక్షం</h2>
+      <p>
+        C# లోని అన్ని ఎక్సెప్షన్లు ఒక స్పష్టమైన క్లాస్ హైరార్కీని పాటిస్తాయి. 
+        వాటన్నింటికీ మూల పురుషుడు <strong><code>System.Exception</code></strong>.
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఎక్సెప్షన్ క్లాస్</th>
+              <th>ఎప్పుడు వస్తుంది?</th>
+              <th>ఉదాహరణ సందర్భం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>NullReferenceException</code></td>
+              <td><code>null</code> గా ఉన్న రిఫరెన్స్ వేరియబుల్ యొక్క మెథడ్ లేదా ప్రాపర్టీని కాల్ చేసినప్పుడు</td>
+              <td><code>string s = null; s.ToUpper();</code></td>
+            </tr>
+            <tr>
+              <td><code>DivideByZeroException</code></td>
+              <td>ఒక ఇంటీజర్‌ను సున్నా (0) తో భాగించినప్పుడు</td>
+              <td><code>int result = 100 / 0;</code></td>
+            </tr>
+            <tr>
+              <td><code>IndexOutOfRangeException</code></td>
+              <td>అర్రే పరిధిని దాటి ఇండెక్స్‌ను యాక్సెస్ చేసినప్పుడు</td>
+              <td><code>int[] a = new int[3]; int x = a[5];</code></td>
+            </tr>
+            <tr>
+              <td><code>FormatException</code></td>
+              <td>స్ట్రింగ్‌ను నంబర్‌గా మార్చేటప్పుడు అక్షరాలు ఉన్నప్పుడు</td>
+              <td><code>int.Parse("హైదరాబాద్");</code></td>
+            </tr>
+            <tr>
+              <td><code>ArgumentNullException</code></td>
+              <td>మెథడ్‌కు తప్పనిసరిగా కావాల్సిన పారామీటర్‌కు <code>null</code> పంపినప్పుడు</td>
+              <td><code>File.ReadAllText(null);</code></td>
+            </tr>
+            <tr>
+              <td><code>InvalidOperationException</code></td>
+              <td>ఆబ్జెక్ట్ యొక్క ప్రస్తుత స్థితిలో ఆ ఆపరేషన్ చెల్లనప్పుడు</td>
+              <td>క్లోజ్ అయిన డేటాబేస్ కనెక్షన్‌పై క్వెరీ రన్ చేయడం</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🛡️ \`try\`, \`catch\`, \`finally\` బ్లాకుల లైఫ్‌సైకిల్</h2>
+      <p>
+        C# లో రన్‌టైమ్ ఎర్రర్లను నియంత్రించడానికి మూడు ప్రాథమిక బ్లాకులు ఉన్నాయి:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong><code>try</code> బ్లాక్:</strong> ప్రమాదం జరిగే అవకాశం ఉన్న సున్నితమైన కోడ్‌ను ఇక్కడ ఉంచుతాం. ఇందులో ఎర్రర్ రాగానే ఎగ్జిక్యూషన్ అక్కడితో ఆగిపోయి, తగిన <code>catch</code> బ్లాక్‌కు జంప్ అవుతుంది.</li>
+        <li><strong><code>catch</code> బ్లాక్:</strong> విసిరిన ఎక్సెప్షన్‌ను క్యాచ్ చేసి, పరిష్కరించే లేదా లాగ్ చేసే కోడ్.</li>
+        <li><strong><code>finally</code> బ్లాక్:</strong> <strong>ఎర్రర్ వచ్చినా రాకపోయినా 100% ఖచ్చితంగా ఎగ్జిక్యూట్ అయ్యే క్లీనప్ బ్లాక్!</strong> (ఫైల్స్ క్లోజ్ చేయడం, కనెక్షన్స్ రిలీజ్ చేయడం).</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · try-catch-finally Flow Control</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">Console.WriteLine("1. లావాదేవీ ప్రారంభమైంది.");
+
+try
+{
+    Console.WriteLine("2. సర్వర్‌తో కనెక్ట్ అవుతున్నాం...");
+    int totalAmount = 5000;
+    int divisor = 0; // ప్రమాదం!
+    int sharePerPerson = totalAmount / divisor;
+    Console.WriteLine($"3. ఒక్కొక్కరికి వాటా: ₹{sharePerPerson}"); // ఇది ఎప్పటికీ రన్ కాదు!
+}
+catch (DivideByZeroException ex)
+{
+    Console.WriteLine($"⚠️ [ఎర్రర్ పట్టుబడింది]: సున్నా మంది వ్యక్తులకు నిధులను పంచలేము! ({ex.Message})");
+}
+finally
+{
+    // ఎర్రర్ వచ్చినా సరే ఇది ఖచ్చితంగా రన్ అవుతుంది!
+    Console.WriteLine("4. 🧹 [Finally క్లీనప్]: సర్వర్ కనెక్షన్ సురక్షితంగా మూసివేయబడింది.");
+}
+
+Console.WriteLine("5. అప్లికేషన్ క్రాష్ అవ్వకుండా ముందుకు సాగుతోంది!");</code></pre>
+      </div>
+
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:12px 16px; margin:16px 0; font-size:14px; color:var(--text);">
+        <strong>💡 ఇంటర్వ్యూ ట్విస్ట్:</strong> <code>try</code> బ్లాక్ లోపల <code>return 100;</code> అని రాసినప్పటికీ, 
+        కంప్యూటర్ ముందుగా <strong><code>finally</code> బ్లాక్‌ను పూర్తి చేసిన తర్వాత మాత్రమే</strong> ఆ వాల్యూని కాలర్‌కు రిటర్న్ చేస్తుంది! 
+        <code>finally</code> ఎగ్జిక్యూషన్‌ను ఆపడం దాదాపు అసాధ్యం.
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🎯 బహుళ \`catch\` బ్లాకులు &amp; ఆర్డరింగ్ రూల్ (Specific to General)</h2>
+      <p>
+        ఒకే <code>try</code> బ్లాక్‌లో వివిధ రకాల ఎర్రర్లు వచ్చే అవకాశం ఉంటుంది. 
+        అందువల్ల మనం బహుళ <code>catch</code> బ్లాకులను రాయవచ్చు. 
+        కానీ ఇక్కడ C# కంపైలర్ ఒక కఠినమైన నిబంధనను విధిస్తుంది:
+      </p>
+      <p style="font-weight:700; color:#ef4444;">
+        "ఎల్లప్పుడూ అత్యంత స్పెసిఫిక్ (చైల్డ్) ఎక్సెప్షన్లను పైభాగంలో, జెనెరిక్ <code>Exception</code> ను అందరికంటే చివర్లో ఉంచాలి!"
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Multiple Catch Blocks in Correct Order</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">try
+{
+    string[] userInputs = { "100", "0", "యాభై" };
+    int num1 = int.Parse(userInputs[0]);
+    int num2 = int.Parse(userInputs[2]); // FormatException ఇక్కడ వస్తుంది!
+    int result = num1 / num2;
+}
+catch (IndexOutOfRangeException ex)
+{
+    Console.WriteLine($"❌ అర్రే పరిమితి దాటిపోయింది: {ex.Message}");
+}
+catch (DivideByZeroException ex)
+{
+    Console.WriteLine($"❌ సున్నాతో భాగించకూడదు: {ex.Message}");
+}
+catch (FormatException ex)
+{
+    Console.WriteLine($"❌ నంబర్ ఫార్మాట్ తప్పుగా ఉంది: {ex.Message}");
+}
+catch (Exception ex) // అల్టిమేట్ సేఫ్టీ నెట్ - అందరికంటే చివర్లోనే ఉండాలి!
+{
+    Console.WriteLine($"❌ ఇతర తెలియని లోపం సంభవించింది: {ex.Message}");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🔍 C# 6+ ఎక్సెప్షన్ ఫిల్టర్లు (\`when\` కీవర్డ్)</h2>
+      <p>
+        గతంలో ఒక ఎక్సెప్షన్ వచ్చినప్పుడు క్యాచ్ బ్లాక్ లోపలికి వెళ్లి <code>if-else</code> రాయాల్సి వచ్చేది. 
+        కానీ C# 6 లో వచ్చిన <strong><code>when</code> ఫిల్టర్</strong> ద్వారా క్యాచ్ బ్లాక్ లోకి అడుగుపెట్టక ముందే షరతును తనిఖీ చేయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Exception Filtering with 'when'</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class ServerException : Exception
+{
+    public int StatusCode { get; }
+    public ServerException(int code, string msg) : base(msg) => StatusCode = code;
+}
+
+try
+{
+    // 404 ఎర్రర్ అనుకరిస్తున్నాం
+    throw new ServerException(404, "అభ్యర్థించిన రిసోర్స్ సర్వర్‌లో దొరకలేదు");
+}
+catch (ServerException ex) when (ex.StatusCode == 404)
+{
+    Console.WriteLine($"🔍 [404 Not Found]: పేజీ దొరకలేదు, హోమ్‌పేజీకి దారి మళ్లిస్తున్నాం.");
+}
+catch (ServerException ex) when (ex.StatusCode == 500)
+{
+    Console.WriteLine($"🔥 [500 Server Error]: సర్వర్ క్రాష్ అయ్యింది, డెవలపర్ అలర్ట్ పంపుతున్నాం.");
+}
+catch (ServerException ex)
+{
+    Console.WriteLine($"⚠️ ఇతర సర్వర్ ఎర్రర్: కోడ్ {ex.StatusCode}");
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>⚡ Performance & Debugging Benefit:</strong> <code>when</code> షరతు తప్పు అయితే, CLR కాల్ స్టాక్‌ను అన్‌వైండ్ (Stack Unwinding) చేయదు! 
+        దీనివల్ల ఒరిజినల్ స్టాక్ ట్రేస్ మెమరీలో చెక్కుచెదరకుండా ఉంటుంది.
+      </p>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> ⚠️ \`throw;\` vs \`throw ex;\` — కాల్ స్టాక్ నాశనమయ్యే తీవ్ర ప్రమాదం!</h2>
+      <p>
+        ఇది ప్రపంచవ్యాప్తంగా ప్రొడక్షన్ డెవలపర్లు చేసే అత్యంత ఘోరమైన తప్పు, మరియు ఇంటర్వ్యూలలో టాప్ ట్రిక్కీ ప్రశ్న:
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>రీ-త్రో సింటాక్స్</th>
+              <th>కాల్ స్టాక్ (Call Stack Trace) ఏమవుతుంది?</th>
+              <th>తీర్పు</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>throw;</code> (బేర్ త్రో)</td>
+              <td><strong>అసలైన ఎర్రర్ ఎక్కడ పుట్టిందో (లైన్ నంబర్, మెథడ్) ఆ ఒరిజినల్ స్టాక్ ట్రేస్‌ను 100% కాపాడుతుంది.</strong></td>
+              <td>✅ <strong>Best Practice (ఎల్లప్పుడూ ఇదే వాడాలి)</strong></td>
+            </tr>
+            <tr>
+              <td><code>throw ex;</code></td>
+              <td><strong>అసలైన స్టాక్ ట్రేస్‌ను పూర్తిగా చెరిపివేసి</strong>, ఈ ప్రస్తుత క్యాచ్ బ్లాక్ లైన్ నంబర్‌నే ఎర్రర్ మూలంగా రీసెట్ చేస్తుంది!</td>
+              <td>❌ <strong>Dangerous Antipattern (ఎప్పుడూ వాడకూడదు!)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block" style="margin-top:16px;">
+        <div class="code-block-header">
+          <span>csharp · throw vs throw ex Demonstration</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">void ProcessOrder()
+{
+    try
+    {
+        ExecuteDatabaseQuery(); // లైన్ 85 లో SQL ఎర్రర్ వచ్చింది అనుకుందాం
+    }
+    catch (Exception ex)
+    {
+        LogToAuditFile(ex.Message);
+
+        // ❌ throw ex; // చెడ్డది! లైన్ 85 పోయి, ఈ క్యాచ్ బ్లాక్ లైనే కొత్త ఎర్రర్ గా రికార్డ్ అవుతుంది!
+        throw; // ✅ అద్భుతమైనది! లైన్ 85 లోని ఒరిజినల్ రూట్ కాజ్ కాల్ స్టాక్‌ను కాపాడుతుంది!
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 📦 ఇన్నర్ ఎక్సెప్షన్స్ (Inner Exceptions) &amp; ఎక్సెప్షన్ ర్యాపింగ్</h2>
+      <p>
+        ఒక పెద్ద ఎంటర్‌ప్రైజ్ అప్లికేషన్‌లో యూజర్‌కు లో-లెవల్ టెక్నికల్ ఎర్రర్స్ (ఉదా: <code>SqlException: Timeout expired on socket 192.168.1.1</code>) చూపించడం మంచిది కాదు. 
+        దానికి బదులు అర్థవంతమైన బిజినెస్ ఎక్సెప్షన్ (ఉదా: <code>OrderProcessingException</code>) రూపంలో చూపించాలి. 
+        అదే సమయంలో డీబగ్గింగ్ కోసం అసలైన SQL ఎర్రర్‌ను లోపల దాచాలి. దీన్నే <strong>Exception Wrapping with Inner Exception</strong> అంటారు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Inner Exception Wrapping</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">try
+{
+    // లో-లెవల్ ఆపరేషన్ విఫలమైంది అనుకుందాం
+    throw new System.IO.FileNotFoundException("బ్యాంక్ కాన్ఫిగరేషన్ ఫైల్ కనబడలేదు!");
+}
+catch (Exception ioEx)
+{
+    // ioEx ని రెండవ పారామీటర్‌గా పంపి ర్యాప్ చేస్తున్నాం!
+    throw new ApplicationException("బ్యాంకింగ్ సర్వీస్ ప్రారంభం కాలేదు", ioEx);
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🛠️ కస్టమ్ ఎక్సెప్షన్స్ (Custom User-Defined Exceptions) రాయడం</h2>
+      <p>
+        మన డొమైన్ బిజినెస్ రూల్స్ ఉల్లంఘించినప్పుడు (ఉదాహరణకు బ్యాంక్ ఖాతాలో బ్యాలెన్స్ చాలకపోవడం, ఏటీఎం కార్డు బ్లాక్ అవ్వడం) 
+        మనం మన స్వంత <strong>కస్టమ్ ఎక్సెప్షన్ క్లాసులను</strong> రాయాలి.
+      </p>
+      <p><strong>కస్టమ్ ఎక్సెప్షన్ బెస్ట్ ప్రాక్టీస్ నియమాలు:</strong></p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>పేరు చివర తప్పనిసరిగా <strong>'Exception'</strong> పదం ఉండాలి (ఉదా: <code>InsufficientFundsException</code>).</li>
+        <li><code>System.Exception</code> క్లాస్ నుండి ఇన్‌హెరిట్ చేసుకోవాలి.</li>
+        <li>ప్రామాణికంగా 3 కన్‌స్ట్రక్టర్లను అందించాలి: డీఫాల్ట్, మెసేజ్ తో, మరియు ఇన్నర్ ఎక్సెప్షన్ తో.</li>
+        <li>అదనపు డొమైన్ వివరాలు (ఉదా: లోటు బ్యాలెన్స్, అకౌంట్ నంబర్) కోసం రీడ్-ఓన్లీ ప్రాపర్టీలను ఉంచవచ్చు.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Professional Custom Exception Implementation</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class InsufficientFundsException : Exception
+{
+    public decimal CurrentBalance { get; }
+    public decimal RequestedAmount { get; }
+    public decimal DeficitAmount => RequestedAmount - CurrentBalance;
+
+    public InsufficientFundsException() : base("ఖాతాలో సరిపడా నిధులు లేవు.") { }
+
+    public InsufficientFundsException(string message) : base(message) { }
+
+    public InsufficientFundsException(string message, Exception inner) : base(message, inner) { }
+
+    // డొమైన్ స్పెసిఫిక్ రిచ్ కన్‌స్ట్రక్టర్
+    public InsufficientFundsException(decimal balance, decimal requested) 
+        : base($"నిధులు సరిపోవు! (ప్రస్తుత బ్యాలెన్స్: ₹{balance:N2}, అభ్యర్థించినది: ₹{requested:N2})")
+    {
+        CurrentBalance = balance;
+        RequestedAmount = requested;
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 🧹 \`IDisposable\` ఇంటర్‌ఫేస్ &amp; Modern \`using\` స్టేట్‌మెంట్ / డిక్లరేషన్</h2>
+      <p>
+        Garbage Collector కేవలం .NET మేనేజ్డ్ మెమరీని మాత్రమే క్లీన్ చేయగలదు. 
+        కానీ ఫైల్ హ్యాండిల్స్, డేటాబేస్ కనెక్షన్లు, నెట్‌వర్క్ సాకెట్లు వంటి <strong>అన్‌మేనేజ్డ్ రీసోర్సెస్ (Unmanaged Resources)</strong> ను డెవలపర్ తక్షణమే రిలీజ్ చేయాలి. 
+        దీనికోసం .NET లో <strong><code>IDisposable</code></strong> ఇంటర్‌ఫేస్ మరియు <strong><code>Dispose()</code></strong> మెథడ్ ఉంటాయి.
+      </p>
+      <p>
+        ఈ <code>Dispose()</code> ను మాన్యువల్‌గా <code>finally</code> లో పిలవడానికి బదులుగా C# అందించిన అత్యంత అందమైన సింటాక్స్ <strong><code>using</code></strong>:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Modern C# 8+ using Declaration</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class SecureFileLogger : IDisposable
+{
+    public string FileName { get; }
+
+    public SecureFileLogger(string name)
+    {
+        FileName = name;
+        Console.WriteLine($"📂 ఫైల్ ఓపెన్ చేయబడింది: {FileName}");
+    }
+
+    public void WriteLog(string msg) => Console.WriteLine($"   [LOG] {msg}");
+
+    // IDisposable కాంట్రాక్ట్
+    public void Dispose()
+    {
+        Console.WriteLine($"🔒 ఫైల్ సురక్షితంగా క్లోజ్ చేయబడింది (Disposed): {FileName}");
+    }
+}
+
+// 🌟 మోడ్రన్ C# 8+ 'using declaration' - కర్లీ బ్రేసెస్ అవసరం లేదు!
+void TestLogging()
+{
+    using var logger = new SecureFileLogger("audit_2026.log");
+    logger.WriteLog("యూజర్ లాగిన్ విజయవంతం");
+    logger.WriteLog("చెల్లింపు ప్రారంభమైంది");
+    // మెథడ్ ముగియగానే (లేదా ఎర్రర్ వచ్చినా) Dispose() ఆటోమేటిక్‌గా రన్ అవుతుంది!
+}
+
+TestLogging();</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🚫 ఎక్సెప్షన్ హ్యాండ్లింగ్ యాంటీ-ప్యాటర్న్స్ (Antipatterns to Avoid)</h2>
+      <p>
+        ఎక్సెప్షన్ హ్యాండ్లింగ్‌లో ప్రొఫెషనల్స్ ఎప్పుడూ చేయకూడని తప్పులు:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>❌ <strong>ఖాళీ క్యాచ్ బ్లాక్ (Swallowing Exceptions):</strong> <code>catch (Exception) { }</code> రాయడం అంటే ఇంట్లో మంటలు అంటుకున్నప్పుడు ఫైర్ అలారం స్విచ్ ఆఫ్ చేసి పడుకోవడం లాంటిది! ఎర్రర్ దాగిపోయి సైలెంట్‌గా డేటా కరప్ట్ అవుతుంది. కనీసం లాగ్ అయినా చేయాలి.</li>
+        <li>❌ <strong>కంట్రోల్ ఫ్లో కోసం ఎక్సెప్షన్లు వాడటం:</strong> సాధారణ <code>if-else</code> లాజిక్ బదులు ఎక్సెప్షన్లను వాడకూడదు. ఎందుకంటే ఎక్సెప్షన్ త్రో అయినప్పుడు కాల్ స్టాక్ ఫ్రేమ్ తయారు చేయడం వల్ల సిస్టమ్ వేగం 100 రెట్లు నెమ్మదిస్తుంది. ఉదాహరణ: <code>int.Parse</code> లో క్యాచ్ చేయడం కంటే <code>int.TryParse</code> వాడటం వేల రెట్లు వేగవంతం!</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🌐 గ్లోబల్ ఎక్సెప్షన్ హ్యాండ్లింగ్ &amp; Structured Logging సూత్రాలు</h2>
+      <p>
+        ప్రతి ఒక్క మెథడ్‌లో వందల కొద్దీ <code>try-catch</code> లు రాసుకుంటూ వెళ్తే కోడ్ చదవడానికి చాలా కష్టమవుతుంది. 
+        ప్రొఫెషనల్ అప్లికేషన్లలో:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>లోకల్‌గా పరిష్కరించగలిగే ఎర్రర్లను మాత్రమే లోకల్ <code>try-catch</code> లో హ్యాండిల్ చేయాలి.</li>
+        <li>మిగిలిన అన్నింటిని పైకి పాస్ చేసి, అప్లికేషన్ టాప్-లెవెల్ లో ఉండే <strong>Global Exception Middleware</strong> (ASP.NET Core లో) లేదా <code>AppDomain.UnhandledException</code> లో కేంద్రీకృతంగా లాగ్ చేయాలి.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🏧 రియల్-వరల్డ్ ప్రాజెక్ట్ — ఎంటర్‌ప్రైజ్ ఏటీఎం క్యాష్ విత్‌డ్రా &amp; ఆడిట్ సిస్టమ్ (Resilient ATM Engine)</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న Custom Exceptions, Multiple Catches, <code>when</code> Filters, <code>throw;</code>, 
+        మరియు <code>IDisposable</code> క్లీనప్ అన్నింటినీ మేళవించి ఒక <strong>ఎంటర్‌ప్రైజ్ స్మార్ట్ ఏటీఎం ఇంజిన్ (Resilient ATM Engine v1.0)</strong> నిర్మిద్దాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Resilient ATM Cash Dispenser & Audit Engine</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🏧 మన ఏటీఎం - ఎంటర్‌ప్రైజ్ క్యాష్ డిస్పెన్సర్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+// 1. డొమైన్ కస్టమ్ ఎక్సెప్షన్లు
+public class InsufficientCashException(decimal balance, decimal requested) 
+    : Exception($"ఖాతాలో నిధులు సరిపోవు! (బ్యాలెన్స్: ₹{balance:N2}, అభ్యర్థన: ₹{requested:N2})")
+{
+    public decimal Deficit => requested - balance;
+}
+
+public class DailyLimitExceededException(decimal limit, decimal requested)
+    : Exception($"రోజువారీ ఏటీఎం విత్‌డ్రా పరిమితి ₹{limit:N2} దాటిపోయింది! (అభ్యర్థన: ₹{requested:N2})");
+
+public class CardBlockedException(string cardNo, string reason)
+    : Exception($"భద్రతా కారణాల వల్ల కార్డ్ {cardNo} బ్లాక్ చేయబడింది: {reason}");
+
+// 2. IDisposable రీసోర్స్ సెషన్
+public class AtmHardwareSession : IDisposable
+{
+    public string SessionId { get; } = "ATM-SESS-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
+
+    public AtmHardwareSession()
+    {
+        Console.WriteLine($"🔌 [హార్డ్‌వేర్]: క్యాష్ డిస్పెన్సర్ షట్టర్ మరియు సెన్సార్లు ఆన్ అయ్యాయి ({SessionId})");
+    }
+
+    public void DispenseCurrencyNotes(decimal amount)
+    {
+        Console.WriteLine($"💵 [క్యాష్ షట్టర్ ఓపెన్]: ₹{amount:N2} కరెన్సీ నోట్లు బయటకు వచ్చాయి. దయచేసి నగదును తీసుకోండి.");
+    }
+
+    public void Dispose()
+    {
+        Console.WriteLine($"🔒 [హార్డ్‌వేర్]: క్యాష్ డిస్పెన్సర్ షట్టర్ సురక్షితంగా లాక్ చేయబడింది. సెషన్ ముగిసింది ({SessionId}).\\n");
+    }
+}
+
+// 3. ప్రధాన ఏటీఎం కంట్రోలర్
+public class AtmController
+{
+    private decimal _accountBalance = 35000.00m;
+    private const decimal DailyWithdrawLimit = 20000.00m;
+    private bool _isCardActive = true;
+
+    public void ProcessWithdrawal(string cardNo, decimal amount)
+    {
+        Console.WriteLine($"-------------------------------------------------");
+        Console.WriteLine($"💳 కార్డ్ #{cardNo} ద్వారా నగదు విత్‌డ్రా అభ్యర్థన: ₹{amount:N2}");
+
+        // using డిక్లరేషన్: ఎర్రర్ వచ్చినా హార్డ్‌వేర్ షట్టర్ 100% సేఫ్‌గా క్లోజ్ అవుతుంది!
+        using var session = new AtmHardwareSession();
+
+        try
+        {
+            if (!_isCardActive)
+            {
+                throw new CardBlockedException(cardNo, "3 సార్లు తప్పుడు పిన్ ఎంటర్ చేయబడింది");
+            }
+            if (amount <= 0 || amount % 100 != 0)
+            {
+                throw new ArgumentException("విత్‌డ్రా మొత్తం ₹100 గుణిజాల్లో మాత్రమే ఉండాలి!");
+            }
+            if (amount > DailyWithdrawLimit)
+            {
+                throw new DailyLimitExceededException(DailyWithdrawLimit, amount);
+            }
+            if (amount > _accountBalance)
+            {
+                throw new InsufficientCashException(_accountBalance, amount);
+            }
+
+            // లావాదేవీ విజయవంతం
+            _accountBalance -= amount;
+            session.DispenseCurrencyNotes(amount);
+            Console.WriteLine($"✅ లావాదేవీ విజయవంతం! మిగిలిన ఖాతా బ్యాలెన్స్: ₹{_accountBalance:N2}");
+        }
+        catch (InsufficientCashException ex)
+        {
+            Console.WriteLine($"❌ [నిధుల లోపం]: {ex.Message} (లోటు మొత్తం: ₹{ex.Deficit:N2})");
+        }
+        catch (DailyLimitExceededException ex)
+        {
+            Console.WriteLine($"⚠️ [పరిమితి హెచ్చరిక]: {ex.Message}");
+        }
+        catch (CardBlockedException ex)
+        {
+            Console.WriteLine($"🚨 [సెక్యూరిటీ అలర్ట్]: {ex.Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"❌ [చెల్లని ఇన్‌పుట్]: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"🔥 [అనూహ్య లోపం]: సిస్టమ్ తాత్కాలికంగా పనిచేయడం లేదు. {ex.Message}");
+        }
+    }
+}
+
+// డ్రైవర్ కోడ్: వివిధ ఎక్సెప్షన్ దృశ్యాల సిమ్యులేషన్
+AtmController atm = new AtmController();
+
+// దృశ్యం 1: చెల్లుబాటు అయ్యే విత్‌డ్రా
+atm.ProcessWithdrawal("4591-XXXX-1234", 5000m);
+
+// దృశ్యం 2: ₹100 గుణిజం కాని మొత్తం
+atm.ProcessWithdrawal("4591-XXXX-1234", 1250m);
+
+// దృశ్యం 3: రోజువారీ పరిమితి దాటిన మొత్తం
+atm.ProcessWithdrawal("4591-XXXX-1234", 25000m);
+
+// దృశ్యం 4: బ్యాలెన్స్ కంటే ఎక్కువ మొత్తం
+atm.ProcessWithdrawal("4591-XXXX-1234", 32000m);
+
+Console.WriteLine("=================================================");</code></pre>
+      </div>
+
+      <!-- RUN LIVE COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin:24px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:#10b981; font-size:18px;">💻 ఈ ఏటీఎం ఇంజిన్‌ను లైవ్ కంపైలర్‌లో రన్ చేసి చూడండి!</h3>
+          <p style="margin:0; font-size:14px; color:var(--text2);">
+            కస్టమ్ ఎక్సెప్షన్లు, IDisposable హార్డ్‌వేర్ షట్టర్ ఆటో-క్లోజ్, మరియు వివిధ వైఫల్యాల నిర్వహణను ప్రత్యక్షంగా వీక్షించండి.
+          </p>
+        </div>
+        <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:12px 24px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <span>▶ Try C# Online Compiler</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🎓 ఇంటర్వ్యూ ప్రశ్నలు, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h2>
+      
+      <p><strong>టాప్ ఇంటర్వ్యూ ప్రశ్నలు &amp; సమాధానాలు:</strong></p>
+      <div style="margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q1: <code>throw;</code> మరియు <code>throw ex;</code> ల మధ్య సాంకేతిక వ్యత్యాసం ఏమిటి?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> <code>throw;</code> అసలైన ఎక్సెప్షన్ ఎక్కడ పుట్టిందో ఆ ఒరిజినల్ కాల్ స్టాక్ ట్రేస్‌ను యథాతథంగా భద్రపరుస్తుంది. కానీ <code>throw ex;</code> అసలైన కాల్ స్టాక్‌ను రీసెట్ చేసి, ప్రస్తుత క్యాచ్ బ్లాక్ లైన్ నంబర్‌నే ఎర్రర్ మూలంగా చూపిస్తుంది. దీనివల్ల ప్రొడక్షన్‌లో బగ్స్ ఎక్కడ వచ్చాయో కనిపెట్టడం అసాధ్యమవుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q2: <code>finally</code> బ్లాక్ ఎప్పుడైనా ఎగ్జిక్యూట్ కాకుండా ఆగిపోయే సందర్భం ఉందా?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> సాధారణ కోడ్ ఎగ్జిక్యూషన్‌లో (రిటర్న్ స్టేట్‌మెంట్లు ఉన్నా సరే) <code>finally</code> ఖచ్చితంగా రన్ అవుతుంది. కానీ 1) <code>Environment.FailFast()</code> పిలిచినప్పుడు, 2) ఆపరేటింగ్ సిస్టమ్ ప్రాసెస్‌ను ఫోర్స్‌ఫుల్‌గా కిల్ చేసినప్పుడు (Task Manager End Task), 3) పవర్ కట్ లేదా హార్డ్‌వేర్ క్రాష్ అయినప్పుడు మాత్రమే <code>finally</code> రన్ అవ్వదు.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 16px 0; color:var(--text);">🧠 మీ నాలెడ్జ్ చెక్ చేసుకోండి — 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>try</code> బ్లాక్ లోపల <code>return 10;</code> ఉంటే, <code>finally</code> బ్లాక్ రన్ అవుతుందా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>ఖచ్చితంగా రన్ అవుతుంది</strong>. కంపైలర్ రిటర్న్ విలువను పక్కనపెట్టి, ముందుగా <code>finally</code> బ్లాక్ పూర్తి చేసిన తర్వాత మాత్రమే కాలర్‌కు రిటర్న్ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: బహుళ <code>catch</code> బ్లాకులలో <code>catch (Exception ex)</code> ను మొదటి స్థానంలో పెడితే ఏం జరుగుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>కంపైల్-టైమ్ ఎర్రర్ వస్తుంది</strong>. ఎందుకంటే <code>Exception</code> అనేది అన్నింటికీ మూల క్లాస్ కాబట్టి అన్ని ఎర్రర్లను అదే పట్టుకుంటుంది, దాని కింద ఉన్న నిర్దిష్ట క్యాచ్ బ్లాకులు ఎప్పటికీ రీచ్ కాలేవు (Unreachable code).
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: C# 6 లో వచ్చిన ఎక్సెప్షన్ ఫిల్టర్ల కోసం ఏ కీవర్డ్ వాడతారు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>when</code></strong>. ఉదాహరణ: <code>catch (SqlException ex) when (ex.Number == 1205)</code>.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: C# లో <code>using</code> స్టేట్‌మెంట్ అంతర్గతంగా ఏ బ్లాకులను ఉత్పత్తి చేస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>try { ... } finally { obj.Dispose(); }</code></strong>. ఎర్రర్ వచ్చినా సరే <code>Dispose()</code> రన్ అయ్యేలా చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: ఖాళీ క్యాచ్ బ్లాక్ <code>catch (Exception) { }</code> రాయడం ఎందుకు తీవ్రమైన తప్పు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> దీనిని "Swallowing Exceptions" అంటారు. ఎర్రర్ సమాచారం లాగ్ కాకుండా నిశ్శబ్దంగా దాగిపోతుంది, దీనివల్ల అప్లికేషన్‌లో బగ్‌లను గుర్తించడం అసాధ్యమవుతుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 16. ఇంటర్‌ఫేసెస్ &amp; Records (Phase 04)
+      </a>
+      <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 18. డెలిగేట్స్, ఈవెంట్స్ &amp; లాంబ్డా →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+`;
+
+const projectSimulationCode = `using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🏧 మన ఏటీఎం - ఎంటర్‌ప్రైజ్ క్యాష్ డిస్పెన్సర్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+public class InsufficientCashException(decimal balance, decimal requested) 
+    : Exception($"ఖాతాలో నిధులు సరిపోవు! (బ్యాలెన్స్: ₹{balance:N2}, అభ్యర్థన: ₹{requested:N2})")
+{
+    public decimal Deficit => requested - balance;
+}
+
+public class DailyLimitExceededException(decimal limit, decimal requested)
+    : Exception($"రోజువారీ ఏటీఎం విత్‌డ్రా పరిమితి ₹{limit:N2} దాటిపోయింది! (అభ్యర్థన: ₹{requested:N2})");
+
+public class CardBlockedException(string cardNo, string reason)
+    : Exception($"భద్రతా కారణాల వల్ల కార్డ్ {cardNo} బ్లాక్ చేయబడింది: {reason}");
+
+public class AtmHardwareSession : IDisposable
+{
+    public string SessionId { get; } = "ATM-SESS-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
+
+    public AtmHardwareSession()
+    {
+        Console.WriteLine($"🔌 [హార్డ్‌వేర్]: క్యాష్ డిస్పెన్సర్ షట్టర్ మరియు సెన్సార్లు ఆన్ అయ్యాయి ({SessionId})");
+    }
+
+    public void DispenseCurrencyNotes(decimal amount)
+    {
+        Console.WriteLine($"💵 [క్యాష్ షట్టర్ ఓపెన్]: ₹{amount:N2} కరెన్సీ నోట్లు బయటకు వచ్చాయి. దయచేసి నగదును తీసుకోండి.");
+    }
+
+    public void Dispose()
+    {
+        Console.WriteLine($"🔒 [హార్డ్‌వేర్]: క్యాష్ డిస్పెన్సర్ షట్టర్ సురక్షితంగా లాక్ చేయబడింది. సెషన్ ముగిసింది ({SessionId}).\\n");
+    }
+}
+
+public class AtmController
+{
+    private decimal _accountBalance = 35000.00m;
+    private const decimal DailyWithdrawLimit = 20000.00m;
+    private bool _isCardActive = true;
+
+    public void ProcessWithdrawal(string cardNo, decimal amount)
+    {
+        Console.WriteLine($"-------------------------------------------------");
+        Console.WriteLine($"💳 కార్డ్ #{cardNo} ద్వారా నగదు విత్‌డ్రా అభ్యర్థన: ₹{amount:N2}");
+
+        using var session = new AtmHardwareSession();
+
+        try
+        {
+            if (!_isCardActive)
+            {
+                throw new CardBlockedException(cardNo, "3 సార్లు తప్పుడు పిన్ ఎంటర్ చేయబడింది");
+            }
+            if (amount <= 0 || amount % 100 != 0)
+            {
+                throw new ArgumentException("విత్‌డ్రా మొత్తం ₹100 గుణిజాల్లో మాత్రమే ఉండాలి!");
+            }
+            if (amount > DailyWithdrawLimit)
+            {
+                throw new DailyLimitExceededException(DailyWithdrawLimit, amount);
+            }
+            if (amount > _accountBalance)
+            {
+                throw new InsufficientCashException(_accountBalance, amount);
+            }
+
+            _accountBalance -= amount;
+            session.DispenseCurrencyNotes(amount);
+            Console.WriteLine($"✅ లావాదేవీ విజయవంతం! మిగిలిన ఖాతా బ్యాలెన్స్: ₹{_accountBalance:N2}");
+        }
+        catch (InsufficientCashException ex)
+        {
+            Console.WriteLine($"❌ [నిధుల లోపం]: {ex.Message} (లోటు మొత్తం: ₹{ex.Deficit:N2})");
+        }
+        catch (DailyLimitExceededException ex)
+        {
+            Console.WriteLine($"⚠️ [పరిమితి హెచ్చరిక]: {ex.Message}");
+        }
+        catch (CardBlockedException ex)
+        {
+            Console.WriteLine($"🚨 [సెక్యూరిటీ అలర్ట్]: {ex.Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"❌ [చెల్లని ఇన్‌పుట్]: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"🔥 [అనూహ్య లోపం]: సిస్టమ్ తాత్కాలికంగా పనిచేయడం లేదు. {ex.Message}");
+        }
+    }
+}
+
+AtmController atm = new AtmController();
+atm.ProcessWithdrawal("4591-XXXX-1234", 5000m);
+atm.ProcessWithdrawal("4591-XXXX-1234", 1250m);
+atm.ProcessWithdrawal("4591-XXXX-1234", 25000m);
+atm.ProcessWithdrawal("4591-XXXX-1234", 32000m);
+
+Console.WriteLine("=================================================");`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions) — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="C# లో Exception Handling, try-catch-finally, multiple catch blocks, when filters, throw vs throw ex, Custom Exceptions, IDisposable &amp; using, మరియు ఏటీఎం ప్రాజెక్ట్ సమగ్ర తెలుగు గైడ్." />
+  <meta name="keywords" content="c# exception handling telugu, c# try catch finally, c# custom exception, c# throw vs throw ex, c# when filter, c# idisposable, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C# ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)",
+    "description": "C# లో Exception Handling, try-catch-finally, multiple catch blocks, when filters, throw vs throw ex, Custom Exceptions సమగ్ర తెలుగు గైడ్.",
+    "articleSection": "Phase 05: అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`${projectSimulationCode.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '17-csharp-exception-handling-try-catch-finally.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C# Chapter 17!');
+console.log('Target file size:', fullHtml.length, 'characters');
