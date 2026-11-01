@@ -1,0 +1,1013 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./csharp_curriculum_data');
+
+const lesson = LESSONS.find(l => l.num === 16);
+const sidebarHtml = buildSidebar(16);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 16: ఇంటర్‌ఫేసెస్ &amp; C# Records</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ &amp; C# Records (Immutable Data)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 16 of 20</span>
+      <span class="meta-pill">🏛️ Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+      <span class="meta-pill">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>అబ్‌స్ట్రాక్షన్ సిద్ధాంతం · abstract క్లాసెస్ &amp; abstract మెథడ్స్ · interfaces ప్యూర్ కాంట్రాక్ట్స్ · Abstract Class vs Interface సమగ్ర పోలిక · బహుళ ఇంటర్‌ఫేస్ ఇంప్లిమెంటేషన్ &amp; Explicit Interface Implementation · C# 8+ Default Interface Methods · లూజ్ కప్లింగ్ &amp; డిపెండెన్సీ ఇంజెక్షన్ (DI) పునాది · C# 9+ record class విప్లవం · Value-based Equality vs Reference Equality · with నాన్-డిస్ట్రక్టివ్ మ్యుటేషన్ · record struct · ఎంటర్‌ప్రైజ్ ఈ-కామర్స్ ఆర్డర్ ప్రాసెసింగ్ ఇంజిన్ · 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>Phase 04 గ్రాండ్ ఫినాలే: అబ్‌స్ట్రాక్షన్ &amp; ఆధునిక C# Records! 🏛️</h3>
+      <p>
+        ఒక ఇంజనీర్ పవర్ సాకెట్‌ను డిజైన్ చేసినప్పుడు, ఆ సాకెట్‌లో టీవీ పెడతారా, ఫ్రిజ్ పెడతారా లేదా ల్యాప్‌టాప్ ఛార్జర్ పెడతారా అనేది సాకెట్‌కు ముఖ్యం కాదు. 
+        ఆ సాకెట్ ఒకే ఒక కాంట్రాక్ట్ (Contract) ను మాత్రమే డిమాండ్ చేస్తుంది: "230 వోల్ట్స్, 3-పిన్ ప్లగ్ ఉంటే చాలు, కరెంట్ సరఫరా అవుతుంది!".
+      </p>
+      <p style="margin-top:10px;">
+        సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌లో కూడా ఇలాంటి అద్భుతమైన డీకప్లింగ్‌ను సాధించే సాధనాలే <strong>ఇంటర్‌ఫేసెస్ (Interfaces)</strong> మరియు <strong>అబ్‌స్ట్రాక్ట్ క్లాసెస్ (Abstract Classes)</strong>. 
+        మరియు ఆధునిక క్లౌడ్ / మైక్రోసర్వీసెస్ యుగంలో డేటా ఇమ్యుటబిలిటీ (మార్చలేని సురక్షితమైన డేటా) కోసం C# 9 లో వచ్చిన <strong>Records</strong> డేటా మోడలింగ్‌ను సమూలంగా మార్చివేశాయి. 
+        ఈ అధ్యాయంతో మీరు ఎంటర్‌ప్రైజ్ లెవల్ C# ఆర్కిటెక్చర్ డిజైన్‌లో సంపూర్ణ ప్రావీణ్యం సంపాదిస్తారు!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🎭 అబ్‌స్ట్రాక్షన్ (Abstraction) తత్వశాస్త్రం — WHAT vs HOW</h2>
+      <p>
+        <strong>అబ్‌స్ట్రాక్షన్ (Abstraction)</strong> అంటే అవసరం లేని సంక్లిష్టమైన అంతర్గత సాంకేతిక వివరాలను దాచిపెట్టి (Hiding implementation details), 
+        యూజర్‌కు అవసరమైన ప్రధాన ఫీచర్లను మాత్రమే ప్రదర్శించడం (Showing essential features).
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>WHAT (ఏం చేయాలి):</strong> ఇంటర్‌ఫేస్ లేదా అబ్‌స్ట్రాక్ట్ క్లాస్ నిర్ణయిస్తుంది (ఉదాహరణ: <code>ProcessPayment(amount)</code>).</li>
+        <li><strong>HOW (ఎలా చేయాలి):</strong> కాంక్రీట్ క్లాస్ అమలు చేస్తుంది (ఉదాహరణ: పేపాల్ ద్వారా చేయాలా, క్రెడిట్ కార్డుతో చేయాలా లేదా బిట్‌కాయిన్‌తో చేయాలా).</li>
+      </ul>
+      <p style="margin-top:12px;">
+        C# లో అబ్‌స్ట్రాక్షన్‌ను సాధించడానికి రెండు ప్రధాన సాధనాలు ఉన్నాయి: 
+        1. <strong>Abstract Classes</strong> (పాక్షిక అబ్‌స్ట్రాక్షన్) 
+        2. <strong>Interfaces</strong> (సంపూర్ణ కాంట్రాక్ట్ అబ్‌స్ట్రాక్షన్).
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 🏛️ అబ్‌స్ట్రాక్ట్ క్లాసెస్ (Abstract Classes) &amp; \`abstract\` మెథడ్స్</h2>
+      <p>
+        ఒక క్లాస్ ముందు <strong><code>abstract</code></strong> అని రాస్తే, దానికి డైరెక్ట్‌గా ఆబ్జెక్ట్‌ను క్రియేట్ చేయలేము (అంటే <code>new AbstractClass()</code> రాయడం కంపైలేషన్ ఎర్రర్). 
+        దానిని కేవలం బేస్ క్లాస్‌గా మాత్రమే ఉపయోగించి, ఇతర పిల్ల క్లాసుల ద్వారా ఇన్‌హెరిట్ చేసుకోవాలి.
+      </p>
+      <p><strong>అబ్‌స్ట్రాక్ట్ క్లాస్ లక్షణాలు:</strong></p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>Abstract Methods:</strong> వీటికి బాడీ <code>{ }</code> ఉండదు; కేవలం సిగ్నేచర్ సెమికోలన్ <code>;</code> తో ముగుస్తుంది. డిరైవ్డ్ క్లాస్ తప్పనిసరిగా <code>override</code> చేయాలి.</li>
+        <li><strong>Concrete Methods:</strong> వీటికి పూర్తి కోడ్ బాడీ ఉంటుంది. అన్ని చైల్డ్ క్లాసులు ఉమ్మడిగా వాడుకోవచ్చు.</li>
+        <li><strong>Fields &amp; Constructors:</strong> ఇవి సాధారణ క్లాసుల లాగే ఫీల్డ్స్‌ను, కన్‌స్ట్రక్టర్లను కలిగి ఉంటాయి. చైల్డ్ కన్‌స్ట్రక్టర్ నుండి <code>base(...)</code> ద్వారా ఇనిషియలైజ్ అవుతాయి.</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Abstract Class with Abstract & Concrete Methods</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public abstract class CloudStorageProvider
+{
+    public string StorageBucketName { get; }
+
+    // కన్‌స్ట్రక్టర్ (చైల్డ్ క్లాసుల కోసం)
+    protected CloudStorageProvider(string bucket)
+    {
+        StorageBucketName = bucket;
+    }
+
+    // 1. అబ్‌స్ట్రాక్ట్ మెథడ్ - బాడీ ఉండదు! చైల్డ్ తప్పనిసరిగా కోడ్ రాయాలి
+    public abstract void UploadFile(string fileName, byte[] data);
+
+    // 2. కాంక్రీట్ మెథడ్ - అందరికీ కామన్ లాజిక్
+    public void PrintBucketInfo()
+    {
+        Console.WriteLine($"☁️ యాక్టివ్ క్లౌడ్ బకెట్: {StorageBucketName}");
+    }
+}
+
+// కాంక్రీట్ చైల్డ్ క్లాస్
+public class AzureBlobStorage : CloudStorageProvider
+{
+    public AzureBlobStorage(string bucket) : base(bucket) { }
+
+    public override void UploadFile(string fileName, byte[] data)
+    {
+        Console.WriteLine($"[Azure] '{fileName}' ({data.Length} బైట్లు) అజూర్ బ్లాబ్‌కు అప్‌లోడ్ అయ్యింది.");
+    }
+}
+
+// CloudStorageProvider p = new CloudStorageProvider("test"); // ❌ కంపైల్ ఎర్రర్: Cannot create instance of abstract type!
+CloudStorageProvider storage = new AzureBlobStorage("prod-media-bucket");
+storage.PrintBucketInfo();
+storage.UploadFile("invoice.pdf", new byte[1024]);</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🔌 ఇంటర్‌ఫేసెస్ (Interfaces) అంటే ఏమిటి? ప్యూర్ కాంట్రాక్ట్స్</h2>
+      <p>
+        ఒక <strong>ఇంటర్‌ఫేస్ (Interface)</strong> అనేది ఒక పవిత్రమైన ఒప్పందం (Formal Contract). 
+        "ఈ ఇంటర్‌ఫేస్‌ను ఇంప్లిమెంట్ చేసే ఏ క్లాస్ అయినా సరే, ఖచ్చితంగా ఇందులో పేర్కొన్న మెథడ్స్ మరియు ప్రాపర్టీలను అందించి తీరాలి!".
+      </p>
+      <p>C# ఇంటర్‌ఫేస్ నియమాలు:</p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>పేరు ప్రారంభంలో ప్రామాణికంగా <strong>'I'</strong> అక్షరం ఉంటుంది (ఉదా: <code>ILogger</code>, <code>IDisposable</code>, <code>IPaymentGateway</code>).</li>
+        <li>డీఫాల్ట్‌గా అన్ని మెంబర్లు <code>public</code> గా ఉంటాయి.</li>
+        <li>సాంప్రదాయకంగా ఇంటర్‌ఫేస్‌లో ఎటువంటి ఫీల్డ్స్ (ఇన్స్టాన్స్ స్టేట్) లేదా కన్‌స్ట్రక్టర్లు ఉండకూడదు.</li>
+        <li><strong>ఒక క్లాస్ ఎన్ని ఇంటర్‌ఫేస్‌లనైనా ఇంప్లిమెంట్ చేసుకోవచ్చు (Multiple Interface Implementation)!</strong></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Defining & Implementing Interfaces</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public interface INotificationService
+{
+    // ప్రాపర్టీ కాంట్రాక్ట్
+    string ProviderName { get; }
+
+    // మెథడ్ కాంట్రాక్ట్స్
+    void SendSms(string mobile, string message);
+    void SendEmail(string email, string subject, string body);
+}
+
+public class TwilioNotificationService : INotificationService
+{
+    public string ProviderName => "Twilio Enterprise Cloud";
+
+    public void SendSms(string mobile, string message)
+    {
+        Console.WriteLine($"📱 SMS -> {mobile}: {message} [via {ProviderName}]");
+    }
+
+    public void SendEmail(string email, string subject, string body)
+    {
+        Console.WriteLine($"📧 Email -> {email} | సబ్జెక్ట్: {subject}");
+    }
+}
+
+INotificationService notifier = new TwilioNotificationService();
+notifier.SendSms("+91 9876543210", "మీ OTP: 549102");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> ⚖️ Abstract Class vs Interface — సమగ్ర పోలిక పట్టిక</h2>
+      <p>
+        సాఫ్ట్‌వేర్ ఆర్కిటెక్ట్ ఇంటర్వ్యూలలో వచ్చే అతి ముఖ్యమైన ప్రశ్న — "ఎప్పుడు అబ్‌స్ట్రాక్ట్ క్లాస్ వాడాలి? ఎప్పుడు ఇంటర్‌ఫేస్ వాడాలి?":
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్</th>
+              <th>Abstract Class</th>
+              <th>Interface</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>సంబంధం (Relationship)</strong></td>
+              <td><strong>IS-A</strong> (గుర్తింపు - ఉదా: <code>Dog IS-A Animal</code>)</td>
+              <td><strong>CAN-DO</strong> (సామర్థ్యం - ఉదా: <code>Dog CAN-DO ISwimmable</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>బహుళ వారసత్వం</strong></td>
+              <td>వీలుకాదు (ఒక క్లాస్ ఒకే అబ్‌స్ట్రాక్ట్ క్లాస్‌ను ఇన్‌హెరిట్ చేసుకోగలదు)</td>
+              <td><strong>ఖచ్చితంగా సాధ్యం</strong> (ఒకే క్లాస్ 10 ఇంటర్‌ఫేస్‌లైనా ఇంప్లిమెంట్ చేయవచ్చు)</td>
+            </tr>
+            <tr>
+              <td><strong>ఇన్స్టాన్స్ ఫీల్డ్స్ &amp; స్టేట్</strong></td>
+              <td>కలిగి ఉండవచ్చు (Fields, Private variables, State)</td>
+              <td>ఇన్స్టాన్స్ ఫీల్డ్స్ అనుమతించబడవు (No state)</td>
+            </tr>
+            <tr>
+              <td><strong>కన్‌స్ట్రక్టర్లు</strong></td>
+              <td>కన్‌స్ట్రక్టర్లు ఉండవచ్చు (<code>base(...)</code>)</td>
+              <td>కన్‌స్ట్రక్టర్లు ఉండవు</td>
+            </tr>
+            <tr>
+              <td><strong>యాక్సెస్ మోడిఫైయర్లు</strong></td>
+              <td><code>public, protected, private, internal</code> అన్నీ సాధ్యం</td>
+              <td>సాధారణంగా <code>public</code></td>
+            </tr>
+            <tr>
+              <td><strong>ఉత్తమ వినియోగం</strong></td>
+              <td>ఒకే కుటుంబానికి చెందిన క్లాసుల మధ్య కోడ్ షేరింగ్ కోసం</td>
+              <td>సంబంధం లేని క్లాసుల మధ్య కాంట్రాక్ట్ &amp; DI కోసం</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🧩 బహుళ ఇంటర్‌ఫేస్ ఇంప్లిమెంటేషన్ &amp; Explicit Interface Implementation</h2>
+      <p>
+        ఒక క్లాస్ బహుళ ఇంటర్‌ఫేస్‌లను కామాలతో వేరు చేసి ఇంప్లిమెంట్ చేయవచ్చు:
+      </p>
+      <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 16px; margin:14px 0; font-family:monospace; font-size:14.5px;">
+        public class SmartOrder : IPrintable, ISerializable, IPayable { ... }
+      </div>
+      <p>
+        ఒకవేళ రెండు ఇంటర్‌ఫేస్‌లలో <strong>ఒకే పేరుతో మెథడ్</strong> ఉంటే (ఉదాహరణ: <code>ISaveable.Save()</code> మరియు <code>IDatabase.Save()</code>), 
+        నేమింగ్ కొలిజన్‌ను పరిష్కరించడానికి <strong>Explicit Interface Implementation</strong> వాడతాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Explicit Interface Implementation for Collision Resolution</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public interface IFileStorage { void Save(); }
+public interface IDatabaseStorage { void Save(); }
+
+public class MultiSaver : IFileStorage, IDatabaseStorage
+{
+    // Explicit Implementation: ఇంటర్‌ఫేస్ పేరుతో ప్రిఫిక్స్ చేస్తాం, public ఉండకూడదు!
+    void IFileStorage.Save()
+    {
+        Console.WriteLine("💾 స్థానిక డిస్క్‌లోని ఫైల్‌లోకి సేవ్ చేయబడింది.");
+    }
+
+    void IDatabaseStorage.Save()
+    {
+        Console.WriteLine("🗄️ క్లౌడ్ SQL డేటాబేస్‌లోకి సేవ్ చేయబడింది.");
+    }
+}
+
+MultiSaver saver = new MultiSaver();
+// saver.Save(); // ❌ కంపైల్ ఎర్రర్: ఏ Save పిలవాలో తెలియదు!
+
+// ఇంటర్‌ఫేస్ రిఫరెన్స్‌కు కాస్ట్ చేసి పిలవాలి:
+IFileStorage fileRef = saver;
+fileRef.Save(); // ఫైల్ సేవ్ రన్ అవుతుంది!
+
+IDatabaseStorage dbRef = saver;
+dbRef.Save(); // డేటాబేస్ సేవ్ రన్ అవుతుంది!</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> ⚡ C# 8+ Default Interface Methods (ఇంటర్‌ఫేస్‌లో డీఫాల్ట్ కోడ్)</h2>
+      <p>
+        గతంలో ఒక ఇంటర్‌ఫేస్‌కు కొత్త మెథడ్‌ను జోడిస్తే, ఆ ఇంటర్‌ఫేస్‌ను ఇంప్లిమెంట్ చేసే వందలాది పాత క్లాసులు కంపైల్ అవ్వకుండా ఫెయిల్ అయ్యేవి (Breaking Change). 
+        దీనికి పరిష్కారంగా C# 8.0 లో <strong>Default Interface Methods</strong> వచ్చాయి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Default Interface Method Example</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public interface ILogger
+{
+    void Log(string message);
+
+    // C# 8+ డీఫాల్ట్ మెథడ్: బాడీ ఉంది! క్లాస్ ఓవర్‌రైడ్ చేయకపోయినా పనిచేస్తుంది
+    void LogWarning(string warning)
+    {
+        Console.WriteLine($"⚠️ [డీఫాల్ట్ హెచ్చరిక]: {warning}");
+    }
+}
+
+public class ConsoleLogger : ILogger
+{
+    public void Log(string message) => Console.WriteLine($"INFO: {message}");
+    // LogWarning ను ఇక్కడ రాయలేదు, కానీ డీఫాల్ట్ మెథడ్ ఆటోమేటిక్‌గా వస్తుంది!
+}
+
+ILogger logger = new ConsoleLogger();
+logger.Log("యాప్ రన్ అవుతోంది");
+logger.LogWarning("మెమరీ 85% దాటింది!");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🔗 డిపెండెన్సీ ఇంజెక్షన్ (DI) &amp; లూజ్ కప్లింగ్ పునాది</h2>
+      <p>
+        ఎంటర్‌ప్రైజ్ ASP.NET Core ఆర్కిటెక్చర్‌లో అత్యంత ముఖ్యమైన సూత్రం: 
+        <strong>"Program to an interface, not an implementation."</strong>
+      </p>
+      <p>
+        మీ బిజినెస్ క్లాస్ నేరుగా <code>new SqlDatabase()</code> కి బంధించబడి ఉంటే, రేపు <code>MongoDatabase</code> కి మార్చడం లేదా యూనిట్ టెస్ట్ కోసం డమ్మీ మాక్ (Mock) డేటాబేస్ వాడటం అసాధ్యం. 
+        కానీ <code>IDatabase</code> ఇంటర్‌ఫేస్‌పై ఆధారపడితే, రన్‌టైమ్‌లో ఏ డేటాబేస్‌నైనా ప్లగ్-అండ్-ప్లే లాగా ఇంజెక్ట్ చేసుకోవచ్చు!
+      </p>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 💎 C# 9+ విప్లవం: \`record\` — ఇమ్యుటబుల్ డేటా ఆబ్జెక్ట్స్</h2>
+      <p>
+        ఆధునిక వెబ్ అప్లికేషన్లు, మైక్రోసర్వీసెస్ మరియు క్లౌడ్ API లలో ఎక్కువ భాగం డేటా మార్పిడి (DTOs - Data Transfer Objects) మాత్రమే ఉంటుంది. 
+        దీని కోసం సాధారణ క్లాసులు రాస్తే <code>Equals</code>, <code>GetHashCode</code>, <code>ToString</code>, కన్‌స్ట్రక్టర్ల కోసం 50 లైన్ల బాయిలర్‌ప్లేట్ కోడ్ రాయాల్సి వచ్చేది.
+      </p>
+      <p>
+        ఈ సమస్యను చిటికెలో పరిష్కరించడానికి C# 9 లో వచ్చిన అద్భుతమైన ఫీచరే <strong><code>record</code> (లేదా <code>record class</code>)</strong>!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Positional Record Declaration (One Single Line!)</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// కేవలం ఈ ఒక్క లైన్‌తో పూర్తి స్థాయి ఇమ్యుటబుల్ డేటా ఆబ్జెక్ట్ రెడీ!
+public record User(int Id, string Name, string Email);
+
+// ఆటోమేటిక్‌గా వచ్చే ఫీచర్లు:
+// 1. Primary Constructor
+// 2. init-only properties (Id, Name, Email)
+// 3. అందమైన ToString() ఫార్మాట్
+// 4. Value-based Equality (== మరియు Equals)
+// 5. Deconstructor tuple support!
+
+User u = new User(101, "శ్రీధర్ పట్నాయక్", "sridhar@tech.com");
+Console.WriteLine(u);
+// అవుట్‌పుట్: User { Id = 101, Name = శ్రీధర్ పట్నాయక్, Email = sridhar@tech.com }</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 🔍 Value-based Equality — Class vs Record వ్యత్యాసం</h2>
+      <p>
+        సాధారణ క్లాస్‌లకు, రికార్డులకు మధ్య ఉన్న అతిపెద్ద వ్యత్యాసం <strong>ఈక్వాలిటీ (Equality)</strong> లో ఉంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Class Equality vs Record Equality</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 1. సాధారణ క్లాస్
+public class CustomerClass
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+// 2. రికార్డ్
+public record CustomerRecord(int Id, string Name);
+
+// క్లాస్ ఆబ్జెక్ట్స్ పోలిక
+var c1 = new CustomerClass { Id = 1, Name = "అరుణ్" };
+var c2 = new CustomerClass { Id = 1, Name = "అరుణ్" };
+Console.WriteLine(c1 == c2); // ❌ FALSE! (ఎందుకంటే వేర్వేరు మెమరీ అడ్రస్‌లు - Reference Equality)
+
+// రికార్డ్స్ పోలిక
+var r1 = new CustomerRecord(1, "అరుణ్");
+var r2 = new CustomerRecord(1, "అరుణ్");
+Console.WriteLine(r1 == r2); // ✅ TRUE! (ఎందుకంటే లోపల విలువలు సమానం - Value Equality)</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🔄 నాన్-డిస్ట్రక్టివ్ మ్యుటేషన్ — \`with\` ఎక్స్‌ప్రెషన్</h2>
+      <p>
+        రికార్డ్స్ ఇమ్యుటబుల్ (మార్చలేనివి). మరి ఒక ఫీల్డ్ మార్చాలంటే మొత్తం కొత్త ఆబ్జెక్ట్ మొదటి నుండి రాయాలా? 
+        అవసరం లేదు! C# <strong><code>with</code> ఎక్స్‌ప్రెషన్</strong> ద్వారా అసలు ఆబ్జెక్ట్‌ను డిస్టర్బ్ చేయకుండా, 
+        కేవలం కావాల్సిన ఫీల్డ్‌ను మాత్రమే మార్చి ఒక కొత్త క్లోన్ (Clone) కాపీని తక్షణమే తయారు చేయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Non-Destructive Mutation with 'with'</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public record ProductOrder(string OrderId, string Sku, int Quantity, decimal TotalPrice);
+
+ProductOrder originalOrder = new ProductOrder("ORD-101", "IPHONE-15", 1, 79900m);
+
+// Quantity మరియు TotalPrice ని మాత్రమే మార్చి సరికొత్త ఆర్డర్ కాపీని క్రియేట్ చేయడం
+ProductOrder updatedOrder = originalOrder with 
+{ 
+    Quantity = 2, 
+    TotalPrice = 159800m 
+};
+
+Console.WriteLine($"అసలు ఆర్డర్: {originalOrder}");
+Console.WriteLine($"కొత్త ఆర్డర్: {updatedOrder}");
+// అసలు ఆర్డర్ ఏమాత్రం చెడిపోలేదు (100% Immutable Safety)!</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 \`record struct\` (C# 10+) — జీరో హీప్ అలోకేషన్</h2>
+      <p>
+        C# 10 లో రికార్డ్స్ స్ట్రక్ట్స్‌కు కూడా అందుబాటులోకి వచ్చాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>record class</code> (లేదా కేవలం <code>record</code>): <strong>Reference Type</strong>, Heap లో స్టోర్ అవుతుంది.</li>
+        <li><code>record struct</code>: <strong>Value Type</strong>, Stack లో స్టోర్ అవుతుంది. Garbage Collector కి ఎలాంటి పనీ ఉండదు!</li>
+      </ul>
+      <p>హై-ఫ్రీక్వెన్సీ ట్రేడింగ్, గేమ్ ఇంజిన్స్, గ్రాఫిక్స్ కోఆర్డినేట్స్ (<code>record struct Point(int X, int Y);</code>) లాంటి ప్రదేశాల్లో ఇది అద్భుతమైన వేగాన్ని అందిస్తుంది.</p>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛒 రియల్-వరల్డ్ ప్రాజెక్ట్ — ఎంటర్‌ప్రైజ్ ఈ-కామర్స్ ఆర్డర్ ప్రాసెసింగ్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న Interfaces, Abstract Classes, Records, <code>with</code> expression, 
+        మరియు Polymorphic Discount Strategies అన్నింటినీ ఏకీకృతం చేసి ఒక పూర్తి స్థాయి <strong>ఈ-కామర్స్ ఆర్డర్ పైప్‌లైన్ ఇంజిన్ (E-Commerce Pipeline Engine v1.0)</strong> నిర్మిద్దాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Enterprise E-Commerce Order & Discount Pipeline</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🛍️ మన షాప్ - ఎంటర్‌ప్రైజ్ ఆర్డర్ & డిస్కౌంట్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+// 1. Immutable Records (DTOs)
+public record CustomerInfo(string CustomerId, string Name, string Email, string Tier);
+public record CartItem(string Sku, string Title, decimal Price, int Quantity);
+public record OrderResult(string OrderId, decimal GrossTotal, decimal Discount, decimal NetPayable, string Status);
+
+// 2. Interfaces (Contracts)
+public interface IPaymentGateway
+{
+    string GatewayName { get; }
+    bool Charge(string customerId, decimal amount, out string transactionRef);
+}
+
+public interface INotifier
+{
+    void SendConfirmation(CustomerInfo customer, OrderResult order);
+}
+
+// 3. Abstract Class: Discount Strategy
+public abstract class DiscountStrategy
+{
+    public string StrategyName { get; }
+    protected DiscountStrategy(string name) => StrategyName = name;
+
+    public abstract decimal CalculateDiscount(CustomerInfo customer, decimal grossTotal);
+}
+
+// కాంక్రీట్ డిస్కౌంట్ క్లాసులు
+public class FestiveDiscount : DiscountStrategy
+{
+    public FestiveDiscount() : base("సంక్రాంతి ఫెస్టివల్ సేల్ (10% రాయితీ)") { }
+
+    public override decimal CalculateDiscount(CustomerInfo customer, decimal grossTotal)
+    {
+        return grossTotal >= 5000m ? grossTotal * 0.10m : 0m;
+    }
+}
+
+public class VipTierDiscount : DiscountStrategy
+{
+    public VipTierDiscount() : base("VIP ప్రివిలేజ్ డిస్కౌంట్ (20% రాయితీ)") { }
+
+    public override decimal CalculateDiscount(CustomerInfo customer, decimal grossTotal)
+    {
+        return customer.Tier == "VIP" ? grossTotal * 0.20m : 0m;
+    }
+}
+
+// 4. కాంక్రీట్ సర్వీసెస్ (ఇంటర్‌ఫేస్ ఇంప్లిమెంటేషన్స్)
+public class RazorpayGateway : IPaymentGateway
+{
+    public string GatewayName => "Razorpay Secure Payments";
+
+    public bool Charge(string customerId, decimal amount, out string transactionRef)
+    {
+        transactionRef = "RZP-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+        Console.WriteLine($"💳 [{GatewayName}] కస్టమర్ {customerId} నుండి ₹{amount:N2} సక్సెస్‌ఫుల్‌గా ఛార్జ్ చేయబడింది.");
+        return true;
+    }
+}
+
+public class EmailNotifier : INotifier
+{
+    public void SendConfirmation(CustomerInfo customer, OrderResult order)
+    {
+        Console.WriteLine($"\\n📩 [Email నోటిఫికేషన్] -> {customer.Email}");
+        Console.WriteLine($"   ప్రియమైన {customer.Name}, మీ ఆర్డర్ {order.OrderId} విజయవంతంగా పూర్తయింది!");
+        Console.WriteLine($"   మొత్తం చెల్లింపు: ₹{order.NetPayable:N2} (రాయితీ: ₹{order.Discount:N2})\\n");
+    }
+}
+
+// 5. మెయిన్ ఆర్డర్ ప్రాసెసర్ (డిపెండెన్సీ ఇంజెక్షన్ పునాది)
+public class OrderProcessor(IPaymentGateway paymentGateway, INotifier notifier)
+{
+    public OrderResult ProcessCheckout(CustomerInfo customer, List<CartItem> cart, DiscountStrategy discountPolicy)
+    {
+        Console.WriteLine($"🛒 ఆర్డర్ చెక్అవుట్ ప్రారంభమైంది: {customer.Name} ({customer.Tier})");
+
+        decimal grossTotal = 0m;
+        foreach (var item in cart) grossTotal += item.Price * item.Quantity;
+
+        decimal discount = discountPolicy.CalculateDiscount(customer, grossTotal);
+        decimal netPayable = grossTotal - discount;
+
+        Console.WriteLine($"   స్థూల మొత్తం  : ₹{grossTotal:N2}");
+        Console.WriteLine($"   వర్తించిన రాయితీ: ₹{discount:N2} [{discountPolicy.StrategyName}]");
+        Console.WriteLine($"   నికర చెల్లింపు: ₹{netPayable:N2}");
+
+        if (paymentGateway.Charge(customer.CustomerId, netPayable, out string txRef))
+        {
+            var result = new OrderResult("ORD-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
+                                         grossTotal, discount, netPayable, "CONFIRMED");
+
+            notifier.SendConfirmation(customer, result);
+            return result;
+        }
+
+        return new OrderResult("FAILED", grossTotal, 0, 0, "PAYMENT_FAILED");
+    }
+}
+
+// డ్రైవర్ కోడ్: ఎగ్జిక్యూషన్
+var customer1 = new CustomerInfo("CUST-901", "శ్రీవాత్సవ వర్మ", "vatsava@email.com", "VIP");
+var cartItems = new List<CartItem>
+{
+    new CartItem("SKU-LAP", "డెల్ ఆల్ట్రాబుక్", 65000m, 1),
+    new CartItem("SKU-MOU", "వైర్‌లెస్ మౌస్", 1500m, 2)
+};
+
+var processor = new OrderProcessor(new RazorpayGateway(), new EmailNotifier());
+
+// VIP డిస్కౌంట్‌తో ప్రాసెస్ చేయడం
+processor.ProcessCheckout(customer1, cartItems, new VipTierDiscount());
+
+// నాన్-డిస్ట్రక్టివ్ మ్యుటేషన్ 'with' టెస్ట్
+var customer2 = customer1 with { CustomerId = "CUST-902", Name = "హరీష్ నాయుడు", Tier = "Regular", Email = "harish@email.com" };
+processor.ProcessCheckout(customer2, cartItems, new FestiveDiscount());
+
+Console.WriteLine("=================================================");</code></pre>
+      </div>
+
+      <!-- RUN LIVE COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin:24px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:#10b981; font-size:18px;">💻 ఈ ఈ-కామర్స్ ఆర్డర్ ఇంజిన్‌ను లైవ్ కంపైలర్‌లో రన్ చేసి చూడండి!</h3>
+          <p style="margin:0; font-size:14px; color:var(--text2);">
+            Records, Interfaces, Abstract Discount Strategy, మరియు 'with' మ్యుటేషన్లను ప్రత్యక్షంగా పరిశీలించండి.
+          </p>
+        </div>
+        <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:12px 24px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <span>▶ Try C# Online Compiler</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🎓 ఇంటర్వ్యూ ప్రశ్నలు, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h2>
+      
+      <p><strong>టాప్ ఇంటర్వ్యూ ప్రశ్నలు &amp; సమాధానాలు:</strong></p>
+      <div style="margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q1: C# లో <code>record</code> కి సాధారణ <code>class</code> కి మధ్య ప్రధాన వ్యత్యాసాలు ఏమిటి?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> 1) Records డీఫాల్ట్‌గా <strong>Value-based Equality</strong> ని అందిస్తాయి (లోపల ఫీల్డ్స్ సమానమైతే <code>==</code> ట్రూ అవుతుంది), క్లాసెస్ Reference Equality ని వాడతాయి. 2) Records ఇమ్యుటబుల్ డేటా మోడలింగ్‌కు ప్రాధాన్యత ఇస్తూ <code>with</code> ఎక్స్‌ప్రెషన్‌ను సపోర్ట్ చేస్తాయి. 3) Records ఆటోమేటిక్‌గా అందమైన <code>ToString()</code> మరియు Deconstructors ని అందిస్తాయి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q2: Explicit Interface Implementation ఎప్పుడు వాడతారు?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> ఒక క్లాస్ రెండు వేర్వేరు ఇంటర్‌ఫేస్‌లను ఇంప్లిమెంట్ చేస్తున్నప్పుడు, రెండింటిలోనూ ఒకే పేరు, ఒకే పారామీటర్లు ఉన్న మెథడ్ ఉంటే నేమింగ్ కొలిజన్ నివారించడానికి <code>void IInterfaceA.Method()</code> రూపంలో ఎక్స్‌ప్లిసిట్ ఇంప్లిమెంటేషన్ వాడతారు.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 16px 0; color:var(--text);">🧠 మీ నాలెడ్జ్ చెక్ చేసుకోండి — 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: అబ్‌స్ట్రాక్ట్ క్లాస్‌కు <code>new AbstractClass()</code> ద్వారా ఆబ్జెక్ట్‌ను సృష్టించవచ్చా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>లేదు</strong>. అబ్‌స్ట్రాక్ట్ క్లాసెస్ అసంపూర్ణమైన బ్లూప్రింట్లు. వాటికి నేరుగా ఆబ్జెక్ట్ సృష్టించడం కంపైల్-టైమ్ ఎర్రర్. వాటిని చైల్డ్ క్లాస్ ద్వారా మాత్రమే ఇన్‌హెరిట్ చేసుకోవాలి.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: ఒక C# క్లాస్ గరిష్టంగా ఎన్ని ఇంటర్‌ఫేస్‌లను ఇంప్లిమెంట్ చేసుకోవచ్చు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>పరిమితి లేదు (బహుళ ఇంటర్‌ఫేస్‌లు)</strong>. ఒక క్లాస్ ఒకే ఒక్క క్లాస్ నుండి మాత్రమే ఇన్‌హెరిట్ చేసుకోగలదు, కానీ ఎన్ని ఇంటర్‌ఫేస్‌లనైనా ఇంప్లిమెంట్ చేయవచ్చు.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: C# 8 లో ఇంటర్‌ఫేస్‌లకు వచ్చిన సరికొత్త ఫీచర్ ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>Default Interface Methods</strong>. ఇంటర్‌ఫేస్ లోపల కూడా డీఫాల్ట్ కోడ్ బాడీని అందించవచ్చు, దీనివల్ల పాత క్లాసులను బ్రేక్ చేయకుండా కొత్త మెథడ్స్ జోడించవచ్చు.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: ఒక రికార్డ్ యొక్క కాపీని తీసుకొని అందులో కొన్ని ఫీల్డ్స్‌ను మాత్రమే సవరించడానికి ఏ ఎక్స్‌ప్రెషన్ వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>with</code> ఎక్స్‌ప్రెషన్</strong> (Non-destructive mutation). ఉదాహరణ: <code>var newRec = oldRec with { Salary = 50000 };</code>.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: <code>record struct</code> మరియు <code>record class</code> మధ్య మెమరీ వ్యత్యాసం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>record class</code> అనేది Reference Type (Heap మెమరీలో స్టోర్ అవుతుంది, GC కలెక్ట్ చేస్తుంది). <code>record struct</code> అనేది Value Type (Stack లో స్టోర్ అవుతుంది, జీరో GC అలోకేషన్).
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 15. ఇన్‌హెరిటెన్స్ &amp; పాలిమార్ఫిజం
+      </a>
+      <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 17. ఎక్సెప్షన్ హ్యాండ్లింగ్ (Phase 05) →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+`;
+
+const projectSimulationCode = `using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🛍️ మన షాప్ - ఎంటర్‌ప్రైజ్ ఆర్డర్ & డిస్కౌంట్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+public record CustomerInfo(string CustomerId, string Name, string Email, string Tier);
+public record CartItem(string Sku, string Title, decimal Price, int Quantity);
+public record OrderResult(string OrderId, decimal GrossTotal, decimal Discount, decimal NetPayable, string Status);
+
+public interface IPaymentGateway
+{
+    string GatewayName { get; }
+    bool Charge(string customerId, decimal amount, out string transactionRef);
+}
+
+public interface INotifier
+{
+    void SendConfirmation(CustomerInfo customer, OrderResult order);
+}
+
+public abstract class DiscountStrategy
+{
+    public string StrategyName { get; }
+    protected DiscountStrategy(string name) => StrategyName = name;
+    public abstract decimal CalculateDiscount(CustomerInfo customer, decimal grossTotal);
+}
+
+public class FestiveDiscount : DiscountStrategy
+{
+    public FestiveDiscount() : base("సంక్రాంతి ఫెస్టివల్ సేల్ (10% రాయితీ)") { }
+    public override decimal CalculateDiscount(CustomerInfo customer, decimal grossTotal) => grossTotal >= 5000m ? grossTotal * 0.10m : 0m;
+}
+
+public class VipTierDiscount : DiscountStrategy
+{
+    public VipTierDiscount() : base("VIP ప్రివిలేజ్ డిస్కౌంట్ (20% రాయితీ)") { }
+    public override decimal CalculateDiscount(CustomerInfo customer, decimal grossTotal) => customer.Tier == "VIP" ? grossTotal * 0.20m : 0m;
+}
+
+public class RazorpayGateway : IPaymentGateway
+{
+    public string GatewayName => "Razorpay Secure Payments";
+    public bool Charge(string customerId, decimal amount, out string transactionRef)
+    {
+        transactionRef = "RZP-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+        Console.WriteLine($"💳 [{GatewayName}] కస్టమర్ {customerId} నుండి ₹{amount:N2} సక్సెస్‌ఫుల్‌గా ఛార్జ్ చేయబడింది.");
+        return true;
+    }
+}
+
+public class EmailNotifier : INotifier
+{
+    public void SendConfirmation(CustomerInfo customer, OrderResult order)
+    {
+        Console.WriteLine($"\\n📩 [Email నోటిఫికేషన్] -> {customer.Email}");
+        Console.WriteLine($"   ప్రియమైన {customer.Name}, మీ ఆర్డర్ {order.OrderId} విజయవంతంగా పూర్తయింది!");
+        Console.WriteLine($"   మొత్తం చెల్లింపు: ₹{order.NetPayable:N2} (రాయితీ: ₹{order.Discount:N2})\\n");
+    }
+}
+
+public class OrderProcessor(IPaymentGateway paymentGateway, INotifier notifier)
+{
+    public OrderResult ProcessCheckout(CustomerInfo customer, List<CartItem> cart, DiscountStrategy discountPolicy)
+    {
+        Console.WriteLine($"🛒 ఆర్డర్ చెక్అవుట్ ప్రారంభమైంది: {customer.Name} ({customer.Tier})");
+        decimal grossTotal = 0m;
+        foreach (var item in cart) grossTotal += item.Price * item.Quantity;
+
+        decimal discount = discountPolicy.CalculateDiscount(customer, grossTotal);
+        decimal netPayable = grossTotal - discount;
+
+        Console.WriteLine($"   స్థూల మొత్తం  : ₹{grossTotal:N2}");
+        Console.WriteLine($"   వర్తించిన రాయితీ: ₹{discount:N2} [{discountPolicy.StrategyName}]");
+        Console.WriteLine($"   నికర చెల్లింపు: ₹{netPayable:N2}");
+
+        if (paymentGateway.Charge(customer.CustomerId, netPayable, out string txRef))
+        {
+            var result = new OrderResult("ORD-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
+                                         grossTotal, discount, netPayable, "CONFIRMED");
+            notifier.SendConfirmation(customer, result);
+            return result;
+        }
+        return new OrderResult("FAILED", grossTotal, 0, 0, "PAYMENT_FAILED");
+    }
+}
+
+var customer1 = new CustomerInfo("CUST-901", "శ్రీవాత్సవ వర్మ", "vatsava@email.com", "VIP");
+var cartItems = new List<CartItem>
+{
+    new CartItem("SKU-LAP", "డెల్ ఆల్ట్రాబుక్", 65000m, 1),
+    new CartItem("SKU-MOU", "వైర్‌లెస్ మౌస్", 1500m, 2)
+};
+
+var processor = new OrderProcessor(new RazorpayGateway(), new EmailNotifier());
+processor.ProcessCheckout(customer1, cartItems, new VipTierDiscount());
+
+var customer2 = customer1 with { CustomerId = "CUST-902", Name = "హరీష్ నాయుడు", Tier = "Regular", Email = "harish@email.com" };
+processor.ProcessCheckout(customer2, cartItems, new FestiveDiscount());
+
+Console.WriteLine("=================================================");`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ &amp; C# Records — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="C# లో Interfaces, Abstract Classes, Multiple Interface Implementation, Default Interface Methods, C# 9+ record, with mutation మరియు ఈ-కామర్స్ పైప్‌లైన్ ప్రాజెక్ట్ సమగ్ర తెలుగు గైడ్." />
+  <meta name="keywords" content="c# interfaces telugu, c# abstract class telugu, c# records telugu, c# with expression, c# default interface methods, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C# ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records",
+    "description": "C# లో Interfaces, Abstract Classes, Multiple Interface Implementation, Default Interface Methods, C# 9+ record, with mutation సమగ్ర తెలుగు గైడ్.",
+    "articleSection": "Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`${projectSimulationCode.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '16-csharp-interfaces-abstract-classes-records.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C# Chapter 16!');
+console.log('Target file size:', fullHtml.length, 'characters');

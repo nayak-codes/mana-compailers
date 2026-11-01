@@ -1,0 +1,1092 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./csharp_curriculum_data');
+
+const lesson = LESSONS.find(l => l.num === 14);
+const sidebarHtml = buildSidebar(14);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 14: ఎన్‌క్యాప్సులేషన్ &amp; Auto-Properties</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ &amp; Auto-Properties (get, set, init)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 14 of 20</span>
+      <span class="meta-pill">🏛️ Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+      <span class="meta-pill">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>డేటా హైడింగ్ తత్వం · 6 యాక్సెస్ మోడిఫైయర్లు (public, private, protected, internal, protected internal, private protected) · Backing Fields &amp; Full Properties · Auto-Implemented Properties { get; set; } · private set &amp; రీడ్-ఓన్లీ డిజైన్ · C# 9+ init-only యాక్సెసర్స్ · ఎక్స్‌ప్రెషన్-బాడీడ్ కంప్యూటెడ్ ప్రాపర్టీస్ (=>) · C# 11 required కీవర్డ్ · సెక్యూర్ పేమెంట్ గేట్‌వే వాలెట్ ప్రాజెక్ట్ · 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>OOP మొదటి రక్షణ కవచం: ఎన్‌క్యాప్సులేషన్ (Encapsulation)! 🛡️</h3>
+      <p>
+        ఒక కారు నడిపే డ్రైవర్‌కు ఇంజిన్ లోపల ఉండే పిస్టన్లు, ఫ్యూయల్ ఇంజెక్టర్లు నేరుగా చేతులతో తాకడానికి అందుబాటులో ఉండవు. 
+        డ్రైవర్ కేవలం స్టీరింగ్, యాక్సిలరేటర్, బ్రేక్ పెడల్స్ అనే సురక్షితమైన ఇంటర్‌ఫేస్ ద్వారా మాత్రమే కారును నియంత్రిస్తాడు. 
+        ఒకవేళ డ్రైవర్ నేరుగా నడుస్తున్న పిస్టన్‌ను తాకగలిగితే ప్రమాదం తప్పదు!
+      </p>
+      <p style="margin-top:10px;">
+        సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో కూడా ఇదే నియమం వర్తిస్తుంది. 
+        ఒక క్లాస్ లోపల ఉండే సెన్సిటివ్ డేటాను (ఉదా: బ్యాంక్ బ్యాలెన్స్, పాస్‌వర్డ్ హాష్, వాలెట్ క్రెడిట్స్) బయటి కోడ్ నేరుగా మార్చకుండా 
+        దాచిపెట్టే పద్ధతినే <strong>డేటా హైడింగ్ (Data Hiding) లేదా ఎన్‌క్యాప్సులేషన్ (Encapsulation)</strong> అంటారు. 
+        C# లోని <strong>6 యాక్సెస్ మోడిఫైయర్లు</strong>, మరియు ఆధునిక <strong>Properties (get, set, init, required)</strong> ద్వారా అత్యున్నత రక్షణ కలిగిన సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌ను ఎలా నిర్మించాలో ఈ అధ్యాయంలో సమగ్రంగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🛡️ ఎన్‌క్యాప్సులేషన్ (Encapsulation) అంటే ఏమిటి? పబ్లిక్ ఫీల్డ్స్ ఎందుకు ప్రమాదకరం?</h2>
+      <p>
+        <strong>ఎన్‌క్యాప్సులేషన్ (Encapsulation)</strong> అంటే ఒక ఆబ్జెక్ట్ యొక్క డేటా (Fields) మరియు ఆ డేటాను మార్చే పద్ధతులను (Methods/Properties) 
+        ఒకే ఒక క్యాప్సూల్ లాంటి యూనిట్‌లో బంధించి, అంతర్గత వివరాలను బయటి ప్రపంచం నుండి దాచడం.
+      </p>
+      <p>
+        మీరు ఒక క్లాస్‌లో ఫీల్డ్స్‌ను <code>public</code> గా డిక్లేర్ చేస్తే ఏం జరుగుతుందో ఈ కింది ఉదాహరణలో చూడండి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · The Danger of Public Fields</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// ❌ అత్యంత ప్రమాదకరమైన బ్యాడ్ కోడ్ (No Encapsulation)
+public class UnsafeAccount
+{
+    public string AccountHolder;
+    public decimal Balance; // పబ్లిక్ ఫీల్డ్!
+}
+
+UnsafeAccount acc = new UnsafeAccount();
+acc.Balance = 10000m;
+
+// ఎవరైనా పొరపాటున లేదా దురుద్దేశంతో బ్యాలెన్స్‌ను రుణాత్మకం చేయవచ్చు!
+acc.Balance = -999999m; // 😱 ఎటువంటి అడ్డంకి లేదు! డేటా కరప్ట్ అయిపోయింది!</code></pre>
+      </div>
+
+      <p>
+        ఈ తీవ్రమైన లోపాన్ని అరికట్టడానికే ఎన్‌క్యాప్సులేషన్ గోల్డెన్ రూల్: 
+        <strong>"ఫీల్డ్స్‌ను ఎల్లప్పుడూ <code>private</code> గా ఉంచాలి. వాటిని చదవడానికి లేదా మార్చడానికి పబ్లిక్ మెథడ్స్ లేదా ప్రాపర్టీల ద్వారా మాత్రమే కఠినమైన నిబంధనలతో (Validation Rules) అనుమతించాలి."</strong>
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 🔐 C# లోని 6 యాక్సెస్ మోడిఫైయర్లు (The 6 Access Modifiers)</h2>
+      <p>
+        C# ఇతర భాషల కంటే అత్యంత సూక్ష్మమైన యాక్సెస్ కంట్రోల్‌ను అందిస్తుంది. 
+        ఇందులో మొత్తం <strong>6 యాక్సెస్ మోడిఫైయర్లు</strong> ఉన్నాయి:
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>మోడిఫైయర్</th>
+              <th>యాక్సెస్ పరిధి (Scope)</th>
+              <th>ఎక్కడ అందుబాటులో ఉంటుంది?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>public</code></td>
+              <td>అపరిమితం (Unrestricted)</td>
+              <td>ఏ ప్రాజెక్ట్ లేదా ఏ అసెంబ్లీ (.dll) నుండి అయినా యాక్సెస్ చేయవచ్చు.</td>
+            </tr>
+            <tr>
+              <td><code>private</code></td>
+              <td>అత్యంత కఠినం (Class Only)</td>
+              <td>ఆ క్లాస్ లేదా స్ట్రక్ట్ కర్లీ బ్రేసెస్ <code>{ }</code> లోపల మాత్రమే. బయటికి కనిపించదు.</td>
+            </tr>
+            <tr>
+              <td><code>protected</code></td>
+              <td>వారసత్వం (Inheritance)</td>
+              <td>ఆ క్లాస్ మరియు దాని చైల్డ్ క్లాసుల (Derived Classes) లోపల మాత్రమే.</td>
+            </tr>
+            <tr>
+              <td><code>internal</code></td>
+              <td>అసెంబ్లీ బౌండరీ (Same Assembly)</td>
+              <td>అదే ప్రాజెక్ట్ / కంపైల్ అయిన అదే <code>.dll</code> లేదా <code>.exe</code> లోపల ఉన్న అన్ని క్లాసులకు కనిపిస్తుంది. బయటి ప్రాజెక్టులకు కనిపించదు.</td>
+            </tr>
+            <tr>
+              <td><code>protected internal</code></td>
+              <td>యూనియన్ (Protected OR Internal)</td>
+              <td>అదే అసెంబ్లీలో ఎక్కడైనా OR ఇతర అసెంబ్లీలలోని డిరైవ్డ్ క్లాసుల్లో మాత్రమే.</td>
+            </tr>
+            <tr>
+              <td><code>private protected</code></td>
+              <td>ఇంటర్‌సెక్షన్ (Protected AND Internal)</td>
+              <td>అదే అసెంబ్లీలో ఉంటూ, డిరైవ్డ్ క్లాస్ అయి ఉండాలి (C# 7.2+).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin:16px 0; font-size:14px; color:var(--text2);">
+        <strong>📌 C# డీఫాల్ట్ యాక్సెస్ నియమాలు (Default Modifiers):</strong><br>
+        • క్లాస్ లెవెల్‌లో (Top-level Class): <code>internal</code> (మీరు ఏమీ రాయకపోతే).<br>
+        • మెంబర్ లెవెల్‌లో (Fields, Methods in Class): <code>private</code> (మీరు ఏమీ రాయకపోతే).
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ☕ క్లాసిక్ గెట్టర్స్ &amp; సెట్టర్స్ vs C# ప్రాపర్టీస్</h2>
+      <p>
+        జావా (Java) లేదా C++ లో ఫీల్డ్స్‌ను ఎన్‌క్యాప్సులేట్ చేయడానికి సాంప్రదాయకంగా రెండు పబ్లిక్ మెథడ్స్ రాస్తారు: 
+        <code>GetBalance()</code> మరియు <code>SetBalance(decimal value)</code>.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Traditional Java-Style Getters/Setters vs Modern C#</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 1. పాత జావా తరహా పద్ధతి (C# లో ఇది రికమండ్ చేయరు):
+public class JavaStyleAccount
+{
+    private decimal _balance;
+
+    public decimal GetBalance() => _balance;
+
+    public void SetBalance(decimal value)
+    {
+        if (value >= 0) _balance = value;
+    }
+}
+
+// కాల్ చేసే విధానం:
+JavaStyleAccount a1 = new JavaStyleAccount();
+a1.SetBalance(5000m);
+Console.WriteLine(a1.GetBalance()); // ఫంక్షన్ కాల్ బ్రాకెట్లు () తప్పనిసరి!
+
+// ----------------------------------------------------
+// 2. C# ప్రాపర్టీ శైలి (Natural Field Syntax with Method Safety!):
+public class CSharpAccount
+{
+    private decimal _balance;
+
+    public decimal Balance
+    {
+        get => _balance;
+        set { if (value >= 0) _balance = value; }
+    }
+}
+
+// కాల్ చేసే విధానం - వేరియబుల్ లాగే సహజంగా ఉంటుంది!
+CSharpAccount a2 = new CSharpAccount();
+a2.Balance = 5000m; // లోపల set రన్ అవుతుంది!
+Console.WriteLine(a2.Balance); // లోపల get రన్ అవుతుంది!</code></pre>
+      </div>
+
+      <p>
+        C# ప్రాపర్టీస్ బయటి ప్రపంచానికి సాధారణ వేరియబుల్ లాగా సహజమైన సింటాక్స్‌తో కనిపిస్తాయి, 
+        కానీ లోపల మాత్రం మెథడ్ లాగా రక్షణ వలయాన్ని అమలు చేస్తాయి.
+      </p>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🏗️ C# ఫుల్ ప్రాపర్టీ అనాటమీ &amp; \`value\` కీవర్డ్</h2>
+      <p>
+        ఒక పూర్తి స్థాయి ప్రాపర్టీ (Full Property) లో రెండు విభాగాలు ఉంటాయి:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>Backing Field:</strong> అసలైన డేటాను దాచే ఒక <code>private</code> వేరియబుల్ (సాధారణంగా <code>_camelCase</code> తో రాస్తారు).</li>
+        <li><strong>Property Declaration:</strong> <code>get</code> మరియు <code>set</code> యాక్సెసర్లు (Accessors) కలిగిన పబ్లిక్ ఇంటర్‌ఫేస్.</li>
+      </ol>
+
+      <p>
+        ఇందులో <strong><code>value</code></strong> అనేది C# అందించే ఒక ప్రత్యేక కాంటెక్స్చువల్ కీవర్డ్ (Contextual Keyword). 
+        బయటి నుండి అసైన్ చేసిన డేటా <code>value</code> అనే పేరుతో సెట్టర్ లోపలికి వస్తుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Full Property with Validation Logic</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class Student
+{
+    // 1. ప్రైవేట్ బ్యాకింగ్ ఫీల్డ్
+    private int _marks;
+
+    // 2. ఫుల్ ప్రాపర్టీ
+    public int Marks
+    {
+        get
+        {
+            return _marks;
+        }
+        set
+        {
+            // కఠినమైన వాలిడేషన్: మార్కులు 0 నుండి 100 మధ్యే ఉండాలి
+            if (value < 0 || value > 100)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "మార్కులు 0 మరియు 100 మధ్య మాత్రమే ఉండాలి!");
+            }
+            _marks = value; // సరైనది అయితేనే ఫీల్డ్‌లో భద్రపరుస్తుంది
+        }
+    }
+}
+
+Student s = new Student();
+s.Marks = 85; // ✅ విజయవంతం
+Console.WriteLine($"విద్యార్థి మార్కులు: {s.Marks}");
+
+// s.Marks = 150; // ❌ System.ArgumentOutOfRangeException విసురుతుంది!</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> ⚡ ఆటో-ఇంప్లిమెంటెడ్ ప్రాపర్టీస్ (Auto-Implemented Properties \`{ get; set; }\`)</h2>
+      <p>
+        ప్రతి చిన్న ప్రాపర్టీకి ప్రత్యేకంగా ప్రైవేట్ బ్యాకింగ్ ఫీల్డ్ రాసుకోవడం విసుగ్గా ఉంటుంది. 
+        ఎలాంటి ప్రత్యేక వాలిడేషన్ అవసరం లేని సందర్భాల్లో C# <strong>Auto-Implemented Properties</strong> ను ప్రవేశపెట్టింది.
+      </p>
+      <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 16px; margin:14px 0; font-family:monospace; font-size:14.5px;">
+        public string Email { get; set; } = "user@example.com";
+      </div>
+      <p>
+        మీరు ఈ ఒక్క లైన్ రాయగానే, <strong>C# కంపైలర్ IL (Intermediate Language) లో ఒక గుప్తమైన బ్యాకింగ్ ఫీల్డ్‌ను (ఉదా: <code>&lt;Email&gt;k__BackingField</code>) ఆటోమేటిక్‌గా జనరేట్ చేస్తుంది</strong>. 
+        భవిష్యత్తులో ఎప్పుడైనా దీనికి వాలిడేషన్ లాజిక్ అవసరమైతే, క్లాస్ బయటి కోడ్‌ను మార్చకుండా సులభంగా ఫుల్ ప్రాపర్టీగా మార్చుకోవచ్చు!
+      </p>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🔒 రీడ్-ఓన్లీ ప్రాపర్టీస్ &amp; ప్రైవేట్ సెట్టర్స్ (\`{ get; private set; }\`)</h2>
+      <p>
+        ఒక వేరియబుల్‌ను బయటి ప్రపంచం చదవవచ్చు (Read), కానీ మార్చడానికి (Write) అనుమతి ఉండకూడదు. 
+        కేవలం క్లాస్ లోపలి మెథడ్స్ మాత్రమే మార్చగలగాలి. 
+        దీనిని సాధించడానికి C# లో <strong>యాక్సెసర్-లెవల్ యాక్సెస్ మోడిఫైయర్లు</strong> ఉన్నాయి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Private Set & Read-Only Properties</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class SecureVault
+{
+    // 1. బయటికి రీడ్-ఓన్లీ, క్లాస్ లోపల మాత్రమే సెట్ చేయవచ్చు
+    public decimal VaultBalance { get; private set; }
+
+    // 2. ప్యూర్ రీడ్-ఓన్లీ (గెట్టర్ మాత్రమే ఉంది - కన్‌స్ట్రక్టర్‌లో తప్ప మారదు)
+    public string VaultId { get; }
+
+    public SecureVault(string id, decimal openingFunds)
+    {
+        VaultId = id;
+        VaultBalance = openingFunds;
+    }
+
+    public void AddFunds(decimal amount)
+    {
+        if (amount > 0) VaultBalance += amount;
+    }
+}
+
+SecureVault vault = new SecureVault("VAULT-007", 500000m);
+Console.WriteLine($"వాల్ట్ ID: {vault.VaultId}, నిధులు: ₹{vault.VaultBalance:N2}");
+
+// vault.VaultBalance = 900000m; // ❌ కంపైల్ ఎర్రర్: The set accessor is inaccessible!
+vault.AddFunds(25000m); // ✅ సురక్షితమైన మెథడ్ ద్వారా మాత్రమే మార్పు సాధ్యం!</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 💎 \`init\`-ఓన్లీ యాక్సెసర్స్ (C# 9+ Immutable Properties)</h2>
+      <p>
+        గతంలో <code>{ get; }</code> లేదా <code>{ get; private set; }</code> వాడినప్పుడు ఒక సమస్య ఉండేది: 
+        ఆబ్జెక్ట్ ఇనిషియలైజర్ సింటాక్స్ <code>new User { Id = 101 }</code> పనిచేసేది కాదు. కేవలం కన్‌స్ట్రక్టర్ పారామీటర్ ద్వారానే ఇవ్వాల్సి వచ్చేది.
+      </p>
+      <p>
+        ఈ సమస్యకు అద్భుతమైన ఆధునిక పరిష్కారమే C# 9 లో వచ్చిన <strong><code>init</code> యాక్సెసర్</strong>!
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>ఆబ్జెక్ట్ పుట్టేప్పుడు (Instantiation / Object Initializer):</strong> విలువను ఉచితంగా సెట్ చేయవచ్చు.</li>
+        <li><strong>ఆబ్జెక్ట్ క్రియేట్ అయిన మరుక్షణమే:</strong> అది శాశ్వతంగా <strong>రీడ్-ఓన్లీ (Immutable)</strong> గా మారిపోతుంది! ఆ తర్వాత ఎవరూ దాన్ని మార్చలేరు.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · init Accessor for Immutability</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class CitizenRecord
+{
+    // జీవితంలో ఒక్కసారే సెట్ చేయగల ఆధార్ మరియు పాన్ నంబర్లు
+    public string AadhaarNumber { get; init; }
+    public string PanCard { get; init; }
+
+    // ఇది ఎప్పుడైనా మారవచ్చు
+    public string ResidentialAddress { get; set; }
+}
+
+// 1. ఆబ్జెక్ట్ ఇనిషియలైజర్ లో init ప్రాపర్టీలకు విలువ ఇవ్వవచ్చు!
+CitizenRecord citizen = new CitizenRecord
+{
+    AadhaarNumber = "9988-7766-5544",
+    PanCard = "ABCDE1234F",
+    ResidentialAddress = "హైదరాబాద్, తెలంగాణ"
+};
+
+// 2. అడ్రస్ మార్చవచ్చు
+citizen.ResidentialAddress = "విశాఖపట్నం, ఆంధ్రప్రదేశ్"; // ✅ OK
+
+// 3. ఆధార్ మార్చడానికి ప్రయత్నిస్తే?
+// citizen.AadhaarNumber = "1122-3344-5566"; // ❌ కంపైలర్ ఎర్రర్: Init-only property can only be assigned in an object initializer!</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🧮 ఎక్స్‌ప్రెషన్-బాడీడ్ కంప్యూటెడ్ ప్రాపర్టీస్ (Computed Properties \`=>\`)</h2>
+      <p>
+        కొన్ని ప్రాపర్టీలు మెమరీలో డేటాను నిల్వ చేసుకోవు. 
+        ఇతర ప్రాపర్టీల ఆధారంగా ఎప్పటికప్పుడు అప్పటికప్పుడు లెక్కించి ఫలితాన్ని ఇస్తాయి. 
+        వీటిని <strong>కంప్యూటెడ్ లేదా కాలిక్యులేటెడ్ ప్రాపర్టీస్ (Computed Properties)</strong> అంటారు.
+      </p>
+      <p>
+        C# లో ఫ్యాట్-యారో (<code>=&gt;</code>) సింటాక్స్ ఉపయోగించి ఒకే లైన్‌లో వీటిని ఎలిగెంట్‌గా రాయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Computed Expression-Bodied Properties</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class OrderItem
+{
+    public string ItemName { get; set; }
+    public decimal UnitPrice { get; set; }
+    public int Quantity { get; set; }
+    public decimal TaxRatePercentage { get; set; } = 18.0m; // 18% GST
+
+    // కంప్యూటెడ్ ప్రాపర్టీ 1: సబ్‌టోటల్
+    public decimal SubTotal => UnitPrice * Quantity;
+
+    // కంప్యూటెడ్ ప్రాపర్టీ 2: ట్యాక్స్ మొత్తం
+    public decimal TaxAmount => SubTotal * (TaxRatePercentage / 100m);
+
+    // కంప్యూటెడ్ ప్రాపర్టీ 3: గ్రాండ్ టోటల్
+    public decimal GrandTotal => SubTotal + TaxAmount;
+
+    // కంప్యూటెడ్ ప్రాపర్టీ 4: ఫార్మాట్ చేసిన వివరణ
+    public string Summary => $"{ItemName} ({Quantity} nos) -> మొత్తం: ₹{GrandTotal:N2}";
+}
+
+var item = new OrderItem { ItemName = "మెకానికల్ కీబోర్డ్", UnitPrice = 3500m, Quantity = 2 };
+Console.WriteLine(item.Summary);
+// అవుట్‌పుట్: మెకానికల్ కీబోర్డ్ (2 nos) -> మొత్తం: ₹8,260.00</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 🚨 C# 11 \`required\` మోడిఫైయర్ — కంపైల్-టైమ్ ఆబ్జెక్ట్ సేఫ్టీ</h2>
+      <p>
+        గతంలో ఒక ఆబ్జెక్ట్ క్రియేట్ చేసేటప్పుడు డెవలపర్ ఏదైనా ముఖ్యమైన ప్రాపర్టీని (ఉదా: <code>Email</code>) ఇవ్వడం మర్చిపోతే, 
+        రన్‌టైమ్‌లో <code>NullReferenceException</code> వచ్చి యాప్ క్రాష్ అయ్యేది. 
+        దీనికి ఒకే పరిష్కారం పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ మాత్రమే ఉండేది.
+      </p>
+      <p>
+        కానీ <strong>C# 11 (.NET 7+) లో వచ్చిన <code>required</code> మోడిఫైయర్</strong> ఆబ్జెక్ట్ ఇనిషియలైజర్లలో కూడా తప్పనిసరి ఫీల్డ్స్‌ను ఎన్‌ఫోర్స్ చేస్తుంది!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · required Modifier in C# 11+</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class UserProfile
+{
+    // తప్పనిసరిగా ఇవ్వాల్సిన ప్రాపర్టీలు
+    public required string Username { get; init; }
+    public required string Email { get; init; }
+
+    // ఐచ్ఛికం (Optional)
+    public string PhoneNumber { get; set; } = "N/A";
+}
+
+// ✅ సరైన వినియోగం: required ప్రాపర్టీలు రెండూ ఇచ్చాం
+var u1 = new UserProfile
+{
+    Username = "vijay_kumar",
+    Email = "vijay@company.com"
+};
+
+// ❌ కంపైల్ ఎర్రర్: Required member 'UserProfile.Email' must be set in object initializer!
+// var u2 = new UserProfile { Username = "anand" };</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> ⚖️ Auto-Properties vs Backing Fields — సమగ్ర పోలిక పట్టిక</h2>
+      <p>
+        ఒక ప్రొఫెషనల్ C# ఆర్కిటెక్ట్‌గా ఎప్పుడు ఆటో-ప్రాపర్టీ వాడాలి? ఎప్పుడు బ్యాకింగ్ ఫీల్డ్ వాడాలి? అనే స్పష్టత ఉండాలి:
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్ / అవసరం</th>
+              <th>Auto-Property ({ get; set; })</th>
+              <th>Full Property (Backing Field తో)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>వాలిడేషన్ లాజిక్</strong></td>
+              <td>వీలుకాదు (No custom logic)</td>
+              <td>ఖచ్చితంగా సాధ్యం (if-else, Exception throwing)</td>
+            </tr>
+            <tr>
+              <td><strong>కోడ్ పొడవు (Boilerplate)</strong></td>
+              <td>కేవలం 1 లైన్ మాత్రమే (Clean)</td>
+              <td>ఫీల్డ్ + get + set (కనీసం 8-10 లైన్లు)</td>
+            </tr>
+            <tr>
+              <td><strong>డేటాబేస్ / ORM మ్యాపింగ్</strong></td>
+              <td>Entity Framework Core కు అనుకూలం</td>
+              <td>డోమైన్ డ్రివెన్ డిజైన్ (DDD) రిచ్ ఎంటిటీలకు శ్రేష్టం</td>
+            </tr>
+            <tr>
+              <td><strong>ఇన్‌మెమరీ ఫీల్డ్ కంట్రోల్</strong></td>
+              <td>కంపైలర్ ఆటోమేటిక్ ఫీల్డ్ ఇస్తుంది</td>
+              <td>డెవలపర్‌కు ఫీల్డ్‌పై పూర్తి నియంత్రణ ఉంటుంది</td>
+            </tr>
+            <tr>
+              <td><strong>సిఫార్సు</strong></td>
+              <td>90% సాధారణ DTOs, మోడల్స్‌కు వాడండి</td>
+              <td>బిజినెస్ రూల్స్, బ్యాంకింగ్ బ్యాలెన్స్, ఏజ్ లిమిట్లకు వాడండి</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 💡 బెస్ట్ ప్రాక్టీసెస్ — గెట్టర్లలో సైడ్-ఎఫెక్ట్స్ ఉంచకూడదు!</h2>
+      <p>
+        C# కోడింగ్ ప్రమాణాలలో అత్యంత కీలకమైన ఆర్కిటెక్చరల్ రూల్: 
+        <strong>"A property getter must be fast and free of side-effects!"</strong>
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>❌ <strong>గెట్టర్ లోపల ఫైల్ డౌన్‌లోడ్ లేదా డేటాబేస్ క్వెరీలు పెట్టకూడదు:</strong> ప్రాపర్టీని చూసినప్పుడు డెవలపర్ అది మెమరీలో తక్షణమే వస్తుందని భావిస్తారు. నెట్‌వర్క్ కాల్ లేదా భారీ లూప్స్ ఉంటే దాన్ని మెథడ్‌గా (<code>FetchDataAsync()</code>) మార్చాలి.</li>
+        <li>❌ <strong>గెట్టర్ ఆబ్జెక్ట్ స్టేట్‌ను మార్చకూడదు:</strong> <code>get { _counter++; return _data; }</code> లాంటివి విచిత్రమైన బగ్స్‌కు దారితీస్తాయి, ఎందుకంటే డీబగ్గర్‌లో మౌస్ ఓవర్ చేసినప్పుడు కూడా గెట్టర్ రన్ అయి కౌంటర్ పెరిగిపోతుంది!</li>
+        <li>✅ <strong>ఎక్సెప్షన్లను కేవలం సెట్టర్లలో మాత్రమే విసరాలి:</strong> చెల్లని ఇన్‌పుట్ వచ్చినప్పుడు మాత్రమే సెట్టర్‌లో ఎర్రర్ ఇవ్వాలి.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 💳 రియల్-వరల్డ్ ప్రాజెక్ట్ — సెక్యూర్ పేమెంట్ గేట్‌వే వాలెట్ సిస్టమ్ (Secure Digital Wallet Engine)</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న Private fields, Full properties with validation, <code>init</code>, <code>required</code>, 
+        మరియు Computed properties అన్నింటినీ అనుసంధానించి ఒక ఎంటర్‌ప్రైజ్ <strong>డిజిటల్ పేమెంట్ వాలెట్ ఇంజిన్ (Digital Wallet Engine v1.0)</strong> నిర్మిద్దాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Secure Digital Wallet & Payment Engine</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("💳 మన పేమెంట్స్ - సెక్యూర్ డిజిటల్ వాలెట్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+public enum WalletTier { Basic, Gold, Platinum }
+
+public class DigitalWallet
+{
+    // 1. init-only ప్రాపర్టీస్ (ఒక్కసారి పుట్టాక ఎవరూ మార్చలేరు)
+    public string WalletId { get; init; }
+    public string KycPan { get; init; }
+
+    // 2. required ప్రాపర్టీ (తప్పనిసరిగా ఇవ్వాలి)
+    public required string RegisteredMobile { get; init; }
+    public required string AccountHolderName { get; init; }
+
+    // 3. బ్యాకింగ్ ఫీల్డ్ తో ఫుల్ ప్రాపర్టీ (కఠినమైన బ్యాలెన్స్ భద్రత)
+    private decimal _balance;
+    public decimal Balance
+    {
+        get => _balance;
+        private set
+        {
+            if (value < 0) throw new InvalidOperationException("వాలెట్ బ్యాలెన్స్ రుణాత్మకం (Negative) కాకూడదు!");
+            _balance = value;
+        }
+    }
+
+    // 4. Auto-property with private set
+    public WalletTier Tier { get; private set; } = WalletTier.Basic;
+    public bool IsKycVerified => !string.IsNullOrWhiteSpace(KycPan);
+
+    // 5. Computed Property (టైర్ ఆధారంగా రోజువారీ పరిమితి)
+    public decimal DailySpendLimit => Tier switch
+    {
+        WalletTier.Basic => 10000.00m,
+        WalletTier.Gold => 50000.00m,
+        WalletTier.Platinum => 200000.00m,
+        _ => 5000.00m
+    };
+
+    private decimal _todaySpent = 0m;
+    public decimal RemainingDailyLimit => DailySpendLimit - _todaySpent;
+
+    // కన్‌స్ట్రక్టర్
+    public DigitalWallet(string walletId, string kycPan, decimal initialDeposit = 500.00m)
+    {
+        WalletId = walletId;
+        KycPan = kycPan?.ToUpper();
+        Balance = initialDeposit;
+        AutoUpgradeTier();
+    }
+
+    public void AddMoney(decimal amount)
+    {
+        if (amount <= 0)
+        {
+            Console.WriteLine("❌ డిపాజిట్ మొత్తం సున్నా కంటే ఎక్కువ ఉండాలి!");
+            return;
+        }
+
+        Balance += amount;
+        AutoUpgradeTier();
+        Console.WriteLine($"✅ ₹{amount:N2} జమ అయ్యింది! ప్రస్తుత బ్యాలెన్స్: ₹{Balance:N2}");
+    }
+
+    public bool MakePayment(string merchantName, decimal amount)
+    {
+        Console.WriteLine($"\\n🛒 చెల్లింపు అభ్యర్థన: {merchantName} కు ₹{amount:N2}");
+
+        if (amount <= 0)
+        {
+            Console.WriteLine("❌ చెల్లింపు మొత్తం చెల్లదు!");
+            return false;
+        }
+        if (amount > Balance)
+        {
+            Console.WriteLine($"❌ బ్యాలెన్స్ సరిపోదు! ప్రస్తుత బ్యాలెన్స్: ₹{Balance:N2}");
+            return false;
+        }
+        if (amount > RemainingDailyLimit)
+        {
+            Console.WriteLine($"❌ రోజువారీ ఖర్చు పరిమితి దాటిపోయింది! (మిగిలిన పరిమితి: ₹{RemainingDailyLimit:N2})");
+            return false;
+        }
+
+        Balance -= amount;
+        _todaySpent += amount;
+        Console.WriteLine($"🎉 చెల్లింపు విజయవంతం! రిఫరెన్స్: TXN-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}");
+        Console.WriteLine($"💰 మిగిలిన బ్యాలెన్స్: ₹{Balance:N2} | నేటి మిగిలిన పరిమితి: ₹{RemainingDailyLimit:N2}");
+        return true;
+    }
+
+    private void AutoUpgradeTier()
+    {
+        if (Balance >= 100000m && IsKycVerified) Tier = WalletTier.Platinum;
+        else if (Balance >= 25000m && IsKycVerified) Tier = WalletTier.Gold;
+        else Tier = WalletTier.Basic;
+    }
+
+    public void DisplayWalletSummary()
+    {
+        Console.WriteLine($"\\n-------------------------------------------------");
+        Console.WriteLine($"👤 ఖాతాదారుడు : {AccountHolderName} ({RegisteredMobile})");
+        Console.WriteLine($"🆔 వాలెట్ ID   : {WalletId}");
+        Console.WriteLine($"📄 KYC స్థితి   : {(IsKycVerified ? "ధృవీకరించబడింది (" + KycPan + ")" : "పెండింగ్")}");
+        Console.WriteLine($"⭐ వాలెట్ టైర్ : {Tier}");
+        Console.WriteLine($"💵 ప్రస్తుత నిధులు: ₹{Balance:N2}");
+        Console.WriteLine($"⏱️ రోజువారీ లిమిట్: ₹{DailySpendLimit:N2} (మిగిలినది: ₹{RemainingDailyLimit:N2})");
+        Console.WriteLine($"-------------------------------------------------");
+    }
+}
+
+// డ్రైవర్ కోడ్: required & init ఫీచర్స్ తో ఆబ్జెక్ట్ నిర్మాణం
+var wallet = new DigitalWallet("WAL-9082", "ABCDE9876K", 30000.00m)
+{
+    AccountHolderName = "సురేష్ కొణిదెల",
+    RegisteredMobile = "+91 98765 43210"
+};
+
+wallet.DisplayWalletSummary();
+
+// లావాదేవీల పరీక్ష
+wallet.MakePayment("స్మార్ట్ ఎలక్ట్రానిక్స్", 12500.00m);
+wallet.MakePayment("సూపర్‌మార్కెట్", 3000.00m);
+wallet.AddMoney(50000.00m);
+
+wallet.DisplayWalletSummary();
+Console.WriteLine("=================================================");</code></pre>
+      </div>
+
+      <!-- RUN LIVE COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin:24px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:#10b981; font-size:18px;">💻 ఈ వాలెట్ కోడ్‌ను ఆన్‌లైన్ C# కంపైలర్‌లో రన్ చేయండి!</h3>
+          <p style="margin:0; font-size:14px; color:var(--text2);">
+            Encapsulation, init, required, Computed Properties మరియు Tier Auto-upgrade లాజిక్‌ను నేరుగా పరిశీలించండి.
+          </p>
+        </div>
+        <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:12px 24px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <span>▶ Try C# Online Compiler</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🎓 ఇంటర్వ్యూ ప్రశ్నలు, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h2>
+      
+      <p><strong>టాప్ ఇంటర్వ్యూ ప్రశ్నలు &amp; సమాధానాలు:</strong></p>
+      <div style="margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q1: C# లో <code>init</code> యాక్సెసర్‌కి మరియు <code>private set</code> కి తేడా ఏమిటి?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> <code>private set</code> ఉన్న ప్రాపర్టీని ఆబ్జెక్ట్ ఇనిషియలైజర్ <code>new Class { Prop = val }</code> ద్వారా బయటి నుండి సెట్ చేయలేము; కేవలం కన్‌స్ట్రక్టర్ లేదా క్లాస్ మెథడ్స్ ద్వారానే సెట్ చేయగలం. కానీ <code>init</code> ప్రాపర్టీని ఆబ్జెక్ట్ ఇనిషియలైజర్‌లో సెట్ చేసుకోవచ్చు, ఆ క్షణం తర్వాత అది శాశ్వతంగా ఇమ్యుటబుల్ (మార్చలేనిది) అయిపోతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q2: <code>internal</code> మరియు <code>protected</code> మధ్య ఉన్న సూక్ష్మ వ్యత్యాసం ఏమిటి?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> <code>internal</code> అనేది అసెంబ్లీ బౌండరీపై ఆధారపడి ఉంటుంది — అదే అసెంబ్లీలోని ఏ క్లాస్ అయినా యాక్సెస్ చేయవచ్చు. <code>protected</code> అనేది ఇన్‌హెరిటెన్స్ హైరార్కీపై ఆధారపడి ఉంటుంది — ఇతర అసెంబ్లీల్లో ఉన్నప్పటికీ చైల్డ్ క్లాస్ అయితే మాత్రమే యాక్సెస్ లభిస్తుంది.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 16px 0; color:var(--text);">🧠 మీ నాలెడ్జ్ చెక్ చేసుకోండి — 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: క్లాస్ లోపల ఒక వేరియబుల్‌కు ఏ యాక్సెస్ మోడిఫైయర్ ఇవ్వకపోతే డీఫాల్ట్‌గా ఏది వర్తిస్తుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>private</code></strong>. C# మెంబర్ వేరియబుల్స్ మరియు మెథడ్స్‌కు డీఫాల్ట్‌గా అత్యంత కఠినమైన <code>private</code> యాక్సెస్ ఇస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: ప్రాపర్టీ సెట్టర్ లోపల బయటి నుండి వచ్చే విలువను స్వీకరించే కాంటెక్స్చువల్ కీవర్డ్ ఏది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>value</code></strong>. <code>set { _field = value; }</code> లో <code>value</code> అనేది అసైన్ చేయబడిన కొత్త డేటాను సూచిస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>public string FullName => $"{First} {Last}";</code> అనేది మెమరీలో డేటాను భద్రపరుస్తుందా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>లేదు</strong>. ఇది ఒక ఎక్స్‌ప్రెషన్-బాడీడ్ కంప్యూటెడ్ ప్రాపర్టీ. దీనికి ప్రత్యేక మెమరీ ఉండదు; పిలిచిన ప్రతిసారీ అప్పటికప్పుడు డైనమిక్‌గా లెక్కించి స్ట్రింగ్‌ను రిటర్న్ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: C# 11 లో వచ్చిన <code>required</code> కీవర్డ్ ప్రయోజనం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఆబ్జెక్ట్ ఇనిషియలైజర్ రాసేటప్పుడు డెవలపర్ ఆ ప్రాపర్టీని తప్పనిసరిగా ఇనిషియలైజ్ చేయాలని కంపైలర్ ఎన్‌ఫోర్స్ చేస్తుంది. ఇవ్వకపోతే కంపైల్-టైమ్ ఎర్రర్ వస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: ఒక ప్రాపర్టీ యొక్క getter లో భారీ డేటాబేస్ లేదా నెట్‌వర్క్ కాల్స్ ఎందుకు ఉంచకూడదు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ప్రాపర్టీస్ ఎల్లప్పుడూ వేగంగా (O(1)) మరియు దుష్ప్రభావాలు (Side-effects) లేకుండా ఉండాలి. డీబగ్గర్‌లో మౌస్ ఓవర్ చేసినప్పుడు కూడా గెట్టర్స్ రన్ అవుతాయి కాబట్టి భారీ కాల్స్ ఉంటే అప్లికేషన్ స్తంభించిపోతుంది. భారీ పనులకు ఎల్లప్పుడూ మెథడ్స్ వాడాలి.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 13. క్లాసెస్ &amp; కన్‌స్ట్రక్టర్స్
+      </a>
+      <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 15. ఇన్‌హెరిటెన్స్ &amp; పాలిమార్ఫిజం →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+`;
+
+const projectSimulationCode = `using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("💳 మన పేమెంట్స్ - సెక్యూర్ డిజిటల్ వాలెట్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+public enum WalletTier { Basic, Gold, Platinum }
+
+public class DigitalWallet
+{
+    public string WalletId { get; init; }
+    public string KycPan { get; init; }
+    public required string RegisteredMobile { get; init; }
+    public required string AccountHolderName { get; init; }
+
+    private decimal _balance;
+    public decimal Balance
+    {
+        get => _balance;
+        private set
+        {
+            if (value < 0) throw new InvalidOperationException("వాలెట్ బ్యాలెన్స్ రుణాత్మకం కాకూడదు!");
+            _balance = value;
+        }
+    }
+
+    public WalletTier Tier { get; private set; } = WalletTier.Basic;
+    public bool IsKycVerified => !string.IsNullOrWhiteSpace(KycPan);
+
+    public decimal DailySpendLimit => Tier switch
+    {
+        WalletTier.Basic => 10000.00m,
+        WalletTier.Gold => 50000.00m,
+        WalletTier.Platinum => 200000.00m,
+        _ => 5000.00m
+    };
+
+    private decimal _todaySpent = 0m;
+    public decimal RemainingDailyLimit => DailySpendLimit - _todaySpent;
+
+    public DigitalWallet(string walletId, string kycPan, decimal initialDeposit = 500.00m)
+    {
+        WalletId = walletId;
+        KycPan = kycPan?.ToUpper();
+        Balance = initialDeposit;
+        AutoUpgradeTier();
+    }
+
+    public void AddMoney(decimal amount)
+    {
+        if (amount <= 0) return;
+        Balance += amount;
+        AutoUpgradeTier();
+        Console.WriteLine($"✅ ₹{amount:N2} జమ అయ్యింది! ప్రస్తుత బ్యాలెన్స్: ₹{Balance:N2}");
+    }
+
+    public bool MakePayment(string merchantName, decimal amount)
+    {
+        Console.WriteLine($"\\n🛒 చెల్లింపు అభ్యర్థన: {merchantName} కు ₹{amount:N2}");
+        if (amount <= 0 || amount > Balance || amount > RemainingDailyLimit)
+        {
+            Console.WriteLine("❌ చెల్లింపు విఫలమైంది (పరిమితి దాటింది లేదా నిధులు సరిపోవు)!");
+            return false;
+        }
+
+        Balance -= amount;
+        _todaySpent += amount;
+        Console.WriteLine($"🎉 చెల్లింపు విజయవంతం! రిఫరెన్స్: TXN-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}");
+        Console.WriteLine($"💰 మిగిలిన బ్యాలెన్స్: ₹{Balance:N2} | నేటి మిగిలిన పరిమితి: ₹{RemainingDailyLimit:N2}");
+        return true;
+    }
+
+    private void AutoUpgradeTier()
+    {
+        if (Balance >= 100000m && IsKycVerified) Tier = WalletTier.Platinum;
+        else if (Balance >= 25000m && IsKycVerified) Tier = WalletTier.Gold;
+        else Tier = WalletTier.Basic;
+    }
+
+    public void DisplayWalletSummary()
+    {
+        Console.WriteLine($"\\n-------------------------------------------------");
+        Console.WriteLine($"👤 ఖాతాదారుడు : {AccountHolderName} ({RegisteredMobile})");
+        Console.WriteLine($"🆔 వాలెట్ ID   : {WalletId}");
+        Console.WriteLine($"📄 KYC స్థితి   : {(IsKycVerified ? "ధృవీకరించబడింది (" + KycPan + ")" : "పెండింగ్")}");
+        Console.WriteLine($"⭐ వాలెట్ టైర్ : {Tier}");
+        Console.WriteLine($"💵 ప్రస్తుత నిధులు: ₹{Balance:N2}");
+        Console.WriteLine($"⏱️ రోజువారీ లిమిట్: ₹{DailySpendLimit:N2} (మిగిలినది: ₹{RemainingDailyLimit:N2})");
+        Console.WriteLine($"-------------------------------------------------");
+    }
+}
+
+var wallet = new DigitalWallet("WAL-9082", "ABCDE9876K", 30000.00m)
+{
+    AccountHolderName = "సురేష్ కొణిదెల",
+    RegisteredMobile = "+91 98765 43210"
+};
+
+wallet.DisplayWalletSummary();
+wallet.MakePayment("స్మార్ట్ ఎలక్ట్రానిక్స్", 12500.00m);
+wallet.MakePayment("సూపర్‌మార్కెట్", 3000.00m);
+wallet.AddMoney(50000.00m);
+wallet.DisplayWalletSummary();
+Console.WriteLine("=================================================");`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ &amp; Auto-Properties — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="C# లో Encapsulation, 6 యాక్సెస్ మోడిఫైయర్లు, Backing Fields, Auto-Properties, private set, C# 9 init, C# 11 required కీవర్డ్ మరియు డిజిటల్ వాలెట్ ప్రాజెక్ట్ సమగ్ర తెలుగు గైడ్." />
+  <meta name="keywords" content="c# encapsulation telugu, c# properties telugu, c# get set init, c# access modifiers, c# required keyword, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/14-csharp-properties-and-encapsulation.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C# ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties (C# Programming in Telugu)",
+    "description": "C# లో Encapsulation, 6 యాక్సెస్ మోడిఫైయర్లు, Backing Fields, Auto-Properties, private set, C# 9 init, C# 11 required కీవర్డ్ సమగ్ర తెలుగు గైడ్.",
+    "articleSection": "Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`${projectSimulationCode.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '14-csharp-properties-and-encapsulation.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C# Chapter 14!');
+console.log('Target file size:', fullHtml.length, 'characters');

@@ -14,3 +14,4 @@ for (let i = 2; i < 12; i++) {
   console.log(`   has copyCode: ${afterMain.includes('copyCode')}`);
   console.log(`   has runCode: ${afterMain.includes('runCode')}`);
 }
+

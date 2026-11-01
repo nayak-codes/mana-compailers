@@ -17,3 +17,4 @@ for (let i = 0; i < 12; i++) {
   console.log(`   div.page-layout: ${content.includes('class="page-layout"')}`);
   console.log(`   site-nav-placeholder: ${content.includes('site-nav-placeholder')}`);
 }
+

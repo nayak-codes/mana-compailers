@@ -1,0 +1,1055 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./csharp_curriculum_data');
+
+const lesson = LESSONS.find(l => l.num === 15);
+const sidebarHtml = buildSidebar(15);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 15: ఇన్‌హెరిటెన్స్ &amp; పాలిమార్ఫిజం</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, new, sealed)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 15 of 20</span>
+      <span class="meta-pill">🏛️ Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+      <span class="meta-pill">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>IS-A సంబంధం · Base vs Derived క్లాసెస్ · base కీవర్డ్ &amp; Constructor Execution Order · Runtime Dynamic Polymorphism · virtual &amp; override మెకానిక్స్ · Virtual Method Table (vtable) · Method Overriding vs Method Hiding (new) · sealed క్లాసులు &amp; Devirtualization · System.Object రూట్ క్లాస్ &amp; ToString() ఓవర్‌రైడ్ · is &amp; as టైప్ కాస్టింగ్ · Liskov Substitution Principle (LSP) · ఎంటర్‌ప్రైజ్ వెహికల్ ఫ్లీట్ టోల్ ఇంజిన్ ప్రాజెక్ట్ · 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>OOP యొక్క రెండు మహా స్తంభాలు: ఇన్‌హెరిటెన్స్ &amp; పాలిమార్ఫిజం! 🚀</h3>
+      <p>
+        ప్రకృతిలో తండ్రి పోలికలు, జన్యుపరమైన లక్షణాలు పిల్లలకు వారసత్వంగా రావడం చూస్తాం. 
+        అదేవిధంగా ఒక జీవి తన వాతావరణాన్ని బట్టి వివిధ రూపాలను స్వీకరించగలగడం (ఉదా: పాలు ఇచ్చే క్షీరదాలు, ఎగిరే పక్షులు అన్నీ 'జంతువు' అనే ఒకే మూలం నుండి వివిధ ప్రవర్తనలను ప్రదర్శించడం) పాలిమార్ఫిజం.
+      </p>
+      <p style="margin-top:10px;">
+        సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో <strong>ఇన్‌హెరిటెన్స్ (Inheritance)</strong> ద్వారా వేలాది లైన్ల కామన్ కోడ్‌ను పదే పదే రాయకుండా ఒక్క మూల క్లాస్ (Base Class) లో భద్రపరిచి, 
+        అవసరమైన కొత్త ఫీచర్లను పిల్ల క్లాసుల్లో (Derived Classes) జోడించుకోవచ్చు. 
+        మరియు <strong>పాలిమార్ఫిజం (Polymorphism - virtual, override)</strong> ద్వారా ఒకే పేరెంట్ రిఫరెన్స్ వేరియబుల్‌తో వందలాది విభిన్న చైల్డ్ ఆబ్జెక్ట్‌లను రన్‌టైమ్‌లో అత్యంత సులభంగా నిర్వహించవచ్చు! 
+        ఈ కాన్సెప్ట్స్ మైక్రోసాఫ్ట్ ఆర్కిటెక్చర్ ఇంటర్వ్యూలలో అత్యధికంగా అడిగే ప్రశ్నలు. వీటిని క్లియర్ కోడ్ ఎగ్జాంపుల్స్‌తో లోతుగా అన్వేషిద్దాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🧬 ఇన్‌హెరిటెన్స్ (Inheritance) పునాది &amp; "IS-A" రిలేషన్‌షిప్</h2>
+      <p>
+        <strong>ఇన్‌హెరిటెన్స్</strong> అనేది ఇప్పటికే ఉన్న ఒక క్లాస్ (Base Class) యొక్క లక్షణాలు (Fields) మరియు ప్రవర్తనలను (Methods) 
+        మరొక కొత్త క్లాస్ (Derived Class) వారసత్వంగా పొందే సాంకేతిక ప్రక్రియ.
+      </p>
+      <p>ఇన్‌హెరిటెన్స్ వాడటానికి ముందు ఎల్లప్పుడూ <strong>"IS-A" (ఇది ఒక...)</strong> పరీక్ష చేయాలి:</p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>✅ <code>SavingsAccount IS-A BankAccount</code> (పొదుపు ఖాతా అనేది ఒక బ్యాంక్ ఖాతా). కాబట్టి ఇన్‌హెరిటెన్స్ సరైనది.</li>
+        <li>✅ <code>ElectricCar IS-A Vehicle</code> (ఎలక్ట్రిక్ కారు అనేది ఒక వాహనం). ఇన్‌హెరిటెన్స్ సరైనది.</li>
+        <li>❌ <code>Car HAS-A Engine</code> (కారు వద్ద ఇంజిన్ ఉంటుంది, కానీ కారు ఇంజిన్ కాదు!). దీనికి ఇన్‌హెరిటెన్స్ వాడకూడదు, <strong>Composition</strong> వాడాలి.</li>
+      </ul>
+
+      <div style="background:var(--bg2); border-left:4px solid #ef4444; padding:12px 16px; margin:14px 0; font-size:14px; color:var(--text);">
+        <strong>⚠️ అతి ముఖ్యమైన ఆర్కిటెక్చరల్ రూల్:</strong> C# లో ఒక క్లాస్ <strong>ఒకే ఒక్క బేస్ క్లాస్ నుండి మాత్రమే</strong> ఇన్‌హెరిట్ చేసుకోగలదు (Single Class Inheritance). 
+        C++ లాగా ఒకే క్లాస్‌కు బహుళ పేరెంట్ క్లాసులు ఉండలేవు (Deadly Diamond of Death సమస్య నివారణ కోసం). బహుళ కాంట్రాక్టులను ఇంప్లిమెంట్ చేయడానికి C# లో <strong>Interfaces</strong> వాడతాం (Chapter 16 లో చూస్తాం).
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 🔗 C# ఇన్‌హెరిటెన్స్ సింటాక్స్ (\`:\`) &amp; ప్రొటెక్టెడ్ మెంబర్స్</h2>
+      <p>
+        C# లో ఇన్‌హెరిటెన్స్ చేయడానికి కోలన్ (<code>:</code>) సింబల్ ఉపయోగిస్తాం.
+      </p>
+      <p>
+        బేస్ క్లాస్‌లోని <code>public</code> మెంబర్లు ఎవరికైనా కనిపిస్తాయి. కానీ <code>private</code> మెంబర్లు చైల్డ్ క్లాస్‌కు కూడా అందవు! 
+        బయటి ప్రపంచానికి కనిపించకూడదు, కానీ చైల్డ్ క్లాస్‌కు మాత్రం పూర్తి స్వేచ్ఛగా అందుబాటులో ఉండాలి అనుకున్నప్పుడు 
+        మనం <strong><code>protected</code></strong> యాక్సెస్ మోడిఫైయర్ వాడాలి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Basic Inheritance & Protected Members</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 1. బేస్ క్లాస్ (Parent)
+public class Account
+{
+    public string AccountNumber { get; set; }
+
+    // protected: బయటికి కనిపించదు కానీ చైల్డ్ క్లాస్ నేరుగా వాడుకోవచ్చు!
+    protected decimal InternalBalance;
+
+    public void CheckBalance()
+    {
+        Console.WriteLine($"ఖాతా {AccountNumber} బ్యాలెన్స్: ₹{InternalBalance:N2}");
+    }
+}
+
+// 2. డిరైవ్డ్ క్లాస్ (Child) - Account నుండి వారసత్వం పొందింది
+public class SavingsAccount : Account
+{
+    public decimal InterestRate { get; set; } = 4.5m;
+
+    public void DepositWithBonus(decimal amount)
+    {
+        // InternalBalance ని చైల్డ్ లో నేరుగా యాక్సెస్ చేస్తున్నాం!
+        InternalBalance += amount + 100m; // ₹100 బోనస్
+        Console.WriteLine($"₹{amount:N2} జమ అయ్యింది (+₹100 బోనస్ లభించింది)!");
+    }
+}
+
+SavingsAccount sa = new SavingsAccount();
+sa.AccountNumber = "SB-8921";
+sa.DepositWithBonus(10000m);
+sa.CheckBalance(); // బేస్ క్లాస్ మెథడ్!
+// అవుట్‌పుట్: ఖాతా SB-8921 బ్యాలెన్స్: ₹10,100.00</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🧱 \`base\` కీవర్డ్ &amp; కన్‌స్ట్రక్టర్ ఎగ్జిక్యూషన్ ఆర్డర్ (\`: base(...)\`)</h2>
+      <p>
+        ఒక చైల్డ్ క్లాస్ ఆబ్జెక్ట్ క్రియేట్ అయినప్పుడు మెమరీలో ఏం జరుగుతుంది? 
+        <strong>తండ్రి లేకుండా కొడుకు పుట్టలేడు! అలాగే బేస్ క్లాస్ కన్‌స్ట్రక్టర్ రన్ అవ్వకుండా చైల్డ్ క్లాస్ ఆబ్జెక్ట్ ఏర్పడదు!</strong>
+      </p>
+      <p><strong>కన్‌స్ట్రక్టర్ల ఎగ్జిక్యూషన్ క్రమం (Order of Execution):</strong></p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>మొదటగా <strong>Base Class Constructor</strong> రన్ అవుతుంది.</li>
+        <li>ఆ తర్వాతే <strong>Derived Class Constructor</strong> రన్ అవుతుంది.</li>
+      </ol>
+      <p>
+        బేస్ క్లాస్ కన్‌స్ట్రక్టర్‌కు అవసరమైన పారామీటర్లను చైల్డ్ నుండి పంపించడానికి <strong><code>: base(...)</code></strong> సింటాక్స్ వాడతాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Constructor Chaining with base(...)</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class Device
+{
+    public string SerialNumber { get; }
+    public string Manufacturer { get; }
+
+    public Device(string serial, string manufacturer)
+    {
+        SerialNumber = serial;
+        Manufacturer = manufacturer;
+        Console.WriteLine($"1. Device బేస్ కన్‌స్ట్రక్టర్ రన్ అయ్యింది: {Manufacturer}");
+    }
+}
+
+public class Smartphone : Device
+{
+    public int CameraMegapixels { get; }
+
+    // base(...) ద్వారా బేస్ కన్‌స్ట్రక్టర్‌కు డేటా పంపుతున్నాం
+    public Smartphone(string serial, string manufacturer, int cameraMp) 
+        : base(serial, manufacturer)
+    {
+        CameraMegapixels = cameraMp;
+        Console.WriteLine($"2. Smartphone చైల్డ్ కన్‌స్ట్రక్టర్ రన్ అయ్యింది: {CameraMegapixels}MP");
+    }
+}
+
+Smartphone phone = new Smartphone("SN-90812", "Samsung", 200);
+// అవుట్‌పుట్:
+// 1. Device బేస్ కన్‌స్ట్రక్టర్ రన్ అయ్యింది: Samsung
+// 2. Smartphone చైల్డ్ కన్‌స్ట్రక్టర్ రన్ అయ్యింది: 200MP</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🎭 పాలిమార్ఫిజం (Polymorphism) తత్వశాస్త్రం</h2>
+      <p>
+        గ్రీకు భాషలో <strong>Poly</strong> అంటే "అనేక", <strong>Morph</strong> అంటే "రూపాలు". 
+        కంప్యూటర్ సైన్స్‌లో <strong>పాలిమార్ఫిజం</strong> అంటే — <strong>ఒకే ఒక సాధారణ రిఫరెన్స్ వేరియబుల్ ద్వారా అనేక రకాల ఆబ్జెక్ట్‌లను వాటి నిర్దిష్ట రూపంలో ఆపరేట్ చేయగల సామర్థ్యం</strong>.
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>రకం</th>
+              <th>ఎప్పుడు నిర్ణయించబడుతుంది?</th>
+              <th>C# ఇంప్లిమెంటేషన్</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Compile-Time (Static) Polymorphism</strong></td>
+              <td>కోడ్ కంపైల్ అయ్యే సమయంలోనే</td>
+              <td><strong>Method Overloading</strong> (ఒకే పేరుతో వేర్వేరు పారామీటర్ల మెథడ్స్) &amp; Operator Overloading.</td>
+            </tr>
+            <tr>
+              <td><strong>Runtime (Dynamic) Polymorphism</strong></td>
+              <td>ప్రోగ్రామ్ రన్ అవుతున్న సమయంలో మెమరీలోని అసలైన ఆబ్జెక్ట్ ఆధారంగా</td>
+              <td><strong>Method Overriding</strong> (<code>virtual</code> &amp; <code>override</code> కీవర్డ్స్).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🪄 \`virtual\` మరియు \`override\` మెకానిక్స్ — Runtime Method Dispatch</h2>
+      <p>
+        సాధారణంగా C# లో ఒక మెథడ్ పిలిచినప్పుడు, రిఫరెన్స్ వేరియబుల్ యొక్క టైప్ ఆధారంగా ఆ మెథడ్ ఎగ్జిక్యూట్ అవుతుంది. 
+        కానీ రన్‌టైమ్‌లో వేరియబుల్ దేనిని పాయింట్ చేస్తుందో ఆ అసలైన ఆబ్జెక్ట్ మెథడ్ రన్ అవ్వాలంటే C# లో 2 కీవర్డ్స్ తప్పనిసరి:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong><code>virtual</code> (బేస్ క్లాస్‌లో):</strong> "నా పిల్ల క్లాసులు నన్ను తమ ఇష్టానుసారం మార్చుకోవడానికి (Override చేయడానికి) నేను అనుమతిస్తున్నాను!" అని పేరెంట్ ప్రకటించడం.</li>
+        <li><strong><code>override</code> (చైల్డ్ క్లాస్‌లో):</strong> "నా పేరెంట్ ఇచ్చిన డీఫాల్ట్ పనిని పక్కనపెట్టి, నా స్వంత సరికొత్త రూపాన్ని నేను అమలు చేస్తున్నాను!" అని చైల్డ్ ధృవీకరించడం.</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Dynamic Polymorphic Dispatch</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class PaymentProcessor
+{
+    // virtual మెథడ్ - చైల్డ్ ఓవర్‌రైడ్ చేసుకోవచ్చు
+    public virtual void ProcessPayment(decimal amount)
+    {
+        Console.WriteLine($"సాధారణ చెల్లింపు పూర్తయింది: ₹{amount:N2}");
+    }
+}
+
+public class UpiPayment : PaymentProcessor
+{
+    public override void ProcessPayment(decimal amount)
+    {
+        Console.WriteLine($"⚡ UPI తక్షణ చెల్లింపు పూర్తయింది (జీరో ఫీజు): ₹{amount:N2}");
+    }
+}
+
+public class CreditCardPayment : PaymentProcessor
+{
+    public override void ProcessPayment(decimal amount)
+    {
+        decimal fee = amount * 0.02m; // 2% ప్రాసెసింగ్ ఫీజు
+        Console.WriteLine($"💳 క్రెడిట్ కార్డ్ చెల్లింపు పూర్తయింది: ₹{amount:N2} (+₹{fee:N2} ఫీజు)");
+    }
+}
+
+// 🌟 పాలిమార్ఫిక్ మ్యాజిక్: బేస్ క్లాస్ లిస్ట్‌లో అన్ని రకాల చైల్డ్స్!
+List<PaymentProcessor> queue = new()
+{
+    new UpiPayment(),
+    new CreditCardPayment(),
+    new PaymentProcessor()
+};
+
+foreach (var processor in queue)
+{
+    // రన్‌టైమ్‌లో ఆయా ఆబ్జెక్ట్ యొక్క సరైన override మెథడ్ మాత్రమే రన్ అవుతుంది!
+    processor.ProcessPayment(5000m);
+}</code></pre>
+      </div>
+
+      <p style="margin-top:14px;">
+        <strong>CLR అంతర్గత రహస్యం (vtable):</strong> ప్రతి క్లాస్‌కు ఒక <strong>Virtual Method Table (vtable)</strong> ఉంటుంది. 
+        ఆబ్జెక్ట్ క్రియేట్ అయినప్పుడు దాని Type Handle ఈ టేబుల్‌ను పాయింట్ చేస్తుంది. 
+        కంపైలర్ డైరెక్ట్ జంప్ కోడ్ రాయకుండా, టేబుల్‌లోని ఫంక్షన్ పాయింటర్‌ను లుకప్ చేసి కాల్ చేస్తుంది. దీన్నే <strong>Dynamic Dispatch</strong> అంటారు.
+      </p>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> ⚠️ Method Overriding vs Method Hiding (\`new\` కీవర్డ్) — ఇంటర్వ్యూ క్లాసిక్</h2>
+      <p>
+        మైక్రోసాఫ్ట్ మరియు ప్రఖ్యాత టెక్ కంపెనీల ఇంటర్వ్యూలలో 100% అడిగే క్వశ్చన్: 
+        <strong>"What is the difference between overriding a method and hiding a method using the \`new\` keyword?"</strong>
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · override vs new (Method Hiding)</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class BaseClass
+{
+    public virtual void MethodA() => Console.WriteLine("Base MethodA");
+    public void MethodB() => Console.WriteLine("Base MethodB");
+}
+
+public class DerivedClass : BaseClass
+{
+    // 1. OVERRIDE: వర్చువల్ టేబుల్‌ను నిజంగా అప్‌డేట్ చేస్తుంది
+    public override void MethodA() => Console.WriteLine("Derived MethodA (Overridden)");
+
+    // 2. NEW (Hiding): బేస్ మెథడ్‌ను కేవలం దాచిపెడుతుంది (Shadowing)
+    public new void MethodB() => Console.WriteLine("Derived MethodB (Hidden)");
+}
+
+// 🧪 అసలైన టెస్ట్ ఇక్కడే ఉంది:
+BaseClass obj = new DerivedClass(); // బేస్ రిఫరెన్స్, చైల్డ్ ఆబ్జెక్ట్!
+
+obj.MethodA(); // 👉 అవుట్‌పుట్: Derived MethodA (Overridden) -> పాలిమార్ఫిజం పనిచేసింది!
+obj.MethodB(); // 👉 అవుట్‌పుట్: Base MethodB -> షాక్! new వాడితే బేస్ క్లాస్ మెథడే రన్ అవుతుంది!</code></pre>
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin:16px 0;">
+        <h4 style="margin:0 0 8px 0; color:#10b981;">💡 ముఖ్యమైన టేకావే:</h4>
+        <p style="margin:0; font-size:14px; line-height:1.7; color:var(--text2);">
+          • <strong><code>override</code></strong> వాడితే, రిఫరెన్స్ వేరియబుల్ ఏ టైప్ అయినా సరే రన్‌టైమ్‌లో ఉన్న <strong>అసలైన చైల్డ్ ఆబ్జెక్ట్ మెథడ్</strong> రన్ అవుతుంది (ట్రూ పాలిమార్ఫిజం).<br>
+          • <strong><code>new</code></strong> వాడితే, అది పాలిమార్ఫిజం కాదు. మీరు బేస్ టైప్ ద్వారా పిలిస్తే బేస్ మెథడ్, చైల్డ్ టైప్ ద్వారా పిలిస్తే చైల్డ్ మెథడ్ రన్ అవుతుంది.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🔒 \`sealed\` క్లాసెస్ &amp; \`sealed\` మెథడ్స్ — వారసత్వానికి సంకెళ్లు</h2>
+      <p>
+        కొన్ని క్లాసులను ఎవరూ ఇన్‌హెరిట్ చేసుకోకూడదని మనం కోరుకుంటాం. 
+        ఉదాహరణకు సెక్యూరిటీ క్రిప్టోగ్రఫీ క్లాస్‌ను ఎవరైనా ఇన్‌హెరిట్ చేసి హాకింగ్ లాజిక్ రాయకుండా నిరోధించడానికి <strong><code>sealed</code></strong> కీవర్డ్ వాడతాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · sealed Classes & sealed Methods</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 1. సీల్డ్ క్లాస్ - దీన్ని ఎవరూ ఇన్‌హెరిట్ చేసుకోలేరు
+public sealed class SecurityTokenProvider
+{
+    public string GenerateJwt() => Guid.NewGuid().ToString();
+}
+
+// public class HackerProvider : SecurityTokenProvider { } 
+// ❌ కంపైలర్ ఎర్రర్: Cannot derive from sealed type 'SecurityTokenProvider'!
+
+// ----------------------------------------------------
+// 2. సీల్డ్ మెథడ్ - చైల్డ్ లో ఫర్దర్ ఓవర్‌రైడింగ్ ఆపడం
+public class Shape
+{
+    public virtual void Draw() => Console.WriteLine("Drawing Shape");
+}
+
+public class Circle : Shape
+{
+    // sealed override: ఇకపై Circle ను ఇన్‌హెరిట్ చేసుకునే క్లాసులు Draw ని మార్చలేవు!
+    public sealed override void Draw() => Console.WriteLine("Drawing Circle");
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>⚡ Performance Advantage:</strong> <code>sealed</code> క్లాసులు కేవలం భద్రత కోసమే కాదు! 
+        .NET JIT కంపైలర్ సీల్డ్ క్లాసులకు vtable లుకప్ చేయకుండా నేరుగా ఇన్‌లైన్ అసెంబ్లీ కోడ్ (Devirtualization) జనరేట్ చేస్తుంది. 
+        దీనివల్ల మైక్రోసెకన్ల విలువైన రన్‌టైమ్ పెర్ఫార్మెన్స్ పెరుగుతుంది!
+      </p>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🌳 C# లో అల్టిమేట్ రూట్ క్లాస్: \`System.Object\`</h2>
+      <p>
+        C# లో ప్రతి ఒక్క క్లాస్, స్ట్రక్ట్, అర్రే లేదా డేటా టైప్ అంతిమంగా <strong><code>System.Object</code> (లేదా చిన్న అక్షరాలతో <code>object</code>)</strong> నుండే పుడతాయి.
+      </p>
+      <p><code>System.Object</code> మనకు అందించే 4 ముఖ్యమైన వర్చువల్ మెథడ్స్:</p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>ToString()</code>: ఆబ్జెక్ట్‌ను స్ట్రింగ్ రూపంలోకి మారుస్తుంది (డీఫాల్ట్‌గా క్లాస్ పేరు ఇస్తుంది, మనం ఓవర్‌రైడ్ చేసుకోవాలి).</li>
+        <li><code>Equals(object obj)</code>: రెండు ఆబ్జెక్టులు సమానమా కాదా పరీక్షిస్తుంది.</li>
+        <li><code>GetHashCode()</code>: హాష్ టేబుల్స్ / డిక్షనరీల కోసం ఇంటీజర్ హాష్ కోడ్ ఇస్తుంది.</li>
+        <li><code>GetType()</code>: రన్‌టైమ్ టైప్ మెటాడేటాను ఇస్తుంది (Reflection).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Overriding ToString() from System.Object</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class Customer
+{
+    public int CustId { get; set; }
+    public string Name { get; set; }
+    public string City { get; set; }
+
+    // System.Object లోని ToString() ను అర్థవంతంగా ఓవర్‌రైడ్ చేయడం
+    public override string ToString()
+    {
+        return $"కస్టమర్ #{CustId}: {Name} ({City})";
+    }
+}
+
+Customer c = new Customer { CustId = 101, Name = "వెంకటేశ్వర్లు", City = "విజయవాడ" };
+
+// Console.WriteLine ఆటోమేటిక్‌గా ToString() ని పిలుస్తుంది!
+Console.WriteLine(c);
+// అవుట్‌పుట్: కస్టమర్ #101: వెంకటేశ్వర్లు (విజయవాడ)</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 🔍 టైప్ కాస్టింగ్ — Upcasting, Downcasting &amp; \`is\`, \`as\` ఆపరేటర్లు</h2>
+      <p>
+        ఇన్‌హెరిటెన్స్ హైరార్కీలో ఆబ్జెక్ట్‌లను పైకి లేదా కిందకి మార్చడాన్ని టైప్ కాస్టింగ్ అంటారు:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>Upcasting (పైకి):</strong> చైల్డ్ ఆబ్జెక్ట్‌ను పేరెంట్ టైప్‌లోకి మార్చడం. ఇది <strong>ఎల్లప్పుడూ 100% సేఫ్</strong>, ఆటోమేటిక్‌గా జరుగుతుంది (ఉదా: <code>Animal a = new Dog();</code>).</li>
+        <li><strong>Downcasting (కిందికి):</strong> పేరెంట్ రిఫరెన్స్‌ను చైల్డ్ టైప్‌లోకి మార్చడం. ఇది <strong>ప్రమాదకరం</strong>. ఒకవేళ ఆ వేరియబుల్‌లో నిజమైన చైల్డ్ లేకపోతే <code>InvalidCastException</code> వచ్చి ప్రోగ్రామ్ క్రాష్ అవుతుంది!</li>
+      </ul>
+
+      <p>సురక్షితమైన డౌన్‌కాస్టింగ్ కోసం ఆధునిక C# లో <code>is</code> ప్యాటర్న్ మ్యాచింగ్ వాడతాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Safe Downcasting with Pattern Matching</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class Vehicle { }
+public class Car : Vehicle { public void PlayRadio() => Console.WriteLine("రేడియో ప్లే అవుతోంది 🎵"); }
+public class Drone : Vehicle { public void Fly() => Console.WriteLine("డ్రోన్ ఎగురుతోంది 🚁"); }
+
+Vehicle v = new Car(); // Upcasting (Safe)
+
+// ✅ మోడ్రన్ C# 'is' ప్యాటర్న్ మ్యాచింగ్ - సేఫ్ కాస్టింగ్ & వేరియబుల్ అసైన్‌మెంట్ ఒక్కచోటే!
+if (v is Car myCar)
+{
+    myCar.PlayRadio(); // నేరుగా సురక్షితంగా వాడవచ్చు!
+}
+
+// పాత 'as' ఆపరేటర్ పద్ధతి (విఫలమైతే null ఇస్తుంది)
+Drone d = v as Drone;
+if (d != null)
+{
+    d.Fly();
+}
+else
+{
+    Console.WriteLine("ఇది డ్రోన్ కాదు, కాబట్టి Fly చేయలేము!");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 📐 Liskov Substitution Principle (LSP) — SOLID పునాది</h2>
+      <p>
+        ప్రపంచ ప్రఖ్యాత సాఫ్ట్‌వేర్ సూత్రాలు అయిన <strong>SOLID Principles</strong> లోని 'L' అక్షరమే 
+        <strong>Liskov Substitution Principle (లిస్కోవ్ సబ్‌స్టిట్యూషన్ సూత్రం)</strong>.
+      </p>
+      <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 16px; margin:14px 0; font-size:14.5px; line-height:1.7;">
+        <strong>సూత్రం:</strong> <em>"ఒక ప్రోగ్రామ్‌లో పేరెంట్ క్లాస్ ఉన్న ప్రతిచోటా, ప్రోగ్రామ్ ప్రవర్తన చెడిపోకుండా దాని ఏ చైల్డ్ క్లాస్‌నైనా ప్రతిక్షేపించగలగాలి (Substitutable)."</em>
+      </div>
+      <p>
+        <strong>LSP ఉల్లంఘనకు క్లాసిక్ ఉదాహరణ:</strong> <code>Rectangle</code> (దీర్ఘచతురస్రం) ను బేస్ క్లాస్‌గా చేసి <code>Square</code> (చతురస్రం) ను చైల్డ్ చేయడం. 
+        చతురస్రంలో Width మార్చితే Height కూడా మారిపోతుంది. దీనివల్ల <code>Rectangle</code> ఆశించిన ప్రవర్తన దెబ్బతింటుంది. 
+        అందువల్ల తప్పుడు ఇన్‌హెరిటెన్స్ చేయకుండా సరైన అబ్‌స్ట్రాక్షన్ డిజైన్ చేయాలి.
+      </p>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🥊 Inheritance vs Composition — "IS-A" vs "HAS-A"</h2>
+      <p>
+        డిజైన్ ప్యాటర్న్స్ రచయితలు (Gang of Four - GoF) ఇచ్చిన ప్రఖ్యాత సూత్రం: 
+        <strong>"Favor object composition over class inheritance."</strong>
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>ఇన్‌హెరిటెన్స్ ఎప్పుడు వాడాలి?:</strong> నిజమైన IS-A సంబంధం ఉన్నప్పుడు మరియు పేరెంట్ క్లాస్ కోడ్ స్థిరంగా ఉన్నప్పుడు (ఉదా: GUI Controls, Framework Base Classes).</li>
+        <li><strong>కంపోజిషన్ ఎప్పుడు వాడాలి?:</strong> HAS-A సంబంధం ఉన్నప్పుడు (ఉదా: <code>Car HAS-A Engine</code>, <code>Order HAS-A List&lt;OrderItem&gt;</code>). కంపోజిషన్ వల్ల క్లాసుల మధ్య టైట్ కప్లింగ్ తగ్గి, టెస్టింగ్ &amp; మెయింటెనెన్స్ సులభమవుతుంది.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🚗 రియల్-వరల్డ్ ప్రాజెక్ట్ — ఎంటర్‌ప్రైజ్ స్మార్ట్ టోల్ గేట్ &amp; ఫ్లీట్ సిస్టమ్ (Smart Toll Plaza Engine)</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న Inheritance, Constructor chaining (<code>base</code>), Virtual/Override polymorphism, 
+        మరియు <code>sealed</code> క్లాసులన్నింటినీ ఉపయోగించి ఒక పూర్తి స్థాయి <strong>స్మార్ట్ టోల్ ప్లాజా ఇంజిన్ (Smart Toll Plaza Engine v1.0)</strong> నిర్మిద్దాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Smart Toll Plaza & Vehicle Fleet Engine</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🛣️ హైదరాబాద్ ఔటర్ రింగ్ రోడ్ - స్మార్ట్ టోల్ ప్లాజా v1.0");
+Console.WriteLine("=================================================\\n");
+
+// 1. బేస్ క్లాస్ (Base Vehicle)
+public class Vehicle
+{
+    public string RegistrationNumber { get; }
+    public string Model { get; }
+    public decimal BaseTollRate { get; }
+
+    public Vehicle(string regNo, string model, decimal baseRate)
+    {
+        RegistrationNumber = regNo;
+        Model = model;
+        BaseTollRate = baseRate;
+    }
+
+    // వర్చువల్ మెథడ్ - చైల్డ్ క్లాసులు టోల్ లెక్కలను ఓవర్‌రైడ్ చేయవచ్చు
+    public virtual decimal CalculateToll()
+    {
+        return BaseTollRate;
+    }
+
+    public virtual void PrintPass(decimal finalToll)
+    {
+        Console.WriteLine($"🚗 [{this.GetType().Name,-15}] వాహనం: {RegistrationNumber,-12} ({Model,-15}) | టోల్ ఫీజు: ₹{finalToll:N2}");
+    }
+}
+
+// 2. చైల్డ్ క్లాస్ 1: ఎలక్ట్రిక్ కార్ (50% గ్రీన్ డిస్కౌంట్)
+public class ElectricCar : Vehicle
+{
+    public int BatteryCapacityKwh { get; }
+
+    public ElectricCar(string regNo, string model, int batteryKwh) 
+        : base(regNo, model, 120.00m) // స్టాండర్డ్ కార్ టోల్ ₹120
+    {
+        BatteryCapacityKwh = batteryKwh;
+    }
+
+    public override decimal CalculateToll()
+    {
+        // పర్యావరణ అనుకూల వాహనం కాబట్టి 50% రాయితీ
+        return BaseTollRate * 0.50m;
+    }
+}
+
+// 3. చైల్డ్ క్లాస్ 2: కమర్షియల్ ట్రక్ (యాక్సిల్స్ ఆధారంగా అదనపు ఛార్జీ)
+public class CommercialTruck : Vehicle
+{
+    public int AxleCount { get; }
+
+    public CommercialTruck(string regNo, string model, int axles) 
+        : base(regNo, model, 350.00m)
+    {
+        AxleCount = axles;
+    }
+
+    public override decimal CalculateToll()
+    {
+        // 2 కంటే ఎక్కువ యాక్సిల్స్ ఉంటే ఒక్కో అదనపు యాక్సిల్‌కు ₹100 అదనం
+        decimal extraAxlePenalty = (AxleCount > 2) ? (AxleCount - 2) * 100.00m : 0m;
+        return BaseTollRate + extraAxlePenalty;
+    }
+}
+
+// 4. చైల్డ్ క్లాస్ 3: ఎమర్జెన్సీ అంబులెన్స్ (100% ఉచితం - sealed క్లాస్!)
+public sealed class EmergencyAmbulance : Vehicle
+{
+    public string HospitalName { get; }
+
+    public EmergencyAmbulance(string regNo, string hospital) 
+        : base(regNo, "ఫోర్స్ ట్రావెలర్ అంబులెన్స్", 0m)
+    {
+        HospitalName = hospital;
+    }
+
+    public sealed override decimal CalculateToll() => 0.00m; // సంపూర్ణ మినహాయింపు
+}
+
+// 5. టోల్ ప్లాజా మేనేజర్ - పాలిమార్ఫిక్ కలెక్షన్ ప్రాసెసింగ్
+public class TollPlazaBooth
+{
+    public decimal TotalRevenueCollected { get; private set; }
+    public int TotalVehiclesPassed { get; private set; }
+
+    public void ProcessTollLane(List<Vehicle> trafficQueue)
+    {
+        Console.WriteLine("🚦 టోల్ బూత్ లేన్ ప్రాసెసింగ్ ప్రారంభమైంది...\\n");
+
+        foreach (var v in trafficQueue)
+        {
+            // 🌟 డైనమిక్ పాలిమార్ఫిజం: రన్‌టైమ్‌లో సరైన CalculateToll() రన్ అవుతుంది!
+            decimal toll = v.CalculateToll();
+            v.PrintPass(toll);
+
+            TotalRevenueCollected += toll;
+            TotalVehiclesPassed++;
+        }
+    }
+}
+
+// డ్రైవర్ కోడ్: ఫ్లీట్ సిమ్యులేషన్
+List<Vehicle> tollQueue = new()
+{
+    new Vehicle("TS-09-EA-1122", "హ్యుందాయ్ క్రెటా", 120.00m),
+    new ElectricCar("TS-07-EV-9999", "టాటా నెక్సాన్ EV", 40),
+    new CommercialTruck("AP-16-TX-4455", "భారత్‌బెంజ్ 16-వీలర్", 4),
+    new EmergencyAmbulance("TS-10-AMB-108", "అపోలో హాస్పిటల్స్"),
+    new CommercialTruck("KA-01-HG-7812", "అశోక్ లేలాండ్ 6-వీలర్", 2)
+};
+
+TollPlazaBooth tollBooth = new TollPlazaBooth();
+tollBooth.ProcessTollLane(tollQueue);
+
+Console.WriteLine($"\\n📊 నేటి టోల్ ప్లాజా ఆడిట్ నివేదిక:");
+Console.WriteLine($"మొత్తం ప్రయాణించిన వాహనాలు: {tollBooth.TotalVehiclesPassed}");
+Console.WriteLine($"మొత్తం వసూలైన టోల్ రెవెన్యూ : ₹{tollBooth.TotalRevenueCollected:N2}");
+Console.WriteLine("=================================================");</code></pre>
+      </div>
+
+      <!-- RUN LIVE COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin:24px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:#10b981; font-size:18px;">💻 ఈ టోల్ ప్లాజా ప్రాజెక్ట్‌ను లైవ్ కంపైలర్‌లో రన్ చేసి చూడండి!</h3>
+          <p style="margin:0; font-size:14px; color:var(--text2);">
+            Vehicle బేస్ క్లాస్, ElectricCar రాయితీలు, CommercialTruck పెనాల్టీలు మరియు Ambulance ఉచిత పాస్‌ల పాలిమార్ఫిక్ ప్రవర్తనను పరిశీలించండి.
+          </p>
+        </div>
+        <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:12px 24px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <span>▶ Try C# Online Compiler</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🎓 ఇంటర్వ్యూ ప్రశ్నలు, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h2>
+      
+      <p><strong>టాప్ ఇంటర్వ్యూ ప్రశ్నలు &amp; సమాధానాలు:</strong></p>
+      <div style="margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q1: C# లో మల్టిపుల్ క్లాస్ ఇన్‌హెరిటెన్స్ ఎందుకు సపోర్ట్ చేయదు?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> <strong>"Deadly Diamond of Death"</strong> సమస్యను నివారించడానికి. ఒక క్లాస్ రెండు పేరెంట్స్ నుండి ఒకే పేరున్న మెథడ్‌ను ఇన్‌హెరిట్ చేసుకుంటే ఏ పేరెంట్ మెథడ్ రన్ అవ్వాలో అస్పష్టత ఏర్పడుతుంది. ఈ సమస్యను అరికట్టడానికి C# సింగిల్ క్లాస్ ఇన్‌హెరిటెన్స్ మాత్రమే అనుమతిస్తూ, మల్టిపుల్ కాంట్రాక్టుల కోసం Interfaces ను అందిస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q2: <code>sealed</code> క్లాస్ వల్ల రన్‌టైమ్ పెర్ఫార్మెన్స్ ఎలా పెరుగుతుంది?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> JIT (Just-In-Time) కంపైలర్‌కు ఆ క్లాస్ నుండి మరే ఇతర డిరైవ్డ్ క్లాసులు ఉండవని ఖచ్చితంగా తెలుస్తుంది. కాబట్టి వర్చువల్ మెథడ్ టేబుల్ (vtable) లుకప్ అవసరం లేకుండా నేరుగా ఇన్-లైన్ మెషిన్ కోడ్‌ను (Devirtualization) ఉత్పత్తి చేస్తుంది.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 16px 0; color:var(--text);">🧠 మీ నాలెడ్జ్ చెక్ చేసుకోండి — 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: చైల్డ్ క్లాస్ ఆబ్జెక్ట్ క్రియేట్ చేసినప్పుడు ఏ కన్‌స్ట్రక్టర్ మొదటగా ఎగ్జిక్యూట్ అవుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>Base Class Constructor (తల్లిదండ్రి కన్‌స్ట్రక్టర్)</strong>. బేస్ ఆబ్జెక్ట్ పూర్తయిన తర్వాత మాత్రమే చైల్డ్ కన్‌స్ట్రక్టర్ రన్ అవుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: బేస్ క్లాస్‌లోని ఒక మెథడ్‌ను చైల్డ్ క్లాస్ మార్చడానికి బేస్ క్లాస్‌లో ఏ కీవర్డ్ వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>virtual</code></strong>. బేస్ క్లాస్ <code>virtual</code> అని అనుమతి ఇస్తేనే చైల్డ్ క్లాస్ <code>override</code> చేయగలదు.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>BaseClass b = new DerivedClass(); b.Method();</code> అన్నప్పుడు చైల్డ్‌లో <code>new</code> కీవర్డ్ ఉంటే ఏ మెథడ్ రన్ అవుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>BaseClass</code> లోని మెథడ్ మాత్రమే రన్ అవుతుంది</strong>. ఎందుకంటే <code>new</code> అనేది పాలిమార్ఫిజం కాదు (Method Hiding మాత్రమే). అది వర్చువల్ టేబుల్‌ను అప్‌డేట్ చేయదు.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: C# లోని అన్ని టైప్స్ అంతిమంగా ఏ బేస్ క్లాస్ నుండి పుడతాయి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>System.Object</code> (లేదా <code>object</code>)</strong>.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: Liskov Substitution Principle (LSP) ప్రధాన నియమం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ప్రోగ్రామ్‌లో ఎక్కడైనా Base Class స్థానంలో Derived Class ను ప్రవేశపెట్టినప్పుడు అప్లికేషన్ బిహేవియర్ పాడవకుండా సరైన ఫలితాన్ని ఇవ్వాలి.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 14. ఎన్‌క్యాప్సులేషన్ &amp; Auto-Properties
+      </a>
+      <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 16. ఇంటర్‌ఫేసెస్ &amp; C# Records →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+`;
+
+const projectSimulationCode = `using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🛣️ హైదరాబాద్ ఔటర్ రింగ్ రోడ్ - స్మార్ట్ టోల్ ప్లాజా v1.0");
+Console.WriteLine("=================================================\\n");
+
+public class Vehicle
+{
+    public string RegistrationNumber { get; }
+    public string Model { get; }
+    public decimal BaseTollRate { get; }
+
+    public Vehicle(string regNo, string model, decimal baseRate)
+    {
+        RegistrationNumber = regNo;
+        Model = model;
+        BaseTollRate = baseRate;
+    }
+
+    public virtual decimal CalculateToll() => BaseTollRate;
+
+    public virtual void PrintPass(decimal finalToll)
+    {
+        Console.WriteLine($"🚗 [{this.GetType().Name,-15}] వాహనం: {RegistrationNumber,-12} ({Model,-15}) | టోల్ ఫీజు: ₹{finalToll:N2}");
+    }
+}
+
+public class ElectricCar : Vehicle
+{
+    public int BatteryCapacityKwh { get; }
+
+    public ElectricCar(string regNo, string model, int batteryKwh) 
+        : base(regNo, model, 120.00m)
+    {
+        BatteryCapacityKwh = batteryKwh;
+    }
+
+    public override decimal CalculateToll() => BaseTollRate * 0.50m;
+}
+
+public class CommercialTruck : Vehicle
+{
+    public int AxleCount { get; }
+
+    public CommercialTruck(string regNo, string model, int axles) 
+        : base(regNo, model, 350.00m)
+    {
+        AxleCount = axles;
+    }
+
+    public override decimal CalculateToll()
+    {
+        decimal extraAxlePenalty = (AxleCount > 2) ? (AxleCount - 2) * 100.00m : 0m;
+        return BaseTollRate + extraAxlePenalty;
+    }
+}
+
+public sealed class EmergencyAmbulance : Vehicle
+{
+    public string HospitalName { get; }
+
+    public EmergencyAmbulance(string regNo, string hospital) 
+        : base(regNo, "ఫోర్స్ ట్రావెలర్ అంబులెన్స్", 0m)
+    {
+        HospitalName = hospital;
+    }
+
+    public sealed override decimal CalculateToll() => 0.00m;
+}
+
+public class TollPlazaBooth
+{
+    public decimal TotalRevenueCollected { get; private set; }
+    public int TotalVehiclesPassed { get; private set; }
+
+    public void ProcessTollLane(List<Vehicle> trafficQueue)
+    {
+        Console.WriteLine("🚦 టోల్ బూత్ లేన్ ప్రాసెసింగ్ ప్రారంభమైంది...\\n");
+        foreach (var v in trafficQueue)
+        {
+            decimal toll = v.CalculateToll();
+            v.PrintPass(toll);
+            TotalRevenueCollected += toll;
+            TotalVehiclesPassed++;
+        }
+    }
+}
+
+List<Vehicle> tollQueue = new()
+{
+    new Vehicle("TS-09-EA-1122", "హ్యుందాయ్ క్రెటా", 120.00m),
+    new ElectricCar("TS-07-EV-9999", "టాటా నెక్సాన్ EV", 40),
+    new CommercialTruck("AP-16-TX-4455", "భారత్‌బెంజ్ 16-వీలర్", 4),
+    new EmergencyAmbulance("TS-10-AMB-108", "అపోలో హాస్పిటల్స్"),
+    new CommercialTruck("KA-01-HG-7812", "అశోక్ లేలాండ్ 6-వీలర్", 2)
+};
+
+TollPlazaBooth tollBooth = new TollPlazaBooth();
+tollBooth.ProcessTollLane(tollQueue);
+
+Console.WriteLine($"\\n📊 నేటి టోల్ ప్లాజా ఆడిట్ నివేదిక:");
+Console.WriteLine($"మొత్తం ప్రయాణించిన వాహనాలు: {tollBooth.TotalVehiclesPassed}");
+Console.WriteLine($"మొత్తం వసూలైన టోల్ రెవెన్యూ : ₹{tollBooth.TotalRevenueCollected:N2}");
+Console.WriteLine("=================================================");`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed) — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="C# లో Inheritance, Polymorphism, virtual &amp; override, Method Hiding (new), sealed క్లాసెస్, System.Object, is &amp; as ఆపరేటర్లు మరియు టోల్ ప్లాజా ప్రాజెక్ట్ సమగ్ర తెలుగు గైడ్." />
+  <meta name="keywords" content="c# inheritance telugu, c# polymorphism telugu, c# virtual override, c# method hiding new, c# sealed class, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/15-csharp-inheritance-and-polymorphism.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C# ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed)",
+    "description": "C# లో Inheritance, Polymorphism, virtual & override, Method Hiding (new), sealed క్లాసెస్ సమగ్ర తెలుగు గైడ్.",
+    "articleSection": "Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`${projectSimulationCode.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '15-csharp-inheritance-and-polymorphism.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C# Chapter 15!');
+console.log('Target file size:', fullHtml.length, 'characters');

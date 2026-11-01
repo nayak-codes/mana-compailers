@@ -22,3 +22,4 @@ for (let i = 2; i < 12; i++) {
     console.log(`   Script ${idx+1} length: ${s.length}, has openInteractiveCompiler: ${s.includes('openInteractiveCompiler')}`);
   });
 }
+

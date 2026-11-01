@@ -1,0 +1,1254 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./csharp_curriculum_data');
+
+const lesson = LESSONS.find(l => l.num === 13);
+const sidebarHtml = buildSidebar(13);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 13: క్లాసెస్, ఆబ్జెక్ట్స్ &amp; కన్‌స్ట్రక్టర్స్</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# క్లాసెస్, ఆబ్జెక్ట్స్, కన్‌స్ట్రక్టర్స్ &amp; Modern Primary Constructors (C# 12)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 13 of 20</span>
+      <span class="meta-pill">🏛️ Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+      <span class="meta-pill">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>OOP తత్వశాస్త్రం · Class vs Object అనాటమీ · new ఆపరేటర్ &amp; Managed Heap మెమరీ అలోకేషన్ · ఫీల్డ్స్ &amp; ఇన్స్టాన్స్ మెథడ్స్ · Default Parameterless Constructor · Parameterized Constructor ఓవర్‌లోడింగ్ · this కీవర్డ్ &amp; Constructor Chaining · C# 12 Primary Constructors విప్లవం · Object Initializer సింటాక్స్ · static మెంబర్స్ &amp; static Constructors · డిస్ట్రక్టర్లు (~Finalizer) · ఎంటర్‌ప్రైజ్ స్మార్ట్ బ్యాంకింగ్ సిస్టమ్ ప్రాజెక్ట్ · 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>స్వాగతం Phase 04 కు! 🏛️ ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) ద్వారా సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్ నిర్మాణం!</h3>
+      <p>
+        ఇప్పటివరకు మనం వేరియబుల్స్, కంట్రోల్ ఫ్లో, మెథడ్స్, అర్రేలు మరియు కలెక్షన్స్ వంటి ప్రోగ్రామింగ్ ప్రాథమిక ఇటుకలను నేర్చుకున్నాం. 
+        కానీ వాస్తవ ప్రపంచంలోని బ్యాంకింగ్ ప్లాట్‌ఫామ్‌లు, ఈ-కామర్స్ పోర్టల్స్, గేమ్ ఇంజిన్‌లు మరియు క్లౌడ్ మైక్రోసర్వీసెస్ వంటి భారీ వ్యవస్థలను నిర్మించాలంటే — 
+        డేటా మరియు ఆ డేటాపై పనిచేసే పనులను విడివిడిగా ఉంచడం అసాధ్యం.
+      </p>
+      <p style="margin-top:10px;">
+        ఈ సమస్యను శాశ్వతంగా పరిష్కరించే ఆధునిక సాఫ్ట్‌వేర్ పద్ధతే <strong>Object-Oriented Programming (OOP)</strong>. 
+        వాస్తవ ప్రపంచంలోని బ్యాంక్ అకౌంట్, కస్టమర్, షాపింగ్ కార్ట్ లేదా గేమ్ క్యారెక్టర్‌ను కంప్యూటర్ మెమరీలో ఒక సమగ్ర రూపంగా ఎలా మలచాలో ఈ అధ్యాయంలో నేర్చుకుంటాం. 
+        ముఖ్యంగా <strong>C# 12 ప్రవేశపెట్టిన శక్తివంతమైన "Primary Constructors"</strong> ద్వారా కోడ్ పొడవును 70% తగ్గించి, అత్యంత క్లీన్ అండ్ ఎలిగెంట్ ఆర్కిటెక్చర్‌ను ఎలా సృష్టించాలో ప్రాక్టికల్‌గా శోధిద్దాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🌍 ప్రొసీజరల్ నుండి ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) వైపు ప్రయాణం</h2>
+      <p>
+        ప్రారంభ దశలో కంప్యూటర్ ప్రోగ్రామ్‌లు <strong>ప్రొసీజరల్ (Procedural)</strong> లేదా స్ట్రక్చర్డ్ శైలిలో ఉండేవి. 
+        అంటే ప్రోగ్రామ్‌లో డేటా వేరుగా (గ్లోబల్ వేరియబుల్స్ లేదా స్ట్రక్చర్లలో), ఆ డేటాపై గణనలు చేసే ఫంక్షన్లు వేరుగా ఉండేవి.
+      </p>
+      <p>
+        ఈ విధానంలో సాఫ్ట్‌వేర్ పరిమాణం పెరిగేకొద్దీ మూడు తీవ్రమైన సమస్యలు తలెత్తుతాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>డేటా ప్రొటెక్షన్ లోపించడం:</strong> ప్రోగ్రామ్‌లోని ఏ ఫంక్షన్ అయినా బ్యాంక్ బ్యాలెన్స్‌ను నేరుగా మార్చేయవచ్చు (ఉదా: <code>balance = -50000;</code>). ఎటువంటి వాలిడేషన్ ఉండదు.</li>
+        <li><strong>మెయింటెనెన్స్ నరకం:</strong> డేటా స్ట్రక్చర్‌లో ఒక్క వేరియబుల్ పేరు మారినా, వందలాది విడి ఫంక్షన్లను మాన్యువల్‌గా సవరించాల్సి వస్తుంది.</li>
+        <li><strong>రియల్-వరల్డ్ మోడలింగ్ అసమర్థత:</strong> వాస్తవ ప్రపంచంలో వస్తువులు కేవలం డేటా మాత్రమే కాదు; వాటికి ఒక <strong>స్థితి (State)</strong> మరియు <strong>ప్రవర్తన (Behavior)</strong> రెండూ కలిసి ఉంటాయి.</li>
+      </ul>
+      <p style="margin-top:12px;">
+        ఈ లోపాలను అధిగమించడానికి <strong>ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</strong> ఆవిర్భవించింది. OOP లో ప్రతి ఎంటిటీ తన డేటాను మరియు ఆ డేటాపై పనిచేసే ఫంక్షన్లను ఒకే రక్షణ కవచం లోపల బంధిస్తుంది. 
+        ఇందులో నాలుగు ప్రధాన స్తంభాలు ఉంటాయి: <strong>Encapsulation, Abstraction, Inheritance, Polymorphism</strong>. ఈ 4వ ఫేజ్‌లో వీటన్నింటినీ లోతుగా ప్రాక్టికల్ కోడింగ్‌తో నేర్చుకుంటాం.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 📐 క్లాస్ (Class) vs ఆబ్జెక్ట్ (Object) — బ్లూప్రింట్ vs ఇన్స్టాన్స్</h2>
+      <p>
+        OOP ను అర్థం చేసుకోవడానికి ప్రపంచ ప్రసిద్ధమైన రూపకం (Analogy) — <strong>ఆర్కిటెక్చర్ బ్లూప్రింట్ మరియు నిజమైన భవనం</strong>:
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="margin:0 0 10px 0; color:#10b981;">🏠 రియల్-వరల్డ్ అనాలజీ:</h4>
+        <p style="margin:0 0 8px 0; line-height:1.7;">
+          <strong>క్లాస్ (Class):</strong> ఒక సివిల్ ఇంజనీర్ కాగితంపై గీసిన ఇంటి ప్లాన్ (Blueprint). ప్లాన్ కాగితంపై ఉంటుంది కానీ మీరు అందులో నివసించలేరు. అది భూమిపై స్థలాన్ని (RAM) ఆక్రమించదు. అది కేవలం ఇల్లు ఎలా ఉండాలో సూచించే నియమావళి.
+        </p>
+        <p style="margin:0; line-height:1.7;">
+          <strong>ఆబ్జెక్ట్ (Object / Instance):</strong> ఆ బ్లూప్రింట్‌ను చూసి నిజమైన ఇటుకలు, సిమెంట్‌తో కట్టిన వాస్తవ ఇల్లు. ఇది భూమిపై నిజంగా స్థలాన్ని (RAM Heap Memory) ఆక్రమిస్తుంది. ఒకే బ్లూప్రింట్ ఆధారంగా మీరు వందలాది వేర్వేరు రంగులు, ఫర్నిచర్ కలిగిన ఇళ్లను నిర్మించవచ్చు!
+        </p>
+      </div>
+
+      <p>
+        సాంకేతిక పరిభాషలో:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>Class:</strong> యూజర్ డిఫైన్డ్ బ్లూప్రింట్ లేదా డేటా టైప్ (User-Defined Reference Type). ఇది ఆబ్జెక్ట్‌కు ఏయే ఫీల్డ్స్ మరియు మెథడ్స్ ఉండాలో నిర్వచిస్తుంది.</li>
+        <li><strong>Object:</strong> క్లాస్ యొక్క ప్రత్యక్ష ప్రతిరూపం (Concrete Instance of a Class). ఇది రన్‌టైమ్‌లో మెమరీని కలిగి ఉంటుంది.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Defining a Basic Class & Instantiating Objects</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 1. క్లాస్ డిక్లరేషన్ (బ్లూప్రింట్)
+public class Car
+{
+    // ఫీల్డ్స్ (State / Data)
+    public string Model;
+    public string Color;
+    public int Speed;
+
+    // మెథడ్స్ (Behavior / Functions)
+    public void Accelerate(int increase)
+    {
+        Speed += increase;
+        Console.WriteLine($"{Model} వేగం పెరిగింది: {Speed} km/h");
+    }
+
+    public void ApplyBrakes()
+    {
+        Speed = 0;
+        Console.WriteLine($"{Model} ఆగింది!");
+    }
+}
+
+// 2. ఆబ్జెక్ట్స్ క్రియేట్ చేయడం (Instances)
+Car car1 = new Car();
+car1.Model = "Tesla Model 3";
+car1.Color = "Red";
+car1.Accelerate(45);
+
+Car car2 = new Car();
+car2.Model = "Tata Harrier";
+car2.Color = "Dark Edition";
+car2.Accelerate(60);</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🧠 \`new\` కీవర్డ్ &amp; Managed Heap మెమరీ ఆర్కిటెక్చర్</h2>
+      <p>
+        C# లో ఒక క్లాస్ ఎల్లప్పుడూ <strong>రిఫరెన్స్ టైప్ (Reference Type)</strong>. 
+        కింది కోడ్ లైన్ రన్ అయినప్పుడు కంప్యూటర్ మెమరీలో అంతర్గతంగా ఏం జరుగుతుందో తెలుసుకోవడం సీనియర్ ఇంజనీర్‌గా మారడానికి అత్యంత కీలకం:
+      </p>
+      <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 16px; margin:14px 0; font-family:monospace; font-size:14.5px;">
+        Car myCar = new Car();
+      </div>
+      <p>ఈ ఒక్క సింగిల్ స్టేట్‌మెంట్‌లో 3 అద్భుతమైన మెమరీ దశలు జరుగుతాయి:</p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>దశ (Phase)</th>
+              <th>కోడ్ భాగం</th>
+              <th>మెమరీ ప్రాంతం</th>
+              <th>అంతర్గతంగా ఏం జరుగుతుంది?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Reference Variable</strong></td>
+              <td><code>Car myCar</code></td>
+              <td><strong>Stack Memory</strong></td>
+              <td>స్టాక్‌లో 64-బిట్ (8 బైట్లు) లేదా 32-బిట్ మెమరీ అలోకేట్ అవుతుంది. ప్రారంభంలో దీని విలువ <code>null</code>. ఇది ఆబ్జెక్ట్ యొక్క అడ్రస్‌ను దాచడానికి సిద్ధంగా ఉన్న పాయింటర్.</td>
+            </tr>
+            <tr>
+              <td><strong>2. Memory Allocation</strong></td>
+              <td><code>new</code></td>
+              <td><strong>Managed Heap</strong></td>
+              <td>CLR (Common Language Runtime) మేనేజ్డ్ హీప్‌లో <code>Car</code> క్లాస్‌కు అవసరమైన బైట్ల మెమరీని రిజర్వ్ చేస్తుంది. అదనంగా Object Header (Sync Block Index, Type Handle) కోసం 16 బైట్ల ఓవర్‌హెడ్ చేరుతుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>3. Initialization &amp; Binding</strong></td>
+              <td><code>Car()</code> మరియు <code>=</code></td>
+              <td><strong>Stack &amp; Heap Link</strong></td>
+              <td>కన్‌స్ట్రక్టర్ రన్ అయి డీఫాల్ట్ విలువలను సెట్ చేస్తుంది. హీప్‌లో ఆబ్జెక్ట్ క్రియేట్ అయిన మెమరీ అడ్రస్ (ఉదా: <code>0x7FFF0A2B</code>) స్టాక్‌లోని <code>myCar</code> వేరియబుల్‌కు అసైన్ అవుతుంది.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:14px;">
+        ఇప్పుడు మీరు <code>Car anotherCar = myCar;</code> అని రాస్తే, హీప్‌లోని ఆబ్జెక్ట్ డూప్లికేట్ అవ్వదు! 
+        కేవలం ఆబ్జెక్ట్ యొక్క మెమరీ అడ్రస్ మాత్రమే కాపీ అవుతుంది. అంటే <code>myCar</code> మరియు <code>anotherCar</code> రెండూ హీప్‌లోని <strong>ఒకే ఒక్క ఆబ్జెక్ట్‌ను</strong> పాయింట్ చేస్తాయి. 
+        ఒక వేరియబుల్ ద్వారా డేటాను మార్చినా, రెండో వేరియబుల్‌లో ఆ మార్పు వెంటనే కనిపిస్తుంది!
+      </p>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🏷️ ఫీల్డ్స్ (Fields) &amp; మెథడ్స్ (Methods) డిక్లరేషన్</h2>
+      <p>
+        ఒక క్లాస్ లోపల ఉండే వేరియబుల్స్‌ను <strong>ఫీల్డ్స్ (Fields)</strong> లేదా మెంబర్ వేరియబుల్స్ అంటారు. 
+        లోకల్ వేరియబుల్స్‌తో పోలిస్తే ఫీల్డ్స్‌కు ఒక విశేషమైన లక్షణం ఉంది: 
+        <strong>మనం ఎటువంటి విలువ ఇవ్వకపోయినా, C# వాటికి డీఫాల్ట్ విలువలను (Default Values) ఆటోమేటిక్‌గా కేటాయిస్తుంది</strong>.
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>డేటా టైప్</th>
+              <th>ఆటోమేటిక్ డీఫాల్ట్ విలువ</th>
+              <th>ఉదాహరణ ఫీల్డ్</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>int, short, byte, long</code></td>
+              <td><code>0</code></td>
+              <td><code>public int AccountNumber; // 0</code></td>
+            </tr>
+            <tr>
+              <td><code>float, double, decimal</code></td>
+              <td><code>0.0f, 0.0d, 0.0m</code></td>
+              <td><code>public decimal Balance; // 0.0m</code></td>
+            </tr>
+            <tr>
+              <td><code>bool</code></td>
+              <td><code>false</code></td>
+              <td><code>public bool IsActive; // false</code></td>
+            </tr>
+            <tr>
+              <td><code>char</code></td>
+              <td><code>'\\0'</code> (Null character)</td>
+              <td><code>public char Grade; // '\\0'</code></td>
+            </tr>
+            <tr>
+              <td><code>string</code> లేదా ఏ Reference Type అయినా</td>
+              <td><code>null</code></td>
+              <td><code>public string AccountHolder; // null</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block" style="margin-top:20px;">
+        <div class="code-block-header">
+          <span>csharp · Default Field Values & Instance Methods</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class UserAccount
+{
+    // ఫీల్డ్స్ - మనం వేల్యూ ఇవ్వకున్నా డీఫాల్ట్ వాల్యూస్ వస్తాయి
+    public string Username;
+    public int LoginAttempts;
+    public bool IsLocked;
+
+    // ఇన్స్టాన్స్ మెథడ్ - ఫీల్డ్స్ పై పనిచేస్తుంది
+    public void DisplayStatus()
+    {
+        Console.WriteLine($"యూజర్: {Username ?? "అనామకుడు"}");
+        Console.WriteLine($"లాగిన్ ప్రయత్నాలు: {LoginAttempts}");
+        Console.WriteLine($"ఖాతా లాక్ అయిందా?: {(IsLocked ? "అవును" : "కాదు")}");
+    }
+}
+
+UserAccount user = new UserAccount();
+user.DisplayStatus();
+// అవుట్‌పుట్: యూజర్: అనామకుడు, లాగిన్ ప్రయత్నాలు: 0, ఖాతా లాక్ అయిందా?: కాదు</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🏗️ కన్‌స్ట్రక్టర్ అంటే ఏమిటి? డీఫాల్ట్ కన్‌స్ట్రక్టర్ (Default Constructor)</h2>
+      <p>
+        ఒక ఆబ్జెక్ట్ మెమరీలో పుట్టే క్షణంలో (Instantiation టైమ్‌లో) ఆటోమేటిక్‌గా ఎగ్జిక్యూట్ అయ్యే ప్రత్యేకమైన మెథడ్‌ను 
+        <strong>కన్‌స్ట్రక్టర్ (Constructor)</strong> అంటారు. 
+      </p>
+      <p><strong>కన్‌స్ట్రక్టర్ యొక్క 3 బంగారు నిబంధనలు:</strong></p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>కన్‌స్ట్రక్టర్ పేరు <strong>ఖచ్చితంగా క్లాస్ పేరుతో సమానంగా</strong> ఉండాలి (Case-sensitive).</li>
+        <li>కన్‌స్ట్రక్టర్‌కు <strong>ఎటువంటి రిటర్న్ టైప్ ఉండకూడదు</strong> — కనీసం <code>void</code> కూడా ఉండకూడదు!</li>
+        <li>మనం క్లాస్‌లో ఒక్క కన్‌స్ట్రక్టర్ కూడా రాయకపోతే, C# కంపైలర్ స్వయంగా ఎటువంటి పారామీటర్లు లేని ఒక <strong>డీఫాల్ట్ కన్‌స్ట్రక్టర్ (Default Parameterless Constructor)</strong> ను కోడ్‌లోకి ఇంజెక్ట్ చేస్తుంది.</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Explicit Default Constructor</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class ServerNode
+{
+    public string NodeId;
+    public string Region;
+    public DateTime StartedAt;
+
+    // మనం స్పష్టంగా రాసిన పారామీటర్ల లేని డీఫాల్ట్ కన్‌స్ట్రక్టర్
+    public ServerNode()
+    {
+        NodeId = Guid.NewGuid().ToString().Substring(0, 8);
+        Region = "ap-south-1 (Hyderabad)";
+        StartedAt = DateTime.UtcNow;
+        Console.WriteLine($"⚡ క్లౌడ్ సర్వర్ నోడ్ ప్రారంభమైంది: {NodeId} [{Region}]");
+    }
+}
+
+// ఆబ్జెక్ట్ క్రియేట్ చేయగానే కన్‌స్ట్రక్టర్ రన్ అవుతుంది
+ServerNode s1 = new ServerNode();
+ServerNode s2 = new ServerNode();</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🎯 పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్స్ (Parameterized Constructors) &amp; ఓవర్‌లోడింగ్</h2>
+      <p>
+        రియల్-వరల్డ్ ప్రోగ్రామింగ్‌లో ఆబ్జెక్ట్ పుట్టేప్పుడే దానికి అవసరమైన అసలైన విలువలను (Data Integrity) అందించాలి. 
+        ఉదాహరణకు ఒక ఎంప్లాయ్ ఆబ్జెక్ట్ క్రియేట్ చేసేటప్పుడు ఖచ్చితంగా ID, పేరు, జీతం ఉండాలి గానీ ఖాళీగా ఉండకూడదు.
+      </p>
+      <p>
+        బయటి నుండి విలువలను స్వీకరించి ఫీల్డ్స్‌ను ఇనిషియలైజ్ చేసే కన్‌స్ట్రక్టర్లను <strong>పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్స్</strong> అంటారు. 
+        వివిధ పారామీటర్లతో బహుళ కన్‌స్ట్రక్టర్లను రాయడాన్ని <strong>Constructor Overloading</strong> అంటారు.
+      </p>
+
+      <div style="background:var(--bg3); border-left:4px solid #ef4444; padding:12px 16px; margin:14px 0; font-size:14px; color:var(--text);">
+        <strong>⚠️ అతి ముఖ్యమైన ఇంటర్వ్యూ పాయింట్:</strong> మీరు మీ క్లాస్‌లో ఒక్క పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ రాసిన మరుక్షణమే, C# కంపైలర్ తన ఉచిత డీఫాల్ట్ కన్‌స్ట్రక్టర్‌ను ఉపసంహరించుకుంటుంది! 
+        మీకు పారామీటర్లు లేని <code>new ClassName()</code> కూడా కావాలంటే, మీరు స్వయంగా <code>public ClassName() { }</code> రాయాల్సిందే!
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Constructor Overloading in Action</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class Employee
+{
+    public int Id;
+    public string Name;
+    public decimal MonthlySalary;
+    public string Department;
+
+    // 1. డీఫాల్ట్ కన్‌స్ట్రక్టర్
+    public Employee()
+    {
+        Id = 0;
+        Name = "నూతన అభ్యర్థి";
+        MonthlySalary = 25000m;
+        Department = "ట్రైనీ";
+    }
+
+    // 2. 2 పారామీటర్ల కన్‌స్ట్రక్టర్
+    public Employee(int id, string name)
+    {
+        Id = id;
+        Name = name;
+        MonthlySalary = 50000m; // డీఫాల్ట్ బేస్ శాలరీ
+        Department = "జనరల్";
+    }
+
+    // 3. పూర్తి 4 పారామీటర్ల కన్‌స్ట్రక్టర్
+    public Employee(int id, string name, decimal salary, string dept)
+    {
+        Id = id;
+        Name = name;
+        MonthlySalary = salary;
+        Department = dept;
+    }
+}
+
+// మూడు వేర్వేరు కన్‌స్ట్రక్టర్లను పిలవడం
+Employee e1 = new Employee();
+Employee e2 = new Employee(101, "రాజేష్ వర్మ");
+Employee e3 = new Employee(102, "స్నేహలత", 95000m, "క్లౌడ్ ఆర్కిటెక్చర్");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🔗 \`this\` కీవర్డ్ &amp; Constructor Chaining (\`: this(...)\`)</h2>
+      <p>
+        C# లో <strong><code>this</code></strong> అనేది ప్రస్తుతం ఎగ్జిక్యూట్ అవుతున్న ఆబ్జెక్ట్ ఇన్స్టాన్స్‌ను సూచించే ఒక హిడెన్ రిఫరెన్స్ వేరియబుల్.
+      </p>
+      <p>దీనికి రెండు ప్రధాన ఉపయోగాలు ఉన్నాయి:</p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>షాడోయింగ్ (Shadowing) నివారణ:</strong> కన్‌స్ట్రక్టర్ పారామీటర్ పేరు మరియు క్లాస్ ఫీల్డ్ పేరు ఒకటే అయినప్పుడు, కంప్యూటర్‌కు గందరగోళం లేకుండా <code>this.name = name;</code> అని ఫీల్డ్‌ను వేరు చేసి చెప్పడానికి వాడతాం.</li>
+        <li><strong>Constructor Chaining (కన్‌స్ట్రక్టర్ చైనింగ్):</strong> పై సెక్షన్‌లో చూసినట్లు ప్రతి కన్‌స్ట్రక్టర్‌లో మళ్లీ మళ్లీ అదే అసైన్‌మెంట్ కోడ్ రాయడం DRY ప్రిన్సిపల్‌కు విరుద్ధం. ఒక కన్‌స్ట్రక్టర్ నుండి ఇంకో కన్‌స్ట్రక్టర్‌ను <code>: this(...)</code> సింటాక్స్ ద్వారా కాల్ చేయవచ్చు.</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Constructor Chaining with : this(...)</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class Product
+{
+    public string Sku;
+    public string Title;
+    public decimal Price;
+    public int StockQuantity;
+
+    // ప్రధాన మాస్టర్ కన్‌స్ట్రక్టర్ - ఇక్కడే అసలైన ఇనిషియలైజేషన్ జరుగుతుంది
+    public Product(string sku, string title, decimal price, int stock)
+    {
+        this.Sku = sku;
+        this.Title = title;
+        this.Price = price;
+        this.StockQuantity = stock;
+    }
+
+    // 2 పారామీటర్ల కన్‌స్ట్రక్టర్ -> మాస్టర్ కన్‌స్ట్రక్టర్‌కు రీడైరెక్ట్ చేస్తుంది!
+    public Product(string sku, string title) : this(sku, title, 99.00m, 10)
+    {
+        Console.WriteLine($"స్టాక్ డిఫాల్ట్‌గా 10 కి సెట్ చేయబడింది.");
+    }
+
+    // 1 పారామీటర్ కన్‌స్ట్రక్టర్ -> 2 పారామీటర్ల కన్‌స్ట్రక్టర్‌కు చైన్ అవుతుంది!
+    public Product(string sku) : this(sku, "పేరులేని ఉత్పత్తి")
+    {
+    }
+}
+
+// ఒకే లైన్ లో చైనింగ్ ద్వారా సురక్షితమైన ఆబ్జెక్ట్ రెడీ
+Product p = new Product("SKU-9021");
+Console.WriteLine($"వస్తువు: {p.Title}, ధర: ₹{p.Price}, స్టాక్: {p.StockQuantity}");
+// అవుట్‌పుట్: వస్తువు: పేరులేని ఉత్పత్తి, ధర: ₹99.00, స్టాక్: 10</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🚀 C# 12 విప్లవాత్మక ఫీచర్ — Primary Constructors in Classes</h2>
+      <p>
+        C# 9 లో రికార్డ్స్ (Records) లో ప్రవేశపెట్టిన ప్రైమరీ కన్‌స్ట్రక్టర్ల విజయాన్ని చూసి, మైక్రోసాఫ్ట్ <strong>C# 12 (.NET 8) లో సాధారణ క్లాసులకు కూడా Primary Constructors ని తీసుకొచ్చింది!</strong> 
+        ఇది ఆధునిక C# చరిత్రలోనే అత్యంత ప్రజాదరణ పొందిన ఫీచర్లలో ఒకటి.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; margin:16px 0;">
+        <h4 style="margin:0 0 8px 0; color:#10b981;">⚡ పాత C# vs C# 12 కోడ్ పోలిక:</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:13px; font-family:monospace;">
+          <div style="background:#fee2e2; border:1px solid #fca5a5; padding:12px; border-radius:6px; color:#7f1d1d;">
+            <strong>❌ పాత C# (బాయిలర్‌ప్లేట్ కోడ్):</strong><br><br>
+            public class User {<br>
+            &nbsp;&nbsp;private string _name;<br>
+            &nbsp;&nbsp;private int _age;<br>
+            &nbsp;&nbsp;public User(string name, int age) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;_name = name;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;_age = age;<br>
+            &nbsp;&nbsp;}<br>
+            }
+          </div>
+          <div style="background:#dcfce7; border:1px solid #86efac; padding:12px; border-radius:6px; color:#14532d;">
+            <strong>✅ C# 12 Primary Constructor:</strong><br><br>
+            // క్లాస్ పక్కనే డైరెక్ట్ పారామీటర్లు!<br>
+            public class User(string name, int age)<br>
+            {<br>
+            &nbsp;&nbsp;public void Print() =><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine($"{name}: {age}");<br>
+            }
+          </div>
+        </div>
+      </div>
+
+      <p><strong>Primary Constructors ముఖ్యాంశాలు &amp; నియమాలు:</strong></p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>ప్రైమరీ కన్‌స్ట్రక్టర్ పారామీటర్లు క్లాస్ మొత్తం పరిధిలో (Scope) అందుబాటులో ఉంటాయి. వాటిని మెథడ్స్‌లో, ప్రాపర్టీ ఇనిషియలైజర్లలో నేరుగా వాడవచ్చు.</li>
+        <li>మీరు క్లాస్‌లో అదనంగా ఇతర కన్‌స్ట్రక్టర్లను (Secondary Constructors) రాయాలనుకుంటే, అవి <strong>తప్పనిసరిగా ప్రైమరీ కన్‌స్ట్రక్టర్‌ను <code>: this(...)</code> తో కాల్ చేయాలి</strong>.</li>
+        <li>డిపెండెన్సీ ఇంజెక్షన్ (Dependency Injection - DI) లో సర్వీసులను ఇంజెక్ట్ చేసుకోవడానికి ఇది ASP.NET Core మైక్రోసర్వీసెస్‌లో విపరీతంగా వాడుతున్నారు.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Modern C# 12 Primary Constructor Example</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// C# 12 Primary Constructor డిక్లరేషన్
+public class BankClient(string fullName, string panNumber, decimal openingBalance)
+{
+    // పారామీటర్‌ను నేరుగా ప్రాపర్టీకి కేటాయించవచ్చు
+    public string ClientName { get; } = fullName;
+    public string Pan { get; } = panNumber.ToUpper();
+    public decimal Balance { get; private set; } = openingBalance;
+
+    // సెకండరీ కన్‌స్ట్రక్టర్ తప్పనిసరిగా ప్రైమరీ కన్‌స్ట్రక్టర్‌ను చైన్ చేయాలి
+    public BankClient(string fullName, string panNumber) 
+        : this(fullName, panNumber, 1000.00m) // కనీస ప్రారంభ బ్యాలెన్స్
+    {
+    }
+
+    public void Deposit(decimal amount)
+    {
+        Balance += amount;
+        Console.WriteLine($"₹{amount:N2} జమ అయ్యింది. కస్టమర్: {fullName}, కొత్త బ్యాలెన్స్: ₹{Balance:N2}");
+    }
+}
+
+var client = new BankClient("సునీత రావు", "ABCDE1234F");
+client.Deposit(5000m);</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 🎨 ఆబ్జెక్ట్ ఇనిషియలైజర్ సింటాక్స్ (Object Initializer Syntax)</h2>
+      <p>
+        ఒక క్లాస్‌కు పదుల సంఖ్యలో ఫీల్డ్స్ లేదా ప్రాపర్టీలు ఉన్నప్పుడు, ప్రతి కాంబినేషన్‌కు కన్‌స్ట్రక్టర్లను రాసుకుంటూ వెళ్తే కన్‌స్ట్రక్టర్ల సంఖ్య పెరిగిపోతుంది. 
+        దీనికి పరిష్కారంగా C# అందించిన సులభమైన ఫీచర్ <strong>Object Initializers</strong>.
+      </p>
+      <p>
+        కన్‌స్ట్రక్టర్ పక్కనే కర్లీ బ్రేసెస్ <code>{ }</code> ఉపయోగించి ఫీల్డ్స్ లేదా ప్రాపర్టీలకు నేరుగా విలువలను కేటాయించవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Object Initializers Syntax</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class Laptop
+{
+    public string Brand { get; set; }
+    public string Processor { get; set; }
+    public int RamGb { get; set; }
+    public decimal Price { get; set; }
+}
+
+// 1. ఆబ్జెక్ట్ ఇనిషియలైజర్ తో సులభంగా సృష్టించడం
+Laptop myLaptop = new Laptop
+{
+    Brand = "Dell XPS 15",
+    Processor = "Intel Core i9 14th Gen",
+    RamGb = 32,
+    Price = 185000.00m
+};
+
+// 2. లిస్ట్ కలెక్షన్‌తో కలిపి వాడటం (Collection Initializer)
+List<Laptop> inventory = new()
+{
+    new Laptop { Brand = "Apple MacBook Pro", Processor = "M3 Max", RamGb = 64, Price = 340000m },
+    new Laptop { Brand = "Lenovo Legion", Processor = "AMD Ryzen 9", RamGb = 16, Price = 135000m }
+};
+
+Console.WriteLine($"ఇన్వెంటరీలో ల్యాప్‌టాప్‌లు: {inventory.Count}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> ⚡ స్టాటిక్ మెంబర్స్ vs ఇన్స్టాన్స్ మెంబర్స్ (\`static\` Fields, Methods, Constructors)</h2>
+      <p>
+        C# లో ఒక మెంబర్ ముందు <strong><code>static</code></strong> అని రాస్తే, అది ఏ ఒక్క నిర్దిష్ట ఆబ్జెక్ట్‌కు కాకుండా — 
+        <strong>మొత్తం క్లాస్‌కు (Type-level)</strong> చెందుతుంది.
+      </p>
+
+      <div class="table-responsive">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్</th>
+              <th>ఇన్స్టాన్స్ మెంబర్ (Non-Static)</th>
+              <th>స్టాటిక్ మెంబర్ (Static)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>మెమరీ కేటాయింపు</strong></td>
+              <td>ప్రతి ఆబ్జెక్ట్ క్రియేట్ అయినప్పుడు కొత్తగా Heap లో కేటాయించబడుతుంది.</td>
+              <td>అప్లికేషన్ లైఫ్‌టైమ్‌లో AppDomain లో ఒకే ఒక్కసారి మెమరీ షేర్ అవుతుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>యాక్సెస్ చేసే విధానం</strong></td>
+              <td>ఆబ్జెక్ట్ వేరియబుల్ ద్వారా: <code>myCar.Speed</code></td>
+              <td>క్లాస్ పేరు ద్వారా నేరుగా: <code>Car.TotalCarsSold</code></td>
+            </tr>
+            <tr>
+              <td><strong>కన్‌స్ట్రక్టర్</strong></td>
+              <td>ప్రతి <code>new</code> ఆపరేటర్ అప్పుడు రన్ అవుతుంది.</td>
+              <td>క్లాస్ మొదటిసారి మెమరీలోకి లోడ్ అయినప్పుడు ఒకే ఒక్కసారి రన్ అవుతుంది. పారామీటర్లు ఉండవు!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block" style="margin-top:20px;">
+        <div class="code-block-header">
+          <span>csharp · Static Fields, Static Methods & Static Constructor</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">public class DatabaseConnection
+{
+    // ఇన్స్టాన్స్ ఫీల్డ్ (ప్రతి కనెక్షన్‌కు వేరుగా ఉంటుంది)
+    public string ConnectionId { get; set; }
+
+    // స్టాటిక్ ఫీల్డ్ (అన్ని కనెక్షన్లు షేర్ చేసుకునే గ్లోబల్ కౌంటర్)
+    public static int ActiveConnectionCount { get; private set; }
+
+    // స్టాటిక్ కన్‌స్ట్రక్టర్ - జీవితంలో ఒక్కసారే రన్ అవుతుంది
+    static DatabaseConnection()
+    {
+        ActiveConnectionCount = 0;
+        Console.WriteLine("🌐 గ్లోబల్ డేటాబేస్ పూల్ ఇనిషియలైజ్ చేయబడింది.");
+    }
+
+    // ఇన్స్టాన్స్ కన్‌స్ట్రక్టర్
+    public DatabaseConnection(string id)
+    {
+        ConnectionId = id;
+        ActiveConnectionCount++; // స్టాటిక్ కౌంటర్ పెంపు
+    }
+
+    // స్టాటిక్ మెథడ్
+    public static void PrintGlobalPoolStatus()
+    {
+        Console.WriteLine($"ప్రస్తుతం యాక్టివ్‌గా ఉన్న డేటాబేస్ కనెక్షన్లు: {ActiveConnectionCount}");
+    }
+}
+
+DatabaseConnection c1 = new DatabaseConnection("DB-CONN-01");
+DatabaseConnection c2 = new DatabaseConnection("DB-CONN-02");
+DatabaseConnection.PrintGlobalPoolStatus(); // అవుట్‌పుట్: 2</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🧹 డిస్ట్రక్టర్స్ / ఫైనలైజర్స్ (\`~ClassName()\`) &amp; Garbage Collection</h2>
+      <p>
+        C++ లాంటి భాషల్లో ఆబ్జెక్ట్ పని అయిపోయాక మెమరీని మాన్యువల్‌గా <code>delete</code> చేయాలి. 
+        కానీ C# లో <strong>Garbage Collector (GC)</strong> ఆటోమేటిక్‌గా అన్‌వాంటెడ్ ఆబ్జెక్ట్స్‌ను క్లీన్ చేస్తుంది.
+      </p>
+      <p>
+        ఒక ఆబ్జెక్ట్ మెమరీ నుండి పూర్తిగా నాశనం కాబోయే ముందు రన్ అవ్వడానికి C# లో <strong>డిస్ట్రక్టర్ లేదా ఫైనలైజర్ (Destructor / Finalizer)</strong> సింటాక్స్ ఉంటుంది:
+      </p>
+      <div style="background:var(--bg2); border-left:4px solid #f59e0b; padding:12px 16px; margin:14px 0; font-family:monospace; font-size:14px;">
+        ~ClassName() { /* క్లీనప్ కోడ్ */ }
+      </div>
+
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:16px; margin:14px 0;">
+        <h4 style="margin:0 0 8px 0; color:#ef4444;">⚠️ ప్రొఫెషనల్ హెచ్చరిక (Best Practice):</h4>
+        <p style="margin:0; font-size:14px; line-height:1.7; color:var(--text2);">
+          ఆధునిక .NET డెవలప్‌మెంట్‌లో <strong>డిస్ట్రక్టర్లను దాదాపుగా ఎప్పుడూ రాయకూడదు!</strong> 
+          ఎందుకంటే ఫైనలైజర్ ఉన్న ఆబ్జెక్ట్‌లు మొదటి సైకిల్‌లో డిలీట్ అవ్వకుండా "Finalization Queue" లోకి వెళ్లి, Gen 1 లేదా Gen 2 మెమరీకి ప్రమోట్ అవుతాయి. 
+          ఇది Garbage Collector పెర్ఫార్మెన్స్‌ను తీవ్రంగా దెబ్బతీస్తుంది. ఫైల్స్ లేదా నెట్‌వర్క్ సాకెట్లను క్లోజ్ చేయడానికి ఎల్లప్పుడూ <strong><code>IDisposable</code> మరియు <code>using</code> స్టేట్‌మెంట్</strong> వాడాలి (దీనిని మనం Chapter 17 లో నేర్చుకుంటాం).
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🏢 రియల్-వరల్డ్ ప్రాజెక్ట్ — ఎంటర్‌ప్రైజ్ స్మార్ట్ బ్యాంకింగ్ సిస్టమ్ (Enterprise Smart Banking Engine)</h2>
+      <p>
+        ఈ అధ్యాయంలో మనం నేర్చుకున్న Classes, Objects, Primary Constructors (C# 12), Constructor Chaining, మరియు Static Members అన్నింటినీ కలిపి 
+        ఒక పూర్తి స్థాయి <strong>స్మార్ట్ బ్యాంకింగ్ కోర్ ఇంజిన్ (Core Banking Engine v1.0)</strong> నిర్మిద్దాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Enterprise Smart Banking Core Engine</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🏦 మన బ్యాంక్ - ఎంటర్‌ప్రైజ్ కోర్ బ్యాంకింగ్ సిస్టమ్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+// 1. Transaction క్లాస్ - C# 12 Primary Constructor తో
+public class BankTransaction(string txId, string type, decimal amount, string note)
+{
+    public string TxId { get; } = txId;
+    public string Type { get; } = type;
+    public decimal Amount { get; } = amount;
+    public string Note { get; } = note;
+    public DateTime Timestamp { get; } = DateTime.UtcNow;
+
+    public void PrintDetails()
+    {
+        Console.WriteLine($"   [{Timestamp:HH:mm:ss}] {Type,-8} | ₹{Amount,10:N2} | {Note} (ID: {TxId})");
+    }
+}
+
+// 2. BankAccount క్లాస్ - OOP ఫుల్ ఫీచర్స్ తో
+public class BankAccount
+{
+    // స్టాటిక్ మెంబర్స్ (బ్యాంక్ మొత్తం స్థాయి లెక్కలు)
+    public static int TotalAccountsCreated { get; private set; }
+    public static decimal BankTotalVaultReserves { get; private set; }
+
+    // ఇన్స్టాన్స్ ఫీల్డ్స్ & ప్రాపర్టీస్
+    public string AccountNumber { get; }
+    public string AccountHolderName { get; }
+    public decimal Balance { get; private set; }
+    private readonly List<BankTransaction> _transactions = new();
+
+    // స్టాటిక్ కన్‌స్ట్రక్టర్
+    static BankAccount()
+    {
+        TotalAccountsCreated = 0;
+        BankTotalVaultReserves = 0m;
+        Console.WriteLine("⚙️ సెంట్రల్ బ్యాంకింగ్ లెడ్జర్ ఇనిషియలైజ్ చేయబడింది.\\n");
+    }
+
+    // మాస్టర్ కన్‌స్ట్రక్టర్
+    public BankAccount(string accNo, string holderName, decimal openingDeposit)
+    {
+        AccountNumber = accNo;
+        AccountHolderName = holderName;
+        Balance = openingDeposit;
+
+        TotalAccountsCreated++;
+        BankTotalVaultReserves += openingDeposit;
+
+        RecordTransaction("DEPOSIT", openingDeposit, "ప్రారంభ డిపాజిట్");
+    }
+
+    // సెకండరీ కన్‌స్ట్రక్టర్ (Chaining: కనీస ₹1,000 డిపాజిట్ తో)
+    public BankAccount(string accNo, string holderName) : this(accNo, holderName, 1000.00m)
+    {
+    }
+
+    public bool Deposit(decimal amount, string note = "నగదు జమ")
+    {
+        if (amount <= 0)
+        {
+            Console.WriteLine("❌ డిపాజిట్ మొత్తం సున్నా కంటే ఎక్కువగా ఉండాలి!");
+            return false;
+        }
+
+        Balance += amount;
+        BankTotalVaultReserves += amount;
+        RecordTransaction("DEPOSIT", amount, note);
+        Console.WriteLine($"✅ ₹{amount:N2} జమ విజయవంతం! ఖాతా: {AccountNumber} | బ్యాలెన్స్: ₹{Balance:N2}");
+        return true;
+    }
+
+    public bool Withdraw(decimal amount, string note = "నగదు విత్‌డ్రా")
+    {
+        if (amount <= 0)
+        {
+            Console.WriteLine("❌ మొత్తం సున్నా కంటే ఎక్కువగా ఉండాలి!");
+            return false;
+        }
+        if (amount > Balance)
+        {
+            Console.WriteLine($"❌ బ్యాలెన్స్ సరిపోదు! (ప్రస్తుత బ్యాలెన్స్: ₹{Balance:N2}, అభ్యర్థించినది: ₹{amount:N2})");
+            return false;
+        }
+
+        Balance -= amount;
+        BankTotalVaultReserves -= amount;
+        RecordTransaction("WITHDRAW", amount, note);
+        Console.WriteLine($"✅ ₹{amount:N2} విత్‌డ్రా పూర్తయింది! మిగిలిన బ్యాలెన్స్: ₹{Balance:N2}");
+        return true;
+    }
+
+    public bool Transfer(BankAccount targetAccount, decimal amount)
+    {
+        Console.WriteLine($"\\n🔄 బదిలీ ప్రక్రియ: {this.AccountHolderName} -> {targetAccount.AccountHolderName} (₹{amount:N2})");
+        if (this.Withdraw(amount, $"బదిలీ -> {targetAccount.AccountNumber}"))
+        {
+            targetAccount.Deposit(amount, $"బదిలీ వచ్చింది <- {this.AccountNumber}");
+            Console.WriteLine("🎉 నిధుల బదిలీ విజయవంతంగా పూర్తయింది!");
+            return true;
+        }
+        Console.WriteLine("❌ నిధుల బదిలీ విఫలమైంది!");
+        return false;
+    }
+
+    private void RecordTransaction(string type, decimal amount, string note)
+    {
+        string txId = "TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+        _transactions.Add(new BankTransaction(txId, type, amount, note));
+    }
+
+    public void PrintAccountStatement()
+    {
+        Console.WriteLine($"\\n-------------------------------------------------");
+        Console.WriteLine($"📄 మినీ స్టేట్‌మెంట్: {AccountHolderName} ({AccountNumber})");
+        Console.WriteLine($"💰 ప్రస్తుత నెట్ బ్యాలెన్స్: ₹{Balance:N2}");
+        Console.WriteLine($"లావాదేవీల చరిత్ర:");
+        foreach (var tx in _transactions)
+        {
+            tx.PrintDetails();
+        }
+        Console.WriteLine($"-------------------------------------------------");
+    }
+}
+
+// డ్రైవర్ కోడ్ (సిమ్యులేషన్)
+var acc1 = new BankAccount("ACC-1001", "రామకృష్ణ శర్మ", 50000m);
+var acc2 = new BankAccount("ACC-1002", "లావణ్య దేవి"); // డీఫాల్ట్ ₹1,000 తో
+
+acc1.Deposit(15000m, "క్లయింట్ ప్రాజెక్ట్ పేమెంట్");
+acc1.Withdraw(8000m, "ఆఫీస్ రెంట్ పేమెంట్");
+
+acc1.Transfer(acc2, 20000m);
+
+acc1.PrintAccountStatement();
+acc2.PrintAccountStatement();
+
+Console.WriteLine($"\\n📊 బ్యాంక్ మొత్తం గణాంకాలు:");
+Console.WriteLine($"మొత్తం ఖాతాలు   : {BankAccount.TotalAccountsCreated}");
+Console.WriteLine($"బ్యాంక్ మొత్తం నిధులు: ₹{BankAccount.BankTotalVaultReserves:N2}");
+Console.WriteLine("=================================================");</code></pre>
+      </div>
+
+      <!-- RUN LIVE COMPILER CARD -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin:24px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:#10b981; font-size:18px;">💻 ఈ ప్రాజెక్ట్‌ను లైవ్ కంపైలర్‌లో రన్ చేసి పరీక్షించండి!</h3>
+          <p style="margin:0; font-size:14px; color:var(--text2);">
+            ఆబ్జెక్ట్స్ క్రియేషన్, Constructor Chaining, డిపాజిట్లు మరియు ఇంట్రా-బ్యాంక్ ట్రాన్స్‌ఫర్లను నిజమైన .NET 8 ఎన్విరాన్‌మెంట్‌లో చూడండి.
+          </p>
+        </div>
+        <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:12px 24px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          <span>▶ Try C# Online Compiler</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🎓 ఇంటర్వ్యూ ప్రశ్నలు, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h2>
+      
+      <p><strong>టాప్ ఇంటర్వ్యూ ప్రశ్నలు &amp; సమాధానాలు:</strong></p>
+      <div style="margin:16px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q1: C# లో Class కి Struct కి మధ్య ముఖ్యమైన తేడా ఏమిటి?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> Class అనేది <strong>Reference Type</strong>, దీని ఆబ్జెక్ట్ Managed Heap లో స్టోర్ అవుతుంది. Struct అనేది <strong>Value Type</strong>, ఇది Stack లో స్టోర్ అవుతుంది. క్లాసెస్ ఇన్‌హెరిటెన్స్‌ను సపోర్ట్ చేస్తాయి, కానీ స్ట్రక్ట్స్ ఇన్‌హెరిట్ చేసుకోలేవు. చిన్నపాటి లైట్‌వెయిట్ డేటాకు Structs, భారీ బిజినెస్ లాజిక్‌కు Classes వాడతారు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+          <h4 style="margin:0 0 6px 0; color:#10b981;">Q2: C# 12 Primary Constructor పారామీటర్లు ఫీల్డ్స్‌గా మారుతాయా?</h4>
+          <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text2);">
+            <strong>జవాబు:</strong> Primary Constructor పారామీటర్లు ఆటోమేటిక్‌గా పబ్లిక్ ప్రాపర్టీలుగా మారవు (Records లాగా కాదు). అవి క్లాస్ పరిధిలో ఉండే ప్రైవేట్ వేరియబుల్స్ లా పనిచేస్తాయి. మీరు వాటిని మెథడ్స్‌లో వాడితే కంపైలర్ లోపల ఒక బ్యాకింగ్ ఫీల్డ్‌ను క్లాస్‌లో జనరేట్ చేస్తుంది.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 16px 0; color:var(--text);">🧠 మీ నాలెడ్జ్ చెక్ చేసుకోండి — 5 ఇంటరాక్టివ్ క్విజ్ ప్రశ్నలు</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>Car c1 = new Car(); Car c2 = c1;</code> రాసినప్పుడు ఎన్ని ఆబ్జెక్ట్‌లు Heap లో క్రియేట్ అవుతాయి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>ఒక్కటే ఒక్క ఆబ్జెక్ట్ (Only 1 Object)</strong>. <code>new</code> ఆపరేటర్ ఒక్కసారే పిలవబడింది కాబట్టి హీప్‌లో ఒకే ఆబ్జెక్ట్ ఉంటుంది. <code>c2</code> అనేది అదే ఆబ్జెక్ట్ మెమరీ అడ్రస్‌ను సూచించే రెండో రిఫరెన్స్ వేరియబుల్ మాత్రమే.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: ఒక క్లాస్‌లో పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ రాస్తే, డీఫాల్ట్ కన్‌స్ట్రక్టర్ <code>new Class()</code> ఏమవుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కంపైలర్ డీఫాల్ట్ కన్‌స్ట్రక్టర్‌ను ఆటోమేటిక్‌గా ప్రొవైడ్ చేయడం ఆపివేస్తుంది. డెవలపర్ స్వయంగా పారామీటర్లు లేని కన్‌స్ట్రక్టర్ రాస్తే తప్ప <code>new Class()</code> కాల్ చేయడం కంపైలేషన్ ఎర్రర్ అవుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: ఒక కన్‌స్ట్రక్టర్ నుండి ఇంకో కన్‌స్ట్రక్టర్‌ను కాల్ చేయడానికి ఏ సింటాక్స్ వాడాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>: this(...)</code></strong> (Constructor Chaining). ఇది కోడ్ డూప్లికేషన్‌ను నివారించి క్లీన్ కోడ్ రాయడానికి సహాయపడుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: Static కన్‌స్ట్రక్టర్ ఎప్పుడు రన్ అవుతుంది? దానికి పారామీటర్లు ఇవ్వవచ్చా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> Static Constructor క్లాస్ మొదటిసారి మెమరీలోకి లోడ్ అయినప్పుడు CLR ద్వారా ఆటోమేటిక్‌గా <strong>ఒకేసారి</strong> ఎగ్జిక్యూట్ అవుతుంది. దీనికి యాక్సెస్ మోడిఫైయర్లు (public/private) గానీ లేదా పారామీటర్లు గానీ <strong>ఇవ్వకూడదు</strong>.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: C# 12 లో ప్రైమరీ కన్‌స్ట్రక్టర్ ఉన్న క్లాస్‌లో సెకండరీ కన్‌స్ట్రక్టర్ రాస్తే తప్పనిసరి నిబంధన ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ప్రతీ సెకండరీ కన్‌స్ట్రక్టర్ తప్పనిసరిగా <code>: this(...)</code> ద్వారా ప్రైమరీ కన్‌స్ట్రక్టర్‌ను నేరుగా గానీ లేదా ఇండైరెక్ట్‌గా గానీ కాల్ చేయాలి. లేకపోతే కంపైల్-టైమ్ ఎర్రర్ వస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 12. జెనెరిక్ కలెక్షన్స్ (List &amp; Dict)
+      </a>
+      <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 14. ఎన్‌క్యాప్సులేషన్ &amp; Auto-Properties →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+`;
+
+const projectSimulationCode = `using System;
+using System.Collections.Generic;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("🏦 మన బ్యాంక్ - ఎంటర్‌ప్రైజ్ కోర్ బ్యాంకింగ్ సిస్టమ్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+public class BankTransaction(string txId, string type, decimal amount, string note)
+{
+    public string TxId { get; } = txId;
+    public string Type { get; } = type;
+    public decimal Amount { get; } = amount;
+    public string Note { get; } = note;
+    public DateTime Timestamp { get; } = DateTime.UtcNow;
+
+    public void PrintDetails()
+    {
+        Console.WriteLine($"   [{Timestamp:HH:mm:ss}] {Type,-8} | ₹{Amount,10:N2} | {Note} (ID: {TxId})");
+    }
+}
+
+public class BankAccount
+{
+    public static int TotalAccountsCreated { get; private set; }
+    public static decimal BankTotalVaultReserves { get; private set; }
+
+    public string AccountNumber { get; }
+    public string AccountHolderName { get; }
+    public decimal Balance { get; private set; }
+    private readonly List<BankTransaction> _transactions = new();
+
+    static BankAccount()
+    {
+        TotalAccountsCreated = 0;
+        BankTotalVaultReserves = 0m;
+        Console.WriteLine("⚙️ సెంట్రల్ బ్యాంకింగ్ లెడ్జర్ ఇనిషియలైజ్ చేయబడింది.\\n");
+    }
+
+    public BankAccount(string accNo, string holderName, decimal openingDeposit)
+    {
+        AccountNumber = accNo;
+        AccountHolderName = holderName;
+        Balance = openingDeposit;
+
+        TotalAccountsCreated++;
+        BankTotalVaultReserves += openingDeposit;
+
+        RecordTransaction("DEPOSIT", openingDeposit, "ప్రారంభ డిపాజిట్");
+    }
+
+    public BankAccount(string accNo, string holderName) : this(accNo, holderName, 1000.00m)
+    {
+    }
+
+    public bool Deposit(decimal amount, string note = "నగదు జమ")
+    {
+        if (amount <= 0) return false;
+        Balance += amount;
+        BankTotalVaultReserves += amount;
+        RecordTransaction("DEPOSIT", amount, note);
+        Console.WriteLine($"✅ ₹{amount:N2} జమ విజయవంతం! ఖాతా: {AccountNumber} | బ్యాలెన్స్: ₹{Balance:N2}");
+        return true;
+    }
+
+    public bool Withdraw(decimal amount, string note = "నగదు విత్‌డ్రా")
+    {
+        if (amount <= 0 || amount > Balance) return false;
+        Balance -= amount;
+        BankTotalVaultReserves -= amount;
+        RecordTransaction("WITHDRAW", amount, note);
+        Console.WriteLine($"✅ ₹{amount:N2} విత్‌డ్రా పూర్తయింది! మిగిలిన బ్యాలెన్స్: ₹{Balance:N2}");
+        return true;
+    }
+
+    public bool Transfer(BankAccount targetAccount, decimal amount)
+    {
+        Console.WriteLine($"\\n🔄 బదిలీ ప్రక్రియ: {this.AccountHolderName} -> {targetAccount.AccountHolderName} (₹{amount:N2})");
+        if (this.Withdraw(amount, $"బదిలీ -> {targetAccount.AccountNumber}"))
+        {
+            targetAccount.Deposit(amount, $"బదిలీ వచ్చింది <- {this.AccountNumber}");
+            Console.WriteLine("🎉 నిధుల బదిలీ విజయవంతంగా పూర్తయింది!");
+            return true;
+        }
+        return false;
+    }
+
+    private void RecordTransaction(string type, decimal amount, string note)
+    {
+        string txId = "TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+        _transactions.Add(new BankTransaction(txId, type, amount, note));
+    }
+
+    public void PrintAccountStatement()
+    {
+        Console.WriteLine($"\\n-------------------------------------------------");
+        Console.WriteLine($"📄 మినీ స్టేట్‌మెంట్: {AccountHolderName} ({AccountNumber})");
+        Console.WriteLine($"💰 ప్రస్తుత నెట్ బ్యాలెన్స్: ₹{Balance:N2}");
+        Console.WriteLine($"లావాదేవీల చరిత్ర:");
+        foreach (var tx in _transactions) tx.PrintDetails();
+        Console.WriteLine($"-------------------------------------------------");
+    }
+}
+
+var acc1 = new BankAccount("ACC-1001", "రామకృష్ణ శర్మ", 50000m);
+var acc2 = new BankAccount("ACC-1002", "లావణ్య దేవి");
+
+acc1.Deposit(15000m, "క్లయింట్ ప్రాజెక్ట్ పేమెంట్");
+acc1.Withdraw(8000m, "ఆఫీస్ రెంట్ పేమెంట్");
+acc1.Transfer(acc2, 20000m);
+
+acc1.PrintAccountStatement();
+acc2.PrintAccountStatement();
+
+Console.WriteLine($"\\n📊 బ్యాంక్ మొత్తం గణాంకాలు:");
+Console.WriteLine($"మొత్తం ఖాతాలు   : {BankAccount.TotalAccountsCreated}");
+Console.WriteLine($"బ్యాంక్ మొత్తం నిధులు: ₹{BankAccount.BankTotalVaultReserves:N2}");
+Console.WriteLine("=================================================");`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# క్లాసెస్, ఆబ్జెక్ట్స్ &amp; కన్‌స్ట్రక్టర్స్ (Primary Constructors in C# 12) — Modern C# Tutorial | Our Compiler</title>
+  <meta name="description" content="C# లో క్లాసెస్, ఆబ్జెక్ట్స్, Managed Heap అలోకేషన్, Default &amp; Parameterized కన్‌స్ట్రక్టర్స్, this కీవర్డ్, C# 12 Primary Constructors, మరియు స్మార్ట్ బ్యాంకింగ్ సిస్టమ్ ప్రాజెక్ట్ సమగ్ర తెలుగు గైడ్." />
+  <meta name="keywords" content="c# classes objects telugu, c# constructors telugu, c# 12 primary constructors, c# this keyword, c# heap allocation, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/13-csharp-classes-objects-and-constructors.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-csharp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C# క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్ (Primary Constructors in C# 12)",
+    "description": "C# లో క్లాసెస్, ఆబ్జెక్ట్స్, Managed Heap అలోకేషన్, Default & Parameterized కన్‌స్ట్రక్టర్స్, this కీవర్డ్, C# 12 Primary Constructors సమగ్ర తెలుగు గైడ్.",
+    "articleSection": "Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-csharp light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`${projectSimulationCode.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '13-csharp-classes-objects-and-constructors.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C# Chapter 13!');
+console.log('Target file size:', fullHtml.length, 'characters');
