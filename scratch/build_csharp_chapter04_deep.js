@@ -1,0 +1,980 @@
+const fs = require('fs');
+const path = require('path');
+const { buildSidebar } = require('./csharp_curriculum_data');
+
+const sidebarHtml = buildSidebar(4);
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Title & Meta Tags -->
+  <title>C# ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.) — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో అరిథ్‌మెటిక్, రిలేషనల్, లాజికల్, బిట్‌వైజ్ ఆపరేటర్లు మరియు ఆధునిక Null-Conditional (?.), Null-Coalescing (??, ??=) ఆపరేటర్లపై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# operators telugu, c# null coalescing telugu, c# null conditional operator, modern csharp 12 operators, c# bitwise telugu">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.) — C# Masterclass">
+  <meta property="og:description" content="C# లో సంపూర్ణ ఆపరేటర్ల సిస్టమ్: ప్రాథమిక గణితం నుండి ఆధునిక Null-Safety ఆపరేటర్ల వరకు సమగ్ర తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/04-csharp-operators-and-expressions.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+</head>
+<body class="lang-csharp light-theme">
+
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+${sidebarHtml}
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 04: ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ &amp; Null-Coalescing</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ &amp; Null-Coalescing (??, ?.)</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 04 of 20</span>
+      <span class="meta-pill">📁 Phase 01: C# ఫండమెంటల్స్ &amp; బేసిక్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Arithmetic Operators (+, -, *, /, %) · Integer Division Trap (5/2 = 2) · Prefix vs Postfix (++i vs i++) · Relational &amp; Equality (==, !=, &gt;, &lt;) · Logical Operators &amp; Short-Circuit Evaluation (&amp;&amp;, ||) · Bitwise &amp; Shift Operators (&amp;, |, ^, ~, &lt;&lt;, &gt;&gt;) · Ternary Conditional (? :) · Modern C# Null Operators: Null-Conditional (?.), Null-Coalescing (??), Null-Assignment (??=), Null-Forgiving (!) · Operator Precedence Table · Real-World Project: E-Commerce Smart Cart &amp; Coupon Engine · 7 Common Beginner Mistakes · Self-Assessment Quiz
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం అధ్యాయం 04 కి! ⚡ లాజిక్ ఇంజిన్ &amp; ఆధునిక Null-Safety పవర్</h3>
+      <p>
+        ప్రోగ్రామింగ్ భాషలో వేరియబుల్స్ అనేవి సమాచారాన్ని దాచుకునే పెట్టెలు అయితే, ఆ పెట్టెలలోని సమాచారంతో లెక్కలు కట్టేవి, పోల్చి చూసేవి, మరియు వ్యాపార నిర్ణయాలు తీసుకునే శక్తిమంతమైన ఆయుధాలే <strong>ఆపరేటర్లు (Operators)</strong>! రెండు సంఖ్యలను కూడటం నుండి, ఒక యూజర్ లాగిన్ అయ్యాడా లేదా ధృవీకరించడం వరకు ప్రతి ఒక్క కోడ్ లైన్ వెనుక ఆపరేటర్ల చక్రం తిరుగుతుంది.
+      </p>
+      <p>
+        అయితే C# ఆపరేటర్ల వ్యవస్థ సాధారణ భాషల కంటే ఎంతో ఆధునికమైనది. సాధారణ అరిథ్‌మెటిక్ మరియు లాజిక్ ఆపరేటర్లతో పాటు — సాఫ్ట్‌వేర్ ఇంజనీరింగ్ ప్రపంచంలో బిలియన్ డాలర్ల నష్టాన్ని కలిగించే <em>NullReferenceException</em> ను సమూలంగా నివారించడానికి ఆధునిక C# మనకు <strong>Null-Conditional (<code>?.</code>)</strong>, <strong>Null-Coalescing (<code>??</code>)</strong>, మరియు <strong>Null-Assignment (<code>??=</code>)</strong> వంటి అద్భుతమైన ఆపరేటర్లను అందించింది.
+      </p>
+      <p>
+        ఈ అధ్యాయంలో మనం సాంప్రదాయ గణిత ఆపరేటర్లలోని దాగి ఉన్న ఉచ్చులు (ఉదాహరణకు <code>5 / 2</code> ఎందుకు <code>2</code> అవుతుంది?), షార్ట్-సర్క్యూట్ మూల్యాంకనం, బిట్‌వైజ్ మాస్కింగ్, మరియు ఆధునిక Null-Safety టెక్నిక్స్‌ను లోతుగా నేర్చుకొని — ఒక పూర్తి స్థాయి ఈ-కామర్స్ షాపింగ్ కార్ట్ ఇంజిన్‌ను నిర్మిస్తాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> ➕ అరిథ్‌మెటిక్ ఆపరేటర్లు (Arithmetic Operators) &amp; గణిత ఉచ్చులు</h2>
+      <p>
+        C# లో సంఖ్యా విలువలతో ప్రాథమిక గణితం చేయడానికి 5 ప్రధాన అరిథ్‌మెటిక్ ఆపరేటర్లు ఉన్నాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>+</code> (సంకలనం / Addition): రెండు సంఖ్యలను కూడుతుంది లేదా స్ట్రింగ్స్‌ను కలుపుతుంది.</li>
+        <li><code>-</code> (వ్యవకలనం / Subtraction): మొదటి సంఖ్య నుండి రెండవ సంఖ్యను తీసివేస్తుంది.</li>
+        <li><code>*</code> (గుణకారం / Multiplication): రెండు సంఖ్యలను గుణిస్తుంది.</li>
+        <li><code>/</code> (భాగహారం / Division): మొదటి సంఖ్యను రెండవ సంఖ్యతో భాగిస్తుంది.</li>
+        <li><code>%</code> (మాడ్యులస్ / Modulo Remainder): భాగహారం చేసిన తర్వాత మిగిలే శేషం (Remainder) ను ఇస్తుంది.</li>
+      </ul>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">🚨 ది ఇంజర్ డివిజన్ ట్రాప్ (The 5 / 2 = 2 Trap):</h3>
+      <p>
+        చాలామంది బిగినర్స్ ఎదుర్కొనే అత్యంత సాధారణ బగ్: రెండు <code>int</code> వేరియబుల్స్‌ను భాగించినప్పుడు C# ఫలితాన్ని కూడా <code>int</code> గానే ఇస్తుంది! డెసిమల్ భాగం పూర్తిగా తుడిచిపెట్టుకుపోతుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Integer Division vs Floating-Point Division</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int totalScore = 15;
+int subjects = 4;
+
+// తప్పు దారి: int / int భాగహారం 3.75 కాకుండా 3 మాత్రమే ఇస్తుంది!
+double wrongAvg = totalScore / subjects; 
+Console.WriteLine($"తప్పుడు సగటు: {wrongAvg}"); // 3
+
+// సరైన దారి: ఏదైనా ఒక సంఖ్యను double లేదా decimal కి క్యాస్ట్ చేయాలి
+double correctAvg = (double)totalScore / subjects; 
+Console.WriteLine($"ఖచ్చితమైన సగటు: {correctAvg}"); // 3.75</code></pre>
+      </div>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">మాడ్యులస్ ఆపరేటర్ (%) యొక్క వాస్తవ అప్లికేషన్స్:</h3>
+      <p>
+        <code>%</code> కేవలం శేషాన్ని మాత్రమే ఇవ్వదు. ప్రోగ్రామింగ్‌లో ఇది:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li>సరి లేదా బేసి సంఖ్యలను కనుగొనడానికి (<code>num % 2 == 0</code>).</li>
+        <li>గడియారం సమయం (12-గంటల ఫార్మాట్ లూపింగ్: <code>hours % 12</code>).</li>
+        <li>టేబుల్ లో ఆల్టర్నేట్ రోస్ (Zebra Stripes) కి రంగులు వేయడానికి విరివిగా వాడతారు.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> ⚡ ఇంక్రిమెంట్ &amp; డిక్రిమెంట్ (Prefix vs Postfix: ++i vs i++)</h2>
+      <p>
+        ఒక వేరియబుల్ విలువను సరిగ్గా 1 పెంచడానికి <code>++</code>, మరియు 1 తగ్గించడానికి <code>--</code> వాడతారు. అయితే ఆపరేటర్ వేరియబుల్ కంటే ముందుందా (Prefix) లేదా వెనుక ఉందా (Postfix) అనే దానిపై కోడ్ ఫలితం పూర్తిగా ఆధారపడి ఉంటుంది.
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>రకం</th>
+            <th>సింటాక్స్</th>
+            <th>ఎగ్జిక్యూషన్ ఆర్డర్</th>
+            <th>వివరణ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Prefix (++x)</strong></td>
+            <td><code>int y = ++x;</code></td>
+            <td><strong>Increment first, then use</strong></td>
+            <td>ముందుగా x విలువ 1 పెరుగుతుంది, ఆ పెరిగిన కొత్త విలువ y లోకి కేటాయించబడుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>Postfix (x++)</strong></td>
+            <td><code>int y = x++;</code></td>
+            <td><strong>Use first, then increment</strong></td>
+            <td>ప్రస్తుతం x లో ఉన్న పాత విలువ y లోకి వెళ్తుంది, ఆ తర్వాత మాత్రమే x విలువ 1 పెరుగుతుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Prefix vs Postfix Mechanics</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int a = 10;
+int b = ++a; // a అవుతుంది 11, b అవుతుంది 11
+Console.WriteLine($"Prefix : a = {a}, b = {b}");
+
+int p = 10;
+int q = p++; // q అవుతుంది 10 (పాత విలువ), p అవుతుంది 11
+Console.WriteLine($"Postfix: p = {p}, q = {q}");
+
+// ఇంటర్వ్యూ క్లాసిక్ పజిల్:
+int x = 5;
+int result = x++ + ++x; 
+// Step 1: x++ విలువ 5 (కానీ x అవుతుంది 6)
+// Step 2: ++x ముందుగా 6 ని 7 చేస్తుంది, విలువ 7
+// Result = 5 + 7 = 12, మరియు x ఆఖరి విలువ 7!
+Console.WriteLine($"x = {x}, result = {result}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ⚖️ రిలేషనల్ &amp; సమానత్వ ఆపరేటర్లు (Relational &amp; Equality)</h2>
+      <p>
+        రెండు విలువల మధ్య తారతమ్యాన్ని పోల్చడానికి రిలేషనల్ ఆపరేటర్లను ఉపయోగిస్తారు. వీటి ఫలితం ఎల్లప్పుడూ ఒక బూలియన్ (<code>true</code> లేదా <code>false</code>) మాత్రమే అవుతుంది:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>==</code> (Equal to): రెండు విలువలు సమానమైతే <code>true</code>.</li>
+        <li><code>!=</code> (Not Equal to): రెండు విలువలు సమానం కాకపోతే <code>true</code>.</li>
+        <li><code>&gt;</code> (Greater than): ఎడమవైపు విలువ పెద్దదైతే <code>true</code>.</li>
+        <li><code>&lt;</code> (Less than): ఎడమవైపు విలువ చిన్నదైతే <code>true</code>.</li>
+        <li><code>&gt;=</code> (Greater than or Equal to): పెద్దది లేదా సమానమైతే <code>true</code>.</li>
+        <li><code>&lt;=</code> (Less than or Equal to): చిన్నది లేదా సమానమైతే <code>true</code>.</li>
+      </ul>
+
+      <div style="background:var(--bg3); border-left:4px solid #f59e0b; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#d97706; font-size:15px;">⚠️ = వర్సెస్ == మధ్య వ్యత్యాసం:</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px;">
+          ఒకే సమానత్వ గుర్తు <code>=</code> అనేది <em>Assignment Operator</em> (విలువను వేరియబుల్‌లో పెట్టడం). రెండు గుర్తులు <code>==</code> అనేవి <em>Comparison Operator</em> (సరిచూడటం). C# టైప్-సేఫ్ కాబట్టి <code>if (x = 5)</code> అని రాస్తే జావాస్క్రిప్ట్ లేదా C లాగా సైలెంట్‌గా తప్పు నిర్ణయం తీసుకోదు, నేరుగా కంపైలర్ ఎర్రర్ ఇచ్చి కాపాడుతుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🧠 లాజికల్ ఆపరేటర్లు &amp; షార్ట్-సర్క్యూట్ మూల్యాంకనం (Short-Circuit Evaluation)</h2>
+      <p>
+        ఒకటి కంటే ఎక్కువ షరతులను కలిపి ఒక సంక్లిష్టమైన నిర్ణయం తీసుకోవడానికి లాజికల్ ఆపరేటర్లను ఉపయోగిస్తాం:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>&amp;&amp;</code> (Conditional Logical AND): రెండు షరతులూ <code>true</code> అయితేనే తుది ఫలితం <code>true</code>.</li>
+        <li><code>||</code> (Conditional Logical OR): ఏదైనా ఒక్క షరతు <code>true</code> అయినా తుది ఫలితం <code>true</code>.</li>
+        <li><code>!</code> (Logical NOT): ఫలితాన్ని తిరగవేస్తుంది (true ని false గా, false ని true గా మారుస్తుంది).</li>
+      </ul>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">షార్ట్-సర్క్యూట్ మూల్యాంకనం (Short-Circuit Evaluation) ఎలా ప్రాణాలు కాపాడుతుంది?</h3>
+      <p>
+        C# కంపైలర్ అనవసరమైన పనులు చేయదు.
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>&amp;&amp;</code> విషయంలో మొదటి షరతు <code>false</code> అయితే, రెండవ షరతు ఎంత పెద్దదైనా సరే దాన్ని కనీసం తాకదు (ఎందుకంటే ఫలితం ఎలాగూ false కాబట్టి).</li>
+        <li><code>||</code> విషయంలో మొదటి షరతు <code>true</code> అయితే, రెండవ షరతును ఎగ్జిక్యూట్ చేయదు (ఎందుకంటే ఫలితం ఎలాగూ true కాబట్టి).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Short-Circuit Saving from NullReferenceException</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string? userEmail = null;
+
+// షార్ట్-సర్క్యూట్ ఇక్కడ మన యాప్‌ను క్రాష్ అవ్వకుండా కాపాడుతుంది:
+// userEmail != null అనేది false అయిన వెంటనే, కుడివైపున ఉన్న userEmail.Contains() ఎగ్జిక్యూట్ కాదు!
+if (userEmail != null &amp;&amp; userEmail.Contains("@"))
+{
+    Console.WriteLine("సరైన ఈమెయిల్!");
+}
+else
+{
+    Console.WriteLine("ఈమెయిల్ నమోదు కాలేదు లేదా చెల్లదు.");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> ⚙️ బిట్‌వైజ్ &amp; షిఫ్ట్ ఆపరేటర్లు (Bitwise &amp; Shift Operators)</h2>
+      <p>
+        డేటాను బైట్ మరియు బిట్ స్థాయిలో ప్రాసెస్ చేయడానికి బిట్‌వైజ్ ఆపరేటర్లను ఉపయోగిస్తారు. గేమ్ డెవలప్‌మెంట్, నెట్‌వర్కింగ్ ప్రోటోకాల్స్, ఎన్‌క్రిప్షన్ మరియు యూజర్ పర్మిషన్స్ (Roles &amp; Flags) నిర్వహణలో ఇవి అత్యంత వేగవంతమైన ప్రత్యామ్నాయాలు:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>&amp;</code> (Bitwise AND): రెండు బిట్లూ 1 అయితేనే 1.</li>
+        <li><code>|</code> (Bitwise OR): ఏదో ఒక బిట్ 1 అయినా 1.</li>
+        <li><code>^</code> (Bitwise XOR): రెండు బిట్లూ వేర్వేరుగా ఉంటేనే 1 (1^0=1, 1^1=0).</li>
+        <li><code>~</code> (Bitwise NOT): అన్ని బిట్లను తిరగవేస్తుంది (0 లు 1 గా, 1 లు 0 గా).</li>
+        <li><code>&lt;&lt;</code> (Left Shift): బిట్లను ఎడమవైపుకు జరుపుతుంది (ప్రతి షిఫ్ట్‌కు విలువ 2 తో గుణించబడుతుంది).</li>
+        <li><code>&gt;&gt;</code> (Right Shift): బిట్లను కుడివైపుకు జరుపుతుంది (ప్రతి షిఫ్ట్‌కు విలువ 2 తో భాగించబడుతుంది).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Bitwise Permissions System</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// యూజర్ పర్మిషన్ బిట్స్: 1 = Read, 2 = Write, 4 = Delete
+int READ_PERMISSION   = 1; // 0001
+int WRITE_PERMISSION  = 2; // 0010
+int DELETE_PERMISSION = 4; // 0100
+
+// ఒక యూజర్‌కి Read &amp; Write రెండూ ఇవ్వడం (Bitwise OR)
+int userRights = READ_PERMISSION | WRITE_PERMISSION; // 0011 (విలువ: 3)
+
+// యూజర్‌కి Delete పర్మిషన్ ఉందా? సరిచూడటం (Bitwise AND)
+bool canDelete = (userRights &amp; DELETE_PERMISSION) != 0;
+bool canRead   = (userRights &amp; READ_PERMISSION) != 0;
+
+Console.WriteLine($"చదవగలరా? : {canRead}");     // True
+Console.WriteLine($"తొలగించగలరా?: {canDelete}");  // False
+
+// బిట్ షిఫ్టింగ్ మ్యాజిక్:
+int num = 8;
+Console.WriteLine($"8 &lt;&lt; 1 (8 * 2) = {num &lt;&lt; 1}"); // 16
+Console.WriteLine($"8 &gt;&gt; 2 (8 / 4) = {num &gt;&gt; 2}"); // 2</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🎯 టెర్నరీ ఆపరేటర్ (? :) — కాంపాక్ట్ కండిషనల్ ఎక్స్‌ప్రెషన్</h2>
+      <p>
+        నాలుగు లైన్ల <code>if-else</code> బ్లాక్ రాయడానికి బదులుగా, కేవలం ఒకే లైన్‌లో కండిషన్ ఆధారంగా విలువను కేటాయించడానికి <strong>Ternary Operator (<code>condition ? trueValue : falseValue</code>)</strong> ఒక అద్భుతమైన సాధనం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Ternary Operator vs If-Else</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int userAge = 20;
+
+// సాంప్రదాయ పద్ధతి:
+string accessStatus;
+if (userAge &gt;= 18) accessStatus = "అనుమతించబడింది";
+else accessStatus = "తిరస్కరించబడింది";
+
+// టెర్నరీ ఆపరేటర్ తో క్లీన్ &amp; ఎలిగెంట్ కోడ్:
+string modernStatus = (userAge &gt;= 18) ? "అనుమతించబడింది" : "తిరస్కరించబడింది";
+Console.WriteLine($"ఓటింగ్ స్టేటస్: {modernStatus}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🛡️ ఆధునిక C# Null ఆపరేటర్లు: ?. , ?? , ??= మరియు !</h2>
+      <p>
+        సాఫ్ట్‌వేర్ పితామహుడు టోనీ హోర్ (Tony Hoare) నల్ పాయింటర్‌ను రూపొందించినందుకు దాన్ని <em>"The Billion Dollar Mistake"</em> అని పిలిచారు. C# లో రన్ అయ్యే యాప్స్ లో దాదాపు 70% క్రాషెస్ <code>NullReferenceException</code> వల్లే జరుగుతాయి. ఆధునిక C# (C# 6 నుండి C# 12 వరకు) ఈ సమస్యను సమూలంగా నిర్మూలించడానికి నాలుగు ప్రత్యేక ఆపరేటర్లను పరిచయం చేసింది:
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">1. Null-Conditional Operator (?.) — సేఫ్ నావిగేషన్</h3>
+      <p>
+        ఒక ఆబ్జెక్ట్ లేదా స్ట్రింగ్ నల్ కాకపోతేనే దాని ప్రాపర్టీని లేదా మెథడ్‌ను కాల్ చేస్తుంది. ఒకవేళ అది నల్ అయితే క్రాష్ అవ్వకుండా నిశ్శబ్దంగా <code>null</code> రిటర్న్ చేస్తుంది.
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">2. Null-Coalescing Operator (??) — డీఫాల్ట్ ఫాల్‌బ్యాక్</h3>
+      <p>
+        ఎడమవైపు ఉన్న విలువ నల్ అయితే, కుడివైపు ఉన్న డీఫాల్ట్ బ్యాకప్ విలువను కేటాయిస్తుంది. <em>"ఇది లేకపోతే అది ఇవ్వు"</em> అనే లాజిక్ ఇది.
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">3. Null-Coalescing Assignment Operator (??=)</h3>
+      <p>
+        ఒక వేరియబుల్ ఇప్పటికే నల్ అయి ఉంటే మాత్రమే దానికి కొత్త విలువను అసైన్ చేస్తుంది (C# 8+ ఫీచర్).
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">4. Null-Forgiving Operator (!)</h3>
+      <p>
+        కంపైలర్ ఇచ్చే నల్ వార్నింగ్ ను ఆపివేస్తూ, "ప్రోగ్రామర్‌గా నేను హామీ ఇస్తున్నాను, ఈ వేరియబుల్ ఎట్టిపరిస్థితుల్లోనూ నల్ కాదు" అని కంపైలర్‌కు చెప్పే ఆపరేటర్.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Modern C# Null Operators Masterclass</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string? customerAddress = null;
+
+// 1. Null-Conditional (?.) - క్రాష్ కాదు! safeLength లో null ఉంటుంది.
+int? safeLength = customerAddress?.Length;
+Console.WriteLine($"చిరునామా పొడవు: {safeLength ?? 0}");
+
+// 2. Null-Coalescing (??) - శూన్యతకు విరుగుడు
+string verifiedAddress = customerAddress ?? "చిరునామా అందుబాటులో లేదు";
+Console.WriteLine($"వివరాలు: {verifiedAddress}");
+
+// 3. Null-Coalescing Assignment (??=)
+string? cachedToken = null;
+cachedToken ??= "AUTH_TOKEN_DEFAULT_SECURE_999"; // నల్ కాబట్టి అసైన్ అవుతుంది
+cachedToken ??= "ANOTHER_TOKEN"; // ఇప్పటికే విలువ ఉంది కాబట్టి మారదు!
+Console.WriteLine($"Final Cached Token: {cachedToken}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 📐 ఆపరేటర్ ప్రిసిడెన్స్ &amp; అసోసియేటివిటీ (Precedence &amp; Associativity Table)</h2>
+      <p>
+        ఒకే గణిత సమీకరణంలో బహుళ ఆపరేటర్లు ఉన్నప్పుడు ఏది ముందు లెక్కించాలి అనే దానికి C# ఖచ్చితమైన ప్రాధాన్యతా నిబంధనలను (Operator Precedence) పాటిస్తుంది.
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ప్రాధాన్యత</th>
+            <th>ఆపరేటర్ల కేటగిరీ</th>
+            <th>ఆపరేటర్లు</th>
+            <th>అసోసియేటివిటీ (దిశ)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1 (అత్యున్నత)</td>
+            <td>Primary / Member Access</td>
+            <td><code>x.y</code>, <code>f(x)</code>, <code>a[i]</code>, <code>x?.y</code>, <code>x++</code>, <code>x--</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Unary</td>
+            <td><code>+</code>, <code>-</code>, <code>!</code>, <code>~</code>, <code>++x</code>, <code>--x</code>, <code>(T)x</code></td>
+            <td>కుడి నుండి ఎడమకి</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Multiplicative</td>
+            <td><code>*</code>, <code>/</code>, <code>%</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Additive</td>
+            <td><code>+</code>, <code>-</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Shift</td>
+            <td><code>&lt;&lt;</code>, <code>&gt;&gt;</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Relational</td>
+            <td><code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>is</code>, <code>as</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Equality</td>
+            <td><code>==</code>, <code>!=</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>Logical AND / OR</td>
+            <td><code>&amp;&amp;</code> తరువాత <code>||</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>Null-Coalescing</td>
+            <td><code>??</code></td>
+            <td>కుడి నుండి ఎడమకి</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Ternary</td>
+            <td><code>?:</code></td>
+            <td>కుడి నుండి ఎడమకి</td>
+          </tr>
+          <tr>
+            <td>11 (అల్పమైనది)</td>
+            <td>Assignment</td>
+            <td><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>??=</code></td>
+            <td>కుడి నుండి ఎడమకి</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:var(--text); font-size:15px;">💡 ప్రోగ్రామింగ్ గోల్డెన్ రూల్: బ్రాకెట్లు (Parentheses) వాడండి!</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14.5px;">
+          ప్రిసిడెన్స్ నియమాలను బట్టీ పట్టడానికి బదులు, మీ ఉద్దేశాన్ని స్పష్టంగా వ్యక్తీకరించడానికి ఎల్లప్పుడూ బ్రాకెట్లు <code>()</code> వాడండి. ఉదాహరణకు <code>(a + b) * c</code> అని రాయడం వల్ల మీ కోడ్ చదివే ఇతర టీమ్ మెంబర్స్‌కు స్పష్టత వస్తుంది మరియు కంపైలర్ తికమకపడదు.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 🔀 కాంపౌండ్ అసైన్‌మెంట్ ఆపరేటర్లు (Compound Assignment: +=, -=, *=)</h2>
+      <p>
+        ఒక వేరియబుల్‌పై ఆపరేషన్ చేసి ఫలితాన్ని మళ్లీ అదే వేరియబుల్‌కు కేటాయించే ప్రక్రియను కుదించి రాయడానికి కాంపౌండ్ అసైన్‌మెంట్ ఆపరేటర్లు తోడ్పడతాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>x += 5;</code> అంటే <code>x = x + 5;</code></li>
+        <li><code>x -= 3;</code> అంటే <code>x = x - 3;</code></li>
+        <li><code>x *= 2;</code> అంటే <code>x = x * 2;</code></li>
+        <li><code>x /= 4;</code> అంటే <code>x = x / 4;</code></li>
+        <li><code>x %= 10;</code> అంటే <code>x = x % 10;</code></li>
+      </ul>
+      <p>
+        ఇవి రాయడానికి సంక్షిప్తంగా ఉండటమే కాకుండా, కొన్ని సందర్భాలలో కంపైలర్ ఇంటర్నల్ బైట్‌కోడ్ స్థాయిలో సింగిల్ రిజిస్టర్ ఆపరేషన్‌గా ఆప్టిమైజ్ చేస్తుంది.
+      </p>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🔍 టైప్ టెస్టింగ్ &amp; కాస్టింగ్ ఆపరేటర్లు (is మరియు as)</h2>
+      <p>
+        ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్‌లో ఒక ఆబ్జెక్ట్ ఏ రకానికి చెందినదో తెలుసుకోవడానికి C# రెండు శక్తిమంతమైన ఆపరేటర్లను అందిస్తుంది:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong><code>is</code> ఆపరేటర్:</strong> ఒక ఆబ్జెక్ట్ నిర్దిష్ట టైప్‌కు అనుకూలమైనదా లేదా అని చెక్ చేసి <code>true</code> లేదా <code>false</code> ఇస్తుంది. ఆధునిక C# లో ఇది ప్యాటర్న్ మ్యాచింగ్‌తో కలిసి వేరియబుల్‌ను అక్కడికక్కడే అన్‌ప్యాక్ చేస్తుంది.</li>
+        <li><strong><code>as</code> ఆపరేటర్:</strong> ఒక ఆబ్జెక్ట్‌ను నిర్దిష్ట క్లాస్‌గా కాస్ట్ చేయడానికి ప్రయత్నిస్తుంది. ఒకవేళ కాస్టింగ్ విఫలమైతే ఎక్సెప్షన్ ఇవ్వకుండా నిశ్శబ్దంగా <code>null</code> ఇస్తుంది (Safe Casting).</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · is &amp; as Operators Demonstration</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">object mixedData = "హలో ప్రపంచం!";
+
+// మోడ్రన్ C# Pattern Matching with 'is'
+if (mixedData is string text)
+{
+    Console.WriteLine($"ఇది ఒక స్ట్రింగ్! పొడవు: {text.Length}");
+}
+
+// 'as' Operator తో సురక్షిత కాస్టింగ్
+object numberBox = 12345;
+string? strAttempt = numberBox as string; // నంబర్ ను స్ట్రింగ్ గా కాస్ట్ చేయలేము కాబట్టి null వస్తుంది
+
+if (strAttempt == null)
+{
+    Console.WriteLine("కాస్టింగ్ సాధ్యం కాలేదు (Safe Null Result). యాప్ క్రాష్ కాలేదు!");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "Smart E-Commerce Cart &amp; Coupon Engine"</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న అరిథ్‌మెటిక్, రిలేషనల్, లాజికల్ షార్ట్-సర్క్యూటింగ్, టెర్నరీ, మరియు ఆధునిక Null-Safety (<code>?.</code>, <code>??</code>, <code>??=</code>) ఆపరేటర్లు అన్నింటినీ ఉపయోగించి ఒక పూర్తి స్థాయి <strong>స్మార్ట్ ఈ-కామర్స్ కార్ట్ &amp; కూపన్ డిస్కౌంట్ ఇంజిన్</strong> ను నిర్మిద్దాం!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Smart E-Commerce Cart &amp; Null-Safe Engine</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🛍️ మన షాపింగ్ కార్ట్ &amp; స్మార్ట్ కూపన్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================");
+
+// 1. కస్టమర్ డేటా &amp; Null-Coalescing
+string? rawCustomerName = null; // యూజర్ పేరు ఇవ్వలేదు అనుకుందాం
+string customerName = rawCustomerName ?? "అతిథి కస్టమర్ (Guest)";
+
+// 2. కార్ట్ వస్తువులు &amp; ధరలు
+decimal item1Price = 1299.00m;
+int item1Qty = 2;
+
+decimal item2Price = 450.50m;
+int item2Qty = 1;
+
+decimal subTotal = (item1Price * item1Qty) + (item2Price * item2Qty);
+
+// 3. కూపన్ కోడ్ ప్రాసెసింగ్ &amp; లాజికల్ షార్ట్-సర్క్యూట్
+string? couponCode = "MANA500";
+decimal discountAmount = 0m;
+
+// షార్ట్-సర్క్యూట్: couponCode నల్ కాకపోతేనే మరియు సమానమైతేనే డిస్కౌంట్ వర్తిస్తుంది
+if (couponCode != null &amp;&amp; couponCode.ToUpper() == "MANA500" &amp;&amp; subTotal &gt;= 2000m)
+{
+    discountAmount = 500m;
+    Console.WriteLine("🎉 సూపర్ ఆఫర్! MANA500 కూపన్ ద్వారా ₹500 తగ్గింపు లభించింది!");
+}
+else
+{
+    Console.WriteLine("కూపన్ వర్తించలేదు లేదా కనీస కొనుగోలు ₹2000 కి చేరుకోలేదు.");
+}
+
+// 4. షిప్పింగ్ ఛార్జీలు (టెర్నరీ ఆపరేటర్)
+// ₹1500 కంటే ఎక్కువ కొంటే ఉచిత డెలివరీ, లేకపోతే ₹100 ఛార్జ్
+decimal netBeforeShipping = subTotal - discountAmount;
+decimal shippingCharge = (netBeforeShipping &gt;= 1500m) ? 0.00m : 100.00m;
+
+// 5. డెలివరీ చిరునామా &amp; Null-Coalescing Assignment (??=)
+string? deliveryAddress = null;
+deliveryAddress ??= "స్థానిక స్టోర్ పికప్ కౌంటర్ (Default Branch)";
+
+// 6. తుది మొత్తం గణన
+decimal grandTotal = netBeforeShipping + shippingCharge;
+
+// 7. అందమైన ఆర్డర్ సారాంశం (Order Summary)
+Console.WriteLine("\\n=================================================");
+Console.WriteLine("                 ఆర్డర్ సారాంశం (INVOICE)           ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"కస్టమర్       : {customerName}");
+Console.WriteLine($"డెలివరీ అడ్రస్: {deliveryAddress}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine($"మొత్తం వస్తువులు : {item1Qty + item2Qty}");
+Console.WriteLine($"కార్ట్ సబ్-టోటల్  : ₹{subTotal:N2}");
+Console.WriteLine($"కూపన్ తగ్గింపు : -₹{discountAmount:N2}");
+Console.WriteLine($"షిప్పింగ్ ఛార్జ్: {(shippingCharge == 0m ? "ఉచితం (FREE)" : $"₹{shippingCharge:N2}")}");
+Console.WriteLine("-------------------------------------------------");
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine($"చెల్లించాల్సిన మొత్తం: ₹{grandTotal:N2}");
+Console.ResetColor();
+Console.WriteLine("=================================================");
+Console.WriteLine("ఆర్డర్ విజయవంతంగా కన్ఫర్మ్ చేయబడింది! ధన్యవాదాలు! 🚀\\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ ఈ-కామర్స్ ఇంజిన్‌ను రన్ చేయండి!</div>
+        <p>
+          ఈ పూర్తి కోడ్‌ను బ్రౌజర్ ఎడిటర్‌లో ఒక్క క్లిక్‌తో ఓపెన్ చేసి — వేర్వేరు కూపన్ కోడ్‌లు, పరిమాణాలు ఇచ్చి డిస్కౌంట్ మరియు షిప్పింగ్ లాజిక్ ఎలా మారుతుందో స్వయంగా పరిశీలించండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన తప్పులు &amp; ప్రొఫెషనల్ బెస్ట్ ప్రాక్టీసెస్</h2>
+      <p>
+        ఆపరేటర్లతో పనిచేసేటప్పుడు సాఫ్ట్‌వేర్ ఇంజనీర్లు తరచుగా చేసే 7 పొరపాట్లు మరియు వాటిని నివారించే నిబంధనలు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. పూర్ణాంకాల భాగహారంలో డెసిమల్స్ కోల్పోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int / int</code> ఎల్లప్పుడూ <code>int</code> మాత్రమే ఇస్తుంది. ఖచ్చితమైన సమాధానం కావాలంటే కనీసం ఒక ఆపరాండ్‌ను <code>(double)</code> లేదా <code>(decimal)</code> గా మార్చాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. షార్ట్-సర్క్యూట్ లోపల సైడ్-ఎఫెక్ట్స్ పెట్టడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>if (isValid || ++counter &gt; 5)</code> అని రాస్తే, isValid ట్రూ అయినప్పుడు <code>++counter</code> ఎగ్జిక్యూట్ కాదు! కౌంటర్లు మరియు స్టేట్ మార్పులను లాజికల్ కండిషన్స్ వెలుపల ఉంచండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. Null-Conditional (?.) తర్వాత ?? డీఫాల్ట్ విలువ పెట్టకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int length = str?.Length;</code> రాయలేరు ఎందుకంటే ఫలితం <code>int?</code> (Nullable). దీనికి <code>int length = str?.Length ?? 0;</code> అని రాయాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. ఫ్లోటింగ్ పాయింట్ నంబర్లను == తో పోల్చడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>0.1 + 0.2 == 0.3</code> ఫాల్స్ అవుతుంది! ఫ్లోట్స్ ను పోల్చేటప్పుడు <code>Math.Abs(a - b) &lt; 0.0001</code> వంటి ఎప్సిలాన్ టోలరెన్స్ వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. బిట్‌వైజ్ ఆపరేటర్లను బ్రాకెట్లు లేకుండా వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>if (val &amp; 1 == 0)</code> రాస్తే, <code>==</code> కి <code>&amp;</code> కంటే ఎక్కువ ప్రిసిడెన్స్ ఉండటం వల్ల కోడ్ తప్పుగా పనిచేస్తుంది! ఎల్లప్పుడూ <code>if ((val &amp; 1) == 0)</code> అని రాయాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. Null-Forgiving (!) ను మితిమీరి వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            కంపైలర్ వార్నింగ్ ను బలవంతంగా ఆపడానికి <code>item!</code> వాడితే, రన్‌టైమ్ లో నిజంగా నల్ వచ్చినప్పుడు యాప్ నిస్సందేహంగా క్రాష్ అవుతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. పోస్ట్‌ఫిక్స్ మరియు ప్రిఫిక్స్ ఫలితాన్ని తప్పుగా ఊహించడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>items[i++]</code> vs <code>items[++i]</code> మధ్య తేడా గమనించకపోతే అర్రే ఇండెక్స్ బౌండ్స్ ఎర్రర్ (IndexOutOfRangeException) వస్తుంది.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        ఆపరేటర్లపై మీ పట్టును నిరూపించుకోవడానికి ఈ 5 క్విజ్ ప్రశ్నలను పరిశీలించండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>int x = 7 / 2;</code> మరియు <code>double y = 7 / 2;</code> ఎగ్జిక్యూట్ అయితే x మరియు y ల విలువ ఎంత?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>x = 3</code> మరియు <code>y = 3.0</code> (3.5 కాదు!).<br>
+          <strong>వివరణ:</strong> 7 మరియు 2 రెండూ పూర్ణాంకాలు (int) కాబట్టి భాగహారం పూర్తయ్యే సమయానికి ఫలితం 3 గా తేలిపోతుంది. ఆ 3 ని <code>double</code> లోకి అసైన్ చేసినప్పటికీ అది 3.0 గానే మారుతుంది. 3.5 రావాలంటే <code>7.0 / 2</code> అని రాయాలి.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: <code>bool result = true || SomeHeavyDatabaseMethod();</code> లో డేటాబేస్ మెథడ్ ఎగ్జిక్యూట్ అవుతుందా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> లేదు, డేటాబేస్ మెథడ్ అస్సలు ఎగ్జిక్యూట్ కాదు!<br>
+          <strong>వివరణ:</strong> లాజికల్ OR (<code>||</code>) షార్ట్-సర్క్యూట్ మూల్యాంకనాన్ని పాటిస్తుంది. ఎడమవైపు ఉన్న మొదటి విలువ <code>true</code> కాబట్టి, మొత్తం ఎక్స్‌ప్రెషన్ ఫలితం ఎలాగూ true అవుతుంది. కాబట్టి సమయాన్ని ఆదా చేయడానికి C# కుడివైపు భాగాన్ని ఎవాల్యుయేట్ చేయదు.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>string? name = null; Console.WriteLine(name?.Length ?? -1);</code> అవుట్‌పుట్ ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>-1</code> ప్రింట్ అవుతుంది.<br>
+          <strong>వివరణ:</strong> <code>name?.Length</code> లో <code>name</code> నల్ కాబట్టి సేఫ్ నావిగేషన్ ద్వారా <code>null</code> వస్తుంది. ఆ తర్వాత ఉన్న Null-Coalescing ఆపరేటర్ (<code>??</code>) ఆ నల్ విలువను గుర్తించి కుడివైపు ఉన్న డీఫాల్ట్ బ్యాకప్ విలువ <code>-1</code> ని అందిస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: <code>10 &lt;&lt; 2</code> బిట్‌వైజ్ ఆపరేషన్ ఫలితం ఎంత?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>40</code>.<br>
+          <strong>వివరణ:</strong> లెఫ్ట్ షిఫ్ట్ (<code>&lt;&lt;</code>) ప్రతి స్థానానికి విలువను 2 తో గుణిస్తుంది. కాబట్టి 2 స్థానాలు ఎడమవైపుకి జరిపితే: 10 * 2² = 10 * 4 = 40.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: <code>token ??= "ABC";</code> మరియు <code>token = token ?? "ABC";</code> మధ్య తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> లాజికల్ గా రెండూ ఒకే పని చేస్తాయి, కానీ <code>??=</code> అనేది C# 8 లో వచ్చిన కాంపాక్ట్ Null-Coalescing Assignment ఆపరేటర్. ఒకవేళ <code>token</code> ఇప్పటికే నల్ కాకపోతే, <code>??=</code> ఎటువంటి అసైన్‌మెంట్ చేయకుండా నిష్క్రమిస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 03. యూజర్ ఇన్‌పుట్ &amp; టైప్ కాస్టింగ్
+      </a>
+      <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 05. కండిషనల్ స్టేట్‌మెంట్స్ (Phase 02) →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🛍️ మన షాపింగ్ కార్ట్ & స్మార్ట్ కూపన్ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================");
+
+string? rawCustomerName = null;
+string customerName = rawCustomerName ?? "అతిథి కస్టమర్ (Guest)";
+
+decimal item1Price = 1299.00m;
+int item1Qty = 2;
+
+decimal item2Price = 450.50m;
+int item2Qty = 1;
+
+decimal subTotal = (item1Price * item1Qty) + (item2Price * item2Qty);
+
+string? couponCode = "MANA500";
+decimal discountAmount = 0m;
+
+if (couponCode != null && couponCode.ToUpper() == "MANA500" && subTotal >= 2000m)
+{
+    discountAmount = 500m;
+    Console.WriteLine("🎉 సూపర్ ఆఫర్! MANA500 కూపన్ ద్వారా ₹500 తగ్గింపు లభించింది!");
+}
+
+decimal netBeforeShipping = subTotal - discountAmount;
+decimal shippingCharge = (netBeforeShipping >= 1500m) ? 0.00m : 100.00m;
+
+string? deliveryAddress = null;
+deliveryAddress ??= "స్థానిక స్టోర్ పికప్ కౌంటర్ (Default Branch)";
+
+decimal grandTotal = netBeforeShipping + shippingCharge;
+
+Console.WriteLine("\\n=================================================");
+Console.WriteLine("                 ఆర్డర్ సారాంశం (INVOICE)           ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"కస్టమర్       : {customerName}");
+Console.WriteLine($"డెలివరీ అడ్రస్: {deliveryAddress}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine($"మొత్తం వస్తువులు : {item1Qty + item2Qty}");
+Console.WriteLine($"కార్ట్ సబ్-టోటల్  : ₹{subTotal:N2}");
+Console.WriteLine($"కూపన్ తగ్గింపు : -₹{discountAmount:N2}");
+Console.WriteLine($"షిప్పింగ్ ఛార్జ్: {(shippingCharge == 0m ? "ఉచితం (FREE)" : $"₹{shippingCharge:N2}")}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine($"చెల్లించాల్సిన మొత్తం: ₹{grandTotal:N2}");
+Console.WriteLine("=================================================\\n");\`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '04-csharp-operators-and-expressions.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value C# Chapter 04!');
+console.log('Target file size:', fullHtml.length, 'characters');
