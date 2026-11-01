@@ -96,3 +96,4 @@ if (allPassed) {
   console.log('\n❌ One or more chapters failed the quality audit.');
   process.exit(1);
 }
+

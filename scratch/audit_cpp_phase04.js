@@ -54,3 +54,4 @@ console.log(`Phase 04 Audit Result: ${allPassed ? '100% PERFECT PASS ✅' : 'FAI
 console.log('-------------------------------------------------------------');
 
 if (!allPassed) process.exit(1);
+

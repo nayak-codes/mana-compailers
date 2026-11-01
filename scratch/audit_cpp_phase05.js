@@ -88,3 +88,4 @@ if (allPassed) {
   console.log('\n❌ Phase 05 has failed checks.');
   process.exit(1);
 }
+
