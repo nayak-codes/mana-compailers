@@ -1,0 +1,1022 @@
+const fs = require('fs');
+const path = require('path');
+const { buildSidebar } = require('./csharp_curriculum_data');
+
+const sidebarHtml = buildSidebar(5);
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Title & Meta Tags -->
+  <title>C# కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో if, else-if, else స్టేట్‌మెంట్స్, గార్డ్ క్లాజెస్ (Guard Clauses), మరియు మోడ్రన్ C# 9-12 Pattern Matching (is, and, or, not, Property Patterns) పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# if else telugu, c# pattern matching telugu, c# guard clauses, modern csharp 12 pattern matching, c# decision making">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching — C# Masterclass">
+  <meta property="og:description" content="సాంప్రదాయ if-else నుండి ఆధునిక C# 12 Pattern Matching వరకు — నిర్ణయాధికార లాజిక్ పై పూర్తి తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
+    }
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
+</head>
+<body class="lang-csharp light-theme">
+
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+${sidebarHtml}
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb">
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 05: కండిషనల్ స్టేట్‌మెంట్స్ &amp; Pattern Matching</span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# కండిషనల్ స్టేట్‌మెంట్స్ (if-else) &amp; మోడ్రన్ Pattern Matching</h1>
+
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 05 of 20</span>
+      <span class="meta-pill">📁 Phase 02: కంట్రోల్ ఫ్లో &amp; లూప్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Control Flow &amp; Branching Logic · CPU Branch Prediction · if, else if, else Chains · Dangling Else Trap · Nested if Pitfalls &amp; Pyramid of Doom · Guard Clauses &amp; Early Return Pattern · Modern C# Pattern Matching · Type Patterns (is) · Relational Patterns (&gt;, &lt;=) · Logical Patterns (and, or, not) · Property Patterns ({ Length: &gt; 5 }) · Comparison Matrix Table · Hot-Path Optimization · Real-World Project: Smart Banking Loan Underwriting Engine · 7 Beginner Pitfalls · Self-Assessment Quiz
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం Phase 02 కి! 🚦 కోడ్ నిర్ణయాధికారం &amp; ఆధునిక Pattern Matching విప్లవం</h3>
+      <p>
+        ఇప్పటివరకు మనం నేర్చుకున్న ప్రోగ్రామ్‌లు కేవలం పై నుండి క్రిందికి వరుసగా (Line-by-Line) ఎగ్జిక్యూట్ అయ్యే సాధారణ కాలిక్యులేషన్స్ మాత్రమే. కానీ నిజమైన ప్రపంచంలో సాఫ్ట్‌వేర్ అనేది పరిస్థితులకు అనుగుణంగా <strong>స్వంతంగా నిర్ణయాలు తీసుకోగలగాలి!</strong> ఉదాహరణకు: వినియోగదారుడు బ్యాంక్ ఖాతాలో బ్యాలెన్స్ కంటే ఎక్కువ డబ్బు విత్‌డ్రా చేయడానికి ప్రయత్నిస్తే నిరాకరించాలి; అర్ధరాత్రి క్రెడిట్ కార్డుపై అనుమానాస్పద లావాదేవీ జరిగితే బ్లాక్ చేయాలి.
+      </p>
+      <p>
+        ఈ నిర్ణయాధికార ప్రక్రియను కంప్యూటర్ సైన్స్‌లో <strong>కంట్రోల్ ఫ్లో (Control Flow)</strong> లేదా బ్రాంచింగ్ (Branching) అంటారు. సాంప్రదాయ C, C++, జావా భాషల్లో మనం దశాబ్దాలుగా వాడిన <code>if-else</code> నిబంధనలు C# లో కూడా ఉన్నప్పటికీ — ఆధునిక C# (C# 9 నుండి C# 12 వరకు) లో ప్రవేశపెట్టబడిన <strong>Pattern Matching</strong> ప్రోగ్రామింగ్ శైలినే సమూలంగా మార్చేసింది!
+      </p>
+      <p>
+        ఈ అధ్యాయంలో మనం సాంప్రదాయ <code>if-else</code> యొక్క అంతర్గత పనితీరు, ప్రొఫెషనల్ ఆర్కిటెక్ట్స్ వాడే <em>గార్డ్ క్లాజ్ (Guard Clause)</em> టెక్నిక్, మరియు C# లోని విప్లవాత్మక <code>is</code>, <code>and</code>, <code>or</code>, <code>not</code> మరియు ప్రాపర్టీ ప్యాటర్న్స్ ను క్షుణ్ణంగా పరిశీలించి — ఒక బ్యాంకింగ్ లోన్ అండర్‌రైటింగ్ ఇంజిన్‌ను నిర్మిస్తాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 🚦 ప్రోగ్రామింగ్ లో నిర్ణయాధికారం &amp; CPU బ్రాంచ్ ప్రిడిక్షన్</h2>
+      <p>
+        ఒక ప్రోగ్రామ్ ఎగ్జిక్యూట్ అవుతున్నప్పుడు CPU ఇన్స్ట్రక్షన్ పాయింటర్ (Instruction Pointer) సాధారణంగా తదుపరి లైన్ వైపు వెళ్తుంది. కానీ ఒక కండిషనల్ స్టేట్‌మెంట్ (<code>if</code>) ఎదురైనప్పుడు, కంప్యూటర్ ఒక కూడలి (Crossroads) కి చేరుకుంటుంది: కండిషన్ <code>true</code> అయితే ఒక రోడ్డులోకి, <code>false</code> అయితే మరొక రోడ్డులోకి కోడ్ ప్రవాహం మళ్లుతుంది.
+      </p>
+
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:var(--text); font-size:15px;">⚡ హార్డ్‌వేర్ ఆర్కిటెక్చర్ రహస్యం: CPU Branch Prediction అంటే ఏమిటి?</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14.5px;">
+          ఆధునిక ప్రాసెసర్లు (Intel Core, AMD Ryzen, Apple Silicon) చాలా వేగంగా ఉంటాయి. అవి <code>if</code> కండిషన్ రిజల్ట్ తేలే వరకు వేచి ఉండవు! ముందే ఊహించి (Speculative Execution) ఒక రోడ్డు వైపు ఇన్స్ట్రక్షన్లను ప్రీ-ఫెచ్ చేస్తాయి. ఒకవేళ CPU ఊహ తప్పు అని తెలిస్తే (Branch Misprediction), అది పైప్‌లైన్‌లోని మొత్తం పనులను రద్దు చేసి మళ్లీ మొదటికి రావాల్సి వస్తుంది (10 నుండి 20 CPU క్లాక్ సైకిల్స్ వృధా అవుతాయి). అందుకే ప్రొఫెషనల్ సాఫ్ట్‌వేర్‌లో క్లీన్ మరియు ప్రిడిక్టబుల్ కండిషన్స్ రాయడం చాలా ముఖ్యం.
+        </p>
+      </div>
+
+      <p>
+        C# లో కండిషనల్ స్టేట్‌మెంట్ ఎప్పుడూ ఒక <strong><code>bool</code> ఎక్స్‌ప్రెషన్</strong> ను మాత్రమే స్వీకరిస్తుంది. C లాంగ్వేజ్‌లో లాగా <code>if (1)</code> లేదా <code>if (500)</code> అని పూర్ణాంకాలను రాయడానికి C# లో అనుమతి లేదు. ఖచ్చితంగా <code>if (count &gt; 0)</code> లేదా <code>if (isValid)</code> వంటి నిజమైన బూలియన్ మాత్రమే ఉండాలి.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 🔀 బేసిక్ if, if-else మరియు if-else-if లాడర్</h2>
+      <p>
+        నిర్ణయాలు తీసుకోవడానికి C# లో ప్రాథమికంగా 3 రూపాలు ఉన్నాయి:
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">1. కేవలం if (సింగిల్ ఛాయిస్)</h3>
+      <p>
+        షరతు నిజమైతేనే లోపలి కోడ్ రన్ అవుతుంది, అబద్ధమైతే ఏమీ చేయకుండా ముందుకు సాగిపోతుంది.
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">2. if-else (ద్వంద్వ ఛాయిస్ - True or False)</h3>
+      <p>
+        షరతు నిజమైతే <code>if</code> బ్లాక్, అబద్ధమైతే తప్పనిసరిగా <code>else</code> బ్లాక్ రన్ అవుతుంది. రెండింటిలో ఏదో ఒకటి మాత్రమే ఖచ్చితంగా రన్ అవుతుంది.
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">3. if-else-if Ladder (బహుళ ఎంపికలు)</h3>
+      <p>
+        వరుసగా పలు షరతులను పై నుండి క్రిందికి తనిఖీ చేస్తూ వెళ్తుంది. ఏ ఒక్క షరతు మొదటగా <code>true</code> అవుతుందో ఆ బ్లాక్ ఎగ్జిక్యూట్ అయి వెంటనే మొత్తం లాడర్ నుండి బయటకు వచ్చేస్తుంది. మిగిలిన షరతులను పరీక్షించదు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · if-else-if Ladder Demonstration</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int studentScore = 82;
+string grade;
+
+if (studentScore &gt;= 90)
+{
+    grade = "A+ (అత్యుత్తమ ప్రతిభ)";
+}
+else if (studentScore &gt;= 75)
+{
+    grade = "A (డిస్టింక్షన్)"; // ఇక్కడ 82 ఉంది కాబట్టి ఇది మాత్రమే రన్ అవుతుంది!
+}
+else if (studentScore &gt;= 60)
+{
+    grade = "B (ఫస్ట్ క్లాస్)";
+}
+else if (studentScore &gt;= 35)
+{
+    grade = "C (పాస్)";
+}
+else
+{
+    grade = "F (రీ-అప్పియర్)";
+}
+
+Console.WriteLine($"విద్యార్థి గ్రేడ్: {grade}");</code></pre>
+      </div>
+
+      <div style="background:var(--bg3); border-left:4px solid #ef4444; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#ef4444; font-size:15px;">🚨 డేంజరస్ డాంగ్లింగ్ ఎల్స్ సమస్య (The Dangling Else Trap):</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px; line-height:1.7;">
+          ఒకే ఒక లైన్ కోడ్ ఉన్నప్పుడు కర్లీ బ్రాకెట్లు <code>{}</code> పెట్టకపోయినా కంపైల్ అవుతుంది. కానీ నెస్టెడ్ కండిషన్లలో <code>else</code> ఏ <code>if</code> కి చెందుతుందో అర్థం కాక తీవ్రమైన లాజిక్ బగ్స్ వస్తాయి. కాబట్టి <strong>ఒక్క లైన్ ఉన్నప్పటికీ ఎల్లప్పుడూ కర్లీ బ్రాకెట్లు <code>{}</code> వాడటం ప్రొఫెషనల్ నిబంధన!</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🪺 నెస్టెడ్ if-else &amp; ది పిరమిడ్ ఆఫ్ డూమ్ (Pyramid of Doom)</h2>
+      <p>
+        ఒక <code>if</code> బ్లాక్ లోపల మరొక <code>if</code>, దాని లోపల ఇంకొక <code>if</code> రాసుకుంటూ పోవడాన్ని <strong>నెస్టెడ్ కండిషన్స్ (Nested Conditions)</strong> అంటారు.
+      </p>
+      <p>
+        ఇది సాధారణ సమస్యలకు పనిచేసినప్పటికీ, నిజమైన ప్రాజెక్ట్‌లలో కోడ్ కుడివైపుకి బాణం ఆకారంలో (Arrow Shape) లేదా పిరమిడ్ లాగా విస్తరిస్తూ పోతుంది. దీనినే ఇండస్ట్రీలో <strong>"Pyramid of Doom"</strong> లేదా <strong>"Arrow Anti-pattern"</strong> అంటారు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · The Ugly Arrow Anti-Pattern (Bad Code)</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// ❌ చెడ్డ కోడ్: లోతుగా నెస్టెడ్ అయి చదవడానికి నరకంలా ఉంటుంది
+void ProcessWithdrawalBad(decimal balance, decimal amount, bool isCardActive, bool isPinValid)
+{
+    if (isCardActive)
+    {
+        if (isPinValid)
+        {
+            if (amount &gt; 0)
+            {
+                if (balance &gt;= amount)
+                {
+                    Console.WriteLine("నగదు విత్‌డ్రా విజయవంతమైంది!");
+                }
+                else
+                {
+                    Console.WriteLine("ఖాతాలో సరిపడా నిధులు లేవు.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("చెల్లని మొత్తం.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("తప్పుడు పిన్ నంబర్.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("కార్డు బ్లాక్ చేయబడింది.");
+    }
+}</code></pre>
+      </div>
+      <p>
+        ఇటువంటి కోడ్‌ను అర్థం చేసుకోవడం, బగ్స్ ఫిక్స్ చేయడం మరియు యూనిట్ టెస్ట్‌లు రాయడం చాలా కష్టం. దీనిని ప్రొఫెషనల్ సాఫ్ట్‌వేర్ ఇంజనీర్లు ఎలా పరిష్కరిస్తారో తర్వాతి సెక్షన్‌లో చూద్దాం!
+      </p>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🛡️ గార్డ్ క్లాజ్ టెక్నిక్ (Guard Clauses / Early Return Pattern)</h2>
+      <p>
+        సీనియర్ సాఫ్ట్‌వేర్ ఆర్కిటెక్ట్స్ మరియు క్లీన్ కోడ్ (Clean Code) పుస్తక రచయితలు సిఫార్సు చేసే అద్భుతమైన డిజైన్ ప్యాటర్న్: <strong>గార్డ్ క్లాజ్ (Guard Clause)</strong> లేదా <strong>ఎర్లీ రిటర్న్ (Early Return)</strong>!
+      </p>
+      <p>
+        <strong>కాన్సెప్ట్:</strong> ఏదైనా షరతు విఫలమైతే (Invalid Case), అక్కడికక్కడే వెంటనే ఎర్రర్ ఇచ్చి ఫంక్షన్ నుండి బయటకు (<code>return</code>) వచ్చేయాలి. అప్పుడు ప్రధాన బిజినెస్ లాజిక్ ఎటువంటి నెస్టెడ్ బ్రాకెట్లు లేకుండా ఫ్లాట్ గా, స్వచ్ఛంగా కనిపిస్తుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Clean Guard Clauses (Professional Architecture)</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// ✅ క్లీన్ కోడ్: గార్డ్ క్లాజెస్‌తో పిరమిడ్ ఆఫ్ డూమ్‌ను సమూలంగా నిర్మూలించాం!
+void ProcessWithdrawalClean(decimal balance, decimal amount, bool isCardActive, bool isPinValid)
+{
+    // గార్డ్ 1: కార్డు యాక్టివ్ కాకపోతే వెంటనే నిష్క్రమించు
+    if (!isCardActive)
+    {
+        Console.WriteLine("కార్డు బ్లాక్ చేయబడింది.");
+        return;
+    }
+
+    // గార్డ్ 2: పిన్ తప్పు అయితే వెంటనే నిష్క్రమించు
+    if (!isPinValid)
+    {
+        Console.WriteLine("తప్పుడు పిన్ నంబర్.");
+        return;
+    }
+
+    // గార్డ్ 3: మొత్తం సరైనది కాకపోతే నిష్క్రమించు
+    if (amount &lt;= 0)
+    {
+        Console.WriteLine("చెల్లని మొత్తం.");
+        return;
+    }
+
+    // గార్డ్ 4: బ్యాలెన్స్ సరిపోకపోతే నిష్క్రమించు
+    if (balance &lt; amount)
+    {
+        Console.WriteLine("ఖాతాలో సరిపడా నిధులు లేవు.");
+        return;
+    }
+
+    // అన్ని తనిఖీలు దాటిన తర్వాత మాత్రమే అసలైన గోల్డెన్ పాత్ ఎగ్జిక్యూట్ అవుతుంది!
+    Console.WriteLine($"విజయవంతం! విత్‌డ్రా చేసిన నగదు: ₹{amount:N2}");
+}
+
+// పరీక్షించడం:
+ProcessWithdrawalClean(10000m, 2500m, true, true);</code></pre>
+      </div>
+      <p>
+        చూశారా? నెస్టెడ్ బ్రాకెట్లు పూర్తిగా మాయమైపోయాయి! కోడ్ ఒక కథలాగా పై నుండి క్రిందికి అత్యంత సులభంగా చదవగలిగేలా మారింది.
+      </p>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🔍 మోడ్రన్ C# Pattern Matching పరిచయం: is ఆపరేటర్‌తో Type Patterns</h2>
+      <p>
+        C# 7 నుండి ప్రారంభమై C# 12 వరకు విప్లవాత్మకంగా ఎదిగిన అతిపెద్ద ఫీచర్ <strong>Pattern Matching</strong>. సాంప్రదాయకంగా ఒక వేరియబుల్ ఏ రకానికి చెందినదో తెలుసుకోవడానికి మనం <code>as</code> ఆపరేటర్ వాడి, ఆ తర్వాత నల్ చెక్ చేయాల్సి వచ్చేది.
+      </p>
+      <p>
+        కానీ మోడ్రన్ C# లో <strong>Type Pattern</strong> ద్వారా టైప్ చెక్ చేయడం మరియు కొత్త వేరియబుల్‌లోకి క్యాస్ట్ చేయడం రెండూ ఒకే సమయంలో జరిగిపోతాయి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Type Pattern Matching with is</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">object vehicleData = 180.50; // ఫ్లోటింగ్ పాయింట్ స్పీడ్ అనుకుందాం
+
+// Type Pattern Matching: చెక్ చేయడం + వేరియబుల్ డిక్లేర్ చేయడం రెండూ ఒకేచోట!
+if (vehicleData is double speed)
+{
+    Console.WriteLine($"వాహనం వేగం (డబుల్): {speed:F1} km/h");
+}
+else if (vehicleData is string text)
+{
+    Console.WriteLine($"టెక్స్ట్ సందేశం: {text.ToUpper()}");
+}
+else if (vehicleData is null)
+{
+    Console.WriteLine("డేటా ఖాళీగా ఉంది (Null)!");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🎯 రిలేషనల్ ప్యాటర్న్స్ (Relational Patterns: &gt;, &lt;=)</h2>
+      <p>
+        C# 9 లో పరిచయం చేయబడిన అత్యంత అందమైన ఫీచర్ <strong>Relational Patterns</strong>. ఒక సంఖ్యను శ్రేణులలో (Ranges) తనిఖీ చేసేటప్పుడు వేరియబుల్ పేరును పదే పదే రాయవలసిన అవసరం లేకుండా డైరెక్ట్‌గా పోల్చవచ్చు!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Relational Range Matching</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int temperature = 38;
+
+// సాంప్రదాయ పద్ధతి:
+// if (temperature &gt;= 35 &amp;&amp; temperature &lt;= 45)
+
+// మోడ్రన్ C# 9+ Relational Pattern:
+if (temperature is &gt;= 35 and &lt;= 45)
+{
+    Console.WriteLine("వాతావరణం చాలా వేడిగా ఉంది (ఎండ తీవ్రత హెచ్చరిక)!");
+}
+else if (temperature is &lt; 15)
+{
+    Console.WriteLine("చలి వాతావరణం!");
+}
+else
+{
+    Console.WriteLine("ఆహ్లాదకరమైన ఉష్ణోగ్రత.");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🔗 కంజంక్టివ్ &amp; డిస్జంక్టివ్ ప్యాటర్న్స్ (and, or, not కీవర్డ్స్)</h2>
+      <p>
+        ఆధునిక C# లో ప్యాటర్న్ మ్యాచింగ్ రాసేటప్పుడు సింబల్స్ (<code>&amp;&amp;</code>, <code>||</code>, <code>!</code>) కు బదులుగా సహజ ఆంగ్ల పదాలు <strong><code>and</code></strong>, <strong><code>or</code></strong>, <strong><code>not</code></strong> లను వాడవచ్చు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · and, or, not Combinators</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">char letter = 'k';
+
+// అక్షరం ఓవెల్ (అచ్చు) కాదా అని సరిచూడటం
+if (letter is 'a' or 'e' or 'i' or 'o' or 'u')
+{
+    Console.WriteLine($"{letter} ఒక అచ్చు (Vowel)");
+}
+else if (letter is not (' ' or '\\t' or '\\n'))
+{
+    Console.WriteLine($"{letter} ఒక హల్లు (Consonant)");
+}
+
+// నల్ చెకింగ్ లో విప్లవం:
+string? response = "SUCCESS";
+if (response is not null)
+{
+    Console.WriteLine($"సందేశం: {response}");
+}</code></pre>
+      </div>
+      <p>
+        <code>if (x is not null)</code> అనేది పాత <code>if (x != null)</code> కంటే ఎందుకు సురక్షితమైనదంటే — ఒక క్లాస్ లో <code>!=</code> ఆపరేటర్‌ను ఎవరైనా తప్పుగా ఓవర్‌లోడ్ చేసినా సరే, <code>is not null</code> ఎల్లప్పుడూ నిజమైన మెమరీ పాయింటర్‌ను మాత్రమే చూస్తుంది!
+      </p>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 📦 ప్రాపర్టీ ప్యాటర్న్స్ (Property Patterns)</h2>
+      <p>
+        ఒక క్లాస్ లేదా రికార్డ్ (Record) ఆబ్జెక్ట్ లోపల ఉన్న నిర్దిష్ట ప్రాపర్టీలను డైరెక్ట్‌గా తనిఖీ చేయడానికి <strong>Property Patterns</strong> ఉపయోగిస్తారు. ఇది ఆబ్జెక్ట్ లోపలికి చొచ్చుకుపోయి (Deep Inspection) అత్యంత క్లీన్ గా వెరిఫై చేస్తుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Property Pattern Matching</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// ఆర్డర్ డేటా స్ట్రక్చర్
+var order = new { Id = 101, Amount = 4500.00, Country = "IN", IsPrime = true };
+
+// ప్రాపర్టీ ప్యాటర్న్: ఆబ్జెక్ట్ ప్రాపర్టీలను డైరెక్ట్‌గా మ్యాచ్ చేయడం
+if (order is { Country: "IN", Amount: &gt;= 2000, IsPrime: true })
+{
+    Console.WriteLine("🎉 సూపర్ ప్రీమియం భారతీయ ఆర్డర్! ఉచిత వన్-డే డెలివరీ అర్హత ఉంది.");
+}
+else
+{
+    Console.WriteLine("ప్రామాణిక డెలివరీ వర్తిస్తుంది.");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: సాంప్రదాయ if-else vs మోడ్రన్ C# Pattern Matching</h2>
+      <p>
+        ఈ రెండు విధానాల మధ్య నిర్మాణపరమైన తేడాలు:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీచర్ / కొలమానం</th>
+            <th>సాంప్రదాయ if-else (C# 1 - 6)</th>
+            <th>మోడ్రన్ Pattern Matching (C# 9 - 12)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>రేంజ్ చెకింగ్</strong></td>
+            <td><code>if (x &gt;= 10 &amp;&amp; x &lt;= 50)</code></td>
+            <td><code>if (x is &gt;= 10 and &lt;= 50)</code> (ఎలిగెంట్)</td>
+          </tr>
+          <tr>
+            <td><strong>టైప్ కాస్టింగ్ &amp; బైండింగ్</strong></td>
+            <td>రెండు స్టెప్స్: <code>if (o is MyClass) { var c = (MyClass)o; }</code></td>
+            <td>ఒకే స్టెప్: <code>if (o is MyClass c)</code></td>
+          </tr>
+          <tr>
+            <td><strong>నల్ సేఫ్టీ</strong></td>
+            <td><code>if (o != null)</code> (ఆపరేటర్ ఓవర్‌లోడ్ ముప్పుంది)</td>
+            <td><code>if (o is not null)</code> (100% పాయింటర్ సేఫ్)</td>
+          </tr>
+          <tr>
+            <td><strong>మల్టిపుల్ ఆల్టర్నేటివ్స్</strong></td>
+            <td><code>if (c == 'a' || c == 'b' || c == 'c')</code></td>
+            <td><code>if (c is 'a' or 'b' or 'c')</code></td>
+          </tr>
+          <tr>
+            <td><strong>కాంప్లెక్స్ ఆబ్జెక్ట్ ఇన్‌స్పెక్షన్</strong></td>
+            <td>చేదుగా ఉండే మల్టిపుల్ డాట్ చెక్స్ (<code>order != null &amp;&amp; order.Amount &gt; 100</code>)</td>
+            <td>క్లీన్ ప్రాపర్టీ ప్యాటర్న్: <code>if (order is { Amount: &gt; 100 })</code></td>
+          </tr>
+          <tr>
+            <td><strong>కోడ్ రీడబిలిటీ</strong></td>
+            <td>సింబల్స్ క్లట్టర్ ఎక్కువగా ఉంటుంది</td>
+            <td>ఆంగ్ల వ్యాకరణం వలే సరళంగా ఉంటుంది</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> ⚡ బ్రాంచింగ్ పెర్ఫార్మెన్స్ &amp; హాట్-పాత్ ఆప్టిమైజేషన్ (Hot-Path Optimization)</h2>
+      <p>
+        హై-పెర్ఫార్మెన్స్ అప్లికేషన్లలో (ఉదాహరణకు సెకనుకు 1 లక్ష రిక్వెస్ట్‌లు వచ్చే పేమెంట్ గేట్‌వేలు), బ్రాంచ్‌లు రాసే వరుస క్రమం మొత్తం సిస్టమ్ స్పీడ్‌ను నిర్ణయిస్తుంది.
+      </p>
+      <p>
+        <strong>హాట్-పాత్ నియమం (Hot-Path Rule):</strong><br>
+        ఒక <code>if-else-if</code> లాడర్ రాసేటప్పుడు, <strong>90% మంది యూజర్లకు ఏ కండిషన్ నిజమవుతుందో దాన్ని మొట్టమొదట పెట్టాలి!</strong> అరుదుగా జరిగే ఎక్సెప్షనల్ కేసులను ఆఖరున ఉంచాలి. దీనివల్ల CPU మొదటి చెక్‌లోనే సక్సెస్ అయి వెంటనే ముందుకు సాగుతుంది, అనవసరమైన కంపారిజన్లు తప్పుతాయి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Hot-Path Order Optimization</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// 95% ట్రాన్సాక్షన్స్ "SUCCESS" అవుతాయి అనుకుందాం
+string txStatus = "SUCCESS";
+
+// ✅ ఆప్టిమైజ్డ్ ఆర్డర్: అత్యధికంగా జరిగేది ముందే ఉంది
+if (txStatus == "SUCCESS")
+{
+    // హాట్ పాత్! 95% సందర్భాలలో ఒక్క కండిషన్ చెక్ తోనే సరిపోతుంది.
+    Console.WriteLine("లావాదేవీ పూర్తయింది.");
+}
+else if (txStatus == "PENDING")
+{
+    Console.WriteLine("బ్యాంక్ కన్ఫర్మేషన్ కోసం వేచి చూస్తున్నాం.");
+}
+else
+{
+    // కేవలం 1% మాత్రమే జరిగే వైఫల్యం ఆఖరున ఉంది
+    Console.WriteLine("లావాదేవీ విఫలమైంది.");
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "Smart Banking Loan Underwriting Engine"</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న గార్డ్ క్లాజెస్‌లు, రిలేషనల్ ప్యాటర్న్స్, మరియు ప్రాపర్టీ ప్యాటర్న్స్ ఉపయోగించి ఒక పూర్తి స్థాయి <strong>స్మార్ట్ బ్యాంకింగ్ లోన్ ఎలిజిబిలిటీ &amp; అండర్‌రైటింగ్ ఇంజిన్</strong> ను తయారు చేద్దాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Smart Banking Loan Underwriting Engine</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🏦 మన బ్యాంక్ - స్మార్ట్ లోన్ ఎలిజిబిలిటీ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+// దరఖాస్తుదారు సమాచారం (Applicant Profile)
+string applicantName = "సురేష్ వర్మ";
+int age = 29;
+int cibilScore = 780;
+decimal monthlyIncome = 85000m;
+decimal existingMonthlyEmi = 15000m;
+decimal requestedLoanAmount = 2500000m; // 25 లక్షల లోన్
+bool hasValidKyc = true;
+
+// 1. గార్డ్ క్లాజ్: ప్రాథమిక KYC ధృవీకరణ
+if (!hasValidKyc)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine("❌ దరఖాస్తు తిరస్కరించబడింది: KYC పత్రాలు పూర్తి కాలేదు.");
+    Console.ResetColor();
+    return;
+}
+
+// 2. గార్డ్ క్లాజ్: వయోపరిమితి (Relational Pattern)
+if (age is not (&gt;= 21 and &lt;= 60))
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"❌ దరఖాస్తు తిరస్కరించబడింది: వయస్సు ({age}) 21 నుండి 60 ఏళ్ల మధ్య ఉండాలి.");
+    Console.ResetColor();
+    return;
+}
+
+// 3. గార్డ్ క్లాజ్: సిబిల్ స్కోర్ ఫిల్టర్
+if (cibilScore &lt; 650)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"❌ దరఖాస్తు తిరస్కరించబడింది: CIBIL స్కోర్ ({cibilScore}) కనీసం 650 ఉండాలి.");
+    Console.ResetColor();
+    return;
+}
+
+// 4. రుణ చెల్లింపు నిష్పత్తి (Debt-To-Income Ratio DTI)
+decimal availableIncome = monthlyIncome - existingMonthlyEmi;
+decimal dtiRatio = (existingMonthlyEmi / monthlyIncome) * 100m;
+
+if (dtiRatio &gt; 50m)
+{
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine($"⚠️ అధిక అప్పుల భారం: మీ DTI నిష్పత్తి {dtiRatio:F1}% ఉంది. 50% కంటే తక్కువ ఉండాలి.");
+    Console.ResetColor();
+    return;
+}
+
+// 5. మోడ్రన్ Pattern Matching తో వడ్డీ రేటు నిర్ణయం
+decimal interestRate;
+string riskCategory;
+
+if (cibilScore is &gt;= 750 &amp;&amp; monthlyIncome is &gt;= 50000m)
+{
+    riskCategory = "అత్యంత సురక్షితమైన ప్రొఫైల్ (Tier-1 Premium)";
+    interestRate = 8.45m; // తక్కువ వడ్డీ
+}
+else if (cibilScore is &gt;= 700 and &lt; 750)
+{
+    riskCategory = "మంచి ప్రొఫైల్ (Tier-2 Standard)";
+    interestRate = 9.20m;
+}
+else
+{
+    riskCategory = "మధ్యస్థ రిస్క్ ప్రొఫైల్ (Tier-3 Moderate)";
+    interestRate = 10.50m;
+}
+
+// 6. గరిష్ట అర్హత మొత్తం (Max Eligible Amount = 40 రెట్ల నికర ఆదాయం)
+decimal maxEligibleLoan = availableIncome * 40m;
+bool isFullyApproved = requestedLoanAmount &lt;= maxEligibleLoan;
+
+// 7. అధికారిక మంజూరు పత్రం (Approval Letter)
+Console.WriteLine("=================================================");
+Console.WriteLine("               లోన్ మంజూరు వివరాల సారాంశం          ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"దరఖాస్తుదారు పేరు : {applicantName}");
+Console.WriteLine($"వయస్సు           : {age} సంవత్సరాలు");
+Console.WriteLine($"CIBIL స్కోర్     : {cibilScore} ({riskCategory})");
+Console.WriteLine($"నెలవారీ ఆదాయం   : ₹{monthlyIncome:N2}");
+Console.WriteLine($"ప్రస్తుత EMIలు   : ₹{existingMonthlyEmi:N2} (DTI: {dtiRatio:F1}%)");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine($"కోరిన లోన్ మొత్తం: ₹{requestedLoanAmount:N2}");
+Console.WriteLine($"గరిష్ట అర్హత పరిమితి: ₹{maxEligibleLoan:N2}");
+Console.WriteLine($"మంజూరైన వడ్డీ రేటు : {interestRate}% p.a.");
+Console.WriteLine("-------------------------------------------------");
+
+if (isFullyApproved)
+{
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine("🎉 శుభవార్త! మీ లోన్ అభ్యర్థన సంపూర్ణంగా ఆమోదించబడింది!");
+    Console.ResetColor();
+}
+else
+{
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine($"⚠️ పాక్షిక ఆమోదం: మీరు కోరిన మొత్తం కంటే గరిష్ట పరిమితి ₹{maxEligibleLoan:N2} కి మాత్రమే అర్హులు.");
+    Console.ResetColor();
+}
+Console.WriteLine("=================================================\\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ బ్యాంకింగ్ ఇంజిన్‌ను పరీక్షించండి!</div>
+        <p>
+          సిబిల్ స్కోర్, నెలవారీ జీతం, మరియు అప్పుల నిష్పత్తులను మార్చి లోన్ మంజూరు లాజిక్ మరియు రిస్క్ కేటగిరీ ఎలా స్వయంచాలకంగా మారుతుందో చూడండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన బ్రాంచింగ్ తప్పులు</h2>
+      <p>
+        కండిషనల్ స్టేట్‌మెంట్స్ రాసేటప్పుడు అత్యధికంగా జరిగే 7 పొరపాట్లు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. if కండిషన్ చివర పొరపాటున సెమీకోలన్ (;) పెట్టడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>if (score &gt; 90); { doSomething(); }</code> అని రాస్తే, సెమీకోలన్ వల్ల if స్టేట్‌మెంట్ అక్కడితో ముగిసిపోతుంది! కండిషన్ ఫాల్స్ అయినా సరే బ్రాకెట్ల లోపలి కోడ్ ఖచ్చితంగా రన్ అయిపోతుంది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. బూలియన్ వేరియబుల్స్ ను == true తో పోల్చడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>if (isActive == true)</code> అని రాయడం అనవసరం. నేరుగా <code>if (isActive)</code> అని రాయడం క్లీన్ కోడ్ పద్ధతి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. గార్డ్ క్లాజెస్‌ను విస్మరించి డీప్ నెస్టింగ్ రాయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            5 లేదా 6 స్థాయిల నెస్టెడ్ if లతో కూడిన పిరమిడ్ ఆఫ్ డూమ్ కోడ్ రీడబిలిటీని నాశనం చేస్తుంది. ఎల్లప్పుడూ ఎర్లీ రిటర్న్ పద్ధతిని పాటించండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. లాడర్ లో కండిషన్ల వరుస క్రమం తారుమారు చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>if (marks &gt;= 35)</code> ను మొదట పెట్టి, ఆ తర్వాత <code>else if (marks &gt;= 90)</code> పెడితే, 95 మార్కులు వచ్చిన విద్యార్థి కూడా మొదటి కండిషన్‌లోనే ఆగిపోతాడు! ఎల్లప్పుడూ కఠినమైన షరతులను ముందే ఉంచాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. స్ట్రింగ్ పోలికలలో కేస్-సెన్సిటివిటీని మర్చిపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>role == "admin"</code> రాసినప్పుడు యూజర్ "Admin" అని ఇస్తే ఫాల్స్ అవుతుంది. <code>string.Equals(role, "admin", StringComparison.OrdinalIgnoreCase)</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. ఫ్లోటింగ్ పాయింట్ సంఖ్యలను == తో ఖచ్చితంగా పోల్చడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>if (doubleVal == 1.0)</code> ఎప్పుడూ నమ్మదగినది కాదు. బైనరీ ప్రెసిషన్ తేడాల వల్ల అది ఫెయిల్ కావచ్చు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. != null బదులు is not null వాడకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            యూజర్ క్రియేట్ చేసిన క్లాస్ లో <code>!=</code> ఆపరేటర్ ఓవర్‌లోడ్ అయి ఉంటే తప్పుడు ఫలితం రావచ్చు. <code>is not null</code> ఎల్లప్పుడూ పక్కాగా పనిచేస్తుంది.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        కండిషనల్ లాజిక్ మరియు ప్యాటర్న్ మ్యాచింగ్‌పై మీ పట్టును ఈ క్రింది 5 క్విజ్ ప్రశ్నలతో పరిశీలించుకోండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>if (x is not null)</code> మరియు <code>if (x != null)</code> మధ్య తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>x != null</code> అనేది ఆబ్జెక్ట్ లో రాసిన ఓవర్‌లోడెడ్ <code>!=</code> ఆపరేటర్‌ను పిలవగలదు (దానిలో బగ్స్ ఉంటే తప్పుడు ఫలితం రావచ్చు). కానీ <code>is not null</code> అనేది ఆపరేటర్లను పట్టించుకోకుండా, స్వచ్ఛమైన రన్‌టైమ్ పాయింటర్ శూన్యమా కాదా అని గ్యారెంటీగా తనిఖీ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌లో "Guard Clauses" (ఎర్లీ రిటర్న్) వాడటం వల్ల కలిగే అతిపెద్ద ప్రయోజనం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఇది "Pyramid of Doom" లేదా "Arrow Anti-pattern" (లోతైన నెస్టెడ్ if బ్రాకెట్లు) ను పూర్తిగా తొలగించి, కోడ్ ను ఫ్లాట్ గా మరియు సులభంగా చదవగలిగేలా చేస్తుంది. చెల్లని కేసులను ముందే రిటర్న్ చేయడం వల్ల ప్రధాన వ్యాపార తర్కం పరిశుభ్రంగా మిగులుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>if (age is &gt;= 18 and &lt;= 60)</code> లో <code>and</code> కీవర్డ్ స్థానంలో <code>&amp;&amp;</code> వాడవచ్చా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ప్యాటర్న్ మ్యాచింగ్ సింటాక్స్ లో <code>is</code> తర్వాత కేవలం ప్యాటర్న్ కాంబినేటర్లయిన <code>and</code>, <code>or</code>, <code>not</code> మాత్రమే అనుమతించబడతాయి. <code>is &gt;= 18 &amp;&amp; &lt;= 60</code> అని రాస్తే సింటాక్స్ ఎర్రర్ వస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: Property Pattern <code>if (user is { IsActive: true, Age: &gt;= 21 })</code> ఒకవేళ <code>user</code> నల్ అయితే క్రాష్ అవుతుందా?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> అస్సలు క్రాష్ కాదు! ప్రాపర్టీ ప్యాటర్న్ అంతర్గతంగా నల్-సేఫ్. ఒకవేళ <code>user</code> నల్ అయితే, ఎటువంటి <code>NullReferenceException</code> లేకుండా నిశ్శబ్దంగా <code>false</code> రిటర్న్ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: CPU Branch Prediction ను దృష్టిలో ఉంచుకొని if-else లాడర్‌ను ఎలా ఆప్టిమైజ్ చేయాలి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> అత్యధిక శాతం (Hot-Path) నిజమయ్యే అవకాశం ఉన్న షరతును లాడర్‌లో మొట్టమొదట పెట్టాలి. దీనివల్ల ఎక్కువ సందర్భాలలో ఒకే చెక్ తో నిర్ణయం జరిగిపోయి, CPU సైకిల్స్ ఆదా అవుతాయి.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp/04-csharp-operators-and-expressions.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Previous: 04. ఆపరేటర్లు &amp; Null-Coalescing
+      </a>
+      <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 06. switch స్టేట్‌మెంట్ &amp; expressions →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = \`using System;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🏦 మన బ్యాంక్ - స్మార్ట్ లోన్ ఎలిజిబిలిటీ ఇంజిన్ v1.0");
+Console.WriteLine("=================================================\\n");
+
+string applicantName = "సురేష్ వర్మ";
+int age = 29;
+int cibilScore = 780;
+decimal monthlyIncome = 85000m;
+decimal existingMonthlyEmi = 15000m;
+decimal requestedLoanAmount = 2500000m;
+bool hasValidKyc = true;
+
+if (!hasValidKyc)
+{
+    Console.WriteLine("❌ దరఖాస్తు తిరస్కరించబడింది: KYC పత్రాలు పూర్తి కాలేదు.");
+    return;
+}
+
+if (age is not (>= 21 and <= 60))
+{
+    Console.WriteLine($"❌ దరఖాస్తు తిరస్కరించబడింది: వయస్సు ({age}) సరిపోదు.");
+    return;
+}
+
+if (cibilScore < 650)
+{
+    Console.WriteLine($"❌ దరఖాస్తు తిరస్కరించబడింది: CIBIL స్కోర్ ({cibilScore}) తక్కువగా ఉంది.");
+    return;
+}
+
+decimal availableIncome = monthlyIncome - existingMonthlyEmi;
+decimal dtiRatio = (existingMonthlyEmi / monthlyIncome) * 100m;
+
+decimal interestRate;
+string riskCategory;
+
+if (cibilScore >= 750 && monthlyIncome >= 50000m)
+{
+    riskCategory = "అత్యంత సురక్షితమైన ప్రొఫైల్ (Tier-1 Premium)";
+    interestRate = 8.45m;
+}
+else if (cibilScore >= 700)
+{
+    riskCategory = "మంచి ప్రొఫైల్ (Tier-2 Standard)";
+    interestRate = 9.20m;
+}
+else
+{
+    riskCategory = "మధ్యస్థ రిస్క్ ప్రొఫైల్ (Tier-3 Moderate)";
+    interestRate = 10.50m;
+}
+
+decimal maxEligibleLoan = availableIncome * 40m;
+bool isFullyApproved = requestedLoanAmount <= maxEligibleLoan;
+
+Console.WriteLine("=================================================");
+Console.WriteLine("               లోన్ మంజూరు వివరాల సారాంశం          ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"దరఖాస్తుదారు పేరు : {applicantName}");
+Console.WriteLine($"CIBIL స్కోర్     : {cibilScore} ({riskCategory})");
+Console.WriteLine($"నెలవారీ ఆదాయం   : ₹{monthlyIncome:N2}");
+Console.WriteLine($"మంజూరైన వడ్డీ రేటు : {interestRate}% p.a.");
+Console.WriteLine($"గరిష్ట అర్హత పరిమితి: ₹{maxEligibleLoan:N2}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine(isFullyApproved ? "🎉 లోన్ ఆమోదించబడింది!" : "⚠️ పాక్షిక ఆమోదం లభించింది.");
+Console.WriteLine("=================================================\\n");\`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '05-csharp-conditional-statements-and-pattern-matching.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+console.log('✅ Successfully generated deep high-value C# Chapter 05!');
+console.log('Target file size:', fullHtml.length, 'characters');
