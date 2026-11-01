@@ -6,3 +6,4 @@ files.forEach(f => {
   const stat = fs.statSync('public/blog-c/' + f);
   console.log(`${f.padEnd(65, ' ')} | ${stat.size} bytes`);
 });
+

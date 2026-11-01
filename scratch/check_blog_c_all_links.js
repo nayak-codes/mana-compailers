@@ -11,3 +11,4 @@ while ((match = cardRegex.exec(content)) !== null) {
   }
 }
 console.log('Unique blog-c links in blog-c.html:', [...new Set(list)]);
+

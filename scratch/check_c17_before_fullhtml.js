@@ -5,3 +5,4 @@ const marker = 'const fullHtml = `';
 const idx = c17Builder.indexOf(marker);
 console.log('--- 1000 CHARS BEFORE fullHtml ---');
 console.log(c17Builder.slice(idx - 1000, idx));
+

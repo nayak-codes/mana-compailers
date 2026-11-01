@@ -6,3 +6,4 @@ console.log('--- FIRST 500 CHARS ---');
 console.log(c17Builder.slice(0, 500));
 console.log('--- LAST 1000 CHARS ---');
 console.log(c17Builder.slice(-1000));
+

@@ -850,3 +850,4 @@ const outputPath = path.join(__dirname, '..', 'public', 'blog-csharp', '08-cshar
 fs.writeFileSync(outputPath, fullHtml, 'utf8');
 console.log('✅ Successfully generated deep high-value C# Chapter 08!');
 console.log('Target file size:', fullHtml.length, 'characters');
+

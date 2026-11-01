@@ -3,3 +3,4 @@ const c17 = fs.readFileSync('public/blog-c/17-c-structures-unions-and-typedef.ht
 
 const start = c17.indexOf('<div class="code-block"');
 console.log(c17.slice(start, start + 600));
+
