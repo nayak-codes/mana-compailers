@@ -66,3 +66,4 @@ if (passedCount === phase2Files.length) {
 } else {
   process.exit(1);
 }
+
