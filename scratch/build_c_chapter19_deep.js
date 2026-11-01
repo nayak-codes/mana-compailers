@@ -233,12 +233,14 @@ const chapterContentHtml = `
       </p>
 
       <h3>perror() మరియు errno తో ఎర్రర్ హ్యాండ్లింగ్:</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — File Open Error Handling with perror()</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
@@ -248,11 +250,11 @@ int main() {
     if (fp == NULL) {
         // perror() సిస్టమ్ ఇచ్చిన ఖచ్చితమైన కారణాన్ని ప్రింట్ చేస్తుంది (ఉదా: No such file or directory)
         perror("ఫైల్ ఓపెన్ చేయడంలో లోపం");
-        printf("సూచన: ఫైల్ పేరు మరియు పాత్ సరిగ్గా ఉన్నాయో లేదో సరిచూసుకోండి.\n");
+        printf("సూచన: ఫైల్ పేరు మరియు పాత్ సరిగ్గా ఉన్నాయో లేదో సరిచూసుకోండి.\\n");
         return EXIT_FAILURE;
     }
 
-    printf("ఫైల్ విజయవంతంగా తెరవబడింది!\n");
+    printf("ఫైల్ విజయవంతంగా తెరవబడింది!\\n");
     fclose(fp);
     return EXIT_SUCCESS;
 }</code></pre>
@@ -279,12 +281,14 @@ int main() {
       </div>
 
       <h3>ప్రాక్టికల్ ప్రాజెక్ట్: ఫైల్ కాపీ మరియు క్యారెక్టర్ &amp; లైన్ కౌంటర్</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Character I/O (fgetc &amp; fputc) Copy Program</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
@@ -294,7 +298,7 @@ int main() {
         perror("సోర్స్ ఫైల్ క్రియేషన్ విఫలమైంది");
         return 1;
     }
-    fputs("నమస్కారం! ఇది C ఫైల్ హ్యాండ్లింగ్ డెమో.\nలైన్ నంబర్ 2: C చాలా శక్తివంతమైనది.\nలైన్ నంబర్ 3: హ్యాపీ కోడింగ్!", source);
+    fputs("నమస్కారం! ఇది C ఫైల్ హ్యాండ్లింగ్ డెమో.\\nలైన్ నంబర్ 2: C చాలా శక్తివంతమైనది.\\nలైన్ నంబర్ 3: హ్యాపీ కోడింగ్!", source);
     fclose(source);
 
     // 2. ఇప్పుడు ఆ ఫైల్‌ను చదివి మరొక ఫైల్‌లోకి కాపీ చేయడం
@@ -316,7 +320,7 @@ int main() {
     while ((ch = fgetc(src)) != EOF) {
         fputc(ch, dest); // డెస్టినేషన్ ఫైల్‌లో రాయడం
         char_count++;
-        if (ch == '\n') {
+        if (ch == '\\n') {
             line_count++;
         }
     }
@@ -326,9 +330,9 @@ int main() {
     fclose(src);
     fclose(dest);
 
-    printf("✅ ఫైల్ విజయవంతంగా కాపీ చేయబడింది!\n");
-    printf("మొత్తం అక్షరాలు: %ld\n", char_count);
-    printf("మొత్తం లైన్లు: %ld\n", line_count);
+    printf("✅ ఫైల్ విజయవంతంగా కాపీ చేయబడింది!\\n");
+    printf("మొత్తం అక్షరాలు: %ld\\n", char_count);
+    printf("మొత్తం లైన్లు: %ld\\n", line_count);
 
     return 0;
 }</code></pre>
@@ -350,16 +354,18 @@ int main() {
         <strong style="color:#059669;">🛡️ బఫర్ ఓవర్‌ఫ్లో రక్షణ:</strong><br/>
         C లో పాత <code>gets()</code> ఫంక్షన్ ఎంత ప్రమాదకరమో మనం స్ట్రింగ్స్ చాప్టర్‌లో చూశాం. 
         <code>fgets()</code> లో మనం బఫర్ సైజును ఖచ్చితంగా పేర్కొంటాం కాబట్టి అది ఎప్పటికీ మెమరీ పరిమితిని దాటదు. 
-        ఇది న్యూలైన్ <code>'\n'</code> క్యారెక్టర్‌ను కూడా బఫర్‌లో ఉంచుతుంది మరియు చివరన <code>'\0'</code> ను జోడిస్తుంది.
+        ఇది న్యూలైన్ <code>'\\n'</code> క్యారెక్టర్‌ను కూడా బఫర్‌లో ఉంచుతుంది మరియు చివరన <code>'\\0'</code> ను జోడిస్తుంది.
       </div>
 
       <h3>fgets() తో టెక్స్ట్ ఫైల్‌ను లైన్ బై లైన్ రీడ్ చేసే కోడ్:</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Safe Line Reading using fgets()</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 #define BUFFER_SIZE 256
@@ -368,9 +374,9 @@ int main() {
     FILE *fp = fopen("config.txt", "w");
     if (!fp) return 1;
 
-    fputs("SERVER_PORT=8080\n", fp);
-    fputs("DATABASE_URL=localhost:5432\n", fp);
-    fputs("DEBUG_MODE=true\n", fp);
+    fputs("SERVER_PORT=8080\\n", fp);
+    fputs("DATABASE_URL=localhost:5432\\n", fp);
+    fputs("DEBUG_MODE=true\\n", fp);
     fclose(fp);
 
     // చదవడానికి తెరవడం
@@ -380,7 +386,7 @@ int main() {
     char line[BUFFER_SIZE];
     int line_num = 1;
 
-    printf("--- కాన్ఫిగరేషన్ ఫైల్ కంటెంట్ ---\n");
+    printf("--- కాన్ఫిగరేషన్ ఫైల్ కంటెంట్ ---\\n");
     // fgets ఫైల్ చివరకు రాగానే NULL రిటర్న్ చేస్తుంది
     while (fgets(line, sizeof(line), fp) != NULL) {
         printf("[%02d]: %s", line_num++, line);
@@ -405,12 +411,14 @@ int main() {
 int fscanf(FILE *stream, const char *format, ...);</code></pre>
 
       <h3>fprintf మరియు fscanf తో స్టూడెంట్ గ్రేడ్ షీట్ జనరేషన్:</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Formatted I/O (fprintf &amp; fscanf)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
@@ -418,9 +426,9 @@ int main() {
     FILE *fp = fopen("marks.txt", "w");
     if (!fp) { perror("ఫైల్ ఓపెన్ విఫలం"); return 1; }
 
-    fprintf(fp, "%d %s %.2f\n", 101, "కార్తీక్", 88.5);
-    fprintf(fp, "%d %s %.2f\n", 102, "లావణ్య", 94.0);
-    fprintf(fp, "%d %s %.2f\n", 103, "ప్రదీప్", 76.5);
+    fprintf(fp, "%d %s %.2f\\n", 101, "కార్తీక్", 88.5);
+    fprintf(fp, "%d %s %.2f\\n", 102, "లావణ్య", 94.0);
+    fprintf(fp, "%d %s %.2f\\n", 103, "ప్రదీప్", 76.5);
     fclose(fp);
 
     // 2. ఫైల్ నుండి ఫార్మాటెడ్ డేటాను చదవడం (fscanf)
@@ -431,12 +439,12 @@ int main() {
     char name[50];
     float marks;
 
-    printf("%-8s %-15s %-8s\n", "రోల్ నం", "పేరు", "మార్కులు");
-    printf("------------------------------------\n");
+    printf("%-8s %-15s %-8s\\n", "రోల్ నం", "పేరు", "మార్కులు");
+    printf("------------------------------------\\n");
 
     // fscanf సక్సెస్ ఫుల్‌గా రీడ్ చేసిన వేరియబుల్స్ సంఖ్యను రిటర్న్ చేస్తుంది (ఇక్కడ 3)
     while (fscanf(fp, "%d %49s %f", &amp;roll, name, &amp;marks) == 3) {
-        printf("%-8d %-15s %-8.2f\n", roll, name, marks);
+        printf("%-8d %-15s %-8.2f\\n", roll, name, marks);
     }
 
     fclose(fp);
@@ -470,7 +478,7 @@ int main() {
             </tr>
             <tr>
               <td><strong>విండోస్ న్యూలైన్ ట్రాన్స్‌లేషన్</strong></td>
-              <td><code>\n</code> రాస్తే అంతర్గతంగా <code>\r\n</code> (CRLF) గా మారుతుంది.</td>
+              <td><code>\\n</code> రాస్తే అంతర్గతంగా <code>\\r\\n</code> (CRLF) గా మారుతుంది.</td>
               <td>ఎలాంటి మార్పు ఉండదు; ప్రతి బైట్ యథాతథంగా స్టోర్ అవుతుంది.</td>
             </tr>
             <tr>
@@ -513,12 +521,14 @@ size_t fread(void *ptr, size_t size, size_t count, FILE *stream);</code></pre>
       </ol>
 
       <h3>పూర్తి స్ట్రక్చర్‌ను ఒకే ఒక్క కాల్‌తో బైనరీ ఫైల్‌లో సేవ్ చేయడం:</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — High-Speed Binary I/O (fwrite &amp; fread)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;string.h&gt;
 
@@ -541,16 +551,16 @@ int main() {
     // ఒకే ఒక్క CPU ఇన్‌స్ట్రక్షన్‌తో మొత్తం 2 స్ట్రక్చర్ల డేటాను డిస్క్‌పై రాయడం
     size_t written = fwrite(emp_out, sizeof(Employee), 2, fp);
     fclose(fp);
-    printf("✅ %zu ఉద్యోగుల రికార్డులు బైనరీ ఫైల్‌లో భద్రపరచబడ్డాయి.\n", written);
+    printf("✅ %zu ఉద్యోగుల రికార్డులు బైనరీ ఫైల్‌లో భద్రపరచబడ్డాయి.\\n", written);
 
     // 2. బైనరీ ఫైల్ నుండి చదవడం ("rb" - Read Binary)
     fp = fopen("employees.bin", "rb");
     if (!fp) { perror("రీడ్ ఫెయిల్"); return 1; }
 
     Employee emp_in;
-    printf("\n--- బైనరీ ఫైల్ నుండి చదివిన ఉద్యోగుల వివరాలు ---\n");
+    printf("\\n--- బైనరీ ఫైల్ నుండి చదివిన ఉద్యోగుల వివరాలు ---\\n");
     while (fread(&amp;emp_in, sizeof(Employee), 1, fp) == 1) {
-        printf("ID: %d | పేరు: %-15s | జీతం: ₹%.2f\n", emp_in.id, emp_in.name, emp_in.salary);
+        printf("ID: %d | పేరు: %-15s | జీతం: ₹%.2f\\n", emp_in.id, emp_in.name, emp_in.salary);
     }
 
     fclose(fp);
@@ -641,12 +651,14 @@ int main() {
         ఈ ప్రోగ్రామ్‌ను క్లోజ్ చేసి మళ్లీ ఓపెన్ చేసినా కాంటాక్ట్స్ సురక్షితంగా ఉంటాయి!
       </p>
 
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Persistent Phonebook Directory Mini-Project</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;string.h&gt;
 
@@ -670,37 +682,37 @@ void add_contact(int id, const char *name, const char *phone, const char *email)
     Contact c;
     c.id = id;
     strncpy(c.name, name, sizeof(c.name) - 1);
-    c.name[sizeof(c.name) - 1] = '\0';
+    c.name[sizeof(c.name) - 1] = '\\0';
     strncpy(c.phone, phone, sizeof(c.phone) - 1);
-    c.phone[sizeof(c.phone) - 1] = '\0';
+    c.phone[sizeof(c.phone) - 1] = '\\0';
     strncpy(c.email, email, sizeof(c.email) - 1);
-    c.email[sizeof(c.email) - 1] = '\0';
+    c.email[sizeof(c.email) - 1] = '\\0';
 
     fwrite(&amp;c, sizeof(Contact), 1, fp);
     fclose(fp);
-    printf("✅ కాంటాక్ట్ సేవ్ అయింది: %s (%s)\n", name, phone);
+    printf("✅ కాంటాక్ట్ సేవ్ అయింది: %s (%s)\\n", name, phone);
 }
 
 // 2. అన్ని కాంటాక్ట్‌లను ఫైల్ నుండి చదివి చూపించడం ("rb" mode)
 void list_all_contacts() {
     FILE *fp = fopen(FILENAME, "rb");
     if (!fp) {
-        printf("⚠️ ఇంకా ఎలాంటి కాంటాక్ట్స్ సేవ్ చేయబడలేదు.\n");
+        printf("⚠️ ఇంకా ఎలాంటి కాంటాక్ట్స్ సేవ్ చేయబడలేదు.\\n");
         return;
     }
 
     Contact c;
-    printf("\n==================== ఫోన్‌బుక్ డైరెక్టరీ ====================\n");
-    printf("%-5s %-20s %-15s %-25s\n", "ID", "పేరు", "ఫోన్ నంబర్", "ఈమెయిల్");
-    printf("------------------------------------------------------------\n");
+    printf("\\n==================== ఫోన్‌బుక్ డైరెక్టరీ ====================\\n");
+    printf("%-5s %-20s %-15s %-25s\\n", "ID", "పేరు", "ఫోన్ నంబర్", "ఈమెయిల్");
+    printf("------------------------------------------------------------\\n");
 
     int count = 0;
     while (fread(&amp;c, sizeof(Contact), 1, fp) == 1) {
-        printf("%-5d %-20s %-15s %-25s\n", c.id, c.name, c.phone, c.email);
+        printf("%-5d %-20s %-15s %-25s\\n", c.id, c.name, c.phone, c.email);
         count++;
     }
-    printf("============================================================\n");
-    printf("మొత్తం కాంటాక్ట్స్: %d\n\n", count);
+    printf("============================================================\\n");
+    printf("మొత్తం కాంటాక్ట్స్: %d\\n\\n", count);
     fclose(fp);
 }
 
@@ -708,7 +720,7 @@ void list_all_contacts() {
 void search_contact(const char *search_name) {
     FILE *fp = fopen(FILENAME, "rb");
     if (!fp) {
-        printf("ఫైల్ అందుబాటులో లేదు.\n");
+        printf("ఫైల్ అందుబాటులో లేదు.\\n");
         return;
     }
 
@@ -716,20 +728,20 @@ void search_contact(const char *search_name) {
     int found = 0;
     while (fread(&amp;c, sizeof(Contact), 1, fp) == 1) {
         if (strstr(c.name, search_name) != NULL) {
-            printf("🔍 దొరికింది! -&gt; ID: %d | పేరు: %s | ఫోన్: %s | ఈమెయిల్: %s\n", 
+            printf("🔍 దొరికింది! -&gt; ID: %d | పేరు: %s | ఫోన్: %s | ఈమెయిల్: %s\\n", 
                    c.id, c.name, c.phone, c.email);
             found = 1;
         }
     }
 
     if (!found) {
-        printf("❌ '%s' పేరుతో ఎలాంటి కాంటాక్ట్ దొరకలేదు.\n", search_name);
+        printf("❌ '%s' పేరుతో ఎలాంటి కాంటాక్ట్ దొరకలేదు.\\n", search_name);
     }
     fclose(fp);
 }
 
 int main() {
-    printf("=== పర్సిస్టెంట్ ఫోన్‌బుక్ సిస్టమ్ ప్రారంభం ===\n");
+    printf("=== పర్సిస్టెంట్ ఫోన్‌బుక్ సిస్టమ్ ప్రారంభం ===\\n");
 
     // టెస్ట్ కోసం కొన్ని కాంటాక్ట్‌లను జోడించడం
     add_contact(1, "శ్రీధర్ పట్నాయక్", "9848022338", "sridhar@gmail.com");
@@ -740,7 +752,7 @@ int main() {
     list_all_contacts();
 
     // సెర్చ్ టెస్టింగ్
-    printf("వెతుకుతున్నాం 'భార్గవి'...\n");
+    printf("వెతుకుతున్నాం 'భార్గవి'...\\n");
     search_contact("భార్గవి");
 
     return 0;
@@ -780,7 +792,7 @@ int main() {
             <em>జవాబు:</em> బఫర్‌లో ఉన్న డేటా డిస్క్‌పై రాయబడకపోవచ్చు (Data Loss). అలాగే OS ఫైల్ హ్యాండిల్స్ పరిమిత సంఖ్యలో ఉంటాయి కాబట్టి ఇతర ప్రోగ్రామ్‌లు ఆ ఫైల్‌ను లాక్ చేయడంలో విఫలమవ్వచ్చు.
         </li>
         <li><strong>Q2: Windows లో టెక్స్ట్ మోడ్ ("r") మరియు బైనరీ మోడ్ ("rb") మధ్య తేడా ఏమిటి?</strong><br/>
-            <em>జవాబు:</em> విండోస్ టెక్స్ట్ మోడ్‌లో రీడ్ చేసేటప్పుడు <code>\r\n</code> ఆటోమేటిక్‌గా ఒకే <code>\n</code> గా మారుతుంది. బైనరీ మోడ్‌లో ఎలాంటి మార్పు లేకుండా ప్రతి బైట్ ఖచ్చితంగా యథాతథంగా చదవబడుతుంది.
+            <em>జవాబు:</em> విండోస్ టెక్స్ట్ మోడ్‌లో రీడ్ చేసేటప్పుడు <code>\\r\\n</code> ఆటోమేటిక్‌గా ఒకే <code>\\n</code> గా మారుతుంది. బైనరీ మోడ్‌లో ఎలాంటి మార్పు లేకుండా ప్రతి బైట్ ఖచ్చితంగా యథాతథంగా చదవబడుతుంది.
         </li>
         <li><strong>Q3: remove() మరియు rename() ఫంక్షన్లు ఎలా పనిచేస్తాయి?</strong><br/>
             <em>జవాబు:</em> <code>&lt;stdio.h&gt;</code> లో ఉండే <code>remove("file.txt")</code> ఫైల్‌ను డిలీట్ చేస్తుంది; <code>rename("old.txt", "new.txt")</code> ఫైల్ పేరును లేదా పాత్‌ను మారుస్తుంది.
@@ -848,15 +860,30 @@ int main() {
 
     <!-- CHAPTER NAVIGATION (PAGINATION) -->
     <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
-      <a href="/blog-c/18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html" style="background:var(--bg2); border:1px solid var(--border); padding:12px 20px; border-radius:8px; text-decoration:none; color:var(--text1); font-weight:600; display:inline-flex; align-items:center; gap:8px;">
-        ← Chapter 18: డైనమిక్ మెమరీ (DMA)
+      <a href="/blog-c/18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 18. డైనమిక్ మెమరీ (DMA)
       </a>
-      <a href="/blog-c/20-c-mini-project-student-record-management.html" style="background:#10b981; border:1px solid #10b981; padding:12px 20px; border-radius:8px; text-decoration:none; color:#ffffff; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
-        Chapter 20: గ్రాండ్ మినీ ప్రాజెక్ట్ →
+      <a href="/blog-c/20-c-mini-project-student-record-management.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 20. గ్రాండ్ మినీ ప్రాజెక్ట్ →
       </a>
     </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
   </main>
 </div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
 `;
 
 const fullHtml = `<!DOCTYPE html>
@@ -873,22 +900,76 @@ const fullHtml = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  <link rel="stylesheet" href="/blog-c/c-style.css" />
-  <script src="/nav.js" defer></script>
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C ఫైల్ హ్యాండ్లింగ్ (fopen, fclose, fprintf, fscanf, fread, fwrite) (C Programming in Telugu)",
+    "description": "స్ట్రీమ్స్ & FILE* పాయింటర్, fopen మోడ్స్, టెక్స్ట్ vs బైనరీ ఫైల్స్, fwrite/fread, fseek/ftell రాండమ్ యాక్సెస్, పర్సిస్టెంట్ ఫోన్‌బుక్ ప్రాజెక్ట్",
+    "articleSection": "Phase 05: స్ట్రక్చర్స్, డైనమిక్ మెమరీ & ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
   <script>
-    // Setup Code blocks Copy & Runner hooks
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+
+    // Code runner & copy button integration
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.code-wrap').forEach((wrap) => {
-        const pre = wrap.querySelector('pre');
-        const actions = wrap.querySelector('.code-actions');
-        if (!pre || !actions) return;
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
 
-        const codeEl = pre.querySelector('code');
-        const rawCode = codeEl ? codeEl.innerText : pre.innerText;
-
-        if (!actions.querySelector('.copy-btn')) {
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
           const copyBtn = document.createElement('button');
-          copyBtn.className = 'action-btn copy-btn';
+          copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
           copyBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(rawCode).then(() => {
@@ -926,5 +1007,5 @@ ${chapterContentHtml}
 const outputPath = path.join(__dirname, '..', 'public', 'blog-c', '19-c-file-handling-fopen-fclose-text-binary.html');
 fs.writeFileSync(outputPath, fullHtml, 'utf8');
 
-console.log('✅ Successfully generated deep high-value C Chapter 19!');
+console.log('✅ Successfully regenerated deep high-value C Chapter 19!');
 console.log('Target file size:', fullHtml.length, 'characters');

@@ -176,19 +176,21 @@ Low Memory (0x00000000)   │         Text Segment (మెషిన్ కోడ
       </div>
 
       <h3>malloc() ప్రాక్టికల్ ఉదాహరణ: యూజర్ కోరిన సైజులో డైనమిక్ అర్రే</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Dynamic Array Allocation using malloc()</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
     int n;
     printf("ఎన్ని ఎలిమెంట్లు స్టోర్ చేయాలనుకుంటున్నారు? ");
     if (scanf("%d", &amp;n) != 1 || n &lt;= 0) {
-        printf("చెల్లుబాటు అయ్యే సంఖ్య ఇవ్వండి!\n");
+        printf("చెల్లుబాటు అయ్యే సంఖ్య ఇవ్వండి!\\n");
         return 1;
     }
 
@@ -197,34 +199,34 @@ int main() {
 
     // మెమరీ కేటాయింపు విజయవంతమైందో లేదో తనిఖీ చేయడం
     if (arr == NULL) {
-        printf("ఎర్రర్: హీప్ మెమరీ కేటాయింపు విఫలమైంది!\n");
+        printf("ఎర్రర్: హీప్ మెమరీ కేటాయింపు విఫలమైంది!\\n");
         return 1;
     }
 
-    printf("\n--- malloc() కేటాయించిన ప్రారంభ గార్బేజ్ డేటా ---\n");
+    printf("\\n--- malloc() కేటాయించిన ప్రారంభ గార్బేజ్ డేటా ---\\n");
     for (int i = 0; i &lt; n; i++) {
-        printf("arr[%d] = %d (Garbage)\n", i, arr[i]);
+        printf("arr[%d] = %d (Garbage)\\n", i, arr[i]);
     }
 
-    printf("\nఇప్పుడు %d విలువలను ఎంటర్ చేయండి:\n", n);
+    printf("\\nఇప్పుడు %d విలువలను ఎంటర్ చేయండి:\\n", n);
     for (int i = 0; i &lt; n; i++) {
         printf("ఎలిమెంట్ %d: ", i + 1);
         scanf("%d", &amp;arr[i]);
     }
 
-    printf("\nమీరు ఎంటర్ చేసిన విలువల మొత్తం (Sum):\n");
+    printf("\\nమీరు ఎంటర్ చేసిన విలువల మొత్తం (Sum):\\n");
     long long sum = 0;
     for (int i = 0; i &lt; n; i++) {
         printf("%d ", arr[i]);
         sum += arr[i];
     }
-    printf("\nమొత్తం సగటు = %.2f\n", (double)sum / n);
+    printf("\\nమొత్తం సగటు = %.2f\\n", (double)sum / n);
 
     // వాడిన తర్వాత మెమరీని OS కి విడుదల చేయడం
     free(arr);
     arr = NULL; // Dangling pointer నివారించడానికి
 
-    printf("\nమెమరీ విజయవంతంగా విడుదల చేయబడింది!\n");
+    printf("\\nమెమరీ విజయవంతంగా విడుదల చేయబడింది!\\n");
     return 0;
 }</code></pre>
       </div>
@@ -250,12 +252,14 @@ int main() {
       </p>
 
       <h3>calloc() లైవ్ ఎగ్జాంపుల్: ఫ్రీక్వెన్సీ కౌంటర్ మరియు క్లీన్ బఫర్</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Clean Zero-Initialized Allocation using calloc()</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
@@ -265,14 +269,14 @@ int main() {
     int *clean_arr = (int *)calloc(size, sizeof(int));
 
     if (clean_arr == NULL) {
-        printf("మెమరీ కేటాయింపు విఫలమైంది!\n");
+        printf("మెమరీ కేటాయింపు విఫలమైంది!\\n");
         return 1;
     }
 
-    printf("calloc() కేటాయించిన ఎలిమెంట్ల ప్రారంభ విలువలు:\n");
+    printf("calloc() కేటాయించిన ఎలిమెంట్ల ప్రారంభ విలువలు:\\n");
     for (int i = 0; i &lt; size; i++) {
         // ఇక్కడ ప్రతి ఎలిమెంట్ ఖచ్చితంగా 0 గానే ఉంటుంది
-        printf("clean_arr[%d] = %d\n", i, clean_arr[i]);
+        printf("clean_arr[%d] = %d\\n", i, clean_arr[i]);
     }
 
     // ఇప్పుడు విలువలను అప్‌డేట్ చేయడం
@@ -280,9 +284,9 @@ int main() {
         clean_arr[i] = (i + 1) * 10;
     }
 
-    printf("\nఅప్‌డేట్ చేసిన తర్వాత విలువలు:\n");
+    printf("\\nఅప్‌డేట్ చేసిన తర్వాత విలువలు:\\n");
     for (int i = 0; i &lt; size; i++) {
-        printf("clean_arr[%d] = %d\n", i, clean_arr[i]);
+        printf("clean_arr[%d] = %d\\n", i, clean_arr[i]);
     }
 
     free(clean_arr);
@@ -361,31 +365,33 @@ int main() {
       </p>
 
       <h3>డిఫెన్సివ్ ప్రోగ్రామింగ్ గోల్డెన్ ప్యాటర్న్:</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Defensive Programming &amp; NULL Verification</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
     // ఉద్దేశపూర్వకంగా అసాధ్యమైన భారీ మెమరీని అడగడం (ఉదా: 1000 Terabytes)
     size_t huge_size = (size_t)1024 * 1024 * 1024 * 1000ULL;
-    printf("భారీ మెమరీ కేటాయింపుకు ప్రయత్నిస్తున్నాం...\n");
+    printf("భారీ మెమరీ కేటాయింపుకు ప్రయత్నిస్తున్నాం...\\n");
 
     int *ptr = (int *)malloc(huge_size);
 
     // పాయింటర్ చెక్ తప్పనిసరి!
     if (ptr == NULL) {
-        fprintf(stderr, "క్రిటికల్ ఎర్రర్: సిస్టమ్‌లో తగినంత ర్యామ్ లేదు! మెమరీ కేటాయింపు విఫలమైంది.\n");
+        fprintf(stderr, "క్రిటికల్ ఎర్రర్: సిస్టమ్‌లో తగినంత ర్యామ్ లేదు! మెమరీ కేటాయింపు విఫలమైంది.\\n");
         // సిస్టమ్ క్రాష్ అవ్వకుండా గౌరవప్రదంగా నిష్క్రమించడం
         return EXIT_FAILURE;
     }
 
     // కేటాయింపు విజయవంతమైతేనే ఇక్కడకు వస్తుంది
     ptr[0] = 100;
-    printf("మొదటి ఎలిమెంట్: %d\n", ptr[0]);
+    printf("మొదటి ఎలిమెంట్: %d\\n", ptr[0]);
 
     free(ptr);
     ptr = NULL;
@@ -438,50 +444,52 @@ int main() {
       </div>
 
       <h3>realloc() సరైన మరియు సురక్షితమైన వినియోగ కోడ్:</h3>
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Dynamic Resizing with realloc()</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
     int initial_cap = 3;
     int *arr = (int *)malloc(initial_cap * sizeof(int));
     if (arr == NULL) {
-        printf("ప్రారంభ మెమరీ విఫలమైంది!\n");
+        printf("ప్రారంభ మెమరీ విఫలమైంది!\\n");
         return 1;
     }
 
     arr[0] = 10;
     arr[1] = 20;
     arr[2] = 30;
-    printf("ప్రారంభ అర్రే (సైజు: %d): %d, %d, %d\n", initial_cap, arr[0], arr[1], arr[2]);
-    printf("ప్రారంభ పాయింటర్ చిరునామా: %p\n", (void*)arr);
+    printf("ప్రారంభ అర్రే (సైజు: %d): %d, %d, %d\\n", initial_cap, arr[0], arr[1], arr[2]);
+    printf("ప్రారంభ పాయింటర్ చిరునామా: %p\\n", (void*)arr);
 
     // ఇప్పుడు సైజును 3 నుండి 6 కి పెంచాలనుకుంటున్నాం
     int new_cap = 6;
     int *temp = (int *)realloc(arr, new_cap * sizeof(int));
 
     if (temp == NULL) {
-        printf("రీసైజింగ్ విఫలమైంది! పాత డేటా అలాగే ఉంది.\n");
+        printf("రీసైజింగ్ విఫలమైంది! పాత డేటా అలాగే ఉంది.\\n");
         free(arr);
         return 1;
     }
 
     // రీసైజింగ్ విజయవంతమైంది కాబట్టి పాయింటర్‌ను అప్‌డేట్ చేయాలి
     arr = temp;
-    printf("రీసైజ్ తర్వాత పాయింటర్ చిరునామా: %p\n", (void*)arr);
+    printf("రీసైజ్ తర్వాత పాయింటర్ చిరునామా: %p\\n", (void*)arr);
 
     // కొత్తగా జోడించిన స్థానాల్లో విలువలు రాయడం
     arr[3] = 40;
     arr[4] = 50;
     arr[5] = 60;
 
-    printf("\nవిస్తరించిన అర్రే లోని అన్ని 6 ఎలిమెంట్లు:\n");
+    printf("\\nవిస్తరించిన అర్రే లోని అన్ని 6 ఎలిమెంట్లు:\\n");
     for (int i = 0; i &lt; new_cap; i++) {
-        printf("arr[%d] = %d\n", i, arr[i]);
+        printf("arr[%d] = %d\\n", i, arr[i]);
     }
 
     free(arr);
@@ -549,19 +557,21 @@ void do_calculation() {<br/>
         కంపైలర్ వెంటనే <code>"double free or corruption (fasttop)"</code> అని ప్రోగ్రామ్‌ను అబార్ట్ చేస్తుంది.
       </p>
 
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Preventing Dangling Pointers and Double Free</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
     int *ptr = (int *)malloc(sizeof(int));
     *ptr = 42;
 
-    printf("విలువ: %d\n", *ptr);
+    printf("విలువ: %d\\n", *ptr);
 
     // మెమరీని ఫ్రీ చేయడం
     free(ptr);
@@ -575,7 +585,7 @@ int main() {
 
     // ఇప్పుడు free(ptr) పిలిచినా ఏ ప్రమాదం ఉండదు (free(NULL) is harmless)
     free(ptr);
-    printf("సురక్షితంగా రక్షించబడింది!\n");
+    printf("సురక్షితంగా రక్షించబడింది!\\n");
 
     return 0;
 }</code></pre>
@@ -595,12 +605,14 @@ int main() {
         దీని ప్రయోజనం ఏమిటంటే, ప్రతి వరుసకు వేర్వేరు సంఖ్యలో కాలమ్స్ (Jagged Array) కేటాయించవచ్చు!
       </p>
 
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — 2D Dynamic Matrix Allocation (int**)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() {
@@ -624,12 +636,12 @@ int main() {
     }
 
     // 4. మ్యాట్రిక్స్‌ను డిస్‌ప్లే చేయడం
-    printf("--- 2D డైనమిక్ మ్యాట్రిక్స్ (%d x %d) ---\n", rows, cols);
+    printf("--- 2D డైనమిక్ మ్యాట్రిక్స్ (%d x %d) ---\\n", rows, cols);
     for (int i = 0; i &lt; rows; i++) {
         for (int j = 0; j &lt; cols; j++) {
             printf("%4d ", matrix[i][j]);
         }
-        printf("\n");
+        printf("\\n");
     }
 
     // 5. డీ-ఎలొకేషన్: రివర్స్ ఆర్డర్‌లో ఫ్రీ చేయాలి!
@@ -639,7 +651,7 @@ int main() {
     free(matrix); // ప్రధాన పాయింటర్‌ను ఫ్రీ చేయడం
     matrix = NULL;
 
-    printf("\n2D మ్యాట్రిక్స్ మెమరీ పూర్తిగా క్లీన్ చేయబడింది!\n");
+    printf("\\n2D మ్యాట్రిక్స్ మెమరీ పూర్తిగా క్లీన్ చేయబడింది!\\n");
     return 0;
 }</code></pre>
       </div>
@@ -659,12 +671,14 @@ int main() {
         <code>realloc()</code> ద్వారా కెపాసిటీని రెట్టింపు (2 ➔ 4 ➔ 8) చేసుకుంటుంది. యూజర్ నిష్క్రమించగానే మొత్తం మెమరీని సురక్షితంగా క్లీన్ చేస్తుంది!
       </div>
 
-      <div class="code-wrap">
-        <div class="code-actions">
-          <button class="action-btn copy-btn">📋 Copy</button>
-          <button class="action-btn try-btn">▶ Run</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Dynamic Resizable Student Record Manager Project</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;string.h&gt;
 
@@ -684,12 +698,12 @@ typedef struct {
 void init_db(StudentDatabase *db, int initial_capacity) {
     db-&gt;data = (Student *)malloc(initial_capacity * sizeof(Student));
     if (db-&gt;data == NULL) {
-        printf("డేటాబేస్ మెమరీ కేటాయింపు విఫలమైంది!\n");
+        printf("డేటాబేస్ మెమరీ కేటాయింపు విఫలమైంది!\\n");
         exit(1);
     }
     db-&gt;size = 0;
     db-&gt;capacity = initial_capacity;
-    printf("[System]: డేటాబేస్ ప్రారంభమైంది. కెపాసిటీ = %d\n", db-&gt;capacity);
+    printf("[System]: డేటాబేస్ ప్రారంభమైంది. కెపాసిటీ = %d\\n", db-&gt;capacity);
 }
 
 // విద్యార్థిని జోడించడం (ఆటో-గ్రోయింగ్ లాజిక్)
@@ -697,11 +711,11 @@ void add_student(StudentDatabase *db, int id, const char *name, float gpa) {
     // కెపాసిటీ నిండిపోతే రెట్టింపు చేయడం
     if (db-&gt;size == db-&gt;capacity) {
         int new_capacity = db-&gt;capacity * 2;
-        printf("\n⚠️ [Auto-Grow]: కెపాసిటీ నిండింది! %d నుండి %d కి విస్తరిస్తున్నాం...\n", db-&gt;capacity, new_capacity);
+        printf("\\n⚠️ [Auto-Grow]: కెపాసిటీ నిండింది! %d నుండి %d కి విస్తరిస్తున్నాం...\\n", db-&gt;capacity, new_capacity);
         
         Student *temp = (Student *)realloc(db-&gt;data, new_capacity * sizeof(Student));
         if (temp == NULL) {
-            printf("ఎర్రర్: మెమరీ విస్తరణ విఫలమైంది!\n");
+            printf("ఎర్రర్: మెమరీ విస్తరణ విఫలమైంది!\\n");
             return;
         }
         db-&gt;data = temp;
@@ -711,22 +725,22 @@ void add_student(StudentDatabase *db, int id, const char *name, float gpa) {
     // కొత్త రికార్డును చొప్పించడం
     db-&gt;data[db-&gt;size].id = id;
     strncpy(db-&gt;data[db-&gt;size].name, name, sizeof(db-&gt;data[db-&gt;size].name) - 1);
-    db-&gt;data[db-&gt;size].name[sizeof(db-&gt;data[db-&gt;size].name) - 1] = '\0';
+    db-&gt;data[db-&gt;size].name[sizeof(db-&gt;data[db-&gt;size].name) - 1] = '\\0';
     db-&gt;data[db-&gt;size].gpa = gpa;
 
     db-&gt;size++;
-    printf("✅ విద్యార్థి జోడించబడ్డారు: %s (ID: %d) [ప్రస్తుతం: %d/%d]\n", name, id, db-&gt;size, db-&gt;capacity);
+    printf("✅ విద్యార్థి జోడించబడ్డారు: %s (ID: %d) [ప్రస్తుతం: %d/%d]\\n", name, id, db-&gt;size, db-&gt;capacity);
 }
 
 // అన్ని రికార్డులను చూపించడం
 void print_db(const StudentDatabase *db) {
-    printf("\n================ విద్యార్థుల డేటాబేస్ ================\n");
-    printf("%-6s %-20s %-8s\n", "ID", "పేరు", "GPA");
-    printf("----------------------------------------------------\n");
+    printf("\\n================ విద్యార్థుల డేటాబేస్ ================\\n");
+    printf("%-6s %-20s %-8s\\n", "ID", "పేరు", "GPA");
+    printf("----------------------------------------------------\\n");
     for (int i = 0; i &lt; db-&gt;size; i++) {
-        printf("%-6d %-20s %-8.2f\n", db-&gt;data[i].id, db-&gt;data[i].name, db-&gt;data[i].gpa);
+        printf("%-6d %-20s %-8.2f\\n", db-&gt;data[i].id, db-&gt;data[i].name, db-&gt;data[i].gpa);
     }
-    printf("====================================================\n\n");
+    printf("====================================================\\n\\n");
 }
 
 // మెమరీని విడుదల చేయడం
@@ -737,7 +751,7 @@ void free_db(StudentDatabase *db) {
     }
     db-&gt;size = 0;
     db-&gt;capacity = 0;
-    printf("[System]: డేటాబేస్ మెమరీ పూర్తిగా క్లీన్ చేయబడింది (No Memory Leaks).\n");
+    printf("[System]: డేటాబేస్ మెమరీ పూర్తిగా క్లీన్ చేయబడింది (No Memory Leaks).\\n");
 }
 
 int main() {
@@ -862,15 +876,30 @@ int main() {
 
     <!-- CHAPTER NAVIGATION (PAGINATION) -->
     <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
-      <a href="/blog-c/17-c-structures-unions-and-typedef.html" style="background:var(--bg2); border:1px solid var(--border); padding:12px 20px; border-radius:8px; text-decoration:none; color:var(--text1); font-weight:600; display:inline-flex; align-items:center; gap:8px;">
-        ← Chapter 17: స్ట్రక్చర్స్ &amp; యూనియన్స్
+      <a href="/blog-c/17-c-structures-unions-and-typedef.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 17. స్ట్రక్చర్స్ &amp; యూనియన్స్
       </a>
-      <a href="/blog-c/19-c-file-handling-fopen-fclose-text-binary.html" style="background:#10b981; border:1px solid #10b981; padding:12px 20px; border-radius:8px; text-decoration:none; color:#ffffff; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
-        Chapter 19: ఫైల్ హ్యాండ్లింగ్ (Files) →
+      <a href="/blog-c/19-c-file-handling-fopen-fclose-text-binary.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 19. ఫైల్ హ్యాండ్లింగ్ (Files) →
       </a>
     </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
   </main>
 </div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
 `;
 
 const fullHtml = `<!DOCTYPE html>
@@ -887,22 +916,76 @@ const fullHtml = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/blog-style.css" />
-  <link rel="stylesheet" href="/blog-c/c-style.css" />
-  <script src="/nav.js" defer></script>
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C డైనమిక్ మెమరీ కేటాయింపు (malloc, calloc, realloc, free) & Memory Leaks (C Programming in Telugu)",
+    "description": "Stack vs Heap మెమరీ ఆర్కిటెక్చర్, malloc, calloc, realloc, free, Memory Leaks, Dangling Pointers, డైనమిక్ స్టూడెంట్ డేటాబేస్ ప్రాజెక్ట్",
+    "articleSection": "Phase 05: స్ట్రక్చర్స్, డైనమిక్ మెమరీ & ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
   <script>
-    // Setup Code blocks Copy & Runner hooks
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+
+    // Code runner & copy button integration
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.code-wrap').forEach((wrap) => {
-        const pre = wrap.querySelector('pre');
-        const actions = wrap.querySelector('.code-actions');
-        if (!pre || !actions) return;
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
 
-        const codeEl = pre.querySelector('code');
-        const rawCode = codeEl ? codeEl.innerText : pre.innerText;
-
-        if (!actions.querySelector('.copy-btn')) {
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
           const copyBtn = document.createElement('button');
-          copyBtn.className = 'action-btn copy-btn';
+          copyBtn.className = 'copy-btn';
           copyBtn.innerHTML = '📋 Copy';
           copyBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(rawCode).then(() => {
@@ -940,5 +1023,5 @@ ${chapterContentHtml}
 const outputPath = path.join(__dirname, '..', 'public', 'blog-c', '18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html');
 fs.writeFileSync(outputPath, fullHtml, 'utf8');
 
-console.log('✅ Successfully generated deep high-value C Chapter 18!');
+console.log('✅ Successfully regenerated deep high-value C Chapter 18!');
 console.log('Target file size:', fullHtml.length, 'characters');
