@@ -1,0 +1,842 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[3]; // Chapter 4
+const sidebarHtml = buildSidebar(4);
+
+const chapter04Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ తెలుగులో: Arithmetic, Prefix vs Postfix, Spaceship Operator (&lt;=&gt;), Bitwise, Short-Circuit, Precedence & Vehicle Telemetry ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ operators telugu, c++ spaceship operator, prefix vs postfix telugu, bitwise operators telugu, short circuit evaluation, c++ operator precedence, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Mastering C++ Operators, Expressions & Bitwise Logic)",
+    "description": "C++ ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ తెలుగులో: Arithmetic, Prefix vs Postfix, C++20 Spaceship Operator, Bitwise Masking, Precedence & Vehicle Telemetry Project.",
+    "articleSection": "Phase 1: C++ Basics & Fundamentals",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-04",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid','static_cast'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','vector','map','set','pair','main',
+        'printf','scanf','getline','numeric_limits','setw','setprecision','fixed','setfill',
+        'left','right','boolalpha','noboolalpha','dec','hex','oct','showbase','clear','ignore',
+        'bitset','strong_ordering'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (!codeEl) return;
+      const rawText = codeEl.textContent;
+      navigator.clipboard.writeText(rawText).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (!codeEl) return;
+      const rawText = codeEl.textContent;
+      try {
+        localStorage.setItem('code_cpp17', rawText);
+        localStorage.setItem('code_cpp', rawText);
+      } catch (e) {
+        console.warn('LocalStorage unavailable:', e);
+      }
+      window.open('/online-cpp-compiler.html', '_blank');
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme !== 'dark') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.code-block pre code').forEach(codeEl => {
+          codeEl.innerHTML = highlightCppCode(codeEl.textContent);
+        });
+      });
+    })();
+  </script>
+</head>
+<body class="lang-cpp light-theme">
+
+<!-- SITE NAVIGATION BAR PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN LESSON CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 04: ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</span>
+    </div>
+
+    <h1 class="page-title">C++ ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & ప్రిసిడెన్స్ మాస్టర్‌క్లాస్</h1>
+
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C++20 / C++17</span>
+      <span class="badge">🟢 Chapter 04 of 20</span>
+      <span class="badge">📂 Phase 01: బేసిక్స్ & ఫండమెంటల్స్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- Covered Topics Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>Arithmetic Operators · Integer Division Trap · Prefix (++i) vs Postfix (i++) Memory Difference · Compound Assignment · Relational Operators · C++20 Spaceship Operator (&lt;=&gt;) · Short-Circuit Logic (&&, ||) · Bitwise Masking (&, |, ^, ~, &lt;&lt;, &gt;&gt;) · Ternary (?:) · Operator Precedence · Undefined Behavior · Vehicle Telemetry Project</span>
+    </div>
+
+    <!-- Intro Overview Box -->
+    <div class="intro-box">
+      <p>కంప్యూటర్ సైన్స్‌లో డేటా కేవలం మెమరీలో ఉండటం మాత్రమే సరిపోదు; ఆ డేటాపై గణనలు, తార్కిక నిర్ణయాలు (Logical Decisions), మరియు పోలికలు జరపాలి. ఒక ప్రోగ్రామ్‌లో లెక్కలు చేయడానికి మరియు ఫలితాలను సృష్టించడానికి వాడే ప్రత్యేక సంకేతాలనే <strong>ఆపరేటర్లు (Operators)</strong> అంటారు.</p>
+      <p style="margin-bottom:0;">ఈ నాల్గవ అధ్యాయంతో మనం C++ Phase 01 (ఫండమెంటల్స్) ను విజయవంతంగా పూర్తి చేసుకోబోతున్నాం! ఈ లెసన్‌లో అరిథ్‌మెటిక్ ఆపరేటర్ల నుండి ఆధునిక <strong>C++20 Spaceship Operator (<code>&lt;=&gt;</code>)</strong>, CPU లెవల్ బిట్‌వైజ్ మాస్కింగ్, మరియు ఒక రియల్-వరల్డ్ <em>Vehicle Sensor Telemetry Engine</em> ప్రాజెక్ట్ ద్వారా ఆపరేటర్ల పూర్తి అంతర్గత మెకానిక్స్ నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ అంటే ఏమిటి? (Operators & Operands)</h2>
+      <p>
+        కంప్యూటర్ ప్రాసెసర్ (ALU - Arithmetic Logic Unit) లో ఒక ఆపరేషన్ జరగడానికి మూడు ముఖ్య భాగాలు ఉంటాయి:
+      </p>
+      <ol style="line-height:1.8; font-size:14px; color:var(--text);">
+        <li><strong>ఆపరేటర్ (Operator):</strong> కంప్యూటర్‌కు ఏ పని చేయాలో ఆదేశించే సంకేతం (ఉదాహరణకు: <code>+</code>, <code>-</code>, <code>*</code>, <code>&lt;&lt;</code>).</li>
+        <li><strong>ఆపరాండ్ (Operand):</strong> ఆపరేటర్ ఏ విలువలపై పనిచేస్తుందో ఆ డేటా లేదా వేరియబుల్స్ (ఉదాహరణకు: <code>a + b</code> లో <code>a</code> మరియు <code>b</code> ఆపరాండ్లు).</li>
+        <li><strong>ఎక్స్‌ప్రెషన్ (Expression):</strong> ఆపరేటర్లు మరియు ఆపరాండ్ల కలయిక ద్వారా ఒక ఫలిత విలువను ఉత్పత్తి చేసే పూర్తి స్టేట్‌మెంట్ (ఉదాహరణకు: <code>total = (price * qty) - discount;</code>).</li>
+      </ol>
+      <p>
+        ఆపరాండ్ల సంఖ్యను బట్టి C++ ఆపరేటర్లు 3 రకాలు:
+      </p>
+      <ul>
+        <li><strong>Unary Operators:</strong> కేవలం ఒకే ఆపరాండ్‌పై పనిచేస్తాయి (ఉదా: <code>++x</code>, <code>-x</code>, <code>!flag</code>, <code>sizeof(int)</code>).</li>
+        <li><strong>Binary Operators:</strong> రెండు ఆపరాండ్ల మధ్య పనిచేస్తాయి (ఉదా: <code>a + b</code>, <code>x &gt; y</code>, <code>a &amp;&amp; b</code>).</li>
+        <li><strong>Ternary Operator:</strong> మూడు భాగాలతో పనిచేసే ఏకైక ఆపరేటర్ కండిషనల్ ఆపరేటర్ (<code>condition ? true_val : false_val</code>).</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> అరిథ్‌మెటిక్ ఆపరేటర్లు & Integer Division vs Floating Division</h2>
+      <p>
+        ప్రాథమిక గణిత గణనల కోసం C++ 5 ప్రధాన అరిథ్‌మెటిక్ ఆపరేటర్లను అందిస్తుంది:
+      </p>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table class="tbl" style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
+              <th style="padding:10px 12px; color:#10b981;">ఆపరేటర్</th>
+              <th style="padding:10px 12px; color:var(--text);">పేరు (Name)</th>
+              <th style="padding:10px 12px; color:var(--text);">ఉదాహరణ (Example)</th>
+              <th style="padding:10px 12px; color:#10b981;">ఫలితం (Result)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700;"><code>+</code></td>
+              <td style="padding:10px 12px;">కూడిక (Addition)</td>
+              <td style="padding:10px 12px;"><code>10 + 5</code></td>
+              <td style="padding:10px 12px;"><code>15</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700;"><code>-</code></td>
+              <td style="padding:10px 12px;">తీసివేత (Subtraction)</td>
+              <td style="padding:10px 12px;"><code>10 - 5</code></td>
+              <td style="padding:10px 12px;"><code>5</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700;"><code>*</code></td>
+              <td style="padding:10px 12px;">గుణకారం (Multiplication)</td>
+              <td style="padding:10px 12px;"><code>10 * 5</code></td>
+              <td style="padding:10px 12px;"><code>50</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700;"><code>/</code></td>
+              <td style="padding:10px 12px;">భాగహారం (Division)</td>
+              <td style="padding:10px 12px;"><code>10 / 4</code></td>
+              <td style="padding:10px 12px; color:#ef4444; font-weight:700;"><code>2</code> (2.5 కాదు! Truncated)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px; font-weight:700;"><code>%</code></td>
+              <td style="padding:10px 12px;">శేషం (Modulus / Remainder)</td>
+              <td style="padding:10px 12px;"><code>10 % 4</code></td>
+              <td style="padding:10px 12px; color:#10b981; font-weight:700;"><code>2</code> (మిగిలిన శేషం)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px; margin:20px 0;">
+        <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:15px;">⚠️ The Integer Division Trap (పూర్ణాంక భాగహార ప్రమాదం)</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          C++ లో రెండు పూర్ణాంకాలను (Integers) భాగిస్తే, ఫలితం కూడా ఎల్లప్పుడూ <strong>పూర్ణాంకమే</strong> అవుతుంది. దశాంశ భాగాన్ని (Decimals) కంపైలర్ పూర్తిగా రద్దు చేసి పారేస్తుంది (Truncation towards zero).<br>
+          కచ్చితమైన <code>2.5</code> కావాలంటే, కనీసం ఒక్క ఆపరాండ్‌నైనా ఫ్లోటింగ్ పాయింట్‌గా మార్చాలి: <code>10.0 / 4</code> లేదా <code>static_cast&lt;double&gt;(10) / 4</code>!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ఇంక్రిమెంట్ & డిక్రిమెంట్: Prefix (++i) vs Postfix (i++) మైక్రోస్కోపిక్ మెమరీ తేడా</h2>
+      <p>
+        ఒక వేరియబుల్ విలువను 1 పెంచడానికి <code>++</code> మరియు 1 తగ్గించడానికి <code>--</code> వాడతాము. అయితే వీటిని వేరియబుల్ ముందు రాస్తే <strong>Prefix</strong> అంటారు, వెనుక రాస్తే <strong>Postfix</strong> అంటారు.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:18px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">⚡ Prefix (++i) — "First Increment, Then Use"</h4>
+          <p style="font-size:13.5px; color:var(--text2); margin:0; line-height:1.6;">
+            ముందుగా మెమరీలోని విలువను 1 పెంచుతుంది. ఆ తర్వాత మారిన కొత్త విలువను ఎక్స్‌ప్రెషన్‌లో ఉపయోగిస్తుంది. ఇందులో ఎటువంటి తాత్కాలిక వేరియబుల్ సృష్టించబడదు, కాబట్టి ఇది <strong>అత్యంత వేగవంతమైనది!</strong>
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px;">
+          <h4 style="color:#f59e0b; margin:0 0 8px 0; font-size:15px;">🐢 Postfix (i++) — "First Use, Then Increment"</h4>
+          <p style="font-size:13.5px; color:var(--text2); margin:0; line-height:1.6;">
+            పాత విలువను ఒక తాత్కాలిక కాపీ (Temporary Object) లో దాచిపెట్టి, ఆ పాత విలువను ఎక్స్‌ప్రెషన్‌కు ఇస్తుంది. ఆ తర్వాత అసలు వేరియబుల్‌ను 1 పెంచుతుంది. క్లాసెస్ మరియు STL ఇటరేటర్లలో ఇది అనవసరమైన మెమరీ కాపీని సృష్టిస్తుంది.
+          </p>
+        </div>
+      </div>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Prefix vs Postfix Memory Demonstration</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int x = 5;
+    int y = 5;
+
+    // 1. Prefix: ముందు 1 పెరుగుతుంది (x=6), ఆపై a లోకి 6 వెళ్తుంది
+    int a = ++x;
+
+    // 2. Postfix: ముందు పాత విలువ (5) b లోకి వెళ్తుంది, ఆపై y 6 అవుతుంది
+    int b = y++;
+
+    std::cout &lt;&lt; "Prefix  -&gt; x: " &lt;&lt; x &lt;&lt; " | a: " &lt;&lt; a &lt;&lt; " (రెండు 6 అయ్యాయి)\\n";
+    std::cout &lt;&lt; "Postfix -&gt; y: " &lt;&lt; y &lt;&lt; " | b: " &lt;&lt; b &lt;&lt; " (b పాత విలువ 5 తీసుకుంది)\\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> అసైన్‌మెంట్ & కాంపౌండ్ అసైన్‌మెంట్ ఆపరేటర్లు</h2>
+      <p>
+        ఒక వేరియబుల్‌కు విలువను కేటాయించడానికి <code>=</code> (Simple Assignment) వాడతాము. అయితే కోడ్‌ను కుదించడానికి మరియు CPU వేగాన్ని పెంచడానికి C++ <strong>Compound Assignment Operators</strong> ను అందిస్తుంది:
+      </p>
+      <ul>
+        <li><code>x += 5;</code> అంటే <code>x = x + 5;</code> కు సమానం.</li>
+        <li><code>x -= 3;</code> అంటే <code>x = x - 3;</code> కు సమానం.</li>
+        <li><code>x *= 2;</code> అంటే <code>x = x * 2;</code> కు సమానం.</li>
+        <li><code>x /= 4;</code> అంటే <code>x = x / 4;</code> కు సమానం.</li>
+        <li><code>x %= 2;</code> అంటే <code>x = x % 2;</code> కు సమానం.</li>
+      </ul>
+      <p style="font-size:13px; color:var(--text3);">
+        గమనిక: కాంపౌండ్ ఆపరేటర్లలో ఎడమవైపు వేరియబుల్ మెమరీ అడ్రస్ కేవలం ఒకే ఒక్కసారి మాత్రమే ఎవాల్యుయేట్ అవుతుంది, కాబట్టి ఇది చాలా వేగవంతమైనది.
+      </p>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> రిలేషనల్ & కంపారిజన్ ఆపరేటర్లు</h2>
+      <p>
+        రెండు విలువల మధ్య సంబంధాన్ని పోల్చడానికి రిలేషనల్ ఆపరేటర్లను ఉపయోగిస్తాము. ఇవి ఎల్లప్పుడూ బూలియన్ ఫలితాన్ని (<code>true</code> లేదా <code>false</code>) ఇస్తాయి:
+      </p>
+      <ul>
+        <li><code>==</code> (Equal to): రెండు విలువలు సమానమా? (ఉదా: <code>5 == 5</code> yields <code>true</code>). ⚠️ గమనిక: సింగిల్ <code>=</code> అసైన్‌మెంట్, డబుల్ <code>==</code> కంపారిజన్!</li>
+        <li><code>!=</code> (Not Equal to): రెండు విలువలు అసమానమా? (ఉదా: <code>5 != 3</code> yields <code>true</code>).</li>
+        <li><code>&gt;</code> (Greater than), <code>&lt;</code> (Less than): పెద్దదా లేదా చిన్నదా?</li>
+        <li><code>&gt;=</code>, <code>&lt;=</code> (Greater than or Equal to / Less than or Equal to).</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> C++20 Three-Way Comparison: స్పేస్‌షిప్ ఆపరేటర్ (&lt;=&gt;)</h2>
+      <p>
+        Modern C++20 లో ప్రవేశపెట్టబడిన అత్యంత విప్లవాత్మకమైన ఆపరేటర్ <strong>Three-Way Comparison Operator (<code>&lt;=&gt;</code>)</strong>. దీని ఆకారం ఒక అంతరిక్ష నౌకలా ఉండటం వల్ల దీనిని ముద్దుగా <strong>"The Spaceship Operator"</strong> అంటారు!
+      </p>
+      <p>
+        గతంలో రెండు ఆబ్జెక్టులను పోల్చడానికి మనం 6 వేర్వేరు ఆపరేటర్లను (<code>==, !=, &lt;, &gt;, &lt;=, &gt;=</code>) ఓవర్‌లోడ్ చేయాల్సి వచ్చేది. కానీ C++20 లో కేవలం ఒక్క <code>&lt;=&gt;</code> రాస్తే చాలు, కంపైలర్ మిగిలిన 6 ఆపరేటర్లను ఆటోమేటిక్‌గా సిద్ధం చేస్తుంది!
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: C++20 Spaceship Operator in Action</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Modern C++20</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;compare&gt; // std::strong_ordering కోసం
+
+int main() {
+    int a = 10;
+    int b = 20;
+
+    auto result = (a &lt;=&gt; b);
+
+    if (result &lt; 0) {
+        std::cout &lt;&lt; "a అనేది b కంటే చిన్నది (a &lt; b)\\n";
+    } else if (result &gt; 0) {
+        std::cout &lt;&lt; "a అనేది b కంటే పెద్దది (a &gt; b)\\n";
+    } else {
+        std::cout &lt;&lt; "రెండూ సమానం (a == b)\\n";
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> లాజికల్ ఆపరేటర్లు & షార్ట్-సర్క్యూట్ ఎవాల్యుయేషన్ (Short-Circuit)</h2>
+      <p>
+        ఒకటి కంటే ఎక్కువ కండిషన్లను కలపడానికి లాజికల్ ఆపరేటర్లు ఉపయోగపడతాయి:
+      </p>
+      <ul>
+        <li><code>&amp;&amp;</code> (Logical AND): అన్ని కండిషన్లు <code>true</code> అయితేనే మొత్తం ఫలితం <code>true</code>.</li>
+        <li><code>||</code> (Logical OR): కనీసం ఒక్క కండిషన్ <code>true</code> అయినా మొత్తం ఫలితం <code>true</code>.</li>
+        <li><code>!</code> (Logical NOT): ఫలితాన్ని తలక్రిందులు చేస్తుంది (<code>true</code> ని <code>false</code> గా, <code>false</code> ని <code>true</code> గా).</li>
+      </ul>
+
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px 20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">⚡ The Power of Short-Circuit Evaluation</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          C++ కంపైలర్ లాజిక్ ఎవాల్యుయేట్ చేసేటప్పుడు సమయాన్ని ఆదా చేయడానికి ఒక తెలివైన టెక్నిక్ వాడుతుంది:<br>
+          - <code>expr1 &amp;&amp; expr2</code> లో, <code>expr1</code> గనుక <code>false</code> అయితే, <code>expr2</code> ను అసలు ముట్టుకోదు! ఎందుకంటే మొదటిది ఫాల్స్ అయితే మొత్తం ఫాల్స్ అని తెలుసు.<br>
+          - <code>expr1 || expr2</code> లో, <code>expr1</code> గనుక <code>true</code> అయితే, <code>expr2</code> ను చెక్ చేయదు!<br>
+          <strong>లైఫ్-సేవింగ్ ఉపయోగం:</strong> <code>if (ptr != nullptr &amp;&amp; *ptr &gt; 0)</code> — ఇక్కడ పాయింటర్ నల్ అయితే రెండవ కండిషన్‌కు వెళ్లదు, దీనివల్ల ప్రోగ్రామ్ నల్-పాయింటర్ క్రాష్ అవ్వకుండా సురక్షితంగా రక్షించబడుతుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> బిట్‌వైజ్ ఆపరేటర్లు: బైనరీ లెవల్ డేటా మానిప్యులేషన్ & బిట్ మాస్కింగ్</h2>
+      <p>
+        ఆటోమోటివ్, ఎంబెడెడ్ సిస్టమ్స్ మరియు గేమ్ ఇంజిన్లలో ప్రతి ఒక్క బిట్ విలువైనది. C++ హార్డ్‌వేర్ బిట్స్‌ను నేరుగా మార్చడానికి 6 బిట్‌వైజ్ ఆపరేటర్లను అందిస్తుంది:
+      </p>
+      <ul>
+        <li><code>&amp;</code> (Bitwise AND): రెండు బిట్లు 1 అయితేనే 1.</li>
+        <li><code>|</code> (Bitwise OR): కనీసం ఒక బిట్ 1 అయినా 1.</li>
+        <li><code>^</code> (Bitwise XOR): రెండు బిట్లు వేర్వేరుగా ఉంటేనే 1 (1^0=1, 1^1=0). క్రిప్టోగ్రఫీలో విస్తృతంగా వాడతారు.</li>
+        <li><code>~</code> (Bitwise NOT / One's Complement): బిట్లను తిరగేస్తుంది (0 ని 1 గా, 1 ని 0 గా).</li>
+        <li><code>&lt;&lt;</code> (Left Shift): బిట్లను ఎడమవైపు జరుపుతుంది. <code>x &lt;&lt; 1</code> అంటే <code>x * 2</code> (రెట్టింపు వేగవంతమైన గుణకారం!).</li>
+        <li><code>&gt;&gt;</code> (Right Shift): బిట్లను కుడివైపు జరుపుతుంది. <code>x &gt;&gt; 1</code> అంటే <code>x / 2</code>.</li>
+      </ul>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Bitwise Operations & Fast Shifts</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;bitset&gt; // 8-బిట్ బైనరీ రిప్రజెంటేషన్ కోసం
+
+int main() {
+    unsigned char a = 5;  // బైనరీ: 00000101
+    unsigned char b = 3;  // బైనరీ: 00000011
+
+    std::cout &lt;&lt; "a (5)  : " &lt;&lt; std::bitset&lt;8&gt;(a) &lt;&lt; '\\n';
+    std::cout &lt;&lt; "b (3)  : " &lt;&lt; std::bitset&lt;8&gt;(b) &lt;&lt; '\\n';
+    std::cout &lt;&lt; "a &amp; b  : " &lt;&lt; std::bitset&lt;8&gt;(a &amp; b) &lt;&lt; " (AND: 1)\\n";
+    std::cout &lt;&lt; "a | b  : " &lt;&lt; std::bitset&lt;8&gt;(a | b) &lt;&lt; " (OR: 7)\\n";
+    std::cout &lt;&lt; "a ^ b  : " &lt;&lt; std::bitset&lt;8&gt;(a ^ b) &lt;&lt; " (XOR: 6)\\n";
+    std::cout &lt;&lt; "a &lt;&lt; 1 : " &lt;&lt; (a &lt;&lt; 1) &lt;&lt; " (Left Shift: 5 * 2 = 10)\\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> టెర్నరీ కండిషనల్ ఆపరేటర్ (? :)</h2>
+      <p>
+        చిన్న చిన్న <code>if-else</code> నిబంధనలను ఒకే ఒక్క లైన్‌లో అందంగా రాయడానికి <strong>Ternary Operator (<code>? :</code>)</strong> ఉపయోగపడుతుంది:
+      </p>
+      <pre style="background:var(--bg3); padding:10px 14px; border-radius:6px; font-size:13px; color:var(--text);"><code>int marks = 85;
+std::string result = (marks &gt;= 40) ? "పాస్ (Pass)" : "ఫెయిల్ (Fail)";</code></pre>
+      <p style="font-size:13.5px; color:var(--text2);">
+        C++ లో టెర్నరీ ఆపరేటర్ ఒక ప్రత్యేకతను కలిగి ఉంది: ఇది ఒక ఎక్స్‌ప్రెషన్ కాబట్టి దీనిని నేరుగా <code>std::cout</code> లోపలే లేదా వేరియబుల్ ఇనిషియలైజేషన్ సమయంలో వాడవచ్చు!
+      </p>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> ఆపరేటర్ ప్రిసిడెన్స్ & అసోసియేటివిటీ (Precedence & Associativity)</h2>
+      <p>
+        ఒక సంక్లిష్టమైన ఎక్స్‌ప్రెషన్‌లో అనేక ఆపరేటర్లు ఉన్నప్పుడు (ఉదా: <code>x = 5 + 3 * 2;</code>), కంపైలర్ ఏ పనిని ముందు చేయాలి? దీనిని నిర్ణయించే నియమాలనే <strong>Operator Precedence (ప్రాధాన్యత)</strong> అంటారు.
+      </p>
+      <p>
+        గణితంలో BODMAS లాగానే, C++ లో గుణకారం (<code>*</code>) మరియు భాగహారానికి (<code>/</code>), కూడిక (<code>+</code>) కంటే ఎక్కువ ప్రాధాన్యత ఉంటుంది. అందుకే <code>5 + 3 * 2</code> లో ముందుగా <code>3 * 2 = 6</code> జరిగి, ఆపై <code>5 + 6 = 11</code> అవుతుంది.
+      </p>
+
+      <div style="overflow-x:auto; margin:18px 0;">
+        <table class="tbl" style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
+              <th style="padding:8px 12px; color:#10b981;">ప్రాధాన్యత (Rank)</th>
+              <th style="padding:8px 12px; color:var(--text);">ఆపరేటర్లు</th>
+              <th style="padding:8px 12px; color:var(--text);">అసోసియేటివిటీ (దిశ)</th>
+              <th style="padding:8px 12px; color:#10b981;">వివరణ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">1 (Highest)</td>
+              <td style="padding:8px 12px;"><code>::</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Scope Resolution</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">2</td>
+              <td style="padding:8px 12px;"><code>()</code>, <code>[]</code>, <code>.</code>, <code>-&gt;</code>, <code>x++</code>, <code>x--</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Function call, Array subscript, Postfix</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">3</td>
+              <td style="padding:8px 12px;"><code>++x</code>, <code>--x</code>, <code>+</code>, <code>-</code>, <code>!</code>, <code>~</code>, <code>sizeof</code></td>
+              <td style="padding:8px 12px;">Right to Left</td>
+              <td style="padding:8px 12px;">Prefix, Unary plus/minus, Logical NOT</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">4</td>
+              <td style="padding:8px 12px;"><code>*</code>, <code>/</code>, <code>%</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Multiplicative</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">5</td>
+              <td style="padding:8px 12px;"><code>+</code>, <code>-</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Additive</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">6</td>
+              <td style="padding:8px 12px;"><code>&lt;&lt;</code>, <code>&gt;&gt;</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Bitwise Shift / Stream I/O</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">7</td>
+              <td style="padding:8px 12px;"><code>&lt;=&gt;</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Three-Way Comparison (C++20)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">8</td>
+              <td style="padding:8px 12px;"><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Relational comparison</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">9</td>
+              <td style="padding:8px 12px;"><code>==</code>, <code>!=</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Equality</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">10</td>
+              <td style="padding:8px 12px;"><code>&amp;</code>, <code>^</code>, <code>|</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Bitwise AND, XOR, OR</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">11</td>
+              <td style="padding:8px 12px;"><code>&amp;&amp;</code>, <code>||</code></td>
+              <td style="padding:8px 12px;">Left to Right</td>
+              <td style="padding:8px 12px;">Logical AND, Logical OR</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:700;">12</td>
+              <td style="padding:8px 12px;"><code>? :</code></td>
+              <td style="padding:8px 12px;">Right to Left</td>
+              <td style="padding:8px 12px;">Ternary Conditional</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px; font-weight:700;">13 (Lowest)</td>
+              <td style="padding:8px 12px;"><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, etc.</td>
+              <td style="padding:8px 12px;">Right to Left</td>
+              <td style="padding:8px 12px;">Assignment operators</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="concept-box" style="background:var(--bg2); border-left:4px solid #10b981; padding:14px 18px; border-radius:8px; margin:16px 0;">
+        <h4 style="color:#10b981; margin:0 0 6px 0; font-size:15px;">💡 సీనియర్ సాఫ్ట్‌వేర్ ఇంజనీర్ సలహా:</h4>
+        <p style="margin:0; font-size:13.5px; color:var(--text); line-height:1.6;">
+          ఆపరేటర్ ప్రిసిడెన్స్ టేబుల్‌ను బట్టీ కొట్టకండి! మీ ఉద్దేశం స్పష్టంగా ఉండటానికి ఎల్లప్పుడూ <strong>కుండలీకరణాలు <code>()</code> (Parentheses)</strong> వాడండి. కుండలీకరణాలకు ప్రపంచంలో అత్యధిక ప్రాధాన్యత ఉంటుంది, పైగా కోడ్ చదివే ఇతర డెవలపర్లకు ఎలాంటి గందరగోళం ఉండదు.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> టైప్ ప్రమోషన్ & static_cast&lt;T&gt;()</h2>
+      <p>
+        వేర్వేరు డేటా టైపుల మధ్య ఆపరేషన్లు జరిగినప్పుడు, సమాచారం కోల్పోకుండా ఉండటానికి C++ చిన్న డేటా టైప్‌ను స్వయంచాలకంగా పెద్ద డేటా టైప్‌గా మారుస్తుంది. దీనిని <strong>Integral Promotion / Usual Arithmetic Conversions</strong> అంటారు.
+      </p>
+      <ul>
+        <li><code>int + double</code> కలిపితే ఫలితం <code>double</code> అవుతుంది.</li>
+        <li><code>short + short</code> కలిపితే CPU రిజిస్టర్లలో వేగంగా జరగడానికి కంపైలర్ రెండింటినీ <code>int</code> గా ప్రమోట్ చేస్తుంది.</li>
+      </ul>
+      <p>
+        కానీ బలవంతంగా టైప్ మార్చాల్సి వచ్చినప్పుడు ఎప్పుడూ పాత C-Style కాస్టింగ్ వాడకుండా Modern <strong><code>static_cast&lt;T&gt;()</code></strong> మాత్రమే వాడాలి.
+      </p>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> సాధారణ బిగినర్ తప్పులు, Undefined Behavior & డివిజన్ బై జీరో</h2>
+      <div style="display:flex; flex-direction:column; gap:14px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Trap 1: = మరియు == మధ్య గందరగోళం</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            కండిషన్‌లో <code>if (x == 5)</code> కి బదులుగా పొరపాటున <code>if (x = 5)</code> అని సింగిల్ ఈక్వల్ రాస్తే, <code>x</code> లోకి 5 అసైన్ అయ్యి అది ఎల్లప్పుడూ <code>true</code> అవుతుంది! దీనిని నివారించడానికి ఆధునిక కంపైలర్ వార్నింగ్స్ (<code>-Wall</code>) ఆన్ చేయండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Trap 2: భయంకరమైన అన్‌డిఫైన్డ్ బిహేవియర్ (i = i++ + ++i;)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            ఒకే ఎక్స్‌ప్రెషన్‌లో ఒకే వేరియబుల్‌ను ఒకటి కంటే ఎక్కువసార్లు ఇంక్రిమెంట్ చేయడం C++ స్టాండర్డ్ ప్రకారం <strong>Undefined Behavior (UB)</strong>. దీనికి నిర్దిష్ట ఫలితం ఉండదు; ఒక కంపైలర్‌లో 12 రావచ్చు, మరొక కంపైలర్‌లో 14 రావచ్చు, లేదా యాప్ క్రాష్ అవ్వవచ్చు! ఇలాంటి కోడ్ ఎప్పుడూ రాయకండి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాక్టీస్ ప్రాజెక్ట్: "Vehicle Sensor Telemetry & Bitmask Engine"</h2>
+      <p>
+        టెస్లా లేదా టాటా ఈవీ లాంటి మోడరన్ ఎలక్ట్రిక్ కార్లలో వాహన సెన్సార్ డేటా (ఇంజిన్ ఆన్, డోర్ లాక్, సీట్‌బెల్ట్, ఎయిర్‌బ్యాగ్) నెట్‌వర్క్ బ్యాండ్‌విడ్త్ ఆదా చేయడానికి సింగిల్ బైట్ లోని బిట్స్‌గా ప్రసారం చేయబడుతుంది.
+      </p>
+      <p>
+        ఈ మొదటి ఫేజ్ గ్రాండ్ ఫినాలేలో — మనం నేర్చుకున్న అరిథ్‌మెటిక్, రిలేషనల్, టెర్నరీ, మరియు బిట్‌వైజ్ మాస్కింగ్ అన్నింటినీ ఉపయోగించి ఒక పూర్తి స్థాయి <strong>"High-Performance Vehicle Telemetry Engine"</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Complete Masterclass Practice Project: Vehicle Telemetry Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 / C++20 Complete Project</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;iomanip&gt;
+#include &lt;bitset&gt;
+
+// సెన్సార్ బిట్ మాస్క్‌లు (Bit Flags)
+constexpr unsigned char ENGINE_ON      = 1 &lt;&lt; 0; // Bit 0 (00000001) - 1
+constexpr unsigned char DOORS_LOCKED   = 1 &lt;&lt; 1; // Bit 1 (00000010) - 2
+constexpr unsigned char SEATBELT_ON    = 1 &lt;&lt; 2; // Bit 2 (00000100) - 4
+constexpr unsigned char HANDBRAKE_PULL = 1 &lt;&lt; 3; // Bit 3 (00001000) - 8
+
+int main() {
+    std::string vehicleModel = "TATA NEXON EV MAX (2026 Edition)";
+    double currentSpeedKmph = 84.50;
+    double batteryLevelPercent = 76.25;
+    int odometerKm = 14520;
+
+    // సింగిల్ బైట్ లో 4 సెన్సార్ల స్టేటస్ నిల్వ చేయడం (Bitwise OR |)
+    unsigned char carStatus = 0;
+    carStatus |= ENGINE_ON;       // ఇంజిన్ స్టార్ట్ అయింది
+    carStatus |= DOORS_LOCKED;    // డోర్స్ లాక్ అయ్యాయి
+    carStatus |= SEATBELT_ON;     // సీట్‌బెల్ట్ ధరించారు
+    // హ్యాండ్‌బ్రేక్ రిలీజ్ చేయబడింది (కాబట్టి Bit 3 ఆఫ్ లో ఉంటుంది)
+
+    // బిట్‌వైజ్ చెకింగ్ (Bitwise AND &amp;)
+    bool isEngineRunning = (carStatus &amp; ENGINE_ON) != 0;
+    bool isDoorsSecure   = (carStatus &amp; DOORS_LOCKED) != 0;
+    bool isSeatbeltBuckled = (carStatus &amp; SEATBELT_ON) != 0;
+    bool isHandbrakeEngaged = (carStatus &amp; HANDBRAKE_PULL) != 0;
+
+    // సేఫ్టీ ఎవాల్యుయేషన్ (Logical &amp;&amp; + Ternary ? :)
+    bool isDriveSafe = isEngineRunning &amp;&amp; isDoorsSecure &amp;&amp; isSeatbeltBuckled &amp;&amp; !isHandbrakeEngaged;
+    std::string safetyAlert = isDriveSafe ? "✅ అన్ని సేఫ్టీ ప్రమాణాలు సరిగ్గా ఉన్నాయి (SAFE TO CRUISE)" 
+                                          : "⚠️ ప్రమాదం! సీట్‌బెల్ట్ లేదా డోర్స్ సరిచూసుకోండి (SAFETY WARNING!)";
+
+    // అందమైన వెహికల్ టెలిమెట్రీ డ్యాష్‌బోర్డ్
+    std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);
+    std::cout &lt;&lt; "================================================================\\n";
+    std::cout &lt;&lt; "          🚗 VEHICLE TELEMETRY &amp; SENSOR DIAGNOSTICS ENGINE      \\n";
+    std::cout &lt;&lt; "================================================================\\n";
+    std::cout &lt;&lt; "వాహనం మోడల్     : " &lt;&lt; vehicleModel &lt;&lt; '\\n';
+    std::cout &lt;&lt; "ప్రస్తుత వేగం   : " &lt;&lt; currentSpeedKmph &lt;&lt; " km/h\\n";
+    std::cout &lt;&lt; "బ్యాటరీ స్థాయి  : " &lt;&lt; batteryLevelPercent &lt;&lt; " %\\n";
+    std::cout &lt;&lt; "ఓడోమీటర్ రీడింగ్: " &lt;&lt; odometerKm &lt;&lt; " km\\n";
+    std::cout &lt;&lt; "----------------------------------------------------------------\\n";
+    std::cout &lt;&lt; "సెన్సార్ రా బైట్ (Raw Byte): " &lt;&lt; std::bitset&lt;8&gt;(carStatus) &lt;&lt; " (Hex: 0x" 
+              &lt;&lt; std::hex &lt;&lt; static_cast&lt;int&gt;(carStatus) &lt;&lt; std::dec &lt;&lt; ")\\n";
+    std::cout &lt;&lt; "----------------------------------------------------------------\\n";
+    std::cout &lt;&lt; "ఇంజిన్ స్థితి     : " &lt;&lt; (isEngineRunning ? "ON (నడుస్తోంది)" : "OFF") &lt;&lt; '\\n';
+    std::cout &lt;&lt; "డోర్ల భద్రత       : " &lt;&lt; (isDoorsSecure ? "LOCKED (సురక్షితం)" : "UNLOCKED (తెరిచి ఉంది)") &lt;&lt; '\\n';
+    std::cout &lt;&lt; "సీట్‌బెల్ట్ స్థితి  : " &lt;&lt; (isSeatbeltBuckled ? "BUCKLED (ధరించారు)" : "UNBUCKLED") &lt;&lt; '\\n';
+    std::cout &lt;&lt; "హ్యాండ్‌బ్రేక్ స్థితి: " &lt;&lt; (isHandbrakeEngaged ? "ENGAGED" : "RELEASED (రిలీజ్ అయింది)") &lt;&lt; '\\n';
+    std::cout &lt;&lt; "================================================================\\n";
+    std::cout &lt;&lt; "సిస్టమ్ డయాగ్నోస్టిక్స్ ఫలితం:\\n" &lt;&lt; safetyAlert &lt;&lt; '\\n';
+    std::cout &lt;&lt; "================================================================\\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ SECTION (5 DETAILS QUESTIONS) -->
+    <section style="margin-top:40px;">
+      <h2 class="section-title"><span class="num">❓</span> ఇంటర్వ్యూ & పరీక్షల క్విజ్ (Knowledge Check)</h2>
+      
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 1: Prefix (++i) మరియు Postfix (i++) మధ్య తేడా ఏమిటి? C++ లో Prefix ఎందుకు ఫాస్ట్?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>++i</code> ముందు విలువను పెంచి, మారిన విలువను అందిస్తుంది; దీనికి ఎటువంటి తాత్కాలిక మెమరీ అవసరం లేదు. కానీ <code>i++</code> పాత విలువను ఒక తాత్కాలిక ఆబ్జెక్ట్ (Temporary copy) లో భద్రపరిచి, ఆపై అసలు విలువను పెంచుతుంది. క్లాసెస్ మరియు లూప్ ఇటరేటర్లలో <code>++i</code> వాడటం వల్ల అనవసరమైన ఆబ్జెక్ట్ కాపీయింగ్ జరగదు కాబట్టి చాలా వేగంగా పనిచేస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 2: లాజికల్ ఆపరేటర్లలో షార్ట్-సర్క్యూట్ ఎవాల్యుయేషన్ (Short-Circuit) అంటే ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>expr1 &amp;&amp; expr2</code> లో <code>expr1</code> గనుక ఫాల్స్ అయితే, మొత్తం ఎక్స్‌ప్రెషన్ ఫాల్స్ అవుతుందని ముందే తెలిసిపోతుంది కాబట్టి <code>expr2</code> ను అసలు ఎవాల్యుయేట్ చేయదు. అలాగే <code>expr1 || expr2</code> లో <code>expr1</code> ట్రూ అయితే రెండవ దాన్ని ముట్టుకోదు. ఇది మెమరీ క్రాష్‌లను ఆపడానికి మరియు ప్రాసెసింగ్ సమయాన్ని ఆదా చేయడానికి చాలా ఉపయోగపడుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 3: Modern C++20 లో వచ్చిన Spaceship Operator (&lt;=&gt;) ప్రయోజనం ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> గతంలో రెండు ఆబ్జెక్టులను పోల్చడానికి 6 వేర్వేరు ఆపరేటర్లను (==, !=, &lt;, &gt;, &lt;=, &gt;=) స్వయంగా రాయాల్సి వచ్చేది. కానీ C++20 లో ఒక్క <code>&lt;=&gt;</code> రాస్తే, కంపైలర్ మిగిలిన అన్ని కంపారిజన్ ఆపరేటర్లను స్వయంచాలకంగా సృష్టిస్తుంది (Consistent Three-Way Ordering).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 4: బిట్‌వైజ్ లెఫ్ట్ షిఫ్ట్ (&lt;&lt;) మరియు రైట్ షిఫ్ట్ (&gt;&gt;) గణితశాస్త్ర పరంగా ఏమి చేస్తాయి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> ఒక సంఖ్యను ఒక స్థానం ఎడమవైపు జరిపితే (<code>x &lt;&lt; 1</code>), అది 2 తో గుణించబడుతుంది (<code>x * 2</code>). అదే ఒక స్థానం కుడివైపు జరిపితే (<code>x &gt;&gt; 1</code>), అది 2 తో భాగించబడుతుంది (<code>x / 2</code>). CPU లో సాధారణ గుణకారాల కంటే షిఫ్ట్ ఆపరేషన్లు ఎన్నో రెట్లు వేగంగా జరుగుతాయి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 5: int a = 5; int b = 2; double c = a / b; లో c విలువ 2.5 ఎందుకు రాదు? ఎలా పరిష్కరించాలి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>a</code> మరియు <code>b</code> రెండూ పూర్ణాంకాలు కాబట్టి C++ పూర్ణాంక భాగహారం (Integer Division) చేసి దశాంశాన్ని కట్ చేసి <code>2</code> మాత్రమే ఇస్తుంది. ఆ తర్వాతే అది <code>c</code> లోకి వెళ్తుంది. కచ్చితమైన 2.5 రావాలంటే <code>static_cast&lt;double&gt;(a) / b</code> అని స్పష్టంగా టైప్ కాస్ట్ చేయాలి.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-cpp/${currentLesson.prev.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: ${currentLesson.prev.title}
+      </a>
+      <a href="/blog-cpp/${currentLesson.next.file}" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: ${currentLesson.next.title} →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13 / Clang 17 (C++20 Standard) · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`// ================================================================
+//          🚗 VEHICLE TELEMETRY & SENSOR DIAGNOSTICS ENGINE
+// ================================================================
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <bitset>
+
+constexpr unsigned char ENGINE_ON      = 1 << 0;
+constexpr unsigned char DOORS_LOCKED   = 1 << 1;
+constexpr unsigned char SEATBELT_ON    = 1 << 2;
+constexpr unsigned char HANDBRAKE_PULL = 1 << 3;
+
+int main() {
+    std::string vehicleModel = "TATA NEXON EV MAX (2026 Edition)";
+    double currentSpeedKmph = 84.50;
+    double batteryLevelPercent = 76.25;
+    int odometerKm = 14520;
+
+    unsigned char carStatus = 0;
+    carStatus |= ENGINE_ON;
+    carStatus |= DOORS_LOCKED;
+    carStatus |= SEATBELT_ON;
+
+    bool isEngineRunning = (carStatus & ENGINE_ON) != 0;
+    bool isDoorsSecure   = (carStatus & DOORS_LOCKED) != 0;
+    bool isSeatbeltBuckled = (carStatus & SEATBELT_ON) != 0;
+    bool isHandbrakeEngaged = (carStatus & HANDBRAKE_PULL) != 0;
+
+    bool isDriveSafe = isEngineRunning && isDoorsSecure && isSeatbeltBuckled && !isHandbrakeEngaged;
+    std::string safetyAlert = isDriveSafe ? "✅ అన్ని సేఫ్టీ ప్రమాణాలు సరిగ్గా ఉన్నాయి (SAFE TO CRUISE)" 
+                                          : "⚠️ ప్రమాదం! సీట్‌బెల్ట్ లేదా డోర్స్ సరిచూసుకోండి (SAFETY WARNING!)";
+
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "================================================================\\\\n";
+    std::cout << "          🚗 VEHICLE TELEMETRY & SENSOR DIAGNOSTICS ENGINE      \\\\n";
+    std::cout << "================================================================\\\\n";
+    std::cout << "వాహనం మోడల్     : " << vehicleModel << '\\\\n';
+    std::cout << "ప్రస్తుత వేగం   : " << currentSpeedKmph << " km/h\\\\n";
+    std::cout << "బ్యాటరీ స్థాయి  : " << batteryLevelPercent << " %\\\\n";
+    std::cout << "ఓడోమీటర్ రీడింగ్: " << odometerKm << " km\\\\n";
+    std::cout << "----------------------------------------------------------------\\\\n";
+    std::cout << "సెన్సార్ రా బైట్ (Raw Byte): " << std::bitset<8>(carStatus) << " (Hex: 0x" 
+              << std::hex << static_cast<int>(carStatus) << std::dec << ")\\\\n";
+    std::cout << "----------------------------------------------------------------\\\\n";
+    std::cout << "ఇంజిన్ స్థితి     : " << (isEngineRunning ? "ON (నడుస్తోంది)" : "OFF") << '\\\\n';
+    std::cout << "డోర్ల భద్రత       : " << (isDoorsSecure ? "LOCKED (సురక్షితం)" : "UNLOCKED (తెరిచి ఉంది)") << '\\\\n';
+    std::cout << "సీట్‌బెల్ట్ స్థితి  : " << (isSeatbeltBuckled ? "BUCKLED (ధరించారు)" : "UNBUCKLED") << '\\\\n';
+    std::cout << "హ్యాండ్‌బ్రేక్ స్థితి: " << (isHandbrakeEngaged ? "ENGAGED" : "RELEASED (రిలీజ్ అయింది)") << '\\\\n';
+    std::cout << "================================================================\\\\n";
+    std::cout << "సిస్టమ్ డయాగ్నోస్టిక్స్ ఫలితం:\\\\n" << safetyAlert << '\\\\n';
+    std::cout << "================================================================\\\\n";
+
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter04Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 04!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter04Content.length, 'characters');
