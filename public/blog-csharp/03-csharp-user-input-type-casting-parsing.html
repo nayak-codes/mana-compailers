@@ -1,455 +1,1054 @@
 <!DOCTYPE html>
 <html class="light-theme" lang="te">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse — Modern C# Tutorial | Our Compiler</title>
-  <meta name="description" content="యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse సమగ్ర తెలుగు గైడ్: Console.ReadLine() · Implicit vs Explicit Casting · int.Parse() vs int.TryParse() ఎర్రర్-ఫ్రీ పార్సింగ్ · Convert క్లాస్." />
-  <meta name="keywords" content="csharp tutorial in telugu, learn c# language, యూజర్ ఇన్‌పుట్ (console.readline), టైప్ కాస్టింగ్ & parse / tryparse, dotnet 8, c# 12, our compiler" />
-  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
-  <link rel="icon" type="image/png" href="/logo.png" />
-  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/03-csharp-user-input-type-casting-parsing.html" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/blog-style.css" />
-  <link rel="stylesheet" href="/blog-csharp/style.css" />
-  <link rel="stylesheet" href="/site-nav.css" />
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Schema.org TechArticle Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse (C# Programming in Telugu)",
-    "description": "Console.ReadLine() · Implicit vs Explicit Casting · int.Parse() vs int.TryParse() ఎర్రర్-ఫ్రీ పార్సింగ్ · Convert క్లాస్",
-    "articleSection": "Phase 01: C# ఫండమెంటల్స్ & బేసిక్స్",
-    "inLanguage": "te",
-    "author": {
-      "@type": "Organization",
-      "name": "Our Compiler Technical Editorial Team",
-      "url": "https://www.ourcompiler.com"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Our Compiler",
-      "url": "https://www.ourcompiler.com"
-    },
-    "datePublished": "2026-02-01",
-    "dateModified": "2026-10-30"
-  }
-  </script>
+  <!-- SEO Title & Meta Tags -->
+  <title>C# యూజర్ ఇన్‌పుట్, టైప్ కాస్టింగ్ & Parse / TryParse — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో Console.ReadLine(), Console.ReadKey(), ఇంప్లిసిట్ & ఎక్స్‌ప్లిసిట్ కాస్టింగ్, Convert క్లాస్, checked/unchecked కీవర్డ్స్ మరియు డిఫెన్సివ్ TryParse() మెథడ్స్ పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# user input telugu, c# parse tryparse telugu, c# type casting telugu, console readline telugu, c# convert toint32, modern csharp 12">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
 
-  <!-- Interactive Scripts: Accordion & Default Light Theme -->
-  <script>
-    function toggleAccordion(btn) {
-      const content = btn.nextElementSibling;
-      const isOpen = content.classList.contains('open');
-      if (isOpen) {
-        content.classList.remove('open');
-        btn.classList.remove('active');
-      } else {
-        content.classList.add('open');
-        btn.classList.add('active');
-      }
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# యూజర్ ఇన్‌పుట్, టైప్ కాస్టింగ్ & Parse / TryParse — C# Masterclass">
+  <meta property="og:description" content="Console.ReadLine() నుండి robust TryParse() వరకు — C# లో యూజర్ ఇన్‌పుట్ నిర్వహణ మరియు టైప్ కన్వర్షన్స్‌పై పూర్తి తెలుగు మాస్టర్‌క్లాస్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/03-csharp-user-input-type-casting-parsing.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
     }
-
-    (function() {
-      const currentTheme = localStorage.getItem('tutorial_theme_v2');
-      if (currentTheme === 'dark') {
-        document.documentElement.classList.remove('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
-        });
-      } else {
-        document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
-        });
-      }
-    })();
-  </script>
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
 </head>
 <body class="lang-csharp light-theme">
 
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-csharp.html" class="active">C#</a>
-</nav>
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
 
-<div class="layout">
+<div class="page-layout">
 
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+  <!-- LEFT SIDEBAR ACCORDION -->
   <aside class="sidebar">
     <div class="sidebar-heading">C# Master Course (తెలుగు)</div>
-    <a href="/blog-csharp.html" class="sidebar-home-link ">
-      ⚡ C# Course HOME (ఇండెక్స్)
-    </a>
+    <a href="/blog-csharp.html" class="sidebar-home-link">⚡ C# Course HOME (ఇండెక్స్)</a>
+
     <div class="sidebar-accordion">
-      <div class="accordion-item">
-        <button class="accordion-header active" onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">⚡</span>
-            <span>Phase 01<br><small style="font-size:11px; font-weight:600; opacity:0.85;">C# ఫండమెంటల్స్ & బేసిక్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content open">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/01-csharp-introduction-and-setup.html" class="lesson-link ">
-                <span class="lesson-num">1.</span>
-                <span class="lesson-name">C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" class="lesson-link ">
-                <span class="lesson-num">2.</span>
-                <span class="lesson-name">వేరియబుల్స్, CTS డేటా టైప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item active">
-              <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="lesson-link active">
-                <span class="lesson-num">3.</span>
-                <span class="lesson-name">యూజర్ ఇన్‌పుట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/04-csharp-operators-and-expressions.html" class="lesson-link ">
-                <span class="lesson-num">4.</span>
-                <span class="lesson-name">ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 01 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C# ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🔀</span>
-            <span>Phase 02<br><small style="font-size:11px; font-weight:600; opacity:0.85;">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" class="lesson-link ">
-                <span class="lesson-num">5.</span>
-                <span class="lesson-name">కండిషనల్ స్టేట్‌మెంట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" class="lesson-link ">
-                <span class="lesson-num">6.</span>
-                <span class="lesson-name">switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" class="lesson-link ">
-                <span class="lesson-num">7.</span>
-                <span class="lesson-name">లూప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" class="lesson-link ">
-                <span class="lesson-num">8.</span>
-                <span class="lesson-name">break, continue & నెస్టెడ్ లూప్స్</span>
-              </a>
-            </li>
-          </ul>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-csharp/01-csharp-introduction-and-setup.html">1. C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</a>
+        <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html">2. వేరియబుల్స్, CTS డేటా టైప్స్ (Value vs Reference) & var</a>
+        <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="active">3. యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse</a>
+        <a href="/blog-csharp/04-csharp-operators-and-expressions.html">4. ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.)</a>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">📦</span>
-            <span>Phase 03<br><small style="font-size:11px; font-weight:600; opacity:0.85;">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" class="lesson-link ">
-                <span class="lesson-num">9.</span>
-                <span class="lesson-name">మెథడ్స్, పారామీటర్ మోడిఫైయర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="lesson-link ">
-                <span class="lesson-num">10.</span>
-                <span class="lesson-name">స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="lesson-link ">
-                <span class="lesson-num">11.</span>
-                <span class="lesson-name">అర్రేలు</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" class="lesson-link ">
-                <span class="lesson-num">12.</span>
-                <span class="lesson-name">జెనెరిక్ కలెక్షన్స్</span>
-              </a>
-            </li>
-          </ul>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</span>
+          </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🏛️</span>
-            <span>Phase 04<br><small style="font-size:11px; font-weight:600; opacity:0.85;">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" class="lesson-link ">
-                <span class="lesson-num">13.</span>
-                <span class="lesson-name">క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" class="lesson-link ">
-                <span class="lesson-num">14.</span>
-                <span class="lesson-name">ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" class="lesson-link ">
-                <span class="lesson-num">15.</span>
-                <span class="lesson-name">ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" class="lesson-link ">
-                <span class="lesson-num">16.</span>
-                <span class="lesson-name">ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</span>
-              </a>
-            </li>
-          </ul>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html">5. కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching</a>
+        <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html">6. switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</a>
+        <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html">7. లూప్స్ (for, while, do-while & foreach)</a>
+        <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html">8. break, continue & నెస్టెడ్ లూప్స్ (2D గ్రిడ్స్)</a>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🚀</span>
-            <span>Phase 05<br><small style="font-size:11px; font-weight:600; opacity:0.85;">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" class="lesson-link ">
-                <span class="lesson-num">17.</span>
-                <span class="lesson-name">ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" class="lesson-link ">
-                <span class="lesson-num">18.</span>
-                <span class="lesson-name">డెలిగేట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" class="lesson-link ">
-                <span class="lesson-num">19.</span>
-                <span class="lesson-name">LINQ</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" class="lesson-link ">
-                <span class="lesson-num">20.</span>
-                <span class="lesson-name">కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
-              </a>
-            </li>
-          </ul>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html">9. మెథడ్స్, పారామీటర్ మోడిఫైయర్స్ (ref, out, in, params)</a>
+        <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html">10. స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</a>
+        <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html">11. అర్రేలు (1D, 2D Rectangular & Jagged Arrays)</a>
+        <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html">12. జెనెరిక్ కలెక్షన్స్ (List<T>, Dictionary<TKey, TValue>, HashSet<T>)</a>
       </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్ (Primary Constructors)</a>
+        <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html">14. ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</a>
+        <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html">15. ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed)</a>
+        <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html">16. ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html">17. ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)</a>
+        <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html">18. డెలిగేట్స్ (Delegates), ఈవెంట్స్ & లాంబ్డా ఎక్స్‌ప్రెషన్స్ (=>)</a>
+        <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html">19. LINQ (Language Integrated Query) — డేటా ప్రాసెసింగ్ పవర్‌హౌస్</a>
+        <a href="/blog-csharp/20-csharp-mini-project-employee-management.html">20. కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ (LINQ & JSON)</a>
+      </div>
+
     </div>
-    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
-      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
-      <a href="/online-csharp-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
-        ▶ Try C# Online Compiler
-      </a>
-      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
-        📁 All Tutorials Index
-      </a>
-    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
   </aside>
-  <!-- MAIN LESSON CONTENT -->
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
   <main class="content">
+
+    <!-- BREADCRUMBS -->
     <div class="breadcrumb">
-      <a href="/">Home</a><span class="sep">›</span>
-      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
-      <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 3: యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse</span>
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 03: యూజర్ ఇన్‌పుట్, టైప్ కాస్టింగ్ &amp; Parse / TryParse</span>
     </div>
 
-    <h1 class="page-title">యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse</h1>
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ &amp; Parse / TryParse</h1>
 
-    <div class="page-meta">
-      <span class="badge">⚡ Modern C# 12 & .NET 8</span>
-      <span class="badge">🟢 Chapter 3 of 20</span>
-      <span class="badge">📂 Phase 01: C# ఫండమెంటల్స్ & బేసిక్స్</span>
-      <span class="badge">📅 2026 Edition</span>
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 03 of 20</span>
+      <span class="meta-pill">📁 Phase 01: C# ఫండమెంటల్స్ &amp; బేసిక్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
-    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>Console.ReadLine() · Implicit vs Explicit Casting · int.Parse() vs int.TryParse() ఎర్రర్-ఫ్రీ పార్సింగ్ · Convert క్లాస్</span>
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Console.ReadLine() · Nullable Reference Types (string?) · Console.ReadKey() &amp; Passwords · Implicit Widening Casting · Explicit Narrowing Casting &amp; Data Truncation · checked &amp; unchecked Overflow Safety · System.Convert Class · Banker's Rounding vs Truncation · int.Parse() Exception Hazards · Defensive int.TryParse() with out Parameter · Comparison Matrix Table · CultureInfo (Comma vs Dot) · Real-World Project: Smart Retail Cashier &amp; Billing System · 7 Common Mistakes · Self-Assessment Quiz
     </div>
 
-    
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
     <div class="intro-box">
-      కన్సోల్ అప్లికేషన్లు యూజర్ నుండి సమాచారాన్ని స్వీకరించి ప్రాసెస్ చేసినప్పుడే ఉపయోగకరంగా మారతాయి. C# లో కీబోర్డ్ ఇన్‌పుట్ తీసుకోవడానికి <strong>Console.ReadLine()</strong> ప్రాథమిక సాధనం. అయితే యూజర్ ఇచ్చే డేటా ఎల్లప్పుడూ టెక్స్ట్ (String) రూపంలోనే ఉంటుంది. ఆ టెక్స్ట్‌ను సంఖ్యలుగా మార్చేటప్పుడు అప్లికేషన్ క్రాష్ కాకుండా రక్షించే ప్రసిద్ధ <strong>int.TryParse()</strong> ప్యాటర్న్, మరియు టైప్ కాస్టింగ్ నిబంధనలను ఈ అధ్యాయంలో సమగ్రంగా పరిశీలిద్దాం.
+      <h3>స్వాగతం అధ్యాయం 03 కి! 🚀 యూజర్‌తో ఇంటరాక్షన్ &amp; నమ్మకమైన డేటా మార్పిడి</h3>
+      <p>
+        ఒక కంప్యూటర్ ప్రోగ్రామ్ నిజమైన సాఫ్ట్‌వేర్‌గా మారేది ఎప్పుడంటే — అది కేవలం తెరపై ఏదో ప్రింట్ చేయడం మాత్రమే కాకుండా, బయటి ప్రపంచం (యూజర్) నుండి సమాచారాన్ని స్వీకరించి, దాన్ని సమర్థవంతంగా విశ్లేషించి సరైన నిర్ణయాలు తీసుకున్నప్పుడు మాత్రమే! ఏటీఎం మెషిన్‌లో పిన్ ఎంటర్ చేయడం నుండి ఆన్‌లైన్ షాపింగ్‌లో ఆర్డర్ పరిమాణం ఇవ్వడం వరకు ప్రతిచోటా యూజర్ ఇన్‌పుట్ కీలక పాత్ర పోషిస్తుంది.
+      </p>
+      <p>
+        అయితే ఇక్కడ సాఫ్ట్‌వేర్ ఇంజనీర్లకు ఎదురయ్యే అతిపెద్ద సవాలు ఏమిటంటే: <strong>కీబోర్డ్ నుండి యూజర్ టైప్ చేసే ప్రతి అక్షరం లేదా సంఖ్య కంప్యూటర్‌కు కేవలం టెక్స్ట్ (<code>string</code>) రూపంలోనే చేరుతుంది!</strong> యూజర్ <code>500</code> అని టైప్ చేస్తే, అది గణిత సంఖ్య కాదు, కేవలం '5', '0', '0' అనే మూడు అక్షరాల స్ట్రింగ్ మాత్రమే. ఆ స్ట్రింగ్‌ను సరైన సంఖ్యగా మార్చి క్యాలిక్యులేషన్ చేయడంలో చిన్న తప్పు జరిగినా అప్లికేషన్ క్రాష్ అయిపోతుంది.
+      </p>
+      <p>
+        ఈ సమగ్ర 3వ అధ్యాయంలో మనం కన్సోల్ ఇన్‌పుట్ మెకానిజమ్స్ (<code>ReadLine</code>, <code>ReadKey</code>), టైప్ కాస్టింగ్ నిబంధనలు (Widening vs Narrowing), డేటా ఓవర్‌ఫ్లో రక్షణ (<code>checked/unchecked</code>), మరియు ఎంటర్‌ప్రైజ్ .NET సిస్టమ్స్‌లో వాడే రక్షిత టెక్నిక్ <strong><code>TryParse()</code></strong> డిఫెన్సివ్ ప్రోగ్రామింగ్‌ను లోతుగా నేర్చుకోబోతున్నాం!
+      </p>
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>Console.ReadLine() అంతర్గత పనితీరు</div>
-    <div class="section-body">
+    <section>
+      <h2 class="section-title"><span class="num">1</span> రియల్-వరల్డ్ ప్రోగ్రామింగ్‌లో ఇన్‌పుట్ &amp; టైప్ కన్వర్షన్ ఎందుకు గుండెకాయ వంటిది?</h2>
       <p>
-        యూజర్ కీబోర్డ్ ద్వారా ఒక లైన్ సమాచారాన్ని టైప్ చేసి <strong>Enter</strong> కీ ప్రెస్ చేసేంత వరకు <code>Console.ReadLine()</code> వేచి చూస్తుంది. 
+        గత అధ్యాయంలో మనం C# లోని వివిధ డేటా టైప్స్ (<code>int</code>, <code>double</code>, <code>decimal</code>, <code>string</code>) గురించి నేర్చుకున్నాం. కోడ్‌లో మనమే డైరెక్ట్‌గా <code>int age = 25;</code> అని రాస్తే దాన్ని <em>హార్డ్‌కోడెడ్ డేటా (Hardcoded Data)</em> అంటారు. కానీ నిజ జీవితంలో ఒక బ్యాంకింగ్ యాప్ లేదా ఈ-కామర్స్ యాప్ రాస్తున్నప్పుడు వయస్సు లేదా నగదు డిపాజిట్ ఎంత అనేది యూజర్ మాత్రమే నిర్ణయిస్తాడు.
+      </p>
+      <p>
+        ఆపరేటింగ్ సిస్టమ్ ఆర్కిటెక్చర్ ప్రకారం, కీబోర్డ్ నుండి యూజర్ ఏది టైప్ చేసినా అది స్టాండర్డ్ ఇన్‌పుట్ స్ట్రీమ్ (<code>stdin</code>) ద్వారా టెక్స్ట్ బఫర్‌లోకి చేరుతుంది. కాబట్టి C# రన్‌టైమ్ దాన్ని స్వతహాగా కేవలం ఒక <strong>టెక్స్ట్ స్ట్రింగ్ (String)</strong> గానే గుర్తిస్తుంది.
       </p>
 
-      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
-        <strong style="color:#10b981; font-size:14.5px;">🔑 గోల్డెన్ రూల్: ఇన్‌పుట్ ఎల్లప్పుడూ string మాత్రమే!</strong>
-        <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
-          యూజర్ నంబర్ <code>25</code> అని టైప్ చేసినా, కంప్యూటర్ దృష్టిలో అది సంఖ్య కాదు; కేవలం రెండు అక్షరాల టెక్స్ట్ <code>"25"</code> మాత్రమే. దానిపై గణిత లెక్కలు చేయాలంటే మనం దానిని సంఖ్యగా (Integer / Double) మార్చాల్సిందే.
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:var(--text); font-size:15px;">🧠 ఆలోచించండి (The "20" + "30" = "2030" Trap):</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14.5px;">
+          మీరు యూజర్‌ని రెండు నంబర్లు అడిగారనుకుందాం. యూజర్ <code>20</code> మరియు <code>30</code> ఇచ్చాడు. మీరు వాటిని స్ట్రింగ్స్ గానే ఉంచి <code>+</code> ఆపరేటర్ వాడితే, కంప్యూటర్ వాటిని నంబర్లుగా కూడదు! బదులుగా స్ట్రింగ్ కంకాటెనేషన్ చేసి <strong>"2030"</strong> అనే సమాధానాన్ని ఇస్తుంది! దీనివల్ల బ్యాంక్ అకౌంట్ బ్యాలెన్స్ ₹50 బదులు ₹2030 చూపించి బ్యాంక్ దివాలా తీస్తుంది. అందుకే స్ట్రింగ్‌ను నంబర్‌గా మార్చే <strong>Type Conversion</strong> అత్యంత ప్రధానమైన ప్రాసెస్.
         </p>
       </div>
 
-      <div class="code-block" style="margin:16px 0;">
-        <div class="code-block-header">
-          <span class="lang-tag">C# — Basic User Input</span>
-          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
-        </div>
-        <pre><code>Console.Write("మీ పేరు నమోదు చేయండి: ");
-string? name = Console.ReadLine();
-
-Console.WriteLine($"స్వాగతం, {name} గారు!");</code></pre>
-      </div>
-    </div>
+      <p>
+        C# లో టైప్ కన్వర్షన్ చేయడానికి ప్రధానంగా 4 దారులు ఉన్నాయి:
+      </p>
+      <ol style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>Implicit Casting (ఆటోమేటిక్ వైడనింగ్):</strong> చిన్న డేటా టైప్ నుండి పెద్ద డేటా టైప్‌కి ఎటువంటి డేటా లాస్ లేకుండా కంపైలర్ స్వయంగా చేసే మార్పిడి.</li>
+        <li><strong>Explicit Casting (మాన్యువల్ న్యాకోవింగ్):</strong> డేటా లాస్ అయ్యే ప్రమాదం ఉన్నప్పటికీ ప్రోగ్రామర్ బాధ్యత తీసుకొని <code>(int)value</code> రూపంలో బలవంతంగా చేసే మార్పిడి.</li>
+        <li><strong>Convert Helper Class:</strong> .NET లైబ్రరీ అందించే <code>Convert.ToInt32()</code> వంటి సమగ్ర మెథడ్స్ (ఇవి <code>null</code> విలువలను సురక్షితంగా హ్యాండిల్ చేస్తాయి).</li>
+        <li><strong>Parsing Methods (<code>Parse()</code> &amp; <code>TryParse()</code>):</strong> టెక్స్ట్ స్ట్రింగ్‌ను సంఖ్యలుగా మార్చే ప్రత్యేక సాధనాలు. వీటిలో <code>TryParse()</code> క్రాష్ రహిత ప్రొడక్షన్ కోడ్‌కి మూలస్తంభం.</li>
+      </ol>
+    </section>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>టైప్ కన్వర్షన్ రకాలు — Implicit vs Explicit (Casting)</div>
-    <div class="section-body">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">1. Implicit Casting (ఆటోమేటిక్):</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0 0 8px 0; line-height:1.6;">
-            చిన్న డేటా టైప్ నుండి పెద్ద డేటా టైప్‌కు మార్చినప్పుడు ఎటువంటి డేటా నష్టం జరగదు కాబట్టి C# కంపైలర్ స్వయంగా చేస్తుంది.
-          </p>
-          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px;">int a = 100;<br>double b = a; // ఆటోమేటిక్ గా 100.0 అవుతుంది</code>
-        </div>
+    <section>
+      <h2 class="section-title"><span class="num">2</span> ⌨️ Console.ReadLine(), Console.ReadKey() &amp; Console.Read() — తేడాలు మరియు పనితీరు</h2>
+      <p>
+        C# లో <code>System.Console</code> క్లాస్ యూజర్ నుండి ఇన్‌పుట్ తీసుకోవడానికి మూడు వేర్వేరు మెథడ్స్‌ను అందిస్తుంది. చాలామంది బిగినర్స్ కేవలం <code>ReadLine()</code> మాత్రమే వాడతారు, కానీ ప్రొఫెషనల్ ప్రాజెక్ట్స్‌లో మిగిలిన రెండింటి ప్రాముఖ్యత అపారం.
+      </p>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px;">
-          <h4 style="color:#ef4444; margin:0 0 6px 0; font-size:14.5px;">2. Explicit Casting (మ్యాన్యువల్):</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0 0 8px 0; line-height:1.6;">
-            పెద్ద టైప్ నుండి చిన్న టైప్‌కు మార్చినప్పుడు డేటా నష్టం లేదా దశాంశాలు తొలగిపోయే ప్రమాదం ఉంటుంది. డెవలపర్ బాధ్యత తీసుకోవాలి.
-          </p>
-          <code style="font-size:12.5px; color:var(--text); display:block; background:var(--bg3); padding:8px; border-radius:4px;">double pi = 3.99;<br>int intPi = (int)pi; // 3 అవుతుంది (దశాంశం తుడిచిపెట్టుకుపోతుంది)</code>
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">1. Console.ReadLine() — పూర్తి లైన్ చదవడం</h3>
+      <p>
+        యూజర్ కీబోర్డ్‌పై టైప్ చేసి <strong>Enter కీ</strong> నొక్కే వరకు వేచి ఉండి, అంతవరకు టైప్ చేసిన మొత్తం అక్షరాలను ఒకే స్ట్రింగ్‌గా రిటర్న్ చేస్తుంది.
+      </p>
+      <p>
+        <strong>మోడ్రన్ C# 12 Nullable Reference Warning (CS8600):</strong><br>
+        మీరు <code>string name = Console.ReadLine();</code> అని రాస్తే VS Code లో లేదా కంపైలర్‌లో పసుపు పచ్చ వార్నింగ్ వస్తుంది: <em>"Converting null literal or possible null value to non-nullable type"</em>. ఎందుకంటే యూజర్ కన్సోల్‌లో ఏమీ ఎంటర్ చేయకుండా <code>Ctrl+Z</code> (End-of-File) కొడితే <code>ReadLine()</code> null రిటర్న్ చేయవచ్చు. కాబట్టి ప్రొఫెషనల్ కోడ్‌లో ఇలా రాయాలి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Null-Safe Input Reading</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
         </div>
+        <pre><code class="language-csharp">// Option A: Nullable string వాడటం (సిఫార్సు చేయబడినది)
+Console.Write("మీ పేరు టైప్ చేయండి: ");
+string? name = Console.ReadLine();
+
+// Option B: Null Coalescing ఆపరేటర్ (??) తో డీఫాల్ట్ విలువ ఇవ్వడం
+Console.Write("నగరం పేరు: ");
+string city = Console.ReadLine() ?? "హైదరాబాద్";
+
+Console.WriteLine($"నమస్కారం, {name}! మీరు {city} నుండి లాగిన్ అయ్యారు.");</code></pre>
       </div>
-    </div>
+
+      <h3 style="font-size:17px; margin-top:28px; color:var(--text);">2. Console.ReadKey() — సింగిల్ కీ మరియు సీక్రెట్ పాస్‌వర్డ్స్</h3>
+      <p>
+        యూజర్ Enter కొట్టే వరకు ఆగదు! కీబోర్డ్‌పై ఏదైనా ఒక కీ తాకగానే వెంటనే రియాక్ట్ అవుతుంది. ఇది ఒక <code>ConsoleKeyInfo</code> ఆబ్జెక్ట్‌ను ఇస్తుంది, అందులో ఏ కీ నొక్కారు (<code>Key</code>), దాని అక్షరం ఏమిటి (<code>KeyChar</code>), Shift లేదా Ctrl నొక్కారా లేదా అనే వివరాలు ఉంటాయి.
+      </p>
+      <p>
+        ముఖ్యంగా <code>Console.ReadKey(intercept: true)</code> అని ఇస్తే, యూజర్ నొక్కిన కీ తెరపై కనపడదు (స్క్రీన్ పై ప్రింట్ అవ్వకుండా ఇంటర్‌సెప్ట్ అవుతుంది). బ్యాంకింగ్ పాస్‌వర్డ్‌లు, గేమ్స్ (WASD బాణాలు), లేదా "ప్రోగ్రామ్ ముగించడానికి ఏదైనా కీ నొక్కండి..." లాంటి సందర్భాల్లో ఇది అమూల్యం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Secret Password Masking with ReadKey</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// రహస్య పిన్ నంబర్ రీడ్ చేస్తూ తెరపై నక్షత్రాలు (*) చూపించడం
+Console.Write("4-అంకెల ATM పిన్ ఎంటర్ చేయండి: ");
+string pin = "";
+
+while (true)
+{
+    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true); // తెరపై ప్రింట్ కాదు
+    if (keyInfo.Key == ConsoleKey.Enter) break; // Enter కొట్టగానే ఆగిపోతుంది
+    
+    if (char.IsDigit(keyInfo.KeyChar))
+    {
+        pin += keyInfo.KeyChar;
+        Console.Write("*"); // యూజర్ చూసేది కేవలం నక్షత్రం మాత్రమే!
+    }
+}
+
+Console.WriteLine($"\nపిన్ విజయవంతంగా స్వీకరించబడింది! పొడవు: {pin.Length} అంకెలు.");</code></pre>
+      </div>
+
+      <h3 style="font-size:17px; margin-top:28px; color:var(--text);">3. Console.Read() — ఒకే క్యారెక్టర్ యొక్క పూర్ణాంక విలువ</h3>
+      <p>
+        ఇది ఇన్‌పుట్ స్ట్రీమ్ నుండి ఒక్క క్యారెక్టర్‌ను చదివి దాని యొక్క పూర్ణాంక (ASCII / Unicode <code>int</code>) విలువను ఇస్తుంది. ఒకవేళ ఇన్‌పుట్ ఏమీ లేకపోతే <code>-1</code> ఇస్తుంది. సాధారణంగా లో-లెవల్ స్ట్రీమ్ ప్రాసెసింగ్ మినహా ఆధునిక అప్లికేషన్లలో దీన్ని చాలా అరుదుగా వాడతారు.
+      </p>
+    </section>
 
     <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>Parse() vs TryParse() — ఎర్రర్-ఫ్రీ పార్సింగ్ ప్యాటర్న్</div>
-    <div class="section-body">
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🔄 ఇంప్లిసిట్ టైప్ కాస్టింగ్ (Implicit Type Casting / Type Widening)</h2>
       <p>
-        ఒక స్ట్రింగ్‌ను సంఖ్యగా మార్చడానికి <code>int.Parse()</code> వాడవచ్చు. కానీ యూజర్ అనుకోకుండా సంఖ్య బదులు అక్షరాలు టైప్ చేస్తే <code>int.Parse()</code> వెంటనే భయంకరమైన <strong>FormatException</strong> తో యాప్‌ను క్రాష్ చేస్తుంది!
+        C# కంపైలర్ చాలా తెలివైనది మరియు భద్రతకు అత్యధిక ప్రాధాన్యత ఇస్తుంది. ఒక చిన్న మెమరీ కంటైనర్‌లో ఉన్న డేటాను తీసుకొని పెద్ద మెమరీ కంటైనర్‌లో వేస్తే ఎటువంటి డేటా ఒలకదు లేదా నష్టపోదు అని కంపైలర్‌కు నమ్మకం కుదిరినప్పుడు, అది ఎటువంటి ఎర్రర్ లేకుండా ఆటోమేటిక్‌గా టైప్ మార్చేస్తుంది. దీనినే <strong>ఇంప్లిసిట్ కాస్టింగ్ (Implicit Casting)</strong> లేదా <strong>టైప్ వైడనింగ్ (Type Widening)</strong> అంటారు.
       </p>
 
-      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
-        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">🛡️ ప్రొడక్షన్ స్టాండర్డ్: int.TryParse() ప్యాటర్న్</h4>
-        <p style="font-size:13.5px; color:var(--text); margin:0 0 8px 0; line-height:1.6;">
-          <code>int.TryParse()</code> క్రాష్ కాకుండా రక్షణ కల్పిస్తుంది. కన్వర్షన్ విజయవంతమైతే <code>true</code> రిటర్న్ చేసి ఆ విలువను <code>out</code> వేరియబుల్ లోకి వేస్తుంది; విఫలమైతే క్రాష్ అవ్వకుండా కేవలం <code>false</code> ఇస్తుంది.
-        </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; margin:20px 0; font-family:monospace; font-size:14px; text-align:center; color:#10b981;">
+        byte (8-bit) ➔ short (16-bit) ➔ int (32-bit) ➔ long (64-bit) ➔ float (32-bit) ➔ double (64-bit)
       </div>
 
-      <div class="code-block" style="margin:16px 0;">
+      <p>
+        <strong>నిజ జీవిత ఉపమానం:</strong> మీ దగ్గర 250 మిల్లీలీటర్ల గ్లాసులో నీరు ఉంది. దాన్ని తీసుకెళ్లి 5 లీటర్ల పెద్ద బకెట్‌లో పోస్తే ఒక్క చుక్క కూడా బయట పడదు. అలాగే <code>int</code> (4 బైట్లు) లో ఉన్న <code>100</code> ని <code>long</code> (8 బైట్లు) లేదా <code>double</code> (8 బైట్లు) లోకి మార్చినా దాని విలువలో ఎటువంటి మార్పు ఉండదు.
+      </p>
+
+      <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">C# — Bulletproof TryParse Demo</span>
-          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
+          <span>csharp · Implicit Casting Demonstration</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
         </div>
-        <pre><code>Console.Write("మీ వయస్సు నమోదు చేయండి: ");
-string? input = Console.ReadLine();
+        <pre><code class="language-csharp">int studentMarks = 95;           // 4 బైట్ల పూర్ణాంకం
+long bigRegisterId = studentMarks; // ఆటోమేటిక్ వైడనింగ్ (int to long)
+double percentage = studentMarks; // ఆటోమేటిక్ వైడనింగ్ (int to double)
 
-// C# 7+ ఇన్లైన్ out వేరియబుల్ డిక్లరేషన్
-if (int.TryParse(input, out int age) &amp;&amp; age &gt; 0) {
-    Console.WriteLine($"సరైన వయస్సు: {age} సంవత్సరాలు.");
-} else {
-    Console.WriteLine("❌ చెల్లని సంఖ్య! దయచేసి సరైన పూర్ణాంకాన్ని టైప్ చేయండి.");
-}</code></pre>
+Console.WriteLine($"Original int: {studentMarks}");
+Console.WriteLine($"Converted long: {bigRegisterId}");
+Console.WriteLine($"Converted double: {percentage:F2}"); // 95.00</code></pre>
       </div>
-    </div>
+      <p>
+        <strong>ముఖ్య గమనిక:</strong> ఇంప్లిసిట్ కాస్టింగ్‌లో మనం ఎటువంటి ప్రత్యేక బ్రాకెట్లు <code>(type)</code> రాయవలసిన అవసరం లేదు. కంపైలర్ తనంతట తానుగానే సిలికాన్ రిజిస్టర్లను అప్‌స్కేల్ చేస్తుంది.
+      </p>
+    </section>
 
     <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>Convert క్లాస్ (Convert.ToInt32, Convert.ToDouble)</div>
-    <div class="section-body">
+    <section>
+      <h2 class="section-title"><span class="num">4</span> ⚠️ ఎక్స్‌ప్లిసిట్ టైప్ కాస్టింగ్ (Explicit Type Casting / Type Narrowing) &amp; డేటా లాస్</h2>
       <p>
-        <code>Convert.ToInt32()</code> పద్ధతి కూడా పార్సింగ్ చేస్తుంది. దీనికి <code>int.Parse()</code> కి ఉన్న ప్రధాన తేడా ఏమిటంటే: <strong>ఒకవేళ ఇన్‌పుట్ <code>null</code> అయితే, Convert క్లాస్ ఎర్రర్ ఇవ్వకుండా డిఫాల్ట్ 0 (సున్నా) రిటర్న్ చేస్తుంది</strong>.
+        ఇప్పుడు రివర్స్ పరిస్థితిని ఆలోచించండి. 5 లీటర్ల బకెట్ నిండా ఉన్న నీటిని 250 మిల్లీలీటర్ల చిన్న గ్లాసులోకి పోయడానికి ప్రయత్నిస్తే ఏమవుతుంది? ఖచ్చితంగా నీరంతా నేలపాలైపోతుంది! కంప్యూటర్ ప్రోగ్రామింగ్‌లో కూడా పెద్ద మెమరీ సైజు గల వేరియబుల్‌ను చిన్న మెమరీ సైజు గల వేరియబుల్‌లోకి బలవంతంగా కుక్కినప్పుడు డేటా నష్టం జరుగుతుంది. దీనిని <strong>ఎక్స్‌ప్లిసిట్ కాస్టింగ్ (Explicit Casting)</strong> లేదా <strong>టైప్ న్యారోయింగ్ (Type Narrowing)</strong> అంటారు.
       </p>
-    </div>
+      <p>
+        కంపైలర్ దీనిని ఆటోమేటిక్‌గా చేయడానికి అస్సలు ఒప్పుకోదు! ఒకవేళ మీరు <code>int x = 99.85;</code> అని రాస్తే, కంపైలర్ ఎర్రర్ కొడుతుంది. "నేను నా స్వంత పూచీకత్తుపై చేస్తున్నాను, డేటా పోయినా నాదే బాధ్యత" అని ప్రోగ్రామర్ బ్రాకెట్లలో <strong>కాస్ట్ ఆపరేటర్</strong> రాయాలి: <code>(int)99.85;</code>.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Explicit Casting &amp; Truncation Danger</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">double productPrice = 999.89;
+
+// ఎక్స్‌ప్లిసిట్ కాస్టింగ్: డెసిమల్ భాగం కత్తిరించబడుతుంది (Truncation)
+int roundedPrice = (int)productPrice; 
+
+Console.WriteLine($"అసలు ధర: {productPrice}");
+Console.WriteLine($"కాస్ట్ చేసిన పూర్ణాంక విలువ: {roundedPrice}"); // 999 మాత్రమే వస్తుంది! 1000 కాదు!
+
+// బిట్ ఓవర్‌ఫ్లో ప్రమాదం (Bit-Level Truncation):
+int massiveNumber = 300;
+byte smallByte = (byte)massiveNumber; // byte గరిష్ట పరిమితి 255 మాత్రమే!
+
+Console.WriteLine($"Original int: {massiveNumber}");
+Console.WriteLine($"Byte result after overflow: {smallByte}"); // 44 మాత్రమే వస్తుంది!!</code></pre>
+      </div>
+
+      <div style="background:var(--bg3); border-left:4px solid #ef4444; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#ef4444; font-size:15px;">🚨 300 కాస్తా 44 గా ఎందుకు మారింది? (The Binary Math):</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px; line-height:1.7;">
+          బైనరీలో <code>300</code> అంటే <code>00000001 00101100</code> (9 బిట్లు). కానీ <code>byte</code> కేవలం ఆఖరి 8 బిట్లను మాత్రమే నిల్వ చేయగలదు. కాబట్టి మొదటి బిట్ <code>1</code> కత్తిరించబడిపోగా, మిగిలిన 8 బిట్లు <code>00101100</code> మిగిలాయి. దీని డెసిమల్ విలువ సరిగ్గా <strong>44</strong>! ఇలాంటి బగ్స్ సాఫ్ట్‌వేర్‌లో ఊహించని ఆర్థిక నష్టాలను కలిగిస్తాయి.
+        </p>
+      </div>
+    </section>
 
     <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
-    <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. కాస్టింగ్ తో స్ట్రింగ్ మార్చాలనుకోవడం:</div>
-          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">string s = "50"; int num = (int)s; // Compiler Error! Cannot convert type string to int</code>
-          <span style="font-size:13px; color:var(--text2); display:block;">స్ట్రింగ్స్ మరియు న్యూమరిక్ టైప్స్ వేర్వేరు మెమరీ ఫార్మాట్లలో ఉంటాయి. కాస్టింగ్ <code>(int)</code> పనిచేయదు; తప్పనిసరిగా <code>int.Parse()</code> లేదా <code>int.TryParse()</code> వాడాలి.</span>
-        </div>
+    <section>
+      <h2 class="section-title"><span class="num">5</span> 🛡️ checked మరియు unchecked కీవర్డ్స్ — సైలెంట్ ఓవర్‌ఫ్లో బగ్స్ నివారణ</h2>
+      <p>
+        డీఫాల్ట్‌గా C# లో పూర్ణాంకాల గణితం (Integer Arithmetic) <strong><code>unchecked</code></strong> మోడ్‌లో నడుస్తుంది. అంటే ఒక వేరియబుల్ తన గరిష్ట పరిమితిని దాటితే (ఉదాహరణకు <code>int.MaxValue + 1</code>), రన్‌టైమ్ ఎటువంటి ఎర్రర్ లేదా అలర్ట్ ఇవ్వకుండా నెగటివ్ నంబర్‌గా మారిపోతుంది (దీన్నే సైలెంట్ రాప్‌అరౌండ్ అంటారు).
+      </p>
+      <p>
+        కానీ మిషన్-క్రిటికల్ ప్రాజెక్ట్స్‌లో (రాకెట్ లాంచ్ సాఫ్ట్‌వేర్, మెడికల్ పరికరాలు, బ్యాంకింగ్ లెక్కలు) ఇలా సైలెంట్‌గా తప్పు విలువలు రావడం మహాప్రమాదం. దీనికి పరిష్కారంగా C# మనకు <strong><code>checked</code></strong> అనే ప్రత్యేక రక్షిత బ్లాక్‌ను ఇచ్చింది!
+      </p>
 
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. ప్రొడక్షన్ కోడ్‌లో నేరుగా int.Parse() వాడటం:</div>
-          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">యూజర్ ఖాళీగా ఎంటర్ నొక్కినా లేదా స్పేస్ ఇచ్చినా <code>int.Parse()</code> మొత్తం యాప్‌ను క్రాష్ చేస్తుంది. ఎల్లప్పుడూ <code>TryParse()</code> నే ప్రాధాన్యత ఇవ్వాలి.</span>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · checked vs unchecked Arithmetic</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
         </div>
+        <pre><code class="language-csharp">int maxMoney = int.MaxValue; // 2,147,483,647
+
+// 1. Unchecked (Default) - సైలెంట్ బగ్
+int broken = unchecked(maxMoney + 1);
+Console.WriteLine($"Unchecked result: {broken}"); // -2,147,483,648 (నెగటివ్ అయిపోయింది!)
+
+// 2. Checked - పూర్తి రక్షణ (Exception విసురుతుంది)
+try
+{
+    checked
+    {
+        Console.WriteLine("రక్షిత కాలిక్యులేషన్ మొదలవుతోంది...");
+        int safeMoney = maxMoney + 1; // ఇక్కడ OverflowException వస్తుంది
+        Console.WriteLine(safeMoney);
+    }
+}
+catch (OverflowException ex)
+{
+    Console.WriteLine($"🚨 సేఫ్టీ గార్డ్ అలర్ట్: మెమరీ పరిమితి దాటింది! {ex.Message}");
+}</code></pre>
       </div>
-    </div>
+    </section>
 
     <!-- SECTION 6 -->
-    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
-    <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: checked మరియు unchecked బ్లాక్స్ ఎందుకు ఉపయోగిస్తారు?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            C# లో డిఫాల్ట్‌గా ఇంటిజర్ ఓవర్‌ఫ్లో అయినప్పుడు ఎర్రర్ రాకుండా నిశ్శబ్దంగా నెగటివ్ విలువగా మారుతుంది. <code>checked { int max = int.MaxValue + 1; }</code> అని రాస్తే, ఓవర్‌ఫ్లో జరగగానే <code>OverflowException</code> ను త్రో చేసి ప్రమాదాన్ని హెచ్చరిస్తుంది.
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🧰 Convert క్లాస్ — విశ్వసనీయమైన ఆల్-రౌండర్ కన్వర్షన్ సాధనం</h2>
+      <p>
+        C# బేస్ క్లాస్ లైబ్రరీ (BCL) లోని <code>System.Convert</code> క్లాస్ ఒక స్విస్-ఆర్మీ నైఫ్ లాంటిది. ఇది ఏదైనా ఒక డేటా టైప్ నుండి మరొక డేటా టైప్‌కి మార్చడానికి పదుల సంఖ్యలో స్టాటిక్ మెథడ్స్‌ను అందిస్తుంది:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>Convert.ToInt32(val)</code> ➔ 32-బిట్ పూర్ణాంకం (<code>int</code>) గా మారుస్తుంది.</li>
+        <li><code>Convert.ToInt64(val)</code> ➔ 64-బిట్ పూర్ణాంకం (<code>long</code>) గా మారుస్తుంది.</li>
+        <li><code>Convert.ToDouble(val)</code> ➔ ఫ్లోటింగ్ పాయింట్ (<code>double</code>) గా మారుస్తుంది.</li>
+        <li><code>Convert.ToDecimal(val)</code> ➔ ఖచ్చితమైన కరెన్సీ (<code>decimal</code>) గా మారుస్తుంది.</li>
+        <li><code>Convert.ToBoolean(val)</code> ➔ బూలియన్ (<code>bool</code>) గా మారుస్తుంది ("true", "false", 1, 0).</li>
+        <li><code>Convert.ToString(val)</code> ➔ ఏదైనా వేరియబుల్‌ను స్ట్రింగ్ రూపంలోకి మారుస్తుంది.</li>
+      </ul>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">Convert క్లాస్ యొక్క 2 సూపర్ పవర్స్:</h3>
+      
+      <p>
+        <strong>1. Null-Safety (నల్ విలువను క్షమించడం):</strong><br>
+        మీరు <code>(int)nullVar</code> అని క్యాస్ట్ చేస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది లేదా రన్‌టైమ్ లో క్రాష్ అవుతుంది. కానీ <code>Convert.ToInt32(null)</code> అని పిలిస్తే ఎటువంటి ఎక్సెప్షన్ రాదు! అది నిశ్శబ్దంగా సురక్షితమైన డీఫాల్ట్ విలువ <strong><code>0</code></strong> ని రిటర్న్ చేస్తుంది! డేటాబేస్ నుండి వచ్చే ఖాళీ రికార్డులను రీడ్ చేసేటప్పుడు ఇది ఎంతో ఉపయోగపడుతుంది.
+      </p>
+
+      <p>
+        <strong>2. Banker's Rounding (రౌండ్-టు-ఈవెన్ రూల్):</strong><br>
+        మనం సాధారణ క్యాస్టింగ్ <code>(int)4.5</code> చేస్తే అది కేవలం డెసిమల్‌ను తుడిచేసి <code>4</code> ఇస్తుంది. కానీ <code>Convert.ToInt32(4.5)</code> మరియు <code>Convert.ToInt32(5.5)</code> రెండూ కూడా సమీపంలో ఉన్న సరిసంఖ్య (Even Number) వైపుకు రౌండ్ చేస్తాయి! దీనివల్ల గణాంకాల విశ్లేషణలో క్రమబద్ధమైన లోపాలు (Systematic Bias) తగ్గుతాయి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Convert Class in Action</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string strNumber = "500";
+int parsedInt = Convert.ToInt32(strNumber);
+
+string? nullString = null;
+int safeZero = Convert.ToInt32(nullString); // ఎర్రర్ రాదు, 0 వస్తుంది!
+Console.WriteLine($"Null safe conversion: {safeZero}");
+
+// Banker's Rounding తనిఖీ:
+Console.WriteLine($"Convert.ToInt32(4.5) = {Convert.ToInt32(4.5)}"); // 4 (Even)
+Console.WriteLine($"Convert.ToInt32(5.5) = {Convert.ToInt32(5.5)}"); // 6 (Even)
+
+// Boolean conversion:
+bool flag = Convert.ToBoolean("true");
+bool numFlag = Convert.ToBoolean(1); // 1 అంటే true, 0 అంటే false
+Console.WriteLine($"Boolean flags: {flag}, {numFlag}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 💥 Parse() మెథడ్స్ — స్ట్రింగ్ టు ప్రిమిటివ్ టైప్స్ (మరియు దాగి ఉన్న గనులు)</h2>
+      <p>
+        C# లోని ప్రతి ప్రిమిటివ్ డేటా టైప్ వద్ద స్ట్రింగ్‌ను రీడ్ చేయడానికి ఒక బిల్ట్-ఇన్ <strong><code>Parse()</code></strong> మెథడ్ ఉంటుంది: <code>int.Parse()</code>, <code>double.Parse()</code>, <code>decimal.Parse()</code>, <code>DateTime.Parse()</code>.
+      </p>
+      <p>
+        స్ట్రింగ్‌లో ఉన్న డేటా 100% పక్కాగా సరైన ఫార్మాట్‌లో ఉందని మీకు గ్యారెంటీ ఉన్నప్పుడు ఇది చాలా వేగంగా పనిచేస్తుంది. ఉదాహరణకు <code>int.Parse("450")</code> మీకు చక్కగా 450 అనే సంఖ్యను ఇస్తుంది.
+      </p>
+
+      <div style="background:var(--bg3); border-left:4px solid #f59e0b; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#d97706; font-size:15px;">💣 Parse() మెథడ్‌లో దాగి ఉన్న 3 ప్రమాదకరమైన మందుపాతరలు (Exceptions):</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px; line-height:1.7;">
+          యూజర్ నుండి వచ్చే ఇన్‌పుట్‌పై నమ్మకం పెట్టుకొని గుడ్డిగా <code>int.Parse(Console.ReadLine())</code> అని రాస్తే ఈ క్రింది 3 సందర్భాలలో మీ మొత్తం సాఫ్ట్‌వేర్ క్రాష్ అయిపోతుంది:
+        </p>
+        <ol style="margin-left:20px; margin-top:8px; line-height:1.6; font-size:13.5px; color:var(--text2);">
+          <li><strong>ArgumentNullException:</strong> యూజర్ ఏమీ టైప్ చేయకుండా ఖాళీగా వదిలేస్తే (<code>null</code>).</li>
+          <li><strong>FormatException:</strong> సంఖ్యకు బదులు అక్షరాలు టైప్ చేస్తే (ఉదా: <code>"abc"</code> లేదా <code>"12.5"</code> ని int లోకి పాస్ చేస్తే).</li>
+          <li><strong>OverflowException:</strong> డేటా టైప్ సైజు కంటే పెద్ద సంఖ్య ఇస్తే (ఉదా: <code>"999999999999999"</code> ని int లోకి పాస్ చేస్తే).</li>
+        </ol>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Parse() Exception Traps</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">try
+{
+    Console.Write("మీ వయస్సు టైప్ చేయండి: ");
+    string? rawInput = Console.ReadLine();
+    
+    // ఒకవేళ యూజర్ "ఇరవై" లేదా "twenty" అని రాస్తే ఇక్కడ క్రాష్ అవుతుంది!
+    int age = int.Parse(rawInput!); 
+    Console.WriteLine($"వచ్చే ఏడాదికి మీ వయస్సు: {age + 1}");
+}
+catch (FormatException)
+{
+    Console.WriteLine("ఎర్రర్: దయచేసి కేవలం అంకెలు మాత్రమే టైప్ చేయండి!");
+}
+catch (OverflowException)
+{
+    Console.WriteLine("ఎర్రర్: మీరు ఇచ్చిన సంఖ్య చాలా పెద్దదిగా ఉంది!");
+}</code></pre>
+      </div>
+      <p>
+        ప్రతి చిన్న ఇన్‌పుట్‌కి ఇంత పెద్ద <code>try-catch</code> బ్లాక్ రాయడం కోడ్ క్లట్టర్‌కు దారితీస్తుంది మరియు ఎక్సెప్షన్ హ్యాండ్లింగ్ సిస్టమ్ రిసోర్సెస్‌ను విపరీతంగా వాడుకుంటుంది. అందుకే సీనియర్ ఆర్కిటెక్ట్స్ తర్వాతి సెక్షన్‌లో ఉన్న టెక్నిక్‌ను మాత్రమే వాడతారు!
+      </p>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 🏆 గోల్డెన్ స్టాండర్డ్: TryParse() డిఫెన్సివ్ ప్రోగ్రామింగ్ &amp; out పారామీటర్స్</h2>
+      <p>
+        ఆధునిక C# లో యూజర్ ఇన్‌పుట్ లేదా ఎక్స్‌టర్నల్ ఫైల్ డేటాను ప్రాసెస్ చేయడానికి <strong><code>TryParse()</code></strong> ను గోల్డెన్ స్టాండర్డ్ (Golden Standard) గా పరిగణిస్తారు.
+      </p>
+      <p>
+        <strong>TryParse ఎలా పనిచేస్తుంది?</strong><br>
+        ఇది ఎట్టి పరిస్థితుల్లోనూ ఎక్సెప్షన్ విసరదు! కన్వర్షన్ విజయవంతమైతే <code>true</code> రిటర్న్ చేస్తుంది మరియు మార్చబడిన విలువను <code>out</code> పారామీటర్‌లో భద్రపరుస్తుంది. ఒకవేళ ఇన్‌పుట్ తప్పుగా ఉంటే (అక్షరాలు, నల్, పరిమితి దాటినా) నిశ్శబ్దంగా <code>false</code> రిటర్న్ చేస్తుంది మరియు <code>out</code> వేరియబుల్‌ను <code>0</code> గా సెట్ చేస్తుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Modern C# Inline TryParse Pattern</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">Console.Write("మీ డిపాజిట్ మొత్తం ఎంటర్ చేయండి (రూపాయలు): ");
+string? input = Console.ReadLine();
+
+// C# 7+ Inline Out Variable Declaration
+if (decimal.TryParse(input, out decimal depositAmount) &amp;&amp; depositAmount &gt; 0)
+{
+    Console.WriteLine($"✅ ధృవీకరించబడింది! జమ చేయబడిన మొత్తం: ₹{depositAmount:N2}");
+}
+else
+{
+    Console.WriteLine("❌ చెల్లని మొత్తం! దయచేసి సరైన ధనాత్మక సంఖ్యను నమోదు చేయండి.");
+}</code></pre>
+      </div>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">యూజర్ సరైన సంఖ్య ఇచ్చే వరకు అడిగే అజేయమైన లూప్ (Foolproof Input Loop):</h3>
+      <p>
+        రియల్ వరల్డ్ అప్లికేషన్లలో యూజర్ తప్పు ఇన్‌పుట్ ఇచ్చినప్పుడు ప్రోగ్రామ్ ముగిసిపోకూడదు. సరైన ఇన్‌పుట్ ఇచ్చే వరకు యూజర్‌ని తిరిగి తిరిగి అడగాలి. ఈ క్రింది ప్యాటర్న్ ప్రొఫెషనల్ కోడింగ్‌లో అత్యంత ప్రాచుర్యం పొందింది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Unbreakable Input Validation Loop</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">int validAge;
+
+while (true)
+{
+    Console.Write("మీ వయస్సు నమోదు చేయండి (1 - 120): ");
+    string? text = Console.ReadLine();
+    
+    if (int.TryParse(text, out validAge) &amp;&amp; validAge &gt;= 1 &amp;&amp; validAge &lt;= 120)
+    {
+        break; // సరైన వయస్సు లభించింది! లూప్ నుండి బయటపడవచ్చు
+    }
+    
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine("తప్పుడు సమాచారం! దయచేసి 1 నుండి 120 మధ్య సరైన సంఖ్య ఇవ్వండి.");
+    Console.ResetColor();
+}
+
+Console.WriteLine($"స్వాగతం! మీ వయస్సు {validAge} సంవత్సరాలుగా నమోదు చేయబడింది.");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: (int) vs int.Parse() vs Convert.ToInt32() vs int.TryParse()</h2>
+      <p>
+        ఇంటర్వ్యూలలో మరియు ఆర్కిటెక్చర్ డిజైన్‌లో తరచుగా అడిగే కీలకమైన తేడాలను స్పష్టమైన అవగాహన కోసం ఈ సమగ్ర పట్టికలో పరిశీలించండి:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీచర్ / బిహేవియర్</th>
+            <th>Casting: (int)val</th>
+            <th>Parsing: int.Parse(str)</th>
+            <th>Helper: Convert.ToInt32(val)</th>
+            <th>Defensive: int.TryParse(str, out res)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఇన్‌పుట్ టైప్స్</strong></td>
+            <td>సంఖ్యా రకాలు (double, float, byte...)</td>
+            <td>కేవలం <code>string</code> మాత్రమే</td>
+            <td>ఏదైనా ఆబ్జెక్ట్ (string, double, null, bool...)</td>
+            <td>కేవలం <code>string</code> లేదా <code>ReadOnlySpan&lt;char&gt;</code></td>
+          </tr>
+          <tr>
+            <td><strong>Null ఇచ్చినప్పుడు</strong></td>
+            <td>కంపైల్ ఎర్రర్ (లేదా NRE)</td>
+            <td><code>ArgumentNullException</code> (క్రాష్)</td>
+            <td><strong>0</strong> రిటర్న్ చేస్తుంది (Null-Safe)</td>
+            <td><strong>false</strong> ఇస్తుంది, res = 0 (క్రాష్ అవ్వదు)</td>
+          </tr>
+          <tr>
+            <td><strong>తప్పుడు ఫార్మాట్ ("abc")</strong></td>
+            <td>కంపైల్ టైమ్ లోనే ఒప్పుకోదు</td>
+            <td><code>FormatException</code> (క్రాష్)</td>
+            <td><code>FormatException</code> (క్రాష్)</td>
+            <td><strong>false</strong> రిటర్న్ చేస్తుంది (అత్యంత సురక్షితం)</td>
+          </tr>
+          <tr>
+            <td><strong>పరిమితి దాటినప్పుడు (&gt; 2.14B)</strong></td>
+            <td>బిట్ కటింగ్ (Unchecked Truncation)</td>
+            <td><code>OverflowException</code></td>
+            <td><code>OverflowException</code></td>
+            <td><strong>false</strong> రిటర్న్ చేస్తుంది</td>
+          </tr>
+          <tr>
+            <td><strong>రౌండింగ్ విధానం (9.8 కి)</strong></td>
+            <td>ట్రంకేషన్ (9 ఇస్తుంది)</td>
+            <td>వర్తించదు (డెసిమల్ స్ట్రింగ్ ఇస్తే ఎర్రర్)</td>
+            <td>Banker's Rounding (10 ఇస్తుంది)</td>
+            <td>వర్తించదు (డెసిమల్ స్ట్రింగ్ ఇస్తే false)</td>
+          </tr>
+          <tr>
+            <td><strong>పెర్ఫార్మెన్స్</strong></td>
+            <td>మెరుపు వేగం (CPU సైకిల్స్)</td>
+            <td>మధ్యస్థం (ఎర్రర్ వస్తే స్లో)</td>
+            <td>మధ్యస్థం (ఇంటర్నల్ ఓవర్‌హెడ్)</td>
+            <td><strong>అత్యుత్తమం</strong> (Zero Exceptions thrown)</td>
+          </tr>
+          <tr>
+            <td><strong>ఉత్తమ వినియోగ సందర్భం</strong></td>
+            <td>సాఫ్ట్‌వేర్ అంతర్గత నంబర్లలో డేటా సైజు మార్పులకు</td>
+            <td>ఫార్మాట్ ఖచ్చితంగా సరైనదని తెలిసిన ఇంటర్నల్ ఫైల్స్ వద్ద</td>
+            <td>డేటాబేస్ నుండి వచ్చే dynamic / nullable విలువలకు</td>
+            <td><strong>యూజర్ ఇన్‌పుట్, వెబ్ ఏపీఐ, ఎక్స్‌టర్నల్ ఫైల్స్ అన్నిటికీ!</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🌍 CultureInfo &amp; ఇంటర్నేషనలైజేషన్ — డెసిమల్ పాయింట్ (.) vs కామా (,) సమస్యలు</h2>
+      <p>
+        ప్రపంచవ్యాప్తంగా సాఫ్ట్‌వేర్ రన్ అయ్యేటప్పుడు డెసిమల్ నంబర్లను ఎలా రాస్తారు అనే విషయంలో దేశాల మధ్య తీవ్రమైన విభేదాలు ఉన్నాయి:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><strong>భారతదేశం, అమెరికా, బ్రిటన్:</strong> డెసిమల్ పాయింట్‌గా చుక్క వాడతారు (ఉదా: <code>10.50</code>).</li>
+        <li><strong>జర్మనీ, ఫ్రాన్స్, ఇటలీ, బ్రెజిల్:</strong> డెసిమల్ సెపరేటర్‌గా కామా వాడతారు (ఉదా: <code>10,50</code>) మరియు వేల విభజనకు చుక్క వాడతారు (<code>1.000,00</code>).</li>
+      </ul>
+      <p>
+        మీరు సాధారణ <code>double.Parse("10.50")</code> అని రాస్తే, అది యూజర్ యొక్క కంప్యూటర్ ఆపరేటింగ్ సిస్టమ్ కల్చర్ (Regional Settings) ఆధారంగా పనిచేస్తుంది. మీ కోడ్ జర్మన్ సర్వర్‌లో రన్ అయినప్పుడు <code>"10.50"</code> ని చూసి <code>FormatException</code> త్రో చేస్తుంది, లేదా దాన్ని <strong>1050</strong> గా తప్పుగా చదువుతుంది! (10 రూపాయల వస్తువుకు 1050 రూపాయలు బిల్ చేస్తుంది).
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · InvariantCulture for Universal Safety</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System.Globalization;
+
+string priceText = "49.99";
+
+// సర్వర్ ప్రపంచంలో ఎక్కడ ఉన్నా చుక్క (.) నే డెసిమల్ గా గుర్తించే గ్లోబల్ ప్రామాణికం
+if (double.TryParse(priceText, NumberStyles.Any, CultureInfo.InvariantCulture, out double universalPrice))
+{
+    Console.WriteLine($"గ్లోబల్ ధర విజయవంతంగా పార్స్ చేయబడింది: {universalPrice}");
+}
+else
+{
+    Console.WriteLine("ధర ఫార్మాట్ చెల్లదు!");
+}</code></pre>
+      </div>
+      <p>
+        <strong>ప్రొఫెషనల్ రూల్:</strong> ఆర్థిక లావాదేవీలు, వెబ్ API JSON డేటా మరియు కాన్ఫిగరేషన్ ఫైల్స్ రీడ్ చేసేటప్పుడు ఎల్లప్పుడూ <strong><code>CultureInfo.InvariantCulture</code></strong> వాడటం సీనియర్ సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్ నియమం.
+      </p>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "Smart Retail Cashier &amp; Billing Engine"</h2>
+      <p>
+        ఇప్పటివరకు మనం నేర్చుకున్న <code>Console.ReadLine()</code>, <code>TryParse()</code>, టైప్ కాస్టింగ్, రౌండింగ్, మరియు నల్ హ్యాండ్లింగ్ కాన్సెప్ట్స్ అన్నింటినీ సమన్వయం చేస్తూ — ఒక పూర్తి స్థాయి రిటైల్ సూపర్ మార్కెట్ క్యాషియర్ కౌంటర్ బిల్లింగ్ ఇంజిన్‌ను తయారు చేద్దాం.
+      </p>
+      <p>
+        ఈ ప్రాజెక్ట్ లో:
+      </p>
+      <ul style="margin-left:24px; line-height:1.7; color:var(--text2);">
+        <li>కస్టమర్ పేరును నల్-సేఫ్‌గా రీడ్ చేస్తాం.</li>
+        <li>వస్తువు పేరు, పరిమాణం (quantity), యూనిట్ ధర (price), మరియు డిస్కౌంట్ శాతాలను రక్షిత లూప్‌లలో స్వీకరిస్తాం.</li>
+        <li>సబ్-టోటల్, 18% జీఎస్టీ (GST), డిస్కౌంట్ తగ్గింపుల తర్వాత తుది చెల్లింపు మొత్తాన్ని లెక్కగడతాం.</li>
+        <li>ఆర్థిక ఖచ్చితత్వం కోసం <code>decimal</code> డేటా టైప్‌ను మాత్రమే వాడతాం.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Smart Retail Cashier Console Project</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Globalization;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🛒 మన సూపర్ మార్కెట్ - స్మార్ట్ క్యాషియర్ కౌంటర్ v1.0");
+Console.WriteLine("=================================================");
+
+// 1. కస్టమర్ పేరు స్వీకరణ (Null-Coalescing)
+Console.Write("కస్టమర్ పేరు నమోదు చేయండి: ");
+string customerName = Console.ReadLine();
+if (string.IsNullOrWhiteSpace(customerName))
+{
+    customerName = "గౌరవనీయ కస్టమర్";
+}
+
+// 2. వస్తువు పేరు
+Console.Write("వస్తువు పేరు (Item Name): ");
+string itemName = Console.ReadLine() ?? "సాధారణ వస్తువు";
+
+// 3. పరిమాణం స్వీకరణ (Defensive int.TryParse Loop)
+int quantity;
+while (true)
+{
+    Console.Write("పరిమాణం (Quantity - అంకెలలో): ");
+    string? qInput = Console.ReadLine();
+    if (int.TryParse(qInput, out quantity) &amp;&amp; quantity &gt; 0)
+    {
+        break;
+    }
+    Console.WriteLine("❌ తప్పు! పరిమాణం కనీసం 1 లేదా అంతకంటే ఎక్కువ ఉండాలి.");
+}
+
+// 4. యూనిట్ ధర స్వీకరణ (Defensive decimal.TryParse Loop)
+decimal unitPrice;
+while (true)
+{
+    Console.Write("యూనిట్ ధర (Price per item ₹): ");
+    string? pInput = Console.ReadLine();
+    if (decimal.TryParse(pInput, NumberStyles.Any, CultureInfo.InvariantCulture, out unitPrice) &amp;&amp; unitPrice &gt; 0)
+    {
+        break;
+    }
+    Console.WriteLine("❌ తప్పు! దయచేసి సరైన ధరను ధనాత్మక సంఖ్యలో ఇవ్వండి.");
+}
+
+// 5. డిస్కౌంట్ శాతం (0 to 50%)
+decimal discountPercent;
+while (true)
+{
+    Console.Write("డిస్కౌంట్ శాతం (Discount % [0 to 50]): ");
+    string? dInput = Console.ReadLine();
+    if (decimal.TryParse(dInput, NumberStyles.Any, CultureInfo.InvariantCulture, out discountPercent) 
+        &amp;&amp; discountPercent &gt;= 0 &amp;&amp; discountPercent &lt;= 50)
+    {
+        break;
+    }
+    Console.WriteLine("❌ తప్పు! డిస్కౌంట్ 0 నుండి 50 శాతం మధ్య మాత్రమే ఉండాలి.");
+}
+
+// 6. బిజినెస్ లాజిక్ కాలిక్యులేషన్స్
+decimal subTotal = quantity * unitPrice;
+decimal discountAmount = subTotal * (discountPercent / 100m);
+decimal taxableAmount = subTotal - discountAmount;
+decimal gstAmount = taxableAmount * 0.18m; // 18% ప్రామాణిక GST
+decimal grandTotal = taxableAmount + gstAmount;
+
+// 7. అందమైన రసీదు (Tax Invoice) ప్రింటింగ్
+Console.WriteLine("\n=================================================");
+Console.WriteLine("                అధికారిక టాక్స్ ఇన్వాయిస్                ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"తేదీ &amp; సమయం     : {DateTime.Now:dd-MMM-yyyy hh:mm tt}");
+Console.WriteLine($"కస్టమర్ పేరు    : {customerName}");
+Console.WriteLine($"కొన్న వస్తువు   : {itemName}");
+Console.WriteLine($"పరిమాణం         : {quantity}");
+Console.WriteLine($"యూనిట్ రేటు     : ₹{unitPrice:N2}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine($"సబ్-టోటల్       : ₹{subTotal:N2}");
+Console.WriteLine($"డిస్కౌంట్ ({discountPercent}%)  : -₹{discountAmount:N2}");
+Console.WriteLine($"పన్ను పరిధి మొత్తం : ₹{taxableAmount:N2}");
+Console.WriteLine($"జీఎస్టీ (GST 18%): +₹{gstAmount:N2}");
+Console.WriteLine("-------------------------------------------------");
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine($"చెల్లించాల్సిన మొత్తం: ₹{grandTotal:N2}");
+Console.ResetColor();
+Console.WriteLine("=================================================");
+Console.WriteLine("మా వద్ద షాపింగ్ చేసినందుకు ధన్యవాదాలు! మళ్లీ రండి! 🙏\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ బిల్లింగ్ ఇంజిన్‌ను పరీక్షించండి!</div>
+        <p>
+          ఈ పూర్తి కోడ్‌ను మా ఇంటరాక్టివ్ బ్రౌజర్ ఎడిటర్‌లో పేస్ట్ చేసి రన్ చేయండి. మీ కస్టమర్ పేరు, పరిమాణం, మరియు ధర ఇచ్చి ఆటోమేటిక్ ఇన్వాయిస్ ఎలా జెనరేట్ అవుతుందో స్వయంగా చూడండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన తప్పులు &amp; ప్రొఫెషనల్ బెస్ట్ ప్రాక్టీసెస్</h2>
+      <p>
+        ఇండస్ట్రీలో జూనియర్ డెవలపర్లు కోడ్ రాసేటప్పుడు తరచుగా చేసే 7 ముఖ్యమైన తప్పులు మరియు వాటి నివారణ మార్గాలు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. CS8600 Nullable Warning ను పట్టించుకోకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>string s = Console.ReadLine();</code> రాస్తే వార్నింగ్ వస్తుంది. ఎల్లప్పుడూ <code>string?</code> వాడండి లేదా <code>?? ""</code> తో శూన్యతను నిరోధించండి.
           </p>
         </div>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Console.ReadLine() పక్కన string? (Question Mark) ఎందుకు కనిపిస్తుంది?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            C# 8 లో ప్రవేశపెట్టిన <strong>Nullable Reference Types</strong> ప్రకారం, యూజర్ ఏమీ టైప్ చేయకుండా Ctrl+Z (EOF) ప్రెస్ చేస్తే <code>null</code> వచ్చే అవకాశం ఉందని కంపైలర్ సూచిస్తుంది.
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. ఎక్స్‌ప్లిసిట్ కాస్టింగ్ (int) రౌండ్ చేస్తుందనుకోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>(int)9.99</code> ఎప్పటికీ 10 అవ్వదు, కేవలం 9 మాత్రమే అవుతుంది. రౌండింగ్ కావాలంటే <code>Math.Round()</code> లేదా <code>Convert.ToInt32()</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. కరెన్సీ లెక్కలకు double లేదా float వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            బైనరీ ఫ్లోటింగ్ పాయింట్ పరిమితుల వల్ల పైసల లెక్కల్లో తేడా వస్తుంది (ఉదా: 0.1 + 0.2 = 0.30000000000000004). డబ్బు లెక్కలకు <strong><code>decimal</code></strong> మాత్రమే వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. యూజర్ ఇన్‌పుట్‌లకు గుడ్డిగా int.Parse() వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            యూజర్ పొరపాటున అక్షరం కొట్టగానే యాప్ క్రాష్ అయిపోతుంది. ఎల్లప్పుడూ <strong><code>int.TryParse()</code></strong> నే వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. CultureInfo ని విస్మరించడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            యూరోపియన్ దేశాల్లో డెసిమల్స్ కామాతో ఉంటాయి. API ఇన్‌పుట్స్ పార్స్ చేసేటప్పుడు <code>CultureInfo.InvariantCulture</code> ను జతచేయడం మర్చిపోవద్దు.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. checked బ్లాక్ లేకుండా పెద్ద మొత్తాల గుణకారాలు చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            రెండు పెద్ద ఇంటిజర్లను గుణించినప్పుడు అది 2 బిలియన్లు దాటితే సైలెంట్‌గా నెగటివ్ నంబర్ అయిపోతుంది. కీలక గణనలకు <code>checked</code> బ్లాక్ వాడండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. Parse రిజల్ట్ చెక్ చేయకుండా out వేరియబుల్ వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>int.TryParse(str, out int val);</code> తర్వాత if కండిషన్ పెట్టకుండా డైరెక్ట్‌గా val వాడితే, పార్సింగ్ ఫెయిల్ అయినప్పుడు val లో 0 ఉంటుంది, అది తప్పుడు గణనలకు దారితీస్తుంది.
           </p>
         </div>
       </div>
-    </div>
-  
+    </section>
 
-    <!-- PREV / NEXT NAVIGATION -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న విషయాలను ఎంతవరకు గ్రహించారో ఈ 5 ఇంటరాక్టివ్ ప్రశ్నలతో మీరే స్వయంగా పరీక్షించుకోండి!
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: <code>int a = (int)8.99;</code> మరియు <code>int b = Convert.ToInt32(8.99);</code> ఎగ్జిక్యూట్ అయితే a మరియు b విలువలు ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>a = 8</code> మరియు <code>b = 9</code>.<br>
+          <strong>వివరణ:</strong> ఎక్స్‌ప్లిసిట్ కాస్టింగ్ <code>(int)</code> కేవలం డెసిమల్ భాగాలను తుడిచిపెడుతుంది (Truncation), కాబట్టి 8.99 లో .99 పోయి 8 మిగులుతుంది. కానీ <code>Convert.ToInt32()</code> రౌండింగ్ నియమాలను పాటిస్తుంది, 8.99 అనేది 9 కి దగ్గరగా ఉండటం వల్ల 9 గా రౌండ్ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: <code>int.Parse(null)</code> మరియు <code>Convert.ToInt32(null)</code> రన్ చేస్తే ఏమి జరుగుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>int.Parse(null)</code> రన్‌టైమ్‌లో <strong>ArgumentNullException</strong> విసిరి అప్లికేషన్‌ను క్రాష్ చేస్తుంది. కానీ <code>Convert.ToInt32(null)</code> ఎటువంటి ఎర్రర్ ఇవ్వకుండా సురక్షితంగా పూర్ణాంకం <strong>0</strong> ని రిటర్న్ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>Console.ReadKey(true)</code> లో <code>true</code> పారామీటర్ యొక్క ప్రాముఖ్యత ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఆ పారామీటర్ పేరు <code>intercept</code>. దాని విలువ <code>true</code> అయితే, యూజర్ కీబోర్డ్ పై నొక్కిన క్యారెక్టర్ తెరపై కనపడదు (It hides/intercepts echo to console). రహస్య పాస్‌వర్డ్‌లు, సెన్సిటివ్ పిన్‌లు రీడ్ చేయడానికి దీనిని వాడతారు.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: <code>int.TryParse("250", out int res)</code> లో <code>out</code> కీవర్డ్ ఎందుకు అవసరం?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఒక C# మెథడ్ సాధారణంగా ఒకే విలువను రిటర్న్ చేయగలదు. <code>TryParse()</code> ఇప్పటికే పార్సింగ్ సక్సెస్ అయిందా లేదా తెలిపే <code>bool</code> ను రిటర్న్ చేస్తుంది. అదనంగా, కన్వర్ట్ అయిన సంఖ్యను బయటకు పంపడానికి <code>out</code> (Output Parameter) మెకానిజమ్‌ను ఉపయోగిస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: ఒక సంఖ్య <code>byte</code> గరిష్ట పరిమితి 255 ను దాటినప్పుడు <code>checked</code> బ్లాక్ లేకపోతే ఏమవుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> రన్‌టైమ్ ఎర్రర్ రాదు! హైయర్-ఆర్డర్ బిట్లు కత్తిరించబడి (Bit Truncation), సంఖ్య 0 నుండి మళ్లీ లూప్ అవుతుంది (ఉదా: 256 అనేది 0 గా, 257 అనేది 1 గా మారుతుంది). దీనినే బఫర్ ఓవర్‌ఫ్లో రాప్‌అరౌండ్ అంటారు.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
       <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
-        ← Prev: 2. వేరియబుల్స్ & CTS డేటా టైప్స్
+        ← Previous: 02. వేరియబుల్స్ &amp; CTS డేటా టైప్స్
       </a>
-      
       <a href="/blog-csharp/04-csharp-operators-and-expressions.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
-        Next: 4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్ →
+        Next: 04. ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ &amp; Null-Coalescing →
       </a>
     </div>
 
@@ -458,7 +1057,7 @@ if (int.TryParse(input, out int age) &amp;&amp; age &gt; 0) {
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on .NET 8.0 SDK / C# 12 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -467,5 +1066,97 @@ if (int.TryParse(input, out int age) &amp;&amp; age &gt; 0) {
 
 <!-- SITE NAVIGATION LOADER -->
 <script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = `using System;
+using System.Globalization;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🛒 మన సూపర్ మార్కెట్ - స్మార్ట్ క్యాషియర్ కౌంటర్ v1.0");
+Console.WriteLine("=================================================");
+
+Console.Write("కస్టమర్ పేరు: ");
+string customerName = Console.ReadLine() ?? "గౌరవనీయ కస్టమర్";
+
+Console.Write("వస్తువు పేరు: ");
+string itemName = Console.ReadLine() ?? "బాస్మతి బియ్యం";
+
+int quantity = 2;
+decimal unitPrice = 149.50m;
+decimal discountPercent = 10m;
+
+decimal subTotal = quantity * unitPrice;
+decimal discountAmount = subTotal * (discountPercent / 100m);
+decimal taxableAmount = subTotal - discountAmount;
+decimal gstAmount = taxableAmount * 0.18m;
+decimal grandTotal = taxableAmount + gstAmount;
+
+Console.WriteLine("\n=================================================");
+Console.WriteLine("                అధికారిక టాక్స్ ఇన్వాయిస్                ");
+Console.WriteLine("=================================================");
+Console.WriteLine($"తేదీ & సమయం     : {DateTime.Now:dd-MMM-yyyy hh:mm tt}");
+Console.WriteLine($"కస్టమర్ పేరు    : {customerName}");
+Console.WriteLine($"కొన్న వస్తువు   : {itemName}");
+Console.WriteLine($"పరిమాణం         : {quantity}");
+Console.WriteLine($"యూనిట్ రేటు     : ₹{unitPrice:N2}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine($"సబ్-టోటల్       : ₹{subTotal:N2}");
+Console.WriteLine($"డిస్కౌంట్ ({discountPercent}%)  : -₹{discountAmount:N2}");
+Console.WriteLine($"పన్ను పరిధి మొత్తం : ₹{taxableAmount:N2}");
+Console.WriteLine($"జీఎస్టీ (GST 18%): +₹{gstAmount:N2}");
+Console.WriteLine("-------------------------------------------------");
+Console.WriteLine($"చెల్లించాల్సిన మొత్తం: ₹{grandTotal:N2}");
+Console.WriteLine("=================================================\n");`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
 </body>
 </html>
