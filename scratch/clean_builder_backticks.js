@@ -32,3 +32,4 @@ code = code.replace("}';", "}\\`;");
 
 fs.writeFileSync(targetFile, code, 'utf8');
 console.log('Done cleaning backticks in', targetFile);
+

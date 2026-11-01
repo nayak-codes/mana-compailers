@@ -1,0 +1,969 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[15]; // Chapter 16 (0-indexed 15)
+const sidebarHtml = buildSidebar(16);
+
+const chapter16Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ పాలిమార్ఫిజమ్ & Virtual Functions సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: Compile-time vs Run-time Polymorphism, virtual కీవర్డ్, override & final, Pure Virtual Functions & Abstract Classes, vtable & vptr మెకానిక్స్, Virtual Destructors, మరియు Enterprise Multi-Cloud Provisioner ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ polymorphism telugu, virtual functions c++, vtable vptr c++, pure virtual functions, abstract classes c++, override final c++11, virtual destructor c++, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Mastering C++ Polymorphism, Virtual Functions & vtable in Telugu)",
+    "description": "C++ పాలిమార్ఫిజమ్ & Virtual Functions పూర్తి గైడ్: Run-time Binding, override, Abstract Classes, vtable, Virtual Destructors, మరియు Multi-Cloud Engine.",
+    "articleSection": "Phase 4: Object-Oriented Programming (OOP)",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-16",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','final','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid','dynamic_cast'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','vector','array','unique_ptr',
+        'make_unique','main','printf','fixed','setprecision'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?|0x[0-9a-fA-F]+)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => {
+        el.innerHTML = highlightCppCode(el.textContent);
+      });
+    });
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        navigator.clipboard.writeText(codeEl.textContent).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        });
+      }
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        const rawCode = codeEl.textContent;
+        try {
+          localStorage.setItem('code_cpp17', rawCode);
+          localStorage.setItem('code_cpp', rawCode);
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        window.open('/online-cpp-compiler.html', '_blank');
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 16: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern C++ (C++20/C++17)</span>
+      <span class="badge">🟢 Chapter 16 of 20</span>
+      <span class="badge">📂 ${currentLesson.phaseTag}: ${currentLesson.phaseTitle}</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ ప్రపంచంలో అత్యంత ఉత్కృష్టమైన మరియు శక్తివంతమైన ఆత్మ: <strong>పాలిమార్ఫిజమ్ (Polymorphism - బహురూపత)</strong>. ఒకే ఒక సాధారణ కమాండ్‌ను పంపినప్పుడు, వేర్వేరు ఆబ్జెక్టులు వాటి స్వంత ప్రత్యేక రీతిలో ఆ కమాండ్‌ను అమలు చేయడాన్నే పాలిమార్ఫిజమ్ అంటారు. ఉదాహరణకు ఒక రిమోట్ కంట్రోలర్ నుండి "Play" బటన్ నొక్కినప్పుడు టీవీ, మ్యూజిక్ ప్లేయర్, లేదా వీడియో గేమ్ తమ తమ శైలిలో ప్లే చేయడం వంటిది.</p>
+      <p>C++ లో రన్‌టైమ్ పాలిమార్ఫిజమ్‌ను సాధించడానికి పునాది రాళ్ళు <strong>వర్చువల్ ఫంక్షన్లు (Virtual Functions)</strong>. అయితే కంపైలర్ మరియు హార్డ్‌వేర్ లెవెల్‌లో రన్‌టైమ్ డిస్పాచ్ ఎలా జరుగుతుందో తెలుసుకోవడానికి ప్రఖ్యాత <strong>vtable (Virtual Method Table)</strong> మరియు <strong>vptr</strong> ల మెకానిక్స్‌ను అర్థం చేసుకోవడం తప్పనిసరి. వీటితో పాటే Modern C++11 యొక్క భద్రతా కవచాలైన <code>override</code>, <code>final</code>, మరియు మెమరీ లీక్స్‌ను నివారించే <strong>వర్చువల్ డిస్ట్రక్టర్లు (Virtual Destructors)</strong> అత్యంత కీలకమైనవి.</p>
+      <p>ఈ సమగ్ర మాస్టర్‌క్లాస్‌లో మనం Compile-time vs Run-time Polymorphism, Object Slicing ప్రమాదాలు, Pure Virtual Functions &amp; Abstract Interfaces, vtable అంతర్గత మెమరీ ఆర్కిటెక్చర్, మరియు పూర్తి స్థాయి <em>"Enterprise Multi-Cloud Infrastructure Provisioner &amp; Kubernetes Orchestrator"</em> ప్రాజెక్ట్‌ను ప్రత్యక్షంగా నిర్మించి నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> పాలిమార్ఫిజమ్ అంటే ఏమిటి? (Many Forms — The Soul of OOP)</h2>
+      <p>
+        <strong>పాలిమార్ఫిజమ్ (Polymorphism)</strong> అనే పదం గ్రీకు భాష నుండి వచ్చింది: <em>Poly</em> అంటే "అనేక" (Many), మరియు <em>Morph</em> అంటే "రూపాలు" (Forms).
+      </p>
+      <p>
+        సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో: <em>ఒకే ఒక ఉమ్మడి ఇంటర్‌ఫేస్ (Interface) ద్వారా విభిన్న రకాల ఆబ్జెక్టులను ఏకరూపంలో నియంత్రించగలగడాన్నే పాలిమార్ఫిజమ్ అంటారు</em>.
+      </p>
+      <p>
+        ఒక వాస్తవ ఉదాహరణ చూద్దాం: మీ కంప్యూటర్‌లో అనేక రకాల డాక్యుమెంట్లు (PDF, Word, Excel, Image) ఉన్నాయి. మీరు వాటన్నింటినీ ప్రింట్ చేయాలనుకున్నప్పుడు వాటన్నింటికీ <code>print()</code> అనే ఒకే కమాండ్‌ను ఇస్తారు. కానీ PDF తన స్వంత పద్ధతిలో ప్రింట్ అవుతుంది, Word తన స్వంత ఫార్మాట్‌లో ప్రింట్ అవుతుంది. ఇదే పాలిమార్ఫిజమ్!
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> కంపైల్-టైమ్ వర్సెస్ రన్-టైమ్ పాలిమార్ఫిజమ్ (Early vs Late Binding)</h2>
+      <p>
+        C++ లో పాలిమార్ఫిజమ్ ప్రధానంగా రెండు రూపాల్లో సాధ్యమవుతుంది:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>అంశం / ఫీచర్</th>
+            <th>కంపైల్-టైమ్ పాలిమార్ఫిజమ్ (Static / Early Binding)</th>
+            <th>రన్-టైమ్ పాలిమార్ఫిజమ్ (Dynamic / Late Binding)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఎలా సాధిస్తారు?</strong></td>
+            <td>Function Overloading, Operator Overloading, C++ Templates</td>
+            <td><strong>Virtual Functions</strong> మరియు Base Class Pointers / References</td>
+          </tr>
+          <tr>
+            <td><strong>బైండింగ్ సమయం</strong></td>
+            <td>ప్రోగ్రామ్ కంపైల్ అయ్యే సమయంలోనే కంపైలర్ ఫంక్షన్ కాల్‌ను ఫిక్స్ చేస్తుంది</td>
+            <td>ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు ఆబ్జెక్ట్ రకాన్ని బట్టి డైనమిక్‌గా నిర్ణయిస్తుంది</td>
+          </tr>
+          <tr>
+            <td><strong>పనితీరు (Performance)</strong></td>
+            <td>అత్యంత వేగవంతం (Zero Runtime Overhead, CPU Direct Jump)</td>
+            <td>స్వల్ప ఓవర్‌హెడ్ (vtable pointer lookup ద్వారా ఇన్-డైరెక్ట్ కాల్)</td>
+          </tr>
+          <tr>
+            <td><strong>సౌలభ్యం (Flexibility)</strong></td>
+            <td>రన్‌టైమ్‌లో కొత్త రకాల ప్లగిన్‌లను డైనమిక్‌గా లోడ్ చేయలేదు</td>
+            <td>అత్యంత అనుకూలమైనది (రన్‌టైమ్ ప్లగ్-అండ్-ప్లే ఆర్కిటెక్చర్)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> ఆబ్జెక్ట్ స్లైసింగ్ సమస్య (The Object Slicing Trap)</h2>
+      <p>
+        పాలిమార్ఫిజమ్ నేర్చుకునే ప్రతి ఒక్కరూ ప్రారంభంలో చేసే ఘోరమైన తప్పు: <strong>ఆబ్జెక్ట్ స్లైసింగ్ (Object Slicing)</strong>.
+      </p>
+      <p>
+        ఒక బేస్ క్లాస్ వేరియబుల్‌కు ఒక చైల్డ్ క్లాస్ ఆబ్జెక్ట్‌ను Pass-by-Value గా అసైన్ చేసినప్పుడు:
+      </p>
+      <pre><code>Base b = derivedObj; // ⚠️ DANGER: Object Slicing జరిగిపోయింది!</code></pre>
+      <p>
+        ఇలా జరిగినప్పుడు కంపైలర్ కేవలం బేస్ క్లాస్‌కు సంబంధించిన భాగాలను మాత్రమే కాపీ చేసి, చైల్డ్ క్లాస్ యొక్క అదనపు ఫీచర్లను మెమరీలో నిర్దాక్షిణ్యంగా <strong>కత్తిరించి (Sliced off)</strong> పారేస్తుంది! ఫలితంగా పాలిమార్ఫిజమ్ పూర్తిగా నశిస్తుంది.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">object_slicing_trap.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class Vehicle {
+public:
+    virtual void describe() const {
+        std::cout << "  🚗 [Vehicle] సాధారణ రవాణా వాహనం.\\n";
+    }
+};
+
+class SuperCar : public Vehicle {
+public:
+    int turboHorsepower = 850;
+    void describe() const override {
+        std::cout << "  🏎️ [SuperCar] టర్బో సూపర్ కార్! అశ్వశక్తి: " << turboHorsepower << " HP!\\n";
+    }
+};
+
+// ❌ ప్రమాదకరమైన ఫంక్షన్: Pass by Value (Object Slicing జరుగుతుంది!)
+void inspectByValue(Vehicle v) {
+    v.describe(); // కేవలం బేస్ వెర్షన్ మాత్రమే పిలువబడుతుంది!
+}
+
+// ✅ సరైన పాలిమార్ఫిక్ ఫంక్షన్: Pass by Reference
+void inspectByReference(const Vehicle& v) {
+    v.describe(); // అసలైన చైల్డ్ పాలిమార్ఫిక్ మెథడ్ రన్ అవుతుంది!
+}
+
+int main() {
+    SuperCar ferrari;
+    std::cout << "=== Pass by Value (స్లైసింగ్ వల్ల సూపర్ కార్ ఫీచర్లు కత్తిరించబడ్డాయి) ===\\n";
+    inspectByValue(ferrari);
+
+    std::cout << "\\n=== Pass by Reference (నిజమైన పాలిమార్ఫిజమ్ విజయవంతం!) ===\\n";
+    inspectByReference(ferrari);
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> <code>virtual</code> కీవర్డ్ &amp; డైనమిక్ మెథడ్ డిస్పాచ్ (Dynamic Dispatch)</h2>
+      <p>
+        ఒక బేస్ క్లాస్ లోని ఫంక్షన్ డిక్లరేషన్ ముందు మనం <strong><code>virtual</code></strong> కీవర్డ్‌ను జోడించినప్పుడు, కంపైలర్‌కు ఒక స్పష్టమైన సందేశం వెళ్తుంది:
+      </p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:12px 16px; margin:16px 0; font-size:14px;">
+        "ఈ ఫంక్షన్‌ను కంపైల్ చేసేటప్పుడే గుడ్డిగా బేస్ క్లాస్ అడ్రస్‌తో లింక్ చేయవద్దు! రన్‌టైమ్‌లో పాయింటర్ చూపిస్తున్న అసలైన ఆబ్జెక్ట్ రకాన్ని తనిఖీ చేసి, ఆ చైల్డ్ క్లాస్ ఫంక్షన్‌నే పిలవండి!"
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">virtual_function_basics.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+
+class PaymentGateway {
+public:
+    virtual void processPayment(double amount) {
+        std::cout << "  💳 [బేస్ గేట్‌వే] సాధారణ చెల్లింపు ప్రాసెస్ అవుతోంది: ₹ " << amount << "\\n";
+    }
+
+    virtual ~PaymentGateway() = default;
+};
+
+class UPIPayment : public PaymentGateway {
+public:
+    void processPayment(double amount) override {
+        std::cout << "  📱 [UPI గేట్‌వే] NPCI సర్వర్ ద్వారా తక్షణ UPI చెల్లింపు: ₹ " << amount << "\\n";
+    }
+};
+
+class CreditCardPayment : public PaymentGateway {
+public:
+    void processPayment(double amount) override {
+        std::cout << "  💳 [క్రెడిట్ కార్డ్] Visa/Mastercard 3D-Secure OTP ప్రాసెస్: ₹ " << amount << "\\n";
+    }
+};
+
+void executeTransaction(PaymentGateway* gateway, double amount) {
+    gateway->processPayment(amount);
+}
+
+int main() {
+    std::cout << "===== C++ Virtual Functions Polymorphism =====\\n";
+    UPIPayment upi;
+    CreditCardPayment card;
+
+    executeTransaction(&upi, 1500.0);  // UPI మెథడ్ కాల్ అవుతుంది
+    executeTransaction(&card, 4500.0); // Credit Card మెథడ్ కాల్ అవుతుంది
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> Modern C++ <code>override</code> &amp; <code>final</code> Specifiers (C++11 Guardrails)</h2>
+      <p>
+        సాంప్రదాయ C++98 లో వర్చువల్ ఫంక్షన్లను ఓవర్‌రైడ్ చేసేటప్పుడు ఒక చిన్న టైపో (ఉదాహరణకు బేస్ లో <code>const</code> ఉండి చైల్డ్ లో లేకపోవడం) జరిగినా కంపైలర్ సైలెంట్‌గా ఒక కొత్త ఫంక్షన్‌ను సృష్టించి ఓవర్‌రైడింగ్‌ను విఫలం చేసేది.
+      </p>
+      <p>
+        దీనిని అరికట్టడానికి <strong>Modern C++11</strong> లో <code>override</code> మరియు <code>final</code> కీవర్డ్లు ప్రవేశపెట్టబడ్డాయి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">override_final_guardrails.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class BaseLogger {
+public:
+    virtual void log(const std::string& msg) {
+        std::cout << "[BaseLog]: " << msg << "\\n";
+    }
+    virtual ~BaseLogger() = default;
+};
+
+class ConsoleLogger : public BaseLogger {
+public:
+    // override కీవర్డ్ కంపైలర్ చేత సిగ్నేచర్‌ను ఖచ్చితంగా వెరిఫై చేయిస్తుంది!
+    void log(const std::string& msg) override {
+        std::cout << "🖥️ [Console]: " << msg << "\\n";
+    }
+};
+
+// final క్లాస్: దీనిని ఇక ఎవరూ ఇన్హెరిట్ చేసుకోలేరు!
+class SecureAuditor final : public BaseLogger {
+public:
+    // final మెథడ్: దీనిని చైల్డ్ క్లాసులు ఓవర్‌రైడ్ చేయలేవు
+    void log(const std::string& msg) override final {
+        std::cout << "🔒 [SHA-256 Secure Audit Log]: " << msg << "\\n";
+    }
+};
+
+int main() {
+    ConsoleLogger cLog;
+    SecureAuditor sLog;
+
+    BaseLogger* p1 = &cLog;
+    BaseLogger* p2 = &sLog;
+
+    p1->log("User logged in");
+    p2->log("Admin accessed ledger");
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> ప్యూర్ వర్చువల్ ఫంక్షన్లు (<code>= 0</code>) &amp; అబ్‌స్ట్రాక్ట్ క్లాసెస్ (Abstract Interfaces)</h2>
+      <p>
+        ఒక బేస్ క్లాస్ లో ఫంక్షన్‌కు ఎటువంటి బాడీని రాయకుండా, కేవలం <strong><code>= 0;</code></strong> అని రాసి వదిలేస్తే దానిని <strong>ప్యూర్ వర్చువల్ ఫంక్షన్ (Pure Virtual Function)</strong> అంటారు.
+      </p>
+      <p>
+        కనీసం ఒక్క ప్యూర్ వర్చువల్ ఫంక్షన్ కలిగిన క్లాస్‌ను <strong>అబ్‌స్ట్రాక్ట్ క్లాస్ (Abstract Class)</strong> అంటారు. దీనికి డైరెక్ట్ ఆబ్జెక్టులను సృష్టించలేము.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">abstract_interface_contract.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// అబ్‌స్ట్రాక్ట్ ఇంటర్‌ఫేస్ (కాంట్రాక్ట్)
+class AudioCodec {
+public:
+    virtual void decodePacket(const std::string& rawBytes) = 0; // Pure Virtual!
+    virtual void encodePacket() = 0;                             // Pure Virtual!
+    virtual ~AudioCodec() = default;
+};
+
+class MP3Codec : public AudioCodec {
+public:
+    void decodePacket(const std::string& rawBytes) override {
+        std::cout << "  🎵 [MP3 డీకోడర్] MPEG-1 Layer III ఫ్రేమ్ ప్రాసెస్ అయ్యింది.\\n";
+    }
+    void encodePacket() override {
+        std::cout << "  🎵 [MP3 ఎన్‌కోడర్] 320 kbps ఆడియో కంప్రెషన్ పూర్తయింది.\\n";
+    }
+};
+
+class FLACCodec : public AudioCodec {
+public:
+    void decodePacket(const std::string& rawBytes) override {
+        std::cout << "  🎧 [FLAC డీకోడర్] లాస్‌లెస్ 24-bit 192kHz హై-రెస్ ఆడియో ప్లేబ్యాక్.\\n";
+    }
+    void encodePacket() override {
+        std::cout << "  🎧 [FLAC ఎన్‌కోడర్] జీరో క్వాలిటీ లాస్ కంప్రెషన్.\\n";
+    }
+};
+
+int main() {
+    // AudioCodec codec; // ❌ కంపైలర్ ఎర్రర్! అబ్‌స్ట్రాక్ట్ క్లాస్ కు ఆబ్జెక్ట్ సృష్టించలేము!
+    MP3Codec mp3;
+    FLACCodec flac;
+
+    AudioCodec* player = &flac;
+    player->decodePacket("0xFFE3_PCM_DATA");
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> అండర్ ది హుడ్: <code>vtable</code> &amp; <code>vptr</code> అంతర్గత మెకానిక్స్</h2>
+      <p>
+        సిస్టమ్స్ ప్రోగ్రామింగ్ ఇంటర్వ్యూలలో అత్యంత తరచుగా అడిగే లోతైన ప్రశ్న: <em>"C++ లో పాలిమార్ఫిజమ్ హార్డ్‌వేర్ మరియు మెమరీ స్థాయిలో నిజంగా ఎలా పనిచేస్తుంది?"</em>
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:20px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.6;">
+        <div style="font-weight:bold; color:#10b981; margin-bottom:10px;">[The Mechanics of vptr and vtable in RAM]</div>
+        <strong>RAM Object Memory (Derived)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Static Memory (vtable in Text/Data)</strong><br/>
+        +----------------------------+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------------------------+<br/>
+        |  <strong>vptr</strong> (Hidden 8-Byte Ptr)  |-------->|  Index [0]: &amp;Derived::render()     |<br/>
+        +----------------------------+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|  Index [1]: &amp;Derived::calculate()  |<br/>
+        |  int memberData1           |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------------------------+<br/>
+        |  double memberData2        |<br/>
+        +----------------------------+
+      </div>
+
+      <ol>
+        <li><strong>vtable:</strong> ఫంక్షన్ పాయింటర్ల స్టాటిక్ అర్రే. ప్రతి పాలిమార్ఫిక్ క్లాస్‌కు ఒకటే ఉంటుంది.</li>
+        <li><strong>vptr:</strong> ప్రతి ఆబ్జెక్ట్ మెమరీ ప్రారంభంలో ఉండే 8-బైట్ల పాయింటర్. ఇది సంబంధిత vtable ను పాయింట్ చేస్తుంది.</li>
+        <li><strong>Dynamic Dispatch:</strong> <code>ptr->func()</code> అన్నప్పుడు <code>vptr</code> ద్వారా <code>vtable</code> లోని ఇండెక్స్‌ను యాక్సెస్ చేసి జంప్ చేస్తుంది.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> వర్చువల్ డిస్ట్రక్టర్లు (Virtual Destructors: The Life-Saving Rule)</h2>
+      <p>
+        బేస్ పాయింటర్ ద్వారా చైల్డ్ ఆబ్జెక్ట్‌ను డిలీట్ చేసినప్పుడు చైల్డ్ డిస్ట్రక్టర్ కూడా సరిగ్గా కాల్ అయ్యి మెమరీ లీక్ కాకుండా చూసుకోవడానికి బేస్ డిస్ట్రక్టర్ తప్పనిసరిగా <code>virtual</code> అయి ఉండాలి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">virtual_destructor_leak_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class BaseResource {
+public:
+    BaseResource() { std::cout << "  [Base] రిసోర్స్ కేటాయించబడింది.\\n"; }
+    // 💡 వర్చువల్ డిస్ట్రక్టర్ లేకపోతే చైల్డ్ మెమరీ శాశ్వతంగా లీక్ అవుతుంది!
+    virtual ~BaseResource() { std::cout << "  [Base] రిసోర్స్ సురక్షితంగా క్లీన్ అయింది.\\n"; }
+};
+
+class HeavyDerived : public BaseResource {
+private:
+    int* heapBuffer;
+public:
+    HeavyDerived() : heapBuffer(new int[5000]) {
+        std::cout << "  [Derived] 20,000 బైట్ల హీప్ మెమరీ కేటాయించబడింది.\\n";
+    }
+    ~HeavyDerived() override {
+        std::cout << "  [Derived] హీప్ బఫర్ లీక్ కాకుండా డిలీట్ చేయబడింది!\\n";
+        delete[] heapBuffer;
+    }
+};
+
+int main() {
+    std::cout << "===== వర్చువల్ డిస్ట్రక్టర్ లైఫ్‌సైకిల్ పరీక్ష =====\\n";
+    BaseResource* ptr = new HeavyDerived();
+
+    // delete ptr పిలిచినప్పుడు:
+    // 1. ముందుగా HeavyDerived డిస్ట్రక్టర్ కాల్ అవుతుంది
+    // 2. తర్వాత BaseResource డిస్ట్రక్టర్ కాల్ అవుతుంది
+    delete ptr;
+
+    std::cout << "మెమరీ లీక్ లేకుండా క్లీనప్ విజయవంతమైంది!\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> పాలిమార్ఫిక్ కాస్టింగ్: <code>dynamic_cast</code> vs <code>static_cast</code></h2>
+      <p>
+        ఒక బేస్ పాయింటర్ చూపిస్తున్న ఆబ్జెక్ట్ నిజంగా నిర్దిష్ట చైల్డ్ క్లాస్ అవునా కాదా అని రన్‌టైమ్‌లో తనిఖీ చేసి సురక్షితంగా మార్చడానికి <strong><code>dynamic_cast</code></strong> ను ఉపయోగిస్తాం.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">dynamic_cast_safe_downcast.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class Animal {
+public:
+    virtual void speak() const = 0;
+    virtual ~Animal() = default;
+};
+
+class Dog : public Animal {
+public:
+    void speak() const override { std::cout << "  🐶 బౌ బౌ!\\n"; }
+    void fetchBall() const { std::cout << "  🎾 కుక్క బంతిని తెచ్చింది!\\n"; }
+};
+
+class Cat : public Animal {
+public:
+    void speak() const override { std::cout << "  🐱 మియావ్!\\n"; }
+};
+
+void identifyAndPlay(Animal* a) {
+    a->speak(); // పాలిమార్ఫిక్ కాల్
+
+    // సురక్షిత డౌన్‌కాస్టింగ్: ఇది కుక్క అయితేనే బంతిని ఆడుతుంది!
+    Dog* dogPtr = dynamic_cast&lt;Dog*&gt;(a);
+    if (dogPtr != nullptr) {
+        dogPtr->fetchBall();
+    } else {
+        std::cout << "  ℹ️ ఇది కుక్క కాదు, బంతి తీసుకురాదు.\\n";
+    }
+}
+
+int main() {
+    Dog myDog;
+    Cat myCat;
+
+    identifyAndPlay(&myDog);
+    identifyAndPlay(&myCat);
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> పాలిమార్ఫిజమ్ యొక్క పెర్ఫార్మెన్స్ కాస్ట్ &amp; ఆప్టిమైజేషన్</h2>
+      <p>
+        హై-ఫ్రీక్వెన్సీ ట్రేడింగ్ (HFT) మరియు గేమ్ ఇంజిన్లలో వర్చువల్ ఫంక్షన్లను వాడేటప్పుడు క్రింది మూడు పెర్ఫార్మెన్స్ అంశాలను పరిగణించాలి:
+      </p>
+      <ol>
+        <li><strong>మెమరీ ఓవర్‌హెడ్:</strong> ప్రతి ఆబ్జెక్ట్‌కు 8 బైట్ల <code>vptr</code> అదనంగా చేరుతుంది.</li>
+        <li><strong>ఇన్‌డైరెక్షన్ ఓవర్‌హెడ్:</strong> డైరెక్ట్ ఫంక్షన్ కాల్ కంటే vtable ద్వారా వెళ్లడం వల్ల CPU లో 2-3 అదనపు సైకిళ్లు పడుతుంది.</li>
+        <li><strong>Inlining పరిమితి:</strong> కంపైలర్ వర్చువల్ ఫంక్షన్లను ఇన్‌లైన్ (Inline) చేయలేదు.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> కన్‌స్ట్రక్టర్లలో వర్చువల్ ఫంక్షన్ల పిలుపు తప్పు (The Constructor Trap)</h2>
+      <p>
+        <strong>గోల్డెన్ రూల్:</strong> <em>కన్‌స్ట్రక్టర్ లేదా డిస్ట్రక్టర్ లోపల ఎప్పుడూ వర్చువల్ ఫంక్షన్లను పిలవకూడదు!</em>
+      </p>
+      <p>
+        ఎందుకు? ఎందుకంటే బేస్ క్లాస్ కన్‌స్ట్రక్టర్ రన్ అవుతున్న సమయంలో చైల్డ్ క్లాస్ ఇంకా పుట్టనేలేదు (దాని vtable పాయింటర్ ఇంకా లోడ్ కాలేదు). ఆ సమయంలో వర్చువల్ ఫంక్షన్ పిలిస్తే బేస్ ఫంక్షన్ మాత్రమే రన్ అవుతుంది తప్ప చైల్డ్ ఫంక్షన్ రన్ కాదు!
+      </p>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> రియల్-వరల్డ్ ప్రాజెక్ట్: Enterprise Multi-Cloud Infrastructure Provisioner &amp; Orchestrator</h2>
+      <p>
+        నిజ జీవితంలో ఆధునిక ఎంటర్‌ప్రైజ్ క్లౌడ్ ప్లాట్‌ఫామ్‌లు (Terraform, Pulumi వంటివి) ఏకకాలంలో AWS, Google Cloud, మరియు Microsoft Azure వంటి విభిన్న క్లౌడ్ ప్రొవైడర్లలో వర్చువల్ మెషీన్లు, కుబెర్‌నెటీస్ క్లస్టర్లు మరియు డేటాబేస్‌లను డిప్లాయ్ చేయాలి.
+      </p>
+      <p>
+        ఈ ప్రాజెక్ట్‌లో మనం అబ్‌స్ట్రాక్ట్ బేస్ క్లాస్, ప్యూర్ వర్చువల్ ఫంక్షన్లు, వర్చువల్ డిస్ట్రక్టర్లు మరియు <code>std::unique_ptr</code> పాలిమార్ఫిక్ వెక్టార్‌తో కూడిన <strong>ఎంటర్‌ప్రైజ్ మల్టీ-క్లౌడ్ ఆర్కెస్ట్రేషన్ ఇంజిన్</strong> ను నిర్మిస్తున్నాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">MultiCloudOrchestrator.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="openInteractiveCompiler()">⚡ Run Live Project</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;memory&gt;
+#include &lt;iomanip&gt;
+
+// అబ్‌స్ట్రాక్ట్ బేస్ ఇంటర్‌ఫేస్ (Abstract Base Class)
+class CloudProvider {
+protected:
+    std::string providerName;
+    std::string region;
+
+public:
+    CloudProvider(std::string name, std::string reg) : providerName(name), region(reg) {}
+
+    virtual ~CloudProvider() {
+        std::cout << "  🗑️ [CloudProvider Destructor] " << providerName << " రిసోర్సులు క్లీన్ చేయబడ్డాయి.\\n";
+    }
+
+    virtual void provisionComputeInstance(const std::string& instanceType, int count) = 0;
+    virtual void deployKubernetesCluster(const std::string& clusterName, int nodes) = 0;
+    virtual double calculateEstimatedHourlyCost() const = 0;
+
+    std::string getProviderName() const { return providerName; }
+};
+
+class AWSProvider : public CloudProvider {
+public:
+    AWSProvider(std::string reg) : CloudProvider("Amazon Web Services (AWS)", reg) {}
+
+    void provisionComputeInstance(const std::string& instanceType, int count) override {
+        std::cout << "  ☁️ [AWS EC2] " << count << "x " << instanceType << " ఇన్స్టాన్స్‌లు " << region << " లో లాంచ్ అయ్యాయి!\\n";
+    }
+
+    void deployKubernetesCluster(const std::string& clusterName, int nodes) override {
+        std::cout << "  ☸️ [AWS EKS] అమెజాన్ ఎలాస్టిక్ కుబెర్‌నెటీస్ సర్వీస్: " << clusterName << " (" << nodes << " Worker Nodes)\\n";
+    }
+
+    double calculateEstimatedHourlyCost() const override {
+        return 12.50;
+    }
+};
+
+class GCPProvider : public CloudProvider {
+public:
+    GCPProvider(std::string reg) : CloudProvider("Google Cloud Platform (GCP)", reg) {}
+
+    void provisionComputeInstance(const std::string& instanceType, int count) override {
+        std::cout << "  🌐 [GCP Compute Engine] " << count << "x " << instanceType << " VM లు " << region << " జోన్‌లో ప్రారంభమయ్యాయి!\\n";
+    }
+
+    void deployKubernetesCluster(const std::string& clusterName, int nodes) override {
+        std::cout << "  ☸️ [Google GKE] ఆటోపైలట్ కుబెర్‌నెటీస్ క్లస్టర్: " << clusterName << " (" << nodes << " Compute Nodes)\\n";
+    }
+
+    double calculateEstimatedHourlyCost() const override {
+        return 10.80;
+    }
+};
+
+class AzureProvider : public CloudProvider {
+public:
+    AzureProvider(std::string reg) : CloudProvider("Microsoft Azure", reg) {}
+
+    void provisionComputeInstance(const std::string& instanceType, int count) override {
+        std::cout << "  🔷 [Azure Virtual Machines] " << count << "x " << instanceType << " VM లు " << region << " లో సిద్ధమయ్యాయి!\\n";
+    }
+
+    void deployKubernetesCluster(const std::string& clusterName, int nodes) override {
+        std::cout << "  ☸️ [Azure AKS] అజూర్ కుబెర్‌నెటీస్ సర్వీస్ క్లస్టర్: " << clusterName << " (" << nodes << " Nodes)\\n";
+    }
+
+    double calculateEstimatedHourlyCost() const override {
+        return 11.75;
+    }
+};
+
+int main() {
+    std::cout << "=======================================================================\\n";
+    std::cout << "🚀 [ENTERPRISE MULTI-CLOUD ORCHESTRATION & DEPLOYMENT ENGINE]\\n";
+    std::cout << "=======================================================================\\n";
+
+    std::vector&lt;std::unique_ptr&lt;CloudProvider&gt;&gt; cloudFleet;
+
+    cloudFleet.push_back(std::make_unique&lt;AWSProvider&gt;("ap-south-1 (Mumbai)"));
+    cloudFleet.push_back(std::make_unique&lt;GCPProvider&gt;("asia-south1 (Delhi)"));
+    cloudFleet.push_back(std::make_unique&lt;AzureProvider&gt;("central-india (Pune)"));
+
+    double totalFleetHourlyCost = 0.0;
+
+    std::cout << "\\n[మల్టీ-క్లౌడ్ డిప్లాయ్‌మెంట్ ఆటోమేషన్ రన్ అవుతోంది]:\\n\\n";
+    for (const auto& provider : cloudFleet) {
+        std::cout << ">>> ఆర్కెస్ట్రేషన్ ప్రొవైడర్: " << provider->getProviderName() << "\\n";
+        provider->provisionComputeInstance("m5.2xlarge", 4);
+        provider->deployKubernetesCluster("prod-banking-mesh", 8);
+
+        double cost = provider->calculateEstimatedHourlyCost();
+        totalFleetHourlyCost += cost;
+        std::cout << "    అంచనా గంట ఖర్చు: $ " << std::fixed << std::setprecision(2) << cost << "\\n\\n";
+    }
+
+    std::cout << "=======================================================================\\n";
+    std::cout << "💰 మొత్తం మల్టీ-క్లౌడ్ నెట్‌వర్క్ గంట ఖర్చు: $ " << totalFleetHourlyCost << " / Hour\\n";
+    std::cout << "=======================================================================\\n";
+    std::cout << "ప్రోగ్రామ్ ముగింపు: వర్చువల్ డిస్ట్రక్టర్లు అన్ని క్లౌడ్ రిసోర్సులను సురక్షితంగా క్లీన్ చేస్తాయి!\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> సారాంశం &amp; ఇంటరాక్టివ్ క్విజ్ (Summary &amp; Self-Check Quizzes)</h2>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:28px;">
+        <h3 style="margin-top:0; color:#10b981;">📌 ఈ అధ్యాయంలో నేర్చుకున్న ప్రధాన అంశాలు:</h3>
+        <ul style="line-height:1.8; color:var(--text);">
+          <li><strong>Polymorphism:</strong> ఒకే సాధారణ ఇంటర్‌ఫేస్ ద్వారా అనేక విభిన్న రకాల ఆబ్జెక్టులను ఏకరూపంలో నియంత్రించే సామర్థ్యం.</li>
+          <li><strong>Compile-time vs Run-time:</strong> ఫంక్షన్ ఓవర్‌లోడింగ్ కంపైల్-టైమ్‌లో బైండ్ అవుతుంది; వర్చువల్ ఫంక్షన్లు రన్‌టైమ్‌లో డైనమిక్‌గా బైండ్ అవుతాయి.</li>
+          <li><strong>Object Slicing:</strong> బేస్ వేరియబుల్‌కు పాస్ చేసినప్పుడు చైల్డ్ డేటా కత్తిరించబడుతుంది; దీన్ని నివారించడానికి ఎల్లప్పుడూ <code>Base*</code> లేదా <code>Base&amp;</code> వాడాలి.</li>
+          <li><strong>virtual Keyword:</strong> కంపైలర్‌కు డైనమిక్ డిస్పాచ్ చేయమని ఆదేశించే కీవర్డ్.</li>
+          <li><strong>override &amp; final:</strong> C++11 సేఫ్‌గార్డ్స్. స్పెల్లింగ్ పొరపాట్లను <code>override</code> నివారిస్తుంది, మరింత ఓవర్‌రైడింగ్‌ను <code>final</code> అడ్డుకుంటుంది.</li>
+          <li><strong>Pure Virtual &amp; Abstract:</strong> <code>virtual void f() = 0;</code> ఉంటే అది అబ్‌స్ట్రాక్ట్ క్లాస్. దీనికి ఆబ్జెక్టులు ఉండవు, కేవలం కాంట్రాక్ట్ మాత్రమే.</li>
+          <li><strong>vtable &amp; vptr:</strong> వర్చువల్ ఫంక్షన్లను రన్‌టైమ్‌లో పాయింట్ చేయడానికి కంపైలర్ ఉపయోగించే ఫంక్షన్ పాయింటర్ టేబుల్ మరియు ఆబ్జెక్ట్ పాయింటర్.</li>
+          <li><strong>Virtual Destructors:</strong> బేస్ పాయింటర్ ద్వారా ఆబ్జెక్ట్‌ను డిలీట్ చేసినప్పుడు చైల్డ్ మెమరీ లీక్ కాకుండా ఉండేలా చూసే పవిత్ర నియమం.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-bottom:16px;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 1: C++ లో ఒక బేస్ క్లాస్‌లోని డిస్ట్రక్టర్‌ను <code>virtual</code> గా డిక్లేర్ చేయకపోతే ఏ ప్రమాదం జరుగుతుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>చైల్డ్ క్లాస్ మెమరీ లీక్ (Memory Leak)</strong> అవుతుంది!<br/>
+          <em>వివరణ:</em> <code>Base* ptr = new Derived(); delete ptr;</code> చేసినప్పుడు, బేస్ డిస్ట్రక్టర్ వర్చువల్ కాకపోతే కేవలం బేస్ క్లాస్ డిస్ట్రక్టర్ మాత్రమే కాల్ అవుతుంది; చైల్డ్ క్లాస్ డిస్ట్రక్టర్ ఎప్పటికీ ఎగ్జిక్యూట్ కాదు, ఫలితంగా చైల్డ్ కేటాయించిన రిసోర్సులు లీక్ అయిపోతాయి.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 2: <strong>Object Slicing</strong> అంటే ఏమిటి? దానిని ఎలా నివారించవచ్చు?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> చైల్డ్ ఆబ్జెక్ట్‌ను బేస్ వేరియబుల్‌కు Pass-by-Value గా ఇచ్చినప్పుడు చైల్డ్ మెంబర్లు కత్తిరించబడటం. నివారణకు <strong>Base పాయింటర్లు (<code>Base*</code>) లేదా రిఫరెన్సులు (<code>Base&amp;</code>)</strong> వాడాలి!<br/>
+          <em>వివరణ:</em> బేస్ వేరియబుల్‌కు చైల్డ్ ఆబ్జెక్ట్ సైజు పట్టదు. కాబట్టి బేస్ భాగం మాత్రమే కాపీ అవుతుంది, చైల్డ్ భాగాలు నశిస్తాయి.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 3: C++11 లో ఫంక్షన్ పక్కన <code>override</code> కీవర్డ్ రాయడం ఎందుకు తప్పనిసరి బెస్ట్ ప్రాక్టీస్?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> స్పెల్లింగ్ తప్పులు లేదా సిగ్నేచర్ మిస్‌మ్యాచ్ వల్ల జరిగే బగ్స్‌ను కంపైల్-టైమ్‌లోనే పసిగట్టడానికి!<br/>
+          <em>వివరణ:</em> <code>override</code> రాసినప్పుడు, బేస్ క్లాస్‌లో సరిగ్గా అదే సంతకంతో వర్చువల్ ఫంక్షన్ లేకపోతే కంపైలర్ ఎర్రర్ ఇస్తుంది. ఇది రన్‌టైమ్‌లో అనుకోని నిశ్శబ్ద వైఫల్యాలను నివారిస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 4: 64-bit ఆర్కిటెక్చర్‌లో వర్చువల్ ఫంక్షన్లు ఉన్న క్లాస్ యొక్క ఆబ్జెక్ట్ సైజు ఎందుకు అదనంగా 8 బైట్లు పెరుగుతుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కంపైలర్ చేర్చే హిడెన్ <strong><code>vptr</code> (Virtual Table Pointer)</strong> కొరకు!<br/>
+          <em>వివరణ:</em> వర్చువల్ ఫంక్షన్లు ఉన్న ప్రతి ఆబ్జెక్ట్ ప్రారంభంలో కంపైలర్ ఒక 8-బైట్ల <code>vptr</code> ను చొప్పిస్తుంది. ఇది ఆ క్లాస్ యొక్క <code>vtable</code> ను పాయింట్ చేసి రన్‌టైమ్ డిస్పాచ్‌ను సాధ్యం చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 5: కన్‌స్ట్రక్టర్ లేదా డిస్ట్రక్టర్ లోపల వర్చువల్ ఫంక్షన్లను ఎందుకు పిలవకూడదు?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఎందుకంటే ఆ సమయంలో పాలిమార్ఫిజమ్ పనిచేయదు (చైల్డ్ వెర్షన్ కాల్ అవ్వదు)!<br/>
+          <em>వివరణ:</em> బేస్ కన్‌స్ట్రక్టర్ రన్ అవుతున్న సమయంలో చైల్డ్ ఆబ్జెక్ట్ ఇంకా పుట్టలేదు (అసంపూర్ణం); డిస్ట్రక్టర్ సమయంలో చైల్డ్ ముందే నశించిపోయింది. కాబట్టి కంపైలర్ వర్చువల్ డిస్పాచ్ చేయకుండా బేస్ క్లాస్ వెర్షన్‌ను మాత్రమే పిలుస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- LESSON NAVIGATION -->
+    <div class="lesson-nav">
+      <a href="/blog-cpp/${currentLesson.prev.file}" class="prev-link">← మునుపటి అధ్యాయం: ${currentLesson.prev.title}</a>
+      <a href="/blog-cpp/${currentLesson.next.file}" class="next-link">తర్వాతి అధ్యాయం: ${currentLesson.next.title} →</a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SCRIPTS FOR SITEMAP & INTERACTIVE RUNNER -->
+<script src="/site-nav.js"></script>
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`#include <iostream>
+#include <string>
+#include <vector>
+#include <memory>
+#include <iomanip>
+
+class CloudProvider {
+protected:
+    std::string providerName;
+    std::string region;
+
+public:
+    CloudProvider(std::string name, std::string reg) : providerName(name), region(reg) {}
+
+    virtual ~CloudProvider() {
+        std::cout << "  🗑️ [CloudProvider Destructor] " << providerName << " రిసోర్సులు క్లీన్ చేయబడ్డాయి.\\\\n";
+    }
+
+    virtual void provisionComputeInstance(const std::string& instanceType, int count) = 0;
+    virtual void deployKubernetesCluster(const std::string& clusterName, int nodes) = 0;
+    virtual double calculateEstimatedHourlyCost() const = 0;
+
+    std::string getProviderName() const { return providerName; }
+};
+
+class AWSProvider : public CloudProvider {
+public:
+    AWSProvider(std::string reg) : CloudProvider("Amazon Web Services (AWS)", reg) {}
+
+    void provisionComputeInstance(const std::string& instanceType, int count) override {
+        std::cout << "  ☁️ [AWS EC2] " << count << "x " << instanceType << " ఇన్స్టాన్స్‌లు " << region << " లో లాంచ్ అయ్యాయి!\\\\n";
+    }
+
+    void deployKubernetesCluster(const std::string& clusterName, int nodes) override {
+        std::cout << "  ☸️ [AWS EKS] అమెజాన్ ఎలాస్టిక్ కుబెర్‌నెటీస్ సర్వీస్: " << clusterName << " (" << nodes << " Worker Nodes)\\\\n";
+    }
+
+    double calculateEstimatedHourlyCost() const override {
+        return 12.50;
+    }
+};
+
+class GCPProvider : public CloudProvider {
+public:
+    GCPProvider(std::string reg) : CloudProvider("Google Cloud Platform (GCP)", reg) {}
+
+    void provisionComputeInstance(const std::string& instanceType, int count) override {
+        std::cout << "  🌐 [GCP Compute Engine] " << count << "x " << instanceType << " VM లు " << region << " జోన్‌లో ప్రారంభమయ్యాయి!\\\\n";
+    }
+
+    void deployKubernetesCluster(const std::string& clusterName, int nodes) override {
+        std::cout << "  ☸️ [Google GKE] ఆటోపైలట్ కుబెర్‌నెటీస్ క్లస్టర్: " << clusterName << " (" << nodes << " Compute Nodes)\\\\n";
+    }
+
+    double calculateEstimatedHourlyCost() const override {
+        return 10.80;
+    }
+};
+
+class AzureProvider : public CloudProvider {
+public:
+    AzureProvider(std::string reg) : CloudProvider("Microsoft Azure", reg) {}
+
+    void provisionComputeInstance(const std::string& instanceType, int count) override {
+        std::cout << "  🔷 [Azure Virtual Machines] " << count << "x " << instanceType << " VM లు " << region << " లో సిద్ధమయ్యాయి!\\\\n";
+    }
+
+    void deployKubernetesCluster(const std::string& clusterName, int nodes) override {
+        std::cout << "  ☸️ [Azure AKS] అజూర్ కుబెర్‌నెటీస్ సర్వీస్ క్లస్టర్: " << clusterName << " (" << nodes << " Nodes)\\\\n";
+    }
+
+    double calculateEstimatedHourlyCost() const override {
+        return 11.75;
+    }
+};
+
+int main() {
+    std::cout << "=======================================================================\\\\n";
+    std::cout << "🚀 [ENTERPRISE MULTI-CLOUD ORCHESTRATION & DEPLOYMENT ENGINE]\\\\n";
+    std::cout << "=======================================================================\\\\n";
+
+    std::vector<std::unique_ptr<CloudProvider>> cloudFleet;
+    cloudFleet.push_back(std::make_unique<AWSProvider>("ap-south-1 (Mumbai)"));
+    cloudFleet.push_back(std::make_unique<GCPProvider>("asia-south1 (Delhi)"));
+    cloudFleet.push_back(std::make_unique<AzureProvider>("central-india (Pune)"));
+
+    double totalFleetHourlyCost = 0.0;
+
+    std::cout << "\\\\n[మల్టీ-క్లౌడ్ డిప్లాయ్‌మెంట్ ఆటోమేషన్ రన్ అవుతోంది]:\\\\n\\\\n";
+    for (const auto& provider : cloudFleet) {
+        std::cout << ">>> ఆర్కెస్ట్రేషన్ ప్రొవైడర్: " << provider->getProviderName() << "\\\\n";
+        provider->provisionComputeInstance("m5.2xlarge", 4);
+        provider->deployKubernetesCluster("prod-banking-mesh", 8);
+
+        double cost = provider->calculateEstimatedHourlyCost();
+        totalFleetHourlyCost += cost;
+        std::cout << "    అంచనా గంట ఖర్చు: $ " << std::fixed << std::setprecision(2) << cost << "\\\\n\\\\n";
+    }
+
+    std::cout << "=======================================================================\\\\n";
+    std::cout << "💰 మొత్తం మల్టీ-క్లౌడ్ నెట్‌వర్క్ గంట ఖర్చు: $ " << totalFleetHourlyCost << " / Hour\\\\n";
+    std::cout << "=======================================================================\\\\n";
+    std::cout << "ప్రోగ్రామ్ ముగింపు: వర్చువల్ డిస్ట్రక్టర్లు అన్ని క్లౌడ్ రిసోర్సులను సురక్షితంగా క్లీన్ చేస్తాయి!\\\\n";
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter16Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 16 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter16Content.length, 'characters');

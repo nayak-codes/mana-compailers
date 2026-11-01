@@ -1,0 +1,917 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[16]; // Chapter 17 (0-indexed 16)
+const sidebarHtml = buildSidebar(17);
+
+const chapter17Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: Arithmetic Operators (+, -, *), Comparison & C++20 Spaceship Operator (<=>), Stream Operators (<<, >>), Subscript Operator ([]), Prefix vs Postfix (++), friend Functions, మరియు Enterprise 3D Vector Physics Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ operator overloading telugu, friend function in c++, spaceship operator c++20, stream insertion operator overloading, subscript operator c++, functors c++, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Mastering C++ Operator Overloading, Friends & Spaceship Operator in Telugu)",
+    "description": "C++ ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends పూర్తి గైడ్: Binary & Unary Operators, Stream Overloading, Subscript, Spaceship, మరియు 3D Vector Physics Engine.",
+    "articleSection": "Phase 4: Object-Oriented Programming (OOP)",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-17",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','final','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','vector','array','ostream',
+        'istream','sqrt','main','printf','fixed','setprecision','sort','count_if'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?|0x[0-9a-fA-F]+)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => {
+        el.innerHTML = highlightCppCode(el.textContent);
+      });
+    });
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        navigator.clipboard.writeText(codeEl.textContent).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        });
+      }
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        const rawCode = codeEl.textContent;
+        try {
+          localStorage.setItem('code_cpp17', rawCode);
+          localStorage.setItem('code_cpp', rawCode);
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        window.open('/online-cpp-compiler.html', '_blank');
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 17: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern C++ (C++20/C++17)</span>
+      <span class="badge">🟢 Chapter 17 of 20</span>
+      <span class="badge">📂 ${currentLesson.phaseTag}: ${currentLesson.phaseTitle}</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>కంప్యూటర్ ప్రోగ్రామింగ్ భాషల్లో గణిత సమీకరణాలు చదవడానికి ఎంత సహజంగా ఉంటే కోడ్ అంత సులభంగా అర్థమవుతుంది. ఉదాహరణకు రెండు సంక్లిష్ట సంఖ్యలను లేదా 3D వెక్టర్లను కూడటానికి <code>v1.addVector(v2).multiplyScalar(5)</code> అని రాసే బదులు, సాధారణ సంఖ్యల వలె <strong><code>(v1 + v2) * 5</code></strong> అని రాయగలిగితే ఎంత అద్భుతంగా ఉంటుంది? ఈ మ్యాజిక్‌ను సాధ్యం చేసే C++ విశిష్ట లక్షణమే <strong>ఆపరేటర్ ఓవర్‌లోడింగ్ (Operator Overloading)</strong>.</p>
+      <p>C++ మనకు ప్రాథమిక ఆపరేటర్లైన <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> లతో పాటు, ఇన్‌పుట్/అవుట్‌పుట్ స్ట్రీమ్‌లైన <strong><code>&lt;&lt;</code></strong>, <strong><code>&gt;&gt;</code></strong>, అర్రే ఇండెక్సింగ్ కోసం <strong><code>[]</code></strong>, ఫంక్టర్ల కొరకు <strong><code>()</code></strong>, మరియు ప్రైవేట్ వేరియబుల్స్‌ను సురక్షితంగా అనుసంధానించే <strong><code>friend</code></strong> ఫంక్షన్లను అందించింది. అంతేకాకుండా Modern C++20 లో ప్రవేశపెట్టిన విప్లవాత్మకమైన <strong>త్రీ-వే కంపారిజన్ ఆపరేటర్ (<code>&lt;=&gt;</code> Spaceship Operator)</strong> గురించి క్షుణ్ణంగా తెలుసుకుందాం!</p>
+      <p>ఈ సమగ్ర మాస్టర్‌క్లాస్‌లో మనం Binary &amp; Unary Operators, Member vs Non-Member Overloading, Stream Chaining, Subscript Access Safety, మరియు పూర్తి స్థాయి <em>"Enterprise High-Performance 3D Vector Math &amp; Physics Simulation Engine"</em> ప్రాజెక్ట్‌ను లైవ్‌గా నిర్మించి నైపుణ్యం సాధిద్దాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> ఆపరేటర్ ఓవర్‌లోడింగ్ అంటే ఏమిటి? ఎందుకు అవసరం? (Intuitive User-Defined Types)</h2>
+      <p>
+        <strong>ఆపరేటర్ ఓవర్‌లోడింగ్ (Operator Overloading) అంటే ఏమిటి?</strong> C++ లో ఇప్పటికే ఉన్న ఆపరేటర్లకు (ఉదాహరణకు <code>+</code>, <code>-</code>, <code>==</code>, <code>&lt;&lt;</code>) మనం సృష్టించిన యూజర్-డిఫైన్డ్ క్లాసెస్ మరియు స్ట్రక్చర్లపై పనిచేయడానికి సరికొత్త అర్థాన్ని (Custom Behavior) అందించే ప్రక్రియను ఆపరేటర్ ఓవర్‌లోడింగ్ అంటారు.
+      </p>
+      <p>
+        <strong>దీనివల్ల ప్రయోజనాలు ఏమిటి?</strong>
+      </p>
+      <ol>
+        <li><strong>సహజమైన సింటాక్స్ (Intuitive Syntax):</strong> సంక్లిష్టమైన మెథడ్ కాల్స్ లేకుండా గణిత సూత్రాల వలె క్లీన్ కోడ్ రాయవచ్చు.</li>
+        <li><strong>స్టాండర్డ్ లైబ్రరీ ఇంటిగ్రేషన్:</strong> మన స్వంత క్లాస్ ఆబ్జెక్టులను నేరుగా <code>std::cout &lt;&lt; myObject</code> ద్వారా కన్సోల్‌పై ముద్రించవచ్చు.</li>
+      </ol>
+      <div class="warning-box">
+        ⚠️ <strong>C++ లో ఓవర్‌లోడ్ చేయలేని 5 ఆపరేటర్లు:</strong><br/>
+        1. <code>.</code> (Dot - Member Access Operator)<br/>
+        2. <code>.*</code> (Pointer to Member Operator)<br/>
+        3. <code>::</code> (Scope Resolution Operator)<br/>
+        4. <code>?:</code> (Ternary Conditional Operator)<br/>
+        5. <code>sizeof</code> (Size Query Operator)
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> ఆపరేటర్ ఫంక్షన్ సింటాక్స్ &amp; గోల్డెన్ రూల్స్</h2>
+      <p>
+        ఆపరేటర్‌ను ఓవర్‌లోడ్ చేయడానికి మనం <strong><code>operator</code></strong> అనే ప్రత్యేక కీవర్డ్‌ను ఉపయోగిస్తాం:
+      </p>
+      <pre><code>ReturnType operator+(const ClassName&amp; rhs) const;</code></pre>
+      <p>
+        <strong>ఆపరేటర్ ఓవర్‌లోడింగ్ యొక్క 3 ప్రాథమిక సూత్రాలు:</strong>
+      </p>
+      <ul>
+        <li><strong>ఆపరేటర్ ప్రెసిడెన్స్ మారదు:</strong> <code>+</code> కంటే <code>*</code> ఎల్లప్పుడూ ముందే లెక్కించబడుతుంది. ఓవర్‌లోడ్ చేసినా ఈ ప్రాధాన్యతా క్రమం మారదు.</li>
+        <li><strong>కొత్త ఆపరేటర్లను కనిపెట్టలేము:</strong> C++ లో లేని కొత్త గుర్తులను (ఉదాహరణకు Python లోని <code>**</code> లేదా <code>$</code>) సృష్టించడం కుదరదు.</li>
+        <li><strong>కనీసం ఒక్క ఆపరేండ్ యూజర్-డిఫైన్డ్ అయి ఉండాలి:</strong> రెండు ప్రిమిటివ్ పూర్ణాంకాల మధ్య (<code>int + int</code>) పనితీరును మార్చడం అసాధ్యం.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> అరిథ్‌మెటిక్ బైనరీ ఆపరేటర్లు (<code>+</code>, <code>-</code>, <code>*</code>)</h2>
+      <p>
+        రెండు సంక్లిష్ట సంఖ్యలను (Complex Numbers: $Real + i \\cdot Imag$) కూడటానికి లేదా తీసివేయడానికి బైనరీ ఆపరేటర్లను ఎలా ఓవర్‌లోడ్ చేయాలో క్రింది ఉదాహరణలో చూడండి:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">complex_binary_operators.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class ComplexNumber {
+public:
+    double real;
+    double imag;
+
+    ComplexNumber(double r = 0.0, double i = 0.0) : real(r), imag(i) {}
+
+    // Binary + Operator Overloading (Member Function)
+    ComplexNumber operator+(const ComplexNumber& rhs) const {
+        return ComplexNumber(this->real + rhs.real, this->imag + rhs.imag);
+    }
+
+    // Binary - Operator Overloading
+    ComplexNumber operator-(const ComplexNumber& rhs) const {
+        return ComplexNumber(this->real - rhs.real, this->imag - rhs.imag);
+    }
+
+    void display() const {
+        std::cout << real << " + " << imag << "i\\n";
+    }
+};
+
+int main() {
+    ComplexNumber c1(4.5, 3.2);
+    ComplexNumber c2(1.5, 2.8);
+
+    // సహజమైన గణిత సంకలనం!
+    ComplexNumber sum = c1 + c2; // అంతర్గతంగా c1.operator+(c2) గా మారుతుంది!
+    ComplexNumber diff = c1 - c2;
+
+    std::cout << "c1 + c2 మొత్తం: "; sum.display();
+    std::cout << "c1 - c2 తేడా:   "; diff.display();
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> కంపారిజన్ ఆపరేటర్లు (<code>==</code>, <code>!=</code>) &amp; Modern C++20 Spaceship Operator (<code><=></code>)</h2>
+      <p>
+        రెండు ఆబ్జెక్టులు సమానమా కాదా అని పోల్చడానికి <code>==</code> మరియు <code>!=</code> ఆపరేటర్లను ఉపయోగిస్తాం.
+      </p>
+      <p>
+        <strong>Modern C++20 Spaceship Operator (<code>&lt;=&gt;</code> Three-Way Comparison):</strong><br/>
+        పూర్వపు C++ లో మీరు ఆబ్జెక్టులను సార్టింగ్ చేయడానికి <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code> మొత్తం 6 ఫంక్షన్లను విడివిడిగా రాయాల్సి వచ్చేది! కానీ C++20 లో <strong><code>auto operator&lt;=&gt;(const MyClass&amp;) const = default;</code></strong> అని ఒక్క లైన్ రాస్తే చాలు — కంపైలర్ స్వయంచాలకంగా మొత్తం 6 కంపారిజన్లను ఆప్టిమైజ్ చేసి ఆటో-జనరేట్ చేస్తుంది!
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">comparison_spaceship_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class Dimension {
+public:
+    int length;
+    int breadth;
+
+    Dimension(int l, int b) : length(l), breadth(b) {}
+
+    // Equality Operator
+    bool operator==(const Dimension& rhs) const {
+        return (length == rhs.length && breadth == rhs.breadth);
+    }
+
+    bool operator!=(const Dimension& rhs) const {
+        return !(*this == rhs); // == పై ఆధారపడి సులభంగా రీయూజ్!
+    }
+};
+
+int main() {
+    Dimension d1(10, 20);
+    Dimension d2(10, 20);
+    Dimension d3(15, 30);
+
+    std::cout << "d1 == d2? " << (d1 == d2 ? "సమానం (True)" : "అసమానం (False)") << "\\n";
+    std::cout << "d1 != d3? " << (d1 != d3 ? "అసమానం (True)" : "సమానం (False)") << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> స్ట్రీమ్ ఇన్సర్షన్ &amp; ఎక్స్‌ట్రాక్షన్ ఆపరేటర్లు (<code><<</code> మరియు <code>>></code>)</h2>
+      <p>
+        మన స్వంత ఆబ్జెక్ట్‌ను <code>std::cout &lt;&lt; obj;</code> అని ప్రింట్ చేయాలంటే <strong><code>operator&lt;&lt;</code></strong> ను ఓవర్‌లోడ్ చేయాలి.
+      </p>
+      <p>
+        <strong>ముఖ్యమైన టెక్నికల్ రహస్యం:</strong><br/>
+        <code>std::cout &lt;&lt; obj;</code> సమీకరణంలో ఎడమవైపు ఉన్న ఆపరేండ్ <code>std::cout</code> (Type: <code>std::ostream</code>). అది మన క్లాస్ కాదు! కాబట్టి ఈ ఆపరేటర్‌ను మన క్లాస్ లోపల మెంబర్ ఫంక్షన్‌గా రాయడం అసాధ్యం!
+      </p>
+      <p>
+        దీనిని తప్పనిసరిగా <strong>నాన్-మెంబర్ <code>friend</code> ఫంక్షన్‌గా</strong> మాత్రమే డిక్లేర్ చేయాలి:
+      </p>
+      <pre><code>friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const MyClass&amp; obj);</code></pre>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">stream_overloading_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+class StockItem {
+private:
+    std::string itemName;
+    double price;
+    int stockQuantity;
+
+public:
+    StockItem(std::string name, double p, int qty) : itemName(name), price(p), stockQuantity(qty) {}
+
+    // friend stream insertion operator
+    friend std::ostream& operator<<(std::ostream& os, const StockItem& item) {
+        os << "[ఉత్పత్తి: " << item.itemName << " | ధర: ₹ " << item.price << " | నిల్వ: " << item.stockQuantity << " యూనిట్లు]";
+        return os; // చైనింగ్ (cout << a << b) కొరకు os రిటర్న్ చేయాలి!
+    }
+};
+
+int main() {
+    StockItem item1("Sony PlayStation 5", 54990.0, 15);
+    StockItem item2("LG OLED 4K TV", 89990.0, 8);
+
+    // అందమైన స్ట్రీమ్ ప్రింటింగ్!
+    std::cout << item1 << "\\n" << item2 << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> <code>friend</code> ఫంక్షన్లు &amp; <code>friend</code> క్లాసెస్ (The Trusted VIP Pass)</h2>
+      <p>
+        ఎన్‌క్యాప్సులేషన్ సూత్రం ప్రకారం క్లాస్ లోని ప్రైవేట్ వేరియబుల్స్‌ను బయటి ఫంక్షన్లు తాకలేవు. కానీ కొన్ని సందర్భాల్లో (ఉదాహరణకు రెండు విభిన్న క్లాసులు పరస్పరం వేగంగా సంభాషించుకోవడానికి లేదా పైన చూసిన <code>operator&lt;&lt;</code> కొరకు) బయటి ఫంక్షన్‌కు ప్రైవేట్ డేటాను చూసే అనుమతి ఇవ్వాల్సి వస్తుంది.
+      </p>
+      <p>
+        దాని కోసమే C++ <strong><code>friend</code></strong> కీవర్డ్‌ను అందించింది. ఒక క్లాస్ లోపల <code>friend void inspect(const MyClass&amp; obj);</code> అని రాస్తే, ఆ ఫంక్షన్ ఆ క్లాస్ యొక్క ప్రైవేట్ మెంబర్లను స్వేచ్ఛగా యాక్సెస్ చేయగలదు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">friend_class_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+class BankVault; // ఫార్వర్డ్ డిక్లరేషన్
+
+class VaultAuditor {
+public:
+    void auditAccount(const BankVault& vault);
+};
+
+class BankVault {
+private:
+    std::string secretKey = "VAULT_SECRET_9876";
+    double reserveCash = 50000000.0;
+
+    // VaultAuditor క్లాస్‌ను అధికారిక 'friend' గా ప్రకటిస్తున్నాం!
+    friend class VaultAuditor;
+};
+
+void VaultAuditor::auditAccount(const BankVault& vault) {
+    // friend అయినందున ప్రైవేట్ డేటాను నేరుగా చదవగలదు!
+    std::cout << "  🔍 [RBI ఆడిట్] రహస్య కీ: " << vault.secretKey << "\\n";
+    std::cout << "  💰 [RBI ఆడిట్] వాల్ట్ నగదు నిల్వ: ₹ " << vault.reserveCash << "\\n";
+}
+
+int main() {
+    BankVault vault;
+    VaultAuditor auditor;
+    auditor.auditAccount(vault);
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> మెంబర్ వర్సెస్ నాన్-మెంబర్ ఆపరేటర్లు (Left-hand Operand Symmetry)</h2>
+      <p>
+        ఆలోచించండి: <code>Complex c = c1 * 2.0;</code> అని రాస్తే, <code>c1.operator*(2.0)</code> కాల్ అవుతుంది కాబట్టి సవ్యంగా పనిచేస్తుంది.
+      </p>
+      <p>
+        కానీ గణితంలో క్రమం మారినా ఒకే ఫలితం రావాలి కదా: <code>Complex c = 2.0 * c1;</code> అని రాస్తే?
+      </p>
+      <p>
+        ఇక్కడ ఎడమవైపు <code>2.0</code> (double) ఉంది! <code>double</code> ప్రిమిటివ్ టైప్ కాబట్టి దానికి మనం <code>operator*</code> రాయలేము!
+      </p>
+      <p>
+        <strong>పరిష్కారం:</strong> నాన్-మెంబర్ ఫ్రెండ్ ఫంక్షన్‌ను ఉపయోగించి <code>friend Complex operator*(double lhs, const Complex&amp; rhs)</code> అని రాయడం ద్వారా సమరూపతను (Symmetry) సాధించవచ్చు!
+      </p>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> సబ్‌స్క్రిప్ట్ ఆపరేటర్ ఓవర్‌లోడింగ్ (<code>operator[]</code>)</h2>
+      <p>
+        మనం ఒక కస్టమ్ కలెక్షన్ లేదా అర్రేను నిర్మించినప్పుడు దాని మూలకాలను సాధారణ అర్రే వలె <code>myList[3]</code> అని చదవడానికి మరియు సవరించడానికి <strong><code>operator[]</code></strong> ను ఓవర్‌లోడ్ చేస్తాం.
+      </p>
+      <p>
+        ఎల్లప్పుడూ రెండు వెర్షన్లు అందించడం ఇండస్ట్రీ బెస్ట్ ప్రాక్టీస్:
+      </p>
+      <ol>
+        <li><strong>Non-const వెర్షన్:</strong> విలువను మార్చడానికి (Mutate) రిఫరెన్స్ రిటర్న్ చేస్తుంది: <code>T&amp; operator[](size_t index);</code></li>
+        <li><strong>Const వెర్షన్:</strong> రీడ్-ఓన్లీ సందర్భాల కొరకు కాన్స్ట్ రిఫరెన్స్ రిటర్న్ చేస్తుంది: <code>const T&amp; operator[](size_t index) const;</code></li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">subscript_operator_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+
+class SafeBuffer {
+private:
+    int data[5] = {10, 20, 30, 40, 50};
+
+public:
+    int& operator[](size_t index) {
+        if (index >= 5) {
+            throw std::out_of_range("❌ ఎర్రర్: బఫర్ బౌండరీ దాటిపోయింది!");
+        }
+        return data[index];
+    }
+
+    const int& operator[](size_t index) const {
+        if (index >= 5) {
+            throw std::out_of_range("❌ ఎర్రర్: బఫర్ బౌండరీ దాటిపోయింది!");
+        }
+        return data[index];
+    }
+};
+
+int main() {
+    SafeBuffer buf;
+    std::cout << "buf[2] పాత విలువ: " << buf[2] << "\\n";
+
+    buf[2] = 999;
+    std::cout << "buf[2] కొత్త విలువ: " << buf[2] << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> యునరీ ఆపరేటర్లు: ప్రీఫిక్స్ వర్సెస్ పోస్ట్‌ఫిక్స్ ఇంక్రిమెంట్ (<code>++obj</code> vs <code>obj++</code>)</h2>
+      <p>
+        C++ కంపైలర్ ప్రీఫిక్స్ ఇంక్రిమెంట్ (<code>++x</code>) మరియు పోస్ట్‌ఫిక్స్ ఇంక్రిమెంట్ (<code>x++</code>) మధ్య ఎలా తేడాను గుర్తిస్తుంది?
+      </p>
+      <ul>
+        <li><strong>ప్రీఫిక్స్ (<code>++obj</code>):</strong> ఎటువంటి ఆర్గుమెంట్లు ఉండవు: <code>MyClass&amp; operator++();</code>. ఇది తక్షణమే విలువను పెంచి ప్రస్తుత ఆబ్జెక్ట్ రిఫరెన్స్‌ను (<code>*this</code>) రిటర్న్ చేస్తుంది.</li>
+        <li><strong>పోస్ట్‌ఫిక్స్ (<code>obj++</code>):</strong> కంపైలర్ తేడాను గుర్తించడానికి ఒక డమ్మీ <code>int</code> పారామీటర్‌ను తీసుకుంటుంది: <code>MyClass operator++(int);</code>.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">prefix_postfix_counter.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class StepCounter {
+private:
+    int steps;
+public:
+    StepCounter(int s = 0) : steps(s) {}
+
+    // Prefix Increment: ++counter
+    StepCounter& operator++() {
+        ++steps;
+        return *this; // రిఫరెన్స్ రిటర్న్ - సూపర్ ఫాస్ట్!
+    }
+
+    // Postfix Increment: counter++ (డమ్మీ int తో)
+    StepCounter operator++(int) {
+        StepCounter temp = *this; // పాత కాపీని భద్రపరచడం
+        ++steps;                  // ప్రస్తుత విలువ పెంపు
+        return temp;              // పాత కాపీని రిటర్న్
+    }
+
+    int getSteps() const { return steps; }
+};
+
+int main() {
+    StepCounter c(10);
+    StepCounter pre = ++c; // c -> 11, pre -> 11
+    std::cout << "Prefix తర్వాత c: " << c.getSteps() << " | pre: " << pre.getSteps() << "\\n";
+
+    StepCounter post = c++; // post -> 11, c -> 12
+    std::cout << "Postfix తర్వాత c: " << c.getSteps() << " | post: " << post.getSteps() << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> ఫంక్షన్ కాల్ ఆపరేటర్ (<code>operator()</code>) &amp; ఫంక్టర్లు (Functors)</h2>
+      <p>
+        ఒక క్లాస్ ఆబ్జెక్ట్‌ను ఒక సాధారణ ఫంక్షన్ లాగా <code>myObj(10, 20)</code> అని పిలవడానికి <strong><code>operator()</code></strong> ను ఓవర్‌లోడ్ చేస్తాం.
+      </p>
+      <p>
+        ఇలా ఫంక్షన్ లా ప్రవర్తించే ఆబ్జెక్టులను C++ లో <strong>ఫంక్టర్లు (Functors లేదా Function Objects)</strong> అంటారు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">functor_threshold_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+// Functor Class
+class ThresholdFilter {
+private:
+    int minThreshold;
+public:
+    ThresholdFilter(int threshold) : minThreshold(threshold) {}
+
+    // Function call operator () overloading
+    bool operator()(int value) const {
+        return value >= minThreshold;
+    }
+};
+
+int main() {
+    std::vector&lt;int&gt; scores = {45, 82, 91, 33, 76, 58, 99};
+
+    ThresholdFilter passFilter(60); // 60 కంటే ఎక్కువ ఉన్నవి పాస్!
+
+    int passedStudents = std::count_if(scores.begin(), scores.end(), passFilter);
+
+    std::cout << "మొత్తం విద్యార్థులు: " << scores.size() << "\\n";
+    std::cout << "60 మార్కులకు పైగా సాధించిన వారు: " << passedStudents << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> ఆపరేటర్ ఓవర్‌లోడింగ్‌లో చేయకూడని తప్పులు (Anti-Patterns)</h2>
+      <ol style="line-height:1.8;">
+        <li>
+          <strong>ఆపరేటర్ యొక్క సహజార్థాన్ని మార్చడం:</strong> <code>+</code> ఆపరేటర్‌తో తీసివేత చేయడం లేదా డాక్యుమెంట్ డిలీట్ చేయడం వంటి విరుద్ధమైన పనులు ఎప్పుడూ చేయకూడదు.
+        </li>
+        <li>
+          <strong>షార్ట్-సర్క్యూట్ ఆపరేటర్లను ఓవర్‌లోడ్ చేయడం:</strong> లాజికల్ ఆపరేటర్లు (<code>&amp;&amp;</code>, <code>||</code>) ఓవర్‌లోడ్ చేస్తే వాటి సహజ షార్ట్-సర్క్యూట్ ఎవాల్యుయేషన్ లక్షణం నశించి తీవ్రమైన బగ్స్ వస్తాయి.
+        </li>
+      </ol>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> రియల్-వరల్డ్ ప్రాజెక్ట్: Enterprise High-Performance 3D Vector Math &amp; Physics Engine</h2>
+      <p>
+        నిజ జీవితంలో Unreal Engine, Unity, నాసా శాటిలైట్ ట్రాకింగ్ సిస్టమ్స్ మరియు 3D కంప్యూటర్ గ్రాఫిక్స్ ఇంజిన్లు మిలియన్ల కొద్దీ 3D స్పేస్ కోఆర్డినేట్స్ ($x, y, z$) లపై వెక్టర్ అంకగణితాన్ని నిరంతరం లెక్కిస్తాయి.
+      </p>
+      <p>
+        ఈ సమగ్ర ప్రాజెక్ట్‌లో మనం <code>+</code>, <code>-</code>, <code>*</code> (Scalar &amp; Dot Product), <code>==</code>, <code>[]</code> సబ్‌స్క్రిప్ట్, మరియు <code>&lt;&lt;</code> స్ట్రీమ్ అవుట్‌పుట్‌తో కూడిన <strong>ఎంటర్‌ప్రైజ్ 3D వెక్టర్ ఫిజిక్స్ ఇంజిన్</strong> ను నిర్మిస్తున్నాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">Vector3DPhysicsEngine.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="openInteractiveCompiler()">⚡ Run Live Project</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;cmath&gt;
+#include &lt;iomanip&gt;
+
+class Vector3D {
+private:
+    double coords[3]; // 0: x, 1: y, 2: z
+
+public:
+    Vector3D(double x = 0.0, double y = 0.0, double z = 0.0) {
+        coords[0] = x;
+        coords[1] = y;
+        coords[2] = z;
+    }
+
+    // 1. Array Subscript Operator ([]) Overloading
+    double& operator[](size_t index) { return coords[index]; }
+    const double& operator[](size_t index) const { return coords[index]; }
+
+    // 2. Binary Vector Addition (+)
+    Vector3D operator+(const Vector3D& rhs) const {
+        return Vector3D(coords[0] + rhs[0], coords[1] + rhs[1], coords[2] + rhs[2]);
+    }
+
+    // 3. Binary Vector Subtraction (-)
+    Vector3D operator-(const Vector3D& rhs) const {
+        return Vector3D(coords[0] - rhs[0], coords[1] - rhs[1], coords[2] - rhs[2]);
+    }
+
+    // 4. Scalar Multiplication: Vector * scalar
+    Vector3D operator*(double scalar) const {
+        return Vector3D(coords[0] * scalar, coords[1] * scalar, coords[2] * scalar);
+    }
+
+    // 5. Symmetric Non-member Friend: scalar * Vector
+    friend Vector3D operator*(double scalar, const Vector3D& v) {
+        return v * scalar; // రీ-యూజ్!
+    }
+
+    // 6. Dot Product Multiplication: Vector * Vector
+    double dot(const Vector3D& rhs) const {
+        return (coords[0] * rhs[0]) + (coords[1] * rhs[1]) + (coords[2] * rhs[2]);
+    }
+
+    // 7. Magnitude (Vector Length)
+    double magnitude() const {
+        return std::sqrt(dot(*this));
+    }
+
+    // 8. Equality Operator
+    bool operator==(const Vector3D& rhs) const {
+        return (coords[0] == rhs[0] && coords[1] == rhs[1] && coords[2] == rhs[2]);
+    }
+
+    // 9. Stream Insertion Operator (<<)
+    friend std::ostream& operator<<(std::ostream& os, const Vector3D& v) {
+        os << "Vector3D(" << v[0] << ", " << v[1] << ", " << v[2] << ")";
+        return os;
+    }
+};
+
+int main() {
+    std::cout << "=======================================================================\\n";
+    std::cout << "🚀 [ENTERPRISE 3D VECTOR MATH & ASTROPHYSICS ENGINE RUNNING]\\n";
+    std::cout << "=======================================================================\\n";
+
+    Vector3D position(10.0, 20.0, 5.0);
+    Vector3D velocity(2.5, -1.0, 4.0);
+
+    std::cout << "ప్రారంభ స్థానం (Position) : " << position << "\\n";
+    std::cout << "ప్రస్తుత వేగం (Velocity)   : " << velocity << "\\n";
+
+    // 1 సెకను తర్వాతి స్థానం: pos + vel
+    Vector3D nextPos = position + velocity;
+    std::cout << "తర్వాతి స్థానం (Next Pos)  : " << nextPos << "\\n";
+
+    // స్కేలార్ గుణకారం (3x Velocity Boost): v * 3
+    Vector3D boosted = velocity * 3.0;
+    std::cout << "3x బూస్ట్ వేగం (Boosted)  : " << boosted << "\\n";
+
+    // సిమెట్రిక్ నాన్-మెంబర్ గుణకారం: 2.0 * v
+    Vector3D doubleSpeed = 2.0 * velocity;
+    std::cout << "డబుల్ స్పీడ్ (2.0 * vel)  : " << doubleSpeed << "\\n";
+
+    // డాట్ ప్రొడక్ట్ గణన
+    double dotProduct = position.dot(velocity);
+    std::cout << "స్థానం మరియు వేగం డాట్ ప్రొడక్ట్: " << dotProduct << "\\n";
+    std::cout << "వేగం యొక్క పరిమాణం (Speed): " << std::fixed << std::setprecision(2) << velocity.magnitude() << " m/s\\n";
+
+    std::cout << "=======================================================================\\n";
+    std::cout << "✅ ఆపరేటర్ ఓవర్‌లోడింగ్ తో ఫిజిక్స్ వెక్టర్ సిమ్యులేషన్ విజయవంతమైంది!\\n";
+    std::cout << "=======================================================================\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> సారాంశం &amp; ఇంటరాక్టివ్ క్విజ్ (Summary &amp; Self-Check Quizzes)</h2>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:28px;">
+        <h3 style="margin-top:0; color:#10b981;">📌 ఈ అధ్యాయంలో నేర్చుకున్న ప్రధాన అంశాలు:</h3>
+        <ul style="line-height:1.8; color:var(--text);">
+          <li><strong>Operator Overloading:</strong> యూజర్-డిఫైన్డ్ టైప్స్ కోసం C++ ఆపరేటర్లకు కస్టమ్ బిహేవియర్ అందించే శక్తి.</li>
+          <li><strong>Non-overloadable Operators:</strong> <code>.</code>, <code>.*</code>, <code>::</code>, <code>?:</code>, మరియు <code>sizeof</code> లను ఓవర్‌లోడ్ చేయలేము.</li>
+          <li><strong>Stream Overloading:</strong> <code>&lt;&lt;</code> మరియు <code>&gt;&gt;</code> లను ఎల్లప్పుడూ నాన్-మెంబర్ <code>friend</code> ఫంక్షన్లుగానే రాయాలి.</li>
+          <li><strong>Symmetry:</strong> <code>2 * obj</code> వంటి సందర్భాల కోసం నాన్-మెంబర్ ఫ్రెండ్ ఫంక్షన్లు తప్పనిసరి.</li>
+          <li><strong>Subscript <code>operator[]</code>:</strong> సేఫ్ బౌండ్స్ చెకింగ్‌తో అర్రే యాక్సెస్ అందించడం.</li>
+          <li><strong>Prefix vs Postfix:</strong> ప్రీఫిక్స్ <code>++x</code> ఫాస్ట్ (నో డమ్మీ పారామీటర్); పోస్ట్‌ఫిక్స్ <code>x++</code> కాపీ రిటర్న్ చేస్తుంది (డమ్మీ <code>int</code> పారామీటర్).</li>
+          <li><strong>C++20 Spaceship Operator:</strong> <code>&lt;=&gt;</code> ద్వారా మొత్తం 6 కంపారిజన్లను ఆటోమేటిక్‌గా రూపొందించడం.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-bottom:16px;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 1: C++ లో స్ట్రీమ్ ఇన్సర్షన్ ఆపరేటర్ <code>operator&lt;&lt;</code> ను క్లాస్ మెంబర్ ఫంక్షన్‌గా ఎందుకు రాయలేము?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఎందుకంటే ఎడమవైపు ఉన్న ఆపరేండ్ <code>std::ostream</code> (std::cout), మన క్లాస్ కాదు!<br/>
+          <em>వివరణ:</em> మెంబర్ ఫంక్షన్ కావాలంటే ఎడమవైపు ఉన్న ఆబ్జెక్ట్ మన క్లాస్ అయి ఉండాలి (ఉదాహరణకు <code>obj &lt;&lt; cout</code> లాగా). కానీ మనం <code>cout &lt;&lt; obj</code> అని రాస్తాం కాబట్టి దీనిని నాన్-మెంబర్ ఫ్రెండ్ ఫంక్షన్‌గా మాత్రమే రాయగలం.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 2: కంపైలర్ ప్రీఫిక్స్ ఇంక్రిమెంట్ (<code>++x</code>) మరియు పోస్ట్‌ఫిక్స్ ఇంక్రిమెంట్ (<code>x++</code>) మధ్య తేడాను ఎలా గుర్తిస్తుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> పోస్ట్‌ఫిక్స్ ఇంక్రిమెంట్ యొక్క ఫంక్షన్ సిగ్నేచర్‌లో ఒక డమ్మీ <strong><code>int</code></strong> పారామీటర్ ఉండటం ద్వారా!<br/>
+          <em>వివరణ:</em> <code>operator++()</code> అనేది ప్రీఫిక్స్ (ఆర్గుమెంట్లు లేవు); <code>operator++(int)</code> అనేది పోస్ట్‌ఫిక్స్. ఆ <code>int</code> పారామీటర్‌కు విలువతో సంబంధం లేదు, కేవలం కంపైలర్ గుర్తుపట్టడానికి మాత్రమే అది ఉంటుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 3: క్రింది వాటిలో C++ లో ఓవర్‌లోడ్ చేయడానికి అనుమతించబడని ఆపరేటర్ ఏది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>::</code> (Scope Resolution Operator)</strong> లేదా <strong><code>.</code> (Dot Operator)</strong>!<br/>
+          <em>వివరణ:</em> C++ స్టాండర్డ్ ప్రకారం <code>.</code>, <code>.*</code>, <code>::</code>, <code>?:</code>, మరియు <code>sizeof</code> ఆపరేటర్లను ఓవర్‌లోడ్ చేయడం కంపైలర్ భద్రత దృష్ట్యా పూర్తిగా నిషేధించబడింది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 4: Modern C++20 లో <strong>Spaceship Operator (<code>&lt;=&gt;</code>)</strong> తీసుకువచ్చిన ప్రధాన విప్లవం ఏమిటి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఒక్క ఆపరేటర్‌తో మొత్తం 6 కంపారిజన్ ఆపరేటర్లను (<code>==, !=, &lt;, &lt;=, &gt;, &gt;=</code>) ఆటోమేటిక్‌గా రూపొందించడం!<br/>
+          <em>వివరణ:</em> పూర్వం 6 వేర్వేరు ఆపరేటర్ ఫంక్షన్లు రాయాల్సి వచ్చేది. C++20 లో <code>auto operator&lt;=&gt;(const T&amp;) const = default;</code> రాస్తే కంపైలర్ వాటన్నింటినీ స్వయంచాలకంగా సృష్టిస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 5: C++ లో <code>friend</code> ఫంక్షన్ అంటే ఏమిటి? అది ఎన్‌క్యాప్సులేషన్‌ను నాశనం చేస్తుందా?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> క్లాస్ ప్రైవేట్ వేరియబుల్స్‌ను యాక్సెస్ చేయడానికి అనుమతించబడిన విశ్వసనీయ బాహ్య ఫంక్షన్. ఇది ఎన్‌క్యాప్సులేషన్‌ను నాశనం చేయదు, ఎందుకంటే ఆ క్లాస్ స్వయంగా అనుమతిస్తుంది!<br/>
+          <em>వివరణ:</em> బయటి ఫంక్షన్ బలవంతంగా ప్రైవేట్ డేటాను దొంగిలించదు. క్లాస్ డెవలపర్ తన క్లాస్ లోపల స్పష్టంగా <code>friend</code> అని ప్రకటించినప్పుడు మాత్రమే ఆ అనుమతి లభిస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- LESSON NAVIGATION -->
+    <div class="lesson-nav">
+      <a href="/blog-cpp/${currentLesson.prev.file}" class="prev-link">← మునుపటి అధ్యాయం: ${currentLesson.prev.title}</a>
+      <a href="/blog-cpp/${currentLesson.next.file}" class="next-link">తర్వాతి అధ్యాయం: ${currentLesson.next.title} →</a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SCRIPTS FOR SITEMAP & INTERACTIVE RUNNER -->
+<script src="/site-nav.js"></script>
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+class Vector3D {
+private:
+    double coords[3];
+
+public:
+    Vector3D(double x = 0.0, double y = 0.0, double z = 0.0) {
+        coords[0] = x;
+        coords[1] = y;
+        coords[2] = z;
+    }
+
+    double& operator[](size_t index) { return coords[index]; }
+    const double& operator[](size_t index) const { return coords[index]; }
+
+    Vector3D operator+(const Vector3D& rhs) const {
+        return Vector3D(coords[0] + rhs[0], coords[1] + rhs[1], coords[2] + rhs[2]);
+    }
+
+    Vector3D operator-(const Vector3D& rhs) const {
+        return Vector3D(coords[0] - rhs[0], coords[1] - rhs[1], coords[2] - rhs[2]);
+    }
+
+    Vector3D operator*(double scalar) const {
+        return Vector3D(coords[0] * scalar, coords[1] * scalar, coords[2] * scalar);
+    }
+
+    friend Vector3D operator*(double scalar, const Vector3D& v) {
+        return v * scalar;
+    }
+
+    double dot(const Vector3D& rhs) const {
+        return (coords[0] * rhs[0]) + (coords[1] * rhs[1]) + (coords[2] * rhs[2]);
+    }
+
+    double magnitude() const {
+        return std::sqrt(dot(*this));
+    }
+
+    bool operator==(const Vector3D& rhs) const {
+        return (coords[0] == rhs[0] && coords[1] == rhs[1] && coords[2] == rhs[2]);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Vector3D& v) {
+        os << "Vector3D(" << v[0] << ", " << v[1] << ", " << v[2] << ")";
+        return os;
+    }
+};
+
+int main() {
+    std::cout << "=======================================================================\\\\n";
+    std::cout << "🚀 [ENTERPRISE 3D VECTOR MATH & ASTROPHYSICS ENGINE RUNNING]\\\\n";
+    std::cout << "=======================================================================\\\\n";
+
+    Vector3D position(10.0, 20.0, 5.0);
+    Vector3D velocity(2.5, -1.0, 4.0);
+
+    std::cout << "ప్రారంభ స్థానం (Position) : " << position << "\\\\n";
+    std::cout << "ప్రస్తుత వేగం (Velocity)   : " << velocity << "\\\\n";
+
+    Vector3D nextPos = position + velocity;
+    std::cout << "తర్వాతి స్థానం (Next Pos)  : " << nextPos << "\\\\n";
+
+    Vector3D boosted = velocity * 3.0;
+    std::cout << "3x బూస్ట్ వేగం (Boosted)  : " << boosted << "\\\\n";
+
+    Vector3D doubleSpeed = 2.0 * velocity;
+    std::cout << "డబుల్ స్పీడ్ (2.0 * vel)  : " << doubleSpeed << "\\\\n";
+
+    double dotProduct = position.dot(velocity);
+    std::cout << "స్థానం మరియు వేగం డాట్ ప్రొడక్ట్: " << dotProduct << "\\\\n";
+    std::cout << "వేగం యొక్క పరిమాణం (Speed): " << std::fixed << std::setprecision(2) << velocity.magnitude() << " m/s\\\\n";
+
+    std::cout << "=======================================================================\\\\n";
+    std::cout << "✅ ఆపరేటర్ ఓవర్‌లోడింగ్ తో ఫిజిక్స్ వెక్టర్ సిమ్యులేషన్ విజయవంతమైంది!\\\\n";
+    std::cout << "=======================================================================\\\\n";
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter17Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 17 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter17Content.length, 'characters');

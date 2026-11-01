@@ -6,3 +6,4 @@ s = s.replace("}\\';", "}\\`;");
 
 fs.writeFileSync('scratch/build_cpp_chapter11_deep.js', s, 'utf8');
 console.log('Fixed projectCode template literal');
+

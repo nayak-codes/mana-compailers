@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ఇన్హెరిటెన్స్ (Inheritance) & The Diamond Problem — Modern C++ Tutorial | Our Compiler</title>
-  <meta name="description" content="C++ ఇన్హెరిటెన్స్ (Inheritance) సమగ్ర తెలుగు గైడ్: Base & Derived Classes, IS-A vs HAS-A, Access Modes (public, protected, private), The Dreaded Diamond Problem, virtual Base Classes, మరియు Constructor/Destructor ఆర్డర్." />
-  <meta name="keywords" content="c++ inheritance in telugu, diamond problem c++, virtual base class c++, multiple inheritance c++, base derived class c++, our compiler" />
+  <title>ఇన్హెరిటెన్స్ (Inheritance) — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ ఇన్హెరిటెన్స్ (Inheritance) సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: Single, Multilevel, Multiple & Hybrid Inheritance, protected యాక్సెస్, Constructor & Destructor Chaining, The Diamond Problem, Virtual Base Classes, మరియు Enterprise Combat Drone Fleet Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ inheritance telugu, multiple inheritance c++, diamond problem c++, virtual base class c++, constructor chaining c++, protected access specifier, oop inheritance, learn c++ in telugu, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/15-cpp-inheritance.html" />
@@ -20,8 +20,8 @@
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "ఇన్హెరిటెన్స్ & The Diamond Problem (Inheritance in C++) తెలుగులో",
-    "description": "C++ ఇన్హెరిటెన్స్: Base vs Derived classes, Public/Protected/Private modes, Multiple Inheritance, The Diamond Problem, మరియు virtual base classes.",
+    "headline": "ఇన్హెరిటెన్స్ (Inheritance) (Mastering C++ Inheritance, Diamond Problem & Virtual Base Classes in Telugu)",
+    "description": "C++ ఇన్హెరిటెన్స్ పూర్తి గైడ్: Single, Multiple, Diamond Problem, Virtual Base Classes, Chaining, మరియు Enterprise Combat Drone ప్రాజెక్ట్.",
     "articleSection": "Phase 4: Object-Oriented Programming (OOP)",
     "inLanguage": "te",
     "author": {
@@ -35,45 +35,11 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-15",
-    "dateModified": "2026-10-29"
+    "dateModified": "2026-11-01"
   }
   </script>
 
-  <!-- Schema.org FAQPage Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "C++ లో 'The Diamond Problem' అంటే ఏమిటి?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "రెండు చైల్డ్ క్లాసులు (B మరియు C) ఒకే పేరెంట్ క్లాస్ (A) నుండి ఇన్హెరిట్ అయ్యి, ఆ తర్వాత నాల్గవ క్లాస్ (D) ఈ B మరియు C రెండింటి నుండి మల్టిపుల్ ఇన్హెరిటెన్స్ చేసుకున్నప్పుడు డైమండ్ ఆకారం ఏర్పడుతుంది. దీనివల్ల D ఆబ్జెక్ట్ లోపల A యొక్క రెండు డూప్లికేట్ కాపీలు తయారై కంపైలర్ కు తీవ్రమైన Ambiguity ఎర్రర్ వస్తుంది."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Diamond Problem ని C++ లో ఎలా పరిష్కరిస్తారు?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "'virtual' base class కీవర్డ్ ద్వారా పరిష్కరిస్తారు: 'class B : virtual public A' మరియు 'class C : virtual public A'. దీనివల్ల కంపైలర్ మెమరీలో A కి కేవలం ఒకే ఒక్క షేర్డ్ కాపీని సృష్టిస్తుంది, ఫలితంగా డూప్లికేషన్ మరియు అంబిగ్యుటీ పూర్తిగా తొలగిపోతాయి."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "ఇన్హెరిటెన్స్ లో Base మరియు Derived క్లాస్ Constructors ఏ ఆర్డర్ లో రన్ అవుతాయి?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Constructors ఎల్లప్పుడూ పైనుండి క్రిందికి (Top-Down: Base Class Constructor ముందు, Derived Class Constructor తర్వాత) రన్ అవుతాయి. Destructors మాత్రం దానికి వ్యతిరేక క్రమంలో (Bottom-Up: Derived Class Destructor ముందు, Base Class Destructor తర్వాత) రన్ అవుతాయి."
-        }
-      }
-    ]
-  }
-  </script>
-
-  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -87,124 +53,79 @@
       }
     }
 
+    // Client-side C++ Syntax Highlighter
     function highlightCppCode(rawCode) {
       const tokens = [];
       const pushToken = (cls, text) => {
         const id = tokens.length;
-        tokens.push(`<span class="${cls}">${text}</span>`);
-        return `___CPP_TOK_${id}___`;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
       };
 
       let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
       code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
       code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
 
-      const keywords = [
-        'alignas', 'alignof', 'and', 'and_eq', 'asm', 'auto', 'bitand', 'bitor',
-        'bool', 'break', 'case', 'catch', 'char', 'char8_t', 'char16_t', 'char32_t',
-        'class', 'compl', 'concept', 'const', 'consteval', 'constexpr', 'constinit',
-        'const_cast', 'continue', 'co_await', 'co_return', 'co_yield', 'decltype',
-        'default', 'delete', 'do', 'double', 'dynamic_cast', 'else', 'enum',
-        'explicit', 'export', 'extern', 'false', 'float', 'for', 'friend', 'goto',
-        'if', 'inline', 'int', 'long', 'mutable', 'namespace', 'new', 'noexcept',
-        'not', 'not_eq', 'nullptr', 'operator', 'or', 'or_eq', 'private', 'protected',
-        'public', 'register', 'reinterpret_cast', 'requires', 'return', 'short',
-        'signed', 'sizeof', 'static', 'static_assert', 'static_cast', 'struct',
-        'switch', 'template', 'this', 'thread_local', 'throw', 'true', 'try',
-        'typedef', 'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual',
-        'void', 'volatile', 'wchar_t', 'while', 'xor', 'xor_eq'
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid'
       ];
-      const kwRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+      const kwRegex = new RegExp('\\b(' + kwList.join('|') + ')\\b', 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      code = code.replace(/\b(std|cout|cin|cerr|endl|string|Device|PoweredDevice|Scanner|Printer|Copier|Vehicle|Car|ElectricCar|size_t)\b/g, m => pushToken('tp', m));
-      code = code.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?[fFulULzZ]*)\b/g, m => pushToken('nm', m));
-      code = code.replace(/([&|<>!+\-*\/%=^~]+)/g, m => pushToken('op', m));
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','vector','array',
+        'main','printf','fixed','setprecision'
+      ];
+      const fnRegex = new RegExp('\\b(' + fnList.join('|') + ')\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
 
-      tokens.forEach((tok, idx) => {
-        code = code.split(`___CPP_TOK_${idx}___`).join(tok);
-      });
-
+      code = code.replace(/\b(\d+(?:\.\d+)?(?:f|u|l|ll)?|0x[0-9a-fA-F]+)\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\d+)___/g, (_, id) => tokens[id]);
       return code;
     }
 
-    (function() {
-      // Default to Light Theme
-      const currentTheme = localStorage.getItem('tutorial_theme_v2');
-      if (currentTheme !== 'dark') {
-        document.documentElement.classList.add('light-theme');
-        window.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => {
+        el.innerHTML = highlightCppCode(el.textContent);
+      });
+    });
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        navigator.clipboard.writeText(codeEl.textContent).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
         });
       }
+    }
 
-      window.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('pre code').forEach(codeBlock => {
-          const pre = codeBlock.parentElement;
-          if (pre.closest('.code-box') || pre.closest('.try-box')) return;
-
-          const wrapper = document.createElement('div');
-          wrapper.className = 'code-box';
-
-          const header = document.createElement('div');
-          header.className = 'code-header';
-          header.innerHTML = `
-            <span>C++ Source</span>
-            <div class="code-actions">
-              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-            </div>
-          `;
-
-          pre.parentNode.insertBefore(wrapper, pre);
-          wrapper.appendChild(header);
-          wrapper.appendChild(pre);
-
-          const rawCode = codeBlock.textContent;
-          codeBlock.innerHTML = highlightCppCode(rawCode);
-
-          const actionsContainer = header.querySelector('.code-actions');
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(rawCode).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              localStorage.setItem('code_cpp17', rawCode);
-              window.location.href = '/online-cpp-compiler.html';
-            });
-          }
-        });
-      });
-    })();
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        const rawCode = codeEl.textContent;
+        try {
+          localStorage.setItem('code_cpp17', rawCode);
+          localStorage.setItem('code_cpp', rawCode);
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        window.open('/online-cpp-compiler.html', '_blank');
+      }
+    }
   </script>
 </head>
-<body class="lang-cpp light-theme">
+<body>
 
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html" class="active">C++</a>
-  <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-</nav>
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
   <!-- LEFT SIDEBAR ACCORDION -->
@@ -213,7 +134,7 @@
     <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
 
     <div class="sidebar-accordion">
-      <!-- PHASE 1: BASICS -->
+      <!-- Phase 01 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">⚡</span>
@@ -234,7 +155,7 @@
         <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
       </div>
 
-      <!-- PHASE 2: CONTROL FLOW -->
+      <!-- Phase 02 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🔀</span>
@@ -255,7 +176,7 @@
         <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
       </div>
 
-      <!-- PHASE 3: FUNCTIONS & MEMORY -->
+      <!-- Phase 03 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🧠</span>
@@ -276,7 +197,7 @@
         <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
       </div>
 
-      <!-- PHASE 4: OOPS (ACTIVE) -->
+      <!-- Phase 04 -->
       <button class="accordion-header active" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🏗️</span>
@@ -298,7 +219,7 @@
         <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
       </div>
 
-      <!-- PHASE 5: ADVANCED STL -->
+      <!-- Phase 05 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🚀</span>
@@ -315,423 +236,781 @@
       <div class="accordion-content">
         <a href="/blog-cpp/18-cpp-templates-generic-programming.html">18. టెంప్లేట్లు & Generic Programming</a>
         <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
-        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. ఎక్సెప్షన్ హ్యాండ్లింగ్ & మినీ ప్రాజెక్ట్</a>
+        <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. Exceptions, Files & Mini Project</a>
       </div>
+
+    </div>
+
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-cpp-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try Online C++ Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
     </div>
   </aside>
 
   <!-- MAIN ARTICLE CONTENT -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
-      <a href="/">Home</a> » <a href="/blog-cpp.html">C++ Masterclass</a> » <span>Chapter 15: ఇన్హెరిటెన్స్ (Inheritance)</span>
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 15: ఇన్హెరిటెన్స్ (Inheritance)</span>
     </div>
 
-    <div class="lesson-header">
-      <span class="badge">Phase 04 · Object-Oriented Programming · Chapter 15 of 20</span>
-      <h1 class="lesson-title">ఇన్హెరిటెన్స్ (Inheritance) & The Diamond Problem (తెలుగులో)</h1>
-      <p class="lesson-desc">
-        కోడ్ పునర్వినియోగం మరియు హైరార్కీల నిర్మాణం! "IS-A" సంబంధం, Base vs Derived Classes, Inheritance Access Modes (public, protected, private), Multiple Inheritance లో తలెత్తే ప్రఖ్యాత <strong>The Dreaded Diamond Problem</strong>, C++ యొక్క సూపర్ సొల్యూషన్ <code>virtual</code> Base Classes, మరియు Constructor/Destructor ఎగ్జిక్యూషన్ ఆర్డర్.
-      </p>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">ఇన్హెరిటెన్స్ (Inheritance)</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern C++ (C++20/C++17)</span>
+      <span class="badge">🟢 Chapter 15 of 20</span>
+      <span class="badge">📂 Phase 04: ఆబ్జెక్ట్ ఓరియెంటెడ్ OOP</span>
+      <span class="badge">📅 2026 Edition</span>
     </div>
 
-    <!-- Subtopics Pill Bar -->
-    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px;">
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>IS-A Relationship · Access Modes · Protected Scope · Multiple Inheritance · Diamond Problem · virtual Base Classes · Constructor Top-Down Order</span>
+      <span>సింగిల్, మల్టీలెవల్, మల్టిపుల్ ఇన్హెరిటెన్స్ · protected యాక్సెస్ · Constructor Chaining · Diamond Problem & Virtual Base Classes</span>
     </div>
 
-    <!-- CONCEPT 1: WHAT IS INHERITANCE -->
-    <div class="section-title"><span class="num">1</span> ఇన్హెరిటెన్స్ (Inheritance) అంటే ఏమిటి? "IS-A" సంబంధం</div>
-    <div class="section-body">
-      <p>
-        నిజ జీవితంలో పిల్లలకు తల్లిదండ్రుల నుండి కొన్ని శారీరక లక్షణాలు, ఆస్తులు వారసత్వంగా ఎలాగైతే వస్తాయో, ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) లో కూడా ఒక కొత్త క్లాస్‌ను మొదటి నుండి రాయకుండా, ఇప్పటికే ఉన్న క్లాస్ లోని డేటా వేరియబుల్స్ మరియు ఫంక్షన్లను వారసత్వంగా స్వీకరించే ప్రక్రియనే <strong>Inheritance</strong> అంటారు.
-      </p>
-      <p>
-        ఇన్హెరిటెన్స్ యొక్క ప్రధాన ఉద్దేశ్యం <strong>Code Reusability (కోడ్ పునర్వినియోగం)</strong>. ఒకే రకమైన కోడ్‌ను పదే పదే రాయకుండా (DRY - Don't Repeat Yourself), కామన్ ఫీచర్లన్నింటినీ ఒక మూల క్లాస్ లో పెట్టి, ప్రత్యేకమైన ఫీచర్లను చైల్డ్ క్లాసులలో విస్తరించవచ్చు.
-      </p>
-
-      <!-- LIGHT VISUAL COMPARISON CARD (IS-A vs HAS-A) -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:10px; padding:18px 22px; margin:20px 0;">
-        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px; font-weight:700;">🧬 "IS-A" (ఇన్హెరిటెన్స్) vs "HAS-A" (కంపోజిషన్) తేడాలు:</h4>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
-          <div style="background:rgba(16, 185, 129, 0.06); border:1px solid rgba(16, 185, 129, 0.2); border-radius:8px; padding:12px 14px;">
-            <strong style="color:#10b981;">✔️ "IS-A" రిలేషన్‌షిప్ (Inheritance):</strong>
-            <p style="font-size:13px; line-height:1.6; margin:6px 0 0; color:var(--text2);">
-              ఒక క్లాస్ సహజంగానే మరొక క్లాస్ యొక్క రకం అయినప్పుడు వాడాలి.<br>
-              • <em>Car IS-A Vehicle</em> (కారు అనేది ఒక వాహనం)<br>
-              • <em>SmartPhone IS-A Device</em> (స్మార్ట్‌ఫోన్ అనేది ఒక పరికరం)<br>
-              • <em>Dog IS-A Animal</em> (కుక్క అనేది ఒక జంతువు)
-            </p>
-          </div>
-          <div style="background:rgba(88, 166, 255, 0.06); border:1px solid rgba(88, 166, 255, 0.2); border-radius:8px; padding:12px 14px;">
-            <strong style="color:#58a6ff;">📦 "HAS-A" రిలేషన్‌షిప్ (Composition):</strong>
-            <p style="font-size:13px; line-height:1.6; margin:6px 0 0; color:var(--text2);">
-              ఒక క్లాస్ లోపల మరొక క్లాస్ ఆబ్జెక్ట్ ఒక భాగంగా ఉన్నప్పుడు వాడాలి.<br>
-              • <em>Car HAS-A Engine</em> (కారు లోపల ఇంజిన్ ఉంటుంది)<br>
-              • <em>Student HAS-A Address</em> (స్టూడెంట్ కు అడ్రస్ ఉంటుంది)<br>
-              ఇలాంటి చోట్ల ఇన్హెరిటెన్స్ చేయకూడదు!
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <p>
-        <strong>ముఖ్యమైన టర్మినాలజీ:</strong><br>
-        • <strong>Base Class (Parent / Super Class):</strong> మూల గుణాలు ఇచ్చే పేరెంట్ క్లాస్.<br>
-        • <strong>Derived Class (Child / Sub Class):</strong> ఆ గుణాలను వారసత్వంగా తీసుకునే చైల్డ్ క్లాస్.
-      </p>
-
-      <!-- COMPACT FOCUSED CODE BLOCK 1 -->
-      <div style="margin-top:20px; margin-bottom:12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Basic Inheritance Syntax & Code Reusability</div>
-        <div class="code-box">
-          <div class="code-header">
-            <span>basic_inheritance.cpp</span>
-            <div class="code-actions">
-              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-            </div>
-          </div>
-          <pre><code>#include &lt;iostream&gt;
-
-class Vehicle {
-public:
-    void startEngine() { std::cout &lt;&lt; "Vroom! Engine started.\n"; }
-};
-
-// Car IS-A Vehicle (Inherits from Vehicle)
-class Car : public Vehicle {
-public:
-    void honkHorn() { std::cout &lt;&lt; "Beep beep!\n"; }
-};
-
-int main() {
-    Car myCar;
-    myCar.startEngine(); // Base Class ఫంక్షన్ నేరుగా లభిస్తుంది!
-    myCar.honkHorn();    // Derived Class సొంత ఫంక్షన్
-    return 0;
-}</code></pre>
-        </div>
-      </div>
-
-      <!-- BREAKDOWN CARD -->
-      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
-        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
-        <ul style="margin:8px 0 0 18px;">
-          <li><code>class Car : public Vehicle</code>: కోలన్ (<code>:</code>) మరియు <code>public</code> కీవర్డ్ ద్వారా <code>Car</code> క్లాస్ <code>Vehicle</code> నుండి పబ్లిక్ గా ఇన్హెరిట్ అవుతుందని కంపైలర్ కు చెప్తున్నాం.</li>
-          <li><code>myCar.startEngine()</code>: <code>Car</code> క్లాస్ లో మనం <code>startEngine()</code> కోడ్ రాయలేదు! అయినప్పటికీ Base Class లో ఉండటం వల్ల చైల్డ్ ఆబ్జెక్ట్ నేరుగా దానిని పిలవగలిగింది. ఇదే కోడ్ పునర్వినియోగం.</li>
-        </ul>
-      </div>
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>నిజ జీవితంలో పిల్లలు తమ తల్లిదండ్రుల నుండి శారీరక రూపాన్ని, తెలివితేటలను మరియు ఆస్తులను వారసత్వంగా పొందుతారు. సరిగ్గా ఇదే సూత్రాన్ని సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌కు అన్వయించిన విప్లవాత్మక ఆబ్జెక్ట్ ఓరియెంటెడ్ భావనే <strong>ఇన్హెరిటెన్స్ (Inheritance - వారసత్వం)</strong>. ఇప్పటికే ఉన్న ఒక క్లాస్ యొక్క లక్షణాలను మరియు ఫంక్షన్లను మళ్లీ రాయకుండా (Zero Code Duplication), వాటిని పొడిగిస్తూ సరికొత్త క్లాసులను నిర్మించడానికి ఇది ఉపయోగపడుతుంది.</p>
+      <p>ఇతర ఆధునిక భాషల కంటే C++ ఇన్హెరిటెన్స్ వ్యవస్థ ఎంతో శక్తివంతమైనది. ఎందుకంటే C++ మాత్రమే <strong>మల్టిపుల్ ఇన్హెరిటెన్స్ (Multiple Inheritance)</strong> కు పూర్తి స్థాయి మద్దతును అందిస్తుంది! అయితే బహుళ బేస్ క్లాసుల కలయిక వల్ల ఏర్పడే కుప్రసిద్ధమైన <strong>డైమండ్ ప్రాబ్లమ్ (The Diamond Problem)</strong> మరియు దానిని విచ్ఛిన్నం చేసే <strong><code>virtual</code> Base Classes</strong> ఆర్కిటెక్చర్‌ను లోతుగా అవగతం చేసుకోవడం ప్రతి సీనియర్ సిస్టమ్స్ ప్రోగ్రామర్‌కు తప్పనిసరి.</p>
+      <p>ఈ సమగ్ర మాస్టర్‌క్లాస్‌లో మనం Single, Multilevel, Multiple &amp; Hybrid Inheritance, Access Modes (public vs protected vs private), Constructor &amp; Destructor Chaining ఎగ్జిక్యూషన్ ఆర్డర్, వర్చువల్ బేస్ క్లాస్ మెకానిక్స్, మరియు పూర్తి స్థాయి <em>"Enterprise Defense &amp; Aerospace Autonomous Combat Drone Fleet Engine"</em> ప్రాజెక్ట్‌ను నిర్మించి నైపుణ్యం సాధిద్దాం!</p>
     </div>
 
-    <!-- CONCEPT 2: ACCESS MODES -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">2</span> Inheritance Access Modes: Visibility Filter ఎలా పనిచేస్తుంది?</div>
-    <div class="section-body">
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> ఇన్హెరిటెన్స్ అంటే ఏమిటి? ఎందుకు అవసరం? (Code Reusability &amp; "Is-A" Relationship)</h2>
       <p>
-        C++ లో ఇన్హెరిటెన్స్ చేసేటప్పుడు <code>public</code>, <code>protected</code>, లేదా <code>private</code> అనే మూడు Access Specifiers లో దేనినైనా ఎంచుకోవచ్చు. ఇది Base Class లోని మెంబర్లను చైల్డ్ క్లాస్ లోకి పంపేటప్పుడు ఒక ఫిల్టర్ లా పనిచేస్తుంది.
+        <strong>ఇన్హెరిటెన్స్ (Inheritance) అంటే ఏమిటి?</strong> ఇప్పటికే ఉన్న ఒక క్లాస్ (దీనిని <strong>Base Class</strong> లేదా <strong>Parent Class</strong> అంటారు) లోని ఫీచర్లు, వేరియబుల్స్ మరియు ఫంక్షన్లను మరొక కొత్త క్లాస్ (దీనిని <strong>Derived Class</strong> లేదా <strong>Child Class</strong> అంటారు) వారసత్వంగా స్వీకరించే ప్రక్రియను ఇన్హెరిటెన్స్ అంటారు.
       </p>
+      <p>
+        <strong>సాఫ్ట్‌వేర్ అభివృద్ధిలో ఇన్హెరిటెన్స్ ఎందుకు అవసరం?</strong>
+      </p>
+      <ol>
+        <li><strong>కోడ్ పునర్వినియోగం (Code Reusability):</strong> ఒకే రకమైన కోడ్‌ను 10 వేర్వేరు క్లాసులలో పదే పదే కాపీ పేస్ట్ చేయకుండా, ఉమ్మడి కోడ్‌ను ఒక Base Class లో రాసి అందరూ వాడుకునేలా చేయవచ్చు.</li>
+        <li><strong>విస్తరణ సామర్థ్యం (Extensibility):</strong> ఇప్పటికే పనిచేస్తున్న పాత కోడ్‌ను మార్చకుండా, దానిపై కొత్త ఫీచర్లను సులభంగా జోడించవచ్చు (Open-Closed Principle).</li>
+        <li><strong>"Is-A" రిలేషన్‌షిప్:</strong> నిజ జీవిత సంబంధాలను సరిగ్గా ప్రతిబింబిస్తుంది:
+          <ul>
+            <li>Car <strong>is a</strong> Vehicle</li>
+            <li>SavingsAccount <strong>is a</strong> BankAccount</li>
+            <li>FighterJet <strong>is an</strong> Aircraft</li>
+          </ul>
+        </li>
+      </ol>
+    </section>
 
-      <!-- LIGHT MODE TABLE -->
-      <div class="table-container" style="margin:20px 0;">
-        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
-          <thead>
-            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-              <th style="padding:12px; color:var(--text);">Base Class మెంబర్</th>
-              <th style="padding:12px; color:var(--text);"><code>public</code> Inheritance</th>
-              <th style="padding:12px; color:var(--text);"><code>protected</code> Inheritance</th>
-              <th style="padding:12px; color:var(--text);"><code>private</code> Inheritance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:12px;"><strong><code>public</code></strong></td>
-              <td style="padding:12px; color:#10b981; font-weight:600;">public గానే ఉంటుంది (95% పరిశ్రమలో వాడేది)</td>
-              <td style="padding:12px;">protected గా మారుతుంది</td>
-              <td style="padding:12px;">private గా మారుతుంది</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:12px;"><strong><code>protected</code></strong></td>
-              <td style="padding:12px; color:#10b981;">protected గానే ఉంటుంది (చైల్డ్ క్లాస్ కు అందుబాటులో ఉంటుంది)</td>
-              <td style="padding:12px;">protected గా ఉంటుంది</td>
-              <td style="padding:12px;">private గా మారుతుంది</td>
-            </tr>
-            <tr>
-              <td style="padding:12px;"><strong><code>private</code></strong></td>
-              <td style="padding:12px; color:#ef4444; font-weight:600;">ఎప్పటికీ ఇన్హెరిట్ అవ్వదు (Not Accessible)</td>
-              <td style="padding:12px; color:#ef4444;">ఎప్పటికీ ఇన్హెరిట్ అవ్వదు</td>
-              <td style="padding:12px; color:#ef4444;">ఎప్పటికీ ఇన్హెరిట్ అవ్వదు</td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> C++ ఇన్హెరిటెన్స్ సింటాక్స్ &amp; మెమరీ లేఅవుట్ (Base Subobject in RAM)</h2>
+      <p>
+        C++ లో ఇన్హెరిటెన్స్ చేయడానికి డిరైవ్డ్ క్లాస్ పేరు పక్కన కోలన్ (<strong><code>:</code></strong>) పెట్టి, Access Mode మరియు Base Class పేరును రాస్తాం:
+      </p>
+      <pre><code>class DerivedClass : public BaseClass {
+    // అదనపు వేరియబుల్స్ &amp; ఫంక్షన్లు
+};</code></pre>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:20px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.6;">
+        <div style="font-weight:bold; color:#10b981; margin-bottom:10px;">[Derived Class Memory Allocation in RAM (Contiguous Layout)]</div>
+        +-------------------------------------------------------+<br/>
+        |  <strong>Derived Class Object (e.g. ElectricCar)</strong>               |<br/>
+        |  +-------------------------------------------------+  |<br/>
+        |  |  <strong>Base Subobject (Vehicle)</strong>                      |  |<br/>
+        |  |  - std::string vinNumber                        |  |<br/>
+        |  |  - int currentSpeed                             |  |<br/>
+        |  +-------------------------------------------------+  |<br/>
+        |  |  <strong>Derived Specific Members</strong>                       |  |<br/>
+        |  |  - int batteryPercentage                        |  |<br/>
+        |  |  - double kilowattHours                         |  |<br/>
+        |  +-------------------------------------------------+  |<br/>
+        +-------------------------------------------------------+
       </div>
 
-      <!-- TIP BOX -->
+      <p>
+        పై ఆర్కిటెక్చర్ ప్రకారం: ఒక డిరైవ్డ్ క్లాస్ ఆబ్జెక్ట్ మెమరీలో సృష్టించబడినప్పుడు, దాని లోపల ముందుగా బేస్ క్లాస్ డేటా మెంబర్లు (Base Subobject) భద్రపరచబడి, వాటి కిందనే డిరైవ్డ్ క్లాస్ స్వంత మెంబర్లు కేటాయించబడతాయి.
+      </p>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> Access Modes: <code>public</code>, <code>protected</code>, మరియు <code>private</code> ఇన్హెరిటెన్స్</h2>
+      <p>
+        చాలా మంది బిగినర్స్ <code>class Derived : public Base</code> లోని <code>public</code> ను సాధారణ పదం అనుకుంటారు. కానీ C++ లో ఇన్హెరిటెన్స్ మూడు వేర్వేరు మోడ్లలో సాధ్యమవుతుంది. ఇది బేస్ క్లాస్ మెంబర్లు చైల్డ్ క్లాస్‌లో ఎలా కనబడాలో నిర్దేశిస్తుంది:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>బేస్ క్లాస్ మెంబర్ (Base Member)</th>
+            <th><code>public</code> ఇన్హెరిటెన్స్ తర్వాత</th>
+            <th><code>protected</code> ఇన్హెరిటెన్స్ తర్వాత</th>
+            <th><code>private</code> ఇన్హెరిటెన్స్ తర్వాత</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>public:</strong></td>
+            <td><strong>public</strong> గానే ఉంటుంది</td>
+            <td><strong>protected</strong> గా మారుతుంది</td>
+            <td><strong>private</strong> గా మారుతుంది</td>
+          </tr>
+          <tr>
+            <td><strong>protected:</strong></td>
+            <td><strong>protected</strong> గానే ఉంటుంది</td>
+            <td><strong>protected</strong> గానే ఉంటుంది</td>
+            <td><strong>private</strong> గా మారుతుంది</td>
+          </tr>
+          <tr>
+            <td><strong>private:</strong></td>
+            <td><strong>ఎప్పటికీ అందుబాటులో ఉండదు</strong> (Hidden)</td>
+            <td><strong>ఎప్పటికీ అందుబాటులో ఉండదు</strong> (Hidden)</td>
+            <td><strong>ఎప్పటికీ అందుబాటులో ఉండదు</strong> (Hidden)</td>
+          </tr>
+        </tbody>
+      </table>
+
       <div class="tip-box">
-        <strong>🛡️ 'protected' స్కోప్ యొక్క ప్రత్యేకత:</strong><br>
-        బయటి ప్రపంచం (<code>main()</code> ఫంక్షన్) నుండి డేటాను దాచాలి, కానీ మన చైల్డ్ క్లాసులు మాత్రం నేరుగా ఆ వేరియబుల్స్ ను వాడుకోవాలి అనుకున్నప్పుడు <code>protected:</code> సెక్షన్ లో వాటిని డిక్లేర్ చేస్తాం. <code>private</code> అయితే చైల్డ్ క్లాస్ కు కూడా అందదు!
+        💡 <strong>గోల్డెన్ రూల్:</strong> 99% వాస్తవ ప్రాజెక్టులలో మనం <strong><code>public inheritance</code></strong> నే ఉపయోగిస్తాం! ఎందుకంటే ఇది మాత్రమే నిజమైన "Is-A" సంబంధాన్ని కాపాడుతుంది. <code>private inheritance</code> అనేది కేవలం కంపోజిషన్ (Has-A) వంటి అంతర్గత ఇంప్లిమెంటేషన్ వివరాల దాచివేతకు మాత్రమే వాడబడుతుంది.
       </div>
+    </section>
 
-      <!-- COMPACT CODE EXAMPLE 2 -->
-      <div style="margin-top:20px; margin-bottom:12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Calling Base Constructor & Using Protected Members</div>
-        <div class="code-box">
-          <div class="code-header">
-            <span>protected_and_super.cpp</span>
-            <div class="code-actions">
-              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-            </div>
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> సింగిల్ &amp; మల్టీలెవల్ ఇన్హెరిటెన్స్ (Single &amp; Multilevel Inheritance)</h2>
+      <ol style="line-height:1.8;">
+        <li><strong>సింగిల్ ఇన్హెరిటెన్స్ (Single Inheritance):</strong> ఒకే ఒక బేస్ క్లాస్ నుండి ఒకే ఒక డిరైవ్డ్ క్లాస్ పుట్టడం (ఉదాహరణ: <code>Vehicle -> Car</code>).</li>
+        <li><strong>మల్టీలెవల్ ఇన్హెరిటెన్స్ (Multilevel Inheritance):</strong> ఒక గొలుసుకట్టు వలె తాత నుండి తండ్రి, తండ్రి నుండి కొడుకు వరకు వారసత్వం కొనసాగడం (ఉదాహరణ: <code>Device -> Computer -> Laptop</code>).</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">multilevel_inheritance_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
           </div>
-          <pre><code>#include &lt;iostream&gt;
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
 
+// లెవల్ 1: Base Class
 class Device {
-protected:
-    std::string brand; // చైల్డ్ క్లాస్ నేరుగా వాడుకోవచ్చు!
 public:
-    Device(std::string b) : brand(b) { }
+    void powerOn() {
+        std::cout << "  [Device] విద్యుత్ సరఫరా ఆన్ చేయబడింది.\n";
+    }
 };
 
-class SmartPhone : public Device {
-    int cameraMP;
+// లెవల్ 2: Derived from Device
+class Computer : public Device {
 public:
-    // Base కన్‌స్ట్రక్టర్ కు పారామీటర్లను పాస్ చేయడం
-    SmartPhone(std::string b, int mp) : Device(b), cameraMP(mp) { }
+    void bootOS() {
+        std::cout << "  [Computer] ఆపరేటింగ్ సిస్టమ్ బూట్ అవుతోంది...\n";
+    }
+};
 
-    void printDetails() {
-        std::cout &lt;&lt; "Brand: " &lt;&lt; brand &lt;&lt; " | Camera: " &lt;&lt; cameraMP &lt;&lt; "MP\n";
+// లెవల్ 3: Derived from Computer (Multilevel)
+class Laptop : public Computer {
+public:
+    void checkBattery() {
+        std::cout << "  [Laptop] బ్యాటరీ నిల్వ: 92%\n";
     }
 };
 
 int main() {
-    SmartPhone phone("Pixel", 50);
-    phone.printDetails();
+    Laptop myLaptop;
+    std::cout << "===== మల్టీలెవల్ ఇన్హెరిటెన్స్ ఫ్లో =====\n";
+    myLaptop.powerOn();     // లెవల్ 1 ఫంక్షన్
+    myLaptop.bootOS();      // లెవల్ 2 ఫంక్షన్
+    myLaptop.checkBattery(); // లెవల్ 3 ఫంక్షన్
     return 0;
 }</code></pre>
-        </div>
       </div>
+    </section>
 
-      <!-- BREAKDOWN CARD -->
-      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
-        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
-        <ul style="margin:8px 0 0 18px;">
-          <li><code>protected: std::string brand;</code>: <code>protected</code> కాబట్టి <code>main()</code> లో <code>phone.brand</code> అని పిలవలేము, కానీ చైల్డ్ క్లాస్ <code>SmartPhone</code> లోపల నేరుగా ప్రింట్ చేసుకోవచ్చు.</li>
-          <li><code>SmartPhone(...) : Device(b)</code>: చైల్డ్ క్లాస్ క్రియేట్ అయ్యేటప్పుడు ముందుగా Base Class కన్‌స్ట్రక్టర్ కు <code>brand</code> ను పంపించి Base ఆబ్జెక్ట్ ను నిర్మించాలి.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- CONCEPT 3: MULTIPLE INHERITANCE & DIAMOND PROBLEM -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">3</span> The Dreaded Diamond Problem & Multiple Inheritance</div>
-    <div class="section-body">
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> హైరార్కికల్ ఇన్హెరిటెన్స్ (Hierarchical Inheritance)</h2>
       <p>
-        జావా (Java) మరియు C# లాంటి భాషల్లో ఒక చైల్డ్ క్లాస్ ఒకటికి మించిన పేరెంట్ క్లాసుల నుండి నేరుగా ఇన్హెరిట్ చేసుకోలేదు (Multiple Inheritance నిరోధించబడింది). కానీ C++ లో ఒక క్లాస్ ఒకేసారి ఎన్ని పేరెంట్ క్లాసుల నుంచైనా ఇన్హెరిట్ చేసుకోవచ్చు (Multiple Inheritance సపోర్ట్ ఉంది).
+        ఒకే ఒక్క ప్రధాన బేస్ క్లాస్ నుండి బహుళ వేర్వేరు చైల్డ్ క్లాసులు స్వతంత్రంగా పుట్టడాన్ని <strong>హైరార్కికల్ ఇన్హెరిటెన్స్</strong> అంటారు.
       </p>
       <p>
-        ఈ స్వేచ్ఛ వల్ల ఆబ్జెక్ట్ ఓరియెంటెడ్ ఆర్కిటెక్చర్‌లో అత్యంత సంక్లిష్టమైన సమస్య <strong>"The Dreaded Diamond Problem"</strong> తలెత్తుతుంది!
+        ఉదాహరణకు ఒక గ్రాఫిక్స్ ఇంజిన్‌లో <code>Shape</code> అనే బేస్ క్లాస్ నుండి <code>Circle</code>, <code>Rectangle</code>, <code>Triangle</code> మొదలైన క్లాసులు ఉద్భవిస్తాయి. అవన్నీ షేప్ యొక్క కామన్ లక్షణాలైన రంగు, స్థానాన్ని వారసత్వంగా పొందుతాయి.
       </p>
+    </section>
 
-      <!-- LIGHT VISUAL DIAGRAM CARD (Clean Emerald Design, NO dark ASCII box) -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:22px; margin:20px 0;">
-        <h4 style="color:#10b981; margin:0 0 14px 0; font-size:16px; font-weight:700;">💎 The Diamond Problem మెమరీ నిర్మాణం (Visual Architecture):</h4>
-        
-        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin:16px 0;">
-          <!-- TOP: BASE CLASS -->
-          <div style="background:#f0fdf4; border:2px solid #10b981; border-radius:8px; padding:10px 24px; text-align:center; min-width:200px;">
-            <strong style="color:#047857; font-size:14px;">PoweredDevice (Base Class)</strong><br>
-            <span style="font-size:12px; color:#475569;">int voltage = 240;</span>
-          </div>
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> మల్టిపుల్ ఇన్హెరిటెన్స్ (Multiple Inheritance: బహుళ బేస్ క్లాసులు)</h2>
+      <p>
+        C++ ప్రోగ్రామింగ్ లాంగ్వేజ్ యొక్క అత్యంత విలక్షణమైన మరియు శక్తివంతమైన ఫీచర్లలో ఒకటి <strong>మల్టిపుల్ ఇన్హెరిటెన్స్</strong>.
+      </p>
+      <p>
+        ఒక చైల్డ్ క్లాస్ ఏకకాలంలో రెండు లేదా అంతకంటే ఎక్కువ స్వతంత్ర బేస్ క్లాసుల నుండి లక్షణాలను పొందడాన్ని మల్టిపుల్ ఇన్హెరిటెన్స్ అంటారు:
+      </p>
+      <pre><code>class SmartDevice : public Camera, public CellularPhone, public GPSNavigator {
+    // మూడు విభిన్న డివైజ్‌ల శక్తులన్నీ ఇందులో ఉంటాయి!
+};</code></pre>
 
-          <!-- ARROWS DOWN -->
-          <div style="display:flex; justify-content:space-between; width:280px; color:#10b981; font-weight:800; font-size:18px;">
-            <span>↙️</span>
-            <span>↘️</span>
-          </div>
-
-          <!-- MIDDLE: TWO DERIVED CLASSES -->
-          <div style="display:flex; justify-content:space-between; width:100%; max-width:440px; gap:20px;">
-            <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:10px 18px; text-align:center; flex:1; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-              <strong style="color:#0f172a; font-size:13.5px;">Scanner</strong><br>
-              <span style="font-size:11.5px; color:#64748b;">(Inherits PoweredDevice)</span>
-            </div>
-            <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:10px 18px; text-align:center; flex:1; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-              <strong style="color:#0f172a; font-size:13.5px;">Printer</strong><br>
-              <span style="font-size:11.5px; color:#64748b;">(Inherits PoweredDevice)</span>
-            </div>
-          </div>
-
-          <!-- ARROWS DOWN TO COPIER -->
-          <div style="display:flex; justify-content:space-between; width:280px; color:#10b981; font-weight:800; font-size:18px;">
-            <span>↘️</span>
-            <span>↙️</span>
-          </div>
-
-          <!-- BOTTOM: COPIER (MULTIPLE INHERITANCE) -->
-          <div style="background:rgba(239, 68, 68, 0.08); border:2px dashed #ef4444; border-radius:8px; padding:12px 24px; text-align:center; min-width:260px;">
-            <strong style="color:#dc2626; font-size:14.5px;">Copier (Multiple Inheritance)</strong><br>
-            <span style="font-size:12px; color:#b91c1c;">⚠️ రామ్‌లో 2 సార్లు PoweredDevice కాపీలు ఉంటాయి!</span>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">multiple_inheritance_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
           </div>
         </div>
+        <pre><code>#include &lt;iostream&gt;
 
-        <p style="font-size:13.5px; line-height:1.7; color:var(--text); margin:12px 0 0;">
-          <strong>రామ్‌లో జరిగే వినాశనం (Ambiguity Collision):</strong><br>
-          <code>Copier</code> ఆబ్జెక్ట్ మెమరీ క్రియేట్ అయినప్పుడు, <code>Scanner</code> ఒక <code>voltage</code> వేరియబుల్‌ను తెస్తుంది, <code>Printer</code> మరొక <code>voltage</code> వేరియబుల్‌ను తెస్తుంది. ఇప్పుడు ప్రోగ్రామర్ <code>copier.voltage</code> అని కాల్ చేయగానే కంపైలర్ కంగారుపడి నిలిచిపోతుంది: <em>"Error: request for member 'voltage' is ambiguous!"</em>
-        </p>
+class CameraModule {
+public:
+    void capturePhoto() {
+        std::cout << "  📸 48MP హై-రిజల్యూషన్ ఫోటో తీయబడింది!\n";
+    }
+};
+
+class CellularModem {
+public:
+    void makeCall(const std::string& number) {
+        std::cout << "  📞 5G నెట్‌వర్క్ ద్వారా " << number << " కి కాల్ కనెక్ట్ అవుతోంది...\n";
+    }
+};
+
+// రెండు స్వతంత్ర క్లాసుల నుండి మల్టిపుల్ ఇన్హెరిటెన్స్
+class ModernSmartphone : public CameraModule, public CellularModem {
+public:
+    void browseWeb() {
+        std::cout << "  🌐 బ్రౌజర్‌లో ఇంటర్నెట్ లోడ్ అవుతోంది...\n";
+    }
+};
+
+int main() {
+    ModernSmartphone phone;
+    std::cout << "===== C++ మల్టిపుల్ ఇన్హెరిటెన్స్ డెమో =====\n";
+    phone.capturePhoto();
+    phone.makeCall("+91-9876543210");
+    phone.browseWeb();
+    return 0;
+}</code></pre>
       </div>
-    </div>
+    </section>
 
-    <!-- CONCEPT 4: VIRTUAL BASE CLASSES -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">4</span> C++ అద్భుత పరిష్కారం: <code>virtual</code> Base Classes</div>
-    <div class="section-body">
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> ది ఫేమస్ "Diamond Problem" (డైమండ్ అంబిగ్యుటీ విపత్తు)</h2>
       <p>
-        ఈ డైమండ్ సమస్యను పరిష్కరించడానికి C++ డిజైనర్ Bjarne Stroustrup <strong><code>virtual</code> Inheritance</strong> అనే అద్భుతమైన ఫీచర్‌ను కనిపెట్టారు.
-      </p>
-      <p>
-        మధ్యలో ఉన్న క్లాసులను <code>class Scanner : virtual public PoweredDevice</code> మరియు <code>class Printer : virtual public PoweredDevice</code> అని డిక్లేర్ చేస్తే, కంపైలర్ మెమరీలో <code>PoweredDevice</code> కు <strong>కేవలం ఒకే ఒక్క షేర్డ్ కాపీని</strong> కేటాయిస్తుంది! రెండు కాపీలు రాకుండా నిరోధిస్తుంది, ఫలితంగా అంబిగ్యుటీ శాశ్వతంగా తొలగిపోతుంది.
+        మల్టిపుల్ ఇన్హెరిటెన్స్ చాలా శక్తివంతమైనదే అయినప్పటికీ, అది సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో అత్యంత ప్రమాదకరమైన ఒక బగ్‌కు కారణమవుతుంది. దాని పేరే <strong>The Deadly Diamond Problem (డైమండ్ అంబిగ్యుటీ విపత్తు)</strong>.
       </p>
 
-      <!-- COMPACT FOCUSED CODE BLOCK 3 -->
-      <div style="margin-top:20px; margin-bottom:12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Solving Diamond Problem with virtual Base Classes</div>
-        <div class="code-box">
-          <div class="code-header">
-            <span>virtual_diamond_solution.cpp</span>
-            <div class="code-actions">
-              <a href="/online-cpp-compiler.html" class="try-btn" target="_blank" rel="noopener">⚡ Try in Compiler</a>
-            </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:20px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.6;">
+        <div style="font-weight:bold; color:#ef4444; margin-bottom:8px;">[The Classic Diamond Inheritance Diagram]</div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Class PoweredDevice] (Apex Base: int powerRating)<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br/>
+        &nbsp;&nbsp;&nbsp;[Class Scanner]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Class Printer]<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Class CopierMachine] (Derived from both)<br/><br/>
+        <span style="color:#ef4444;">విపత్తు: CopierMachine ఆబ్జెక్ట్ లోపల PoweredDevice యొక్క TWO కాపీలు పుడతాయి!</span><br/>
+        copier.powerRating అని పిలిస్తే -> కంపైలర్ ERROR: Request for member 'powerRating' is ambiguous!
+      </div>
+
+      <p>
+        పై చిత్రంలో <code>CopierMachine</code> ఆబ్జెక్ట్ సృష్టించబడినప్పుడు, <code>Scanner</code> ద్వారా ఒక <code>powerRating</code> కాపీ, <code>Printer</code> ద్వారా రెండవ <code>powerRating</code> కాపీ వస్తాయి. ఇప్పుడు ప్రోగ్రామర్ <code>copier.powerRating = 200;</code> అని రాస్తే, కంపైలర్ ఏ కాపీని మార్చాలో తెలియక గందరగోళానికి గురై ఎర్రర్ విసురుతుంది!
+      </p>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> డైమండ్ ప్రాబ్లమ్‌కు శాశ్వత పరిష్కారం: <code>virtual</code> Base Classes</h2>
+      <p>
+        ఈ డైమండ్ విపత్తును సమూలంగా పరిష్కరించడానికి C++ మనకు అందించిన దివ్యౌషధమే <strong><code>virtual</code> Base Classes</strong>!
+      </p>
+      <p>
+        మధ్యలో ఉన్న క్లాసులు బేస్ క్లాస్‌ను ఇన్హెరిట్ చేసుకునే సమయంలో <strong><code>virtual</code></strong> కీవర్డ్‌ను జోడించాలి:
+      </p>
+      <pre><code>class Scanner : virtual public PoweredDevice { ... };
+class Printer : virtual public PoweredDevice { ... };</code></pre>
+      <p>
+        <strong>వర్చువల్ ఇన్హెరిటెన్స్ ఎలా పనిచేస్తుంది?</strong>
+      </p>
+      <ul>
+        <li>కంపైలర్ <code>CopierMachine</code> ఆబ్జెక్ట్ లోపల <code>PoweredDevice</code> యొక్క రెండు వేర్వేరు కాపీలను సృష్టించకుండా, కేవలం <strong>ఒకే ఒక్క ఉమ్మడి కాపీని (Single Shared Instance)</strong> మాత్రమే ఉంచుతుంది!</li>
+        <li>అంతర్గతంగా ప్రతి చైల్డ్ క్లాస్ ఒక <strong>Virtual Base Pointer (<code>vbptr</code>)</strong> ను మెమరీలో నిర్వహిస్తూ, ఆ షేర్డ్ బేస్ సబ్‌ఆబ్జెక్ట్‌ను చూపిస్తుంది.</li>
+        <li>దీనివల్ల అంబిగ్యుటీ పూర్తిగా తొలగిపోయి మెమరీ ఆదా అవుతుంది!</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">virtual_base_class_solution.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
           </div>
-          <pre><code>#include &lt;iostream&gt;
+        </div>
+        <pre><code>#include &lt;iostream&gt;
 
 class PoweredDevice {
 public:
     int voltage;
-    PoweredDevice(int v = 240) : voltage(v) { std::cout &lt;&lt; "PoweredDevice Ready!\n"; }
+    PoweredDevice(int v) : voltage(v) {
+        std::cout << "  ⚡ [PoweredDevice] వోల్టేజ్ ఇనిషియలైజ్ చేయబడింది: " << voltage << "V\n";
+    }
 };
 
-// virtual కీవర్డ్ ద్వారా ఒకే షేర్డ్ కాపీ మాత్రమే క్రియేట్ అవుతుంది
-class Scanner : virtual public PoweredDevice { };
-class Printer : virtual public PoweredDevice { };
-
-class Copier : public Scanner, public Printer {
+// 💡 వర్చువల్ ఇన్హెరిటెన్స్ ద్వారా డైమండ్ ప్రాబ్లమ్ పరిష్కారం!
+class Scanner : virtual public PoweredDevice {
 public:
-    Copier(int v) : PoweredDevice(v) { } // అత్యంత దిగువ క్లాస్ Base ను ఇనిషియలైజ్ చేస్తుంది
+    Scanner(int v) : PoweredDevice(v) {
+        std::cout << "  📠 Scanner మాడ్యూల్ రెడీ.\n";
+    }
+};
+
+class Printer : virtual public PoweredDevice {
+public:
+    Printer(int v) : PoweredDevice(v) {
+        std::cout << "  🖨️ Printer మాడ్యూల్ రెడీ.\n";
+    }
+};
+
+class CopierMachine : public Scanner, public Printer {
+public:
+    // వర్చువల్ బేస్ క్లాస్ ఉన్నప్పుడు, మోస్ట్ డిరైవ్డ్ క్లాస్ నేరుగా అపెక్స్ బేస్‌ను పిలవాలి!
+    CopierMachine(int v) : PoweredDevice(v), Scanner(v), Printer(v) {
+        std::cout << "  🏢 CopierMachine పూర్తిగా ఆపరేషనల్!\n";
+    }
 };
 
 int main() {
-    Copier c(220);
-    std::cout &lt;&lt; "Copier Voltage: " &lt;&lt; c.voltage &lt;&lt; "V\n"; // అంబిగ్యుటీ లేదు!
+    std::cout << "===== Virtual Base Class డైమండ్ పరిష్కార పరీక్ష =====\n";
+    CopierMachine copier(240);
+
+    // అంబిగ్యుటీ లేకుండా నేరుగా voltage ను యాక్సెస్ చేయవచ్చు!
+    std::cout << "\nకాపియర్ వోల్టేజ్: " << copier.voltage << "V (ఏకైక షేర్డ్ ఇన్స్టాన్స్!)\n";
     return 0;
 }</code></pre>
-        </div>
       </div>
+    </section>
 
-      <!-- BREAKDOWN CARD -->
-      <div style="background:var(--bg2); border:1px solid var(--border); padding:16px 20px; border-radius:8px; margin-top:12px; font-size:13.5px; line-height:1.7;">
-        <strong style="color:#10b981; font-size:14px;">🔍 Line-by-Line కోడ్ బ్రేక్ డౌన్:</strong>
-        <ul style="margin:8px 0 0 18px;">
-          <li><code>class Scanner : virtual public PoweredDevice</code>: <code>virtual</code> కీవర్డ్ కంపైలర్ కు చెప్తుంది: "ఈ బేస్ క్లాస్ ను వేరే ఎవరైనా షేర్ చేసుకుంటే, నువ్వు డూప్లికేట్ చేయకుండా ఒకే షేర్డ్ మెమరీని ఉంచు".</li>
-          <li><code>Copier(int v) : PoweredDevice(v)</code>: వర్చువల్ ఇన్హెరిటెన్స్ లో మధ్యవర్తులు కాకుండా, చివరి చైల్డ్ క్లాస్ (Most-Derived Class) నేరుగా బేస్ క్లాస్ కన్‌స్ట్రక్టర్ ను పిలవాలి.</li>
-          <li><code>c.voltage</code>: ఇప్పుడు మెమరీలో ఒకే <code>voltage</code> ఉన్నందున ఎటువంటి కంపైలర్ ఎర్రర్ రాకుండా సజావుగా రన్ అవుతుంది.</li>
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> Constructor &amp; Destructor Chaining (ఎగ్జిక్యూషన్ ఆర్డర్)</h2>
+      <p>
+        ఒక డిరైవ్డ్ క్లాస్ ఆబ్జెక్ట్ సృష్టించబడినప్పుడు మరియు నశించినప్పుడు వాటి కన్‌స్ట్రక్టర్లు మరియు డిస్ట్రక్టర్లు ఏ క్రమంలో ఎగ్జిక్యూట్ అవుతాయి?
+      </p>
+
+      <ol>
+        <li>
+          <strong>కన్‌స్ట్రక్టర్ల క్రమం (Top-to-Bottom / Base-to-Derived):</strong><br/>
+          ఒక ఇంటిని నిర్మించేటప్పుడు ముందుగా పునాది వేసి, ఆ తర్వాతే మొదటి అంతస్తు, రెండో అంతస్తు కడతారు కదా! అలాగే C++ లో ముందుగా <strong>Base Class Constructor</strong> అమలవుతుంది, ఆ తర్వాతే <strong>Derived Class Constructor</strong> అమలవుతుంది.
+        </li>
+        <li>
+          <strong>డిస్ట్రక్టర్ల క్రమం (Bottom-to-Top / Derived-to-Base):</strong><br/>
+          ఒక ఇంటిని కూల్చేటప్పుడు పైకప్పు నుండి మొదలుపెట్టి చివరిగా పునాదిని తీసేస్తారు. సరిగ్గా అలాగే ముందుగా <strong>Derived Class Destructor</strong> అమలవుతుంది, చివరగా <strong>Base Class Destructor</strong> అమలవుతుంది (ఖచ్చితమైన రివర్స్ LIFO క్రమం!).
+        </li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">chaining_order_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+class Parent {
+public:
+    Parent() { std::cout << "  1. [Parent Constructor] పునాది వేయబడింది.\n"; }
+    ~Parent() { std::cout << "  4. [Parent Destructor] పునాది తొలగించబడింది.\n"; }
+};
+
+class Child : public Parent {
+public:
+    Child() { std::cout << "  2. [Child Constructor] భవనం నిర్మించబడింది.\n"; }
+    ~Child() { std::cout << "  3. [Child Destructor] భవనం కూల్చబడింది.\n"; }
+};
+
+int main() {
+    std::cout << "స్కోప్ ప్రారంభం...\n";
+    {
+        Child c;
+    } // ఇక్కడ స్కోప్ ముగిసింది
+    std::cout << "స్కోప్ ముగిసింది.\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> మెథడ్ ఓవర్‌రైడింగ్ &amp; C++ Name Hiding Trap</h2>
+      <p>
+        ఒక బేస్ క్లాస్ లో ఉన్న ఫంక్షన్‌కు భిన్నమైన కొత్త ప్రవర్తనను చైల్డ్ క్లాస్‌లో ఇవ్వడాన్నే <strong>మెథడ్ ఓవర్‌రైడింగ్ (Method Overriding)</strong> అంటారు.
+      </p>
+      <div class="warning-box">
+        ⚠️ <strong>The Dreaded Name Hiding Trap:</strong><br/>
+        C++ లో ఒక బేస్ క్లాస్‌లో <code>void show(int)</code> మరియు <code>void show(double)</code> ఓవర్‌లోడ్స్ ఉన్నాయనుకుందాం. ఇప్పుడు మీరు చైల్డ్ క్లాస్‌లో కేవలం <code>void show(string)</code> అని రాస్తే, బేస్ లోని <code>show(int)</code> మరియు <code>show(double)</code> రెండూ <strong>పూర్తిగా దాగిపోతాయి (Hidden)!</strong> చైల్డ్ ఆబ్జెక్ట్‌తో <code>c.show(5)</code> అని పిలిస్తే కంపైలర్ ఎర్రర్ వస్తుంది.<br/>
+        <em>పరిష్కారం:</em> చైల్డ్ క్లాస్ లోపల <strong><code>using Base::show;</code></strong> అని స్పష్టంగా చెప్పడం ద్వారా బేస్ ఓవర్‌లోడ్స్‌ను తిరిగి బహిర్గతం చేయవచ్చు!
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> Composition vs Inheritance: "Prefer Composition over Inheritance"</h2>
+      <p>
+        సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌లో ప్రముఖ డిజైన్ సూత్రం: <em>"Favor Object Composition over Class Inheritance"</em>.
+      </p>
+      <ul>
+        <li><strong>Inheritance (Is-A):</strong> చైల్డ్ క్లాస్ బేస్ క్లాస్‌తో గట్టిగా ముడిపడి ఉంటుంది (Tight Coupling). బేస్ క్లాస్‌లో చిన్న మార్పు జరిగినా అన్ని చైల్డ్ క్లాసులు ప్రభావితమవుతాయి.</li>
+        <li><strong>Composition (Has-A):</strong> ఒక క్లాస్ లోపల మరొక క్లాస్ ఆబ్జెక్ట్‌ను ఒక వేరియబుల్ గా ఉంచుకోవడం (Loose Coupling). ఉదాహరణకు ఒక కారుకు ఇంజిన్ ఉంటుంది (Car HAS-A Engine). కారు అనేది ఇంజిన్ కాదు! కాబట్టి <code>class Car : public Engine</code> అని రాయకూడదు; బదులుగా <code>class Car { Engine engine; };</code> అని రాయాలి.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> రియల్-వరల్డ్ ప్రాజెక్ట్: Enterprise Defense Autonomous Combat Drone Fleet Engine</h2>
+      <p>
+        రక్షణ మరియు ఏరోస్పేస్ రంగంలో ఉపయోగించే ఆధునిక సైనిక మానవరహిత యుద్ధ డ్రోన్లు (Autonomous Stealth UCAVs - Unmanned Combat Aerial Vehicles) అత్యంత సంక్లిష్టమైన హార్డ్‌వేర్ ఆర్కిటెక్చర్‌ను కలిగి ఉంటాయి.
+      </p>
+      <p>
+        ఒక డ్రోన్ ప్రాథమికంగా ఒక <strong>ఏవియేషన్ ప్లాట్‌ఫామ్ (AvionicsPlatform)</strong>; అదే సమయంలో అది ఒక <strong>స్టీల్త్ రాడార్ సర్వైలెన్స్ యూనిట్ (StealthSurveillanceUnit)</strong> మరియు ఒక <strong>ప్రెసిషన్ వెపన్ కంట్రోలర్ (PrecisionWeaponController)</strong>. ఇవి రెండూ ఉమ్మడి ఏవియేషన్ పవర్ సిస్టమ్‌ను పంచుకోవాలి (వర్చువల్ బేస్ క్లాస్ ద్వారా డైమండ్ ప్రాబ్లం పరిష్కారం).
+      </p>
+      <p>
+        ఈ సమగ్ర ప్రాజెక్ట్‌లో మనం వర్చువల్ ఇన్హెరిటెన్స్, మల్టిపుల్ ఇన్హెరిటెన్స్ మరియు కన్‌స్ట్రక్టర్ చైనింగ్‌తో కూడిన <strong>ఎంటర్‌ప్రైజ్ కాంబ్యాట్ డ్రోన్ మిషన్ ఇంజిన్</strong> ను నిర్మిస్తున్నాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">CombatDroneFleetEngine.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="openInteractiveCompiler()">⚡ Run Live Project</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;iomanip&gt;
+
+// అపెక్స్ బేస్ క్లాస్: ఏవియోనిక్స్ పవర్ & టెలిమెట్రీ
+class AvionicsCore {
+protected:
+    std::string droneSerial;
+    double currentBatteryKWh;
+    double altitudeMeters;
+
+public:
+    AvionicsCore(std::string serial, double battery)
+        : droneSerial(serial), currentBatteryKWh(battery), altitudeMeters(0.0) {
+        std::cout << "  🚁 [AvionicsCore Base] పవర్ బస్ ఆన్ చేయబడింది: " << droneSerial 
+                  << " (బ్యాటరీ: " << currentBatteryKWh << " kWh)\n";
+    }
+
+    virtual ~AvionicsCore() {
+        std::cout << "  🛑 [AvionicsCore Base] ఏవియోనిక్స్ పవర్ సురక్షితంగా షట్‌డౌన్ చేయబడింది.\n";
+    }
+
+    void climb(double meters) {
+        altitudeMeters += meters;
+        currentBatteryKWh -= (meters * 0.001);
+        std::cout << "  ✈️ [ఎత్తు పెంపు] ఎత్తు: " << altitudeMeters << " మీటర్లు | మిగిలిన పవర్: " << currentBatteryKWh << " kWh\n";
+    }
+};
+
+// బ్రాంచ్ 1: వర్చువల్ బేస్ ఇన్హెరిటెన్స్ (డైమండ్ నివారణ)
+class SurveillanceRadar : virtual public AvionicsCore {
+protected:
+    double radarScanRangeKm;
+
+public:
+    SurveillanceRadar(std::string serial, double battery, double scanRange)
+        : AvionicsCore(serial, battery), radarScanRangeKm(scanRange) {
+        std::cout << "  📡 [SurveillanceRadar] AESA రాడార్ యాక్టివేట్ చేయబడింది (పరిధి: " << radarScanRangeKm << " KM)\n";
+    }
+
+    void scanForHostiles() {
+        std::cout << "  🔍 [రాడార్ స్కానింగ్] " << radarScanRangeKm << " KM పరిధిలో గగనతల శత్రు లక్ష్యాల అన్వేషణ జరుగుతోంది...\n";
+    }
+};
+
+// బ్రాంచ్ 2: వర్చువల్ బేస్ ఇన్హెరిటెన్స్ (డైమండ్ నివారణ)
+class PrecisionWeaponBay : virtual public AvionicsCore {
+protected:
+    int payloadMissiles;
+
+public:
+    PrecisionWeaponBay(std::string serial, double battery, int missiles)
+        : AvionicsCore(serial, battery), payloadMissiles(missiles) {
+        std::cout << "  🎯 [PrecisionWeaponBay] గైడెడ్ క్షిపణి లాంచర్ లోడ్ చేయబడింది (మిస్సైల్స్: " << payloadMissiles << ")\n";
+    }
+
+    void fireMissile(const std::string& targetCoordinates) {
+        if (payloadMissiles > 0) {
+            payloadMissiles--;
+            std::cout << "  🚀 [మిస్సైల్ ప్రయోగం!] టార్గెట్ కోఆర్డినేట్స్: " << targetCoordinates 
+                      << " పైకి క్షిపణి దూసుకెళ్లింది! (మిగిలినవి: " << payloadMissiles << ")\n";
+        } else {
+            std::cout << "  ⚠️ హెచ్చరిక: క్షిపణులు అయిపోయాయి! వెంటనే బేస్ కు తిరిగి రండి.\n";
+        }
+    }
+};
+
+// డైమండ్ చైల్డ్: మల్టిపుల్ ఇన్హెరిటెన్స్ ఫ్రమ్ SurveillanceRadar & PrecisionWeaponBay
+class CombatStealthUAV : public SurveillanceRadar, public PrecisionWeaponBay {
+private:
+    std::string callSign;
+
+public:
+    // మోస్ట్ డిరైవ్డ్ క్లాస్ నేరుగా వర్చువల్ అపెక్స్ బేస్ (AvionicsCore) ను ఇనిషియలైజ్ చేయాలి!
+    CombatStealthUAV(std::string serial, std::string callName, double battery, double scanRange, int missiles)
+        : AvionicsCore(serial, battery),
+          SurveillanceRadar(serial, battery, scanRange),
+          PrecisionWeaponBay(serial, battery, missiles),
+          callSign(callName) {
+        std::cout << "\n  ⚡ [COMBAT STEALTH UAV READY] కాల్‌సైన్: " << callSign << " పోరాటానికి సిద్ధం!\n";
+    }
+
+    void executeCombatMission(const std::string& targetGrid) {
+        std::cout << "\n==============================================================\n";
+        std::cout << "⚔️ [మిషన్ ఎగ్జిక్యూషన్ - " << callSign << " / " << droneSerial << "]\n";
+        std::cout << "==============================================================\n";
+        climb(12000.0); // 12 కిమీ ఎత్తుకు ఎగరడం
+        scanForHostiles();
+        fireMissile(targetGrid);
+        std::cout << "లక్ష్యం ధ్వంసమైంది! బేస్ కు తిరుగు ప్రయాణం ప్రారంభం...\n";
+        std::cout << "==============================================================\n";
+    }
+};
+
+int main() {
+    std::cout << "==============================================================\n";
+    std::cout << "🛡️ [DEFENSE AEROSPACE COMBAT DRONE SIMULATION RUNNING]\n";
+    std::cout << "==============================================================\n";
+
+    {
+        // డ్రోన్ సృష్టి (సింగిల్ షేర్డ్ ఏవియోనిక్స్ పవర్ కోర్ తో!)
+        CombatStealthUAV droneX("DRONE_IAF_GHAATAK_01", "GARUDA_STRIKE", 250.0, 150.0, 4);
+
+        // మిషన్ అమలు
+        droneX.executeCombatMission("SECTOR_4_ENEMY_RADAR_BUNKER_34.5N_72.8E");
+    } // స్కోప్ ముగియగానే రివర్స్ ఆర్డర్‌లో అన్నీ లీక్-ఫ్రీగా క్లీన్ అవుతాయి!
+
+    std::cout << "\nమిషన్ ముగింపు. వర్చువల్ ఇన్హెరిటెన్స్ ఆర్కిటెక్చర్ విజయవంతమైంది!\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> సారాంశం &amp; ఇంటరాక్టివ్ క్విజ్ (Summary &amp; Self-Check Quizzes)</h2>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:28px;">
+        <h3 style="margin-top:0; color:#10b981;">📌 ఈ అధ్యాయంలో నేర్చుకున్న ప్రధాన అంశాలు:</h3>
+        <ul style="line-height:1.8; color:var(--text);">
+          <li><strong>Inheritance Concept:</strong> కోడ్ పునర్వినియోగం మరియు "Is-A" సంబంధాల రూపకల్పనకు మూలస్తంభం.</li>
+          <li><strong>Access Modes:</strong> <code>public</code>, <code>protected</code>, <code>private</code> ఇన్హెరిటెన్స్ ద్వారా బేస్ మెంబర్ల దృశ్యమానతను నియంత్రించడం. వాస్తవ ప్రాజెక్టులలో పబ్లిక్ ఇన్హెరిటెన్స్ ప్రామాణికం.</li>
+          <li><strong>Multiple Inheritance:</strong> ఒక చైల్డ్ క్లాస్ బహుళ స్వతంత్ర బేస్ క్లాసుల నుండి లక్షణాలను వారసత్వంగా పొందడం.</li>
+          <li><strong>The Diamond Problem:</strong> రెండు వేర్వేరు మార్గాల్లో ఒకే బేస్ క్లాస్ నుండి మల్టిపుల్ ఇన్హెరిటెన్స్ జరిగినప్పుడు డేటా డూప్లికేషన్ మరియు అంబిగ్యుటీ రావడం.</li>
+          <li><strong>Virtual Base Classes:</strong> <code>virtual public Base</code> ద్వారా కంపైలర్ కేవలం ఒకే ఒక్క సింగిల్ షేర్డ్ కాపీని ఉంచేలా చేసి డైమండ్ సమస్యను శాశ్వతంగా పరిష్కరించడం.</li>
+          <li><strong>Chaining Order:</strong> కన్‌స్ట్రక్టర్లు బేస్ నుండి చైల్డ్‌కు (Top-to-Bottom) మరియు డిస్ట్రక్టర్లు చైల్డ్ నుండి బేస్‌కు (Bottom-to-Top) అమలవుతాయి.</li>
+          <li><strong>Composition over Inheritance:</strong> గట్టి బంధం (Tight Coupling) నివారించడానికి "Is-A" లేని చోట ఆబ్జెక్ట్ కంపోజిషన్ (Has-A) ను ఎంచుకోవాలి.</li>
         </ul>
       </div>
-    </div>
 
-    <!-- CONCEPT 5: CONSTRUCTOR & DESTRUCTOR ORDER -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">5</span> Constructor & Destructor ఎగ్జిక్యూషన్ ఆర్డర్</div>
-    <div class="section-body">
-      <p>
-        ఇన్హెరిటెన్స్ హైరార్కీలో ఆబ్జెక్టులు నిర్మించబడేటప్పుడు మరియు నశించేటప్పుడు ఎగ్జిక్యూషన్ ఆర్డర్ చాలా స్పష్టమైన నియమాలను పాటిస్తుంది:
-      </p>
+      <h3 style="margin-bottom:16px;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
 
-      <!-- VISUAL TIMELINE CARD -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin:20px 0;">
-        <h4 style="color:#10b981; margin:0 0 12px 0; font-size:15px; font-weight:700;">⏳ లైఫ్‌సైకిల్ టైమ్‌లైన్ (Life-cycle Order):</h4>
-        
-        <div style="display:flex; flex-direction:column; gap:10px; font-size:13.5px; line-height:1.7;">
-          <div style="background:#f0fdf4; border-left:4px solid #10b981; padding:10px 14px; border-radius:4px;">
-            <strong style="color:#047857;">1. Constructors ఎగ్జిక్యూషన్ (Top-Down: పైనుండి క్రిందికి):</strong><br>
-            ఇల్లు కట్టేటప్పుడు పునాది (Foundation) ముందు వేసినట్లు, ముందుగా Base Class Constructor రన్ అవుతుంది, ఆ తర్వాతే Derived Class Constructor రన్ అవుతుంది.<br>
-            <em>క్రమం: GrandParent ──► Parent ──► Child</em>
-          </div>
-
-          <div style="background:#fef2f2; border-left:4px solid #ef4444; padding:10px 14px; border-radius:4px;">
-            <strong style="color:#b91c1c;">2. Destructors ఎగ్జిక్యూషన్ (Bottom-Up: క్రింది నుండి పైకి):</strong><br>
-            ఇల్లు కూల్చేటప్పుడు పైకప్పు ముందు తీసేసినట్లు, ముందుగా Derived Class Destructor రన్ అయ్యి తన మెమరీని క్లీన్ చేస్తుంది, ఆ తర్వాత Base Class Destructor రన్ అవుతుంది.<br>
-            <em>క్రమం: Child ──► Parent ──► GrandParent</em>
-          </div>
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 1: C++ లో ఒక బేస్ క్లాస్‌లోని <code>protected</code> మెంబర్లకు మరియు <code>private</code> మెంబర్లకు ఉన్న కీలక వ్యత్యాసం ఏమిటి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>protected</code> మెంబర్లను డిరైవ్డ్ (చైల్డ్) క్లాసులు నేరుగా యాక్సెస్ చేయగలవు, కానీ <code>private</code> మెంబర్లను చైల్డ్ క్లాసులు కూడా తాకలేవు!<br/>
+          <em>వివరణ:</em> <code>private</code> అనేది కేవలం ఆ నిర్దిష్ట క్లాస్‌కు మాత్రమే పరిమితం. <code>protected</code> అనేది బాహ్య ప్రపంచానికి ప్రైవేట్‌గా ఉంటూనే, వారసత్వంగా వచ్చే పిల్ల క్లాసులకు మాత్రమే స్వేచ్ఛాయుత యాక్సెస్‌ను ఇస్తుంది.
         </div>
-      </div>
-    </div>
+      </details>
 
-    <!-- PITFALLS & BEST PRACTICES -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">6</span> సాధారణంగా బిగినర్స్ చేసే తప్పులు & బెస్ట్ ప్రాక్టీసెస్</div>
-    <div class="section-body">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
-        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:10px; padding:16px;">
-          <h4 style="color:#ef4444; margin:0 0 8px 0; font-size:14px;">⚠️ Common Beginner Traps</h4>
-          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
-            <li><strong>Access Mode మర్చిపోవడం:</strong> <code>class Car : Vehicle</code> అని రాస్తే C++ డిఫాల్ట్ గా <code>private</code> ఇన్హెరిటెన్స్ చేస్తుంది! ఎల్లప్పుడూ <code>public Vehicle</code> అని రాయడం మర్చిపోకండి.</li>
-            <li><strong>వర్చువల్ డిస్ట్రక్టర్ లేకపోవడం:</strong> బేస్ క్లాస్ పాయింటర్ తో చైల్డ్ ఆబ్జెక్ట్ ను డిలీట్ చేసినప్పుడు చైల్డ్ డిస్ట్రక్టర్ కాల్ అవ్వదు (మెమరీ లీక్). అందుకే బేస్ క్లాస్ డిస్ట్రక్టర్ కు <code>virtual ~Base()</code> ఖచ్చితంగా పెట్టాలి!</li>
-          </ul>
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 2: The Diamond Problem లో కంపైలర్ ఎర్రర్ రావడానికి అసలు కారణం ఏమిటి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఆబ్జెక్ట్ లోపల అపెక్స్ బేస్ క్లాస్ యొక్క <strong>రెండు వేర్వేరు డూప్లికేట్ కాపీలు</strong> ఏర్పడి అంబిగ్యుటీ (Member Ambiguity) రావడం వల్ల!<br/>
+          <em>వివరణ:</em> క్లాస్ D అనేది B మరియు C రెండింటి నుండీ A ని పొందినప్పుడు, A లోని వేరియబుల్స్ రెండుసార్లు మెమరీలో పుడతాయి. <code>d.variable</code> అన్నప్పుడు ఏ కాపీని వాడాలో కంపైలర్ తేల్చుకోలేక ఎర్రర్ విసురుతుంది.
         </div>
-        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:10px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14px;">💡 Industry Best Practices</h4>
-          <ul style="font-size:13px; line-height:1.7; margin:0; padding-left:18px; color:var(--text2);">
-            <li><strong>Prefer Composition over Inheritance:</strong> బలవంతంగా ఇన్హెరిటెన్స్ చేయకండి. "IS-A" ఖచ్చితంగా కుదిరితేనే ఇన్హెరిట్ చేయండి, లేదంటే ఆబ్జెక్ట్ ను మెంబర్ గా ఉంచుకోండి (Composition).</li>
-            <li><strong>డైమండ్ హైరార్కీలను తగ్గించండి:</strong> మల్టిపుల్ ఇన్హెరిటెన్స్ కోడ్ ను సంక్లిష్టం చేస్తుంది. ఆధునిక C++ లో ఇంటర్‌ఫేస్‌ల కోసం Pure Abstract Classes ని వాడటం మేలైన పద్ధతి.</li>
-          </ul>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 3: డైమండ్ సమస్యను పరిష్కరించడానికి <code>virtual</code> బేస్ క్లాస్ వాడినప్పుడు అంతర్గతంగా ఏం జరుగుతుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కంపైలర్ కేవలం ఒకే ఒక్క సింగిల్ షేర్డ్ బేస్ సబ్‌ఆబ్జెక్ట్‌ను ఉంచి, పాయింటర్ల (vbptr) ద్వారా కలుపుతుంది!<br/>
+          <em>వివరణ:</em> <code>virtual</code> కీవర్డ్ ఉండటం వల్ల కంపైలర్ డూప్లికేట్ కాపీలను సృష్టించదు. అన్ని ఇంటర్మీడియట్ క్లాసులు ఒకే పంచుకున్న బేస్ ఇన్స్టాన్స్‌ను రిఫర్ చేస్తాయి, ఫలితంగా అంబిగ్యుటీ మాయమవుతుంది.
         </div>
-      </div>
-    </div>
+      </details>
 
-    <!-- FAQ SECTION -->
-    <div class="section-title" style="margin-top:40px;"><span class="num">❓</span> Frequently Asked Questions (FAQ)</div>
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 4: ఒక చైల్డ్ క్లాస్ ఆబ్జెక్ట్ సృష్టించబడినప్పుడు కన్‌స్ట్రక్టర్ల మరియు డిస్ట్రక్టర్ల అమలు క్రమం (Execution Order) ఎలా ఉంటుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కన్‌స్ట్రక్టర్లు <strong>Base -> Derived</strong> క్రమంలో, డిస్ట్రక్టర్లు <strong>Derived -> Base</strong> క్రమంలో అమలవుతాయి!<br/>
+          <em>వివరణ:</em> పునాది పడిన తర్వాతే భవనం ఏర్పడుతుంది, కాబట్టి ముందు బేస్ కన్‌స్ట్రక్టర్ రన్ అవుతుంది. కూల్చేటప్పుడు రివర్స్ ఆర్డర్‌లో ముందు చైల్డ్ డిస్ట్రక్ట్ అయ్యి, ఆ తర్వాత బేస్ క్లీన్ అవుతుంది.
+        </div>
+      </details>
 
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> C++ లో 'The Diamond Problem' అంటే ఏమిటి?</h4>
-      <p>
-        రెండు చైల్డ్ క్లాసులు (B మరియు C) ఒకే పేరెంట్ క్లాస్ (A) నుండి ఇన్హెరిట్ అయ్యి, ఆ తర్వాత నాల్గవ క్లాస్ (D) ఈ B మరియు C రెండింటి నుండి మల్టిపుల్ ఇన్హెరిటెన్స్ చేసుకున్నప్పుడు డైమండ్ ఆకారం ఏర్పడుతుంది. దీనివల్ల D ఆబ్జెక్ట్ లోపల A యొక్క రెండు డూప్లికేట్ కాపీలు తయారై కంపైలర్ కు తీవ్రమైన Ambiguity ఎర్రర్ వస్తుంది.
-      </p>
-    </div>
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 5: "Car" మరియు "Engine" మధ్య ఏ రకమైన సంబంధం సరైనది? (Is-A లేక Has-A?)
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>Has-A (Composition)</strong> మాత్రమే సరైనది!<br/>
+          <em>వివరణ:</em> ఒక కారుకు ఇంజిన్ ఉంటుంది (Car HAS-AN Engine), కానీ కారు అనేది ఒక ఇంజిన్ కాదు (Car IS NOT an Engine). కాబట్టి ఇక్కడ ఇన్హెరిటెన్స్ వాడటం డిజైన్ పరంగా తీవ్రమైన తప్పు; కారు క్లాస్ లోపల ఇంజిన్ ఆబ్జెక్ట్‌ను ఒక వేరియబుల్‌గా ఉంచడం (Composition) సరైన పద్ధతి.
+        </div>
+      </details>
+    </section>
 
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> Diamond Problem ని C++ లో ఎలా పరిష్కరిస్తారు?</h4>
-      <p>
-        <code>virtual</code> base class కీవర్డ్ ద్వారా పరిష్కరిస్తారు: <code>class B : virtual public A</code> మరియు <code>class C : virtual public A</code>. దీనివల్ల కంపైలర్ మెమరీలో A కి కేవలం ఒకే ఒక్క షేర్డ్ కాపీని సృష్టిస్తుంది, ఫలితంగా డూప్లికేషన్ మరియు అంబిగ్యుటీ పూర్తిగా తొలగిపోతాయి.
-      </p>
-    </div>
-
-    <div class="faq-card">
-      <h4><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 8px; border-radius:4px; font-size:12px; margin-right:4px;">Q</span> ఇన్హెరిటెన్స్ లో Base మరియు Derived క్లాస్ Constructors ఏ ఆర్డర్ లో రన్ అవుతాయి?</h4>
-      <p>
-        Constructors ఎల్లప్పుడూ పైనుండి క్రిందికి (Top-Down: Base Class Constructor ముందు, Derived Class Constructor తర్వాత) రన్ అవుతాయి. Destructors మాత్రం దానికి వ్యతిరేక క్రమంలో (Bottom-Up: Derived Class Destructor ముందు, Base Class Destructor తర్వాత) రన్ అవుతాయి.
-      </p>
-    </div>
-
-    <!-- AUTHOR ATTRIBUTION -->
-    <div class="author" style="margin-top:40px;">
-      <div class="avatar">OC</div>
-      <div>
-        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · Modern C++ Standards</span>
-      </div>
-    </div>
-
-    <!-- LESSON NAVIGATION FOOTER -->
-    <div style="display:flex; justify-content:space-between; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap;">
-      <a href="/blog-cpp/14-cpp-constructors-and-destructors.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); color:var(--text);">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">← Previous Chapter</span>
-        <span style="font-size:14px; font-weight:700;">14. Constructors, Destructors & RAII</span>
-      </a>
-
-      <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html" class="nav-btn" style="text-decoration:none; display:flex; flex-direction:column; gap:4px; padding:12px 18px; border-radius:8px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--text); text-align:right;">
-        <span style="font-size:12px; color:#10b981; font-weight:700;">Next Chapter →</span>
-        <span style="font-size:14px; font-weight:700;">16. పాలిమార్ఫిజమ్ & Virtual Functions</span>
-      </a>
+    <!-- LESSON NAVIGATION -->
+    <div class="lesson-nav">
+      <a href="/blog-cpp/14-cpp-constructors-and-destructors.html" class="prev-link">← మునుపటి అధ్యాయం: 14. Constructors & Destructors</a>
+      <a href="/blog-cpp/16-cpp-polymorphism-virtual-functions.html" class="next-link">తర్వాతి అధ్యాయం: 16. పాలిమార్ఫిజమ్ →</a>
     </div>
 
   </main>
 </div>
 
-<!-- SITE NAVIGATION LOADER -->
-<script src="/site-nav.js" defer></script>
+<!-- SCRIPTS FOR SITEMAP & INTERACTIVE RUNNER -->
+<script src="/site-nav.js"></script>
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = `#include <iostream>
+#include <string>
+#include <iomanip>
+
+class AvionicsCore {
+protected:
+    std::string droneSerial;
+    double currentBatteryKWh;
+    double altitudeMeters;
+
+public:
+    AvionicsCore(std::string serial, double battery)
+        : droneSerial(serial), currentBatteryKWh(battery), altitudeMeters(0.0) {
+        std::cout << "  🚁 [AvionicsCore Base] పవర్ బస్ ఆన్ చేయబడింది: " << droneSerial 
+                  << " (బ్యాటరీ: " << currentBatteryKWh << " kWh)\\n";
+    }
+
+    virtual ~AvionicsCore() {
+        std::cout << "  🛑 [AvionicsCore Base] ఏవియోనిక్స్ పవర్ సురక్షితంగా షట్‌డౌన్ చేయబడింది.\\n";
+    }
+
+    void climb(double meters) {
+        altitudeMeters += meters;
+        currentBatteryKWh -= (meters * 0.001);
+        std::cout << "  ✈️ [ఎత్తు పెంపు] ఎత్తు: " << altitudeMeters << " మీటర్లు | మిగిలిన పవర్: " << currentBatteryKWh << " kWh\\n";
+    }
+};
+
+class SurveillanceRadar : virtual public AvionicsCore {
+protected:
+    double radarScanRangeKm;
+
+public:
+    SurveillanceRadar(std::string serial, double battery, double scanRange)
+        : AvionicsCore(serial, battery), radarScanRangeKm(scanRange) {
+        std::cout << "  📡 [SurveillanceRadar] AESA రాడార్ యాక్టివేట్ చేయబడింది (పరిధి: " << radarScanRangeKm << " KM)\\n";
+    }
+
+    void scanForHostiles() {
+        std::cout << "  🔍 [రాడార్ స్కానింగ్] " << radarScanRangeKm << " KM పరిధిలో గగనతల శత్రు లక్ష్యాల అన్వేషణ జరుగుతోంది...\\n";
+    }
+};
+
+class PrecisionWeaponBay : virtual public AvionicsCore {
+protected:
+    int payloadMissiles;
+
+public:
+    PrecisionWeaponBay(std::string serial, double battery, int missiles)
+        : AvionicsCore(serial, battery), payloadMissiles(missiles) {
+        std::cout << "  🎯 [PrecisionWeaponBay] గైడెడ్ క్షిపణి లాంచర్ లోడ్ చేయబడింది (మిస్సైల్స్: " << payloadMissiles << ")\\n";
+    }
+
+    void fireMissile(const std::string& targetCoordinates) {
+        if (payloadMissiles > 0) {
+            payloadMissiles--;
+            std::cout << "  🚀 [మిస్సైల్ ప్రయోగం!] టార్గెట్ కోఆర్డినేట్స్: " << targetCoordinates 
+                      << " పైకి క్షిపణి దూసుకెళ్లింది! (మిగిలినవి: " << payloadMissiles << ")\\n";
+        } else {
+            std::cout << "  ⚠️ హెచ్చరిక: క్షిపణులు అయిపోయాయి! వెంటనే బేస్ కు తిరిగి రండి.\\n";
+        }
+    }
+};
+
+class CombatStealthUAV : public SurveillanceRadar, public PrecisionWeaponBay {
+private:
+    std::string callSign;
+
+public:
+    CombatStealthUAV(std::string serial, std::string callName, double battery, double scanRange, int missiles)
+        : AvionicsCore(serial, battery),
+          SurveillanceRadar(serial, battery, scanRange),
+          PrecisionWeaponBay(serial, battery, missiles),
+          callSign(callName) {
+        std::cout << "\\n  ⚡ [COMBAT STEALTH UAV READY] కాల్‌సైన్: " << callSign << " పోరాటానికి సిద్ధం!\\n";
+    }
+
+    void executeCombatMission(const std::string& targetGrid) {
+        std::cout << "\\n==============================================================\\n";
+        std::cout << "⚔️ [మిషన్ ఎగ్జిక్యూషన్ - " << callSign << " / " << droneSerial << "]\\n";
+        std::cout << "==============================================================\\n";
+        climb(12000.0);
+        scanForHostiles();
+        fireMissile(targetGrid);
+        std::cout << "లక్ష్యం ధ్వంసమైంది! బేస్ కు తిరుగు ప్రయాణం ప్రారంభం...\\n";
+        std::cout << "==============================================================\\n";
+    }
+};
+
+int main() {
+    std::cout << "==============================================================\\n";
+    std::cout << "🛡️ [DEFENSE AEROSPACE COMBAT DRONE SIMULATION RUNNING]\\n";
+    std::cout << "==============================================================\\n";
+
+    {
+        CombatStealthUAV droneX("DRONE_IAF_GHAATAK_01", "GARUDA_STRIKE", 250.0, 150.0, 4);
+        droneX.executeCombatMission("SECTOR_4_ENEMY_RADAR_BUNKER_34.5N_72.8E");
+    }
+
+    std::cout << "\\nమిషన్ ముగింపు. వర్చువల్ ఇన్హెరిటెన్స్ ఆర్కిటెక్చర్ విజయవంతమైంది!\\n";
+    return 0;
+}`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
 </body>
 </html>
