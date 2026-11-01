@@ -1,0 +1,720 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./c_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 9);
+const sidebarHtml = buildSidebar(9);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 9: ఫంక్షన్స్, ప్రొటోటైప్స్ &amp; కాల్ స్టాక్ (Call Stack)</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">C ఫంక్షన్స్, ఫార్వర్డ్ డిక్లరేషన్ &amp; కాల్ స్టాక్ ఆర్కిటెక్చర్</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
+      <span class="badge">🟢 Chapter 09 of 20</span>
+      <span class="badge">📂 Phase 03: ఫంక్షన్స్, స్కోప్ &amp; రికర్షన్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>మోడ్యులర్ ప్రోగ్రామింగ్ · DRY సూత్రం · ఫంక్షన్ అనాటమీ · Function Prototypes ఎందుకు తప్పనిసరి? · Single-Pass ਕੰపైలర్ సీక్రెట్ · Parameters vs Arguments · RAM Call Stack &amp; Activation Records · LIFO ఆర్డర్ · 4 రకాల ఫంక్షన్ కేటగిరీల పట్టిక · శాలరీ ట్యాక్స్ ప్రాజెక్ట్ · ఇంటరాక్టివ్ క్విజ్</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>ఒక పెద్ద 5-స్టార్ రెస్టారెంట్ యొక్క వంటగదిని (Kitchen) ఊహించుకోండి. అక్కడ హెడ్ చెఫ్ (Head Chef) ఉన్నారు. ఆ హెడ్ చెఫ్ స్వయంగా మార్కెట్‌కు వెళ్లి కూరగాయలు తేవడం, ఉల్లిపాయలు కోయడం, పిండి కలపడం, పొయ్యి వెలిగించడం, బిరియానీ వండడం, ప్లేట్లలో సర్వ్ చేయడం, చివరకు బిల్లు వేయడం... అన్నీ ఒక్కరే చేస్తే ఏమవుతుంది? గంటల తరబడి సమయం వృధా అవుతుంది, కిచెన్ అస్తవ్యస్తమవుతుంది, ఆర్డర్లు ఆలస్యమై రెస్టారెంట్ మూతపడుతుంది!</p>
+      <p>కానీ నిజమైన వంటగదిలో <strong>బాధ్యతల విభజన (Division of Labor / Modularity)</strong> ఉంటుంది: కూరగాయలు కోయడానికి ఒక సహాయకుడు (<code>chopVegetables()</code>), మసాలాలు రుబ్బడానికి మరొకరు (<code>grindSpices()</code>), సూప్ తయారు చేయడానికి ప్రత్యేక నిపుణుడు ఉంటారు. హెడ్ చెఫ్ (మన ప్రోగ్రామ్‌లోని <code>main()</code> ఫంక్షన్ లాంటి వారు) కేవలం వారికి ఆదేశాలు ఇస్తూ, ఫలితాలను పర్యవేక్షిస్తారు. దీనివలన పని వేగవంతంగా, శుభ్రంగా మరియు ఎటువంటి గందరగోళం లేకుండా పూర్తవుతుంది.</p>
+      <p>కంప్యూటర్ ప్రోగ్రామింగ్‌లో కూడా వేలాది లైన్ల కోడ్‌ను ఒకే <code>main()</code> లో గుప్పించకూడదు. ప్రోగ్రామ్‌ను చిన్న చిన్న స్వతంత్ర భాగాలుగా విభజించే కళనే <strong>ఫంక్షన్స్ (Functions / Modular Architecture)</strong> అంటారు. ఈ తొమ్మిదవ అధ్యాయంతో మనం <strong>Phase 03 (ఫంక్షన్స్, స్కోప్ &amp; రికర్షన్)</strong> లోకి అడుగుపెడుతున్నాం. ఇందులో ఫంక్షన్ ప్రొటోటైప్స్, <strong>RAM లోని CPU కాల్ స్టాక్ (Call Stack)</strong>, స్టాక్ ఫ్రేమ్స్ (Activation Records) మరియు పూర్తి స్థాయి శాలరీ &amp; ట్యాక్స్ మేనేజ్‌మెంట్ ఇంజిన్‌ను నిర్మిద్దాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే సమగ్ర అంశాలు (Roadmap)</div>
+    <div class="section-body">
+      <p>సిస్టమ్స్ ప్రోగ్రామింగ్‌లో ఫంక్షన్స్ అనేవి కోడ్ రీయూజబిలిటీకి మరియు ఆర్కిటెక్చర్ క్లీన్‌నెస్‌కు పునాది రాళ్ళు. ఈ అధ్యాయంలో కవర్ చేయబడే లోతైన అంశాలు:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>మోడ్యులర్ ప్రోగ్రామింగ్ &amp; DRY సూత్రం:</strong> "Don't Repeat Yourself" ఫిలాసఫీ మరియు కోడ్ రీయూజబిలిటీ.</li>
+        <li><strong>ఫంక్షన్ అనాటమీ (Anatomy of a Function):</strong> Return Type, Function Name, Parameter List, మరియు Body.</li>
+        <li><strong>ఫంక్షన్ డిక్లరేషన్ (Function Prototype / Forward Declaration):</strong> C కంపైలర్‌కు ఇచ్చే ముందస్తు అగ్రిమెంట్.</li>
+        <li><strong>ప్రొటోటైప్ ఎందుకు తప్పనిసరి?</strong> C సింగిల్-పాస్ కంపైలేషన్ (Single-Pass Compilation) మరియు <code>implicit declaration</code> ఎర్రర్స్.</li>
+        <li><strong>పారామీటర్స్ vs ఆర్గుమెంట్స్:</strong> Formal Parameters మరియు Actual Arguments మధ్య సాంకేతిక వ్యత్యాసం.</li>
+        <li><strong>void ఫంక్షన్స్ &amp; return స్టేట్‌మెంట్:</strong> విలువను వెనక్కి పంపే మరియు పంపని పద్ధతులు.</li>
+        <li><strong>హార్డ్‌వేర్ లెవల్ CPU కాల్ స్టాక్ (RAM Call Stack):</strong> స్టాక్ మెమరీ, పుష్ (Push) మరియు పాప్ (Pop) ఆపరేషన్లు.</li>
+        <li><strong>స్టాక్ ఫ్రేమ్స్ (Activation Records):</strong> లోకల్ వేరియబుల్స్, పారామీటర్స్ మరియు రిటర్న్ అడ్రస్ (Return Address) నిల్వ అయ్యే విధానం.</li>
+        <li><strong>LIFO (Last-In, First-Out) ఎగ్జిక్యూషన్ ఆర్డర్:</strong> ఫంక్షన్ చైన్డ్ కాల్స్ మెమరీలో ఎలా నడుస్తాయి?</li>
+        <li><strong>సమగ్ర వర్గీకరణ పట్టిక:</strong> 4 రకాల ఫంక్షన్ల కాంబినేషన్స్ (With/Without Return Type, With/Without Arguments).</li>
+        <li><strong>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్:</strong> మోడ్యులర్ ఎంప్లాయ్ శాలరీ, అలవెన్సులు &amp; ఇన్కమ్ ట్యాక్స్ కాలిక్యులేటర్.</li>
+        <li><strong>బిగినర్స్ చేసే టాప్ 5 తప్పులు:</strong> ప్రొటోటైప్ సెమికోలన్ మిస్సింగ్, లోకల్ వేరియబుల్ అడ్రస్ రిటర్న్ చేయడం వంటి ప్రమాదాలు.</li>
+        <li><strong>స్వీయ మూల్యాంకన క్విజ్:</strong> 5 లోతైన ఇంటర్వ్యూ &amp; గేట్ ఎగ్జామ్ ప్రశ్నలు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>మోడ్యులర్ ప్రోగ్రామింగ్ &amp; DRY సూత్రం (Don't Repeat Yourself)</div>
+    <div class="section-body">
+      <p>సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో అత్యంత పవిత్రమైన నియమం: <strong>DRY — Don't Repeat Yourself</strong>. ఒకే లాజిక్‌ను మీ ప్రోగ్రామ్‌లో పదేపదే కాపీ-పేస్ట్ చేయకూడదు. కాపీ-పేస్ట్ చేసిన కోడ్‌లో ఏదైనా బగ్ వస్తే, దాన్ని ఫిక్స్ చేయడానికి మీరు కోడ్‌లోని పది చోట్ల మార్చాల్సి ఉంటుంది!</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">ఫంక్షన్స్ అందించే 4 అద్భుత ప్రయోజనాలు:</h4>
+        <ul style="margin:0; padding-left:20px; color:var(--text2); font-size:14px; line-height:1.7;">
+          <li><strong>రీయూజబిలిటీ (Code Reusability):</strong> ఒకసారి ఫంక్షన్ రాసి, దానిని మీ ప్రాజెక్ట్‌లో వందల సార్లు పిలుచుకోవచ్చు.</li>
+          <li><strong>మెయింటెనెన్స్ (Easy Maintenance):</strong> లాజిక్‌లో మార్పు చేయాల్సి వస్తే కేవలం ఆ ఒక్క ఫంక్షన్‌ను సరిచేస్తే చాలు.</li>
+          <li><strong>రీడబిలిటీ &amp; అబ్‌స్ట్రాక్షన్ (Readability):</strong> <code>main()</code> ఫంక్షన్ చదవడానికి ఒక పుస్తకం ఇండెక్స్‌లా సులభంగా అర్థమవుతుంది.</li>
+          <li><strong>టీమ్‌వర్క్ (Team Collaboration):</strong> వేర్వేరు డెవలపర్లు వేర్వేరు ఫంక్షన్లపై ఒకే సమయంలో స్వతంత్రంగా పనిచేయవచ్చు.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>ఫంక్షన్ అనాటమీ &amp; 3 కీలక భాగాలు (Declaration, Definition, Call)</div>
+    <div class="section-body">
+      <p>C లాంగ్వేజ్‌లో ఒక ఫంక్షన్‌ను విజయవంతంగా ఉపయోగించాలంటే <strong>3 కీలక దశలు (Three Sacred Steps)</strong> ఉంటాయి:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">1. డిక్లరేషన్ (Prototype)</h4>
+          <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.6;">ఫంక్షన్ పేరు, రిటర్న్ టైప్, పారామీటర్ల గురించి కంపైలర్‌కు ఇచ్చే ముందస్తు నోటీస్ (ముగింపులో సెమికోలన్ <code>;</code> ఉంటుంది).</p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">2. ఫంక్షన్ డెఫినిషన్ (Definition)</h4>
+          <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.6;">ఆ ఫంక్షన్ చేయవలసిన అసలైన పనిని కర్లీ బ్రేసెస్ <code>{ ... }</code> లోపల రాసే అసలైన బాడీ కోడ్.</p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">3. ఫంక్షన్ కాల్ (Function Call)</h4>
+          <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.6;"><code>main()</code> లో లేదా వేరే ఫంక్షన్‌లో ఆ ఫంక్షన్ పేరును పిలిచి ఆర్గుమెంట్లను పాస్ చేసి ఎగ్జిక్యూట్ చేయడం.</p>
+        </div>
+      </div>
+
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">ఫంక్షన్ సింటాక్స్ అనాటమీ:</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; margin-bottom:14px;">
+        <span style="color:#2563eb;">రిటర్న్_టైప్</span> <span style="color:#059669; font-weight:700;">ఫంక్షన్_పేరు</span> ( <span style="color:#d97706;">డేటాటైప్ పారామీటర్1</span>, <span style="color:#d97706;">డేటాటైప్ పారామీటర్2</span> ) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;// ఫంక్షన్ బాడీ (స్టేట్‌మెంట్స్)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#7c3aed; font-weight:700;">return</span> ఫలితం;<br>
+        }
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Complete Function Lifecycle Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// 1. Function Prototype (ముందస్తు డిక్లరేషన్)
+int calculateSum(int a, int b);
+
+int main() {
+    int num1 = 25, num2 = 15;
+
+    // 2. Function Call (పిలుపు)
+    int total = calculateSum(num1, num2);
+
+    printf("రెండు సంఖ్యల మొత్తం: %d\\n", total);
+    return 0;
+}
+
+// 3. Function Definition (అసలైన బాడీ)
+int calculateSum(int a, int b) {
+    int result = a + b;
+    return result; // కాలింగ్ ఫంక్షన్‌కు విలువను రిటర్న్ చేయి
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>Function Prototypes ఎందుకు తప్పనిసరి? Single-Pass కంపైలర్ సీక్రెట్</div>
+    <div class="section-body">
+      <p>చాలా మంది కొత్త ప్రోగ్రామర్లకు ఒక ప్రశ్న వస్తుంది: <em>"ఫంక్షన్ బాడీని కింద రాసి, పైన మళ్లీ ఫంక్షన్ ప్రొటోటైప్ (Function Prototype) లైన్ ఎందుకు రాయాలి? ఇది అనవసరమైన డబుల్ వర్క్ కాదా?"</em></p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">ది C సింగిల్-పాస్ కంపైలర్ ఆర్కిటెక్చర్ (Single-Pass Compilation):</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          C కంపైలర్ (GCC / Clang) మీ సోర్స్ కోడ్‌ను పైనుండి కిందికి (Top-to-Bottom) ఒకేసారి మాత్రమే చదువుతుంది (Single Pass). మీరు <code>main()</code> లో ఒక ఫంక్షన్‌ను పిలిచే సమయానికి, ఆ ఫంక్షన్ అసలైన బాడీ కింద ఉంటే — కంపైలర్‌కు ఆ ఫంక్షన్ అసలు ఉందో లేదో తెలియదు! దాని రిటర్న్ టైప్ ఏమిటో, ఎన్ని పారామీటర్లు తీసుకోవాలో తెలియక కంపైలర్ కంగారుపడుతుంది. అందుకే ఫైల్ మొదట్లోనే <strong>Function Prototype (Forward Declaration)</strong> పెట్టి కంపైలర్‌తో అగ్రిమెంట్ కుదుర్చుకుంటాం: <em>"ఓ కంపైలర్! కింద ఈ పేరుతో, ఇన్ని పారామీటర్లతో ఒక ఫంక్షన్ రాస్తున్నాను, గుర్తుపెట్టుకో!"</em> అని తెలియజేస్తాం.
+        </p>
+      </div>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px 16px; margin:14px 0; color:#991b1b; font-size:13.5px;">
+        ⚠️ <strong>కంపైలర్ వార్నింగ్ (Implicit Declaration):</strong> ప్రొటోటైప్ లేకుండా <code>main()</code> కింద ఫంక్షన్ రాస్తే, పాత C89 కంపైలర్ ఆ ఫంక్షన్ రిటర్న్ టైప్ డీఫాల్ట్‌గా <code>int</code> అనుకుంటుంది. ఒకవేళ అది <code>float</code> లేదా <code>double</code> రిటర్న్ చేస్తే డేటా పూర్తిగా కరప్ట్ అవుతుంది! ఆధునిక C99/C11 లో GCC <code>warning: implicit declaration of function</code> లేదా కంపైలేషన్ ఎర్రర్‌ను విసురుతుంది!
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>పారామీటర్స్ vs ఆర్గుమెంట్స్ (Parameters vs Arguments)</div>
+    <div class="section-body">
+      <p>ఇంటర్వ్యూలలో తరచుగా అడిగే ప్రాథమిక సాంకేతిక వ్యత్యాసం ఇది:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>అంశం</th>
+            <th>ఆర్గుమెంట్స్ (Actual Arguments)</th>
+            <th>పారామీటర్స్ (Formal Parameters)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>నిర్వచనం</strong></td>
+            <td>ఫంక్షన్‌ను కాల్ చేసేటప్పుడు పాస్ చేసే అసలైన విలువలు.</td>
+            <td>ఫంక్షన్ హెడర్‌లో ఆ విలువలను అందుకోవడానికి డిక్లేర్ చేసిన వేరియబుల్స్.</td>
+          </tr>
+          <tr>
+            <td><strong>ఎక్కడ ఉంటాయి?</strong></td>
+            <td>కాలింగ్ ఫంక్షన్ లోపల (ఉదా: <code>add(10, 20);</code> లేదా <code>add(x, y);</code>)</td>
+            <td>ఫంక్షన్ డెఫినిషన్ హెడర్‌లో (ఉదా: <code>int add(int a, int b)</code>)</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ కేటాయింపు</strong></td>
+            <td>కాలింగ్ ఫంక్షన్ యొక్క స్టాక్ ఫ్రేమ్‌లో ఉంటాయి.</td>
+            <td>కాల్డ్ ఫంక్షన్ యొక్క స్టాక్ ఫ్రేమ్‌లో కొత్త మెమరీ స్థానాలు కేటాయించబడతాయి.</td>
+          </tr>
+          <tr>
+            <td><strong>విలువ మార్పిడి</strong></td>
+            <td>C లో డీఫాల్ట్‌గా ఆర్గుమెంట్ల కాపీ మాత్రమే పారామీటర్లకు వెళ్తుంది (Call by Value).</td>
+            <td>పారామీటర్‌ను మారిస్తే ఒరిజినల్ ఆర్గుమెంట్ విలువ మారదు!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>void ఫంక్షన్స్ &amp; Return స్టేట్‌మెంట్ మెకానిక్స్</div>
+    <div class="section-body">
+      <p>ఒక ఫంక్షన్ పని పూర్తి చేసిన తర్వాత తిరిగి ఏ విలువనూ ఇవ్వాల్సిన అవసరం లేనప్పుడు (ఉదాహరణకు కేవలం స్క్రీన్ పై మెసేజ్ ప్రింట్ చేయడం లేదా సౌండ్ ప్లే చేయడం), దాని రిటర్న్ టైప్‌ను <strong><code>void</code></strong> గా డిక్లేర్ చేస్తారు.</p>
+
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">Early Return టెక్నిక్ (గార్డ్ క్లాజ్):</h4>
+      <p><code>void</code> ఫంక్షన్లలో కూడా <code>return;</code> స్టేట్‌మెంట్‌ను ఒంటరిగా వాడవచ్చు! ఏదైనా తప్పుడు కండిషన్ ఎదురైనప్పుడు ఫంక్షన్‌ను మధ్యలోనే ఆపేసి బయటకు రావడానికి (Early Exit Guard Clause) ఇది ఉపయోగపడుతుంది:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Early Return Guard Clause in void Function</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+void printUserCard(int age, const char* name) {
+    if (age &lt; 18) {
+        printf("⛔ యాక్సెస్ నిరాకరించబడింది! %s మైనర్ (వయస్సు %d).\\n", name, age);
+        return; // ఫంక్షన్ ఇక్కడితో ఆగిపోతుంది! కింద ఉన్న కోడ్ రన్ కాదు.
+    }
+
+    printf("===============================\\n");
+    printf("   వెల్‌కమ్ క్లబ్ మెంబర్: %s\\n", name);
+    printf("   ధృవీకరించబడిన వయస్సు: %d\\n", age);
+    printf("===============================\\n");
+}
+
+int main() {
+    printUserCard(16, "రాహుల్");
+    printUserCard(24, "సురేష్");
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>హార్డ్‌వేర్ &amp; RAM ఆర్కిటెక్చర్ — CPU కాల్ స్టాక్ (The Call Stack)</div>
+    <div class="section-body">
+      <p>ఒక C ప్రోగ్రామ్ రన్ అవుతున్నప్పుడు కంప్యూటర్ RAM లో ఏమి జరుగుతుంది? ఇది ప్రతి ప్రొఫెషనల్ సాఫ్ట్‌వేర్ ఇంజనీర్ తెలుసుకోవాల్సిన అత్యంత కీలకమైన అంశం. ప్రోగ్రామ్ మెమరీలో ఒక ప్రత్యేక విభాగం ఉంటుంది, దానినే <strong>కాల్ స్టాక్ (Call Stack)</strong> అంటారు.</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">ప్లేట్ల దొంతర ఎనాలజీ (Stack of Plates):</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          ఒక వివాహ భోజనశాలలో ప్లేట్లను ఒకదానిపై ఒకటి అమర్చిన దొంతరను (Stack of plates) గమనించండి. కొత్త ప్లేట్‌ను ఎల్లప్పుడూ పైనే పెడతారు (<strong>PUSH</strong>). ఎవరైనా ప్లేట్ తీసుకోవాలంటే అందరికంటే పైన ఉన్న ప్లేట్‌ను మాత్రమే ముందుగా తీయగలరు (<strong>POP</strong>). దీనినే కంప్యూటర్ సైన్స్‌లో <strong>LIFO — Last-In, First-Out</strong> అంటారు. చివరగా వచ్చినది ముందుగా బయటకు వెళ్తుంది!
+        </p>
+      </div>
+
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">స్టాక్ ఫ్రేమ్ (Stack Frame / Activation Record) లోపల ఏముంటుంది?</h4>
+      <p>ప్రోగ్రామ్‌లో ఒక ఫంక్షన్ కాల్ జరిగిన ప్రతిసారీ, RAM కాల్ స్టాక్ పై ఆ ఫంక్షన్ కోసం ఒక బ్లాక్ మెమరీ కేటాయించబడుతుంది. దీనిని <strong>స్టాక్ ఫ్రేమ్ (Stack Frame)</strong> అంటారు. ఇందులో మూడు ముఖ్యమైన విషయాలుంటాయి:</p>
+
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14px; line-height: 1.7;">
+        <li><strong>ఫార్మల్ పారామీటర్లు (Parameters):</strong> కాలర్ పంపిన విలువల కాపీలు.</li>
+        <li><strong>లోకల్ వేరియబుల్స్ (Local Variables):</strong> ఆ ఫంక్షన్ లోపల డిక్లేర్ చేయబడిన వేరియబుల్స్.</li>
+        <li><strong>రిటర్న్ అడ్రస్ (Return Address):</strong> ఫంక్షన్ పూర్తయిన తర్వాత CPU తిరిగి <code>main()</code> లో ఏ లైన్ వద్దకు వెళ్లి పని ప్రారంభించాలో తెలిపే మెమరీ అడ్రస్!</li>
+      </ol>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>కాల్ స్టాక్ లైఫ్‌సైకిల్ &amp; LIFO ఎగ్జిక్యూషన్ ఆర్డర్</div>
+    <div class="section-body">
+      <p>క్రింది కోడ్‌లో <code>main()</code> ఫంక్షన్ <code>calculateTotal()</code> ను పిలుస్తుంది, అది మళ్లీ <code>applyTax()</code> ను పిలుస్తుంది. ఈ చైన్డ్ కాల్స్ మెమరీలో ఎలా స్టాక్ అవుతాయో స్టెప్-బై-స్టెప్ చూద్దాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Multi-Level Function Call Stack Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+double applyTax(double amount) {
+    double tax = amount * 0.18; // 18% GST
+    printf("   [3. applyTax Frame] పన్ను లెక్కించబడింది: రూ. %.2f\\n", tax);
+    return amount + tax;
+}
+
+double calculateTotal(int qty, double price) {
+    printf("  [2. calculateTotal Frame] బేస్ మొత్తం లెక్కించబడుతోంది...\\n");
+    double baseTotal = qty * price;
+    double finalWithTax = applyTax(baseTotal); // చైన్డ్ కాల్!
+    return finalWithTax;
+}
+
+int main() {
+    printf("[1. main Frame] బిల్లింగ్ ప్రారంభమైంది...\\n");
+    double bill = calculateTotal(3, 500.0);
+    printf("[1. main Frame] తుది బిల్లు: రూ. %.2f\\n", bill);
+    return 0;
+}</code></pre>
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-top:16px;">
+        <h4 style="color:#059669; margin:0 0 10px; font-size:14.5px;">RAM కాల్ స్టాక్ యొక్క PUSH &amp; POP దశలు:</h4>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.7; color:var(--text2);">
+          [దశ 1]: main() ప్రారంభమైంది &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;➔ స్టాక్ పై <strong>[main Frame]</strong> PUSH అయింది.<br>
+          [దశ 2]: calculateTotal() కాల్ అయింది &nbsp;&nbsp;➔ స్టాక్ పై <strong>[calculateTotal Frame]</strong> PUSH అయింది.<br>
+          [దశ 3]: applyTax() కాల్ అయింది &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;➔ స్టాక్ పై <strong>[applyTax Frame]</strong> PUSH అయింది (ఇప్పుడు టాప్ లో ఉంది).<br>
+          [దశ 4]: applyTax() ముగిసింది &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;➔ <strong>[applyTax Frame] POP అయి మెమరీ డిలీట్ అయింది!</strong><br>
+          [దశ 5]: calculateTotal() ముగిసింది &nbsp;&nbsp;&nbsp;➔ <strong>[calculateTotal Frame] POP అయింది!</strong><br>
+          [దశ 6]: main() ముగిసింది &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;➔ <strong>[main Frame] POP అయి ప్రోగ్రామ్ మెమరీ క్లీన్ అయింది!</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>ఫంక్షన్ల 4 రకాల వర్గీకరణ పట్టిక (The 4 Function Archetypes)</div>
+    <div class="section-body">
+      <p>ఆర్గుమెంట్లు మరియు రిటర్న్ టైప్స్ ఆధారంగా C లో ఫంక్షన్లను నాలుగు ప్రాథమిక వర్గాలుగా విభజించవచ్చు:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>రకం / కేటగిరీ</th>
+            <th>ఆర్గుమెంట్స్ ఉన్నాయా?</th>
+            <th>రిటర్న్ టైప్ ఉందా?</th>
+            <th>వాడుక సందర్భం (Real Use-Case)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. No Arg, No Return</strong></td>
+            <td>లేదు (<code>void</code>)</td>
+            <td>లేదు (<code>void</code>)</td>
+            <td>కన్సోల్ హెడర్ బ్యానర్లు, హెల్ప్ మెనూలు ప్రింట్ చేయడానికి (ఉదా: <code>printWelcomeBanner()</code>).</td>
+          </tr>
+          <tr>
+            <td><strong>2. With Arg, No Return</strong></td>
+            <td>ఉన్నాయి (<code>int, float...</code>)</td>
+            <td>లేదు (<code>void</code>)</td>
+            <td>డేటాను ఫార్మాట్ చేసి డిస్ప్లే చేయడానికి లేదా లాగ్‌లోకి రాయడానికి (ఉదా: <code>logError(code)</code>).</td>
+          </tr>
+          <tr>
+            <td><strong>3. No Arg, With Return</strong></td>
+            <td>లేదు (<code>void</code>)</td>
+            <td>ఉంది (<code>int, double...</code>)</td>
+            <td>యూజర్ నుండి ఇన్‌పుట్ చదవడం లేదా సిస్టమ్ కరెంట్ సమయం తీసుకోవడం (ఉదా: <code>getSecurityPin()</code>).</td>
+          </tr>
+          <tr>
+            <td><strong>4. With Arg, With Return</strong></td>
+            <td>ఉన్నాయి</td>
+            <td>ఉంది</td>
+            <td>గణిత సమీకరణాలు, బ్యాంకింగ్ లావాదేవీల లెక్కింపులు (ఉదా: <code>calculateEMI(P, R, N)</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>C లో ఇన్-లైన్ ఫంక్షన్స్ (Inline Functions &amp; Performance)</div>
+    <div class="section-body">
+      <p>ఫంక్షన్ కాల్ జరిగిన ప్రతిసారీ CPU స్టాక్ ఫ్రేమ్‌ను నిర్మించడం, రిటర్న్ అడ్రస్‌ను సేవ్ చేయడం, జంప్ చేయడం వంటి ప్రక్రియల్లో కొంత సమయం (Function Call Overhead) ఖర్చవుతుంది. చాలా చిన్న ఫంక్షన్లు (ఉదాహరణకు రెండు సంఖ్యలలో గరిష్ట విలువను కనుగొనే 1 లైన్ ఫంక్షన్) లక్షలాది సార్లు లూప్‌లో రన్ అవుతుంటే, ఈ ఓవర్‌హెడ్ పర్ఫార్మెన్స్‌ను తగ్గిస్తుంది.</p>
+
+      <p>ఆధునిక C99 స్టాండర్డ్ లో దీనిని అధిగమించడానికి <strong><code>inline</code></strong> కీవర్డ్ ప్రవేశపెట్టబడింది. ఫంక్షన్ ముందు <code>inline</code> అని పెడితే, కంపైలర్ ఫంక్షన్ కాల్ జంప్ చేయకుండా, ఆ కోడ్‌ను నేరుగా కాల్ చేసిన ప్రదేశంలోనే అతికిస్తుంది (Inline Expansion)!</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Inline Function Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// Inline Function: ఫంక్షన్ కాల్ ఓవర్‌హెడ్ లేకుండా మెరుపు వేగంతో రన్ అవుతుంది
+static inline int findMax(int a, int b) {
+    return (a &gt; b) ? a : b;
+}
+
+int main() {
+    int x = 45, y = 82;
+    int maximum = findMax(x, y); // కంపైలర్ దీన్ని (x > y) ? x : y గా మారుస్తుంది
+    printf("గరిష్ట సంఖ్య: %d\\n", maximum);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్ — శాలరీ &amp; ఇన్కమ్ ట్యాక్స్ ఇంజిన్</div>
+    <div class="section-body">
+      <p>ఇప్పటివరకు నేర్చుకున్న ఫంక్షన్ ప్రొటోటైప్స్, మోడ్యులర్ డిజైన్, మల్టిపుల్ ఆర్గ్యుమెంట్స్ మరియు రిటర్న్ టైప్స్‌ను కలిపి ఒక కార్పొరేట్ కంపెనీ <strong>ఉద్యోగుల జీతం &amp; పన్ను గణన వ్యవస్థను (Payroll &amp; Tax Engine)</strong> నిర్మిద్దాం. ఇందులో ప్రతి పనికి ఒక ప్రత్యేక ఫంక్షన్ ఉంటుంది:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Modular Employee Payroll &amp; Tax Engine</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// ============================================
+// 1. ఫంక్షన్ ప్రొటోటైప్స్ (Forward Declarations)
+// ============================================
+void printCompanyHeader(void);
+double calculateHRA(double basicSalary);
+double calculateDA(double basicSalary);
+double calculateGrossSalary(double basic, double hra, double da);
+double calculateIncomeTax(double annualGross);
+void generatePaySlip(const char* empName, double basic);
+
+int main() {
+    printCompanyHeader();
+
+    // ఇద్దరు ఉద్యోగులకు పే-స్లిప్స్ జనరేట్ చేద్దాం
+    generatePaySlip("అర్జున్ వర్మ", 65000.0);
+    generatePaySlip("స్నిగ్ధ శర్మ", 95000.0);
+
+    return 0;
+}
+
+// ============================================
+// 2. మోడ్యులర్ ఫంక్షన్ డెఫినిషన్స్
+// ============================================
+
+void printCompanyHeader(void) {
+    printf("====================================================\\n");
+    printf("    మన టెక్నాలజీస్ ప్రైవేట్ లిమిటెడ్ (Mana Payroll 2026)\\n");
+    printf("====================================================\\n");
+}
+
+// HRA: బేసిక్ పే లో 40% ఇంటి అద్దె భత్యం
+double calculateHRA(double basicSalary) {
+    return basicSalary * 0.40;
+}
+
+// DA: బేసిక్ పే లో 20% కరువు భత్యం
+double calculateDA(double basicSalary) {
+    return basicSalary * 0.20;
+}
+
+// స్థూల జీతం (Gross Salary)
+double calculateGrossSalary(double basic, double hra, double da) {
+    return basic + hra + da;
+}
+
+// వార్షిక ఆదాయ పన్ను స్లాబ్‌లు
+double calculateIncomeTax(double annualGross) {
+    if (annualGross &lt;= 500000.0) {
+        return 0.0; // రూ. 5 లక్షల వరకు 0% పన్ను
+    } else if (annualGross &lt;= 1000000.0) {
+        return (annualGross - 500000.0) * 0.10; // 10% స్లాబ్
+    } else {
+        return (500000.0 * 0.10) + ((annualGross - 1000000.0) * 0.20); // 20% స్లాబ్
+    }
+}
+
+// పూర్తి శాలరీ స్లిప్ ముద్రించే కో-ఆర్డినేటర్ ఫంక్షన్
+void generatePaySlip(const char* empName, double basic) {
+    double hra = calculateHRA(basic);
+    double da = calculateDA(basic);
+    double monthlyGross = calculateGrossSalary(basic, hra, da);
+    double annualGross = monthlyGross * 12.0;
+    double annualTax = calculateIncomeTax(annualGross);
+    double monthlyTax = annualTax / 12.0;
+    double netMonthlyTakeHome = monthlyGross - monthlyTax;
+
+    printf("\\n[పే-స్లిప్] ఉద్యోగి పేరు: %s\\n", empName);
+    printf("----------------------------------------------------\\n");
+    printf("  బేసిక్ పే (Basic Salary) : రూ. %10.2f\\n", basic);
+    printf("  ఇంటి భత్యం (HRA - 40%%)   : రూ. %10.2f\\n", hra);
+    printf("  కరువు భత్యం (DA - 20%%)   : రూ. %10.2f\\n", da);
+    printf("  నెలవారీ స్థూల జీతం (Gross): రూ. %10.2f\\n", monthlyGross);
+    printf("  వార్షిక ఆదాయం (Annual)   : రూ. %10.2f\\n", annualGross);
+    printf("  నెలవారీ TDS పన్ను మినహాయింపు: రూ. %10.2f\\n", monthlyTax);
+    printf("----------------------------------------------------\\n");
+    printf("  👉 చేతికి అందే నికర జీతం (Net Pay): రూ. %10.2f\\n", netMonthlyTakeHome);
+    printf("====================================================\\n");
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div class="section-title"><span class="num">12</span>సాధారణంగా బిగినర్స్ చేసే టాప్ 5 ఫంక్షన్ తప్పులు</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">1. ప్రొటోటైప్ చివర సెమికోలన్ మర్చిపోవడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>int add(int a, int b)</code> అని రాసి సెమికోలన్ పెట్టకపోతే, కంపైలర్ దాని కింద ఉన్న కోడ్‌ను ఫంక్షన్ బాడీ అనుకుని భారీ ఎర్రర్స్ ఇస్తుంది.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">2. ఫంక్షన్ డెఫినిషన్ హెడర్ పక్కన పొరపాటున సెమికోలన్ పెట్టడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>int add(int a, int b); { return a + b; }</code> అని రాస్తే బాడీ ఫంక్షన్ నుండి విడిపోయి స్వతంత్ర బ్లాక్ అయిపోతుంది!</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">3. లోకల్ వేరియబుల్ యొక్క అడ్రస్‌ను రిటర్న్ చేయడం (Dangling Pointer Trap):</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">ఫంక్షన్ ముగియగానే దాని స్టాక్ ఫ్రేమ్ మెమరీ నుండి నాశనం అవుతుంది. లోపల ఉన్న లోకల్ వేరియబుల్ పాయింటర్‌ను రిటర్న్ చేస్తే మెమరీ క్రాష్ అవుతుంది!</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">4. నాన్-వాయిడ్ ఫంక్షన్‌లో రిటర్న్ స్టేట్‌మెంట్ మర్చిపోవడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>int</code> రిటర్న్ టైప్ పెట్టి లోపల <code>return</code> రాయకపోతే గార్బేజ్ వాల్యూ రిటర్న్ అవుతుంది (Undefined Behavior).</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">5. ఆర్గుమెంట్ల డేటా టైప్స్ తారుమారు చేయడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">ఫంక్షన్ <code>(int, double)</code> ఆశిస్తుంటే మీరు <code>(double, int)</code> పాస్ చేస్తే డేటా ట్రంకేట్ లేదా టైప్ కాస్టింగ్ సమస్యలు వస్తాయి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 13 -->
+    <div class="section-title"><span class="num">13</span>స్వీయ మూల్యాంకన క్విజ్ &amp; మీరే స్వయంగా Try చేయండి!</div>
+    <div class="section-body">
+      <p>ఈ పాఠంలోని లోతైన అంశాలను క్రింది 5 ప్రాక్టికల్ ప్రశ్నల ద్వారా పరీక్షించుకోండి:</p>
+
+      <!-- QUIZ QUESTIONS -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: C లో Function Prototype ను ఎందుకు ఉపయోగిస్తారు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> C కంపైలర్ టాప్-టు-బాటమ్ సింగిల్-పాస్‌లో కోడ్‌ను చదువుతుంది. <code>main()</code> లో ఫంక్షన్‌ను పిలవడానికి ముందే దాని పేరు, రిటర్న్ టైప్ మరియు పారామీటర్ల సంఖ్యను కంపైలర్‌కు ధృవీకరించడానికి (Forward Declaration) ప్రొటోటైప్ తప్పనిసరి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: RAM కాల్ స్టాక్ (Call Stack) ఏ ఆర్డర్ ప్రకారం పనిచేస్తుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>LIFO — Last-In, First-Out</strong>. చివరగా కాల్ చేయబడిన ఫంక్షన్ స్టాక్ పైకి వచ్చి, ముందుగా ఎగ్జిక్యూషన్ ముగించుకుని స్టాక్ నుండి పాప్ (POP) అవుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: ఒక స్టాక్ ఫ్రేమ్ (Activation Record) లోపల ఏ వివరాలు ఉంటాయి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> 1) ఫార్మల్ పారామీటర్లు, 2) ఫంక్షన్ లోకల్ వేరియబుల్స్, 3) ఫంక్షన్ ముగిసిన తర్వాత తిరిగి వెళ్లాల్సిన <strong>రిటర్న్ అడ్రస్ (Return Address)</strong>.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: void ఫంక్షన్ లోపల return స్టేట్‌మెంట్ రాయవచ్చా?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> అవును, రాయవచ్చు! అయితే ఎటువంటి విలువను ఇవ్వకుండా కేవలం <code>return;</code> అని మాత్రమే రాయాలి. కండిషన్ విఫలమైనప్పుడు ఫంక్షన్‌ను మధ్యలోనే ఆపేయడానికి (Early Exit) దీనిని ఉపయోగిస్తారు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: inline ఫంక్షన్ యొక్క ముఖ్య ప్రయోజనం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> చిన్న ఫంక్షన్లకు స్టాక్ ఫ్రేమ్ నిర్మాణం మరియు మెమరీ జంప్స్ యొక్క ఓవర్‌హెడ్‌ను తగ్గించి, కోడ్‌ను నేరుగా కాల్ ప్రదేశంలోనే ఎంబెడ్ చేయడం ద్వారా CPU ఎగ్జిక్యూషన్ వేగాన్ని పెంచుతుంది.
+        </div>
+      </details>
+
+      <!-- TRY BOX -->
+      <div class="try-box" style="margin-top:24px;">
+        <div class="try-title">🚀 శాలరీ &amp; ట్యాక్స్ ఇంజిన్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో రన్ చేయండి!</div>
+        <p>పైన వివరించిన <code>పేరోల్ &amp; ట్యాక్స్ సిస్టమ్</code> కోడ్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో ఓపెన్ చేసి స్వయంగా రన్ చేయండి. కొత్త భత్యాలు (ఉదా: మెడికల్ అలవెన్స్, బోనస్) లెక్కించే కొత్త ఫంక్షన్‌లను జోడించి టెస్ట్ చేయండి!</p>
+        <a class="run-btn" href="/online-c-compiler.html" target="_blank">
+          👉 Our Compiler లో C Compiler try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 అధ్యాయ సారాంశం (Quick Summary):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>ఫంక్షన్స్:</strong> సంక్లిష్ట సమస్యలను చిన్న చిన్న పనులుగా విభజించే మోడ్యులర్ ఇంజిన్లు.</li>
+          <li><strong>DRY సూత్రం:</strong> కోడ్ డూప్లికేషన్‌ను అరికట్టి రీయూజబిలిటీని పెంచుతుంది.</li>
+          <li><strong>ప్రొటోటైప్:</strong> C సింగిల్-పాస్ కంపైలర్‌కు ఇచ్చే ముందస్తు కాంట్రాక్ట్.</li>
+          <li><strong>కాల్ స్టాక్:</strong> RAM లో ఫంక్షన్ ఫ్రేమ్‌లను LIFO పద్ధతిలో నిర్వహించే మెమరీ నిర్మాణం.</li>
+          <li><strong>స్టాక్ ఫ్రేమ్:</strong> పారామీటర్లు, లోకల్ వేరియబుల్స్ మరియు రిటర్న్ అడ్రస్‌ల సమాహారం.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 10):</strong> C ప్రోగ్రామింగ్‌లోనే అత్యంత ఆకర్షణీయమైన అంశం — <strong>Call by Value vs Call by Reference (పాయింటర్లతో మెమరీ అడ్రస్ ఆధారంగా అసలైన విలువలను మార్చడం)</strong> గురించి అద్భుతంగా నేర్చుకుందాం!
+      </div>
+    </div>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-c/08-c-break-continue-nested-loops.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 8. break, continue &amp; ప్యాటర్న్స్
+      </a>
+      <a href="/blog-c/10-c-parameter-passing-call-by-value-reference.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 10. Call by Value vs Reference →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+// Assemble the complete HTML document
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C ఫంక్షన్స్, ప్రొటోటైప్స్ & కాల్ స్టాక్ ఆర్కిటెక్చర్ — Modern C Tutorial | Our Compiler</title>
+  <meta name="description" content="C ఫంక్షన్స్, ఫార్వర్డ్ డిక్లరేషన్ & కాల్ స్టాక్ సమగ్ర తెలుగు గైడ్: DRY సూత్రం, Function Prototypes ఎందుకు తప్పనిసరి, RAM Call Stack & Activation Records, శాలరీ ప్రాజెక్ట్." />
+  <meta name="keywords" content="c functions in telugu, c function prototype, c call stack, stack frames c, modular c programming, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/09-c-functions-and-prototypes.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "C ఫంక్షన్స్, ప్రొటోటైప్స్ & కాల్ స్టాక్ ఆర్కిటెక్చర్ (C Programming in Telugu)",
+    "description": "DRY సూత్రం, Function Prototypes ఎందుకు తప్పనిసరి, RAM Call Stack & Activation Records, శాలరీ ప్రాజెక్ట్",
+    "articleSection": "Phase 03: ఫంక్షన్స్, స్కోప్ & రికర్షన్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
+  </script>
+</head>
+<body class="lang-c light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-c', '09-c-functions-and-prototypes.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C Chapter 09!');
+console.log('Target file size:', fullHtml.length, 'characters');
