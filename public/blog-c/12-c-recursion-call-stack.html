@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్ — Modern C Tutorial | Our Compiler</title>
-  <meta name="description" content="రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్ సమగ్ర తెలుగు గైడ్: బేస్ కండిషన్ ప్రాముఖ్యత · ఫ్యాక్టోరియల్ & ఫిబోనాకి కాల్ ట్రీ · స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow) ఎర్రర్ నివారణ." />
-  <meta name="keywords" content="c tutorial in telugu, learn c language, రికార్షన్ (recursion) & కాల్ స్టాక్ మెకానిక్స్, c programming, our compiler" />
+  <title>C రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్ — Modern C Tutorial | Our Compiler</title>
+  <meta name="description" content="C రికార్షన్ (Recursion) & కాల్ స్టాక్ సమగ్ర తెలుగు గైడ్: రష్యన్ బొమ్మల ఎనాలజీ, బేస్ కండిషన్ ప్రాముఖ్యత, ఫ్యాక్టోరియల్, ఫిబోనాకి కాల్ ట్రీ, టవర్స్ ఆఫ్ హనోయి, స్టాక్ ఓవర్‌ఫ్లో నివారణ." />
+  <meta name="keywords" content="c recursion in telugu, c recursion call stack, towers of hanoi in c, base case recursion, stack overflow c, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-c/12-c-recursion-call-stack.html" />
@@ -20,8 +20,8 @@
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్ (C Programming in Telugu)",
-    "description": "బేస్ కండిషన్ ప్రాముఖ్యత · ఫ్యాక్టోరియల్ & ఫిబోనాకి కాల్ ట్రీ · స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow) ఎర్రర్ నివారణ",
+    "headline": "C రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్ (C Programming in Telugu)",
+    "description": "బేస్ కండిషన్ ప్రాముఖ్యత, ఫ్యాక్టోరియల్, ఫిబోనాకి కాల్ ట్రీ, టవర్స్ ఆఫ్ హనోయి, స్టాక్ ఓవర్‌ఫ్లో నివారణ",
     "articleSection": "Phase 03: ఫంక్షన్స్, స్కోప్ & రికర్షన్",
     "inLanguage": "te",
     "author": {
@@ -35,11 +35,11 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-01",
-    "dateModified": "2026-10-29"
+    "dateModified": "2026-11-01"
   }
   </script>
 
-  <!-- Interactive Scripts: Accordion, C Syntax Highlighter & Default Light Theme -->
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -58,34 +58,55 @@
       if (currentTheme === 'dark') {
         document.documentElement.classList.remove('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
         });
       } else {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
         });
       }
     })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
   </script>
 </head>
 <body class="lang-c light-theme">
-
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html" class="active">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-</nav>
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
   <!-- LEFT SIDEBAR ACCORDION -->
@@ -206,197 +227,577 @@
     <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
   </aside>
 
-  <!-- MAIN LESSON CONTENT -->
+
+  <!-- MAIN ARTICLE -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 12: రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్</span>
+      <span class="current">Chapter 12: రికార్షన్ (Recursion) &amp; కాల్ స్టాక్ మెకానిక్స్</span>
     </div>
 
-    <h1 class="page-title">రికార్షన్ (Recursion) & కాల్ స్టాక్ మెకానిక్స్</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">C రికార్షన్ (Recursion) &amp; కాల్ స్టాక్ మెకానిక్స్</h1>
 
+    <!-- PAGE META BADGES -->
     <div class="page-meta">
-      <span class="badge">⚡ Modern C (C99 / C11)</span>
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
       <span class="badge">🟢 Chapter 12 of 20</span>
-      <span class="badge">📂 Phase 03: ఫంక్షన్స్, స్కోప్ & రికర్షన్</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">📂 Phase 03: ఫంక్షన్స్, స్కోప్ &amp; రికర్షన్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
+    <!-- SUBTOPICS PILL BAR -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>బేస్ కండిషన్ ప్రాముఖ్యత · ఫ్యాక్టోరియల్ & ఫిబోనాకి కాల్ ట్రీ · స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow) ఎర్రర్ నివారణ</span>
+      <span>రష్యన్ బొమ్మల ఎనాలజీ · రికార్షన్ 2 పవిత్ర నియమాలు · బేస్ కండిషన్ · ఫ్యాక్టోరియల్ స్టాక్ వైండింగ్/అన్‌వైండింగ్ · ఫిబోనాకి కాల్ ట్రీ · రికార్షన్ vs లూప్స్ పట్టిక · స్టాక్ ఓవర్‌ఫ్లో క్రాష్ నివారణ · డైరెక్ట్ vs ఇన్‌డైరెక్ట్ రికార్షన్ · టెయిల్ రికార్షన్ ఆప్టిమైజేషన్ · టవర్స్ ఆఫ్ హనోయి · ఫోల్డర్ సైజ్ ప్రాజెక్ట్ · ఇంటరాక్టివ్ క్విజ్</span>
     </div>
 
-    
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
     <div class="intro-box">
-      కంప్యూటర్ సైన్స్‌లో అత్యంత శక్తివంతమైన మరియు అందమైన అల్గారిథమిక్ టెక్నిక్ <strong>రికార్షన్ (Recursion)</strong>. ఒక పెద్ద సమస్యను పరిష్కరించడానికి ఒక ఫంక్షన్ తనను తాను మళ్లీ మళ్లీ పిలుచుకోవడమే రికార్షన్. అయితే రికార్షన్‌ను నియంత్రించే <strong>బేస్ కండిషన్ (Base Condition)</strong> లేకపోతే కంప్యూటర్ మెమరీ నిండిపోయి <strong>స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow)</strong> క్రాష్ ఎలా సంభవిస్తుందో, ఫ్యాక్టోరియల్ మరియు ఫిబోనాకి కాల్ ట్రీల ద్వారా లోతుగా నేర్చుకుందాం.
+      <p>రష్యా దేశపు ప్రసిద్ధ <strong>మాట్రియోష్కా బొమ్మలను (Russian Matryoshka Nesting Dolls)</strong> మీరు ఎప్పుడైనా చూశారా? ఒక అందమైన పెద్ద చెక్క బొమ్మ ఉంటుంది. దాని మూత తీయగానే లోపల సరిగ్గా అలాంటిదే ఇంకొక చిన్న బొమ్మ ఉంటుంది! దానిని తెరిస్తే లోపల మరొక చిన్న బొమ్మ... ఇలా తెరుచుకుంటూ వెళ్తే చిట్టచివరగా ఒక ఘనమైన, తెరవడానికి వీల్లేని అతిచిన్న బొమ్మ (Smallest Solid Doll) కనిపిస్తుంది. అక్కడితో బొమ్మలను తెరవడం ఆగిపోతుంది. ఆ తర్వాత మళ్లీ అన్నింటినీ ఒకదానిలో ఒకటి పెట్టి మూసివేస్తారు.</p>
+      <p>కంప్యూటర్ సైన్స్ చరిత్రలోనే అత్యంత మంత్రముగ్ధులను చేసే అల్గారిథమిక్ భావన <strong>రికార్షన్ (Recursion)</strong> సరిగ్గా ఇలాంటిదే! ఒక పెద్ద సమస్యను పరిష్కరించడానికి, ఒక ఫంక్షన్ తన లాంటిదే కొద్దిగా చిన్నదైన సమస్యతో <strong>తనను తాను పదేపదే పిలుచుకోవడాన్ని (A function calling itself)</strong> రికార్షన్ అంటారు. చివరగా వచ్చిన అతిచిన్న సమస్యను <strong>బేస్ కండిషన్ (Base Case)</strong> అంటారు. బేస్ కండిషన్ తగలగానే పిలుపులు ఆగిపోయి, ఫలితాలు వెనక్కి రావడం మొదలవుతాయి!</p>
+      <p>ఈ పన్నెండవ అధ్యాయంతో మనం <strong>Phase 03 (ఫంక్షన్స్, స్కోప్ &amp; రికర్షన్)</strong> ను పూర్తి చేయబోతున్నాం. ఇందులో రికార్షన్ యొక్క అంతర్గత <strong>RAM కాల్ స్టాక్ వైండింగ్ మరియు అన్‌వైండింగ్ (Stack Winding &amp; Unwinding)</strong> ప్రక్రియ, ఫ్యాక్టోరియల్, ఫిబోనాకి కాల్ ట్రీలు, ప్రాణాంతక <strong>స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow)</strong> నివారణ, మరియు ప్రసిద్ధ <strong>టవర్స్ ఆఫ్ హనోయి (Towers of Hanoi)</strong> అల్గారిథమ్‌ను సమగ్రంగా అన్వేషిద్దాం!</p>
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>రికార్షన్ 2 మూలస్తంభాలు — బేస్ కండిషన్ & రికర్సివ్ స్టెప్</div>
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే సమగ్ర అంశాలు (Roadmap)</div>
     <div class="section-body">
-      <p>
-        ఏదైనా రికర్సివ్ ఫంక్షన్ సరిగ్గా పనిచేయాలంటే అది ఖచ్చితంగా రెండు నియమాలను కలిగి ఉండాలి:
-      </p>
+      <p>డేటా స్ట్రక్చర్స్, ట్రీస్, గ్రాఫ్స్ మరియు కాంప్లెక్స్ అల్గారిథమ్స్ నేర్చుకోవడానికి రికార్షన్ అనేది గేట్‌వే వంటిది. ఈ అధ్యాయంలో కవర్ చేయబడే లోతైన భావనలు:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>రికార్షన్ ప్రాథమిక నిర్వచనం:</strong> విభజించు మరియు పాలించు (Divide and Conquer) ఫిలాసఫీ.</li>
+        <li><strong>రికార్షన్ యొక్క 2 పవిత్ర నియమాలు:</strong> బేస్ కండిషన్ (Base Condition) మరియు రికర్సివ్ స్టెప్ (Recursive Step).</li>
+        <li><strong>కాల్ స్టాక్ వైండింగ్ &amp; అన్‌వైండింగ్:</strong> RAM లో స్టాక్ ఫ్రేమ్‌లు ఎలా పేరుకుపోతాయి? ఫలితాలు ఎలా గుణించబడతాయి?</li>
+        <li><strong>ఫ్యాక్టోరియల్ అల్గారిథమ్ పోస్ట్‌మార్టం:</strong> $N! = N 	imes (N-1)!$ గణితాన్ని C కోడ్‌గా మార్చే విధానం.</li>
+        <li><strong>ఫిబోనాకి సంఖ్యలు &amp; రికర్సివ్ కాల్ ట్రీ:</strong> బైనరీ రికార్షన్, డూప్లికేట్ సబ్‌ప్రాబ్లమ్స్ మరియు $O(2^N)$ టైమ్ కాంప్లెక్సిటీ.</li>
+        <li><strong>సమగ్ర తులనాత్మక పట్టిక:</strong> రికార్షన్ (Recursion) vs ఇటరేషన్ / లూప్స్ (Iteration / Loops).</li>
+        <li><strong>ప్రాణాంతక స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow Exception):</strong> 8 MB స్టాక్ లిమిట్ దాటి ప్రోగ్రామ్ ఎందుకు క్రాష్ అవుతుంది?</li>
+        <li><strong>డైరెక్ట్ రికార్షన్ vs ఇన్‌డైరెక్ట్ రికార్షన్:</strong> మ్యూచువల్ రికార్షన్ (Mutual Recursive Function Calls).</li>
+        <li><strong>టెయిల్ రికార్షన్ (Tail Recursion) &amp; TCO ఆప్టిమైజేషన్:</strong> కంపైలర్ రికార్షన్‌ను లూప్‌గా మార్చే ఆధునిక టెక్నిక్.</li>
+        <li><strong>ది టవర్స్ ఆఫ్ హనోయి (Towers of Hanoi Puzzle):</strong> $2^N - 1$ మూవ్స్‌తో రింగ్స్ మార్చే క్లాసిక్ ప్రోగ్రామ్.</li>
+        <li><strong>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్:</strong> నెస్టెడ్ ఫైల్ సిస్టమ్ డైరెక్టరీ సైజ్ కాలిక్యులేటర్ సిమ్యులేషన్.</li>
+        <li><strong>బిగినర్స్ చేసే టాప్ 5 రికార్షన్ తప్పులు:</strong> మిస్సింగ్ బేస్ కండిషన్, $n++$ వర్సెస్ $n-1$ ట్రాప్స్.</li>
+        <li><strong>స్వీయ మూల్యాంకన క్విజ్:</strong> 5 లోతైన విశ్లేషణాత్మక ప్రశ్నలు &amp; ఎగ్జామ్ కాన్సెప్ట్స్.</li>
+      </ul>
+    </div>
 
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">1. బేస్ కండిషన్ (The Base Case):</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            ఇది రికార్షన్ ఆగాల్సిన గమ్యస్థానం. ఫంక్షన్ ఇకపై తనను తాను పిలవకుండా ఖచ్చితమైన సమాధానాన్ని రిటర్న్ చేసి వెనక్కి మళ్ళే షరతు (ఉదా: <code>if (n &lt;= 1) return 1;</code>).
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>రికార్షన్ ప్రాథమిక భావన — విభజించు &amp; జయించు (Divide &amp; Conquer)</div>
+    <div class="section-body">
+      <p>నిజ జీవితంలో ఒక పెద్ద కష్టమైన సమస్య ఎదురైనప్పుడు, దానిని ఒకేసారి పరిష్కరించడం కష్టం. కానీ ఆ సమస్యను కొద్దిగా చిన్నదైన ఉప-సమస్యగా (Sub-problem) విభజించగలిగితే — అదే లాజిక్‌ను పదేపదే వర్తింపజేసి చివరకు అతిచిన్న సులభమైన స్థితికి చేరుకోవచ్చు. దీనినే <strong>విభజించు మరియు జయించు (Divide and Conquer)</strong> అంటారు.</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">రికార్షన్ ఎలా పనిచేస్తుంది?</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          ఒక సాధారణ ఫంక్షన్ వేరొక ఫంక్షన్‌ను పిలుస్తుంది. కానీ ఒక రికర్సివ్ ఫంక్షన్ <strong>తనను తానే మళ్లీ పిలుచుకుంటుంది!</strong> అయితే ప్రతి పిలుపులోనూ ఇన్‌పుట్ విలువ చిన్నదిగా మారుతూ బేస్ కండిషన్ వైపుకు అడుగులు వేయాలి. అలా జరగకపోతే అది అంతులేని <strong>ఇన్ఫినిట్ రికార్షన్ (Infinite Recursion)</strong> గా మారి కంప్యూటర్ మెమరీని నింపేస్తుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>రికార్షన్ యొక్క 2 పవిత్ర నియమాలు (The Two Golden Rules)</div>
+    <div class="section-body">
+      <p>C లో మీరు ఏ రికర్సివ్ ఫంక్షన్ రాసినా, అందులో కచ్చితంగా <strong>ఈ రెండు భాగాలు ఉండాల్సిందే:</strong></p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:18px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">1. బేస్ కండిషన్ (Base Condition)</h4>
+          <p style="color:var(--text2); font-size:13.5px; line-height:1.6; margin:0;">
+            రికార్షన్ ఎక్కడ ఆగిపోవాలో నిర్దేశించే అత్యవసర బ్రేక్! ఇది తగలగానే ఫంక్షన్ తనను తాను పిలవడం ఆపేసి, ఒక ప్రత్యక్ష విలువను రిటర్న్ చేస్తుంది. ఇది లేకపోతే స్టాక్ ఓవర్‌ఫ్లో తప్పదు!
           </p>
         </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:16px;">
-          <h4 style="color:#3b82f6; margin:0 0 6px 0; font-size:14.5px;">2. రికర్సివ్ స్టెప్ (The Recursive Step):</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            సమస్య పరిమాణాన్ని కుదిస్తూ (Reducing problem size) బేస్ కండిషన్ దిశగా తీసుకువెళ్లే పిలుపు (ఉదా: <code>n * factorial(n - 1)</code>).
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #2563eb; border-radius:0 8px 8px 0; padding:16px;">
+          <h4 style="color:#2563eb; margin:0 0 8px; font-size:15px;">2. రికర్సివ్ స్టెప్ (Recursive Step)</h4>
+          <p style="color:var(--text2); font-size:13.5px; line-height:1.6; margin:0;">
+            ఫంక్షన్ తనను తాను చిన్న ఇన్‌పుట్‌తో (ఉదా: <code>n - 1</code>) పిలుచుకునే భాగం. ఇది సమస్యను క్రమంగా బేస్ కండిషన్ వైపుకు నడిపిస్తుంది.
           </p>
         </div>
       </div>
+    </div>
 
-      <div class="code-block" style="margin:16px 0;">
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>ఫ్యాక్టోరియల్ అల్గారిథమ్ &amp; కాల్ స్టాక్ వైండింగ్ / అన్‌వైండింగ్</div>
+    <div class="section-body">
+      <p>గణితంలో ఫ్యాక్టోరియల్ సమీకరణాన్ని పరిశీలిద్దాం:</p>
+      $$N! = N 	imes (N-1)! quad 	ext{మరియు} quad 0! = 1, quad 1! = 1$$
+
+      <p>దీనిని C లో రికార్షన్ ద్వారా కోడ్ చేయడం ఎంతో సహజంగా, ఎలిగాంట్‌గా ఉంటుంది:</p>
+
+      <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">C — Recursive Factorial</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+          <span class="lang-tag">C — Recursive Factorial Implementation</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
+// రికర్సివ్ ఫ్యాక్టోరియల్ ఫంక్షన్
 long long factorial(int n) {
-    // బేస్ కండిషన్
+    // 1. బేస్ కండిషన్ (ఆగే నియమం)
     if (n &lt;= 1) {
+        printf("  -> బేస్ కండిషన్ చేరుకుంది! factorial(%d) = 1 రిటర్న్ చేస్తున్నాం.\n", n);
         return 1;
     }
-    // రికర్సివ్ కాల్
-    return n * factorial(n - 1);
+
+    // 2. రికర్సివ్ స్టెప్ (Winding Phase)
+    printf("  [PUSH] factorial(%d) లెక్కించడానికి factorial(%d) ని పిలుస్తున్నాం...\n", n, n - 1);
+    long long result = n * factorial(n - 1);
+
+    // 3. అన్‌వైండింగ్ ఫేజ్ (Unwinding Phase)
+    printf("  [POP] factorial(%d) పూర్తయింది = %lld\n", n, result);
+    return result;
 }
 
-int main(void) {
-    int num = 5;
-    printf("%d యొక్క ఫ్యాక్టోరియల్ = %lld\n", num, factorial(num));
+int main() {
+    int num = 4;
+    printf("=== 4 యొక్క ఫ్యాక్టోరియల్ గణన (Call Stack Lifecycle) ===\n");
+    long long ans = factorial(num);
+    printf("తుది ఫలితం: %d! = %lld\n", num, ans);
+    return 0;
+}</code></pre>
+      </div>
+
+      <h4 style="color:#059669; margin:20px 0 10px; font-size:15px;">RAM కాల్ స్టాక్ యొక్క 2 దశలు (Winding vs Unwinding):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8; color:var(--text2);">
+        <strong>[దశ 1: వైండింగ్ - స్టాక్ ఫ్రేమ్స్ పెరుగుదల (PUSH)]:</strong><br>
+        factorial(4) ➔ 4 * factorial(3)<br>
+        &nbsp;&nbsp;factorial(3) ➔ 3 * factorial(2)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;factorial(2) ➔ 2 * factorial(1)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;factorial(1) ➔ <strong>బేస్ కండిషన్ తగిలింది! 1 రిటర్న్ చేస్తుంది.</strong><br><br>
+        <strong>[దశ 2: అన్‌వైండింగ్ - ఫలితాల గుణకారం &amp; మెమరీ విడుదల (POP)]:</strong><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;factorial(1) = 1 రిటర్న్ అయింది (Frame Popped)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;factorial(2) = 2 * 1 = 2 (Frame Popped)<br>
+        &nbsp;&nbsp;factorial(3) = 3 * 2 = 6 (Frame Popped)<br>
+        factorial(4) = 4 * 6 = <strong>24</strong> (తుది సమాధానం main కు చేరింది!)
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>ఫిబోనాకి సంఖ్యలు &amp; రికర్సివ్ కాల్ ట్రీ (Fibonacci Call Tree)</div>
+    <div class="section-body">
+      <p>ఫిబోనాకి క్రమం (0, 1, 1, 2, 3, 5, 8, 13...) లో ప్రతి సంఖ్య దాని మునుపటి రెండు సంఖ్యల మొత్తం. దీనిని <strong>బైనరీ రికార్షన్ (Binary Tree Recursion)</strong> అంటారు, ఎందుకంటే ప్రతి ఒక్క కాల్ మరొక రెండు కాల్స్‌ను పుట్టిస్తుంది:</p>
+      $$F(n) = F(n-1) + F(n-2) quad 	ext{మరియు} quad F(0) = 0, quad F(1) = 1$$
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Fibonacci Recursion &amp; Call Tree</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int fibonacci(int n) {
+    if (n == 0) return 0; // బేస్ కండిషన్ 1
+    if (n == 1) return 1; // బేస్ కండిషన్ 2
+
+    return fibonacci(n - 1) + fibonacci(n - 2); // రెండు రికర్సివ్ కాల్స్!
+}
+
+int main() {
+    int terms = 7;
+    printf("మొదటి %d ఫిబోనాకి సంఖ్యలు:\n", terms);
+    for (int i = 0; i &lt; terms; i++) {
+        printf("%d ", fibonacci(i));
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+      </div>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:14px; margin:16px 0; color:#991b1b; font-size:13.5px;">
+        ⚠️ <strong>ఎక్స్‌పోనెన్షియల్ టైమ్ కాంప్లెక్సిటీ ప్రమాదం ($O(2^N)$):</strong> <code>fibonacci(5)</code> లెక్కించడానికి <code>fibonacci(3)</code> ను రెండుసార్లు, <code>fibonacci(2)</code> ను మూడుసార్లు అనవసరంగా మళ్లీ మళ్లీ లెక్కిస్తుంది. $N = 50$ ఇస్తే మీ కంప్యూటర్ కొన్ని గంటల పాటు నిలిచిపోతుంది! దీనిని అధిగమించడానికే భవిష్యత్తులో మనం <strong>డైనమిక్ ప్రోగ్రామింగ్ (Memoization / DP)</strong> ఉపయోగిస్తాం!
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>సమగ్ర తులనాత్మక పట్టిక (Recursion vs Iteration / Loops)</div>
+    <div class="section-body">
+      <p>రికార్షన్ మరియు సాధారణ లూప్స్ (Iteration) మధ్య ఉన్న సమగ్ర ఇంజనీరింగ్ వ్యత్యాసాలను ఒకే పట్టికలో పరిశీలిద్దాం:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>అంశం / ఫీచర్</th>
+            <th>రికార్షన్ (Recursion)</th>
+            <th>ఇటరేషన్ / లూప్స్ (Iteration - for/while)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ప్రాథమిక మెకానిజం</strong></td>
+            <td>ఫంక్షన్ తనను తాను పదేపదే కాల్ చేసుకుంటుంది.</td>
+            <td>స్టేట్‌మెంట్ల బ్లాక్ లూప్ కండిషన్ ఫాల్స్ అయ్యే వరకు పునరావృతమవుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>టెర్మినేషన్ నిబంధన</strong></td>
+            <td><strong>బేస్ కండిషన్ (Base Case)</strong> ద్వారా ముగుస్తుంది.</td>
+            <td><strong>లూప్ కండిషన్ ఫాల్స్ (False)</strong> కావడం ద్వారా ముగుస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ వినియోగం</strong></td>
+            <td><strong>ఎక్కువ:</strong> ప్రతి కాల్‌కి RAM కాల్ స్టాక్ పై కొత్త స్టాక్ ఫ్రేమ్ కేటాయించబడుతుంది ($O(N)$ space).</td>
+            <td><strong>అతి తక్కువ:</strong> ఒకే స్టాక్ ఫ్రేమ్‌లో కౌంటర్ మాత్రమే మారుతుంది ($O(1)$ space).</td>
+          </tr>
+          <tr>
+            <td><strong>ఎగ్జిక్యూషన్ వేగం</strong></td>
+            <td>ఫంక్షన్ కాల్ ఓవర్‌హెడ్ (Push/Pop) వలన కొద్దిగా నెమ్మదిగా ఉంటుంది.</td>
+            <td>నేరుగా CPU జంప్స్ కాబట్టి అత్యంత వేగవంతమైనది.</td>
+          </tr>
+          <tr>
+            <td><strong>కోడ్ రీడబిలిటీ &amp; సైజు</strong></td>
+            <td>ట్రీస్, గ్రాఫ్స్, టవర్స్ ఆఫ్ హనోయి వంటి వాటికి కోడ్ చాలా చిన్నగా, క్లీన్‌గా ఉంటుంది.</td>
+            <td>సంక్లిష్టమైన సమస్యలకు కోడ్ పెద్దదిగా, గజిబిజిగా మారవచ్చు.</td>
+          </tr>
+          <tr>
+            <td><strong>ప్రమాదం</strong></td>
+            <td>బేస్ కండిషన్ లేకపోతే <strong>Stack Overflow</strong> క్రాష్ అవుతుంది.</td>
+            <td>కండిషన్ అప్‌డేట్ లేకపోతే <strong>Infinite Loop</strong> (CPU 100% Hang) అవుతుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>ప్రాణాంతక స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow Exception) నివారణ</div>
+    <div class="section-body">
+      <p>కంప్యూటర్ RAM లో ప్రతి ప్రోగ్రామ్‌కు కేటాయించే కాల్ స్టాక్ పరిమాణం అపరిమితమైనది కాదు. లైనక్స్ మరియు విండోస్‌లలో సాధారణంగా కాల్ స్టాక్ సైజు <strong>1 MB నుండి 8 MB వరకు</strong> మాత్రమే ఉంటుంది.</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#ef4444; margin:0 0 8px; font-size:15px;">స్టాక్ ఓవర్‌ఫ్లో ఎలా జరుగుతుంది?</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          ఒక రికర్సివ్ ఫంక్షన్‌లో బేస్ కండిషన్ రాయడం మర్చిపోయినా, లేదా బేస్ కండిషన్ ఎప్పటికీ చేరుకోని తప్పుడు లాజిక్ రాసినా — స్టాక్ ఫ్రేమ్‌లు ఒకదానిపై ఒకటి పేరుకుపోతూనే ఉంటాయి. స్టాక్ మెమరీ పరిమితి ముగిసిపోగానే, ఆపరేటింగ్ సిస్టమ్ ప్రోగ్రామ్‌ను <strong>Segmentation Fault (SIGSEGV / Stack Overflow)</strong> ఎర్రర్‌తో తక్షణమే చంపేస్తుంది!
+        </p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Fatal Infinite Recursion (Stack Overflow Demonstration)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>// ❌ ప్రమాదకరమైన కోడ్: బేస్ కండిషన్ లేదు!
+void causeCrash(int count) {
+    printf("కాల్ సంఖ్య: %d\n", count);
+    causeCrash(count + 1); // ఎప్పటికీ ఆగదు! లక్షలాది ఫ్రేమ్స్ స్టాక్ ని నింపేస్తాయి.
+}
+
+int main() {
+    // causeCrash(1); // ⚠️ ఇది రన్ చేస్తే సెగ్మెంటేషన్ ఫాల్ట్ తో ప్రోగ్రామ్ క్రాష్ అవుతుంది!
     return 0;
 }</code></pre>
       </div>
     </div>
 
-    <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>కాల్ స్టాక్ విజువలైజేషన్ & స్టాక్ ఫ్రేమ్‌ల పేర్చివేత (Call Tree Trace)</div>
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>డైరెక్ట్ రికార్షన్ vs ఇన్‌డైరెక్ట్ రికార్షన్ (Mutual Recursion)</div>
     <div class="section-body">
-      <p>
-        <code>factorial(4)</code> పిలిచినప్పుడు RAM కాల్ స్టాక్‌లో రెండు విభిన్న దశలు జరుగుతాయి:
-      </p>
+      <p>రికార్షన్‌లో ప్రధానంగా రెండు రకాలు ఉంటాయి:</p>
 
-      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px;">
-          <strong style="color:#3b82f6; font-size:14px;">దశ 1: వైండింగ్ ఫేజ్ (Winding Phase - ఫార్వర్డ్ కాల్స్):</strong>
-          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
-            <code>factorial(4)</code> ➔ <code>factorial(3)</code> ➔ <code>factorial(2)</code> ➔ <code>factorial(1)</code>. ప్రతి కాల్‌కు కొత్త స్టాక్ ఫ్రేమ్ మెమరీలో పేర్చబడుతుంది.
-          </p>
-        </div>
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">1. డైరెక్ట్ రికార్షన్ (Direct Recursion):</h4>
+      <p>ఫంక్షన్ <code>A()</code> తన బాడీ లోపల నేరుగా <code>A()</code> నే పిలుచుకోవడం (మనం ఇప్పటివరకు చూసిన ఫ్యాక్టోరియల్ లాగా).</p>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px;">
-          <strong style="color:#10b981; font-size:14px;">దశ 2: అన్‌వైండింగ్ ఫేజ్ (Unwinding Phase - ఫలితాల రిటర్న్):</strong>
-          <p style="font-size:13px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
-            బేస్ కండిషన్ <code>factorial(1) = 1</code> రీచ్ అవ్వగానే ఫ్రేమ్‌లు పాప్ అవుతూ గుణకారం పూర్తవుతుంది: <code>1</code> ➔ <code>2 * 1 = 2</code> ➔ <code>3 * 2 = 6</code> ➔ <code>4 * 6 = 24</code>.
-          </p>
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">2. ఇన్‌డైరెక్ట్ రికార్షన్ (Indirect / Mutual Recursion):</h4>
+      <p>ఫంక్షన్ <code>A()</code> ఫంక్షన్ <code>B()</code> ని పిలుస్తుంది, మరియు ఫంక్షన్ <code>B()</code> తిరిగి ఫంక్షన్ <code>A()</code> ని పిలుస్తుంది! ఈ చక్రీయ రిలేషన్‌షిప్‌ను మ్యూచువల్ రికార్షన్ అంటారు. ఉదాహరణకు ఒక సంఖ్య సరి సంఖ్యో (Even) బేసి సంఖ్యో (Odd) పరస్పరం నిర్ణయించడం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Indirect Mutual Recursion Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// Forward Prototypes
+int isEven(int n);
+int isOdd(int n);
+
+int isEven(int n) {
+    if (n == 0) return 1; // 0 అనేది సరి సంఖ్య
+    return isOdd(n - 1);  // isOdd ని పిలుస్తుంది!
+}
+
+int isOdd(int n) {
+    if (n == 0) return 0; // 0 బేసి సంఖ్య కాదు
+    return isEven(n - 1); // isEven ని పిలుస్తుంది!
+}
+
+int main() {
+    int num = 7;
+    if (isEven(num)) {
+        printf("%d అనేది సరి సంఖ్య (Even Number)\n", num);
+    } else {
+        printf("%d అనేది బేసి సంఖ్య (Odd Number)\n", num);
+    }
+    return 0;
+}</code></pre>
       </div>
     </div>
 
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow) ఎర్రర్ నివారణ</div>
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>టెయిల్ రికార్షన్ (Tail Recursion) &amp; TCO ఆప్టిమైజేషన్</div>
     <div class="section-body">
-      <p>
-        బేస్ కండిషన్ రాయడం మర్చిపోయినా లేదా ఇన్పుట్ సైజ్ చాలా పెద్దదై వేల సంఖ్యలో రికర్సివ్ కాల్స్ జరిగినా, కాల్ స్టాక్ కోసం OS కేటాయించిన మెమరీ (8MB) పూర్తిగా నిండిపోతుంది.
-      </p>
+      <p>ఒక ఫంక్షన్‌లో జరిగే <strong>రికార్సివ్ కాల్ ఆ ఫంక్షన్ యొక్క చిట్టచివరి స్టేట్‌మెంట్ అయి ఉండి</strong>, ఆ కాల్ తర్వాత ఎటువంటి అదనపు ఆపరేషన్లు (కూడికలు, గుణకారాలు) లేకపోతే, దానిని <strong>టెయిల్ రికార్షన్ (Tail Recursion)</strong> అంటారు.</p>
 
-      <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px; margin:16px 0;">
-        <strong style="color:#ef4444; font-size:14px;">💥 Segmentation fault (core dumped):</strong>
-        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
-          స్టాక్ బౌండరీ దాటి పక్కనున్న మెమరీ గార్డ్ పేజీలోకి వెళ్ళిన క్షణంలో ఆపరేటింగ్ సిస్టమ్ ప్రోగ్రామ్‌ను బలవంతంగా క్రాష్ చేస్తుంది. దీనినే <strong>Stack Overflow</strong> అంటారు.
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">Tail Call Optimization (TCO):</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          ఆధునిక GCC/Clang కంపైలర్లు (<code>-O2</code> లేదా <code>-O3</code> ఫ్లాగ్స్ తో) టెయిల్ రికార్షన్‌ను గుర్తించినప్పుడు, స్టాక్ పై కొత్త స్టాక్ ఫ్రేమ్‌లను సృష్టించవు! పాత స్టాక్ ఫ్రేమ్‌నే రీయూజ్ చేసి దానిని ఒక సాధారణ లూప్‌లా మార్చేస్తాయి. దీనివలన రికార్షన్ వాడినప్పటికీ <strong>మెమరీ కాంప్లెక్సిటీ $O(N)$ నుండి $O(1)$ కి పడిపోయి</strong> స్టాక్ ఓవర్‌ఫ్లో ప్రమాదం పూర్తిగా తొలగిపోతుంది!
         </p>
       </div>
 
-      <h4 style="color:#10b981; margin:20px 0 10px; font-size:15px; font-weight:700;">⚖️ లూప్స్ vs రికార్షన్ (Comparison Matrix):</h4>
-      <div style="overflow-x:auto; margin-bottom:16px;">
-        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
-          <thead>
-            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
-              <th style="padding:10px 14px; color:var(--text);">లక్షణం</th>
-              <th style="padding:10px 14px; color:var(--text);">లూప్స్ (Iteration)</th>
-              <th style="padding:10px 14px; color:var(--text);">రికార్షన్ (Recursion)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:10px 14px; font-weight:700; color:#10b981;">మెమరీ వినియోగం</td>
-              <td style="padding:10px 14px;">$O(1)$ స్థిరమైన మెమరీ</td>
-              <td style="padding:10px 14px;">$O(N)$ స్టాక్ ఫ్రేమ్‌ల మెమరీ ఓవర్‌హెడ్</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:10px 14px; font-weight:700; color:#10b981;">వేగం (Speed)</td>
-              <td style="padding:10px 14px;">అత్యంత వేగవంతమైనది</td>
-              <td style="padding:10px 14px;">ఫంక్షన్ కాల్ ఓవర్‌హెడ్ వల్ల కొద్దిగా నెమ్మది</td>
-            </tr>
-            <tr>
-              <td style="padding:10px 14px; font-weight:700; color:#10b981;">కోడ్ పరిశుభ్రత</td>
-              <td style="padding:10px 14px;">ట్రీస్/గ్రాఫ్స్‌కు సంక్లిష్టమైన కోడ్</td>
-              <td style="padding:10px 14px;">డివైడ్ & కాంకర్ సమస్యలకు అత్యంత సూక్ష్మమైన కోడ్</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Non-Tail vs Tail Recursive Factorial</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>// 1. నాన్-టెయిల్ రికార్షన్: గుణకారం (*) చివర మిగిలి ఉంది కాబట్టి కాల్ స్టాక్ అవసరం
+long long nonTailFactorial(int n) {
+    if (n &lt;= 1) return 1;
+    return n * nonTailFactorial(n - 1); // '*' ఆపరేషన్ పెండింగ్ లో ఉంది!
+}
+
+// 2. టెయిల్ రికార్షన్: చివరి స్టేట్‌మెంట్ కేవలం ఫంక్షన్ కాల్ మాత్రమే (అక్యుమ్యులేటర్ ద్వారా)
+long long tailFactorialHelper(int n, long long accumulator) {
+    if (n &lt;= 1) return accumulator;
+    return tailFactorialHelper(n - 1, n * accumulator); // ప్యూర్ టెయిల్ కాల్!
+}
+
+long long tailFactorial(int n) {
+    return tailFactorialHelper(n, 1);
+}</code></pre>
       </div>
     </div>
 
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>ది టవర్స్ ఆఫ్ హనోయి (The Towers of Hanoi Puzzle)</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. బేస్ కండిషన్ లేకపోవడం:</div>
-          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">బేస్ కండిషన్ లేకపోతే అనంతమైన రికర్సివ్ కాల్స్‌తో ప్రోగ్రామ్ తక్షణమే క్రాష్ అవుతుంది.</span>
-        </div>
+      <p>కంప్యూటర్ సైన్స్ చరిత్రలోనే రికార్షన్ యొక్క శక్తిని నిరూపించే అత్యంత ప్రసిద్ధ పజిల్ <strong>టవర్స్ ఆఫ్ హనోయి (Towers of Hanoi)</strong>. ఇందులో మూడు స్తంభాలు (Source, Auxiliary, Destination) ఉంటాయి. Source పై వివిధ పరిమాణాల డిస్కులు (Disks) ఉంటాయి:</p>
 
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. ఫిబోనాకి డూప్లికేట్ కాల్స్ ట్రాప్:</div>
-          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;"><code>fib(n-1) + fib(n-2)</code> అని రాస్తే ఒకే విలువను లెక్కించడానికి వందల సార్లు డూప్లికేట్ కాల్స్ జరిగి $O(2^N)$ తో సిస్టమ్ ఫ్రీజ్ అవుతుంది. డైనమిక్ ప్రోగ్రామింగ్ లేదా లూప్స్ వాడాలి.</span>
+      <ol style="margin-left: 20px; color: var(--text2); font-size: 14px; line-height: 1.7;">
+        <li>ఒకేసారి కేవలం ఒక డిస్కును మాత్రమే కదపాలి.</li>
+        <li>చిన్న డిస్కు కింద పెద్ద డిస్కును ఉంచకూడదు (పెద్దదాని పైనే చిన్నది ఉండాలి).</li>
+        <li>$N$ డిస్కులను గమ్యస్థానానికి చేర్చడానికి కనీసం $2^N - 1$ మూవ్స్ పడతాయి.</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Towers of Hanoi Recursive Engine</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// Towers of Hanoi రికర్సివ్ సొల్యూషన్
+void towerOfHanoi(int n, char fromRod, char toRod, char auxRod) {
+    if (n == 1) {
+        printf("-> డిస్క్ 1 ని %c నుండి %c కి మార్చు\n", fromRod, toRod);
+        return;
+    }
+
+    // 1. (n-1) డిస్కులను Source నుండి Helper కి మార్చు
+    towerOfHanoi(n - 1, fromRod, auxRod, toRod);
+
+    // 2. అతిపెద్ద nవ డిస్కును Source నుండి Destination కి మార్చు
+    printf("-> డిస్క్ %d ని %c నుండి %c కి మార్చు\n", n, fromRod, toRod);
+
+    // 3. Helper లో ఉన్న (n-1) డిస్కులను Destination కి మార్చు
+    towerOfHanoi(n - 1, auxRod, toRod, fromRod);
+}
+
+int main() {
+    int totalDisks = 3; // 3 డిస్కులు = 2^3 - 1 = 7 మూవ్స్!
+    printf("=== టవర్స్ ఆఫ్ హనోయి పరిష్కారం (%d డిస్కులు) ===\n", totalDisks);
+    towerOfHanoi(totalDisks, 'A', 'C', 'B');
+    return 0;
+}</code></pre>
       </div>
     </div>
 
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్ — ఫోల్డర్ సైజ్ &amp; ఫైల్ సిస్టమ్ స్కానర్</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: Tail Recursion అంటే ఏమిటి? కంపైలర్ దాన్ని ఎలా ఆప్టిమైజ్ చేస్తుంది?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            ఒక రికర్సివ్ ఫంక్షన్‌లో రికర్సివ్ కాల్ అనేది ఆ ఫంక్షన్ యొక్క ఆఖరి స్టేట్‌మెంట్ అయితే దాన్ని <strong>Tail Recursion</strong> అంటారు. ఆధునిక GCC కంపైలర్లు (Tail Call Optimization - TCO) ద్వారా కొత్త స్టాక్ ఫ్రేమ్స్ సృష్టించకుండా దాన్ని స్వయంచాలకంగా ఒక సాధారణ లూప్‌గా మార్చి మెమరీని ఆదా చేస్తాయి.
-          </p>
-        </div>
+      <p>నిజ జీవితంలో విండోస్ ఎక్స్‌ప్లోరర్ లేదా లైనక్స్ టెర్మినల్ ఒక ఫోల్డర్ సైజును ఎలా లెక్కిస్తుందో ఆలోచించారా? ఒక ఫోల్డర్ లోపల ఫైల్స్ ఉంటాయి, వాటితో పాటు సబ్-ఫోల్డర్స్ (Sub-folders) ఉంటాయి, వాటి లోపల మళ్లీ మరిన్ని సబ్-ఫోల్డర్స్ ఉంటాయి! ఫోల్డర్ల లోతు ఎంతైనా సరే, రికార్షన్ ద్వారా ప్రతి ఫోల్డర్‌ను స్వయంచాలకంగా స్కాన్ చేసి మొత్తం మెగాబైట్లను లెక్కించవచ్చు:</p>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: పరిశ్రమల్లో రియల్-వరల్డ్ ప్రాజెక్టులలో రికార్షన్‌ను ఎక్కడ వాడతారు?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            ఫైల్ సిస్టమ్ డైరెక్టరీలను ట్రావర్స్ చేయడానికి, JSON / XML పార్సింగ్ చేయడానికి, బైనరీ సెర్చ్ ట్రీస్ (BST) మరియు క్విక్ సార్ట్ (QuickSort), మెర్జ్ సార్ట్ (MergeSort) వంటి అల్గారిథమ్‌లలో రికార్షన్ విస్తృతంగా వాడతారు.
-          </p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Recursive Folder Hierarchy &amp; Size Scanner</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// డెప్త్ లెవల్ ఆధారంగా స్పేసెస్ ప్రింట్ చేసే హెల్పర్
+void printIndent(int depth) {
+    for (int i = 0; i &lt; depth; i++) {
+        printf("    ");
+    }
+}
+
+// రికర్సివ్ ఫోల్డర్ సైజ్ కాలిక్యులేటర్ (సిమ్యులేషన్)
+double calculateFolderSize(const char* folderName, int subFolderCount, double directFileSizeMB, int depth) {
+    printIndent(depth);
+    printf("📁 ఫోల్డర్ స్కాన్ చేయబడుతోంది: [%s] (డైరెక్ట్ ఫైల్స్: %.1f MB)\n", folderName, directFileSizeMB);
+
+    // బేస్ కండిషన్: సబ్-ఫోల్డర్స్ ఏవీ లేకపోతే కేవలం డైరెక్ట్ సైజ్ రిటర్న్ చేయి
+    if (subFolderCount == 0) {
+        printIndent(depth);
+        printf("  └── ఏ సబ్-ఫోల్డర్స్ లేవు. ముగింపు.\n");
+        return directFileSizeMB;
+    }
+
+    double totalSize = directFileSizeMB;
+
+    // ప్రతి సబ్-ఫోల్డర్ కోసం రికర్సివ్‌గా సైజ్ లెక్కించు
+    for (int i = 1; i &lt;= subFolderCount; i++) {
+        char childName[32];
+        sprintf(childName, "సబ్_ఫోల్డర్_%d", i);
+
+        // రికర్సివ్ కాల్ (లోపలి లోతుకి వెళ్తోంది)
+        double childSize = calculateFolderSize(childName, subFolderCount - 1, 15.0 * i, depth + 1);
+        totalSize += childSize;
+    }
+
+    printIndent(depth);
+    printf("✔️ [%s] మొత్తం సబ్-ట్రీ సైజు: %.1f MB\n", folderName, totalSize);
+    return totalSize;
+}
+
+int main() {
+    printf("====================================================\n");
+    printf("    మనా ఫైల్ సిస్టమ్ రికర్సివ్ స్టోరేజ్ స్కానర్\n");
+    printf("====================================================\n");
+
+    double grandTotal = calculateFolderSize("రూట్_డ్రైవ్_C:", 2, 50.0, 0);
+
+    printf("----------------------------------------------------\n");
+    printf("📊 మొత్తం C: డ్రైవ్ ఉపయోగించిన స్పేస్: %.2f MB\n", grandTotal);
+    printf("====================================================\n");
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div class="section-title"><span class="num">12</span>సాధారణంగా బిగినర్స్ చేసే టాప్ 5 రికార్షన్ తప్పులు</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">1. బేస్ కండిషన్ రాయడం పూర్తిగా మర్చిపోవడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">ఇది స్టాక్ ఫ్రేమ్‌లను నింపేసి సెగ్మెంటేషన్ ఫాల్ట్ (Stack Overflow) తో ప్రోగ్రామ్‌ను వెంటనే క్రాష్ చేస్తుంది.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">2. రికర్సివ్ కాల్‌లో n-1 బదులు n-- లేదా n++ వాడటం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>func(n--)</code> అని రాస్తే ప్రస్తుత విలువ మాత్రమే పాస్ అవుతుంది (Post-decrement)! దీనివలన బేస్ కండిషన్ వైపు తగ్గక ఇన్ఫినిట్ లూప్ అవుతుంది. ఎల్లప్పుడూ <code>func(n - 1)</code> వాడాలి!</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">3. బేస్ కండిషన్‌లో నెగెటివ్ నంబర్లను హ్యాండిల్ చేయకపోవడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>if (n == 0)</code> మాత్రమే రాసి యూజర్ <code>-5</code> ఇస్తే, అది సున్నాను ఎప్పటికీ చేరుకోక క్రాష్ అవుతుంది. అందుకే <code>if (n &lt;= 0)</code> అని రాయాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">4. నాన్-వాయిడ్ రికార్షన్‌లో రిటర్న్ మిస్ చేయడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">రికార్షన్ కాల్ ముందు <code>return</code> రాయకుండా కేవలం <code>func(n - 1);</code> అని రాస్తే కాలర్ ఫంక్షన్‌కు గార్బేజ్ వాల్యూ వెళ్తుంది.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">5. భారీ ఇన్పుట్లకు సాధారణ రికార్షన్ వాడటం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">$N = 100000$ లాంటి పెద్ద సంఖ్యలకు సాధారణ రికార్షన్ రాస్తే స్టాక్ ఓవర్‌ఫ్లో అవుతుంది; అటువంటి వాటికి ఇటరేషన్ లేదా టెయిల్ రికార్షన్ వాడాలి.</span>
         </div>
       </div>
     </div>
-  
+
+    <!-- SECTION 13 -->
+    <div class="section-title"><span class="num">13</span>స్వీయ మూల్యాంకన క్విజ్ &amp; మీరే స్వయంగా Try చేయండి!</div>
+    <div class="section-body">
+      <p>ఈ పాఠంలోని లోతైన అంశాలను క్రింది 5 ప్రాక్టికల్ ప్రశ్నల ద్వారా పరీక్షించుకోండి:</p>
+
+      <!-- QUIZ QUESTIONS -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: రికార్షన్‌లో బేస్ కండిషన్ లేకపోతే ఏం జరుగుతుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> రికార్షన్ అంతులేకుండా నడుస్తూ స్టాక్ ఫ్రేమ్‌లతో RAM స్టాక్ మెమరీని నింపేస్తుంది. చివరకు ఆపరేటింగ్ సిస్టమ్ <strong>Stack Overflow (Segmentation Fault)</strong> ఎర్రర్‌తో ప్రోగ్రామ్‌ను క్రాష్ చేస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: రికార్షన్ కాల్ స్టాక్ లో వైండింగ్ (Winding) మరియు అన్‌వైండింగ్ (Unwinding) అంటే ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> బేస్ కండిషన్ వైపు ఫంక్షన్ కాల్స్ జరుగుతూ స్టాక్ పై ఫ్రేమ్స్ పేరుకుపోవడాన్ని <strong>వైండింగ్ (Winding)</strong> అంటారు. బేస్ కండిషన్ తగిలిన తర్వాత ఫలితాలు రిటర్న్ అవుతూ స్టాక్ ఫ్రేమ్స్ తొలగించబడటాన్ని <strong>అన్‌వైండింగ్ (Unwinding)</strong> అంటారు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: సాధారణ రికార్షన్‌తో పోలిస్తే టెయిల్ రికార్షన్ (Tail Recursion) ఎందుకు ఉత్తమమైనది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> టెయిల్ రికార్షన్‌లో రికర్సివ్ కాల్ చివరగా జరుగుతుంది కాబట్టి, ఆధునిక కంపైలర్లు (TCO ద్వారా) పాత స్టాక్ ఫ్రేమ్‌నే రీయూజ్ చేస్తాయి. దీనివలన మెమరీ వినియోగం $O(1)$ కి పడిపోయి స్టాక్ ఓవర్‌ఫ్లో ముప్పు తప్పుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: 3 డిస్కులు ఉన్న టవర్స్ ఆఫ్ హనోయి సమస్యను పరిష్కరించడానికి మొత్తం ఎన్ని మూవ్స్ అవసరం?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> సూత్రం $2^N - 1$. కాబట్టి $2^3 - 1 = 8 - 1 = 7$ మూవ్స్ అవసరం.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: func(n--) అని రికర్సివ్ కాల్ లో ఎందుకు రాయకూడదు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>n--</code> అనేది పోస్ట్-డిక్రిమెంట్. అంటే ప్రస్తుత పాత <code>n</code> విలువే మళ్లీ ఫంక్షన్‌కు వెళ్తుంది! దీనివలన విలువ తగ్గక శాశ్వతంగా ఇన్ఫినిట్ రికార్షన్ అయిపోతుంది. ఎల్లప్పుడూ <code>func(n - 1)</code> వాడాలి.
+        </div>
+      </details>
+
+      <!-- TRY BOX -->
+      <div class="try-box" style="margin-top:24px;">
+        <div class="try-title">🚀 ఫ్యాక్టోరియల్ &amp; టవర్స్ ఆఫ్ హనోయి ప్రోగ్రామ్‌లను మన ఆన్‌లైన్ C కంపైలర్‌లో రన్ చేయండి!</div>
+        <p>పైన వివరించిన <code>ఫ్యాక్టోరియల్ కాల్ స్టాక్ ట్రేసర్</code> మరియు <code>టవర్స్ ఆఫ్ హనోయి</code> కోడ్‌లను మన ఆన్‌లైన్ C కంపైలర్‌లో ఓపెన్ చేసి స్వయంగా రన్ చేయండి. డిస్కుల సంఖ్యను మార్చి మూవ్స్ ఎలా జనరేట్ అవుతున్నాయో పరీక్షించండి!</p>
+        <a class="run-btn" href="/online-c-compiler.html" target="_blank">
+          👉 Our Compiler లో C Compiler try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 Phase 03 ముగింపు సారాంశం (Phase 03 Wrap-Up):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>మోడ్యులర్ ప్రోగ్రామింగ్ &amp; మెమరీ విజయం:</strong> ఫంక్షన్స్, ప్రొటోటైప్స్ (Ch 9), Call by Value vs Reference &amp; పాయింటర్లు (Ch 10), స్టోరేజ్ క్లాసెస్ &amp; స్కోప్ (Ch 11), మరియు రికార్షన్ &amp; కాల్ స్టాక్ (Ch 12) లపై పూర్తి పాండిత్యం సాధించారు!</li>
+          <li><strong>రికార్షన్:</strong> సంక్లిష్ట సమస్యలను తనలాంటి చిన్న సమస్యలుగా మార్చి పరిష్కరించే కళ.</li>
+          <li><strong>బేస్ కండిషన్:</strong> రికార్షన్‌ను ఆపే అత్యంత ముఖ్యమైన రక్షణ కవచం.</li>
+          <li><strong>స్టాక్ ఓవర్‌ఫ్లో:</strong> బేస్ కండిషన్ లేనప్పుడు స్టాక్ మెమరీ నిండిపోయి వచ్చే క్రాష్.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Phase 04 — డేటా స్ట్రక్చర్స్ &amp; మెమరీ పాయింటర్స్):</strong> వేలాది విలువల సమాహారాన్ని మెమరీలో పక్కపక్కనే నిల్వ చేసే <strong>అర్రేలు (1D &amp; 2D Arrays), మ్యాట్రిక్స్ ఆపరేషన్లు మరియు కంటిగ్యువస్ మెమరీ ఆర్కిటెక్చర్</strong> గురించి అత్యంత ఆసక్తికరంగా నేర్చుకుందాం!
+      </div>
+    </div>
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
       <a href="/blog-c/11-c-storage-classes-and-scope.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
-        ← Prev: 11. వేరియబుల్ స్కోప్ & స్టోరేజ్ క్లాసెస్
+        ← Prev: 11. వేరియబుల్ స్కోప్ &amp; స్టోరేజ్ క్లాసెస్
       </a>
-      
       <a href="/blog-c/13-c-arrays-1d-and-2d-matrices.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
-        Next: 13. అర్రేలు & 2D Matrices →
+        Next: 13. అర్రేలు &amp; 2D Matrices →
       </a>
     </div>
 
@@ -405,7 +806,7 @@ int main(void) {
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -416,3 +817,4 @@ int main(void) {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
+
